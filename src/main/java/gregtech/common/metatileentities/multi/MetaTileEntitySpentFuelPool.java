@@ -62,7 +62,8 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
                 .where('W', blocks(Blocks.WATER).or(blocks(Blocks.FLOWING_WATER)))
                 .where('U', blocks(Blocks.WATER))
                 .where('R', states(getRodState()))
-                .where('T', states(getMetalCasingState()).or(autoAbilities(true, false, true, true, false, true, false)))
+                .where('T',
+                        states(getMetalCasingState()).or(autoAbilities(true, false, true, true, false, true, false)))
                 .build();
     }
 
