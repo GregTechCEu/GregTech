@@ -177,7 +177,7 @@ public class NuclearRecipes {
                 .output(MetaItems.ANODE_BASKET)
                 .buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(400).EUt(VA[EV])
                 .notConsumable(MetaItems.ANODE_BASKET)
                 .notConsumable(Salt.getFluid(1000))
                 .input(fuelPelletDepleted, LEU235)
@@ -186,7 +186,7 @@ public class NuclearRecipes {
                 .chancedOutput(dustFissionByproduct, LEU235, 266, 0)
                 .buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(400).EUt(VA[EV])
                 .notConsumable(MetaItems.ANODE_BASKET)
                 .notConsumable(Salt.getFluid(1000))
                 .input(fuelPelletDepleted, HEU235)
@@ -195,7 +195,7 @@ public class NuclearRecipes {
                 .chancedOutput(dustFissionByproduct, HEU235, 301, 0)
                 .buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(400).EUt(VA[EV])
                 .notConsumable(MetaItems.ANODE_BASKET)
                 .notConsumable(Salt.getFluid(1000))
                 .input(fuelPelletDepleted, LowGradeMOX)
