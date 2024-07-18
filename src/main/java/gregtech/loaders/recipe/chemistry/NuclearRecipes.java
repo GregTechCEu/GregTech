@@ -19,7 +19,7 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(400).EUt(VA[MV])
-                .input(dust, BoronTrioxide, 2)
+                .input(dust, BoronTrioxide, 10)
                 .input(dust, Carbon, 7)
                 .output(dust, BoronCarbide, 5)
                 .fluidOutputs(CarbonMonoxide.getFluid(6000))
