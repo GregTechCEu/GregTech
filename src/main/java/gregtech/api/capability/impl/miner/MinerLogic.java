@@ -393,9 +393,9 @@ public class MinerLogic {
                 // check every block along the x-axis
                 while (x1 <= startX.get() + currentRadius * 2) {
                     BlockPos blockPos = new BlockPos(x1, y, z1);
-                    IBlockState state = metaTileEntity.getWorld().getBlockState(blockPos);
+                    IBlockState state = world.getBlockState(blockPos);
                     if (state.getBlock().blockHardness >= 0 &&
-                            world.getTileEntity(blockPos) == null &&
+                            state.getBlock().hasTileEntity(state) &&
                             GTUtility.isOre(GTUtility.toItem(state))) {
                         blocks.addLast(blockPos);
                     }
