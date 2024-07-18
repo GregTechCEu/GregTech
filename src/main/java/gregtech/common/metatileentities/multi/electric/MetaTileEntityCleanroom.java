@@ -27,11 +27,9 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.api.util.RelativeDirection;
@@ -138,8 +136,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
-//        this.cleanroomLogic.setMaxProgress(Math.max(100,
-//                ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
+        // this.cleanroomLogic.setMaxProgress(Math.max(100,
+        // ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
         this.cleanroomLogic.setMaxProgress(100);
         this.cleanroomLogic.setMinEnergyTier(cleanroomFilter.getMinTier());
     }
@@ -186,7 +184,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @NotNull
     @Override
     protected IBlockPattern createStructurePattern() {
-
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
         TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
                 .setMinGlobalLimited(1).setMaxGlobalLimited(3));
@@ -363,12 +360,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             case "addl" -> bounds[2] += 1;
         }
 
-        structurePatterns[0].clearCache();
+        getSubstructure("MAIN").getPattern().clearCache();
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(!drainEnergy(true))
                 .addCustom(tl -> {
@@ -493,7 +489,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     public boolean drainEnergy(boolean simulate) {
-        if(true) return true;
+        if (true) return true;
 
         long energyToDrain = isClean() ? 4 :
                 GTValues.VA[getEnergyTier()];

@@ -11,11 +11,13 @@ import net.minecraft.world.World;
 import java.util.function.BiFunction;
 
 public class FactoryExpandablePattern {
+
     protected QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction;
     protected BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction;
     protected final RelativeDirection[] structureDir = new RelativeDirection[3];
 
-    private FactoryExpandablePattern(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
+    private FactoryExpandablePattern(RelativeDirection aisleDir, RelativeDirection stringDir,
+                                     RelativeDirection charDir) {
         structureDir[0] = aisleDir;
         structureDir[1] = stringDir;
         structureDir[2] = charDir;
@@ -39,8 +41,9 @@ public class FactoryExpandablePattern {
         if (flags != 0x7) throw new IllegalArgumentException("Must have 3 different axes!");
     }
 
-    public static FactoryExpandablePattern start(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
-        return new FactoryExpandablePattern(aisleDir,stringDir, charDir);
+    public static FactoryExpandablePattern start(RelativeDirection aisleDir, RelativeDirection stringDir,
+                                                 RelativeDirection charDir) {
+        return new FactoryExpandablePattern(aisleDir, stringDir, charDir);
     }
 
     public static FactoryExpandablePattern start() {
@@ -58,10 +61,11 @@ public class FactoryExpandablePattern {
     }
 
     public ExpandablePattern build() {
-        if (boundsFunction == null) throw new IllegalStateException("Bound function is null! Use .boundsFunction(...) on the builder!");
-        if (predicateFunction == null) throw new IllegalStateException("Predicate function is null! Use .predicateFunction(...) on the builder!");
+        if (boundsFunction == null)
+            throw new IllegalStateException("Bound function is null! Use .boundsFunction(...) on the builder!");
+        if (predicateFunction == null)
+            throw new IllegalStateException("Predicate function is null! Use .predicateFunction(...) on the builder!");
 
         return new ExpandablePattern(boundsFunction, predicateFunction, structureDir);
     }
-
 }

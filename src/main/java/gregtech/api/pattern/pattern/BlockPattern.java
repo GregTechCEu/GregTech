@@ -106,8 +106,10 @@ public class BlockPattern implements IBlockPattern {
                 // when legacyStartOffset() is called, aisles have been reversed, so don't reverse it manually here
                 // the scuffed ternary is so that if the structure dir is the second thing, then don't reverse it
                 startOffset[structureDir[0].ordinal() / 2] = aisleI * (structureDir[0].ordinal() % 2 == 0 ? -1 : 1);
-                startOffset[structureDir[1].ordinal() / 2] = (dimensions[1] - 1 - result[0]) * (structureDir[1].ordinal() % 2 == 0 ? -1 : 1);
-                startOffset[structureDir[2].ordinal() / 2] = (dimensions[2] - 1 - result[1]) * (structureDir[2].ordinal() % 2 == 0 ? -1 : 1);
+                startOffset[structureDir[1].ordinal() / 2] = (dimensions[1] - 1 - result[0]) *
+                        (structureDir[1].ordinal() % 2 == 0 ? -1 : 1);
+                startOffset[structureDir[2].ordinal() / 2] = (dimensions[2] - 1 - result[1]) *
+                        (structureDir[2].ordinal() % 2 == 0 ? -1 : 1);
                 return;
             }
         }
@@ -499,14 +501,17 @@ public class BlockPattern implements IBlockPattern {
                                     boolean flip) {
         GreggyBlockPos start = controllerPos.copy();
         for (int i = 0; i < 3; i++) {
-            start.offset(RelativeDirection.VALUES[2 * i].getRelativeFacing(frontFacing, upFacing, flip), startOffset[i]);
+            start.offset(RelativeDirection.VALUES[2 * i].getRelativeFacing(frontFacing, upFacing, flip),
+                    startOffset[i]);
         }
         return start;
     }
 
     /**
-     * Moves the start offset in the given direction and amount, use {@link BlockPattern#clearCache()} after to prevent the cache from being stuck in the old offset.
-     * @param dir The direction, relative to controller.
+     * Moves the start offset in the given direction and amount, use {@link BlockPattern#clearCache()} after to prevent
+     * the cache from being stuck in the old offset.
+     * 
+     * @param dir    The direction, relative to controller.
      * @param amount The amount to offset.
      */
     public void moveStartOffset(RelativeDirection dir, int amount) {
@@ -516,7 +521,9 @@ public class BlockPattern implements IBlockPattern {
     }
 
     /**
-     * Gets the start offset. You probably should use {@link BlockPattern#moveStartOffset(RelativeDirection, int)} instead of mutating the result, but I can't stop you.
+     * Gets the start offset. You probably should use {@link BlockPattern#moveStartOffset(RelativeDirection, int)}
+     * instead of mutating the result, but I can't stop you.
+     * 
      * @return The start offset.
      */
     public int[] getStartOffset() {
@@ -525,6 +532,7 @@ public class BlockPattern implements IBlockPattern {
 
     /**
      * Get the start offset in the given direction.
+     * 
      * @param dir The direction, relative to controller.
      * @return The amount, can be negative.
      */

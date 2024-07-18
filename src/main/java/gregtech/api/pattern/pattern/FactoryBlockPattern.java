@@ -5,10 +5,8 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import com.google.common.base.Joiner;
-
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +48,7 @@ public class FactoryBlockPattern {
      */
     private final int[] dimensions = { -1, -1, -1 };
     /**
-     * Look at the field with the same name in  {@link BlockPattern} for docs
+     * Look at the field with the same name in {@link BlockPattern} for docs
      */
     private int[] startOffset;
     private char centerChar;
@@ -170,7 +168,8 @@ public class FactoryBlockPattern {
 
     /**
      * Sets a part of the start offset in the given direction.
-     * @param dir The direction to offset, relative to controller.
+     * 
+     * @param dir    The direction to offset, relative to controller.
      * @param amount The amount to offset.
      */
     public FactoryBlockPattern startOffset(RelativeDirection dir, int amount) {
@@ -232,7 +231,8 @@ public class FactoryBlockPattern {
         if (reverse) {
             ArrayUtils.reverse(aisleArray);
         } else {
-            if (startOffset == null) GTLog.logger.warn("You used .modern() on the builder without using .startOffset()! This will have unintended behavior!");
+            if (startOffset == null) GTLog.logger.warn(
+                    "You used .modern() on the builder without using .startOffset()! This will have unintended behavior!");
         }
         return new BlockPattern(aisleArray, dimensions, structureDir, startOffset, symbolMap, centerChar);
     }

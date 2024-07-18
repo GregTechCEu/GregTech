@@ -4,7 +4,6 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.PatternError;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.resources.I18n;
@@ -17,7 +16,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -44,20 +42,20 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed()) {
-//                multiblock.structurePatterns[0].autoBuild(player, multiblock);
+                // multiblock.structurePatterns[0].autoBuild(player, multiblock);
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;
         } else {
             // If not sneaking, try to show structure debug info (if any) in chat.
             if (!multiblock.isStructureFormed()) {
-//                PatternError error = multiblock.structurePatterns[0].getError();
-//                if (error != null) {
-//                    player.sendMessage(
-//                            new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
-//                    player.sendMessage(new TextComponentString(error.getErrorInfo()));
-//                    return EnumActionResult.SUCCESS;
-//                }
+                // PatternError error = multiblock.structurePatterns[0].getError();
+                // if (error != null) {
+                // player.sendMessage(
+                // new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
+                // player.sendMessage(new TextComponentString(error.getErrorInfo()));
+                // return EnumActionResult.SUCCESS;
+                // }
             }
             player.sendMessage(new TextComponentTranslation("gregtech.multiblock.pattern.no_errors")
                     .setStyle(new Style().setColor(TextFormatting.GREEN)));

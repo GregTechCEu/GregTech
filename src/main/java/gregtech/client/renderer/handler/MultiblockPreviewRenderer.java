@@ -109,7 +109,7 @@ public class MultiblockPreviewRenderer {
         // todo fix
         BlockInfo[][][] blocks = null;
         // yay unreachable statements
-        if(true) return;
+        if (true) return;
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         int maxY = 0;
         for (int x = 0; x < blocks.length; x++) {

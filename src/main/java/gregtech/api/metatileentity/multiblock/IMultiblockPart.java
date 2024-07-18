@@ -8,6 +8,17 @@ public interface IMultiblockPart {
 
     void removeFromMultiBlock(MultiblockControllerBase controllerBase);
 
+    default MultiblockControllerBase getAttachedMultiblock() {return null;}
+
+    /**
+     * Gets how many multiblocks are currently using the part.
+     */
+    default int getWallsharedCount() { return 1;}
+
+    default boolean canPartShare(MultiblockControllerBase target, String substructureName) {
+        return canPartShare();
+    }
+
     default boolean canPartShare() {
         return true;
     }

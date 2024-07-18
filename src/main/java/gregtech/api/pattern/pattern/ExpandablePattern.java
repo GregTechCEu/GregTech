@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
 public class ExpandablePattern implements IBlockPattern {
+
     protected final QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction;
     protected final BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction;
 
@@ -38,7 +39,9 @@ public class ExpandablePattern implements IBlockPattern {
     protected final Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
     protected final Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCount = new Object2IntOpenHashMap<>();
 
-    public ExpandablePattern(@NotNull QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction, @NotNull BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction, @NotNull RelativeDirection[] directions) {
+    public ExpandablePattern(@NotNull QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction,
+                             @NotNull BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction,
+                             @NotNull RelativeDirection[] directions) {
         this.boundsFunction = boundsFunction;
         this.predicateFunction = predicateFunction;
         this.directions = directions;
@@ -107,8 +110,10 @@ public class ExpandablePattern implements IBlockPattern {
             int negativeOrdinal = opposite.ordinal();
 
             // todo maybe fix this to allow flipping and update the quadfunction
-            negativeCorner.offset(opposite.getRelativeFacing(frontFacing, upwardsFacing, false), bounds[negativeOrdinal]);
-            positiveCorner.offset(selected.getRelativeFacing(frontFacing, upwardsFacing, false), bounds[positiveOrdinal]);
+            negativeCorner.offset(opposite.getRelativeFacing(frontFacing, upwardsFacing, false),
+                    bounds[negativeOrdinal]);
+            positiveCorner.offset(selected.getRelativeFacing(frontFacing, upwardsFacing, false),
+                    bounds[positiveOrdinal]);
         }
 
         // which way each direction progresses absolutely, in [ char, string, aisle ]
@@ -116,8 +121,6 @@ public class ExpandablePattern implements IBlockPattern {
         for (int i = 0; i < 3; i++) {
             facings[i] = directions[2 - i].getRelativeFacing(frontFacing, upwardsFacing, false);
         }
-
-
 
         worldState.setWorld(world);
         // this translates from the relative coordinates to world coordinates
@@ -136,7 +139,7 @@ public class ExpandablePattern implements IBlockPattern {
                         !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
             }
 
-//            GTLog.logger.info("Checked pos at " + pos);
+            // GTLog.logger.info("Checked pos at " + pos);
 
             boolean result = predicate.test(worldState, info, globalCount, null);
             if (!result) return false;

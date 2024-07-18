@@ -140,6 +140,7 @@ public class GreggyBlockPos {
 
     /**
      * Adds the other pos's position to this pos.
+     * 
      * @param other The other pos, not mutated.
      */
     public GreggyBlockPos add(GreggyBlockPos other) {
@@ -151,6 +152,7 @@ public class GreggyBlockPos {
 
     /**
      * Subtracts the other pos's position to this pos.
+     * 
      * @param other The other pos, not mutated.
      */
     public GreggyBlockPos subtract(GreggyBlockPos other) {
@@ -161,7 +163,9 @@ public class GreggyBlockPos {
     }
 
     /**
-     * Same as {@link GreggyBlockPos#subtract(GreggyBlockPos)} but sets this pos to be the absolute value of the operation.
+     * Same as {@link GreggyBlockPos#subtract(GreggyBlockPos)} but sets this pos to be the absolute value of the
+     * operation.
+     * 
      * @param other The other pos, not mutated.
      */
     public GreggyBlockPos diff(GreggyBlockPos other) {
@@ -210,6 +214,7 @@ public class GreggyBlockPos {
 
     /**
      * Compares for the same coordinate.
+     * 
      * @param other The object to compare to, can be either GreggyBlockPos or BlockPos
      */
     @Override

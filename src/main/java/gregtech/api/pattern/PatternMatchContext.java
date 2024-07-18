@@ -35,7 +35,7 @@ public class PatternMatchContext {
     }
 
     public <T> T getOrDefault(String key, T defaultValue) {
-        //noinspection unchecked
+        // noinspection unchecked
         return (T) data.getOrDefault(key, defaultValue);
     }
 
