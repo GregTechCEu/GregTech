@@ -35,18 +35,18 @@ import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+
+import static gregtech.api.util.GTUtility.getGlobalThreadPoolExecutor;
 
 public class MinerLogic {
-
-    private static final short MAX_SPEED = Short.MAX_VALUE;
-    private static final byte POWER = 5;
-    private static final byte TICK_TOLERANCE = 20;
-    private static final double DIVIDEND = MAX_SPEED * Math.pow(TICK_TOLERANCE, POWER);
 
     protected final MetaTileEntity metaTileEntity;
     protected final IMiner miner;
@@ -57,7 +57,7 @@ public class MinerLogic {
 
     private final ICubeRenderer PIPE_TEXTURE;
 
-    private final LinkedList<BlockPos> blocksToMine = new LinkedList<>();
+    private final Deque<BlockPos> blocksToMine = new ArrayDeque<>();
 
     private final AtomicInteger x = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger y = new AtomicInteger(Integer.MAX_VALUE);
@@ -78,6 +78,8 @@ public class MinerLogic {
     protected boolean wasActiveAndNeedsUpdate;
 
     private final IBlockState oreReplacementBlock = findMiningReplacementBlock();
+
+    private CompletableFuture<Void> completableFuture;
 
     /**
      * Creates the general logic for all in-world ore block miners
@@ -166,7 +168,7 @@ public class MinerLogic {
         }
 
         // check if the miner needs new blocks to mine and get them if needed
-        checkBlocksToMine();
+        getBlocksToMine();
 
         // if there are blocks to mine and the correct amount of time has passed, do the mining
         if (metaTileEntity.getOffsetTimer() % this.speed == 0 && !blocksToMine.isEmpty()) {
@@ -191,14 +193,13 @@ public class MinerLogic {
 
         }
 
-        if (blocksToMine.isEmpty()) {
+        if (blocksToMine.isEmpty() && completableFuture.isDone()) {
             // there were no blocks to mine, so the current position is the previous position
             x.set(mineX.get());
             y.set(mineY.get());
             z.set(mineZ.get());
-
             // attempt to get more blocks to mine, if there are none, the miner is done mining
-            blocksToMine.addAll(getBlocksToMine());
+            getBlocksToMine();
             if (blocksToMine.isEmpty()) {
                 this.isDone = true;
                 this.wasActiveAndNeedsUpdate = true;
@@ -270,7 +271,7 @@ public class MinerLogic {
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine,
                                         @NotNull IBlockState blockState) {
         blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, 0); // regular ores do not get
-                                                                                       // fortune applied
+        // fortune applied
     }
 
     /**
@@ -335,14 +336,6 @@ public class MinerLogic {
     }
 
     /**
-     * Checks whether there are any more blocks to mine, if there are currently none queued
-     */
-    public void checkBlocksToMine() {
-        if (blocksToMine.isEmpty())
-            blocksToMine.addAll(getBlocksToMine());
-    }
-
-    /**
      * Recalculates the mining area, refills the block list and restarts the miner, if it was done
      */
     public void resetArea() {
@@ -350,90 +343,72 @@ public class MinerLogic {
         if (this.isDone) this.setWorkingEnabled(false);
         this.isDone = false;
         blocksToMine.clear();
-        checkBlocksToMine();
         resetPipeLength();
     }
 
     /**
      * Gets the blocks to mine
-     *
-     * @return a {@link LinkedList} of {@link BlockPos} for each ore to mine
      */
-    private LinkedList<BlockPos> getBlocksToMine() {
-        LinkedList<BlockPos> blocks = new LinkedList<>();
+    private void getBlocksToMine() {
+        if (completableFuture == null) {
 
-        // determine how many blocks to retrieve this time
-        double quotient = getQuotient(getMeanTickTime(metaTileEntity.getWorld()));
-        int calcAmount = quotient < 1 ? 1 : (int) (Math.min(quotient, Short.MAX_VALUE));
-        int calculated = 0;
+            int y = startY.get();
 
-        // keep getting blocks until the target amount is reached
-        while (calculated < calcAmount) {
-            // moving down the y-axis
-            if (y.get() > 0) {
-                // moving across the z-axis
-                if (z.get() <= startZ.get() + currentRadius * 2) {
-                    // check every block along the x-axis
-                    if (x.get() <= startX.get() + currentRadius * 2) {
-                        BlockPos blockPos = new BlockPos(x.get(), y.get(), z.get());
-                        IBlockState state = metaTileEntity.getWorld().getBlockState(blockPos);
-                        if (state.getBlock().blockHardness >= 0 &&
-                                metaTileEntity.getWorld().getTileEntity(blockPos) == null &&
-                                GTUtility.isOre(GTUtility.toItem(state))) {
-                            blocks.addLast(blockPos);
-                        }
-                        // move to the next x position
-                        x.incrementAndGet();
-                    } else {
-                        // reset x and move to the next z layer
-                        x.set(startX.get());
-                        z.incrementAndGet();
-                    }
-                } else {
-                    // reset z and move to the next y layer
-                    z.set(startZ.get());
-                    y.decrementAndGet();
-                }
-            } else
-                return blocks;
+            List<CompletableFuture<Deque<BlockPos>>> completableFutures = new ArrayList<>(y);
 
-            // only count iterations where blocks were found
-            if (!blocks.isEmpty())
-                calculated++;
+            // run an asynchronous task for each y layer scan
+            while (y > 0) {
+                completableFutures
+                        .add(CompletableFuture.supplyAsync(getYLayerBlocks(y), getGlobalThreadPoolExecutor()));
+                y--;
+            }
+
+            // separate task for results of the finished futures
+            completableFuture = CompletableFuture.allOf(                                   // collect all futures
+                    completableFutures.toArray(new CompletableFuture[startY.get() - 1]))   // arrays only for .allOf
+                    .thenAccept(t -> completableFutures.stream()  // collect (un)finished tasks in the correct order
+                            .map(CompletableFuture::join)         // get the completed result
+                            .forEach(blocksToMine::addAll));      // add to the list, this doesn't happen here
         }
-        return blocks;
+
+        // if the task is done, then searching is complete and a result can be obtained
+        if (completableFuture.isDone()) {
+            completableFuture.getNow(null); // adds to the list
+        }
     }
 
     /**
-     * @param values to find the mean of
-     * @return the mean value
+     * Supplier method needed since lambdas cannot use non-final variables
      */
-    private static long mean(@NotNull long[] values) {
-        if (values.length == 0L)
-            return 0L;
+    private Supplier<Deque<BlockPos>> getYLayerBlocks(int y) {
+        return () -> {
+            World world = metaTileEntity.getWorld();
 
-        long sum = 0L;
-        for (long v : values)
-            sum += v;
-        return sum / values.length;
-    }
+            Deque<BlockPos> blocks = new ArrayDeque<>();
 
-    /**
-     * @param world the {@link World} to get the average tick time of
-     * @return the mean tick time
-     */
-    private static double getMeanTickTime(@NotNull World world) {
-        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
-    }
+            int z1 = startZ.get();
+            int x1 = startX.get();
 
-    /**
-     * gets the quotient for determining the amount of blocks to mine
-     *
-     * @param base is a value used for calculation, intended to be the mean tick time of the world the miner is in
-     * @return the quotient
-     */
-    private static double getQuotient(double base) {
-        return DIVIDEND / Math.pow(base, POWER);
+            while (z1 <= startZ.get() + currentRadius * 2) {
+                // check every block along the x-axis
+                while (x1 <= startX.get() + currentRadius * 2) {
+                    BlockPos blockPos = new BlockPos(x1, y, z1);
+                    IBlockState state = metaTileEntity.getWorld().getBlockState(blockPos);
+                    if (state.getBlock().blockHardness >= 0 &&
+                            world.getTileEntity(blockPos) == null &&
+                            GTUtility.isOre(GTUtility.toItem(state))) {
+                        blocks.addLast(blockPos);
+                    }
+                    // move to the next x position
+                    x1++;
+                }
+                // reset x and move to the next z layer
+                x1 = startX.get();
+                z1++;
+            }
+
+            return blocks;
+        };
     }
 
     /**

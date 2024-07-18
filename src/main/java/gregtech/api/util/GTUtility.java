@@ -58,6 +58,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +71,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -78,6 +81,21 @@ import java.util.function.Predicate;
 import static gregtech.api.GTValues.V;
 
 public class GTUtility {
+
+    private static final ThreadPoolExecutor GLOBAL_THREAD_POOL_EXECUTOR;
+
+    static {
+        GLOBAL_THREAD_POOL_EXECUTOR = (ThreadPoolExecutor) Executors.newFixedThreadPool(
+                Runtime.getRuntime().availableProcessors() - 2, new BasicThreadFactory.Builder()
+                        .namingPattern("gt_global_threads-%d").priority(Thread.NORM_PRIORITY).build());
+    }
+
+    /**
+     * @return ThreadPoolExecutor that is shared among all threaded operations.
+     */
+    public static ThreadPoolExecutor getGlobalThreadPoolExecutor() {
+        return GLOBAL_THREAD_POOL_EXECUTOR;
+    }
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
         String[] result = new String[array.length];
