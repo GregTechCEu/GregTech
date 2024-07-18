@@ -151,6 +151,13 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                .input(dust, LowEnrichedUraniumDioxide, 1) // Assuming 20% enrichment
+                .input(dust, DepletedUraniumDioxide, 3)
+                .circuitMeta(1)
+                .output(dust, LEU235, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dust, HighEnrichedUraniumDioxide, 1)
                 .input(dust, DepletedUraniumDioxide, 4)
                 .circuitMeta(2)
