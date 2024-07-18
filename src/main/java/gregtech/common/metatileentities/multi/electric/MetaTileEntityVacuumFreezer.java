@@ -5,8 +5,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
@@ -66,7 +66,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
 
-        ITextComponent button = new TextComponentString("Second structure offset: " + structurePatterns[1].getStartOffset(RelativeDirection.FRONT));
+        ITextComponent button = new TextComponentString("Second structure offset: " + ((BlockPattern) structurePatterns[1]).getStartOffset(RelativeDirection.FRONT));
         button.appendText(" ");
         button.appendSibling(withButton(new TextComponentString("[-]"), "sub"));
         button.appendText(" ");
@@ -80,7 +80,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
         int mod = componentData.equals("add") ? 1 : -1;
-        structurePatterns[1].moveStartOffset(RelativeDirection.FRONT, mod);
+        ((BlockPattern) structurePatterns[1]).moveStartOffset(RelativeDirection.FRONT, mod);
         structurePatterns[1].clearCache();
     }
 

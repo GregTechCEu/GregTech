@@ -101,6 +101,10 @@ public class TraceabilityPredicate {
         return this;
     }
 
+    public boolean isCenter() {
+        return isCenter;
+    }
+
     public TraceabilityPredicate sort() {
         limited.sort(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount)));
         return this;
@@ -342,7 +346,7 @@ public class TraceabilityPredicate {
 
         public boolean testGlobal(BlockWorldState blockWorldState, StructureInfo info,
                                   Object2IntMap<SimplePredicate> cache) {
-            if (minGlobalCount == -1 && maxGlobalCount == -1) return true;
+            if (minGlobalCount == -1 && maxGlobalCount == -1 || cache == null) return true;
 
             boolean base = predicate.test(blockWorldState, info);
             int count = cache.getInt(this);
@@ -355,7 +359,7 @@ public class TraceabilityPredicate {
 
         public boolean testLayer(BlockWorldState blockWorldState, StructureInfo info,
                                  Object2IntMap<SimplePredicate> cache) {
-            if (minLayerCount == -1 && maxLayerCount == -1) return true;
+            if (minLayerCount == -1 && maxLayerCount == -1 || cache == null) return true;
 
             boolean base = predicate.test(blockWorldState, info);
             int count = cache.getInt(this);

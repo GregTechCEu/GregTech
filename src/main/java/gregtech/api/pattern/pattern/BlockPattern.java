@@ -1,7 +1,13 @@
-package gregtech.api.pattern;
+package gregtech.api.pattern.pattern;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.PatternError;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.StructureInfo;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
@@ -21,7 +27,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockPattern {
+public class BlockPattern implements IBlockPattern {
 
     /**
      * In the form of [ aisleDir, stringDir, charDir ]
@@ -95,11 +101,13 @@ public class BlockPattern {
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             int[] result = aisles[aisleI].firstInstanceOf(center);
             if (result != null) {
+                // the ordinal() / 2 is so that each relative offset gets put into the correct startOffset
+
                 // when legacyStartOffset() is called, aisles have been reversed, so don't reverse it manually here
-                // the scuffed ternary is so that if the structure dir is the first thing, then don't reverse it
-                startOffset[0] = aisleI * (structureDir[0] == RelativeDirection.VALUES[0] ? 1 : -1);
-                startOffset[1] = (dimensions[1] - 1 - result[0]) * (structureDir[1] == RelativeDirection.VALUES[2] ? 1 : -1);
-                startOffset[2] = (dimensions[2] - 1 - result[1]) * (structureDir[2] == RelativeDirection.VALUES[4] ? 1 : -1);
+                // the scuffed ternary is so that if the structure dir is the second thing, then don't reverse it
+                startOffset[structureDir[0].ordinal() / 2] = aisleI * (structureDir[0].ordinal() % 2 == 0 ? -1 : 1);
+                startOffset[structureDir[1].ordinal() / 2] = (dimensions[1] - 1 - result[0]) * (structureDir[1].ordinal() % 2 == 0 ? -1 : 1);
+                startOffset[structureDir[2].ordinal() / 2] = (dimensions[2] - 1 - result[1]) * (structureDir[2].ordinal() % 2 == 0 ? -1 : 1);
                 return;
             }
         }
@@ -111,6 +119,7 @@ public class BlockPattern {
         return info.getError();
     }
 
+    @Override
     public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
                                                   EnumFacing upwardsFacing, boolean allowsFlip) {
         if (!cache.isEmpty()) {
@@ -149,18 +158,20 @@ public class BlockPattern {
         return null;
     }
 
+    @Override
     public void clearCache() {
         cache.clear();
     }
 
-    private boolean checkPatternAt(World world, BlockPos centerPos, EnumFacing frontFacing,
-                                   EnumFacing upwardsFacing, boolean isFlipped) {
+    @Override
+    public boolean checkPatternAt(World world, BlockPos centerPos, EnumFacing frontFacing,
+                                  EnumFacing upwardsFacing, boolean isFlipped) {
         this.matchContext.reset();
         this.globalCount.clear();
         this.layerCount.clear();
         cache.clear();
 
-        worldState.world = world;
+        worldState.setWorld(world);
 
         int aisleOffset = -1;
         GreggyBlockPos controllerPos = new GreggyBlockPos(centerPos);
@@ -462,6 +473,7 @@ public class BlockPattern {
         // });
     }
 
+    @Override
     public PreviewBlockPattern getDefaultShape() {
         char[][][] pattern = new char[dimensions[2]][dimensions[1]][dimensions[0]];
 
@@ -478,8 +490,9 @@ public class BlockPattern {
         return null;
     }
 
-    public boolean hasStartOffset() {
-        return hasStartOffset;
+    @Override
+    public boolean legacyBuilderError() {
+        return !hasStartOffset;
     }
 
     private GreggyBlockPos startPos(GreggyBlockPos controllerPos, EnumFacing frontFacing, EnumFacing upFacing,

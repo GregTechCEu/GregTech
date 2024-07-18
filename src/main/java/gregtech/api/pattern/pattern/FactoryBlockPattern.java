@@ -1,5 +1,6 @@
-package gregtech.api.pattern;
+package gregtech.api.pattern.pattern;
 
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
@@ -63,17 +64,17 @@ public class FactoryBlockPattern {
     private final Char2ObjectMap<TraceabilityPredicate> symbolMap = new Char2ObjectOpenHashMap<>();
 
     /**
-     * In the form of [ charDir, stringDir, aisleDir ]
+     * In the form of [ aisleDir, stringDir, charDir ]
      */
     private final RelativeDirection[] structureDir = new RelativeDirection[3];
 
     /**
      * @see FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)
      */
-    private FactoryBlockPattern(RelativeDirection charDir, RelativeDirection stringDir, RelativeDirection aisleDir) {
-        structureDir[0] = charDir;
+    private FactoryBlockPattern(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
+        structureDir[0] = aisleDir;
         structureDir[1] = stringDir;
-        structureDir[2] = aisleDir;
+        structureDir[2] = charDir;
         int flags = 0;
         for (int i = 0; i < 3; i++) {
             switch (structureDir[i]) {
@@ -186,7 +187,7 @@ public class FactoryBlockPattern {
      * @see FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)
      */
     public static FactoryBlockPattern start() {
-        return new FactoryBlockPattern(RIGHT, UP, BACK);
+        return new FactoryBlockPattern(BACK, UP, RIGHT);
     }
 
     /**
@@ -200,7 +201,7 @@ public class FactoryBlockPattern {
      */
     public static FactoryBlockPattern start(RelativeDirection charDir, RelativeDirection stringDir,
                                             RelativeDirection aisleDir) {
-        return new FactoryBlockPattern(charDir, stringDir, aisleDir);
+        return new FactoryBlockPattern(aisleDir, stringDir, charDir);
     }
 
     /**
@@ -211,7 +212,7 @@ public class FactoryBlockPattern {
      */
     public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
         this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher).sort());
-        if (blockMatcher.isCenter) centerChar = symbol;
+        if (blockMatcher.isCenter()) centerChar = symbol;
         return this;
     }
 
@@ -227,9 +228,6 @@ public class FactoryBlockPattern {
     public BlockPattern build() {
         checkMissingPredicates();
         this.dimensions[0] = aisles.size();
-        RelativeDirection temp = structureDir[0];
-        structureDir[0] = structureDir[2];
-        structureDir[2] = temp;
         PatternAisle[] aisleArray = aisles.toArray(new PatternAisle[0]);
         if (reverse) {
             ArrayUtils.reverse(aisleArray);

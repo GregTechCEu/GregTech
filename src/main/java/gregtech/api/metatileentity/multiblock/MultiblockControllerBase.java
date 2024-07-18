@@ -8,12 +8,13 @@ import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.PreviewBlockPattern;
+import gregtech.api.pattern.pattern.PreviewBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
@@ -79,10 +80,11 @@ import java.util.stream.Collectors;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
+// todo use bitsets you idiot
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
     // array is not null, but elements can be null
-    protected @Nullable BlockPattern @NotNull [] structurePatterns = new BlockPattern[64];
+    protected @Nullable IBlockPattern @NotNull [] structurePatterns = new IBlockPattern[64];
 
     /**
      * Null until the first time {@link MultiblockControllerBase#getMatchingShapes()} is called, if it is not overriden
@@ -138,7 +140,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * @return structure pattern of this multiblock
      */
     @NotNull
-    protected abstract BlockPattern createStructurePattern();
+    protected abstract IBlockPattern createStructurePattern();
 
     /**
      * Populate the structurePatterns array with structure patterns, values can be null. Doing this prevents
@@ -153,14 +155,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
         for (int i = 1; i < structurePatterns.length; i++) {
             // noinspection DataFlowIssue
-            if (structurePatterns[i] != null && !structurePatterns[i].hasStartOffset()) {
+            if (structurePatterns[i] != null && structurePatterns[i].legacyBuilderError()) {
                 failures.add(i);
             }
         }
 
         if (!failures.isEmpty()) {
             throw new IllegalStateException("Structure patterns " + Arrays.toString(failures.toArray()) +
-                    " didn't have a manually set start offset");
+                    " needs some legacy updating");
         }
     }
 
@@ -180,7 +182,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 notifyBlockUpdate();
                 markDirty();
                 writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeByte(upwardsFacing.getIndex()));
-                for (BlockPattern pattern : structurePatterns) {
+                for (IBlockPattern pattern : structurePatterns) {
                     if (pattern != null) pattern.clearCache();
                 }
                 checkStructurePatterns();
@@ -393,7 +395,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void checkStructurePattern(int index) {
-        BlockPattern pattern = structurePatterns[index];
+        IBlockPattern pattern = structurePatterns[index];
         if (pattern == null || !shouldCheckStructure(index)) return;
 
         long time = System.nanoTime();
@@ -429,7 +431,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.multiblockParts.addAll(parts);
             this.multiblockAbilities.putAll(abilities);
             parts.forEach(part -> part.addToMultiBlock(this));
-            this.structuresFormed[index] = true;
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeVarInt(index));
             formStructure(context, index);
         } else if (context == null && structuresFormed[index]) {
@@ -449,6 +450,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     protected void formStructure(PatternMatchContext context, int index) {
         // form the main structure
         if (index == 0) formStructure(context);
+
+        this.structuresFormed[index] = true;
     }
 
     public void invalidateStructure() {
@@ -463,10 +466,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void invalidateStructure(int index) {
         // invalidate the main structure
         if (index == 0) invalidateStructure();
+
+        structuresFormed[index] = false;
     }
 
     protected void invalidStructureCaches() {
-        for (BlockPattern pattern : structurePatterns) {
+        for (IBlockPattern pattern : structurePatterns) {
             if (pattern != null) pattern.clearCache();
         }
     }

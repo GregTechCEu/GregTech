@@ -38,6 +38,21 @@ public enum RelativeDirection {
         return apply(facing).getDirectionVec();
     }
 
+    /**
+     * Gets the opposite RelativeDirection to this. UP <-> DOWN, LEFT <-> RIGHT, FRONT <-> BACK.
+     */
+    public RelativeDirection getOpposite() {
+        return VALUES[oppositeOrdinal()];
+    }
+
+    /**
+     * Gets the ordinal of the RelativeDirection opposite to this. UP <-> DOWN, LEFT <-> RIGHT, FRONT <-> BACK.
+     */
+    public int oppositeOrdinal() {
+        // floor to nearest even + adjustment
+        return (ordinal() / 2) * 2 + (1 - ordinal() % 2);
+    }
+
     public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
         EnumFacing.Axis frontAxis = frontFacing.getAxis();
         return switch (this) {

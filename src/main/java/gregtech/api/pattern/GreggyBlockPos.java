@@ -139,6 +139,46 @@ public class GreggyBlockPos {
     }
 
     /**
+     * Adds the other pos's position to this pos.
+     * @param other The other pos, not mutated.
+     */
+    public GreggyBlockPos add(GreggyBlockPos other) {
+        pos[0] += other.pos[0];
+        pos[1] += other.pos[1];
+        pos[2] += other.pos[2];
+        return this;
+    }
+
+    /**
+     * Subtracts the other pos's position to this pos.
+     * @param other The other pos, not mutated.
+     */
+    public GreggyBlockPos subtract(GreggyBlockPos other) {
+        pos[0] -= other.pos[0];
+        pos[1] -= other.pos[1];
+        pos[2] -= other.pos[2];
+        return this;
+    }
+
+    /**
+     * Same as {@link GreggyBlockPos#subtract(GreggyBlockPos)} but sets this pos to be the absolute value of the operation.
+     * @param other The other pos, not mutated.
+     */
+    public GreggyBlockPos diff(GreggyBlockPos other) {
+        pos[0] = Math.abs(pos[0] - other.pos[0]);
+        pos[1] = Math.abs(pos[1] - other.pos[1]);
+        pos[2] = Math.abs(pos[2] - other.pos[2]);
+        return this;
+    }
+
+    /**
+     * @return True if all 3 of the coordinates are 0.
+     */
+    public boolean origin() {
+        return equals(BlockPos.ORIGIN);
+    }
+
+    /**
      * @return A new immutable instance of {@link BlockPos}
      */
     public BlockPos immutable() {
@@ -168,11 +208,58 @@ public class GreggyBlockPos {
         return super.toString() + "[x=" + pos[0] + ", y=" + pos[1] + ", z=" + pos[2] + "]";
     }
 
+    /**
+     * Compares for the same coordinate.
+     * @param other The object to compare to, can be either GreggyBlockPos or BlockPos
+     */
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof GreggyBlockPos greg)) return false;
+        if (other == null) return false;
 
-        return Arrays.equals(pos, greg.pos);
+        if (other instanceof GreggyBlockPos greg) {
+            return Arrays.equals(pos, greg.pos);
+        } else if (other instanceof BlockPos p) {
+            return p.getX() == pos[0] && p.getY() == pos[1] && p.getZ() == pos[2];
+        }
+
+        return false;
+    }
+
+    /**
+     * Validates the facings argument to be of length 3 and use each pair of facings exactly once.
+     */
+    public static void validateFacingsArray(EnumFacing... facings) {
+        if (facings.length != 3) throw new IllegalArgumentException("Facings must be array of length 3!");
+
+        // validate facings, int division so opposite facings mark the same element
+        boolean[] dirs = new boolean[3];
+        for (int i = 0; i < 3; i++) {
+            dirs[facings[i].ordinal() / 2] = true;
+        }
+
+        if (!(dirs[0] && dirs[1] && dirs[2]))
+            throw new IllegalArgumentException("The 3 facings must use each axis exactly once!");
+    }
+
+    /**
+     * Gets the starting position for {@link GreggyBlockPos#allInBox(GreggyBlockPos, GreggyBlockPos, EnumFacing...)}.
+     */
+    public static GreggyBlockPos startPos(GreggyBlockPos first, GreggyBlockPos second, EnumFacing... facings) {
+        validateFacingsArray(facings);
+
+        GreggyBlockPos start = new GreggyBlockPos();
+
+        for (int i = 0; i < 3; i++) {
+            int a = first.get(facings[i].getAxis());
+            int b = second.get(facings[i].getAxis());
+
+            // multiplying by -1 reverses the direction of min(...)
+            int mult = facings[i].getAxisDirection().getOffset();
+
+            start.set(facings[i].getAxis(), Math.min(a * mult, b * mult) * mult);
+        }
+
+        return start;
     }
 
     /**
@@ -192,17 +279,9 @@ public class GreggyBlockPos {
      */
     public static Iterable<GreggyBlockPos> allInBox(GreggyBlockPos first, GreggyBlockPos second,
                                                     EnumFacing... facings) {
-        if (facings.length != 3) throw new IllegalArgumentException("Facings must be array of length 3!");
+        validateFacingsArray(facings);
 
-        // validate facings, int division so opposite facings mark the same element
-        boolean[] dirs = new boolean[3];
-        for (int i = 0; i < 3; i++) {
-            dirs[facings[i].ordinal() / 2] = true;
-        }
-
-        if (!(dirs[0] && dirs[1] && dirs[2]))
-            throw new IllegalArgumentException("The 3 facings must use each axis exactly once!");
-
+        // same code as startPos but it has the length thing
         GreggyBlockPos start = new GreggyBlockPos();
         int[] length = new int[3];
 

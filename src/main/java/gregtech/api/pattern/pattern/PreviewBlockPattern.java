@@ -1,7 +1,8 @@
-package gregtech.api.pattern;
+package gregtech.api.pattern.pattern;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static gregtech.api.pattern.FactoryBlockPattern.COMMA_JOIN;
+import static gregtech.api.pattern.pattern.FactoryBlockPattern.COMMA_JOIN;
 
 /**
  * Class holding data for a concrete multiblock. This multiblock can be formed or unformed in this.
@@ -38,7 +39,7 @@ public class PreviewBlockPattern {
      * Legacy compat only, do not use for new code.
      */
     public PreviewBlockPattern(MultiblockShapeInfo info) {
-        this.aisles = info.aisles;
+        this.aisles = info.getAisles();
         this.dimensions = new int[] { aisles.length, aisles[0].getStringCount(), aisles[0].getCharCount() };
         structureDir = new RelativeDirection[] { RelativeDirection.BACK, RelativeDirection.UP,
                 RelativeDirection.RIGHT };
@@ -46,7 +47,7 @@ public class PreviewBlockPattern {
         // i am lazy so hopefully addons follow the convention of using 'S' for their self predicate(aka center
         // predicate)
         legacyStartOffset('S');
-        this.symbols = info.symbols;
+        this.symbols = info.getSymbols();
     }
 
     public PreviewBlockPattern(PatternAisle[] aisles, int[] dimensions, RelativeDirection[] directions,

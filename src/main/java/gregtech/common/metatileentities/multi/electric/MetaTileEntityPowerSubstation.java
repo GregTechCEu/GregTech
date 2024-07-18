@@ -11,6 +11,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.*;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;

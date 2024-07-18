@@ -9,8 +9,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -106,7 +106,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         if (this.handler == null || this.structurePatterns[0] == null) return;
-        handler.determineLayerCount(this.structurePatterns[0]);
+        handler.determineLayerCount((BlockPattern) this.structurePatterns[0]);
         handler.determineOrderedFluidOutputs();
     }
 

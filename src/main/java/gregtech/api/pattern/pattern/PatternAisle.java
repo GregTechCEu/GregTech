@@ -1,4 +1,4 @@
-package gregtech.api.pattern;
+package gregtech.api.pattern.pattern;
 
 public class PatternAisle {
 
