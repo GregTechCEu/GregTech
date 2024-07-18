@@ -5,13 +5,11 @@ import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.function.Supplier;
 
 public abstract class AbstractNetFlowEdge extends NetEdge {
 
@@ -24,11 +22,12 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
     }
 
     @Override
-    public double getDynamicWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick,
-                                   Supplier<@NotNull Double> defaultWeight) {
-        if (cannotSupportChannel(channel, queryTick, simulator)) {
-            return defaultWeight.get() * 1000000;
-        } else return defaultWeight.get();
+    public double getDynamicWeight(IPredicateTestObject channel, IGraphNet net, @Nullable SimulatorKey simulator, long queryTick,
+                                   double defaultWeight) {
+        long flow = getFlowLimit(channel, net, queryTick, simulator);
+        if (flow <= 0) {
+            return defaultWeight * getThroughput() * Short.MAX_VALUE;
+        } else return defaultWeight * getThroughput() / flow;
     }
 
     public boolean cannotSupportChannel(IPredicateTestObject channel, long queryTick, @Nullable SimulatorKey simulator) {
@@ -61,7 +60,7 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
         else return getChannels(simulator).getFlowLimit(channel, graph, queryTick);
     }
 
-    public long getConsumedLimit(IPredicateTestObject channel, long queryTick, @Nullable SimulatorKey simulator) {
+    protected long getConsumedLimit(IPredicateTestObject channel, long queryTick, @Nullable SimulatorKey simulator) {
         if (!this.test(channel)) return 0;
         else return getChannels(simulator).getConsumedLimit(channel, queryTick);
     }

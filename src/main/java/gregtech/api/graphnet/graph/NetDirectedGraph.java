@@ -12,7 +12,8 @@ import java.util.function.Supplier;
 
 public class NetDirectedGraph extends SimpleDirectedWeightedGraph<GraphVertex, GraphEdge> implements INetGraph {
 
-    private GraphNetBacker net = null;
+    private boolean dynamicWeights;
+    private IGraphNet net;
 
     private IPredicateTestObject testObject;
     private SimulatorKey simulator;
@@ -20,13 +21,6 @@ public class NetDirectedGraph extends SimpleDirectedWeightedGraph<GraphVertex, G
 
     public NetDirectedGraph(Supplier<GraphVertex> vertexSupplier, Supplier<GraphEdge> edgeSupplier) {
         super(vertexSupplier, edgeSupplier);
-    }
-
-    @Override
-    public void setOwningNet(GraphNetBacker net) {
-        if (this.net != null)
-            throw new IllegalStateException("Tried to set the owning net of an already initialized graph!");
-        this.net = net;
     }
 
     @Override
@@ -42,14 +36,20 @@ public class NetDirectedGraph extends SimpleDirectedWeightedGraph<GraphVertex, G
     }
 
     @Override
+    public void setupInternal(GraphNetBacker backer, boolean dynamicWeights) {
+        this.net = backer.getBackedNet();
+        this.dynamicWeights = dynamicWeights;
+    }
+
+    @Override
     public double getEdgeWeight(GraphEdge graphEdge) {
         if (!graphEdge.getSource().wrapped.traverse(queryTick, true) ||
                 !graphEdge.getTarget().wrapped.traverse(queryTick, true))
             return Double.POSITIVE_INFINITY;
 
         if (graphEdge.wrapped.test(testObject)) {
-            if (net.dynamicWeights()) {
-                return graphEdge.wrapped.getDynamicWeight(testObject, simulator, queryTick, () -> super.getEdgeWeight(graphEdge));
+            if (dynamicWeights) {
+                return graphEdge.wrapped.getDynamicWeight(testObject, net, simulator, queryTick, super.getEdgeWeight(graphEdge));
             } else return super.getEdgeWeight(graphEdge);
         } else return Double.POSITIVE_INFINITY;
     }

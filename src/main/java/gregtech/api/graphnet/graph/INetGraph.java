@@ -9,10 +9,13 @@ import org.jgrapht.Graph;
 
 public interface INetGraph extends Graph<GraphVertex, GraphEdge> {
 
-    @ApiStatus.Internal
-    void setOwningNet(GraphNetBacker net);
-
     void prepareForAlgorithmRun(IPredicateTestObject testObject, SimulatorKey simulator, long queryTick);
 
     boolean isDirected();
+
+    /**
+     * This should only be called by {@link GraphNetBacker}
+     */
+    @ApiStatus.Internal
+    void setupInternal(GraphNetBacker backer, boolean dynamicWeights);
 }

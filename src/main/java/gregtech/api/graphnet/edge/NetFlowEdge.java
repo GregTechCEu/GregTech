@@ -1,16 +1,12 @@
 package gregtech.api.graphnet.edge;
 
 import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.pipenetold.block.IPipeType;
-import gregtech.api.graphnet.pipenetold.IPipeNetData;
-import gregtech.api.graphnet.pipenetold.PipeNetNode;
 
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
-import org.jgrapht.Graph;
 
 import java.util.List;
 import java.util.Set;
@@ -18,6 +14,7 @@ import java.util.Set;
 public class NetFlowEdge extends AbstractNetFlowEdge {
 
     private final int flowBufferTicks;
+    private final int regenerationTime;
 
     /**
      * NetEdge that provides standard flow behavior handling
@@ -28,6 +25,20 @@ public class NetFlowEdge extends AbstractNetFlowEdge {
      */
     public NetFlowEdge(int flowBufferTicks) {
         this.flowBufferTicks = Math.max(flowBufferTicks, 1);
+        this.regenerationTime = 1;
+    }
+
+    /**
+     * NetEdge that provides standard flow behavior handling
+     *
+     * @param flowBufferMult Determines maximum mult of 'buffer' flow capacity that can be built up along edges. Allows
+     *                        for once-an-interval push/pull operations instead of needing them every unit of time
+     *                        for maximum throughput.
+     * @param regenerationTime Ticks required for flow to regenerate once. Allows slowing down the rate of regeneration.
+     */
+    public NetFlowEdge(int flowBufferMult, int regenerationTime) {
+        this.flowBufferTicks = Math.max(flowBufferMult, 1);
+        this.regenerationTime = Math.max(regenerationTime, 1);
     }
 
     @Override
@@ -121,22 +132,22 @@ public class NetFlowEdge extends AbstractNetFlowEdge {
         @Override
         public void recalculateFlowLimits(long queryTick) {
             if (!this.init) {
-                this.map.defaultReturnValue((long) getThroughput() * flowBufferTicks);
+                this.map.defaultReturnValue(getThroughput() * flowBufferTicks);
                 this.init = true;
             }
-            int time = (int) (queryTick - this.lastQueryTick);
-            if (time < 0) {
+            int regenerationUnits = (int) (queryTick - this.lastQueryTick) / regenerationTime;
+            if (regenerationUnits < 0) {
                 this.map.clear();
-            } else {
+            } else if (regenerationUnits > 0) {
                 List<Object> toRemove = new ObjectArrayList<>();
                 this.map.replaceAll((k, v) -> {
-                    v += (long) time * getThroughput();
+                    v += (long) regenerationUnits * getThroughput();
                     if (v >= map.defaultReturnValue()) toRemove.add(k);
                     return v;
                 });
                 toRemove.forEach(this.map::removeLong);
+                this.lastQueryTick += (long) regenerationUnits * regenerationTime;
             }
-            this.lastQueryTick = queryTick;
         }
 
         @Override

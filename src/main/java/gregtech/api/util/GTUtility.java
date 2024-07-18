@@ -75,6 +75,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.V;
@@ -903,5 +904,18 @@ public class GTUtility {
     @SideOnly(Side.CLIENT)
     public static EntityPlayer getSP() {
         return Minecraft.getMinecraft().player;
+    }
+
+    public static long binarySearch(long minValue, long maxValue, LongPredicate test, boolean ascending) {
+        while (maxValue - minValue > 1) {
+            long middle = (minValue + maxValue) / 2;
+            // XOR
+            if (test.test(middle) ^ !ascending) {
+                maxValue = middle;
+            } else {
+                minValue = maxValue;
+            }
+        }
+        return ascending ? maxValue : minValue;
     }
 }

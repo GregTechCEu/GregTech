@@ -7,7 +7,6 @@ import gregtech.api.graphnet.NetGroup;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.edge.util.FlowConsumer;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
@@ -67,20 +66,17 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         if (limit <= 0) return 0;
 
         long availableAmperage = Math.min(amperage, limit);
-        FlowConsumer consumer = new FlowConsumer(internalBuffer, IPredicateTestObject.INSTANCE, net, availableAmperage,
-                tick, simulator);
 
         EnergyTraverseData data = new EnergyTraverseData(net, IPredicateTestObject.INSTANCE, simulator, tick, voltage,
                 tile.getPos(), side);
         availableAmperage -= TraverseHelpers.traverseFlood(data, getPaths(data), amperage);
         if (availableAmperage > 0) {
-            TraverseHelpers.traverseDumb(data, getPaths(data), data::handleOverflow, availableAmperage);
+            availableAmperage -= TraverseHelpers.traverseDumb(data, getPaths(data), data::handleOverflow, availableAmperage);
         }
         data.runPostActions();
-
-        consumer.finalReduction(availableAmperage);
-
         long accepted = amperage - availableAmperage;
+
+        internalBuffer.consumeFlowLimit(IPredicateTestObject.INSTANCE, net, accepted, tick, simulator);
         if (!simulate) {
             EnergyGroupData group = getEnergyData();
             if (group != null) {

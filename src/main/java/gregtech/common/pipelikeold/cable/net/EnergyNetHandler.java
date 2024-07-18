@@ -9,7 +9,6 @@ import gregtech.api.graphnet.pipenetold.PipeNetPath;
 import gregtech.api.graphnet.pipenetold.NodeLossResult;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.edge.util.FlowConsumerList;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;

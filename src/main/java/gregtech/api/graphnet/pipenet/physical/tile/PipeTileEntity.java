@@ -35,6 +35,7 @@ import net.minecraft.world.World;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -551,5 +552,14 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         for (var node : this.netCapabilities.keySet()) {
             node.getNet().updatePredication(node, this);
         }
+    }
+
+    public static @Nullable PipeTileEntity getTileNoLoading(BlockPos pos, int dimension) {
+        World world = DimensionManager.getWorld(dimension);
+        if (world == null || !world.isBlockLoaded(pos)) return null;
+
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof PipeTileEntity pipe) return pipe;
+        else return null;
     }
 }

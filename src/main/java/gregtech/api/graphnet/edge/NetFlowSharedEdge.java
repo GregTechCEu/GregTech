@@ -1,9 +1,6 @@
 package gregtech.api.graphnet.edge;
 
 import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.pipenetold.block.IPipeType;
-import gregtech.api.graphnet.pipenetold.IPipeNetData;
-import gregtech.api.graphnet.pipenetold.PipeNetNode;
 
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
@@ -12,7 +9,6 @@ import net.minecraft.util.math.MathHelper;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
-import org.jgrapht.Graph;
 
 import java.util.List;
 import java.util.Set;

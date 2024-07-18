@@ -3,7 +3,7 @@ package gregtech.api.graphnet.predicate;
 import gregtech.api.graphnet.gather.GTGraphGatherables;
 
 import gregtech.api.graphnet.gather.GatherPredicatesEvent;
-import gregtech.api.graphnet.logic.INetLogicEntry;
+
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;

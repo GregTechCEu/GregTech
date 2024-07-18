@@ -23,10 +23,10 @@ public interface IGraphNet {
 
     /**
      * Controls whether dynamic weight lookup will be used.
-     * If the algorithm does not support dynamic weights, this will be ignored.
+     * Dynamic weight lookup can be more expensive, so this should not be enabled unless necessary.
      */
-    default boolean usesDynamicWeights() {
-        return true;
+    default boolean usesDynamicWeights(int algorithmID) {
+        return false;
     }
 
     /**

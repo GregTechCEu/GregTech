@@ -3,10 +3,11 @@ package gregtech.api.graphnet.traverse;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+
+import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -32,9 +33,9 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      *
      * @param node the node being traversed
      * @param flowReachingNode the flow that has reached this node.
-     * @return the flow continuing onward after loss is applied.
+     * @return the loss operator for the node.
      */
-    long traverseToNode(N node, long flowReachingNode);
+    ReversibleLossOperator traverseToNode(N node, long flowReachingNode);
 
     /**
      * Reports that the traverse has finished a path walk, for finalization.
@@ -44,4 +45,14 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      * @return the amount of flow that should be consumed, before walking the next path.
      */
     long finalizeAtDestination(N destination, long flowReachingDestination);
+
+    /**
+     * Allows for reporting a smaller capacity along an edge than it actually has. Do not report a larger capacity
+     * than the actual edge or things will break.
+     * @param edge the edge to get capacity for.
+     * @return a non-negative capacity that is less than or equal to the true capacity of the edge.
+     */
+    default long getFlowLimit(AbstractNetFlowEdge edge) {
+        return edge.getFlowLimit(this.getTestObject(), this.getGraphNet(), this.getQueryTick(), this.getSimulatorKey());
+    }
 }

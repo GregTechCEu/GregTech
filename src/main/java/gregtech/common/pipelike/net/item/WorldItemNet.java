@@ -14,7 +14,6 @@ import gregtech.common.pipelike.net.fluid.WorldFluidNet;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -40,7 +39,12 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
     }
 
     public WorldItemNet(String name) {
-        super(name, DynamicWeightsShortestPathsAlgorithm::new, false);
+        super(name, false, DynamicWeightsShortestPathsAlgorithm::new);
+    }
+
+    @Override
+    public boolean usesDynamicWeights(int algorithmID) {
+        return true;
     }
 
     @Override
@@ -60,11 +64,11 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
 
     @Override
     public Iterator<FlowWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
-        return backer.getPaths(node, FlowWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
+        return backer.getPaths(node, 0, FlowWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
     }
 
     @Override
     public @NotNull NetFlowEdge getNewEdge() {
-        return new NetFlowEdge(10);
+        return new NetFlowEdge(5, 4);
     }
 }

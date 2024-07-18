@@ -7,7 +7,6 @@ import gregtech.api.graphnet.pipenetold.PipeNetPath;
 import gregtech.api.graphnet.pipenetold.NodeLossResult;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.edge.util.FlowConsumerList;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidRegulator;

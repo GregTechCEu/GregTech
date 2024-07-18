@@ -37,16 +37,25 @@ import java.util.function.Function;
  */
 public final class GraphNetBacker {
 
+    private final IGraphNet backedNet;
     private final INetGraph pipeGraph;
     private final Object2ObjectOpenHashMap<Object, GraphVertex> vertexMap;
-    private final NetAlgorithmWrapper netAlgorithm;
+    private final NetAlgorithmWrapper[] netAlgorithms;
 
-    public GraphNetBacker(IGraphNet backedNet, Function<IGraphNet, @NotNull INetAlgorithm> algorithmBuilder,
-                          INetGraph graph) {
-        graph.setOwningNet(this);
+    @SafeVarargs
+    public GraphNetBacker(IGraphNet backedNet, INetGraph graph,
+                          Function<IGraphNet, @NotNull INetAlgorithm>... algorithmBuilders) {
+        this.backedNet = backedNet;
         this.pipeGraph = graph;
-        this.netAlgorithm = new NetAlgorithmWrapper(backedNet, algorithmBuilder);
+        this.netAlgorithms = new NetAlgorithmWrapper[algorithmBuilders.length];
+        for (int i = 0; i < algorithmBuilders.length; i++) {
+            this.netAlgorithms[i] = new NetAlgorithmWrapper(backedNet, algorithmBuilders[i]);
+        }
         this.vertexMap = new Object2ObjectOpenHashMap<>();
+    }
+
+    public IGraphNet getBackedNet() {
+        return backedNet;
     }
 
     public void addNode(NetNode node) {
@@ -63,7 +72,7 @@ public final class GraphNetBacker {
 
     public boolean removeNode(@Nullable NetNode node) {
         if (node != null) {
-            if (this.getGraph().edgesOf(node.wrapper).size() != 0) this.invalidateAlg();
+            if (this.getGraph().edgesOf(node.wrapper).size() != 0) this.invalidateAlgs();
             if (node.getGroupUnsafe() != null) {
                 node.getGroupUnsafe().splitNode(node);
             } else this.removeVertex(node.wrapper);
@@ -107,29 +116,32 @@ public final class GraphNetBacker {
         this.getGraph().removeEdge(edge);
     }
 
-    public boolean dynamicWeights() {
-        return netAlgorithm.getNet().usesDynamicWeights() &&  netAlgorithm.supportsDynamicWeights();
-    }
-
     /**
      * Note - if an error is thrown with a stacktrace descending from this method,
      * most likely a bad remapper was passed in. <br>
      * This method should never be exposed outside the net this backer is backing due to this fragility.
      */
-    public <Path extends INetPath<?, ?>> Iterator<Path> getPaths(@Nullable NetNode node, @NotNull NetPathMapper<Path> remapper, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
+    public <Path extends INetPath<?, ?>> Iterator<Path> getPaths(@Nullable NetNode node, int algorithmID, @NotNull NetPathMapper<Path> remapper, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
         if (node == null) return Collections.emptyIterator();
 
         Iterator<? extends INetPath<?, ?>> cache = node.getPathCache();
         if (cache != null) return (Iterator<Path>) cache;
 
-        Iterator<Path> iter = this.netAlgorithm.getPathsIterator(node.wrapper, remapper, testObject, simulator, queryTick);
+        this.getGraph().setupInternal(this, backedNet.usesDynamicWeights(algorithmID));
+        Iterator<Path> iter = this.netAlgorithms[algorithmID].getPathsIterator(node.wrapper, remapper, testObject, simulator, queryTick);
         if (iter instanceof ICacheableIterator) {
             return (Iterator<Path>) node.setPathCache((ICacheableIterator<Path>) iter);
         } else return iter;
     }
 
-    public void invalidateAlg() {
-        this.netAlgorithm.invalidate();
+    public void invalidateAlg(int algorithmID) {
+        this.netAlgorithms[algorithmID].invalidate();
+    }
+
+    public void invalidateAlgs() {
+        for (NetAlgorithmWrapper netAlgorithm : this.netAlgorithms) {
+            netAlgorithm.invalidate();
+        }
     }
 
     public INetGraph getGraph() {
@@ -164,13 +176,13 @@ public final class GraphNetBacker {
         Int2ObjectOpenHashMap<GraphVertex> vertexMap = new Int2ObjectOpenHashMap<>(vertexCount);
         for (int i = 0; i < vertexCount; i++) {
             NBTTagCompound tag = vertices.getCompoundTag(String.valueOf(i));
-            NetNode node = this.netAlgorithm.getNet().getNewNode();
+            NetNode node = this.backedNet.getNewNode();
             node.deserializeNBT(tag);
             if (tag.hasKey("GroupID")) {
                 int id = tag.getInteger("GroupID");
                 NetGroup group = groupMap.get(id);
                 if (group == null) {
-                    group = new NetGroup(this.netAlgorithm.getNet());
+                    group = new NetGroup(this.backedNet);
                     groupMap.put(id, group);
                 }
                 group.addNode(node);

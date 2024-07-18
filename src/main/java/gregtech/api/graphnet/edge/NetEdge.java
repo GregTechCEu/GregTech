@@ -1,5 +1,6 @@
 package gregtech.api.graphnet.edge;
 
+import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
@@ -13,8 +14,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 public class NetEdge implements INBTSerializable<NBTTagCompound> {
 
@@ -59,9 +58,9 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
         else return predicateHandler.test(object);
     }
 
-    public double getDynamicWeight(IPredicateTestObject channel, SimulatorKey simulator, long queryTick,
-                                   Supplier<@NotNull Double> defaultWeight) {
-        return defaultWeight.get();
+    public double getDynamicWeight(IPredicateTestObject channel, IGraphNet graph, @Nullable SimulatorKey simulator,
+                                   long queryTick, double defaultWeight) {
+        return defaultWeight;
     }
 
     @Override

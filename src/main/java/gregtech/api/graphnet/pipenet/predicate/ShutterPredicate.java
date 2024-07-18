@@ -1,16 +1,12 @@
-package gregtech.api.graphnet.predicate;
+package gregtech.api.graphnet.pipenet.predicate;
 
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
-import gregtech.common.covers.CoverShutter;
-
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
+import gregtech.api.graphnet.predicate.IEdgePredicate;
 
 import net.minecraft.nbt.NBTTagString;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class ShutterPredicate implements IEdgePredicate<ShutterPredicate, NBTTagString> {
 
@@ -31,7 +27,7 @@ public final class ShutterPredicate implements IEdgePredicate<ShutterPredicate, 
 
     @Override
     public NBTTagString serializeNBT() {
-        return new NBTTagString("");
+        return new NBTTagString();
     }
 
     @Override

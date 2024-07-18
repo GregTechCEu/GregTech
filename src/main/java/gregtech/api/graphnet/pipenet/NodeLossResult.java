@@ -1,5 +1,7 @@
 package gregtech.api.graphnet.pipenet;
 
+import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
+
 import net.minecraft.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
@@ -11,9 +13,9 @@ import java.util.function.UnaryOperator;
 public final class NodeLossResult {
 
     private final @Nullable Consumer<WorldPipeNetNode> postAction;
-    private final @NotNull UnaryOperator<Long> lossFunction;
+    private final @NotNull ReversibleLossOperator lossFunction;
 
-    public NodeLossResult(@Nullable Consumer<WorldPipeNetNode> postAction, @NotNull UnaryOperator<Long> lossFunction) {
+    public NodeLossResult(@Nullable Consumer<WorldPipeNetNode> postAction, @NotNull ReversibleLossOperator lossFunction) {
         this.postAction = postAction;
         this.lossFunction = lossFunction;
     }
@@ -27,7 +29,7 @@ public final class NodeLossResult {
         this.postAction.accept(node);
     }
 
-    public long applyLossFunction(long value) {
-        return this.lossFunction.apply(value);
+    public @NotNull ReversibleLossOperator getLossFunction() {
+        return lossFunction;
     }
 }

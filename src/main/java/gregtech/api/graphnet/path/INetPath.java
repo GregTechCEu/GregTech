@@ -9,7 +9,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface INetPath<N extends NetNode, T extends NetEdge> {
+
     List<N> getOrderedNodes();
+
+    default N getSourceNode() {
+        return getOrderedNodes().get(0);
+    }
+
+    default N getTargetNode() {
+        List<N> nodes = getOrderedNodes();
+        return nodes.get(nodes.size() - 1);
+    }
 
     List<T> getOrderedEdges();
 

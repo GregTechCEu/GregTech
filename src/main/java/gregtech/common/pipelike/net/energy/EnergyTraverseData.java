@@ -11,6 +11,9 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
 
+import gregtech.api.graphnet.traverse.util.FlatLossOperator;
+import gregtech.api.graphnet.traverse.util.IdentityLossOperator;
+import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 import gregtech.api.util.GTUtility;
 
 import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
@@ -20,7 +23,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
@@ -54,7 +56,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     }
 
     @Override
-    public long traverseToNode(WorldPipeNetNode node, long flowReachingNode) {
+    public ReversibleLossOperator traverseToNode(WorldPipeNetNode node, long flowReachingNode) {
         VoltageLimitLogic limitLogic = node.getData().getLogicEntryNullable(VoltageLimitLogic.INSTANCE);
         if (limitLogic != null) {
             long voltage = limitLogic.getValue();
@@ -65,7 +67,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
 
         NodeLossResult result = lossCache.get(node);
         if (result != null) {
-            return result.applyLossFunction(flowReachingNode);
+            return result.getLossFunction();
         } else {
             TemperatureLogic temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
             result = temperatureLogic == null ? null : temperatureLogic.getLossResult(getQueryTick());
@@ -73,12 +75,12 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                 if (node.getData().getLogicEntryDefaultable(SuperconductorLogic.INSTANCE)
                         .canSuperconduct(temperatureLogic == null ? TemperatureLogic.DEFAULT_TEMPERATURE :
                                 temperatureLogic.getTemperature(getQueryTick()))) {
-                    return flowReachingNode;
+                    return IdentityLossOperator.INSTANCE;
                 }
-                return flowReachingNode - node.getData().getLogicEntryDefaultable(LossAbsoluteLogic.INSTANCE).getValue();
+                return new FlatLossOperator(node.getData().getLogicEntryDefaultable(LossAbsoluteLogic.INSTANCE).getValue());
             }
             if (result.hasPostAction()) lossCache.put(node, result);
-            return result.applyLossFunction(flowReachingNode);
+            return result.getLossFunction();
         }
     }
 

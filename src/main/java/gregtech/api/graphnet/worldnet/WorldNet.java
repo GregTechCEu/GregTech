@@ -34,16 +34,16 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
     protected final GraphNetBacker backer;
     private World world;
 
-    public WorldNet(String name, Function<IGraphNet, INetAlgorithm> algorithmBuilder,
-                    Function<IGraphNet, INetGraph> graphBuilder) {
+    @SafeVarargs
+    public WorldNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
+                    Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
         super(name);
-        this.backer = new GraphNetBacker(this, algorithmBuilder, graphBuilder.apply(this));
+        this.backer = new GraphNetBacker(this, graphBuilder.apply(this), algorithmBuilders);
     }
 
-    public WorldNet(String name, Function<IGraphNet, INetAlgorithm> algorithmBuilder,
-                    boolean directed) {
-        this(name, algorithmBuilder,
-                directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder());
+    @SafeVarargs
+    public WorldNet(String name, boolean directed, Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
+        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(), algorithmBuilders);
     }
 
     public void setWorld(World world) {
@@ -57,7 +57,7 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
     @Override
     public Iterator<GenericGraphNetPath> getPaths(NetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
         nodeClassCheck(node);
-        return backer.getPaths(node, GenericGraphNetPath.MAPPER, testObject, simulator, queryTick);
+        return backer.getPaths(node, 0, GenericGraphNetPath.MAPPER, testObject, simulator, queryTick);
     }
 
     @NotNull

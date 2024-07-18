@@ -45,11 +45,11 @@ public abstract class WorldPipeNetBase<NodeDataType extends IPipeNetData<NodeDat
 
     private final GraphNetBacker<PipeNetPath<PipeType, NodeDataType, Edge>> backer;
 
-    WorldPipeNetBase(String name, boolean isDirected,
-                     Function<IGraphNet, INetAlgorithm> algorithmBuilder,
-                     INetGraph graph) {
+    @SafeVarargs
+    WorldPipeNetBase(String name, boolean isDirected, INetGraph graph,
+                     Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
         super(name);
-        this.backer = new GraphNetBacker(this, algorithmBuilder, graph, this.needsDynamicWeights());
+        this.backer = new GraphNetBacker(this, graph, algorithmBuilders);
         this.isDirected = isDirected;
     }
 
@@ -63,7 +63,7 @@ public abstract class WorldPipeNetBase<NodeDataType extends IPipeNetData<NodeDat
     }
 
     protected void markAlgInvalid() {
-        this.backer.invalidateAlg();
+        this.backer.invalidateAlgs();
     }
 
     public World getWorld() {

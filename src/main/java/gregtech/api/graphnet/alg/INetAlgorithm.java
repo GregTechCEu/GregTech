@@ -9,8 +9,4 @@ public interface INetAlgorithm {
 
     <Path extends INetPath<?, ?>> Iterator<Path> getPathsIterator(GraphVertex source, NetPathMapper<Path> remapper);
 
-    default boolean supportsDynamicWeights() {
-        return false;
-    }
-
 }

@@ -2,7 +2,6 @@ package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
@@ -39,7 +38,12 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
     }
 
     public WorldEnergyNet(String name) {
-        super(name, DynamicWeightsShortestPathsAlgorithm::new, false);
+        super(name, false, DynamicWeightsShortestPathsAlgorithm::new);
+    }
+
+    @Override
+    public boolean usesDynamicWeights(int algorithmID) {
+        return true;
     }
 
     @Override
@@ -54,7 +58,7 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
 
     @Override
     public Iterator<FlowWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
-        return backer.getPaths(node, FlowWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
+        return backer.getPaths(node, 0, FlowWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
     }
 
     @Override

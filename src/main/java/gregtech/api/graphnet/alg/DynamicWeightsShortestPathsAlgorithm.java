@@ -33,11 +33,6 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
         return new LimitedIterator<>(source, searchSpace, remapper);
     }
 
-    @Override
-    public boolean supportsDynamicWeights() {
-        return true;
-    }
-
     protected class LimitedIterator<Path extends INetPath<?, ?>> implements ICacheableIterator<Path> {
 
         private static final int MAX_ITERATIONS = 100;

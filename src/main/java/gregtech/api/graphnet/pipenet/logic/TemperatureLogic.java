@@ -9,6 +9,10 @@ import gregtech.api.graphnet.pipenet.NodeLossResult;
 
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 
+import gregtech.api.graphnet.traverse.util.CompleteLossOperator;
+
+import gregtech.api.graphnet.traverse.util.MultLossOperator;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -104,7 +108,7 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
                 } else {
                     world.setBlockToAir(pos);
                 }
-            }, l -> 0L);
+            }, CompleteLossOperator.INSTANCE);
         } else if (getPartialBurnTemperature() != null && getTemperature(tick) > getPartialBurnTemperature()) {
             return new NodeLossResult(n -> {
                 World world = n.getNet().getWorld();
@@ -113,7 +117,7 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
                 if (state.getBlock() instanceof IBurnable burnable) {
                     burnable.partialBurn(state, world, pos);
                 }
-            }, l -> (long) (l * 0.5));
+            }, new MultLossOperator(0.5));
         } else {
             return null;
         }

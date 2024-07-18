@@ -7,7 +7,6 @@ import gregtech.api.graphnet.graph.GraphVertex;
 
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,11 +32,6 @@ public class NetAlgorithmWrapper {
 
     public void invalidate() {
         this.alg = null;
-    }
-
-    public boolean supportsDynamicWeights() {
-        if (alg == null) alg = builder.apply(net);
-        return alg.supportsDynamicWeights();
     }
 
     public <Path extends INetPath<?, ?>> Iterator<Path> getPathsIterator(GraphVertex source, NetPathMapper<Path> remapper, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
