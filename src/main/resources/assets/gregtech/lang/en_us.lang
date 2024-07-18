@@ -5506,6 +5506,13 @@ gregtech.jei.materials.average_mass=Average mass: %,d
 gregtech.jei.materials.average_protons=Average protons: %,d
 gregtech.jei.materials.average_neutrons=Average neutrons: %,d
 
+# Add info to the bottom of the JEI page for fuel recipes
+#   Formula: "gregtech.jei." + unlocalized name of recipe map + ".info." + line number
+#   You can add as many lines as you want, but the size of the entire page does not increase automatically
+gregtech.jei.combustion_generator.info.1=Fuel use and energy production
+gregtech.jei.combustion_generator.info.2=rates are multiplied §64x§0 per tier.
+
+
 gregtech.veins.ore.bauxite=Bauxite Vein
 gregtech.veins.ore.magnetite=Magnetite Vein
 gregtech.veins.ore.naquadah=Naquadah Vein
