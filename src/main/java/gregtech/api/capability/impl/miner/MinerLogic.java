@@ -395,7 +395,7 @@ public class MinerLogic {
                     BlockPos blockPos = new BlockPos(x1, y, z1);
                     IBlockState state = world.getBlockState(blockPos);
                     if (state.getBlock().blockHardness >= 0 &&
-                            state.getBlock().hasTileEntity(state) &&
+                            !state.getBlock().hasTileEntity(state) &&
                             GTUtility.isOre(GTUtility.toItem(state))) {
                         blocks.addLast(blockPos);
                     }
