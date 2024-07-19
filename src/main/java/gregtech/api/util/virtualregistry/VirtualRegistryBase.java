@@ -35,12 +35,19 @@ public class VirtualRegistryBase extends WorldSavedData {
         return getRegistry(owner).getEntry(type, name);
     }
 
-    protected static void addEntry(@Nullable UUID owner, String name, VirtualEntry entry) {
+    public static void addEntry(@Nullable UUID owner, String name, VirtualEntry entry) {
         getRegistry(owner).addEntry(name, entry);
     }
 
     public static boolean hasEntry(@Nullable UUID owner, EntryTypes<?> type, String name) {
         return getRegistry(owner).contains(type, name);
+    }
+
+    public static <T extends VirtualEntry> T getOrCreateEntry(@Nullable UUID owner, EntryTypes<T> type, String name) {
+        if (!hasEntry(owner, type, name))
+            addEntry(owner, name, type.createInstance());
+
+        return getEntry(owner, type, name);
     }
 
     /**

@@ -9,7 +9,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.virtualregistry.EntryTypes;
-import gregtech.api.util.virtualregistry.VirtualTankRegistry;
+import gregtech.api.util.virtualregistry.VirtualRegistryBase;
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.CoverPump;
@@ -36,8 +36,6 @@ import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                  implements CoverWithUI, ITickable, IControllable {
 
@@ -55,13 +53,15 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     @Override
-    protected VirtualTank createEntry(String name, UUID owner) {
-        var tank = VirtualTankRegistry.getTankCreate(name, owner);
-
+    protected void updateLink() {
+        super.updateLink();
         if (this.linkedTank != null)
-            this.linkedTank.changeTank(tank);
+            this.linkedTank.changeTank(this.activeEntry);
+    }
 
-        return tank;
+    @Override
+    protected EntryTypes<VirtualTank> getType() {
+        return EntryTypes.ENDER_FLUID;
     }
 
     @Override
@@ -135,7 +135,8 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
             @Override
             protected void deleteEntry(String name, VirtualTank entry) {
-                VirtualTankRegistry.delTank(name, getOwner(), false);
+                if (entry.getFluidAmount() == 0)
+                    VirtualRegistryBase.deleteEntry(getOwner(), getType(), name);
             }
         };
     }
