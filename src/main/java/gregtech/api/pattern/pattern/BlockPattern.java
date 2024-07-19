@@ -101,15 +101,11 @@ public class BlockPattern implements IBlockPattern {
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             int[] result = aisles[aisleI].firstInstanceOf(center);
             if (result != null) {
-                // the ordinal() / 2 is so that each relative offset gets put into the correct startOffset
-
-                // when legacyStartOffset() is called, aisles have been reversed, so don't reverse it manually here
-                // the scuffed ternary is so that if the structure dir is the second thing, then don't reverse it
-                startOffset[structureDir[0].ordinal() / 2] = aisleI * (structureDir[0].ordinal() % 2 == 0 ? -1 : 1);
-                startOffset[structureDir[1].ordinal() / 2] = (dimensions[1] - 1 - result[0]) *
-                        (structureDir[1].ordinal() % 2 == 0 ? -1 : 1);
-                startOffset[structureDir[2].ordinal() / 2] = (dimensions[2] - 1 - result[1]) *
-                        (structureDir[2].ordinal() % 2 == 0 ? -1 : 1);
+                // structure starts at aisle 0, string 0, char 0, think about it
+                // so relative to the controller we need to offset by this to get to the start
+                moveStartOffset(structureDir[0], -aisleI);
+                moveStartOffset(structureDir[1], -result[0]);
+                moveStartOffset(structureDir[2], -result[1]);
                 return;
             }
         }
@@ -256,7 +252,7 @@ public class BlockPattern implements IBlockPattern {
                             !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
                 }
 
-                GTLog.logger.info("Checked pos at " + charPos + " with flip " + flip);
+//                GTLog.logger.info("Checked pos at " + charPos + " with flip " + flip);
 
                 boolean result = predicate.test(worldState, info, globalCount, layerCount);
                 if (!result) return false;

@@ -11,7 +11,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.StructureInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pattern.pattern.PatternInfo;
@@ -147,6 +146,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         List<String> failures = new ArrayList<>();
 
         for (Object2ObjectMap.Entry<String, PatternInfo> pattern : structures.object2ObjectEntrySet()) {
+            if ("MAIN".equals(pattern.getKey())) continue;
+
             if (pattern.getValue().getPattern().legacyBuilderError()) {
                 failures.add(pattern.getKey());
             }
@@ -183,7 +184,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isFlipped() {
-        if (getSubstructure("MAIN") == null) return false;
         return getSubstructure("MAIN").isFlipped();
     }
 
@@ -368,19 +368,19 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return BlockPos::hashCode;
     }
 
-    public void checkStructurePattern() {
-        checkStructurePattern("MAIN");
-    }
-
     public void checkStructurePatterns() {
         for (String name : structures.keySet()) {
             checkStructurePattern(name);
         }
     }
 
+    public void checkStructurePattern() {
+        checkStructurePattern("MAIN");
+    }
+
     public void checkStructurePattern(String name) {
         PatternInfo pattern = getSubstructure(name);
-        if (pattern == null || !pattern.shouldUpdate) return;
+        if (!pattern.shouldUpdate) return;
 
         long time = System.nanoTime();
         PatternMatchContext context = pattern.getPattern().checkPatternFastAt(getWorld(), getPos(),
@@ -433,7 +433,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         // form the main structure
         if ("MAIN".equals(name)) formStructure(context);
 
-        if (getSubstructure(name) != null) getSubstructure(name).setFormed(true);
+        getSubstructure(name).setFormed(true);
     }
 
     public void invalidateStructure() {
@@ -529,7 +529,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     pattern.setFormed(false);
                 }
             } else {
-                getSubstructure(name).setFormed(false);
+                getSubstructure(name).setFormed(buf.readBoolean());
             }
 
             if (!isStructureFormed()) {
@@ -554,6 +554,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isStructureFormed(String name) {
+        if (getWorld() == null) return false;
+
         return getSubstructure(name).isFormed();
     }
 
@@ -659,6 +661,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
                 // only generate for the first pattern, if you have more than 1 pattern you better override this
                 defaultPattern = getSubstructure("MAIN").getPattern().getDefaultShape();
+
+                if (defaultPattern == null) return Collections.emptyList();
             }
 
             return Collections.singletonList(defaultPattern);

@@ -13,6 +13,7 @@ public interface IMultiblockPart {
     /**
      * Gets how many multiblocks are currently using the part.
      */
+    // todo do a concrete impl
     default int getWallsharedCount() { return 1;}
 
     default boolean canPartShare(MultiblockControllerBase target, String substructureName) {

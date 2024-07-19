@@ -39,6 +39,12 @@ public class ExpandablePattern implements IBlockPattern {
     protected final Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
     protected final Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCount = new Object2IntOpenHashMap<>();
 
+    /**
+     * New expandable pattern normally you would use {@link FactoryExpandablePattern} instead.
+     * @param boundsFunction A function to supply bounds, order in the way .values() are ordered in RelativeDirection.
+     * @param predicateFunction Given a pos and bounds(the one you just passed in, not mutated), return a predicate. The pos is offset as explained in the builder method.
+     * @param directions The structure directions, explained in the builder method.
+     */
     public ExpandablePattern(@NotNull QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction,
                              @NotNull BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction,
                              @NotNull RelativeDirection[] directions) {
@@ -157,6 +163,7 @@ public class ExpandablePattern implements IBlockPattern {
 
     @Override
     public PreviewBlockPattern getDefaultShape() {
+        // todo undo
         return null;
     }
 
