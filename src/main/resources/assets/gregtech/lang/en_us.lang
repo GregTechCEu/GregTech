@@ -5512,6 +5512,9 @@ gregtech.jei.materials.average_neutrons=Average neutrons: %,d
 gregtech.jei.combustion_generator.info.1=Fuel use and energy production
 gregtech.jei.combustion_generator.info.2=rates are multiplied §64x§0 per tier.
 
+gregtech.jei.gas_turbine.info.1=Fuel use and energy production
+gregtech.jei.gas_turbine.info.2=rates are multiplied §64x§0 per tier.
+gregtech.jei.steam_turbine.info.1=Steam use per tick is §6%dx§0 the EU/t
 
 gregtech.veins.ore.bauxite=Bauxite Vein
 gregtech.veins.ore.magnetite=Magnetite Vein

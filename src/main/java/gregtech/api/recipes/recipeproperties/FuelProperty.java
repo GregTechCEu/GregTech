@@ -1,5 +1,7 @@
 package gregtech.api.recipes.recipeproperties;
 
+import gregtech.common.ConfigHolder;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
@@ -18,7 +20,16 @@ public class FuelProperty extends RecipeProperty<String> {
     @Override
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
         for(int i = 1; i <= getTranslationLineCount(castValue(value)); i++) {
-            minecraft.fontRenderer.drawString(I18n.format(getTranslationKey(castValue(value), i) ), x, y+10*(i-getTranslationLineCount(castValue(value))), color);
+            minecraft.fontRenderer.drawString(I18n.format(getTranslationKey(castValue(value), i), getExtraInfo(castValue(value)) ), x, y+10*(i-getTranslationLineCount(castValue(value))), color);
+        }
+    }
+
+    public String getExtraInfo(String unlocalizedName) {
+        switch (unlocalizedName) {
+            case "steam_turbine":
+                return "" + 1.0 / ConfigHolder.machines.multiblockSteamToEU;
+            default:
+                return "";
         }
     }
 
