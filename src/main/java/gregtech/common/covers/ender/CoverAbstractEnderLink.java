@@ -71,16 +71,16 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     public CoverAbstractEnderLink(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                   @NotNull EnumFacing attachedSide) {
         super(definition, coverableView, attachedSide);
-        this.activeEntry = createEntry(createName(), null);
+        updateLink();
     }
 
-    protected abstract T createEntry(String name, UUID owner);
-
     protected void updateLink() {
-        this.activeEntry = createEntry(createName(), getOwner());
+        this.activeEntry = VirtualRegistryBase.getOrCreateEntry(getOwner(), getType(), createName());
         this.activeEntry.setColor(this.color);
         markDirty();
     }
+
+    protected abstract EntryTypes<T> getType();
 
     public String getColorStr() {
         return this.color;

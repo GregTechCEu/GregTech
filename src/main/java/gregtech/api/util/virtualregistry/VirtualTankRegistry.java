@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Deprecated
 public final class VirtualTankRegistry extends VirtualRegistryBase {
 
     private static final int DEFAULT_CAPACITY = 64000; // 64B
