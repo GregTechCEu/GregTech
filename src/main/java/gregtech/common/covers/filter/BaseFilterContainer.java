@@ -15,7 +15,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -207,19 +207,13 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     /** Uses Cleanroom MUI */
-    public IWidget initUI(ModularPanel main, GuiSyncManager manager) {
-        var panel = new PanelSyncHandler(main) {
+    public IWidget initUI(ModularPanel main, PanelSyncManager manager) {
+        PanelSyncHandler panel = manager.panel("filter_panel", main, (syncManager, syncHandler) -> {
+            var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
+            filter.setMaxTransferSize(getMaxTransferSize());
+            return filter.createPopupPanel(syncManager);
+        });
 
-            // the panel can't be opened if there's no filter, so `getFilter()` should not be null
-            @Override
-            public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-                var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
-                filter.setMaxTransferSize(getMaxTransferSize());
-                return filter.createPopupPanel(syncManager);
-            }
-        };
-
-        manager.syncValue("filter_panel", panel);
         var filterButton = new ButtonWidget<>();
         filterButton.setEnabled(hasFilter());
 

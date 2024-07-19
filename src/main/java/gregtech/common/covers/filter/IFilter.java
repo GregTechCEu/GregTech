@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,16 +21,16 @@ public interface IFilter {
 
     /** Uses Cleanroom MUI */
     @NotNull
-    ModularPanel createPopupPanel(GuiSyncManager syncManager);
+    ModularPanel createPopupPanel(PanelSyncManager syncManager);
 
     /** Uses Cleanroom MUI */
     @NotNull
-    ModularPanel createPanel(GuiSyncManager syncManager);
+    ModularPanel createPanel(PanelSyncManager syncManager);
 
     /** Uses Cleanroom MUI - Creates the widgets standalone so that they can be put into their own panel */
 
     @NotNull
-    Widget<?> createWidgets(GuiSyncManager syncManager);
+    Widget<?> createWidgets(PanelSyncManager syncManager);
 
     ItemStack getContainerStack();
 
