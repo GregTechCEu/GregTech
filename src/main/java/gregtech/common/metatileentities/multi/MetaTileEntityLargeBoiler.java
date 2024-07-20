@@ -248,6 +248,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
+    public ICubeRenderer getInactiveTexture(IMultiblockPart part) {
+        return isFireboxPart(part) ? boilerType.casingRenderer : boilerType.fireboxIdleRenderer;
+    }
+
+    @Override
     public boolean hasMufflerMechanics() {
         return true;
     }
