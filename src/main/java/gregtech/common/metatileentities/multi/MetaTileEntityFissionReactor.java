@@ -18,7 +18,6 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IControlRodPort;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -55,8 +54,9 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportBus;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -374,7 +374,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             canWork = false;
                             this.lockingState = LockingState.MISSING_FUEL;
                             break;
-                        } else if (!((MetaTileEntityFuelRodImportHatch) fuelImport).getExportHatch(this.height - 1)
+                        } else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
                                 .getExportItems().insertItem(0,
                                         OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
                                 .isEmpty()) {
@@ -388,7 +388,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
                         if (fissionReactor.needsOutput) {
-                            ((MetaTileEntityFuelRodImportHatch) fuelImport).getExportHatch(this.height - 1)
+                            ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
                                     .getExportItems().insertItem(0,
                                             OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
                                                     fuelImport.getPartialFuel()),
@@ -881,7 +881,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                         this.unlockAll();
                         setLockingState(LockingState.MISSING_FUEL);
                         return;
-                    } else if (mte instanceof IControlRodPort controlIn) {
+                    } else if (mte instanceof MetaTileEntityControlRodPort controlIn) {
                         ControlRod component = new ControlRod(100000, controlIn.hasModeratorTip(), 1, 800);
                         fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
                     }
@@ -1004,18 +1004,26 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     controllerSlice[0].substring((int) Math.floor(diameter / 2.) + 2);
 
             // Example hatches
-            controllerSlice[1] = controllerSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "frc" +
+            controllerSlice[1] = controllerSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "fff" +
                     controllerSlice[1].substring((int) Math.floor(diameter / 2.) + 2);
-            controllerSlice[3] = controllerSlice[3].substring(0, (int) Math.floor(diameter / 2.)) + "r" +
-                    controllerSlice[3].substring((int) Math.floor(diameter / 2.) + 1);
+            controllerSlice[2] = controllerSlice[2].substring(0, (int) Math.floor(diameter / 2.) - 1) + "fcf" +
+                    controllerSlice[2].substring((int) Math.floor(diameter / 2.) + 2);
+            controllerSlice[3] = controllerSlice[3].substring(0, (int) Math.floor(diameter / 2.) - 1) + "frf" +
+                    controllerSlice[3].substring((int) Math.floor(diameter / 2.) + 2);
 
-            topSlice[1] = topSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "eqb" +
+            topSlice[1] = topSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "eee" +
                     topSlice[1].substring((int) Math.floor(diameter / 2.) + 2);
-            topSlice[3] = topSlice[3].substring(0, (int) Math.floor(diameter / 2.)) + "m" +
-                    topSlice[3].substring((int) Math.floor(diameter / 2.) + 1);
+            topSlice[2] = topSlice[2].substring(0, (int) Math.floor(diameter / 2.) - 1) + "ebe" +
+                    topSlice[2].substring((int) Math.floor(diameter / 2.) + 2);
+            topSlice[3] = topSlice[3].substring(0, (int) Math.floor(diameter / 2.) - 1) + "eqe" +
+                    topSlice[3].substring((int) Math.floor(diameter / 2.) + 2);
 
-            bottomSlice[1] = bottomSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "gVd" +
+            bottomSlice[1] = bottomSlice[1].substring(0, (int) Math.floor(diameter / 2.) - 1) + "ggg" +
                     bottomSlice[1].substring((int) Math.floor(diameter / 2.) + 2);
+            bottomSlice[2] = bottomSlice[2].substring(0, (int) Math.floor(diameter / 2.) - 1) + "gdg" +
+                    bottomSlice[2].substring((int) Math.floor(diameter / 2.) + 2);
+            bottomSlice[3] = bottomSlice[3].substring(0, (int) Math.floor(diameter / 2.) - 1) + "gVg" +
+                    bottomSlice[3].substring((int) Math.floor(diameter / 2.) + 2);
 
             for (int i = 0; i < diameter; i++) {
                 topSlice[i] = topSlice[i].replace('A', 'V');

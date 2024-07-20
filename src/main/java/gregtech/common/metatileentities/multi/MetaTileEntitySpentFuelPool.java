@@ -81,7 +81,7 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
     @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.AUTOCLAVE_OVERLAY;
+        return Textures.SPENT_FUEL_POOL_OVERLAY;
     }
 
     private IBlockState getRodState() {

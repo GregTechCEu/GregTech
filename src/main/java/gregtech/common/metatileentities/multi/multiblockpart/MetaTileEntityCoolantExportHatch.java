@@ -92,10 +92,8 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = Textures.PIPE_OUT_OVERLAY;
-            renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = Textures.FLUID_HATCH_OUTPUT_OVERLAY;
-            overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.FLUID_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 

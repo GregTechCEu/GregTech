@@ -24,11 +24,14 @@ import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -38,6 +41,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -103,16 +108,13 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = Textures.PIPE_IN_OVERLAY;
-            renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = Textures.FLUID_HATCH_INPUT_OVERLAY;
-            overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.FLUID_HATCH_INPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     public boolean checkValidity(int depth) {
-        // Export ports are always considered valid
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
             if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
@@ -204,5 +206,12 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     @Override
     public Fluid getLockedObject() {
         return fluidTank.getLockedObject();
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.nuclear.locking.fluid"));
     }
 }
