@@ -134,9 +134,8 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
             }
 
             @Override
-            protected void deleteEntry(String name, VirtualTank entry) {
-                if (entry.getFluidAmount() == 0)
-                    VirtualRegistryBase.deleteEntry(getOwner(), getType(), name);
+            protected void deleteEntry(String name) {
+                VirtualRegistryBase.deleteEntry(getOwner(), getType(), name, tank -> tank.getFluidAmount() == 0);
             }
         };
     }
