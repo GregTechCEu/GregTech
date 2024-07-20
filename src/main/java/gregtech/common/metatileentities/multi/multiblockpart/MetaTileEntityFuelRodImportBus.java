@@ -42,8 +42,8 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
 
 public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNotifiablePart
-        implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
-                   IControllable, IFissionReactorHatch {
+                                            implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
+                                            IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private Material mat;

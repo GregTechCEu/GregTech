@@ -23,8 +23,8 @@ import codechicken.lib.vec.Matrix4;
 import java.util.List;
 
 public class MetaTileEntityFuelRodExportBus extends MetaTileEntityMultiblockNotifiablePart
-        implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
-                   IFissionReactorHatch {
+                                            implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
+                                            IFissionReactorHatch {
 
     private boolean workingEnabled;
 
