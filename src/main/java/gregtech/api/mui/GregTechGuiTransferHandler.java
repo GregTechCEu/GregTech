@@ -1,10 +1,6 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.screen.ModularScreen;
-
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
-
-import mezz.jei.transfer.RecipeTransferErrorInternal;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
