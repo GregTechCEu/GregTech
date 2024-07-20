@@ -27,7 +27,6 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         this.index = index;
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
-            tooltip.excludeArea(getArea());
             var recipe = memory.getRecipeAtIndex(this.index);
             if (recipe == null) return;
             var list = getScreen().getScreenWrapper().getItemToolTip(recipe.getRecipeResult());

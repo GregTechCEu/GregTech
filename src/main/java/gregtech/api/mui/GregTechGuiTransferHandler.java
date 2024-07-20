@@ -1,6 +1,10 @@
 package gregtech.api.mui;
 
+import com.cleanroommc.modularui.screen.ModularScreen;
+
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
+
+import mezz.jei.transfer.RecipeTransferErrorInternal;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
@@ -8,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.screen.ModularContainer;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
@@ -33,8 +37,9 @@ public class GregTechGuiTransferHandler implements IRecipeTransferHandler<Modula
     @Override
     public @Nullable IRecipeTransferError transferRecipe(ModularContainer container, IRecipeLayout recipeLayout,
                                                          EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+        String key = PanelSyncManager.makeSyncKey("recipe_logic", 0);
         CraftingRecipeLogic recipeLogic = (CraftingRecipeLogic) container.getSyncManager()
-                .getSyncHandler(GuiSyncManager.makeSyncKey("recipe_logic", 0));
+                .getSyncHandler("workbench", key);
 
         if (!doTransfer) {
             // todo highlighting in JEI?
