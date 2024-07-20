@@ -22,7 +22,7 @@ import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
@@ -50,7 +50,6 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         setSyncHandler(this.syncHandler);
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
-            tooltip.excludeArea(getArea());
             if (!isSynced()) return;
             ItemStack stack = this.syncHandler.getOutputStack();
             if (stack.isEmpty()) return;
@@ -107,7 +106,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
         @Override
         @SuppressWarnings({ "OverrideOnly" })
-        public void init(String key, GuiSyncManager syncManager) {
+        public void init(String key, PanelSyncManager syncManager) {
             super.init(key, syncManager);
             getSyncManager().getSlotGroups().stream()
                     .filter(SlotGroup::allowShiftTransfer)
