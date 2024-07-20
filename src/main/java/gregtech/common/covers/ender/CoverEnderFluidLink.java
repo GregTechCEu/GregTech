@@ -150,7 +150,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                 .marginRight(2);
     }
 
-    protected Column createWidgets(ModularPanel panel, GuiSyncManager syncManager) {
+    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
         getFluidFilterContainer().setMaxTransferSize(1);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
