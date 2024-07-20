@@ -327,8 +327,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
             T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
             String key = String.format("entry#%s_description:%d", entry.getColorStr(), isPrivate ? 1 : 0);
-            PanelSyncHandler entryDescriptionSH = syncManager.panel(key, mainPanel, (syncManager1, syncHandler) ->
-                    GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
+            PanelSyncHandler entryDescriptionSH = syncManager.panel(key, mainPanel,
+                    (syncManager1, syncHandler) -> GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
                             .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
                                     .color(UI_TITLE_COLOR)
                                     .asWidget()
