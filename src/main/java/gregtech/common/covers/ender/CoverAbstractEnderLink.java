@@ -389,7 +389,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .addTooltipLine(IKey.lang("cover.generic.ender.delete_entry"))
                             .onMousePressed(i -> {
                                 // todo option to force delete, maybe as a popup?
-                                deleteEntry(name, entry);
+                                deleteEntry(name);
                                 syncToServer(1, buffer -> NetworkUtils.writeStringSafe(buffer, name));
                                 Interactable.playButtonClickSound();
                                 return true;
@@ -400,46 +400,12 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
             super.readOnServer(i, packetBuffer);
             if (i == 1) {
-                String name = NetworkUtils.readStringSafe(packetBuffer);
-                T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
-                deleteEntry(name, entry);
+                deleteEntry(NetworkUtils.readStringSafe(packetBuffer));
             }
         }
 
         protected abstract IWidget createSlotWidget(T entry);
 
-        protected abstract void deleteEntry(String name, T entry);
+        protected abstract void deleteEntry(String name);
     }
-    //
-    // private static class EntryDescriptionSH extends PanelSyncHandler {
-    //
-    // private final VirtualEntry entry;
-    //
-    // protected EntryDescriptionSH(ModularPanel mainPanel, VirtualEntry entry) {
-    // super(mainPanel);
-    // this.entry = entry;
-    // }
-    //
-    // @Override
-    // public ModularPanel createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
-    // return GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
-    // .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
-    // .color(UI_TITLE_COLOR)
-    // .asWidget()
-    // .left(4)
-    // .top(6))
-    // .child(new TextFieldWidget()
-    // .setTextColor(Color.WHITE.darker(1))
-    // .widthRel(0.95f)
-    // .height(18)
-    // .value(new StringSyncValue(entry::getDescription, this::updateDescription))
-    // .alignX(0.5f)
-    // .bottom(6));
-    // }
-    //
-    // private void updateDescription(String desc) {
-    // this.entry.setDescription(desc);
-    // closePanel();
-    // }
-    // }
 }
