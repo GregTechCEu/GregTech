@@ -15,7 +15,7 @@ import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.slot.IOnSlotChanged;
@@ -36,7 +36,6 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         setSyncHandler(this.syncHandler);
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
-            tooltip.excludeArea(getArea());
             if (!isSynced()) return;
             ItemStack stack = this.syncHandler.getStack();
             if (stack.isEmpty()) return;
@@ -135,7 +134,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         }
 
         @Override
-        public void init(String key, GuiSyncManager syncHandler) {
+        public void init(String key, PanelSyncManager syncHandler) {
             super.init(key, syncHandler);
             this.lastStoredItem = this.handler.getStackInSlot(this.index).copy();
         }
