@@ -391,8 +391,7 @@ public class ElementMaterials {
 
         Krypton = new Material.Builder(52, gregtechId("krypton"))
                 .gas(new FluidBuilder()
-                        .customStill()
-                        .translation("gregtech.fluid.generic"))
+                        .customStill())
                 .color(0x80FF80)
                 .element(Elements.Kr)
                 .build();
