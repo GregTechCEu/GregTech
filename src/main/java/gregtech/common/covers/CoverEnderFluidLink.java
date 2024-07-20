@@ -42,7 +42,7 @@ import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.ToggleButton;
@@ -167,7 +167,7 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
         getFluidFilterContainer().setMaxTransferSize(1);
@@ -177,7 +177,7 @@ public class CoverEnderFluidLink extends CoverBase implements CoverWithUI, ITick
                 .bindPlayerInventory();
     }
 
-    protected Column createWidgets(ModularPanel panel, GuiSyncManager syncManager) {
+    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
         var isPrivate = new BooleanSyncValue(this::isPrivate, this::setPrivate);
         isPrivate.updateCacheFromSource(true);
 

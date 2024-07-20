@@ -20,7 +20,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
@@ -94,20 +94,20 @@ public class SimpleItemFilter extends BaseFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
         return GTGuis.createPopupPanel("simple_item_filter", 98, 81)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22).left(4));
     }
 
     @Override
-    public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
         return GTGuis.createPanel("simple_item_filter", 176, 166);
     }
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         var ignoreDamage = new BooleanSyncValue(this.filterReader::isIgnoreDamage, this.filterReader::setIgnoreDamage);
         var ignoreNBT = new BooleanSyncValue(this.filterReader::isIgnoreNBT, this.filterReader::setIgnoreNBT);
