@@ -150,7 +150,7 @@ public class GregtechDataCodes {
     public static final int CACHED_CWU = assignId();
 
     // Fission Hatches
-    public static final int LOCK_UPDATE = assignId();
+    public static final int FISSION_LOCK_UPDATE = assignId();
 
     // NBT Keys
 

@@ -4,6 +4,7 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
@@ -148,7 +149,7 @@ public class OrePrefix {
     // 2 Plates combined in one Item
     public static final OrePrefix plateDouble = new OrePrefix("plateDouble", M * 2, null, MaterialIconType.plateDouble,
             ENABLE_UNIFICATION, hasIngotProperty
-                    .and(mat -> mat.hasFlags(GENERATE_PLATE, GENERATE_DOUBLE_PLATE) && !mat.hasFlag(NO_SMASHING)));
+            .and(mat -> mat.hasFlags(GENERATE_PLATE, GENERATE_DOUBLE_PLATE) && !mat.hasFlag(NO_SMASHING)));
     // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     public static final OrePrefix plate = new OrePrefix("plate", M, null, MaterialIconType.plate, ENABLE_UNIFICATION,
             mat -> mat.hasFlag(GENERATE_PLATE));
@@ -220,7 +221,7 @@ public class OrePrefix {
     // made of 5 Ingots.
     public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null,
             MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasRotorProperty
-                    .and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
+            .and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE) && !m.hasProperty(PropertyKey.GEM)));
 
     public static final OrePrefix paneGlass = new OrePrefix("paneGlass", -1, MarkerMaterials.Color.Colorless, null,
             SELF_REFERENCING, null);
@@ -328,18 +329,21 @@ public class OrePrefix {
     // Nuclear stuff, introduced by Zalgo and Bruberu
     public static final OrePrefix fuelRod = new OrePrefix("fuelRod", -1, null, MaterialIconType.fuelRod, 0,
             material -> material.hasProperty(PropertyKey.FISSION_FUEL),
-            mat -> Arrays.asList(I18n.format("metaitem.nuclear.tooltip.radioactive"),
-                    I18n.format("metaitem.nuclear.tooltip.duration",
-                            mat.getProperty(PropertyKey.FISSION_FUEL).getDuration()),
-                    I18n.format("metaitem.nuclear.tooltip.temperature",
-                            mat.getProperty(PropertyKey.FISSION_FUEL).getMaxTemperature()),
-                    I18n.format("metaitem.nuclear.tooltip.cross_sections",
-                            mat.getProperty(PropertyKey.FISSION_FUEL).getFastNeutronFissionCrossSection(),
-                            mat.getProperty(PropertyKey.FISSION_FUEL).getSlowNeutronFissionCrossSection()),
-                    I18n.format(
-                            "metaitem.nuclear.tooltip.neutron_time." +
-                                    mat.getProperty(PropertyKey.FISSION_FUEL).getNeutronGenerationTimeCategory(),
-                            mat.getProperty(PropertyKey.FISSION_FUEL).getNeutronGenerationTime())));
+            mat -> {
+                FissionFuelProperty prop = mat.getProperty(PropertyKey.FISSION_FUEL);
+                return Arrays.asList(I18n.format("metaitem.nuclear.tooltip.radioactive"),
+                        I18n.format("metaitem.nuclear.tooltip.duration",
+                                prop.getDuration()),
+                        I18n.format("metaitem.nuclear.tooltip.temperature",
+                                prop.getMaxTemperature()),
+                        I18n.format("metaitem.nuclear.tooltip.cross_sections",
+                                prop.getFastNeutronFissionCrossSection(),
+                                prop.getSlowNeutronFissionCrossSection()),
+                        I18n.format(
+                                "metaitem.nuclear.tooltip.neutron_time." +
+                                        prop.getNeutronGenerationTimeCategory(),
+                                prop.getNeutronGenerationTime()));
+            });
     public static final OrePrefix fuelRodDepleted = new OrePrefix("fuelRodDepleted", -1, null,
             MaterialIconType.fuelRodDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL),
             mat -> Collections.singletonList(I18n.format("metaitem.nuclear.tooltip.radioactive")));

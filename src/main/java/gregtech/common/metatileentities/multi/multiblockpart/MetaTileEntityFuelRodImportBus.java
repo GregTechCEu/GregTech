@@ -12,8 +12,11 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.nuclear.fission.FissionFuelRegistry;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.CoolantProperty;
+import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
@@ -39,16 +42,16 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
+import static gregtech.api.capability.GregtechDataCodes.FISSION_LOCK_UPDATE;
 
 public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNotifiablePart
                                             implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
                                             IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
-    private Material mat;
+    private FissionFuelProperty fuelProperty;
     public MetaTileEntityFuelRodExportBus pairedHatch;
-    private Material partialFuel;
+    private FissionFuelProperty partialFuel;
     private FuelRod internalFuelRod;
 
     public MetaTileEntityFuelRodImportBus(ResourceLocation metaTileEntityId) {
@@ -132,8 +135,9 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         getLockedImport().setLock(data.getBoolean("locked"));
-        if (data.hasKey("partialFuel"))
-            this.partialFuel = GregTechAPI.materialManager.getMaterial(data.getString("partialFuel"));
+        if (data.hasKey("partialFuel")) {
+            // TODO this.partialFuel = GregTechAPI.materialManager.getMaterial(data.getString("partialFuel"));
+        }
     }
 
     @Override
@@ -168,7 +172,7 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     @Override
     public void setLock(boolean isLocked) {
         getLockedImport().setLock(isLocked);
-        writeCustomData(LOCK_UPDATE, (packetBuffer -> {
+        writeCustomData(FISSION_LOCK_UPDATE, (packetBuffer -> {
             packetBuffer.writeBoolean(isLocked);
         }));
     }
@@ -176,7 +180,7 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == LOCK_UPDATE) {
+        if (dataId == FISSION_LOCK_UPDATE) {
             getLockedImport().setLock(buf.readBoolean());
         }
     }
@@ -192,31 +196,26 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public Material getFuel() {
-        return this.mat;
+    public FissionFuelProperty getFuel() {
+        return this.fuelProperty;
     }
 
     @Override
-    public void setFuel(Material material) {
-        this.mat = material;
+    public void setFuel(FissionFuelProperty prop) {
+        this.fuelProperty = prop;
     }
 
     @Override
-    public Material getPartialFuel() {
+    public FissionFuelProperty getPartialFuel() {
         return this.partialFuel;
     }
 
     @Override
-    public boolean setPartialFuel(Material material) {
-        if (partialFuel != null && partialFuel.equals(material)) {
-            return false;
-        }
-        if (!material.hasProperty(PropertyKey.FISSION_FUEL)) {
-            return false;
-        }
-        this.partialFuel = material;
+    public boolean setPartialFuel(FissionFuelProperty prop) {
+
+        this.partialFuel = prop;
         if (this.internalFuelRod != null) {
-            this.internalFuelRod.setFuel(partialFuel.getProperty(PropertyKey.FISSION_FUEL));
+            this.internalFuelRod.setFuel(prop);
         }
         return true;
     }

@@ -16,8 +16,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,10 +31,11 @@ import net.minecraftforge.items.ItemStackHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
+import static gregtech.api.capability.GregtechDataCodes.FISSION_LOCK_UPDATE;
 
 public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNotifiablePart
                                               implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler,
@@ -43,7 +43,7 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
 
     private boolean workingEnabled;
     private LockableFluidTank fluidTank;
-    private Material coolant;
+    private CoolantProperty coolant;
 
     public MetaTileEntityCoolantExportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, true);
@@ -105,13 +105,13 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     @Override
     public void setLock(boolean isLocked) {
         fluidTank.setLock(isLocked);
-        writeCustomData(LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
+        writeCustomData(FISSION_LOCK_UPDATE, (packetBuffer -> packetBuffer.writeBoolean(isLocked)));
     }
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == LOCK_UPDATE) {
+        if (dataId == FISSION_LOCK_UPDATE) {
             this.fluidTank.setLock(buf.readBoolean());
         }
     }
@@ -127,21 +127,17 @@ public class MetaTileEntityCoolantExportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public Material getCoolant() {
+    public CoolantProperty getCoolant() {
         return this.coolant;
     }
 
     @Override
-    public void setCoolant(Material material) {
-        if (!material.hasProperty(PropertyKey.COOLANT)) {
-            throw new IllegalStateException(
-                    "Can't use material " + material.getName() + " as a coolant without a coolant property");
-        }
-        this.coolant = material;
+    public void setCoolant(CoolantProperty prop) {
+        this.coolant = prop;
     }
 
     @Override
-    public LockableFluidTank getFluidTank() {
+    public @NotNull LockableFluidTank getFluidTank() {
         return this.fluidTank;
     }
 

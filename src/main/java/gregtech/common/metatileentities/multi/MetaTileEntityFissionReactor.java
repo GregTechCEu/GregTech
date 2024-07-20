@@ -38,6 +38,7 @@ import gregtech.api.unification.FluidUnifier;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
@@ -374,7 +375,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             canWork = false;
                             this.lockingState = LockingState.MISSING_FUEL;
                             break;
-                        } else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
+                        } /* TODO else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
                                 .getExportItems().insertItem(0,
                                         OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
                                 .isEmpty()) {
@@ -384,15 +385,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                     this.lockingState = LockingState.FUEL_CLOGGED;
                                     break;
                                 }
+                                */
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
                         if (fissionReactor.needsOutput) {
-                            ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
-                                    .getExportItems().insertItem(0,
-                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
-                                                    fuelImport.getPartialFuel()),
-                                            false);
+                            // TODO                            ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
+                            //                                    .getExportItems().insertItem(0,
+                            //                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
+                            //                                                    fuelImport.getPartialFuel()),
+                            //                                            false);
                             this.fissionReactor.fuelMass -= 60;
                         }
                         if (canWork) {
@@ -437,14 +439,20 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         this.unlockAll();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
         pos = pos.move(this.getFrontFacing().getOpposite(), diameter / 2);
+        placeCorium(pos, EnumFacing.UP);
         for (int i = 0; i <= this.heightBottom; i++) {
-            this.getWorld().setBlockState(pos.add(0, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
-            this.getWorld().setBlockState(pos.add(1, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
-            this.getWorld().setBlockState(pos.add(-1, -i, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
-            this.getWorld().setBlockState(pos.add(0, -i, 1), Materials.Corium.getFluid().getBlock().getDefaultState());
-            this.getWorld().setBlockState(pos.add(0, -i, -1), Materials.Corium.getFluid().getBlock().getDefaultState());
+            this.getWorld().setBlockState(pos, Materials.Corium.getFluid().getBlock().getDefaultState());
+            for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+                placeCorium(pos, facing);
+            }
+            pos.move(EnumFacing.DOWN);
         }
         this.getWorld().setBlockState(pos.add(0, 1, 0), Materials.Corium.getFluid().getBlock().getDefaultState());
+    }
+
+    private void placeCorium(BlockPos.MutableBlockPos pos, EnumFacing facing) {
+        this.getWorld().setBlockState(pos.move(facing), Materials.Corium.getFluid().getBlock().getDefaultState());
+        pos.move(facing.getOpposite());
     }
 
     protected void performPrimaryExplosion() {
@@ -743,25 +751,25 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     public void syncReactorStats() {
-        this.temperature = this.fissionReactor.temperature;
-        this.maxTemperature = this.fissionReactor.maxTemperature;
-        this.pressure = this.fissionReactor.pressure;
-        this.maxPressure = this.fissionReactor.maxPressure;
-        this.power = this.fissionReactor.power;
-        this.maxPower = this.fissionReactor.maxPower;
-        this.kEff = this.fissionReactor.kEff;
-        this.controlRodInsertionValue = this.fissionReactor.controlRodInsertion;
-        this.fuelDepletionPercent = Math.max(0, this.fissionReactor.fuelDepletion) /
-                this.fissionReactor.maxFuelDepletion;
+        this.temperature = this.fissionReactor.getTemperature();
+        this.maxTemperature = this.fissionReactor.getMaxTemperature();
+        this.pressure = this.fissionReactor.getPressure();
+        this.maxPressure = this.fissionReactor.getMaxPressure();
+        this.power = this.fissionReactor.getPower();
+        this.maxPower = this.fissionReactor.getMaxPower();
+        this.kEff = this.fissionReactor.getkEff();
+        this.controlRodInsertionValue = this.fissionReactor.getControlRodInsertion();
+        this.fuelDepletionPercent = Math.max(0, this.fissionReactor.getFuelDepletion()) /
+                this.fissionReactor.getMaxFuelDepletion();
         writeCustomData(GregtechDataCodes.SYNC_REACTOR_STATS, (packetBuffer -> {
-            packetBuffer.writeDouble(this.fissionReactor.temperature);
-            packetBuffer.writeDouble(this.fissionReactor.maxTemperature);
-            packetBuffer.writeDouble(this.fissionReactor.pressure);
-            packetBuffer.writeDouble(this.fissionReactor.maxPressure);
-            packetBuffer.writeDouble(this.fissionReactor.power);
-            packetBuffer.writeDouble(this.fissionReactor.maxPower);
-            packetBuffer.writeDouble(this.fissionReactor.kEff);
-            packetBuffer.writeDouble(this.fissionReactor.controlRodInsertion);
+            packetBuffer.writeDouble(this.temperature);
+            packetBuffer.writeDouble(this.maxTemperature);
+            packetBuffer.writeDouble(this.pressure);
+            packetBuffer.writeDouble(this.maxPressure);
+            packetBuffer.writeDouble(this.power);
+            packetBuffer.writeDouble(this.maxPower);
+            packetBuffer.writeDouble(this.kEff);
+            packetBuffer.writeDouble(this.controlRodInsertionValue);
             packetBuffer.writeDouble(this.fuelDepletionPercent);
         }));
         this.markDirty();
@@ -815,7 +823,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         this.lockAll();
         int radius = this.diameter / 2;     // This is the floor of the radius, the actual radius is 0.5 blocks
         // larger
-        BlockPos reactorOrigin = this.getPos().offset(this.frontFacing.getOpposite(), radius);
+        BlockPos.MutableBlockPos reactorOrigin = new BlockPos.MutableBlockPos(this.getPos());
+        reactorOrigin.move(this.frontFacing.getOpposite(), radius);
         boolean foundFuel = false;
         for (int i = -radius; i <= radius; i++) {
             for (int j = -radius; j <= radius; j++) {
@@ -832,14 +841,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             Material mat = FluidUnifier.getMaterialFromFluid(lockedFluid);
                             if (mat != null && mat.hasProperty(PropertyKey.COOLANT) &&
                                     mat.getProperty(PropertyKey.COOLANT).isCorrectFluid(mat, lockedFluid)) {
-                                coolantIn.setCoolant(mat);
+                                CoolantProperty prop = mat.getProperty(PropertyKey.COOLANT);
+                                coolantIn.setCoolant(prop);
                                 BlockPos exportHatchPos = currentPos.offset(coolantIn.getFrontFacing().getOpposite(),
                                         height - 1);
                                 if (getWorld().getTileEntity(
                                         exportHatchPos) instanceof IGregTechTileEntity coolantOutCandidate) {
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();
                                     if (coolantOutMTE instanceof MetaTileEntityCoolantExportHatch coolantOut) {
-                                        coolantOut.setCoolant(mat);
+                                        coolantOut.setCoolant(prop);
                                         CoolantChannel component = new CoolantChannel(100050, 0, mat, 1000, coolantIn,
                                                 coolantOut);
                                         fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
@@ -859,16 +869,15 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                 FissionFuelProperty property = mat.material.getProperty(PropertyKey.FISSION_FUEL);
                                 if (property != null) {
                                     FuelRod component;
-                                    fuelIn.setFuel(mat.material);
+                                    fuelIn.setFuel(property);
                                     foundFuel = true;
                                     if (fissionReactor.fuelDepletion == 0 || fuelIn.getPartialFuel() == null) {
-                                        fuelIn.setPartialFuel(mat.material);
+                                        fuelIn.setPartialFuel(property);
                                         component = new FuelRod(property.getMaxTemperature(), 1, property, 650);
                                         fuelIn.setInternalFuelRod(component);
                                     } else {
                                         // It's guaranteed to have this property (if the implementation is correct).
-                                        FissionFuelProperty partialProp = fuelIn.getPartialFuel()
-                                                .getProperty(PropertyKey.FISSION_FUEL);
+                                        FissionFuelProperty partialProp = fuelIn.getPartialFuel();
                                         component = new FuelRod(partialProp.getMaxTemperature(), 1, partialProp, 650);
                                         fuelIn.setInternalFuelRod(component);
                                     }
