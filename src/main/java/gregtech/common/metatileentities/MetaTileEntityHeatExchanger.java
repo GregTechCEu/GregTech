@@ -63,6 +63,6 @@ public class MetaTileEntityHeatExchanger extends RecipeMapMultiblockController {
     @NotNull
     @Override
     protected ICubeRenderer getFrontOverlay() {
-        return Textures.BLAST_FURNACE_OVERLAY;
+        return Textures.HEAT_EXCHANGER_OVERLAY;
     }
 }

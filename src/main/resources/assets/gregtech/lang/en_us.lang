@@ -57,6 +57,9 @@ gregtech.machine.control_rod.tooltip.1=Lowers neutron multiplication as it is in
 gregtech.machine.control_rod_moderated.name=Graphite-Tipped Control Rod Port
 gregtech.machine.control_rod_moderated.tooltip=Requires §fControl Rod Channels§7 below itself to function and form.
 gregtech.machine.control_rod_moderated.tooltip.1=Increases neutron multiplication when placed between fuel rods when inserted around 30%!
+gregtech.machine.nuclear.locking.item=Locks when the reactor is turned on; the held item cannot change type when locked.
+gregtech.machine.nuclear.locking.fluid=Locks when the reactor is turned on; the held fluid cannot change type when locked.
+
 
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.

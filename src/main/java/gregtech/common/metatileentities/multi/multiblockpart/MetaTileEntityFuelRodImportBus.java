@@ -16,39 +16,42 @@ import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.LOCK_UPDATE;
 
-public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNotifiablePart
-                                              implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
-                                              IControllable, IFissionReactorHatch {
+public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNotifiablePart
+        implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
+                   IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private Material mat;
-    public MetaTileEntityFuelRodExportHatch pairedHatch;
+    public MetaTileEntityFuelRodExportBus pairedHatch;
     private Material partialFuel;
     private FuelRod internalFuelRod;
 
-    public MetaTileEntityFuelRodImportHatch(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityFuelRodImportBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
     }
 
@@ -64,7 +67,7 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityFuelRodImportHatch(metaTileEntityId);
+        return new MetaTileEntityFuelRodImportBus(metaTileEntityId);
     }
 
     @Override
@@ -104,11 +107,8 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
-            renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = isExportHatch ? Textures.ITEM_HATCH_OUTPUT_OVERLAY :
-                    Textures.ITEM_HATCH_INPUT_OVERLAY;
-            overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.PIPE_IN_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.ITEM_HATCH_INPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
@@ -231,7 +231,7 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         return this.getLockedImport();
     }
 
-    public MetaTileEntityFuelRodExportHatch getExportHatch(int depth) {
+    public MetaTileEntityFuelRodExportBus getExportHatch(int depth) {
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
             if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
@@ -242,10 +242,17 @@ public class MetaTileEntityFuelRodImportHatch extends MetaTileEntityMultiblockNo
         if (getWorld()
                 .getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
             MetaTileEntity mte = gtTe.getMetaTileEntity();
-            if (mte instanceof MetaTileEntityFuelRodExportHatch) {
-                return (MetaTileEntityFuelRodExportHatch) mte;
+            if (mte instanceof MetaTileEntityFuelRodExportBus) {
+                return (MetaTileEntityFuelRodExportBus) mte;
             }
         }
         return null;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
+                               boolean advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.nuclear.locking.item"));
     }
 }

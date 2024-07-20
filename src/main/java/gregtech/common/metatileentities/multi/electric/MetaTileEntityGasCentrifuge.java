@@ -87,4 +87,8 @@ public class MetaTileEntityGasCentrifuge extends RecipeMapMultiblockController {
         return MetaBlocks.GAS_CENTRIFUGE_CASING
                 .getState(BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_COLUMN);
     }
+
+    protected ICubeRenderer getFrontOverlay() {
+        return Textures.GAS_CENTRIFUGE_OVERLAY;
+    }
 }

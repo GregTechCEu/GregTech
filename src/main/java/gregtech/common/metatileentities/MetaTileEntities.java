@@ -285,8 +285,8 @@ public class MetaTileEntities {
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
     public static MetaTileEntityFissionReactor FISSION_REACTOR;
     public static MetaTileEntityHeatExchanger HEAT_EXCHANGER;
-    public static MetaTileEntityFuelRodImportHatch FUEL_ROD_INPUT;
-    public static MetaTileEntityFuelRodExportHatch FUEL_ROD_OUTPUT;
+    public static MetaTileEntityFuelRodImportBus FUEL_ROD_INPUT;
+    public static MetaTileEntityFuelRodExportBus FUEL_ROD_OUTPUT;
     public static MetaTileEntityCoolantImportHatch COOLANT_INPUT;
     public static MetaTileEntityCoolantExportHatch COOLANT_OUTPUT;
     public static MetaTileEntityControlRodPort CONTROL_ROD;
@@ -1127,9 +1127,9 @@ public class MetaTileEntities {
 
         // Nuclear hatches, 1800-1805
         FUEL_ROD_INPUT = registerMetaTileEntity(1800,
-                new MetaTileEntityFuelRodImportHatch(gregtechId("fuel_rod_input")));
+                new MetaTileEntityFuelRodImportBus(gregtechId("fuel_rod_input")));
         FUEL_ROD_OUTPUT = registerMetaTileEntity(1801,
-                new MetaTileEntityFuelRodExportHatch(gregtechId("fuel_rod_output")));
+                new MetaTileEntityFuelRodExportBus(gregtechId("fuel_rod_output")));
         COOLANT_INPUT = registerMetaTileEntity(1802, new MetaTileEntityCoolantImportHatch(gregtechId("coolant_input")));
         COOLANT_OUTPUT = registerMetaTileEntity(1803,
                 new MetaTileEntityCoolantExportHatch(gregtechId("coolant_output")));

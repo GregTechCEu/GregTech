@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IControlRodPort;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -27,8 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifiablePart
-                                          implements IFissionReactorHatch, IControlRodPort,
-                                          IMultiblockAbilityPart<IControlRodPort> {
+                                          implements IFissionReactorHatch,
+                                          IMultiblockAbilityPart<MetaTileEntityControlRodPort> {
 
     private boolean hasModeratorTip;
 
@@ -54,7 +53,6 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
 
     @Override
     public boolean checkValidity(int depth) {
-        // Export ports are always considered valid
         BlockPos pos = this.getPos();
         for (int i = 1; i < depth; i++) {
             if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
@@ -67,12 +65,12 @@ public class MetaTileEntityControlRodPort extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public MultiblockAbility<IControlRodPort> getAbility() {
+    public MultiblockAbility<MetaTileEntityControlRodPort> getAbility() {
         return MultiblockAbility.CONTROL_ROD_PORT;
     }
 
     @Override
-    public void registerAbilities(List<IControlRodPort> abilityList) {
+    public void registerAbilities(List<MetaTileEntityControlRodPort> abilityList) {
         abilityList.add(this);
     }
 

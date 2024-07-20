@@ -10,7 +10,6 @@ import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -23,13 +22,13 @@ import codechicken.lib.vec.Matrix4;
 
 import java.util.List;
 
-public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNotifiablePart
-                                              implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
-                                              IFissionReactorHatch {
+public class MetaTileEntityFuelRodExportBus extends MetaTileEntityMultiblockNotifiablePart
+        implements IMultiblockAbilityPart<IItemHandlerModifiable>, IControllable,
+                   IFissionReactorHatch {
 
     private boolean workingEnabled;
 
-    public MetaTileEntityFuelRodExportHatch(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityFuelRodExportBus(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, true);
     }
 
@@ -45,7 +44,7 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityFuelRodExportHatch(metaTileEntityId);
+        return new MetaTileEntityFuelRodExportBus(metaTileEntityId);
     }
 
     @Override
@@ -63,10 +62,7 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        if (this.isExportHatch) {
-            return new ItemStackHandler(1);
-        }
-        return super.createImportItemHandler();
+        return new ItemStackHandler(1);
     }
 
     private ModularUI.Builder createUITemplate(EntityPlayer player) {
@@ -88,10 +84,8 @@ public class MetaTileEntityFuelRodExportHatch extends MetaTileEntityMultiblockNo
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = Textures.PIPE_OUT_OVERLAY;
-            renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
-            SimpleOverlayRenderer overlay = Textures.ITEM_HATCH_OUTPUT_OVERLAY;
-            overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.PIPE_OUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            Textures.ITEM_HATCH_OUTPUT_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 

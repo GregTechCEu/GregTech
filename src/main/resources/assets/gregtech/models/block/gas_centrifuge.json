@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "gas_centrifuge",
-		"particle": "gas_centrifuge"
+		"0": "gregtech:gas_centrifuge",
+		"particle": "gregtech:gas_centrifuge"
 	},
 	"elements": [
 		{
