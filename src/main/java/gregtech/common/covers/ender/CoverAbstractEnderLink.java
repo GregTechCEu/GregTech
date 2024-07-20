@@ -294,23 +294,27 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected abstract class EntrySelectorSH extends PanelSyncHandler {
 
         private final EntryTypes<T> type;
-        private final List<String> names = new ArrayList<>();
+        private final ModularPanel mainPanel;
 
         protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
-            super(mainPanel);
+            super(mainPanel, EntrySelectorSH::defaultPanel);
             this.type = type;
+            this.mainPanel = mainPanel;
+        }
+
+        private static ModularPanel defaultPanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
+            return GTGuis.createPopupPanel("entry_selector", 168, 112);
         }
 
         @Override
-        public ModularPanel createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
-            this.names.clear();
-            this.names.addAll(VirtualRegistryBase.getEntryNames(getOwner(), type));
-            return GTGuis.createPopupPanel("entry_selector", 168, 112)
+        public ModularPanel createUI(PanelSyncManager syncManager) {
+            List<String> names = new ArrayList<>(VirtualRegistryBase.getEntryNames(getOwner(), type));
+            return super.createUI(syncManager)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR).asWidget()
                             .top(6)
                             .left(4))
-                    .child(ListWidget.builder(this.names, name -> createRow(name, mainPanel, syncManager))
+                    .child(ListWidget.builder(names, name -> createRow(name, this.mainPanel, syncManager))
                             .background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
                                     .height(112 - 20))
@@ -322,9 +326,27 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
             T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
-            var entryDescriptionSH = new EntryDescriptionSH(mainPanel, entry);
-            syncManager.syncValue(String.format("entry#%s_description", entry.getColorStr()), isPrivate ? 1 : 0,
-                    entryDescriptionSH);
+            //            var entryDescriptionSH = new EntryDescriptionSH(mainPanel, entry);
+            //            syncManager.syncValue(String.format("entry#%s_description", entry.getColorStr()), isPrivate ? 1 : 0,
+            //                    entryDescriptionSH);
+            String key = String.format("entry#%s_description:%d", entry.getColorStr(), isPrivate ? 1 : 0);
+            PanelSyncHandler entryDescriptionSH = syncManager.panel(key, mainPanel, (syncManager1, syncHandler) ->
+                    GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
+                            .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
+                                    .color(UI_TITLE_COLOR)
+                                    .asWidget()
+                                    .left(4)
+                                    .top(6))
+                            .child(new TextFieldWidget()
+                                    .setTextColor(Color.WHITE.darker(1))
+                                    .widthRel(0.95f)
+                                    .height(18)
+                                    .value(new StringSyncValue(entry::getDescription, string -> {
+                                        entry.setDescription(string);
+                                        syncHandler.closePanel();
+                                    }))
+                                    .alignX(0.5f)
+                                    .bottom(6)));
 
             return new Row()
                     .left(4)
