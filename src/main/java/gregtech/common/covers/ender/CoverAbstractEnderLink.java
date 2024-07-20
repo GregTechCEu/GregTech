@@ -35,7 +35,7 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -137,7 +137,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
@@ -145,7 +145,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .bindPlayerInventory();
     }
 
-    protected Column createWidgets(ModularPanel panel, GuiSyncManager syncManager) {
+    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
         var entrySelectorSH = createEntrySelector(panel);
@@ -302,7 +302,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         @Override
-        public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+        public ModularPanel createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
             this.names.clear();
             this.names.addAll(VirtualRegistryBase.getEntryNames(getOwner(), type));
             return GTGuis.createPopupPanel("entry_selector", 168, 112)
@@ -320,7 +320,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .bottom(6));
         }
 
-        protected IWidget createRow(String name, ModularPanel mainPanel, GuiSyncManager syncManager) {
+        protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
             T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
             var entryDescriptionSH = new EntryDescriptionSH(mainPanel, entry);
             syncManager.syncValue(String.format("entry#%s_description", entry.getColorStr()), isPrivate ? 1 : 0,
@@ -391,36 +391,36 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         protected abstract void deleteEntry(String name, T entry);
     }
-
-    private static class EntryDescriptionSH extends PanelSyncHandler {
-
-        private final VirtualEntry entry;
-
-        protected EntryDescriptionSH(ModularPanel mainPanel, VirtualEntry entry) {
-            super(mainPanel);
-            this.entry = entry;
-        }
-
-        @Override
-        public ModularPanel createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
-            return GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
-                    .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
-                            .color(UI_TITLE_COLOR)
-                            .asWidget()
-                            .left(4)
-                            .top(6))
-                    .child(new TextFieldWidget()
-                            .setTextColor(Color.WHITE.darker(1))
-                            .widthRel(0.95f)
-                            .height(18)
-                            .value(new StringSyncValue(entry::getDescription, this::updateDescription))
-                            .alignX(0.5f)
-                            .bottom(6));
-        }
-
-        private void updateDescription(String desc) {
-            this.entry.setDescription(desc);
-            closePanel();
-        }
-    }
+//
+//    private static class EntryDescriptionSH extends PanelSyncHandler {
+//
+//        private final VirtualEntry entry;
+//
+//        protected EntryDescriptionSH(ModularPanel mainPanel, VirtualEntry entry) {
+//            super(mainPanel);
+//            this.entry = entry;
+//        }
+//
+//        @Override
+//        public ModularPanel createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
+//            return GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
+//                    .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
+//                            .color(UI_TITLE_COLOR)
+//                            .asWidget()
+//                            .left(4)
+//                            .top(6))
+//                    .child(new TextFieldWidget()
+//                            .setTextColor(Color.WHITE.darker(1))
+//                            .widthRel(0.95f)
+//                            .height(18)
+//                            .value(new StringSyncValue(entry::getDescription, this::updateDescription))
+//                            .alignX(0.5f)
+//                            .bottom(6));
+//        }
+//
+//        private void updateDescription(String desc) {
+//            this.entry.setDescription(desc);
+//            closePanel();
+//        }
+//    }
 }
