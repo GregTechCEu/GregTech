@@ -44,7 +44,7 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
@@ -201,7 +201,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         getCraftingRecipeLogic().updateCurrentRecipe();
 
         guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
@@ -256,7 +256,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .bindPlayerInventory();
     }
 
-    public IWidget createToolInventory(GuiSyncManager syncManager) {
+    public IWidget createToolInventory(PanelSyncManager syncManager) {
         var toolSlots = new SlotGroup("tool_slots", 9, -120, true);
         syncManager.registerSlotGroup(toolSlots);
 
@@ -269,7 +269,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .build().marginTop(2);
     }
 
-    public IWidget createInternalInventory(GuiSyncManager syncManager) {
+    public IWidget createInternalInventory(PanelSyncManager syncManager) {
         var inventory = new SlotGroup("internal_slots", 9, -100, true);
         syncManager.registerSlotGroup(inventory);
 
@@ -297,7 +297,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .build();
     }
 
-    public IWidget createCraftingOutput(PosGuiData guiData, GuiSyncManager syncManager) {
+    public IWidget createCraftingOutput(PosGuiData guiData, PanelSyncManager syncManager) {
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
         syncManager.syncValue("amount_crafted", amountCrafted);
         amountCrafted.updateCacheFromSource(true);
@@ -313,7 +313,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .asWidget().widthRel(1f));
     }
 
-    public IWidget createRecipeMemoryGrid(GuiSyncManager syncManager) {
+    public IWidget createRecipeMemoryGrid(PanelSyncManager syncManager) {
         return SlotGroupWidget.builder()
                 .matrix("XXX",
                         "XXX",
@@ -323,7 +323,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .build().right(0);
     }
 
-    public IWidget createInventoryPage(GuiSyncManager syncManager) {
+    public IWidget createInventoryPage(PanelSyncManager syncManager) {
         var connected = new SlotGroup("connected_inventory", 8, true);
         syncManager.registerSlotGroup(connected);
 
