@@ -51,7 +51,7 @@ public final class FluidStorageKeys {
      * @return the registry name
      */
     public static @NotNull String prefixedRegistryName(@NotNull String prefix, @NotNull FluidStorageKey key,
-                                                        @NotNull Material material) {
+                                                       @NotNull Material material) {
         FluidProperty property = material.getProperty(PropertyKey.FLUID);
         if (property != null && property.getPrimaryKey() != key) {
             return prefix + material.getName();
