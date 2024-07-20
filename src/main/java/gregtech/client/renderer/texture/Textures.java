@@ -731,13 +731,4 @@ public class Textures {
                 ArrayUtils.addAll(ops, new TransformationList(translation), uvList));
         renderState.render();
     }
-
-    // TODO Could maybe be cleaned up?
-    public static ICubeRenderer getInactiveTexture(ICubeRenderer renderer) {
-        if (renderer == BRONZE_FIREBOX_ACTIVE) return BRONZE_FIREBOX;
-        if (renderer == STEEL_FIREBOX_ACTIVE) return STEEL_FIREBOX;
-        if (renderer == TITANIUM_FIREBOX_ACTIVE) return TITANIUM_FIREBOX;
-        if (renderer == TUNGSTENSTEEL_FIREBOX_ACTIVE) return TUNGSTENSTEEL_FIREBOX;
-        return renderer;
-    }
 }

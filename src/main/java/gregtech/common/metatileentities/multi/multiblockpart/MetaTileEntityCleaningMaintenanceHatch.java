@@ -64,21 +64,6 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     }
 
     @Override
-    public ICubeRenderer getBaseTexture() {
-        MultiblockControllerBase controller = getController();
-        if (controller != null) {
-            return this.hatchTexture = controller.getBaseTexture(this);
-        } else if (this.hatchTexture != null) {
-            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
-                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
-            }
-            return this.hatchTexture;
-        } else {
-            return Textures.VOLTAGE_CASINGS[getTier()];
-        }
-    }
-
-    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         getBaseTexture().render(renderState, translation, ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));

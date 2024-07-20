@@ -249,7 +249,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     public ICubeRenderer getInactiveTexture(IMultiblockPart part) {
-        return isFireboxPart(part) ? boilerType.casingRenderer : boilerType.fireboxIdleRenderer;
+        return isFireboxPart(part) ? boilerType.fireboxIdleRenderer : boilerType.casingRenderer;
     }
 
     @Override
