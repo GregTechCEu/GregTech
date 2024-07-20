@@ -35,8 +35,8 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
@@ -326,9 +326,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
             T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
-            //            var entryDescriptionSH = new EntryDescriptionSH(mainPanel, entry);
-            //            syncManager.syncValue(String.format("entry#%s_description", entry.getColorStr()), isPrivate ? 1 : 0,
-            //                    entryDescriptionSH);
             String key = String.format("entry#%s_description:%d", entry.getColorStr(), isPrivate ? 1 : 0);
             PanelSyncHandler entryDescriptionSH = syncManager.panel(key, mainPanel, (syncManager1, syncHandler) ->
                     GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
@@ -413,36 +410,36 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         protected abstract void deleteEntry(String name, T entry);
     }
-//
-//    private static class EntryDescriptionSH extends PanelSyncHandler {
-//
-//        private final VirtualEntry entry;
-//
-//        protected EntryDescriptionSH(ModularPanel mainPanel, VirtualEntry entry) {
-//            super(mainPanel);
-//            this.entry = entry;
-//        }
-//
-//        @Override
-//        public ModularPanel createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
-//            return GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
-//                    .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
-//                            .color(UI_TITLE_COLOR)
-//                            .asWidget()
-//                            .left(4)
-//                            .top(6))
-//                    .child(new TextFieldWidget()
-//                            .setTextColor(Color.WHITE.darker(1))
-//                            .widthRel(0.95f)
-//                            .height(18)
-//                            .value(new StringSyncValue(entry::getDescription, this::updateDescription))
-//                            .alignX(0.5f)
-//                            .bottom(6));
-//        }
-//
-//        private void updateDescription(String desc) {
-//            this.entry.setDescription(desc);
-//            closePanel();
-//        }
-//    }
+    //
+    // private static class EntryDescriptionSH extends PanelSyncHandler {
+    //
+    // private final VirtualEntry entry;
+    //
+    // protected EntryDescriptionSH(ModularPanel mainPanel, VirtualEntry entry) {
+    // super(mainPanel);
+    // this.entry = entry;
+    // }
+    //
+    // @Override
+    // public ModularPanel createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
+    // return GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
+    // .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
+    // .color(UI_TITLE_COLOR)
+    // .asWidget()
+    // .left(4)
+    // .top(6))
+    // .child(new TextFieldWidget()
+    // .setTextColor(Color.WHITE.darker(1))
+    // .widthRel(0.95f)
+    // .height(18)
+    // .value(new StringSyncValue(entry::getDescription, this::updateDescription))
+    // .alignX(0.5f)
+    // .bottom(6));
+    // }
+    //
+    // private void updateDescription(String desc) {
+    // this.entry.setDescription(desc);
+    // closePanel();
+    // }
+    // }
 }
