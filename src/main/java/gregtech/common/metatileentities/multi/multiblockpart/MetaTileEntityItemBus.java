@@ -97,7 +97,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
         if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
             for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
@@ -110,7 +110,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+    public void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
         if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
             for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {

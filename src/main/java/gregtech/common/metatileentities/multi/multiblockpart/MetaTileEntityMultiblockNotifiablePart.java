@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.IFluidTank;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
         List<INotifiableHandler> handlerList = getPartHandlers();
         for (INotifiableHandler handler : handlerList) {
@@ -78,7 +79,7 @@ public abstract class MetaTileEntityMultiblockNotifiablePart extends MetaTileEnt
     }
 
     @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+    public void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
         List<INotifiableHandler> handlerList = getPartHandlers();
         for (INotifiableHandler handler : handlerList) {

@@ -218,7 +218,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         rebuildData(controllerBase instanceof MetaTileEntityDataBank);
         super.addToMultiBlock(controllerBase);
     }

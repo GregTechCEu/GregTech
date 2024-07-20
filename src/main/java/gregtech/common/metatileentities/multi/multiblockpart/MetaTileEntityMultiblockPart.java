@@ -4,6 +4,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -24,6 +25,11 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.SYNC_CONTROLLER;
 
@@ -32,7 +38,15 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
 
     private final int tier;
     private BlockPos controllerPos;
-    private MultiblockControllerBase controllerTile;
+    private Class<? extends MultiblockControllerBase> controllerClass;
+    private List<@NotNull MultiblockControllerBase> controllers;
+
+    /**
+     * Client side, used for rendering.
+     */
+    private MultiblockControllerBase lastController = null;
+    private int wallshareCount = 0;
+    protected String attachedSubstructureName;
     protected ICubeRenderer hatchTexture = null;
 
     public MetaTileEntityMultiblockPart(ResourceLocation metaTileEntityId, int tier) {
@@ -49,6 +63,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        if (controllerPos != null) GTLog.logger.info("pos: " + controllerPos);
         ICubeRenderer baseTexture = getBaseTexture();
         pipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
@@ -64,35 +79,45 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         return tier;
     }
 
-    public MultiblockControllerBase getController() {
-        if (getWorld() != null && getWorld().isRemote) { // check this only clientside
-            if (controllerTile == null && controllerPos != null) {
-                this.controllerTile = (MultiblockControllerBase) GTUtility.getMetaTileEntity(getWorld(), controllerPos);
+    public @Nullable MultiblockControllerBase getController() {
+        tryInitControllers();
+
+        if (getWorld() == null) {
+            this.controllers.clear();
+            lastController = null;
+            return null;
+        }
+
+        if (getWorld().isRemote) { // client check, on client controllers is always empty
+            if (lastController == null) {
+                if (controllerPos != null) {
+                    this.lastController = (MultiblockControllerBase) GTUtility.getMetaTileEntity(getWorld(), controllerPos);
+                }
+            } else if (!lastController.isValid()) {
+                this.lastController = null;
             }
+
+            return lastController;
         }
-        if (controllerTile != null && (controllerTile.getHolder() == null ||
-                !controllerTile.isValid() ||
-                !(getWorld().isRemote || controllerTile.getMultiblockParts().contains(this)))) {
-            // tile can become invalid for many reasons, and can also forgot to remove us once we aren't in structure
-            // anymore
-            // so check it here to prevent bugs with dangling controller reference and wrong texture
-            this.controllerTile = null;
+
+        if (controllers.isEmpty()) return null; // server check, remove controller if it is no longer valid
+
+        MultiblockControllerBase controller = controllers.get(controllers.size() - 1);
+
+        if (!controller.isValid()) {
+            removeController(controller);
         }
-        return controllerTile;
+
+        return controller;
     }
 
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {
-            return this.hatchTexture = controller.getBaseTexture(this);
-        } else if (this.hatchTexture != null) {
-            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
-                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
-            }
-            return this.hatchTexture;
-        } else {
-            return Textures.VOLTAGE_CASINGS[tier];
-        }
+            this.hatchTexture = controller.getInactiveTexture(this);
+            return controller.getBaseTexture(this);
+        } else if (hatchTexture != null) return hatchTexture;
+        return Textures.VOLTAGE_CASINGS[tier];
     }
 
     public boolean shouldRenderOverlay() {
@@ -120,7 +145,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         super.receiveInitialSyncData(buf);
         if (buf.readBoolean()) {
             this.controllerPos = buf.readBlockPos();
-            this.controllerTile = null;
+            this.lastController = null;
         }
     }
 
@@ -128,27 +153,59 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == SYNC_CONTROLLER) {
-            if (buf.readBoolean()) {
-                this.controllerPos = buf.readBlockPos();
-                this.controllerTile = null;
+            long data = buf.readLong();
+            if (data != Long.MAX_VALUE) {
+                this.controllerPos = BlockPos.fromLong(data);
             } else {
-                this.controllerPos = null;
-                this.controllerTile = null;
+                controllerPos = null;
+                GTLog.logger.info("hi");
             }
+            this.lastController = null;
             scheduleRenderUpdate();
         }
     }
 
-    private void setController(MultiblockControllerBase controller1) {
-        this.controllerTile = controller1;
-        if (!getWorld().isRemote) {
-            writeCustomData(SYNC_CONTROLLER, writer -> {
-                writer.writeBoolean(controllerTile != null);
-                if (controllerTile != null) {
-                    writer.writeBlockPos(controllerTile.getPos());
-                }
-            });
+    private void addController(@NotNull MultiblockControllerBase controller) {
+        tryInitControllers();
+
+        // this should be called after canPartShare has already checked the class, just a safeguard
+        if (controllerClass != null && controller.getClass() != controllerClass) {
+            GTLog.logger.error("addController(MultiblockControllerBase) was called on " + getClass().getName() + " with a mismatched name(original: " + controllerClass.getName() + " new: " + controller.getClass().getName() +")! Ignoring the call.");
+            return;
         }
+
+        if (controllers.isEmpty()) controllerClass = controller.getClass();
+
+        this.controllers.add(controller);
+
+        syncLastController();
+    }
+
+    private void removeController(@NotNull MultiblockControllerBase controller) {
+        tryInitControllers();
+
+        if (!controllers.remove(controller)) {
+            GTLog.logger.error("removeController(MultiblockControllerBase) was called on " + getClass().getName() + " while the given controller wasn't in the list!");
+        }
+
+        if (controllers.isEmpty()) {
+            controllerClass = null;
+        }
+
+        syncLastController();
+    }
+
+    private void syncLastController() {
+        if (getWorld().isRemote) return;
+
+        if (controllers.isEmpty()) {
+            writeCustomData(SYNC_CONTROLLER, buf -> buf.writeLong(Long.MAX_VALUE));
+            return;
+        }
+
+        MultiblockControllerBase controller = controllers.get(controllers.size() - 1);
+
+        writeCustomData(SYNC_CONTROLLER, buf -> buf.writeBlockPos(controller.getPos()));
     }
 
     @Override
@@ -161,20 +218,40 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
-        setController(controllerBase);
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
+        addController(controllerBase);
         scheduleRenderUpdate();
+        wallshareCount++;
     }
 
     @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
-        setController(null);
+    public void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
+        removeController(controllerBase);
         scheduleRenderUpdate();
+        wallshareCount--;
+    }
+
+    private void tryInitControllers() {
+        // can't just init the variable in ctor because we need this init before super ctor finishes
+        if (controllers == null) controllers = new ArrayList<>(1);
+    }
+
+    @Override
+    public boolean canPartShare(MultiblockControllerBase target, String substructureName) {
+        // when this is called normally isAttachedToMultiBlock has already been called and returned true
+        // so we know controllerClass is notnull
+
+        return canPartShare() && target.getClass() == controllerClass && substructureName.equals(attachedSubstructureName);
+    }
+
+    @Override
+    public int getWallshareCount() {
+        return wallshareCount;
     }
 
     @Override
     public boolean isAttachedToMultiBlock() {
-        return getController() != null;
+        return controllers != null && !controllers.isEmpty();
     }
 
     @Override

@@ -30,6 +30,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -77,14 +78,14 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
         this.fluidInventory = new FluidHandlerProxy(new FluidTankList(false), controllerBase.getExportFluids());
         this.itemInventory = new ItemHandlerProxy(controllerBase.getImportItems(), controllerBase.getExportItems());
     }
 
     @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+    public void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
         this.fluidInventory = new FluidTankList(false);
         this.itemInventory = new GTItemStackHandler(this, 0);

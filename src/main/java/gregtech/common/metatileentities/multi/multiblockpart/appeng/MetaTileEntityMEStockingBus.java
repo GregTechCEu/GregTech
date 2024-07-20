@@ -101,7 +101,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
         // ensure that no other stocking bus on this multiblock is configured to hold the same item.
         // that we have in our own bus.
@@ -111,7 +111,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     }
 
     @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+    public void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         // block auto-pull from working when not in a formed multiblock
         this.autoPullTest = $ -> false;
         if (this.autoPull) {

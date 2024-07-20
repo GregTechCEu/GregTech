@@ -50,7 +50,7 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
         if (controllerBase instanceof ICleanroomReceiver &&
                 ((ICleanroomReceiver) controllerBase).getCleanroom() == null) {

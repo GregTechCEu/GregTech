@@ -206,6 +206,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @SideOnly(Side.CLIENT)
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);
 
+    /**
+     * Gets the inactive texture for this part, used for when the multiblock is unformed and you want the part to keep its overlay. Return null to ignore and make hatches go back to their default textures on unform.
+     */
+    public @Nullable ICubeRenderer getInactiveTexture(IMultiblockPart part) {
+        return null;
+    }
+
     public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
         return true;
     }
@@ -393,7 +400,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
-                    if (!part.canPartShare()) {
+                    if (!part.canPartShare(this, name)) {
                         return;
                     }
                 }

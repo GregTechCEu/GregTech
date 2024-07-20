@@ -161,7 +161,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.addToMultiBlock(controllerBase);
         for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
             if (handler instanceof INotifiableHandler notifiable) {
@@ -172,7 +172,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     }
 
     @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+    public void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
         for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
             if (handler instanceof INotifiableHandler notifiable) {
