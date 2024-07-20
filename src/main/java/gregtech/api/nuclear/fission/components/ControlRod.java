@@ -1,16 +1,12 @@
 package gregtech.api.nuclear.fission.components;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class ControlRod extends ReactorComponent {
 
     private double weight;
     private final boolean tipModeration;
-    private final List<Pair<FuelRod, FuelRod>> fuelRodPairs = new ObjectArrayList<>();
+    private int relatedFuelRodPairs;
 
     public ControlRod(double maxTemperature, boolean tipModeration, double thermalConductivity, double mass) {
         super(0, maxTemperature, thermalConductivity, mass, true);
@@ -18,14 +14,14 @@ public class ControlRod extends ReactorComponent {
         this.weight = 0;
     }
 
-    public static void normalizeWeights(ArrayList<ControlRod> effectiveControlRods, int fuelRodNum) {
+    public static void normalizeWeights(List<ControlRod> effectiveControlRods, int fuelRodNum) {
         for (ControlRod control_rod : effectiveControlRods) {
             if (fuelRodNum != 1)
                 control_rod.weight /= (fuelRodNum * fuelRodNum) - fuelRodNum;
         }
     }
 
-    public static double controlRodFactor(ArrayList<ControlRod> effectiveControlRods, double insertion) {
+    public static double controlRodFactor(List<ControlRod> effectiveControlRods, double insertion) {
         double crf = 0;
         for (ControlRod control_rod : effectiveControlRods) {
             if (control_rod.hasModeratorTip()) {
@@ -49,13 +45,10 @@ public class ControlRod extends ReactorComponent {
         this.weight = weight;
     }
 
-    public void addFuelRodPairToMap(FuelRod fuelRodA, FuelRod fuelRodB) {
-        fuelRodPairs.add(Pair.of(fuelRodA, fuelRodB));
+    public void addFuelRodPair() {
+        relatedFuelRodPairs++;
     }
 
-    List<Pair<FuelRod, FuelRod>> getFuelRodPairMap() {
-        return fuelRodPairs;
-    }
 
     public void increaseWeight() {
         weight++;
@@ -66,6 +59,6 @@ public class ControlRod extends ReactorComponent {
     }
 
     public void computeWeightFromFuelRodMap() {
-        this.weight = fuelRodPairs.size() * 4; // 4 being a constant to help balance this out
+        this.weight = relatedFuelRodPairs * 4; // 4 being a constant to help balance this out
     }
 }

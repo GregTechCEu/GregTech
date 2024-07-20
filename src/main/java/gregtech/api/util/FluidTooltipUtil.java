@@ -119,7 +119,7 @@ public class FluidTooltipUtil {
                 tooltip.add(I18n.format("gregtech.coolant.cooling_factor",
                         material.getProperty(PropertyKey.COOLANT).getCoolingFactor()));
                 tooltip.add(I18n.format("gregtech.coolant.moderation_factor",
-                        material.getProperty(PropertyKey.COOLANT).getModerationFactor()));
+                        material.getProperty(PropertyKey.COOLANT).getModeratorFactor()));
                 if (material.getProperty(PropertyKey.COOLANT).accumulatesHydrogen()) {
                     tooltip.add(I18n.format("gregtech.coolant.accumulates_hydrogen"));
                 }

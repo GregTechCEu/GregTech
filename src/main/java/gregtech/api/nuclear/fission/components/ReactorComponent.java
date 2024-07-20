@@ -7,11 +7,12 @@ public class ReactorComponent {
     private final double thermalConductivity;
     private final double mass;
 
-    private final int[] pos = new int[2];
+    private int x;
+    private int y;
 
     private final boolean isValid;
 
-    private int ID = -1;
+    private int index = -1;
 
     public ReactorComponent(double moderationFactor, double maxTemperature, double thermalConductivity, double mass,
                             boolean isValid) {
@@ -23,12 +24,12 @@ public class ReactorComponent {
     }
 
     public void setPos(int x, int y) {
-        this.pos[0] = x;
-        this.pos[1] = y;
+        this.x = x;
+        this.y = y;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public double getModerationFactor() {
@@ -47,21 +48,28 @@ public class ReactorComponent {
         return isValid;
     }
 
-    public int getID() {
-        return ID;
+    /**
+     * @return The index of the reactor component, which is -1 if unset
+     */
+    public int getIndex() {
+        return index;
     }
 
-    public int[] getPos() {
-        return pos;
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public boolean samePositionAs(ReactorComponent component) {
-        return this.getPos()[0] == component.getPos()[0] && this.getPos()[1] == component.getPos()[1];
+        return this.getX() == component.getX() && this.getY() == component.getY();
     }
 
     public double getDistance(ReactorComponent component) {
-        return Math.sqrt(Math.pow(this.getPos()[0] - component.getPos()[0], 2) +
-                Math.pow(this.getPos()[1] - component.getPos()[1], 2));
+        return Math.sqrt(Math.pow(this.getX() - component.getX(), 2) +
+                Math.pow(this.getY() - component.getY(), 2));
     }
 
     public double getMass() {

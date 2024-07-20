@@ -9,10 +9,15 @@ import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.common.ConfigHolder;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class FissionReactor {
 
@@ -37,11 +42,11 @@ public class FissionReactor {
     public static final double airBoilingPoint = 78.8;
 
     private ReactorComponent[][] reactorLayout;
-    private final ArrayList<FuelRod> fuelRods;
-    private final ArrayList<ControlRod> controlRods;
-    private final ArrayList<CoolantChannel> coolantChannels;
-    private final ArrayList<ControlRod> effectiveControlRods;
-    private final ArrayList<CoolantChannel> effectiveCoolantChannels;
+    private final List<FuelRod> fuelRods;
+    private final List<ControlRod> controlRods;
+    private final List<CoolantChannel> coolantChannels;
+    private final List<ControlRod> effectiveControlRods;
+    private final List<CoolantChannel> effectiveCoolantChannels;
 
     private double k;
 
@@ -52,46 +57,46 @@ public class FissionReactor {
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
-    public double controlRodInsertion;
-    public int reactorDepth;
-    public double reactorRadius;
+    private double controlRodInsertion;
+    private int reactorDepth;
+    private double reactorRadius;
 
-    public boolean moderatorTipped; // set by the type of control rod in the reactor(prepInitialConditions)
+    private boolean moderatorTipped; // set by the type of control rod in the reactor(prepInitialConditions)
 
     /**
      * Megawatts
      */
-    public double power;
+    private double power;
 
     /**
      * Temperature of the reactor
      */
-    public double temperature = roomTemperature;
-    public double pressure = standardPressure;
-    public double exteriorPressure = standardPressure;
+    private double temperature = roomTemperature;
+    private double pressure = standardPressure;
+    private double exteriorPressure = standardPressure;
     /**
      * Temperature of boiling point in kelvin at standard pressure Determined by a weighted sum of the individual
      * coolant boiling points in {@link FissionReactor#prepareInitialConditions()}
      */
-    public double coolantBoilingPointStandardPressure;
+    private double coolantBoilingPointStandardPressure;
 
     /**
      * Average temperature of the coolant in kelvin as coolant exits the reactor.
      */
-    public double coolantExitTemperature;
+    private double coolantExitTemperature;
 
-    public double prevTemperature;
+    private double prevTemperature;
 
     /**
      * Latent heat of vaporization in J/mol Determined by a weighted sum of the individual heats of vaporization in
      * {@link FissionReactor#prepareInitialConditions()}
      */
-    public double coolantHeatOfVaporization;
+    private double coolantHeatOfVaporization;
     /**
      * Equilibrium temperature in kelvin Determined by a weighted sum of the individual coolant temperatures in
      * {@link FissionReactor#prepareInitialConditions()}
      */
-    public double coolantBaseTemperature;
+    private double coolantBaseTemperature;
     public double maxFuelDepletion = 1;
     public double fuelDepletion = -1;
     public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
@@ -195,25 +200,26 @@ public class FissionReactor {
                  * Check for null because the layout
                  * is in general not a square
                  */
-                if (reactorLayout[i][j] != null && reactorLayout[i][j].isValid()) {
-                    reactorLayout[i][j].setPos(i, j);
-                    maxTemperature = Double.min(maxTemperature, reactorLayout[i][j].getMaxTemperature());
-                    structuralMass += reactorLayout[i][j].getMass();
-                    if (reactorLayout[i][j] instanceof FuelRod) {
-                        reactorLayout[i][j].setID(idRod);
-                        fuelRods.add((FuelRod) reactorLayout[i][j]);
+                ReactorComponent comp = reactorLayout[i][j];
+                if (comp != null && comp.isValid()) {
+                    comp.setPos(i, j);
+                    maxTemperature = Double.min(maxTemperature, comp.getMaxTemperature());
+                    structuralMass += comp.getMass();
+                    if (comp instanceof FuelRod fuelRod) {
+                        comp.setIndex(idRod);
+                        fuelRods.add(fuelRod);
                         idRod++;
                     }
 
-                    if (reactorLayout[i][j] instanceof ControlRod) {
-                        reactorLayout[i][j].setID(idControl);
-                        controlRods.add((ControlRod) reactorLayout[i][j]);
+                    if (comp instanceof ControlRod controlRod) {
+                        comp.setIndex(idControl);
+                        controlRods.add(controlRod);
                         idControl++;
                     }
 
-                    if (reactorLayout[i][j] instanceof CoolantChannel) {
-                        reactorLayout[i][j].setID(idChannel);
-                        coolantChannels.add((CoolantChannel) reactorLayout[i][j]);
+                    if (comp instanceof CoolantChannel coolantChannel) {
+                        comp.setIndex(idChannel);
+                        coolantChannels.add(coolantChannel);
                         idChannel++;
                     }
                 }
@@ -233,26 +239,33 @@ public class FissionReactor {
          */
         for (int i = 0; i < fuelRods.size(); i++) {
             for (int j = 0; j < i; j++) {
-                double mij = 0;
                 boolean pathIsClear = true;
-                ArrayList<ControlRod> controlRodsHit = new ArrayList<>();
-                ArrayList<CoolantChannel> coolantChannelsHit = new ArrayList<>();
+                double mij = 0;
+                FuelRod rodOne = fuelRods.get(i);
+                FuelRod rodTwo = fuelRods.get(j);
 
                 /*
                  * Geometric factor calculation is done by (rough) numerical integration along a straight path between
                  * the two cells
                  */
-                for (int t = 0; t < ConfigHolder.machines.fissionReactorResolution; t++) {
-                    double[] pos = new double[2];
-                    pos[0] = (fuelRods.get(j).getPos()[0] - fuelRods.get(i).getPos()[0]) *
-                            ((float) t / ConfigHolder.machines.fissionReactorResolution) + fuelRods.get(i).getPos()[0];
-                    pos[1] = (fuelRods.get(j).getPos()[1] - fuelRods.get(i).getPos()[1]) *
-                            ((float) t / ConfigHolder.machines.fissionReactorResolution) + fuelRods.get(i).getPos()[1];
-                    ReactorComponent component = reactorLayout[(int) Math.round(pos[0])][(int) Math.round(pos[1])];
+                double resolution = ConfigHolder.machines.fissionReactorResolution;
+                for (int t = 0; t < resolution; t++) {
+                    double x;
+                    double y;
+
+                    x = (rodTwo.getX() - rodOne.getX()) *
+                            ((float) t / resolution) + fuelRods.get(i).getX();
+                    y = (rodTwo.getY() - rodOne.getY()) *
+                            ((float) t / resolution) + fuelRods.get(i).getY();
+                    if (x < 0 || x > reactorLayout.length - 1 || y < 0 || y > reactorLayout.length - 1) {
+                        continue;
+                    }
+                    ReactorComponent component = reactorLayout[(int) Math.round(x)][(int) Math.round(y)];
 
                     if (component == null) {
                         continue;
                     }
+
                     mij += component.getModerationFactor();
 
                     /*
@@ -269,17 +282,10 @@ public class FissionReactor {
                      * We keep track of which active elements we hit, so we can determine how important they are
                      * relative to the others later
                      */
-                    if (component instanceof ControlRod) {
-                        if (!controlRodsHit.contains(component)) {
-                            controlRodsHit.add((ControlRod) component);
-                            if (((ControlRod) component).hasModeratorTip()) {
-                                moderatorTipped = true;
-                            }
-                        }
-                    } else if (component instanceof CoolantChannel) {
-                        if (!coolantChannelsHit.contains(component)) {
-                            coolantChannelsHit.add((CoolantChannel) component);
-                        }
+                    if (component instanceof ControlRod rod) {
+                        rod.addFuelRodPair();
+                    } else if (component instanceof CoolantChannel channel) {
+                        channel.addFuelRodPair();
                     }
                 }
 
@@ -292,19 +298,13 @@ public class FissionReactor {
                  */
                 if (pathIsClear) {
                     mij /= ConfigHolder.machines.fissionReactorResolution;
-                    geometricMatrixSlowNeutrons[i][j] = geometricMatrixSlowNeutrons[j][i] = (1. -
-                            Math.exp(-mij * fuelRods.get(i).getDistance(fuelRods.get(j)))) /
-                            fuelRods.get(i).getDistance(fuelRods.get(j));
-                    geometricMatrixFastNeutrons[i][j] = geometricMatrixFastNeutrons[j][i] = 1. /
-                            fuelRods.get(i).getDistance(fuelRods.get(j)) - geometricMatrixSlowNeutrons[i][j];
-
-                    for (ControlRod rod : controlRodsHit) {
-                        rod.addFuelRodPairToMap(fuelRods.get(i), fuelRods.get(j));
-                    }
-
-                    for (CoolantChannel channel : coolantChannelsHit) {
-                        channel.addFuelRodPairToMap(fuelRods.get(i), fuelRods.get(j));
-                    }
+                    geometricMatrixSlowNeutrons[i][j] = (1.0 -
+                            Math.exp(-mij * rodOne.getDistance(rodTwo))) /
+                            rodOne.getDistance(rodTwo);
+                    geometricMatrixSlowNeutrons[j][i] = geometricMatrixSlowNeutrons[i][j];
+                    geometricMatrixFastNeutrons[i][j] = 1.0 /
+                            rodOne.getDistance(rodTwo) - geometricMatrixSlowNeutrons[i][j];
+                    geometricMatrixFastNeutrons[j][i] = geometricMatrixFastNeutrons[i][j];
                 }
             }
         }
@@ -312,22 +312,22 @@ public class FissionReactor {
         /*
          * We now use the data we have on the geometry to calculate the reactor's stats
          */
-        double avgGeometricFactorSlowNeutrons = 0.;
-        double avgGeometricFactorFastNeutrons = 0.;
+        double avgGeometricFactorSlowNeutrons = 0;
+        double avgGeometricFactorFastNeutrons = 0;
 
-        double avgHighEnergyFissionFactor = 0.;
-        double avgLowEnergyFissionFactor = 0.;
-        double avgHighEnergyCaptureFactor = 0.;
-        double avgLowEnergyCaptureFactor = 0.;
+        double avgHighEnergyFissionFactor = 0;
+        double avgLowEnergyFissionFactor = 0;
+        double avgHighEnergyCaptureFactor = 0;
+        double avgLowEnergyCaptureFactor = 0;
 
-        double avgFuelRodDistance = 0.;
+        double avgFuelRodDistance = 0;
 
         for (int iIdx = 0; iIdx < fuelRods.size(); iIdx++) {
             FuelRod i = fuelRods.get(iIdx);
             for (int jIdx = 0; jIdx < iIdx; jIdx++) {
                 FuelRod j = fuelRods.get(jIdx);
-                avgGeometricFactorSlowNeutrons += geometricMatrixSlowNeutrons[i.getID()][j.getID()];
-                avgGeometricFactorFastNeutrons += geometricMatrixFastNeutrons[i.getID()][j.getID()];
+                avgGeometricFactorSlowNeutrons += geometricMatrixSlowNeutrons[i.getIndex()][j.getIndex()];
+                avgGeometricFactorFastNeutrons += geometricMatrixFastNeutrons[i.getIndex()][j.getIndex()];
 
                 avgFuelRodDistance += i.getDistance(j);
             }
@@ -405,7 +405,7 @@ public class FissionReactor {
     }
 
     public boolean isDepleted() {
-        return maxFuelDepletion <= fuelDepletion || fuelDepletion < 0;
+        return fuelDepletion >= maxFuelDepletion || fuelDepletion < 0;
     }
 
     public void prepareInitialConditions() {
@@ -434,16 +434,18 @@ public class FissionReactor {
             coolantHeatOfVaporization += prop.getHeatOfVaporization();
         }
 
-        coolantBaseTemperature /= coolantChannels.size();
-        coolantBoilingPointStandardPressure /= coolantChannels.size();
-        coolantExitTemperature /= coolantChannels.size();
-        coolantHeatOfVaporization /= coolantChannels.size();
+        if (!coolantChannels.isEmpty()) {
+            coolantBaseTemperature /= coolantChannels.size();
+            coolantBoilingPointStandardPressure /= coolantChannels.size();
+            coolantExitTemperature /= coolantChannels.size();
+            coolantHeatOfVaporization /= coolantChannels.size();
 
-        if (coolantBaseTemperature == 0) {
-            coolantBaseTemperature = envTemperature;
-        }
-        if (coolantBoilingPointStandardPressure == 0) {
-            coolantBoilingPointStandardPressure = airBoilingPoint;
+            if (coolantBaseTemperature == 0) {
+                coolantBaseTemperature = envTemperature;
+            }
+            if (coolantBoilingPointStandardPressure == 0) {
+                coolantBoilingPointStandardPressure = airBoilingPoint;
+            }
         }
         isOn = true;
     }
@@ -553,8 +555,8 @@ public class FissionReactor {
 
     public void updatePressure() {
         this.pressure = responseFunction(
-                this.temperature <= this.coolantBoilingPoint() || !this.isOn ? this.exteriorPressure :
-                        1000. * R * this.temperature,
+                !(this.temperature <= this.coolantBoilingPoint()) && this.isOn ? 1000. * R * this.temperature :
+                        this.exteriorPressure,
                 this.pressure, 0.2);
     }
 
@@ -656,43 +658,42 @@ public class FissionReactor {
         if (!this.isOn || !this.controlRodRegulationOn)
             return;
 
+        boolean adjustFactor = false;
         if (pressure > maxPressure * 0.8 || temperature > (coolantExitTemperature + maxTemperature) / 2 ||
                 temperature > maxTemperature - 150 || temperature - prevTemperature > 30) {
             if (kEff > 1) {
                 this.controlRodInsertion += 0.004;
-                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+                adjustFactor = true;
             }
         } else if (temperature > coolantExitTemperature * 0.3 + coolantBaseTemperature * 0.7) {
             if (kEff > 1.01) {
                 this.controlRodInsertion += 0.008;
-                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+                adjustFactor = true;
             } else if (kEff < 1.005) {
                 this.controlRodInsertion -= 0.001;
-                this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+                adjustFactor = true;
             }
         } else if (temperature > coolantExitTemperature * 0.1 + coolantBaseTemperature * 0.9) {
             if (kEff > 1.025) {
                 this.controlRodInsertion += 0.012;
-                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+                adjustFactor = true;
             } else if (kEff < 1.015) {
                 this.controlRodInsertion -= 0.004;
-                this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+                adjustFactor = true;
             }
         } else {
             if (kEff > 1.1) {
                 this.controlRodInsertion += 0.02;
-                this.controlRodInsertion = Math.min(1, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+                adjustFactor = true;
             } else if (kEff < 1.05) {
                 this.controlRodInsertion -= 0.006;
-                this.controlRodInsertion = Math.max(0, this.controlRodInsertion);
-                this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
+                adjustFactor = true;
             }
+        }
+
+        if (adjustFactor) {
+            this.controlRodInsertion = Math.max(0, Math.min(1, this.controlRodInsertion));
+            this.controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
         }
     }
 
@@ -703,11 +704,53 @@ public class FissionReactor {
         this.kEff = 0;
         this.coolantMass = 0;
         this.fuelMass = 0;
-        reactorLayout = new ReactorComponent[reactorLayout.length][reactorLayout.length];
+        for (ReactorComponent[] components : reactorLayout) {
+            Arrays.fill(components, null);
+        }
         fuelRods.clear();
         controlRods.clear();
         coolantChannels.clear();
         effectiveControlRods.clear();
         effectiveCoolantChannels.clear();
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public double getMaxTemperature() {
+        return maxTemperature;
+    }
+
+    public double getkEff() {
+        return kEff;
+    }
+
+    public double getControlRodInsertion() {
+        return controlRodInsertion;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public double getMaxPressure() {
+        return maxPressure;
+    }
+
+    public double getPower() {
+        return power;
+    }
+
+    public double getMaxPower() {
+        return maxPower;
+    }
+
+    public double getFuelDepletion() {
+        return fuelDepletion;
+    }
+
+    public double getMaxFuelDepletion() {
+        return maxFuelDepletion;
     }
 }

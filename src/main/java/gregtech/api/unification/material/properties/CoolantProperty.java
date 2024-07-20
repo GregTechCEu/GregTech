@@ -1,25 +1,23 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.fluids.store.FluidStorageKey;
+import gregtech.api.nuclear.fission.ICoolantStats;
 import gregtech.api.unification.material.Material;
 
 import net.minecraftforge.fluids.Fluid;
 
 public class CoolantProperty implements IMaterialProperty {
 
+    private ICoolantStats stats;
     private Material hotHPCoolant;
     private double moderatorFactor;
     /**
-     * Roughly the heat transfer coefficient
-     * Do not put too much thought into this
+     * Roughly the heat transfer coefficient Do not put too much thought into this
      */
     private double coolingFactor;
     // in kelvin at standard conditions
     private double boilingPoint;
     // neutron absorption rate
-    private double absorption;
-    // in pascal
-    private double pressure;
     // in J/L
     private double heatOfVaporization;
     // in J/(kg*K)
@@ -29,13 +27,12 @@ public class CoolantProperty implements IMaterialProperty {
     private FluidStorageKey key;
 
     public CoolantProperty(Material hotHPCoolant, FluidStorageKey key, double moderatorFactor, double coolingFactor,
-                           double boilingPoint, double absorption, double heatOfVaporization,
+                           double boilingPoint, double heatOfVaporization,
                            double specificHeatCapacity) {
         this.hotHPCoolant = hotHPCoolant;
         this.moderatorFactor = moderatorFactor;
         this.coolingFactor = coolingFactor;
         this.boilingPoint = boilingPoint;
-        this.absorption = absorption;
         this.heatOfVaporization = heatOfVaporization;
         this.specificHeatCapacity = specificHeatCapacity;
         this.key = key;
@@ -58,7 +55,7 @@ public class CoolantProperty implements IMaterialProperty {
         this.moderatorFactor = moderatorFactor;
     }
 
-    public double getModerationFactor() {
+    public double getModeratorFactor() {
         return this.moderatorFactor;
     }
 
@@ -76,14 +73,6 @@ public class CoolantProperty implements IMaterialProperty {
 
     public double getBoilingPoint() {
         return this.boilingPoint;
-    }
-
-    public void setAbsorption(double absorption) {
-        this.absorption = absorption;
-    }
-
-    public double getAbsorption() {
-        return absorption;
     }
 
     public double getHeatOfVaporization() {
