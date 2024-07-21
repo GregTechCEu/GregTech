@@ -225,15 +225,15 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     }
 
     public MetaTileEntityFuelRodExportBus getExportHatch(int depth) {
-        BlockPos pos = this.getPos();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
         for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
+            if (getWorld().getBlockState(pos.move(this.frontFacing.getOpposite())) !=
                     MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.FUEL_CHANNEL)) {
                 return null;
             }
         }
         if (getWorld()
-                .getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
+                .getTileEntity(pos.move(this.frontFacing.getOpposite())) instanceof IGregTechTileEntity gtTe) {
             MetaTileEntity mte = gtTe.getMetaTileEntity();
             if (mte instanceof MetaTileEntityFuelRodExportBus) {
                 return (MetaTileEntityFuelRodExportBus) mte;

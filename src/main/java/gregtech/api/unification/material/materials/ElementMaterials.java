@@ -874,7 +874,6 @@ public class ElementMaterials {
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.U)
-                // .fissionFuelProperties(1600, 40, 1.2, 0.1, 0.1, 0.5)
                 .build();
 
         Uranium235 = new Material.Builder(117, gregtechId("uranium_235"))
@@ -1022,10 +1021,7 @@ public class ElementMaterials {
                 .build();
 
         Uranium239 = new Material.Builder(132, gregtechId("uranium_239"))
-                .ingot(3)
-                .liquid(new FluidBuilder().temperature(1405))
                 .color(0x46FA46).iconSet(SHINY)
-                .flags(EXT_METAL)
                 .element(Elements.U239)
                 .build();
 
@@ -1075,6 +1071,11 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().temperature(913))
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu244)
+                .build();
+
+        Plutonium = new Material.Builder(141, gregtechId("plutonium"))
+                .color(0xF03232).iconSet(METALLIC)
+                .element(Elements.Pu)
                 .build();
     }
 }

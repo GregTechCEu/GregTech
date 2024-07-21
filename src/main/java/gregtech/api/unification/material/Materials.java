@@ -216,6 +216,7 @@ public class Materials {
     public static Material Phosphorus;
     public static Material Polonium;
     public static Material Platinum;
+    public static Material Plutonium;
     public static Material Plutonium238;
     public static Material Plutonium239;
     public static Material Plutonium240;

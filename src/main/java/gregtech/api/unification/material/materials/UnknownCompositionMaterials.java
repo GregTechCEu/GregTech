@@ -6,8 +6,6 @@ import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 
-import gregtech.api.unification.material.info.MaterialIconSet;
-
 import net.minecraftforge.fluids.FluidRegistry;
 
 import static gregtech.api.unification.material.Materials.*;

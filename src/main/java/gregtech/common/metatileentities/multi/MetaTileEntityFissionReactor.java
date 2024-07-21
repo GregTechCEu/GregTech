@@ -254,15 +254,18 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     private TextFormatting getLockedTextColor() {
-        if (lockingState == LockingState.LOCKED)
-            return TextFormatting.GREEN;
-        if (lockingState == LockingState.INVALID_COMPONENT)
-            return TextFormatting.RED;
-        if (lockingState == LockingState.UNLOCKED)
-            return TextFormatting.DARK_AQUA;
-        if (lockingState == LockingState.SHOULD_LOCK)
-            return TextFormatting.BLACK;
-        return getWorld().getWorldTime() % 4 >= 2 ? TextFormatting.RED : TextFormatting.YELLOW;
+        switch (lockingState) {
+            case LOCKED:
+                return TextFormatting.GREEN;
+            case UNLOCKED:
+                return TextFormatting.DARK_AQUA;
+            case INVALID_COMPONENT:
+                return TextFormatting.RED;
+            case SHOULD_LOCK:
+                return TextFormatting.BLACK;
+            default:
+                return getWorld().getWorldTime() % 4 >= 2 ? TextFormatting.RED : TextFormatting.YELLOW;
+        }
     }
 
     private void tryLocking(boolean lock) {
@@ -294,15 +297,17 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 String.format("%.2f", this.fuelDepletionPercent * 100)));
     }
 
-    protected boolean isBlockEdge(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing direction,
+    protected boolean isBlockEdge(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos, @NotNull EnumFacing direction,
                                   int steps) {
-        BlockPos test = pos.offset(direction, steps);
+        pos.move(direction, steps);
 
-        if (world.getBlockState(test).getBlock() == MetaBlocks.FISSION_CASING) {
+        if (world.getBlockState(pos).getBlock() == MetaBlocks.FISSION_CASING) {
+            pos.move(direction.getOpposite(), steps);
             return false;
         }
 
-        MetaTileEntity potentialTile = GTUtility.getMetaTileEntity(world, test);
+        MetaTileEntity potentialTile = GTUtility.getMetaTileEntity(world, pos);
+        pos.move(direction.getOpposite(), steps);
         if (potentialTile == null) {
             return true;
         }
@@ -321,10 +326,11 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     /**
      * Uses the upper layer to determine the diameter of the structure
      */
-    protected int findDiameter(int heightAbove) {
+    protected int findDiameter() {
         int i = 1;
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), this.getPos().offset(getUp(), heightAbove),
+            if (this.isBlockEdge(this.getWorld(), pos.move(getUp()),
                     this.getFrontFacing().getOpposite(),
                     i))
                 break;
@@ -338,8 +344,9 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
      */
     protected int findHeight(boolean top) {
         int i = 1;
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
         while (i <= 15) {
-            if (this.isBlockEdge(this.getWorld(), this.getPos(), top ? getUp() : getUp().getOpposite(), i))
+            if (this.isBlockEdge(this.getWorld(), pos, top ? getUp() : getUp().getOpposite(), i))
                 break;
             i++;
         }
@@ -478,7 +485,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
         this.height = heightTop + heightBottom + 1;
 
-        this.diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(heightTop), 15), 5) : 5;
+        this.diameter = this.getWorld() != null ? Math.max(Math.min(this.findDiameter(), 15), 5) : 5;
 
         int radius = this.diameter % 2 == 0 ? (int) Math.floor(this.diameter / 2.f) :
                 Math.round((this.diameter - 1) / 2.f);
@@ -926,13 +933,13 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     @Override
     public long getCoverCapacity() {
         // power is in MW
-        return (int) (this.maxPower * 1e6);
+        return (long) (this.maxPower * 1e6);
     }
 
     @Override
     public long getCoverStored() {
         // power is in MW
-        return (int) (this.power * 1e6);
+        return (long) (this.power * 1e6);
     }
 
     private enum LockingState {
@@ -954,6 +961,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         INVALID_COMPONENT
     }
 
+    @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         List<MultiblockShapeInfo> shapes = new ArrayList<>();
 

@@ -65,5 +65,4 @@ public class CoolantChannel extends ReactorComponent {
     public ICoolantHandler getOutputHandler() {
         return outputHandler;
     }
-
 }

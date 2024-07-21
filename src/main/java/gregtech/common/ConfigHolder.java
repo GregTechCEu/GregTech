@@ -45,6 +45,8 @@ public class ConfigHolder {
 
     public static class MachineOptions {
 
+        public NuclearOptions nuclear = new NuclearOptions();
+
         @Config.Comment({ "Whether insufficient energy supply should reset Machine recipe progress to zero.",
                 "If true, progress will reset.", "If false, progress will decrease to zero with 2x speed",
                 "Default: false" })
@@ -89,10 +91,6 @@ public class ConfigHolder {
         @Config.Comment({ "Steam to EU multiplier for Steam Multiblocks.",
                 "1.0 means 1L Steam -> 1 EU. 0.5 means 2L Steam -> 1 EU.", "Default: 0.5" })
         public double multiblockSteamToEU = 0.5;
-
-        @Config.Comment({ "Nuclear Max Power multiplier for balancing purposes", "Default: 0.1" })
-        @Config.RangeDouble(min = 0, max = 10000)
-        public double nuclearPowerMultiplier = 0.1;
 
         @Config.Comment({ "Whether machines or boilers damage the terrain when they explode.",
                 "Note machines and boilers always explode when overloaded with power or met with special conditions, regardless of this config.",
@@ -166,14 +164,21 @@ public class ConfigHolder {
                 "Default: true" })
         public boolean allowTickAcceleration = true;
 
-        @Config.Comment({ "How much the amount of power required to boil a coolant is divided by." })
-        @Config.RangeDouble(min = 0.1, max = 1000)
-        public double fissionCoolantDivisor = 14;
+        public static class NuclearOptions {
 
-        @Config.Comment({
-                "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
-        @Config.RangeInt(min = 5, max = 10000)
-        public double fissionReactorResolution = 100;
+            @Config.Comment({ "Nuclear Max Power multiplier for balancing purposes", "Default: 0.1" })
+            @Config.RangeDouble(min = 0, max = 10000)
+            public double nuclearPowerMultiplier = 0.1;
+
+            @Config.Comment({ "How much the amount of power required to boil a coolant is divided by." })
+            @Config.RangeDouble(min = 0.1, max = 1000)
+            public double fissionCoolantDivisor = 14;
+
+            @Config.Comment({
+                    "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
+            @Config.RangeInt(min = 5, max = 10000)
+            public double fissionReactorResolution = 100;
+        }
     }
 
     public static class WorldGenOptions {

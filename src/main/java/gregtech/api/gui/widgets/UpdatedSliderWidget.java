@@ -4,13 +4,10 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.FloatConsumer;
-
 import gregtech.api.util.function.FloatSupplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-
-import java.util.function.Supplier;
 
 public class UpdatedSliderWidget extends SliderWidget {
 

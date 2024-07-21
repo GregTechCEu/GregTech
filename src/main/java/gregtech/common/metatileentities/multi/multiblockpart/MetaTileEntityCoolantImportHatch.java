@@ -113,15 +113,15 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
 
     @Override
     public boolean checkValidity(int depth) {
-        BlockPos pos = this.getPos();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getPos());
         for (int i = 1; i < depth; i++) {
-            if (getWorld().getBlockState(pos.offset(this.frontFacing.getOpposite(), i)) !=
+            if (getWorld().getBlockState(pos.move(this.frontFacing.getOpposite())) !=
                     MetaBlocks.FISSION_CASING.getState(BlockFissionCasing.FissionCasingType.COOLANT_CHANNEL)) {
                 return false;
             }
         }
         if (getWorld()
-                .getTileEntity(pos.offset(this.frontFacing.getOpposite(), depth)) instanceof IGregTechTileEntity gtTe) {
+                .getTileEntity(pos.move(this.frontFacing.getOpposite())) instanceof IGregTechTileEntity gtTe) {
             return gtTe.getMetaTileEntity().metaTileEntityId.equals(MetaTileEntities.COOLANT_OUTPUT.metaTileEntityId);
         }
         return false;

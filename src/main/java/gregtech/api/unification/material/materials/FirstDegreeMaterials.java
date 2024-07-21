@@ -514,7 +514,9 @@ public class FirstDegreeMaterials {
                 .build();
 
         Salt = new Material.Builder(312, gregtechId("salt"))
-                .gem(1).ore(2, 1).fluid()
+                .gem(1).ore(2, 1)
+                .liquid(new FluidBuilder()
+                        .translation("gregtech.fluid.molten"))
                 .color(0xFAFAFA).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Sodium, 1, Chlorine, 1)
@@ -1573,7 +1575,7 @@ public class FirstDegreeMaterials {
         HighPressureSteam = new Material.Builder(454, gregtechId("high_pressure_steam"))
                 .gas(new FluidBuilder()
                         .temperature(500)
-                /* .customStill() */)
+                        .customStill())
                 .color(0xC4C4C4)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
@@ -1583,9 +1585,8 @@ public class FirstDegreeMaterials {
                 .dust(3)
                 .color(0xF03232).iconSet(DULL)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Plutonium239, 1, Oxygen, 2)
-                .build()
-                .setFormula("PuO2", true);
+                .components(Plutonium, 1, Oxygen, 2)
+                .build();
 
         Zircaloy = new Material.Builder(456, gregtechId("zircaloy"))
                 .ingot()
@@ -1604,10 +1605,11 @@ public class FirstDegreeMaterials {
                 .setFormula("UO2", true);
 
         Zircon = new Material.Builder(458, gregtechId("zircon"))
-                .ore()
-                .color(0x386F6F)
+                .gem().ore()
+                .color(0x6E0909)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
+                .iconSet(SHINY)
                 .build();
 
         ZirconiumDioxide = new Material.Builder(459, gregtechId("zirconium_dioxide"))
@@ -1622,6 +1624,7 @@ public class FirstDegreeMaterials {
                 .color(0x689FBF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zirconium, 1, Chlorine, 4)
+                .iconSet(SHINY)
                 .build();
 
         HafniumDioxide = new Material.Builder(461, gregtechId("hafnium_dioxide"))
@@ -1636,6 +1639,7 @@ public class FirstDegreeMaterials {
                 .color(0x69699A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hafnium, 1, Chlorine, 4)
+                .iconSet(SHINY)
                 .build();
 
         Inconel = new Material.Builder(463, gregtechId("inconel"))
@@ -1645,21 +1649,20 @@ public class FirstDegreeMaterials {
                 .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
                 .blastTemp(1610, GasTier.MID, GTValues.VA[EV], 200)
                 .fluidPipeProperties(2010, 175, true, true, true, false)
-                .build()
-                .setFormula("Ni5Cr2Fe2NbMo", true);
+                .build();
 
         HighEnrichedUraniumHexafluoride = new Material.Builder(464, gregtechId("high_enriched_uranium_hexafluoride"))
                 .gas()
                 .color(0x5BF93A)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Fluorine, 6)
-                .build()
-                .setFormula("UF6", true);
+                .build();
 
         BoronTrioxide = new Material.Builder(465, gregtechId("boron_trioxide"))
                 .dust()
                 .color(0xC1E9E1)
                 .components(Boron, 2, Oxygen, 3)
+                .iconSet(METALLIC)
                 .build();
 
         BoronCarbide = new Material.Builder(466, gregtechId("boron_carbide"))
@@ -1668,6 +1671,7 @@ public class FirstDegreeMaterials {
                 .blast(2620)
                 .color(0xC1E9C1)
                 .components(Boron, 4, Carbon, 1)
+                .iconSet(METALLIC)
                 .build();
     }
 }
