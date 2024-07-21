@@ -70,7 +70,7 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1400)
-                .input(dust, ZirconiumDioxide, 1)
+                .input(dust, ZirconiumDioxide, 3)
                 .input(dust, Carbon, 1)
                 .fluidInputs(Chlorine.getFluid(4000))
                 .fluidOutputs(CarbonDioxide.getFluid(1000))
@@ -78,7 +78,7 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[EV]).blastFurnaceTemp(1250)
-                .input(dust, HafniumDioxide, 1)
+                .input(dust, HafniumDioxide, 3)
                 .input(dust, Carbon, 1)
                 .fluidInputs(Chlorine.getFluid(4000))
                 .fluidOutputs(CarbonDioxide.getFluid(1000))
@@ -254,10 +254,10 @@ public class NuclearRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustBredFuel, LEU235)
-                .chancedOutput(dust, Plutonium239, 235, 0)
-                .chancedOutput(dust, Plutonium240, 110, 0)
-                .chancedOutput(dust, Plutonium241, 70, 0)
-                .chancedOutput(dust, Neptunium239, 15, 0)
+                .chancedOutput(dust, Plutonium239, 282, 0)
+                .chancedOutput(dust, Plutonium240, 132, 0)
+                .chancedOutput(dust, Plutonium241, 84, 0)
+                .chancedOutput(dust, Neptunium239, 18, 0)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])

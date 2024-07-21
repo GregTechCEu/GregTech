@@ -61,9 +61,6 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Palladium);
         oreProp.setWashedIn(Mercury);
 
-        oreProp = Plutonium239.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Uraninite, Lead, Uraninite);
-
         // oreProp = Silicon.getProperty(PropertyKey.ORE);
         // oreProp.setOreByProducts(SiliconDioxide);
 
@@ -415,5 +412,10 @@ public class MaterialFlagAddition {
                 new CoolantProperty(DistilledWater, HighPressureSteam, FluidStorageKeys.LIQUID, 1., 1000,
                         373, 2260000, 4168.)
                                 .setAccumulatesHydrogen(true));
+
+        HeavyWater.setProperty(PropertyKey.COOLANT,
+                new CoolantProperty(HeavyWater, HighPressureHeavyWater, FluidStorageKeys.LIQUID, 4., 1000,
+                        374.4, 2064000, 4228.)
+                        .setAccumulatesHydrogen(true));
     }
 }

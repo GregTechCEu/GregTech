@@ -678,6 +678,7 @@ public class FirstDegreeMaterials {
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium, 1, Oxygen, 2)
+                .fissionFuel(1800, 300, 55., 1., 1000., 0., 2.4)
                 .build()
                 .setFormula("UO2", true);
 
@@ -1672,6 +1673,19 @@ public class FirstDegreeMaterials {
                 .color(0xC1E9C1)
                 .components(Boron, 4, Carbon, 1)
                 .iconSet(METALLIC)
+                .build();
+
+        HeavyWater = new Material.Builder(467, gregtechId("heavy_water"))
+                .fluid()
+                .color(0x3673D6)
+                .components(Deuterium, 2, Oxygen, 1)
+                .build();
+
+        HighPressureHeavyWater = new Material.Builder(468, gregtechId("high_pressure_heavy_water"))
+                .gas(new FluidBuilder().temperature(500))
+                .color(0xCCD9F0)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Deuterium, 2, Oxygen, 1)
                 .build();
     }
 }
