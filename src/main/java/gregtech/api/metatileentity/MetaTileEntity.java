@@ -499,7 +499,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             }
         }
         if (this instanceof IDataStickIntractable dsi && playerIn.isSneaking()) {
-            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) && dsi.onDataStickShiftRightClick(playerIn, heldStack)) {
+            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) &&
+                    dsi.onDataStickShiftRightClick(playerIn, heldStack)) {
                 return true;
             }
         }
@@ -660,12 +661,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        /* if (this instanceof IDataStickIntractable dsi) {
-            ItemStack stack = player.getHeldItemMainhand();
-            if (MetaItems.TOOL_DATA_STICK.isItemEqual(stack)) {
-                dsi.onDataStickLeftClick(player, stack);
-            }
-        } */
+        /*
+         * if (this instanceof IDataStickIntractable dsi) {
+         * ItemStack stack = player.getHeldItemMainhand();
+         * if (MetaItems.TOOL_DATA_STICK.isItemEqual(stack)) {
+         * dsi.onDataStickLeftClick(player, stack);
+         * }
+         * }
+         */
     }
 
     /**
