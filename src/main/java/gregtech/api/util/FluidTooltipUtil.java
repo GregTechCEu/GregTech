@@ -114,18 +114,6 @@ public class FluidTooltipUtil {
             ICoolantStats coolant = CoolantRegistry.getCoolant(fluid);
             if (coolant != null) {
                 tooltip.add(I18n.format("gregtech.coolant.general"));
-                tooltip.add(I18n.format("gregtech.coolant.boiling_point",
-                        coolant.getBoilingPoint(),
-                        coolant.getHotCoolant().getTemperature()));
-                tooltip.add(I18n.format("gregtech.coolant.heat_capacity",
-                        coolant.getSpecificHeatCapacity()));
-                tooltip.add(I18n.format("gregtech.coolant.cooling_factor",
-                        coolant.getCoolingFactor()));
-                tooltip.add(I18n.format("gregtech.coolant.moderation_factor",
-                        coolant.getModeratorFactor()));
-                if (coolant.accumulatesHydrogen()) {
-                    tooltip.add(I18n.format("gregtech.coolant.accumulates_hydrogen"));
-                }
             }
             return tooltip;
         };

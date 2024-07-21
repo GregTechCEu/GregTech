@@ -40,4 +40,20 @@ public interface IFissionFuelStats {
      * @return The average time for a neutron to be emitted during a fission event. Do not make this accurate.
      */
     double getNeutronGenerationTime();
+
+    /**
+     * Helper method for the tooltip
+     * @return An integer corresponding to the stability of the fuel. 0 corresponds to stable, 1 to somewhat stable, 2 to dangerous, 3 to very dangerous
+     */
+    default int getNeutronGenerationTimeCategory() {
+        if (this.getNeutronGenerationTime() > 2) {
+            return 0;
+        } else if (this.getNeutronGenerationTime() > 1.25) {
+            return 1;
+        } else if (this.getNeutronGenerationTime() > 0.9) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
 }

@@ -194,13 +194,15 @@ metaitem.electric.discharge_mode.tooltip=Use while sneaking to toggle discharge 
 metaitem.dust.tooltip.purify=Throw into Cauldron to get clean Dust
 metaitem.crushed.tooltip.purify=Throw into Cauldron to get Purified Ore
 metaitem.nuclear.tooltip.radioactive=§cEmits dangerous radiation
-metaitem.nuclear.tooltip.duration=Depletes in §f%d§7 MJ of heat
-metaitem.nuclear.tooltip.temperature=Melts at §f%d§7 degrees K
-metaitem.nuclear.tooltip.cross_sections=Fissions with probability §f%d§7 barns with fast neutrons and §f%d§7 barns with slow neutrons
-metaitem.nuclear.tooltip.neutron_time.0=Releases neutrons §f%d§7 seconds after fissioning on average (§aStable§7)
-metaitem.nuclear.tooltip.neutron_time.1=Releases neutrons §f%d§7 seconds after fissioning on average (§eSomewhat stable§7)
-metaitem.nuclear.tooltip.neutron_time.2=Releases neutrons §f%d§7 seconds after fissioning on average (§cDangerous§7)
-metaitem.nuclear.tooltip.neutron_time.3=Releases neutrons §f%d§7 seconds after fissioning on average (§4Very dangerous§7)
+metaitem.nuclear.tooltip.duration=Total heat energy: %d MJ
+metaitem.nuclear.tooltip.temperature=Melting point: %d K
+metaitem.nuclear.tooltip.cross_section_fast=Fast neutron prob: %d barn
+metaitem.nuclear.tooltip.cross_section_slow=Slow neutron prob: %d barn
+metaitem.nuclear.tooltip.neutron_time.0=Avg. neutron: %ds (§aSafe§r)
+metaitem.nuclear.tooltip.neutron_time.1=Avg. neutron: %ds (§eSafer§r)
+metaitem.nuclear.tooltip.neutron_time.2=Avg. neutron: %ds (§cUnsafe§r)
+metaitem.nuclear.tooltip.neutron_time.3=Avg. neutron: %ds (§4Very unsafe§r)
+
 metaitem.int_circuit.configuration=§aConfigured Value: §f%d§7
 metaitem.credit.copper.name=Copper Credit
 metaitem.credit.copper.tooltip=0.125 Credits
@@ -1878,7 +1880,8 @@ gregtech.material.hafnium_dioxide=Hafnium Dioxide
 gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
 gregtech.material.boron_trioxide=Boron Trioxide
 gregtech.material.boron_carbide=Boron Carbide
-
+gregtech.material.heavy_water=Heavy Water
+gregtech.material.high_pressure_heavy_water=High Pressure Heavy Water
 
 # Organic Chemistry Materials
 gregtech.material.silicone_rubber=Silicone Rubber
@@ -5524,11 +5527,11 @@ gregtech.fluid.state_liquid=§aState: Liquid
 gregtech.fluid.state_plasma=§aState: Plasma
 gregtech.fluid.type_acid.tooltip=§6Acidic! Handle with care!
 gregtech.coolant.general=§9Can be used as a coolant§7
-gregtech.coolant.boiling_point=§5Boils at §f%d§5 K at STP, and exits at §f%d§5 K from a reactor
-gregtech.coolant.heat_capacity=§5Has a specific heat capacity of §f%d§5 J/kg*K
-gregtech.coolant.cooling_factor=§5Has a heat transfer coefficient of §f%d§5 W/(m^2K)
-gregtech.coolant.moderation_factor=§5Has a moderation cross section of §f%d§5 barns
-gregtech.coolant.accumulates_hydrogen=§6Accumulates explosive hydrogen gas at 1500K
+gregtech.coolant.exit_temp=Hot coolant temperature: %d K
+gregtech.coolant.heat_capacity=Heat capacity: %d J/kgK
+gregtech.coolant.cooling_factor=Heat transfer: %d W/(m^2K)
+gregtech.coolant.moderation_factor=Moderation cross section: %d barn
+gregtech.coolant.accumulates_hydrogen=§6Accumulates hydrogen at 1500K
 
 gregtech.gui.fuel_amount=Fuel Amount:
 gregtech.gui.fluid_amount=Fluid Amount:

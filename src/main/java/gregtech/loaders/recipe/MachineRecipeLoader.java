@@ -1267,7 +1267,7 @@ public class MachineRecipeLoader {
         MACERATOR_RECIPES.recipeBuilder()
                 .input(stone, GraniteRed)
                 .output(dust, GraniteRed)
-                .chancedOutput(dust, Uranium, 10, 5)
+                .chancedOutput(dust, Uraninite, 10, 5)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
