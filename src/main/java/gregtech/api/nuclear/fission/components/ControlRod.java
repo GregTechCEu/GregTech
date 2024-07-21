@@ -49,7 +49,6 @@ public class ControlRod extends ReactorComponent {
         relatedFuelRodPairs++;
     }
 
-
     public void increaseWeight() {
         weight++;
     }

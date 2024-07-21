@@ -16,7 +16,7 @@ public interface ICoolantStats {
 
     /**
      * @return A factor relating to the neutron moderation properties; the higher the factor, the fewer neutrons pass
-     * through.
+     *         through.
      */
     double getModeratorFactor();
 
@@ -31,9 +31,8 @@ public interface ICoolantStats {
     double getBoilingPoint();
 
     /**
-     * @return If the coolant reacts with zirconium cladding at high temperatures. This is true for mostly water-based coolants.
+     * @return If the coolant reacts with zirconium cladding at high temperatures. This is true for mostly water-based
+     *         coolants.
      */
     boolean accumulatesHydrogen();
-
-
 }

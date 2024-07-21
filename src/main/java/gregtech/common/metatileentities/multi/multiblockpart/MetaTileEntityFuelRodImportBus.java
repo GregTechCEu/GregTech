@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.gui.GuiTextures;
@@ -12,12 +11,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.nuclear.fission.FissionFuelRegistry;
 import gregtech.api.nuclear.fission.components.FuelRod;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
@@ -212,7 +207,6 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
 
     @Override
     public boolean setPartialFuel(FissionFuelProperty prop) {
-
         this.partialFuel = prop;
         if (this.internalFuelRod != null) {
             this.internalFuelRod.setFuel(prop);

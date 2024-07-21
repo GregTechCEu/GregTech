@@ -57,7 +57,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportBus;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -375,26 +374,28 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             canWork = false;
                             this.lockingState = LockingState.MISSING_FUEL;
                             break;
-                        } /* TODO else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
-                                .getExportItems().insertItem(0,
-                                        OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
-                                .isEmpty()) {
-                                    // We still need to know if the output is blocked, even if the recipe doesn't start
-                                    // yet
-                                    canWork = false;
-                                    this.lockingState = LockingState.FUEL_CLOGGED;
-                                    break;
-                                }
-                                */
+                        } /*
+                           * TODO else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height -
+                           * 1)
+                           * .getExportItems().insertItem(0,
+                           * OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
+                           * .isEmpty()) {
+                           * // We still need to know if the output is blocked, even if the recipe doesn't start
+                           * // yet
+                           * canWork = false;
+                           * this.lockingState = LockingState.FUEL_CLOGGED;
+                           * break;
+                           * }
+                           */
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
                         if (fissionReactor.needsOutput) {
-                            // TODO                            ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
-                            //                                    .getExportItems().insertItem(0,
-                            //                                            OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
-                            //                                                    fuelImport.getPartialFuel()),
-                            //                                            false);
+                            // TODO ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
+                            // .getExportItems().insertItem(0,
+                            // OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
+                            // fuelImport.getPartialFuel()),
+                            // false);
                             this.fissionReactor.fuelMass -= 60;
                         }
                         if (canWork) {
