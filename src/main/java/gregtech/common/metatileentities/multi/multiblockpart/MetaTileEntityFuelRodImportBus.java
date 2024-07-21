@@ -3,7 +3,9 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IFuelRodHandler;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.BlockableSlotWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.itemhandlers.LockableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -16,9 +18,11 @@ import gregtech.api.nuclear.fission.IFissionFuelStats;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -42,8 +46,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.FISSION_LOCK_UPDATE;
 
 public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNotifiablePart
-                                            implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler,
-                                            IControllable, IFissionReactorHatch {
+        implements IMultiblockAbilityPart<IFuelRodHandler>, IFuelRodHandler, IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private IFissionFuelStats fuelProperty;
@@ -81,11 +84,10 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     }
 
     private ModularUI.Builder createUITemplate(EntityPlayer player) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 143)
-                .label(10, 5, getMetaFullName());
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 143).label(10, 5, getMetaFullName());
 
-        builder.widget(new SlotWidget(importItems, 0, 79, 18, true, true)
-                .setBackgroundTexture(GuiTextures.SLOT));
+        builder.widget(new BlockableSlotWidget(importItems, 0, 79, 18, true, true)
+                .setIsBlocked(this::isLocked).setBackgroundTexture(GuiTextures.SLOT));
 
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 60);
     }
@@ -140,8 +142,7 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setBoolean("locked", getLockedImport().isLocked());
-        if (partialFuel != null)
-            data.setInteger("partialFuel", this.partialFuel.hashCode());
+        if (partialFuel != null) data.setInteger("partialFuel", this.partialFuel.hashCode());
         return super.writeToNBT(data);
     }
 
@@ -237,8 +238,7 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
                 return null;
             }
         }
-        if (getWorld()
-                .getTileEntity(pos.move(this.frontFacing.getOpposite())) instanceof IGregTechTileEntity gtTe) {
+        if (getWorld().getTileEntity(pos.move(this.frontFacing.getOpposite())) instanceof IGregTechTileEntity gtTe) {
             MetaTileEntity mte = gtTe.getMetaTileEntity();
             if (mte instanceof MetaTileEntityFuelRodExportBus) {
                 return (MetaTileEntityFuelRodExportBus) mte;

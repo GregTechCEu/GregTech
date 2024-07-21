@@ -198,10 +198,10 @@ metaitem.nuclear.tooltip.duration=Total heat energy: %d MJ
 metaitem.nuclear.tooltip.temperature=Melting point: %d K
 metaitem.nuclear.tooltip.cross_section_fast=Fast neutron prob: %d barn
 metaitem.nuclear.tooltip.cross_section_slow=Slow neutron prob: %d barn
-metaitem.nuclear.tooltip.neutron_time.0=Avg. neutron: %ds (§aSafe§r)
-metaitem.nuclear.tooltip.neutron_time.1=Avg. neutron: %ds (§cSafer§r)
-metaitem.nuclear.tooltip.neutron_time.2=Avg. neutron: %ds (§4Unsafe§r)
-metaitem.nuclear.tooltip.neutron_time.3=Avg. neutron: %ds (§0Very unsafe§r)
+metaitem.nuclear.tooltip.neutron_time.0=Avg. neutron: %ds (§1Safe§r)
+metaitem.nuclear.tooltip.neutron_time.1=Avg. neutron: %ds (§2Safer§r)
+metaitem.nuclear.tooltip.neutron_time.2=Avg. neutron: %ds (§cUnsafe§r)
+metaitem.nuclear.tooltip.neutron_time.3=Avg. neutron: %ds (§4Very unsafe§r)
 
 metaitem.int_circuit.configuration=§aConfigured Value: §f%d§7
 metaitem.credit.copper.name=Copper Credit
@@ -5596,6 +5596,8 @@ gregtech.gui.fission.lock.enabled=Unlock Fuel and Coolant types and stop the Rea
 
 gregtech.gui.fission.helper.disabled=When I'm smiling, I regulate your control rods for you! - Smiley, the Control Rod Specialist
 gregtech.gui.fission.helper.enabled=When I'm smiling, I regulate your control rods for you! - Smiley, the Control Rod Specialist
+
+gregtech.gui.locked=(Locked)
 
 ore.spawnlocation.name=Ore Spawn Information
 gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spawn locations.

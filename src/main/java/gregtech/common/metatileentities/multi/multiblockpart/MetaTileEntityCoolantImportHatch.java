@@ -32,6 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -48,8 +49,8 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.FISSION_LOCK_UPDATE;
 
 public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart
-                                              implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler,
-                                              IControllable, IFissionReactorHatch {
+        implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler,
+                   IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private LockableFluidTank fluidTank;
@@ -87,18 +88,24 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
 
     public ModularUI.Builder createTankUI(IFluidTank fluidTank, String title, EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
-        TankWidget tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
+        builder.image(7, 16, 131, 55, GuiTextures.DISPLAY);
+        TankWidget tankWidget = new TankWidget(fluidTank, 119, 52, 18, 18)
                 .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
         builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
-        builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
+        builder.dynamicLabel(11, 40, () -> {
+            if (isLocked()) {
+                return tankWidget.getFluidLocalizedName() + " " + I18n.format("gregtech.gui.locked");
+            } else {
+                return tankWidget.getFluidLocalizedName();
+            }
+        }, 0xFFFFFF);
         return builder.label(6, 6, title)
-                .widget(new FluidContainerSlotWidget(importItems, 0, 90, 16, false)
+                .widget(new FluidContainerSlotWidget(importItems, 0, 140, 16, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-                .widget(new SlotWidget(exportItems, 0, 90, 53, true, false)
+                .widget(new ImageWidget(141, 36, 14, 15, GuiTextures.TANK_ICON))
+                .widget(new SlotWidget(exportItems, 0, 140, 53, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                 .bindPlayerInventory(entityPlayer.inventory);
     }
