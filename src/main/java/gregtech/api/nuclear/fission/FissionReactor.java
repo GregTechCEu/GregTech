@@ -94,22 +94,22 @@ public class FissionReactor {
      * {@link FissionReactor#prepareInitialConditions()}
      */
     private double coolantBaseTemperature;
-    public double maxFuelDepletion = 1;
-    public double fuelDepletion = -1;
-    public double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
-    public double decayProductsAmount;
-    public double envTemperature = roomTemperature; // maybe gotten from config per dim
-    public double accumulatedHydrogen;
-    public double weightedGenerationTime = 2; // The mean generation time in seconds, accounting for delayed neutrons
+    private double maxFuelDepletion = 1;
+    private double fuelDepletion = -1;
+    private double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
+    private double decayProductsAmount;
+    private double envTemperature = roomTemperature; // maybe gotten from config per dim
+    private double accumulatedHydrogen;
+    private double weightedGenerationTime = 2; // The mean generation time in seconds, accounting for delayed neutrons
 
-    public double maxTemperature = 2000;
+    private double maxTemperature = 2000;
     // Pascals
-    public double maxPressure = 15000000;
+    private double maxPressure = 15000000;
     // In MW apparently
-    public double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
+    private double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
     public static double zircaloyHydrogenReactionTemperature = 1500;
 
-    public double surfaceArea;
+    private double surfaceArea;
     public static double thermalConductivity = 45; // 45 W/(m K), for steel
     public static double wallThickness = 0.1;
     public static double coolantWallThickness = 0.06; // Ideal for a 1-m diameter steel pipe with the given maximum
@@ -125,12 +125,12 @@ public class FissionReactor {
 
     // very much changed here for balance purposes
 
-    public double coolantMass;
-    public double fuelMass;
-    public double structuralMass;
-    public boolean needsOutput;
-    public boolean controlRodRegulationOn = true;
-    public boolean isOn = false;
+    private double coolantMass;
+    private double fuelMass;
+    private double structuralMass;
+    private boolean needsOutput;
+    private boolean controlRodRegulationOn = true;
+    private boolean isOn = false;
 
     protected static double responseFunction(double target, double current, double criticalRate) {
         if (current < 0) {
@@ -403,6 +403,10 @@ public class FissionReactor {
 
     public boolean isDepleted() {
         return fuelDepletion >= maxFuelDepletion || fuelDepletion < 0;
+    }
+
+    public void resetFuelDepletion() {
+        this.fuelDepletion = 0;
     }
 
     public void prepareInitialConditions() {
@@ -749,5 +753,29 @@ public class FissionReactor {
 
     public double getMaxFuelDepletion() {
         return maxFuelDepletion;
+    }
+
+    public double getAccumulatedHydrogen() {
+        return accumulatedHydrogen;
+    }
+
+    public void changeFuelMass(double amount) {
+        fuelMass += amount;
+    }
+
+    public boolean needsOutput() {
+        return needsOutput;
+    }
+
+    public void setNeedsOutput(boolean needsOutput) {
+        this.needsOutput = needsOutput;
+    }
+
+    public boolean isControlRodRegulationOn() {
+        return controlRodRegulationOn;
+    }
+
+    public void setControlRodRegulationOn(boolean controlRodRegulationOn) {
+        this.controlRodRegulationOn = controlRodRegulationOn;
     }
 }

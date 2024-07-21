@@ -20,8 +20,9 @@ public class LockableItemStackHandler extends NotifiableItemStackHandler impleme
     @Override
     public void setLock(boolean isLocked) {
         this.locked = isLocked;
-        if (isLocked)
+        if (isLocked && !this.getStackInSlot(0).isEmpty()) {
             lockedItemStack = this.getStackInSlot(0).copy();
+        }
     }
 
     public boolean isLocked() {
@@ -31,10 +32,8 @@ public class LockableItemStackHandler extends NotifiableItemStackHandler impleme
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (this.locked) {
-            if (!this.lockedItemStack.isItemEqual(stack)) {
-                return stack;
-            }
+        if (this.locked && !this.lockedItemStack.isItemEqual(stack)) {
+            return stack;
         }
         return super.insertItem(slot, stack, simulate);
     }

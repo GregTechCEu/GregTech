@@ -62,15 +62,8 @@ public class CoolantChannel extends ReactorComponent {
         return inputHandler;
     }
 
-    public void setInputHandler(ICoolantHandler inputHandler) {
-        this.inputHandler = inputHandler;
-    }
-
     public ICoolantHandler getOutputHandler() {
         return outputHandler;
     }
 
-    public void setOutputHandler(ICoolantHandler outputHandler) {
-        this.outputHandler = outputHandler;
-    }
 }
