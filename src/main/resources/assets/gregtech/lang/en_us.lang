@@ -2404,6 +2404,9 @@ gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
 gregtech.recipe.category.extractor_recycling=Extractor Recycling
 
+fission.coolant.name=Coolant Heating
+fission.fuel.name=Fission Reactor
+
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
 behaviour.soft_hammer.enabled=Working Enabled
