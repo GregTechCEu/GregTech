@@ -209,6 +209,9 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
 
     @Override
     public boolean setPartialFuel(IFissionFuelStats prop) {
+        if (prop == this.partialFuel) {
+            return false;
+        }
         this.partialFuel = prop;
         if (this.internalFuelRod != null) {
             this.internalFuelRod.setFuel(prop);
