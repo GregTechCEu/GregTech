@@ -23,7 +23,7 @@ public class MetaTileEntityHeatExchanger extends RecipeMapMultiblockController {
 
     public MetaTileEntityHeatExchanger(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.HEAT_EXCHANGER_RECIPES);
-        this.recipeMapWorkable = new PrimitiveRecipeLogic(this, RecipeMaps.HEAT_EXCHANGER_RECIPES);
+        this.recipeMapWorkable = new PrimitiveRecipeLogic(this);
     }
 
     @Override

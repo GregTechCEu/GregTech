@@ -23,7 +23,7 @@ public abstract class RecipeMapPrimitiveMultiblockController extends RecipeMapMu
 
     public RecipeMapPrimitiveMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId, recipeMap);
-        this.recipeMapWorkable = new PrimitiveRecipeLogic(this, recipeMap);
+        this.recipeMapWorkable = new PrimitiveRecipeLogic(this);
         initializeAbilities();
     }
 
