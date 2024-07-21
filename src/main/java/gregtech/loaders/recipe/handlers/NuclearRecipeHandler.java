@@ -18,20 +18,15 @@ public class NuclearRecipeHandler {
     }
 
     private static void processFuelRod(OrePrefix orePrefix, Material material, FissionFuelProperty oreProperty) {
-        MACERATOR_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                .input(fuelRodDepleted, material)
-                .output(dust, Zircaloy, 4)
-                .buildAndRegister();
-
         // This is fine, since it goes up to 320x parallel
         SPENT_FUEL_POOL_RECIPES.recipeBuilder().duration(10000).EUt(20)
                 .input(fuelRodHotDepleted, material)
                 .output(fuelRodDepleted, material)
                 .buildAndRegister();
 
-        CUTTER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+        CANNER_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
                 .input(fuelRodDepleted, material)
-                .output(plate, Zircaloy, 4)
+                .output(MetaItems.FUEL_CLADDING)
                 .output(fuelPelletDepleted, material, 16)
                 .buildAndRegister();
 
@@ -41,11 +36,9 @@ public class NuclearRecipeHandler {
                 .output(fuelPellet, material)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
-                .input(plate, Zircaloy, 4)
-                .input(spring, Inconel, 1)
-                .input(round, StainlessSteel, 2)
+        CANNER_RECIPES.recipeBuilder().duration(300).EUt(VA[HV])
                 .input(fuelPellet, material, 16)
+                .input(MetaItems.FUEL_CLADDING)
                 .output(fuelRod, material)
                 .buildAndRegister();
     }
