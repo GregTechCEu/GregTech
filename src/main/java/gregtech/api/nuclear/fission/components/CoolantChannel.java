@@ -1,6 +1,7 @@
 package gregtech.api.nuclear.fission.components;
 
 import gregtech.api.capability.ICoolantHandler;
+import gregtech.api.nuclear.fission.ICoolantStats;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class CoolantChannel extends ReactorComponent {
 
-    private final Material coolant;
+    private final ICoolantStats coolant;
     private double weight;
     private int relatedFuelRodPairs;
 
@@ -18,9 +19,9 @@ public class CoolantChannel extends ReactorComponent {
     // Allows fission reactors to heat up less than a full liter of coolant.
     public double partialCoolant;
 
-    public CoolantChannel(double maxTemperature, double thermalConductivity, Material coolant, double mass,
+    public CoolantChannel(double maxTemperature, double thermalConductivity, ICoolantStats coolant, double mass,
                           ICoolantHandler inputHandler, ICoolantHandler outputHandler) {
-        super(coolant.getProperty(PropertyKey.COOLANT).getModeratorFactor(), maxTemperature, thermalConductivity, mass,
+        super(coolant.getModeratorFactor(), maxTemperature, thermalConductivity, mass,
                 true);
         this.coolant = coolant;
         this.weight = 0;
@@ -50,7 +51,7 @@ public class CoolantChannel extends ReactorComponent {
         this.weight = weight;
     }
 
-    public Material getCoolant() {
+    public ICoolantStats getCoolant() {
         return coolant;
     }
 

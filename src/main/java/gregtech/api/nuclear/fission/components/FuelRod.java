@@ -1,12 +1,12 @@
 package gregtech.api.nuclear.fission.components;
 
-import gregtech.api.unification.material.properties.FissionFuelProperty;
+import gregtech.api.nuclear.fission.IFissionFuelStats;
 
 public class FuelRod extends ReactorComponent {
 
-    private FissionFuelProperty fuel;
+    private IFissionFuelStats fuel;
 
-    public FuelRod(double maxTemperature, double thermalConductivity, FissionFuelProperty fuel, double mass) {
+    public FuelRod(double maxTemperature, double thermalConductivity, IFissionFuelStats fuel, double mass) {
         super(0, maxTemperature, thermalConductivity, mass, true);
         this.fuel = fuel;
     }
@@ -35,11 +35,11 @@ public class FuelRod extends ReactorComponent {
         return fuel.getNeutronGenerationTime();
     }
 
-    public FissionFuelProperty getFuel() {
+    public IFissionFuelStats getFuel() {
         return fuel;
     }
 
-    public void setFuel(FissionFuelProperty property) {
+    public void setFuel(IFissionFuelStats property) {
         this.fuel = property;
         this.maxTemperature = property.getMaxTemperature();
     }

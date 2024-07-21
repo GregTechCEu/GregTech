@@ -4,12 +4,10 @@ import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.nuclear.fission.components.ReactorComponent;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.CoolantProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
@@ -427,11 +425,14 @@ public class FissionReactor {
         weightedGenerationTime /= fuelRods.size();
 
         for (CoolantChannel channel : coolantChannels) {
-            CoolantProperty prop = channel.getCoolant().getProperty(PropertyKey.COOLANT);
+            ICoolantStats prop = channel.getCoolant();
+            Fluid fluid = CoolantRegistry.originalFluid(prop);
 
-            coolantBaseTemperature += channel.getCoolant().getFluid().getTemperature();
+            if (fluid != null) {
+                coolantBaseTemperature += fluid.getTemperature();
+            }
             coolantBoilingPointStandardPressure += prop.getBoilingPoint();
-            coolantExitTemperature += prop.getHotHPCoolant().getFluid().getTemperature();
+            coolantExitTemperature += prop.getHotCoolant().getTemperature();
             coolantHeatOfVaporization += prop.getHeatOfVaporization();
         }
 
@@ -465,18 +466,17 @@ public class FissionReactor {
             if (tryFluidDrain != null) {
                 int drained = tryFluidDrain.amount;
 
-                Material coolant = channel.getCoolant();
+                ICoolantStats prop = channel.getCoolant();
+                int coolantTemp = CoolantRegistry.originalFluid(prop).getTemperature();
 
-                CoolantProperty prop = coolant.getProperty(PropertyKey.COOLANT);
-
-                double cooledTemperature = prop.getHotHPCoolant().getFluid().getTemperature();
+                double cooledTemperature = prop.getHotCoolant().getTemperature();
                 if (cooledTemperature > this.temperature) {
                     continue;
                 }
 
                 double heatRemovedPerLiter = prop.getSpecificHeatCapacity() /
                         ConfigHolder.machines.nuclear.fissionCoolantDivisor *
-                        (cooledTemperature - coolant.getFluid().getTemperature());
+                        (cooledTemperature - coolantTemp);
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa
                 double heatFluxPerAreaAndTemp = 1 /
@@ -500,13 +500,13 @@ public class FissionReactor {
                 channel.partialCoolant += cappedFluidUsed - actualFlowRate;
 
                 FluidStack HPCoolant = new FluidStack(
-                        prop.getHotHPCoolant().getFluid(), actualFlowRate);
+                        prop.getHotCoolant(), actualFlowRate);
 
                 channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
                 channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
                 if (prop.accumulatesHydrogen() &&
                         this.temperature > zircaloyHydrogenReactionTemperature) {
-                    double boilingPoint = coolantBoilingPoint(coolant);
+                    double boilingPoint = coolantBoilingPoint(prop);
                     if (this.temperature > boilingPoint) {
                         this.accumulatedHydrogen += (this.temperature - boilingPoint) / boilingPoint;
                     } else if (actualFlowRate < Math.min(remainingSpace, idealFluidUsed)) {
@@ -515,7 +515,7 @@ public class FissionReactor {
                     }
                 }
 
-                this.coolantMass += cappedFluidUsed * coolant.getMass();
+                this.coolantMass += cappedFluidUsed * prop.getMass();
                 heatRemoved += cappedFluidUsed * heatRemovedPerLiter;
             }
         }
@@ -533,13 +533,13 @@ public class FissionReactor {
                 R * Math.log(this.pressure / standardPressure) / this.coolantHeatOfVaporization);
     }
 
-    protected double coolantBoilingPoint(Material coolant) {
-        if (coolant.getProperty(PropertyKey.COOLANT).getBoilingPoint() == 0) {
+    protected double coolantBoilingPoint(ICoolantStats coolant) {
+        if (coolant.getBoilingPoint() == 0) {
             return coolantBoilingPoint();
         }
-        return 1. / (1. / coolant.getProperty(PropertyKey.COOLANT).getBoilingPoint() -
+        return 1. / (1. / coolant.getBoilingPoint() -
                 R * Math.log(this.pressure / standardPressure) /
-                        coolant.getProperty(PropertyKey.COOLANT).getHeatOfVaporization());
+                        coolant.getHeatOfVaporization());
     }
 
     public void updateTemperature(int flowRate) {
