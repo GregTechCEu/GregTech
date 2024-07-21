@@ -243,25 +243,30 @@ public class FissionReactor {
                  * Geometric factor calculation is done by (rough) numerical integration along a straight path between
                  * the two cells
                  */
+                int prevX = fuelRods.get(i).getX();
+                int prevY = fuelRods.get(i).getY();
                 double resolution = ConfigHolder.machines.nuclear.fissionReactorResolution;
                 for (int t = 0; t < resolution; t++) {
-                    double x;
-                    double y;
-
-                    x = (rodTwo.getX() - rodOne.getX()) *
-                            ((float) t / resolution) + fuelRods.get(i).getX();
-                    y = (rodTwo.getY() - rodOne.getY()) *
-                            ((float) t / resolution) + fuelRods.get(i).getY();
+                    int x = (int) Math.round((rodTwo.getX() - rodOne.getX()) *
+                            ((float) t / resolution) + fuelRods.get(i).getX());
+                    int y = (int) Math.round((rodTwo.getY() - rodOne.getY()) *
+                            ((float) t / resolution) + fuelRods.get(i).getY());
                     if (x < 0 || x > reactorLayout.length - 1 || y < 0 || y > reactorLayout.length - 1) {
                         continue;
                     }
-                    ReactorComponent component = reactorLayout[(int) Math.round(x)][(int) Math.round(y)];
+                    ReactorComponent component = reactorLayout[x][y];
 
                     if (component == null) {
                         continue;
                     }
 
                     mij += component.getModerationFactor();
+
+                    if (x == prevX && y == prevY) {
+                        continue;
+                    }
+                    prevX = x;
+                    prevY = y;
 
                     /*
                      * For simplicity, we pretend that fuel rods are completely opaque to neutrons, paths that hit fuel
