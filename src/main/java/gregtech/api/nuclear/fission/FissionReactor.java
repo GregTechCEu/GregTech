@@ -223,6 +223,8 @@ public class FissionReactor {
     }
 
     public void computeGeometry() {
+        effectiveControlRods.clear();
+        effectiveCoolantChannels.clear();
         moderatorTipped = false;
         double[][] geometricMatrixSlowNeutrons = new double[fuelRods.size()][fuelRods.size()];
         double[][] geometricMatrixFastNeutrons = new double[fuelRods.size()][fuelRods.size()];
