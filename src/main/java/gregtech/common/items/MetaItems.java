@@ -564,7 +564,9 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
 
+    // Nuclear
     public static MetaItem<?>.MetaValueItem ANODE_BASKET;
+    public static MetaItem<?>.MetaValueItem FUEL_CLADDING;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();
 

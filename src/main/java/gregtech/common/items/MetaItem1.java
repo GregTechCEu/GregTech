@@ -1112,5 +1112,6 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1);
 
         ANODE_BASKET = addItem(1005, "basket.anode");
+        FUEL_CLADDING = addItem(1006, "cladding.fuel");
     }
 }
