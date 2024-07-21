@@ -297,7 +297,8 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 String.format("%.2f", this.fuelDepletionPercent * 100)));
     }
 
-    protected boolean isBlockEdge(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos, @NotNull EnumFacing direction,
+    protected boolean isBlockEdge(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
+                                  @NotNull EnumFacing direction,
                                   int steps) {
         pos.move(direction, steps);
 
