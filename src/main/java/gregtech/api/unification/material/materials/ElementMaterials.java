@@ -614,7 +614,7 @@ public class ElementMaterials {
                 .itemPipeProperties(512, 4.0f)
                 .build();
 
-        Plutonium239 = new Material.Builder(81, gregtechId("plutonium"))
+        Plutonium239 = new Material.Builder(81, gregtechId("plutonium_239"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
                 .ore(true)

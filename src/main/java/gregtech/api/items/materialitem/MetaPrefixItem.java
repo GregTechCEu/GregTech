@@ -84,10 +84,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         if (prefix.getAlternativeOreName() != null) {
             OreDictUnifier.registerOre(item, prefix.getAlternativeOreName(), material);
         }
-
-        if (material == Materials.Plutonium239) {
-            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "_239");
-        } else if (material == Materials.Saltpeter) {
+        if (material == Materials.Saltpeter) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString());
         }
     }
@@ -171,7 +168,7 @@ public class MetaPrefixItem extends StandardMetaItem {
             }
         }
     }
-    
+
     private void handleHeatDamage(@NotNull Material material, @NotNull EntityLivingBase entity) {
         float heatDamage = 0.f;
         if (material.hasProperty(PropertyKey.BLAST)) {

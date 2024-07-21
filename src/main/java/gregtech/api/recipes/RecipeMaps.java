@@ -1471,18 +1471,68 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.MOTOR)
                     .build();
 
-    public static final RecipeMap<PrimitiveRecipeBuilder> HEAT_EXCHANGER_RECIPES = new RecipeMap<>("heat_exchanger", 1,
-            0, 2, 2, new PrimitiveRecipeBuilder(), false)
-                    .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, ProgressWidget.MoveType.HORIZONTAL)
-                    .setSound(GTSoundEvents.COOLING);
+    /**
+     * Example:
+     *
+     * <pre>
+     * RecipeMap.HEAT_EXCHANGER_RECIPES.recipeBuilder()
+     *         .circuitMeta(1)
+     *         .fluidInputs(DistilledWater.getFluid(1000), HotHighPressureSteam.getFluid(100))
+     *         .fluidOutputs(Steam.getFluid(96000), DistilledWater.getFluid(100))
+     *         .duration(1)
+     *         .buildAndRegister();
+     * </pre>
+     */
+    @ZenProperty
+    public static final RecipeMap<PrimitiveRecipeBuilder> HEAT_EXCHANGER_RECIPES = new RecipeMapBuilder<>("heat_exchanger",
+            new PrimitiveRecipeBuilder())
+            .itemInputs(1)
+            .fluidInputs(2)
+            .fluidOutputs(2)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .sound(GTSoundEvents.COOLING)
+            .build();
 
-    public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMap<>("spent_fuel_pool", 1,
-            1, 1, 1, new SimpleRecipeBuilder(), false)
-                    .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
+    /**
+     * Example:
+     *
+     * <pre>
+     * RecipeMap.SPENT_FUEL_POOL_RECIPES.recipeBuilder()
+     *         .input(OrePrefix.fuelRodHotDepleted, Materials.LEU235)
+     *         .output(OrePrefix.fuelRodDepleted, Materials.LEU235)
+     *         .duration(1000)
+     *         .buildAndRegister();
+     * </pre>
+     */
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMapBuilder<>("spent_fuel_pool",
+            new SimpleRecipeBuilder())
+            .itemInputs(1)
+            .itemOutputs(1)
+            .fluidInputs(1)
+            .fluidOutputs(1)
+            .progressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL)
+            .build();
 
-    public static final RecipeMap<SimpleRecipeBuilder> GAS_CENTRIFUGE_RECIPES = new RecipeMap<>("gas_centrifuge", 0, 0,
-            1, 2, new SimpleRecipeBuilder(), false)
-                    .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR);
+    /**
+     * Example:
+     *
+     * <pre>
+     * GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[HV])
+     *      .fluidInputs(UraniumHexafluoride.getFluid(1000))
+     *      .fluidOutputs(LowEnrichedUraniumHexafluoride.getFluid(100))
+     *      .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
+     *      .buildAndRegister();
+     * </pre>
+     */
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> GAS_CENTRIFUGE_RECIPES = new RecipeMapBuilder<>("gas_centrifuge",
+            new SimpleRecipeBuilder())
+            .fluidInputs(1)
+            .fluidOutputs(2)
+            .progressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
+            .sound(GTSoundEvents.CENTRIFUGE)
+            .build();
 
     //////////////////////////////////////
     // Fuel Recipe Maps //
