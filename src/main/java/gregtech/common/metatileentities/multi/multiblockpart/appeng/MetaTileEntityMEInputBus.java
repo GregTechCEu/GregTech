@@ -319,7 +319,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.copy_paste.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
@@ -350,12 +350,13 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     }
 
     @Override
-    public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+    public final boolean onDataStickShiftRightClick(EntityPlayer player, ItemStack dataStick) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("MEInputBus", writeConfigToTag());
         dataStick.setTagCompound(tag);
         dataStick.setTranslatableName("gregtech.machine.me.item_import.data_stick.name");
-        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_copy_settings"), true);
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.import_copy_settings"), true);
+        return true;
     }
 
     protected NBTTagCompound writeConfigToTag() {
@@ -384,7 +385,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         }
         readConfigFromTag(tag.getCompoundTag("MEInputBus"));
         syncME();
-        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_paste_settings"), true);
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.import_paste_settings"), true);
         return true;
     }
 

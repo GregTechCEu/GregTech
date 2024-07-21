@@ -4497,6 +4497,12 @@ gregtech.machine.muffle.off=静音：已禁用
 gregtech.machine.perfect_oc=超频不会损失能效。
 gregtech.machine.parallel_limit=可同时处理至多§b%d§7个配方。
 
+gregtech.machine.copy_paste.tooltip=左键点击闪存以复制设置，右键点击以应用
+gregtech.machine.import_copy_settings=已将设置保存到闪存
+gregtech.machine.import_paste_settings=已从闪存应用设置
+#gregtech.machine.import.data_stick.name
+
+
 gregtech.machine.ld_item_endpoint.name=长距离物品管道接口
 gregtech.machine.ld_fluid_endpoint.name=长距离流体管道接口
 gregtech.machine.endpoint.tooltip.min_length=§b最低接口间距：§f%d格方块
@@ -5309,9 +5315,6 @@ gregtech.machine.me.fluid_export.tooltip=将流体直接存储到ME网络中
 gregtech.machine.me.fluid_export.tooltip.2=可以缓存无限数量的流体
 gregtech.machine.me.stocking_auto_pull_enabled=ME自动拉取已启用
 gregtech.machine.me.stocking_auto_pull_disabled=ME自动拉取已禁用
-gregtech.machine.me.copy_paste.tooltip=左键点击闪存以复制设置，右键点击以应用
-gregtech.machine.me.import_copy_settings=已将设置保存到闪存
-gregtech.machine.me.import_paste_settings=已从闪存应用设置
 gregtech.machine.me.item_import.data_stick.name=§oME输入总线配置数据
 gregtech.machine.me.fluid_import.data_stick.name=§oME输入仓配置数据
 

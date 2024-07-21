@@ -4125,6 +4125,11 @@ gregtech.machine.endpoint.tooltip.1=Соединяется с блоком §fТ
 gregtech.machine.endpoint.tooltip.2=Трубопровод обязан иметь §f1 Входную§7 и §f1 Выходную§7 конечную точку.
 gregtech.machine.endpoint.tooltip.3=Только Конечная точка трубопровода может находится в §fЗагруженном чанке§7.
 
+gregtech.machine.copy_paste.tooltip=ЛКС с Флешкой для копирования, ПКМ для применения
+gregtech.machine.import_copy_settings=Настройки сохранены в Флешку
+gregtech.machine.import_paste_settings=Настройки из Флешки применены
+#gregtech.machine.import.data_stick.name
+
 # Advancements
 gregtech.advancement.root_steam.name=Эра пара
 gregtech.advancement.root_steam.desc=Добро пожаловать в GregTech! Все начинается с вашего первого медного слитка.
@@ -5932,9 +5937,6 @@ gregtech.machine.me.stocking_item.tooltip=Извлекает предметы н
 gregtech.machine.me_import_item_hatch.configs.tooltip=Держит 16 предметов в наличии
 tile.gt_explosive.breaking_tooltip=При обычной добыче взрывается, добудьте с SHIFT, чтобы забрать обратно
 gregtech.machine.me.stocking_fluid.tooltip=Извлекает жидкости непосредственно из сети ME
-gregtech.machine.me.copy_paste.tooltip=ЛКС с Флешкой для копирования, ПКМ для применения
-gregtech.machine.me.import_copy_settings=Настройки сохранены в Флешку
-gregtech.machine.me.import_paste_settings=Настройки из Флешки применены
 gregtech.machine.me.fluid_import.data_stick.name=§oНастройки ME Накопительного жидкостного люка
 gregtech.recipe.dimensions_blocked=Заблокированные измерения: %s
 gregtech.gui.item_auto_input.tooltip.enabled=Авто. ввод предметов включен
