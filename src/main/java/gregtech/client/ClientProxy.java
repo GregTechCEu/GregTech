@@ -243,7 +243,7 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SuppressWarnings("deprecation") // we need the deprecated I18n to match EnderCore in all cases
+        @SuppressWarnings("deprecation") // we need the deprecated I18n to match EnderCore in all cases
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void cleanupDebugTooltips(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();

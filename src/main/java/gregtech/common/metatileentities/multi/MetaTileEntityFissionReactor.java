@@ -214,12 +214,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
      */
     public void toggleControlRodRegulation(boolean b) {
         if (fissionReactor != null) {
-            this.fissionReactor.setControlRodRegulationOn(b);
+            this.fissionReactor.controlRodRegulationOn = b;
         }
     }
 
     public boolean areControlRodsRegulated() {
-        return fissionReactor != null && this.fissionReactor.isControlRodRegulationOn();
+        return fissionReactor != null && this.fissionReactor.controlRodRegulationOn;
     }
 
     @Override
@@ -395,21 +395,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                        if (fissionReactor.needsOutput()) {
+                        if (fissionReactor.needsOutput) {
                             ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
                                     .getExportItems().insertItem(0,
                                             FissionFuelRegistry.getDepletedFuel(fuelImport.getPartialFuel()),
                                             false);
-                            this.fissionReactor.changeFuelMass(-60);
+                            this.fissionReactor.fuelMass -= 60;
                         }
                         if (canWork) {
                             fuelImport.getStackHandler().extractItem(0, 1, false);
                             needsReset |= fuelImport.setPartialFuel(fuelImport.getFuel());
-                            this.fissionReactor.changeFuelMass(60);
+                            this.fissionReactor.fuelMass += 60;
                         }
                     }
                     if (canWork) {
-                        fissionReactor.setNeedsOutput(true);
+                        fissionReactor.needsOutput = true;
                         this.fissionReactor.resetFuelDepletion();
 
                         if (needsReset) {
@@ -427,7 +427,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
             boolean melts = this.fissionReactor.checkForMeltdown();
             boolean explodes = this.fissionReactor.checkForExplosion();
-            double hydrogen = this.fissionReactor.getAccumulatedHydrogen();
+            double hydrogen = this.fissionReactor.accumulatedHydrogen;
             if (melts) {
                 this.performMeltdownEffects();
             }
@@ -756,16 +756,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     }
 
     public void syncReactorStats() {
-        this.temperature = this.fissionReactor.getTemperature();
-        this.maxTemperature = this.fissionReactor.getMaxTemperature();
-        this.pressure = this.fissionReactor.getPressure();
-        this.maxPressure = this.fissionReactor.getMaxPressure();
-        this.power = this.fissionReactor.getPower();
-        this.maxPower = this.fissionReactor.getMaxPower();
-        this.kEff = this.fissionReactor.getkEff();
-        this.controlRodInsertionValue = this.fissionReactor.getControlRodInsertion();
-        this.fuelDepletionPercent = Math.max(0, this.fissionReactor.getFuelDepletion()) /
-                this.fissionReactor.getMaxFuelDepletion();
+        this.temperature = this.fissionReactor.temperature;
+        this.maxTemperature = this.fissionReactor.maxTemperature;
+        this.pressure = this.fissionReactor.pressure;
+        this.maxPressure = this.fissionReactor.maxPressure;
+        this.power = this.fissionReactor.power;
+        this.maxPower = this.fissionReactor.maxPower;
+        this.kEff = this.fissionReactor.kEff;
+        this.controlRodInsertionValue = this.fissionReactor.controlRodInsertion;
+        this.fuelDepletionPercent = Math.max(0, this.fissionReactor.fuelDepletion) /
+                this.fissionReactor.maxFuelDepletion;
         writeCustomData(GregtechDataCodes.SYNC_REACTOR_STATS, (packetBuffer -> {
             packetBuffer.writeDouble(this.temperature);
             packetBuffer.writeDouble(this.maxTemperature);
@@ -872,7 +872,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                 FuelRod component;
                                 fuelIn.setFuel(stats);
                                 foundFuel = true;
-                                if (fissionReactor.getFuelDepletion() == 0 || fuelIn.getPartialFuel() == null) {
+                                if (fissionReactor.fuelDepletion == 0 || fuelIn.getPartialFuel() == null) {
                                     fuelIn.setPartialFuel(stats);
                                     component = new FuelRod(stats.getMaxTemperature(), 1, stats, 650);
                                     fuelIn.setInternalFuelRod(component);

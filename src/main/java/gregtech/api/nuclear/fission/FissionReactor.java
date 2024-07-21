@@ -52,7 +52,7 @@ public class FissionReactor {
     /**
      * Integers used on variables with direct player control for easier adjustments (normalize this to 0,1)
      */
-    private double controlRodInsertion;
+    public double controlRodInsertion;
     private int reactorDepth;
     private double reactorRadius;
 
@@ -61,13 +61,13 @@ public class FissionReactor {
     /**
      * Megawatts
      */
-    private double power;
+    public double power;
 
     /**
      * Temperature of the reactor
      */
-    private double temperature = roomTemperature;
-    private double pressure = standardPressure;
+    public double temperature = roomTemperature;
+    public double pressure = standardPressure;
     private double exteriorPressure = standardPressure;
     /**
      * Temperature of boiling point in kelvin at standard pressure Determined by a weighted sum of the individual
@@ -92,19 +92,19 @@ public class FissionReactor {
      * {@link FissionReactor#prepareInitialConditions()}
      */
     private double coolantBaseTemperature;
-    private double maxFuelDepletion = 1;
-    private double fuelDepletion = -1;
+    public double maxFuelDepletion = 1;
+    public double fuelDepletion = -1;
     private double neutronPoisonAmount; // can kill reactor if power is lowered and this value is high
     private double decayProductsAmount;
     private double envTemperature = roomTemperature; // maybe gotten from config per dim
-    private double accumulatedHydrogen;
+    public double accumulatedHydrogen;
     private double weightedGenerationTime = 2; // The mean generation time in seconds, accounting for delayed neutrons
 
-    private double maxTemperature = 2000;
+    public double maxTemperature = 2000;
     // Pascals
-    private double maxPressure = 15000000;
+    public double maxPressure = 15000000;
     // In MW apparently
-    private double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
+    public double maxPower = 3; // determined by the amount of fuel in reactor and neutron matricies
     public static double zircaloyHydrogenReactionTemperature = 1500;
 
     private double surfaceArea;
@@ -124,11 +124,11 @@ public class FissionReactor {
     // very much changed here for balance purposes
 
     private double coolantMass;
-    private double fuelMass;
+    public double fuelMass;
     private double structuralMass;
-    private boolean needsOutput;
-    private boolean controlRodRegulationOn = true;
-    private boolean isOn = false;
+    public boolean needsOutput;
+    public boolean controlRodRegulationOn = true;
+    protected boolean isOn = false;
 
     protected static double responseFunction(double target, double current, double criticalRate) {
         if (current < 0) {
@@ -713,69 +713,5 @@ public class FissionReactor {
         coolantChannels.clear();
         effectiveControlRods.clear();
         effectiveCoolantChannels.clear();
-    }
-
-    public double getTemperature() {
-        return temperature;
-    }
-
-    public double getMaxTemperature() {
-        return maxTemperature;
-    }
-
-    public double getkEff() {
-        return kEff;
-    }
-
-    public double getControlRodInsertion() {
-        return controlRodInsertion;
-    }
-
-    public double getPressure() {
-        return pressure;
-    }
-
-    public double getMaxPressure() {
-        return maxPressure;
-    }
-
-    public double getPower() {
-        return power;
-    }
-
-    public double getMaxPower() {
-        return maxPower;
-    }
-
-    public double getFuelDepletion() {
-        return fuelDepletion;
-    }
-
-    public double getMaxFuelDepletion() {
-        return maxFuelDepletion;
-    }
-
-    public double getAccumulatedHydrogen() {
-        return accumulatedHydrogen;
-    }
-
-    public void changeFuelMass(double amount) {
-        fuelMass += amount;
-    }
-
-    public boolean needsOutput() {
-        return needsOutput;
-    }
-
-    public void setNeedsOutput(boolean needsOutput) {
-        this.needsOutput = needsOutput;
-    }
-
-    public boolean isControlRodRegulationOn() {
-        return controlRodRegulationOn;
-    }
-
-    public void setControlRodRegulationOn(boolean controlRodRegulationOn) {
-        this.controlRodRegulationOn = controlRodRegulationOn;
     }
 }

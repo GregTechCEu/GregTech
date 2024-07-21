@@ -20,6 +20,7 @@ import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -214,6 +215,9 @@ public class MetaPrefixItem extends StandardMetaItem {
         Material material = getMaterial(itemStack);
         if (prefix == null || material == null) return;
         addMaterialTooltip(lines, itemStack);
+        if (material.isRadioactive()) {
+            lines.add(I18n.format("metaitem.info.radioactive"));
+        }
     }
 
     /**
