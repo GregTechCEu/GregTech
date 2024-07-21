@@ -75,7 +75,7 @@ public final class BQuDataFixer {
         Path questDbPath = bqDir.resolve(QUEST_DB_JSON_FILE);
         if (!Files.isRegularFile(questDbPath)) {
             LOG.info("Unable to find BQ Quest Database, assuming this is a new world");
-            return false;
+            return true;
         }
 
         JsonObject json;
