@@ -493,6 +493,8 @@ public class Materials {
     public static Material Inconel;
     public static Material BoronTrioxide;
     public static Material BoronCarbide;
+    public static Material HeavyWater;
+    public static Material HighPressureHeavyWater;
 
     /**
      * Organic chemistry

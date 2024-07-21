@@ -697,5 +697,11 @@ public class ReactorRecipes {
                 .fluidOutputs(PolychlorinatedBiphenyl.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .duration(200).EUt(VH[HV]).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .fluidInputs(Deuterium.getFluid(2000))
+                .fluidInputs(Oxygen.getFluid(1000))
+                .fluidOutputs(HeavyWater.getFluid(1000))
+                .duration(200).EUt(VH[LV]).buildAndRegister();
     }
 }
