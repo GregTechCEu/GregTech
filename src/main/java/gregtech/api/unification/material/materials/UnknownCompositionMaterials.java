@@ -6,6 +6,8 @@ import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 
+import gregtech.api.unification.material.info.MaterialIconSet;
+
 import net.minecraftforge.fluids.FluidRegistry;
 
 import static gregtech.api.unification.material.Materials.*;
@@ -334,6 +336,7 @@ public class UnknownCompositionMaterials {
         Corium = new Material.Builder(1560, gregtechId("corium"))
                 .liquid(new FluidBuilder().temperature(2500).block().density(8.0D).viscosity(10000))
                 .color(0x7A6B50)
+                .iconSet(DULL)
                 .flags(NO_UNIFICATION, STICKY, GLOWING)
                 .build();
 
@@ -648,8 +651,8 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0xD5D69C).build();
 
         SpentUraniumFuelSolution = new Material.Builder(1651, gregtechId("spent_uranium_fuel_solution"))
-                .liquid(new FluidBuilder())
-                .color(0x5B5B5B).build(); // TODO color
+                .liquid()
+                .color(0x384536).build();
 
         RadonRichGasMixture = new Material.Builder(1652, gregtechId("radon_rich_gas_mixture"))
                 .gas()

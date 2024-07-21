@@ -216,12 +216,12 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
      */
     public void toggleControlRodRegulation(boolean b) {
         if (fissionReactor != null) {
-            this.fissionReactor.controlRodRegulationOn = b;
+            this.fissionReactor.setControlRodRegulationOn(b);
         }
     }
 
     public boolean areControlRodsRegulated() {
-        return fissionReactor != null && this.fissionReactor.controlRodRegulationOn;
+        return fissionReactor != null && this.fissionReactor.isControlRodRegulationOn();
     }
 
     @Override
@@ -390,23 +390,23 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
-                        if (fissionReactor.needsOutput) {
+                        if (fissionReactor.needsOutput()) {
                             // TODO ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
                             // .getExportItems().insertItem(0,
                             // OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
                             // fuelImport.getPartialFuel()),
                             // false);
-                            this.fissionReactor.fuelMass -= 60;
+                            this.fissionReactor.changeFuelMass(-60);
                         }
                         if (canWork) {
                             fuelImport.getStackHandler().extractItem(0, 1, false);
                             needsReset |= fuelImport.setPartialFuel(fuelImport.getFuel());
-                            this.fissionReactor.fuelMass += 60;
+                            this.fissionReactor.changeFuelMass(60);
                         }
                     }
                     if (canWork) {
-                        fissionReactor.needsOutput = true;
-                        this.fissionReactor.fuelDepletion = 0.;
+                        fissionReactor.setNeedsOutput(true);
+                        this.fissionReactor.resetFuelDepletion();
 
                         if (needsReset) {
                             fissionReactor.computeGeometry();
@@ -423,7 +423,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
             boolean melts = this.fissionReactor.checkForMeltdown();
             boolean explodes = this.fissionReactor.checkForExplosion();
-            double hydrogen = this.fissionReactor.accumulatedHydrogen;
+            double hydrogen = this.fissionReactor.getAccumulatedHydrogen();
             if (melts) {
                 this.performMeltdownEffects();
             }
@@ -872,7 +872,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                                     FuelRod component;
                                     fuelIn.setFuel(property);
                                     foundFuel = true;
-                                    if (fissionReactor.fuelDepletion == 0 || fuelIn.getPartialFuel() == null) {
+                                    if (fissionReactor.getFuelDepletion() == 0 || fuelIn.getPartialFuel() == null) {
                                         fuelIn.setPartialFuel(property);
                                         component = new FuelRod(property.getMaxTemperature(), 1, property, 650);
                                         fuelIn.setInternalFuelRod(component);

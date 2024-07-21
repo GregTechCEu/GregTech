@@ -5,6 +5,8 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.function.FloatConsumer;
 
+import gregtech.api.util.function.FloatSupplier;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -12,10 +14,10 @@ import java.util.function.Supplier;
 
 public class UpdatedSliderWidget extends SliderWidget {
 
-    Supplier<Float> detector;
+    private FloatSupplier detector;
 
     public UpdatedSliderWidget(String name, int xPosition, int yPosition, int width, int height, float min, float max,
-                               float currentValue, FloatConsumer responder, Supplier<Float> detector) {
+                               float currentValue, FloatConsumer responder, FloatSupplier detector) {
         super(name, xPosition, yPosition, width, height, min, max, currentValue, responder);
         this.detector = detector;
     }
