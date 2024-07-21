@@ -1,6 +1,7 @@
 package gregtech.api.capability;
 
 import gregtech.api.items.itemhandlers.LockableItemStackHandler;
+import gregtech.api.nuclear.fission.IFissionFuelStats;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
 
@@ -8,11 +9,11 @@ import net.minecraft.item.ItemStack;
 
 public interface IFuelRodHandler extends ILockableHandler<ItemStack> {
 
-    FissionFuelProperty getFuel();
+    IFissionFuelStats getFuel();
 
-    void setFuel(FissionFuelProperty prop);
+    void setFuel(IFissionFuelStats prop);
 
-    FissionFuelProperty getPartialFuel();
+    IFissionFuelStats getPartialFuel();
 
     /**
      * Set the fuel type that's currently being processed by this specific handler.
@@ -20,7 +21,7 @@ public interface IFuelRodHandler extends ILockableHandler<ItemStack> {
      * @param prop The new fuel type.
      * @return true if the partial fuel changed.
      */
-    boolean setPartialFuel(FissionFuelProperty prop);
+    boolean setPartialFuel(IFissionFuelStats prop);
 
     void setInternalFuelRod(FuelRod rod);
 

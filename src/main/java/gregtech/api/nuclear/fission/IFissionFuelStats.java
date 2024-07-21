@@ -7,10 +7,37 @@ import org.jetbrains.annotations.NotNull;
 public interface IFissionFuelStats {
 
     /**
-     * Used internally to get the depleted fuel the first time; do not call this yourself!
-     * 
-     * @return The depleted fuel to be put into the fuel registry.
+     * @return The maximum temperature the fuel can handle before the reactor melts down.
      */
-    @NotNull
-    ItemStack getDepletedFuel();
+    int getMaxTemperature();
+
+    /**
+     * @return How long the fuel lasts in the reactor, in terms of the megajoules it makes.
+     */
+    int getDuration();
+
+    /**
+     * @return The cross section of slow neutrons that can be captured by this fuel to breed it.
+     */
+    double getSlowNeutronCaptureCrossSection();
+
+    /**
+     * @return The cross section of fast neutrons that can be captured by this fuel to breed it.
+     */
+    double getFastNeutronCaptureCrossSection();
+
+    /**
+     * @return The cross section of slow neutrons that can cause fission in this fuel.
+     */
+    double getSlowNeutronFissionCrossSection();
+
+    /**
+     * @return The cross section of fast neutrons that can cause fission in this fuel.
+     */
+    double getFastNeutronFissionCrossSection();
+
+    /**
+     * @return The average time for a neutron to be emitted during a fission event. Do not make this accurate.
+     */
+    double getNeutronGenerationTime();
 }

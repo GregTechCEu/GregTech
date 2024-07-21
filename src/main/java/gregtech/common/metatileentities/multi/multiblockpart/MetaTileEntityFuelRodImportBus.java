@@ -11,6 +11,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.nuclear.fission.FissionFuelRegistry;
+import gregtech.api.nuclear.fission.IFissionFuelStats;
 import gregtech.api.nuclear.fission.components.FuelRod;
 import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.client.renderer.texture.Textures;
@@ -44,9 +46,9 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
                                             IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
-    private FissionFuelProperty fuelProperty;
+    private IFissionFuelStats fuelProperty;
     public MetaTileEntityFuelRodExportBus pairedHatch;
-    private FissionFuelProperty partialFuel;
+    private IFissionFuelStats partialFuel;
     private FuelRod internalFuelRod;
 
     public MetaTileEntityFuelRodImportBus(ResourceLocation metaTileEntityId) {
@@ -131,7 +133,7 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
         super.readFromNBT(data);
         getLockedImport().setLock(data.getBoolean("locked"));
         if (data.hasKey("partialFuel")) {
-            // TODO this.partialFuel = GregTechAPI.materialManager.getMaterial(data.getString("partialFuel"));
+            this.partialFuel = FissionFuelRegistry.getFissionFuel(data.getInteger("partialFuel"));
         }
     }
 
@@ -139,7 +141,7 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setBoolean("locked", getLockedImport().isLocked());
         if (partialFuel != null)
-            data.setString("partialFuel", this.partialFuel.toString());
+            data.setInteger("partialFuel", this.partialFuel.hashCode());
         return super.writeToNBT(data);
     }
 
@@ -191,22 +193,22 @@ public class MetaTileEntityFuelRodImportBus extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public FissionFuelProperty getFuel() {
+    public IFissionFuelStats getFuel() {
         return this.fuelProperty;
     }
 
     @Override
-    public void setFuel(FissionFuelProperty prop) {
+    public void setFuel(IFissionFuelStats prop) {
         this.fuelProperty = prop;
     }
 
     @Override
-    public FissionFuelProperty getPartialFuel() {
+    public IFissionFuelStats getPartialFuel() {
         return this.partialFuel;
     }
 
     @Override
-    public boolean setPartialFuel(FissionFuelProperty prop) {
+    public boolean setPartialFuel(IFissionFuelStats prop) {
         this.partialFuel = prop;
         if (this.internalFuelRod != null) {
             this.internalFuelRod.setFuel(prop);

@@ -1,6 +1,7 @@
 package gregtech.api.capability;
 
 import gregtech.api.capability.impl.LockableFluidTank;
+import gregtech.api.nuclear.fission.ICoolantStats;
 import gregtech.api.unification.material.properties.CoolantProperty;
 
 import net.minecraft.util.EnumFacing;
@@ -12,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 public interface ICoolantHandler extends ILockableHandler<Fluid> {
 
     @Nullable
-    CoolantProperty getCoolant();
+    ICoolantStats getCoolant();
 
-    void setCoolant(@Nullable CoolantProperty prop);
+    void setCoolant(@Nullable ICoolantStats prop);
 
     @NotNull
     LockableFluidTank getFluidTank();

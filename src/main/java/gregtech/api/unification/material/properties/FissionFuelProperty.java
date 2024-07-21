@@ -1,6 +1,15 @@
 package gregtech.api.unification.material.properties;
 
-public class FissionFuelProperty implements IMaterialProperty {
+import gregtech.api.nuclear.fission.IFissionFuelStats;
+import gregtech.api.unification.OreDictUnifier;
+
+import gregtech.api.unification.ore.OrePrefix;
+
+import net.minecraft.item.ItemStack;
+
+import org.jetbrains.annotations.NotNull;
+
+public class FissionFuelProperty implements IMaterialProperty, IFissionFuelStats {
 
     // The max temperature the fuel can handle before it liquefies.
     private int maxTemperature;
@@ -34,6 +43,7 @@ public class FissionFuelProperty implements IMaterialProperty {
         this.neutronGenerationTime = neutronGenerationTime;
     }
 
+    @Override
     public int getMaxTemperature() {
         return maxTemperature;
     }
@@ -43,6 +53,7 @@ public class FissionFuelProperty implements IMaterialProperty {
         this.maxTemperature = maxTemperature;
     }
 
+    @Override
     public int getDuration() {
         return duration;
     }
@@ -52,6 +63,7 @@ public class FissionFuelProperty implements IMaterialProperty {
         this.duration = duration;
     }
 
+    @Override
     public double getSlowNeutronCaptureCrossSection() {
         return slowNeutronCaptureCrossSection;
     }
@@ -60,6 +72,7 @@ public class FissionFuelProperty implements IMaterialProperty {
         this.slowNeutronCaptureCrossSection = slowNeutronCaptureCrossSection;
     }
 
+    @Override
     public double getFastNeutronCaptureCrossSection() {
         return fastNeutronCaptureCrossSection;
     }
@@ -68,6 +81,7 @@ public class FissionFuelProperty implements IMaterialProperty {
         this.fastNeutronCaptureCrossSection = fastNeutronCaptureCrossSection;
     }
 
+    @Override
     public double getSlowNeutronFissionCrossSection() {
         return slowNeutronFissionCrossSection;
     }
@@ -76,6 +90,7 @@ public class FissionFuelProperty implements IMaterialProperty {
         this.slowNeutronFissionCrossSection = slowNeutronFissionCrossSection;
     }
 
+    @Override
     public double getFastNeutronFissionCrossSection() {
         return fastNeutronFissionCrossSection;
     }
@@ -84,6 +99,7 @@ public class FissionFuelProperty implements IMaterialProperty {
         this.fastNeutronFissionCrossSection = fastNeutronFissionCrossSection;
     }
 
+    @Override
     public double getNeutronGenerationTime() {
         return neutronGenerationTime;
     }

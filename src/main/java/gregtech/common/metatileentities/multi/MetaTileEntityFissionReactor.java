@@ -24,7 +24,11 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.nuclear.fission.CoolantRegistry;
+import gregtech.api.nuclear.fission.FissionFuelRegistry;
 import gregtech.api.nuclear.fission.FissionReactor;
+import gregtech.api.nuclear.fission.ICoolantStats;
+import gregtech.api.nuclear.fission.IFissionFuelStats;
 import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
@@ -34,15 +38,7 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.unification.FluidUnifier;
-import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.CoolantProperty;
-import gregtech.api.unification.material.properties.FissionFuelProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTStringUtils;
 import gregtech.api.util.GTUtility;
@@ -57,6 +53,8 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
+
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportBus;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -87,7 +85,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
-                                          implements IDataInfoProvider, IProgressBarMultiblock, ICustomEnergyCover {
+        implements IDataInfoProvider, IProgressBarMultiblock, ICustomEnergyCover {
 
     private FissionReactor fissionReactor;
     private int diameter;
@@ -131,21 +129,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 () -> this.getFillPercentage(0),
                 4, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
+                .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(1),
                 82, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
+                .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(2),
                 160, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
-                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
+                .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
         builder.widget(progressBar);
 
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
@@ -163,7 +161,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         }.setBackground(GuiTextures.DARK_SLIDER_BACKGROUND).setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
         builder.widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 80, 220, 18, 0.0f, 16000.f, flowRate,
                 this::setFlowRate).setBackground(GuiTextures.DARK_SLIDER_BACKGROUND)
-                        .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
+                .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
 
         builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(220)
@@ -173,7 +171,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
         builder.widget(new ToggleButtonWidget(215, 183, 18, 18, GuiTextures.BUTTON_LOCK,
                 this::isLocked, this::tryLocking).shouldUseBaseBackground()
-                        .setTooltipText("gregtech.gui.fission.lock"));
+                .setTooltipText("gregtech.gui.fission.lock"));
         builder.widget(new ImageWidget(215, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
 
         // Voiding Mode Button
@@ -208,7 +206,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
         return new ToggleButtonWidget(x, y, width, height, this::areControlRodsRegulated,
                 this::toggleControlRodRegulation).setButtonTexture(GuiTextures.BUTTON_CONTROL_ROD_HELPER)
-                        .setTooltipText("gregtech.gui.fission.helper");
+                .setTooltipText("gregtech.gui.fission.helper");
     }
 
     /**
@@ -382,28 +380,26 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             canWork = false;
                             this.lockingState = LockingState.MISSING_FUEL;
                             break;
-                        } /*
-                           * TODO else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height -
-                           * 1)
-                           * .getExportItems().insertItem(0,
-                           * OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, fuelImport.getFuel()), true)
-                           * .isEmpty()) {
-                           * // We still need to know if the output is blocked, even if the recipe doesn't start
-                           * // yet
-                           * canWork = false;
-                           * this.lockingState = LockingState.FUEL_CLOGGED;
-                           * break;
-                           * }
-                           */
+                        } else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height -
+                                        1)
+                                .getExportItems().insertItem(0,
+                                        FissionFuelRegistry.getDepletedFuel(fuelImport.getFuel()), true)
+                                .isEmpty()) {
+                            // We still need to know if the output is blocked, even if the recipe doesn't start
+                            // yet
+                            canWork = false;
+                            this.lockingState = LockingState.FUEL_CLOGGED;
+                            break;
+                        }
+
                     }
 
                     for (IFuelRodHandler fuelImport : this.getAbilities(MultiblockAbility.IMPORT_FUEL_ROD)) {
                         if (fissionReactor.needsOutput()) {
-                            // TODO ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
-                            // .getExportItems().insertItem(0,
-                            // OreDictUnifier.get(OrePrefix.fuelRodHotDepleted,
-                            // fuelImport.getPartialFuel()),
-                            // false);
+                            ((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height - 1)
+                                    .getExportItems().insertItem(0,
+                                            FissionFuelRegistry.getDepletedFuel(fuelImport.getPartialFuel()),
+                                            false);
                             this.fissionReactor.changeFuelMass(-60);
                         }
                         if (canWork) {
@@ -582,19 +578,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         MultiblockAbility<?>[] allowedAbilities = { MultiblockAbility.IMPORT_COOLANT, MultiblockAbility.IMPORT_FUEL_ROD,
                 MultiblockAbility.CONTROL_ROD_PORT };
         return tilePredicate((state, tile) -> {
-            if (!(tile instanceof IMultiblockAbilityPart<?> &&
-                    ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
-                return false;
-            }
-            if (tile instanceof IFissionReactorHatch hatchPart) {
-                if (!hatchPart.checkValidity(height - 1)) {
-                    state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
+                    if (!(tile instanceof IMultiblockAbilityPart<?> &&
+                            ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
+                        return false;
+                    }
+                    if (tile instanceof IFissionReactorHatch hatchPart) {
+                        if (!hatchPart.checkValidity(height - 1)) {
+                            state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
+                            return false;
+                        }
+                        return true;
+                    }
                     return false;
-                }
-                return true;
-            }
-            return false;
-        },
+                },
                 () -> Arrays.stream(allowedAbilities)
                         .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
                         .filter(Objects::nonNull).map(tile -> {
@@ -847,19 +843,17 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     if (mte instanceof ICoolantHandler coolantIn) {
                         Fluid lockedFluid = coolantIn.getLockedObject();
                         if (lockedFluid != null) {
-                            Material mat = FluidUnifier.getMaterialFromFluid(lockedFluid);
-                            if (mat != null && mat.hasProperty(PropertyKey.COOLANT) &&
-                                    mat.getProperty(PropertyKey.COOLANT).isCorrectFluid(mat, lockedFluid)) {
-                                CoolantProperty prop = mat.getProperty(PropertyKey.COOLANT);
-                                coolantIn.setCoolant(prop);
+                            ICoolantStats stats = CoolantRegistry.getCoolant(lockedFluid);
+                            if (stats != null) {
+                                coolantIn.setCoolant(stats);
                                 BlockPos exportHatchPos = currentPos.offset(coolantIn.getFrontFacing().getOpposite(),
                                         height - 1);
                                 if (getWorld().getTileEntity(
                                         exportHatchPos) instanceof IGregTechTileEntity coolantOutCandidate) {
                                     MetaTileEntity coolantOutMTE = coolantOutCandidate.getMetaTileEntity();
                                     if (coolantOutMTE instanceof MetaTileEntityCoolantExportHatch coolantOut) {
-                                        coolantOut.setCoolant(prop);
-                                        CoolantChannel component = new CoolantChannel(100050, 0, mat, 1000, coolantIn,
+                                        coolantOut.setCoolant(stats);
+                                        CoolantChannel component = new CoolantChannel(100050, 0, stats, 1000, coolantIn,
                                                 coolantOut);
                                         fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
                                         continue;
@@ -873,27 +867,24 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                     } else if (mte instanceof IFuelRodHandler fuelIn) {
                         ItemStack lockedFuel = fuelIn.getStackHandler().getStackInSlot(0);
                         if (!lockedFuel.isEmpty()) {
-                            MaterialStack mat = OreDictUnifier.getMaterial(lockedFuel);
-                            if (mat != null && OreDictUnifier.getPrefix(lockedFuel) == OrePrefix.fuelRod) {
-                                FissionFuelProperty property = mat.material.getProperty(PropertyKey.FISSION_FUEL);
-                                if (property != null) {
-                                    FuelRod component;
-                                    fuelIn.setFuel(property);
-                                    foundFuel = true;
-                                    if (fissionReactor.getFuelDepletion() == 0 || fuelIn.getPartialFuel() == null) {
-                                        fuelIn.setPartialFuel(property);
-                                        component = new FuelRod(property.getMaxTemperature(), 1, property, 650);
-                                        fuelIn.setInternalFuelRod(component);
-                                    } else {
-                                        // It's guaranteed to have this property (if the implementation is correct).
-                                        FissionFuelProperty partialProp = fuelIn.getPartialFuel();
-                                        component = new FuelRod(partialProp.getMaxTemperature(), 1, partialProp, 650);
-                                        fuelIn.setInternalFuelRod(component);
-                                    }
+                            IFissionFuelStats stats = FissionFuelRegistry.getFissionFuel(lockedFuel);
+                            if (stats != null) {
+                                FuelRod component;
+                                fuelIn.setFuel(stats);
+                                foundFuel = true;
+                                if (fissionReactor.getFuelDepletion() == 0 || fuelIn.getPartialFuel() == null) {
+                                    fuelIn.setPartialFuel(stats);
+                                    component = new FuelRod(stats.getMaxTemperature(), 1, stats, 650);
                                     fuelIn.setInternalFuelRod(component);
-                                    fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
-                                    continue;
+                                } else {
+                                    // It's guaranteed to have this property (if the implementation is correct).
+                                    IFissionFuelStats partialProp = fuelIn.getPartialFuel();
+                                    component = new FuelRod(partialProp.getMaxTemperature(), 1, partialProp, 650);
+                                    fuelIn.setInternalFuelRod(component);
                                 }
+                                fuelIn.setInternalFuelRod(component);
+                                fissionReactor.addComponent(component, i + radius - 1, j + radius - 1);
+                                continue;
                             }
                         }
                         this.unlockAll();

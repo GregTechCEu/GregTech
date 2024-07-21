@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.nuclear.fission.ICoolantStats;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
@@ -52,7 +53,7 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
 
     private boolean workingEnabled;
     private LockableFluidTank fluidTank;
-    private CoolantProperty coolant;
+    private ICoolantStats coolant;
 
     public MetaTileEntityCoolantImportHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 4, false);
@@ -183,12 +184,12 @@ public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNo
     }
 
     @Override
-    public CoolantProperty getCoolant() {
+    public ICoolantStats getCoolant() {
         return this.coolant;
     }
 
     @Override
-    public void setCoolant(CoolantProperty prop) {
+    public void setCoolant(ICoolantStats prop) {
         this.coolant = prop;
     }
 

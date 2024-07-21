@@ -5,9 +5,9 @@ import net.minecraftforge.fluids.Fluid;
 public interface ICoolantStats {
 
     /**
-     * @return The fluid with these cooling properties.
+     * @return The heated coolant fluid.
      */
-    Fluid getFluid();
+    Fluid getHotCoolant();
 
     /**
      * @return The specific heat capacity of the fluid in J/(kg*K).
@@ -31,8 +31,18 @@ public interface ICoolantStats {
     double getBoilingPoint();
 
     /**
+     * @return The heat of vaporization of the fluid in J/(kg*K).
+     */
+    double getHeatOfVaporization();
+
+    /**
      * @return If the coolant reacts with zirconium cladding at high temperatures. This is true for mostly water-based
      *         coolants.
      */
     boolean accumulatesHydrogen();
+
+    /**
+     * @return The mass of the coolant per liter in kg
+     */
+    double getMass();
 }
