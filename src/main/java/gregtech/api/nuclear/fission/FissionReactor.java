@@ -245,7 +245,7 @@ public class FissionReactor {
                  * Geometric factor calculation is done by (rough) numerical integration along a straight path between
                  * the two cells
                  */
-                double resolution = ConfigHolder.machines.fissionReactorResolution;
+                double resolution = ConfigHolder.machines.nuclear.fissionReactorResolution;
                 for (int t = 0; t < resolution; t++) {
                     double x;
                     double y;
@@ -294,7 +294,7 @@ public class FissionReactor {
                  * The fraction of fast neutrons is simply one minus the fraction of slow neutrons
                  */
                 if (pathIsClear) {
-                    mij /= ConfigHolder.machines.fissionReactorResolution;
+                    mij /= resolution;
                     geometricMatrixSlowNeutrons[i][j] = (1.0 -
                             Math.exp(-mij * rodOne.getDistance(rodTwo))) /
                             rodOne.getDistance(rodTwo);
@@ -356,11 +356,11 @@ public class FissionReactor {
                     (1 - sigmoid) * Math.pow(avgFuelRodDistance, -1);
 
             maxPower = fuelRods.size() * (avgHighEnergyFissionFactor + avgLowEnergyFissionFactor) * fuelRodFactor *
-                    ConfigHolder.machines.nuclearPowerMultiplier;
+                    ConfigHolder.machines.nuclear.nuclearPowerMultiplier;
         } else {
             // The calculations break down for the geometry, so we just do this instead.
             k = 0.00001;
-            maxPower = 0.1 * ConfigHolder.machines.nuclearPowerMultiplier;
+            maxPower = 0.1 * ConfigHolder.machines.nuclear.nuclearPowerMultiplier;
         }
         /*
          * We give each control rod and coolant channel a weight depending on how many fuel rods they affect
@@ -475,7 +475,7 @@ public class FissionReactor {
                 }
 
                 double heatRemovedPerLiter = prop.getSpecificHeatCapacity() /
-                        ConfigHolder.machines.fissionCoolantDivisor *
+                        ConfigHolder.machines.nuclear.fissionCoolantDivisor *
                         (cooledTemperature - coolant.getFluid().getTemperature());
                 // Explained by:
                 // https://physics.stackexchange.com/questions/153434/heat-transfer-between-the-bulk-of-the-fluid-inside-the-pipe-and-the-pipe-externa

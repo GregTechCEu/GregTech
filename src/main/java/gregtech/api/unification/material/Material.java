@@ -283,8 +283,8 @@ public class Material implements Comparable<Material> {
     @ZenGetter("radioactive")
     public boolean isRadioactive() {
         if (materialInfo.element != null) return materialInfo.element.halfLifeSeconds >= 0;
-        for (MaterialStack material : materialInfo.componentList)
-            if (material.material.isRadioactive()) return true;
+        for (MaterialStack stack : materialInfo.componentList)
+            if (stack.material.isRadioactive()) return true;
         return false;
     }
 
@@ -298,8 +298,8 @@ public class Material implements Comparable<Material> {
             return 6e23 * (Math.log(2) * Math.exp(-Math.log(2) / materialInfo.element.halfLifeSeconds));
         }
         double decaysPerSecond = 0;
-        for (MaterialStack material : materialInfo.componentList)
-            decaysPerSecond += material.material.getDecaysPerSecond();
+        for (MaterialStack stack : materialInfo.componentList)
+            decaysPerSecond += stack.material.getDecaysPerSecond();
         return decaysPerSecond;
     }
 
@@ -308,9 +308,9 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null) return materialInfo.element.getProtons();
         if (materialInfo.componentList.isEmpty()) return Math.max(1, Elements.Tc.getProtons());
         long totalProtons = 0, totalAmount = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalAmount += material.amount;
-            totalProtons += material.amount * material.material.getProtons();
+        for (MaterialStack stack : materialInfo.componentList) {
+            totalAmount += stack.amount;
+            totalProtons += stack.amount * stack.material.getProtons();
         }
         return totalProtons / totalAmount;
     }
@@ -320,9 +320,9 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null) return materialInfo.element.getNeutrons();
         if (materialInfo.componentList.isEmpty()) return Elements.Tc.getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalAmount += material.amount;
-            totalNeutrons += material.amount * material.material.getNeutrons();
+        for (MaterialStack stack : materialInfo.componentList) {
+            totalAmount += stack.amount;
+            totalNeutrons += stack.amount * stack.material.getNeutrons();
         }
         return totalNeutrons / totalAmount;
     }
@@ -332,9 +332,9 @@ public class Material implements Comparable<Material> {
         if (materialInfo.element != null) return materialInfo.element.getMass();
         if (materialInfo.componentList.size() == 0) return Elements.Tc.getMass();
         long totalMass = 0, totalAmount = 0;
-        for (MaterialStack material : materialInfo.componentList) {
-            totalAmount += material.amount;
-            totalMass += material.amount * material.material.getMass();
+        for (MaterialStack stack : materialInfo.componentList) {
+            totalAmount += stack.amount;
+            totalMass += stack.amount * stack.material.getMass();
         }
         return totalMass / totalAmount;
     }
@@ -1086,10 +1086,10 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder fissionFuelProperties(int maxTemperature, int duration, double slowNeutronCaptureCrossSection,
-                                             double fastNeutronCaptureCrossSection,
-                                             double slowNeutronFissionCrossSection,
-                                             double fastNeutronFissionCrossSection, double neutronGenerationTime) {
+        public Builder fissionFuel(int maxTemperature, int duration, double slowNeutronCaptureCrossSection,
+                                   double fastNeutronCaptureCrossSection,
+                                   double slowNeutronFissionCrossSection,
+                                   double fastNeutronFissionCrossSection, double neutronGenerationTime) {
             properties.ensureSet(PropertyKey.DUST);
             properties.setProperty(PropertyKey.FISSION_FUEL,
                     new FissionFuelProperty(maxTemperature, duration, slowNeutronCaptureCrossSection,

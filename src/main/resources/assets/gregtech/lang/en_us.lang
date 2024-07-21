@@ -5510,6 +5510,7 @@ gregtech.fluid.liquid_generic=Liquid %s
 gregtech.fluid.gas_generic=%s Gas
 gregtech.fluid.gas_vapor=%s Vapor
 gregtech.fluid.plasma=%s Plasma
+gregtech.fluid.molten=Molten %s
 gregtech.fluid.empty=Empty
 gregtech.fluid.amount=§9Amount: %,d/%,d L
 gregtech.fluid.temperature=§cTemperature: %,d K

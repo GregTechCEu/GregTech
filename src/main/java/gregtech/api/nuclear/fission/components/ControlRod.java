@@ -16,8 +16,9 @@ public class ControlRod extends ReactorComponent {
 
     /**
      * Normalizes the weights of a list of control rods based on the true number of fuel rod pairs.
+     * 
      * @param effectiveControlRods The control rods to normalize.
-     * @param fuelRodNum The number of fuel rods in the reactor.
+     * @param fuelRodNum           The number of fuel rods in the reactor.
      */
     public static void normalizeWeights(List<ControlRod> effectiveControlRods, int fuelRodNum) {
         for (ControlRod control_rod : effectiveControlRods) {
@@ -28,8 +29,9 @@ public class ControlRod extends ReactorComponent {
 
     /**
      * Determines the effect of a list of control rods based on how far they are inserted into a reactor.
+     * 
      * @param effectiveControlRods The list of control rods to be analyzed.
-     * @param insertion How far the control rods are inserted into the reactor, from 0 to 1.
+     * @param insertion            How far the control rods are inserted into the reactor, from 0 to 1.
      * @return A number representing the reactivity change of the reactor from the control rods.
      */
     public static double controlRodFactor(List<ControlRod> effectiveControlRods, double insertion) {
@@ -77,7 +79,8 @@ public class ControlRod extends ReactorComponent {
     }
 
     /**
-     * Automatically calculates the control rod weight (its effect on reactivity) based on the number of fuel rod pairs that it is in the way of.
+     * Automatically calculates the control rod weight (its effect on reactivity) based on the number of fuel rod pairs
+     * that it is in the way of.
      */
     public void computeWeightFromFuelRodMap() {
         this.weight = relatedFuelRodPairs * 4; // 4 being a constant to help balance this out

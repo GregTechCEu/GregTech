@@ -60,7 +60,7 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
             if (chanceBase >= 100 || chanceBase == 0) {
                 s = (this.chanceBase / 100) + "%";
             } else {
-                s = "." + this.chanceBase + "%";
+                s = "0." + this.chanceBase + "%";
             }
             if (this.chanceLogic != null && this.chanceLogic != ChancedOutputLogic.NONE &&
                     this.chanceLogic != ChancedOutputLogic.OR) {

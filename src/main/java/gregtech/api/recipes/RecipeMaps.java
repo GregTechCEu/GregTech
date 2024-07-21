@@ -1291,14 +1291,15 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> HEAT_EXCHANGER_RECIPES = new RecipeMapBuilder<>("heat_exchanger",
+    public static final RecipeMap<PrimitiveRecipeBuilder> HEAT_EXCHANGER_RECIPES = new RecipeMapBuilder<>(
+            "heat_exchanger",
             new PrimitiveRecipeBuilder())
-            .itemInputs(1)
-            .fluidInputs(2)
-            .fluidOutputs(2)
-            .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
-            .sound(GTSoundEvents.COOLING)
-            .build();
+                    .itemInputs(1)
+                    .fluidInputs(2)
+                    .fluidOutputs(2)
+                    .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+                    .sound(GTSoundEvents.COOLING)
+                    .build();
 
     /**
      * Example:
@@ -1312,34 +1313,35 @@ public class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMapBuilder<>("spent_fuel_pool",
+    public static final RecipeMap<SimpleRecipeBuilder> SPENT_FUEL_POOL_RECIPES = new RecipeMapBuilder<>(
+            "spent_fuel_pool",
             new SimpleRecipeBuilder())
-            .itemInputs(1)
-            .itemOutputs(1)
-            .fluidInputs(1)
-            .fluidOutputs(1)
-            .progressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL)
-            .build();
+                    .itemInputs(1)
+                    .itemOutputs(1)
+                    .fluidInputs(1)
+                    .fluidOutputs(1)
+                    .progressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL)
+                    .build();
 
     /**
      * Example:
      *
      * <pre>
      * GAS_CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[HV])
-     *      .fluidInputs(UraniumHexafluoride.getFluid(1000))
-     *      .fluidOutputs(LowEnrichedUraniumHexafluoride.getFluid(100))
-     *      .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
-     *      .buildAndRegister();
+     *         .fluidInputs(UraniumHexafluoride.getFluid(1000))
+     *         .fluidOutputs(LowEnrichedUraniumHexafluoride.getFluid(100))
+     *         .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
+     *         .buildAndRegister();
      * </pre>
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> GAS_CENTRIFUGE_RECIPES = new RecipeMapBuilder<>("gas_centrifuge",
             new SimpleRecipeBuilder())
-            .fluidInputs(1)
-            .fluidOutputs(2)
-            .progressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
-            .sound(GTSoundEvents.CENTRIFUGE)
-            .build();
+                    .fluidInputs(1)
+                    .fluidOutputs(2)
+                    .progressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.CIRCULAR)
+                    .sound(GTSoundEvents.CENTRIFUGE)
+                    .build();
 
     //////////////////////////////////////
     // Fuel Recipe Maps //

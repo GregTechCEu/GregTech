@@ -3,6 +3,7 @@ package gregtech.api.util;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.GTFluid;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 
 import net.minecraft.client.resources.I18n;
@@ -108,20 +109,22 @@ public class FluidTooltipUtil {
                 tooltip.add(I18n.format("gregtech.fluid.temperature.cryogenic"));
             }
 
-            if (material.hasProperty(PropertyKey.COOLANT) &&
-                    material.getProperty(PropertyKey.COOLANT).isCorrectFluid(material, fluid)) {
-                tooltip.add(I18n.format("gregtech.coolant.general"));
-                tooltip.add(I18n.format("gregtech.coolant.boiling_point",
-                        material.getProperty(PropertyKey.COOLANT).getBoilingPoint(),
-                        material.getProperty(PropertyKey.COOLANT).getHotHPCoolant().getFluid().getTemperature()));
-                tooltip.add(I18n.format("gregtech.coolant.heat_capacity",
-                        material.getProperty(PropertyKey.COOLANT).getSpecificHeatCapacity()));
-                tooltip.add(I18n.format("gregtech.coolant.cooling_factor",
-                        material.getProperty(PropertyKey.COOLANT).getCoolingFactor()));
-                tooltip.add(I18n.format("gregtech.coolant.moderation_factor",
-                        material.getProperty(PropertyKey.COOLANT).getModeratorFactor()));
-                if (material.getProperty(PropertyKey.COOLANT).accumulatesHydrogen()) {
-                    tooltip.add(I18n.format("gregtech.coolant.accumulates_hydrogen"));
+            if (material.hasProperty(PropertyKey.COOLANT)) {
+                CoolantProperty coolant = material.getProperty(PropertyKey.COOLANT);
+                if (coolant.isCorrectFluid(material, fluid)) {
+                    tooltip.add(I18n.format("gregtech.coolant.general"));
+                    tooltip.add(I18n.format("gregtech.coolant.boiling_point",
+                            coolant.getBoilingPoint(),
+                            coolant.getHotHPCoolant().getFluid().getTemperature()));
+                    tooltip.add(I18n.format("gregtech.coolant.heat_capacity",
+                            coolant.getSpecificHeatCapacity()));
+                    tooltip.add(I18n.format("gregtech.coolant.cooling_factor",
+                            coolant.getCoolingFactor()));
+                    tooltip.add(I18n.format("gregtech.coolant.moderation_factor",
+                            coolant.getModeratorFactor()));
+                    if (coolant.accumulatesHydrogen()) {
+                        tooltip.add(I18n.format("gregtech.coolant.accumulates_hydrogen"));
+                    }
                 }
             }
             return tooltip;
