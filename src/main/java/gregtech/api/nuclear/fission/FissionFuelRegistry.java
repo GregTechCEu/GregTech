@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class FissionFuelRegistry {
@@ -29,6 +30,11 @@ public class FissionFuelRegistry {
     @Nullable
     public static IFissionFuelStats getFissionFuel(ItemStack stack) {
         return FUELS.get(stack);
+    }
+
+    @NotNull
+    public static Collection<ItemStack> getAllFissionableRods() {
+        return FUELS.keySet();
     }
 
     @Nullable

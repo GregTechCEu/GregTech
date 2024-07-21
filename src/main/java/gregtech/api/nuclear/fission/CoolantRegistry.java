@@ -7,6 +7,7 @@ import net.minecraftforge.fluids.Fluid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class CoolantRegistry {
@@ -22,6 +23,11 @@ public class CoolantRegistry {
     @Nullable
     public static ICoolantStats getCoolant(Fluid fluid) {
         return COOLANTS.get(fluid);
+    }
+
+    @NotNull
+    public static Collection<Fluid> getAllCoolants() {
+        return COOLANTS.keySet();
     }
 
     @Nullable
