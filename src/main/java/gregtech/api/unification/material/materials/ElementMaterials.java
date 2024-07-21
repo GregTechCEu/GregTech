@@ -1045,28 +1045,24 @@ public class ElementMaterials {
                 .build();
 
         Plutonium238 = new Material.Builder(137, gregtechId("plutonium_238"))
-                .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu238)
                 .build();
 
         Plutonium240 = new Material.Builder(138, gregtechId("plutonium_240"))
-                .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu240)
                 .build();
 
         Plutonium242 = new Material.Builder(139, gregtechId("plutonium_242"))
-                .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu242)
                 .build();
 
         Plutonium244 = new Material.Builder(140, gregtechId("plutonium_244"))
-                .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu244)

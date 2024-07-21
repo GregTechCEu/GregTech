@@ -329,21 +329,7 @@ public class OrePrefix {
     // Nuclear stuff, introduced by Zalgo and Bruberu
     public static final OrePrefix fuelRod = new OrePrefix("fuelRod", -1, null, MaterialIconType.fuelRod, 0,
             material -> material.hasProperty(PropertyKey.FISSION_FUEL),
-            mat -> {
-                FissionFuelProperty prop = mat.getProperty(PropertyKey.FISSION_FUEL);
-                return Arrays.asList(I18n.format("metaitem.nuclear.tooltip.radioactive"),
-                        I18n.format("metaitem.nuclear.tooltip.duration",
-                                prop.getDuration()),
-                        I18n.format("metaitem.nuclear.tooltip.temperature",
-                                prop.getMaxTemperature()),
-                        I18n.format("metaitem.nuclear.tooltip.cross_sections",
-                                prop.getFastNeutronFissionCrossSection(),
-                                prop.getSlowNeutronFissionCrossSection()),
-                        I18n.format(
-                                "metaitem.nuclear.tooltip.neutron_time." +
-                                        prop.getNeutronGenerationTimeCategory(),
-                                prop.getNeutronGenerationTime()));
-            });
+            mat -> Collections.singletonList(I18n.format("metaitem.nuclear.tooltip.radioactive")));
     public static final OrePrefix fuelRodDepleted = new OrePrefix("fuelRodDepleted", -1, null,
             MaterialIconType.fuelRodDepleted, 0, material -> material.hasProperty(PropertyKey.FISSION_FUEL),
             mat -> Collections.singletonList(I18n.format("metaitem.nuclear.tooltip.radioactive")));

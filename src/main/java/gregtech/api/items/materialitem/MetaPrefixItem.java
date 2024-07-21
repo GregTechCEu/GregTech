@@ -215,9 +215,6 @@ public class MetaPrefixItem extends StandardMetaItem {
         Material material = getMaterial(itemStack);
         if (prefix == null || material == null) return;
         addMaterialTooltip(lines, itemStack);
-        if (material.isRadioactive()) {
-            lines.add(I18n.format("metaitem.info.radioactive"));
-        }
     }
 
     /**
