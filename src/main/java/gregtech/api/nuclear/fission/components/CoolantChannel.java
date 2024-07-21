@@ -42,7 +42,6 @@ public class CoolantChannel extends ReactorComponent {
         relatedFuelRodPairs++;
     }
 
-
     public double getWeight() {
         return weight;
     }
