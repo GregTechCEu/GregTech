@@ -199,9 +199,9 @@ metaitem.nuclear.tooltip.temperature=Melting point: %d K
 metaitem.nuclear.tooltip.cross_section_fast=Fast neutron prob: %d barn
 metaitem.nuclear.tooltip.cross_section_slow=Slow neutron prob: %d barn
 metaitem.nuclear.tooltip.neutron_time.0=Avg. neutron: %ds (§aSafe§r)
-metaitem.nuclear.tooltip.neutron_time.1=Avg. neutron: %ds (§eSafer§r)
-metaitem.nuclear.tooltip.neutron_time.2=Avg. neutron: %ds (§cUnsafe§r)
-metaitem.nuclear.tooltip.neutron_time.3=Avg. neutron: %ds (§4Very unsafe§r)
+metaitem.nuclear.tooltip.neutron_time.1=Avg. neutron: %ds (§cSafer§r)
+metaitem.nuclear.tooltip.neutron_time.2=Avg. neutron: %ds (§4Unsafe§r)
+metaitem.nuclear.tooltip.neutron_time.3=Avg. neutron: %ds (§0Very unsafe§r)
 
 metaitem.int_circuit.configuration=§aConfigured Value: §f%d§7
 metaitem.credit.copper.name=Copper Credit
@@ -2551,6 +2551,7 @@ metaitem.coloured.leds.name=Coloured LEDs
 metaitem.display.name=Display
 
 metaitem.basket.anode.name=Anode Basket
+metaitem.cladding.fuel.name=Fuel Cladding
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -5531,7 +5532,7 @@ gregtech.coolant.exit_temp=Hot coolant temperature: %d K
 gregtech.coolant.heat_capacity=Heat capacity: %d J/kgK
 gregtech.coolant.cooling_factor=Heat transfer: %d W/(m^2K)
 gregtech.coolant.moderation_factor=Moderation cross section: %d barn
-gregtech.coolant.accumulates_hydrogen=§6Accumulates hydrogen at 1500K
+gregtech.coolant.accumulates_hydrogen=§cAccumulates hydrogen at 1500K
 
 gregtech.gui.fuel_amount=Fuel Amount:
 gregtech.gui.fluid_amount=Fluid Amount:
