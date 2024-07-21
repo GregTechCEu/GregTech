@@ -494,7 +494,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                                 CuboidRayTraceResult hitResult) {
         ItemStack heldStack = playerIn.getHeldItem(hand);
         if (this instanceof IDataStickIntractable dsi && !playerIn.isSneaking()) {
-            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) && dsi.onDataStickRightClick(playerIn, heldStack)) {
+            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) &&
+                    dsi.onDataStickRightClick(playerIn, heldStack)) {
                 return true;
             }
         }
@@ -660,9 +661,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return true;
     }
 
-    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
-
-    }
+    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {}
 
     /**
      * @return true if the player must sneak to rotate this metatileentity, otherwise false
