@@ -11,8 +11,9 @@
       "gas_centrifuge_column" : {
         "model" : "gregtech:gas_centrifuge",
         "textures" : {
-          "0" : "gregtech:blocks/casings/nuclear/gas_centrifuge",
-          "particle" : "gregtech:blocks/casings/nuclear/gas_centrifuge"
+          "0" : "gregtech:blocks/casings/nuclear/gas_centrifuge_side",
+          "1" : "gregtech:blocks/casings/nuclear/gas_centrifuge_end",
+          "particle" : "gregtech:blocks/casings/nuclear/gas_centrifuge_side"
         }
       }
     }
