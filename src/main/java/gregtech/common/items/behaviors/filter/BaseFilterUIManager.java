@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public abstract class BaseFilterUIManager implements IItemBehaviour, ItemUIFacto
     }
 
     @Override
-    public abstract ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager);
+    public abstract ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager);
 
     protected final ModularPanel createBasePanel(ItemStack stack) {
         return GTGuis.createPanel(stack, 176, 188)

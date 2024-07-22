@@ -24,7 +24,7 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -242,12 +242,12 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         return super.buildUI(guiData, guiSyncManager).height(192 + 36);
     }
 
     @Override
-    protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+    protected ParentWidget<?> createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
         var transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
         transferMode.updateCacheFromSource(true);
         syncManager.syncValue("transfer_mode", transferMode);
