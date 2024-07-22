@@ -5,22 +5,19 @@ import gregtech.api.nuclear.fission.CoolantRegistry;
 import gregtech.api.nuclear.fission.ICoolantStats;
 import gregtech.common.metatileentities.MetaTileEntities;
 
-import mezz.jei.api.gui.IGuiFluidStackGroup;
-
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.gui.IGuiItemStackGroup;
+import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
-
-import net.minecraft.client.resources.I18n;
-
 import org.jetbrains.annotations.Nullable;
 
 public class CoolantCategory extends BasicRecipeCategory<CoolantInfo, CoolantInfo> {
+
     private final IDrawable icon;
     protected final IDrawable slot;
     private final IDrawable arrow;
@@ -34,8 +31,10 @@ public class CoolantCategory extends BasicRecipeCategory<CoolantInfo, CoolantInf
         super("coolant", "fission.coolant.name", guiHelper.createBlankDrawable(176, 90), guiHelper);
 
         this.icon = guiHelper.createDrawableIngredient(MetaTileEntities.FISSION_REACTOR.getStackForm());
-        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
-        this.arrow = guiHelper.drawableBuilder(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 20, 20, 20).setTextureSize(20, 40).build();
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18)
+                .build();
+        this.arrow = guiHelper.drawableBuilder(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 20, 20, 20)
+                .setTextureSize(20, 40).build();
     }
 
     @Nullable
@@ -69,7 +68,6 @@ public class CoolantCategory extends BasicRecipeCategory<CoolantInfo, CoolantInf
         } else {
             hydrogen = "";
         }
-
     }
 
     @Override

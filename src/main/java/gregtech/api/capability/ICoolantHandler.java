@@ -2,7 +2,6 @@ package gregtech.api.capability;
 
 import gregtech.api.capability.impl.LockableFluidTank;
 import gregtech.api.nuclear.fission.ICoolantStats;
-import gregtech.api.unification.material.properties.CoolantProperty;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;

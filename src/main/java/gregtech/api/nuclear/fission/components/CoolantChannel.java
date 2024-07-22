@@ -2,8 +2,6 @@ package gregtech.api.nuclear.fission.components;
 
 import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.nuclear.fission.ICoolantStats;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.PropertyKey;
 
 import java.util.List;
 

@@ -17,7 +17,6 @@ import gregtech.api.metatileentity.multiblock.IFissionReactorHatch;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.nuclear.fission.ICoolantStats;
-import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockFissionCasing;
 import gregtech.common.blocks.MetaBlocks;
@@ -32,7 +31,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -49,8 +47,8 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.FISSION_LOCK_UPDATE;
 
 public class MetaTileEntityCoolantImportHatch extends MetaTileEntityMultiblockNotifiablePart
-        implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler,
-                   IControllable, IFissionReactorHatch {
+                                              implements IMultiblockAbilityPart<ICoolantHandler>, ICoolantHandler,
+                                              IControllable, IFissionReactorHatch {
 
     private boolean workingEnabled;
     private LockableFluidTank fluidTank;

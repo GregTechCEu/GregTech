@@ -1,9 +1,5 @@
 package gregtech.api.nuclear.fission;
 
-import net.minecraft.item.ItemStack;
-
-import org.jetbrains.annotations.NotNull;
-
 public interface IFissionFuelStats {
 
     /**
@@ -43,7 +39,9 @@ public interface IFissionFuelStats {
 
     /**
      * Helper method for the tooltip
-     * @return An integer corresponding to the stability of the fuel. 0 corresponds to stable, 1 to somewhat stable, 2 to dangerous, 3 to very dangerous
+     * 
+     * @return An integer corresponding to the stability of the fuel. 0 corresponds to stable, 1 to somewhat stable, 2
+     *         to dangerous, 3 to very dangerous
      */
     default int getNeutronGenerationTimeCategory() {
         if (this.getNeutronGenerationTime() > 2) {

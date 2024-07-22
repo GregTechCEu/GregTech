@@ -71,11 +71,11 @@ import java.util.stream.Stream;
 
 @JEIPlugin
 @GregTechModule(
-        moduleID = GregTechModules.MODULE_JEI,
-        containerID = GTValues.MODID,
-        modDependencies = Mods.Names.JUST_ENOUGH_ITEMS,
-        name = "GregTech JEI Integration",
-        description = "JustEnoughItems Integration Module")
+                moduleID = GregTechModules.MODULE_JEI,
+                containerID = GTValues.MODID,
+                modDependencies = Mods.Names.JUST_ENOUGH_ITEMS,
+                name = "GregTech JEI Integration",
+                description = "JustEnoughItems Integration Module")
 public class JustEnoughItemsModule extends IntegrationSubmodule implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
@@ -173,7 +173,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     }
 
                     registry.addRecipes(recipeStream.map(r -> new GTRecipeWrapper(recipeMap, r))
-                                    .collect(Collectors.toList()),
+                            .collect(Collectors.toList()),
                             entry.getKey().getUniqueID());
                 }
             }

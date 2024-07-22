@@ -1,13 +1,6 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.nuclear.fission.IFissionFuelStats;
-import gregtech.api.unification.OreDictUnifier;
-
-import gregtech.api.unification.ore.OrePrefix;
-
-import net.minecraft.item.ItemStack;
-
-import org.jetbrains.annotations.NotNull;
 
 public class FissionFuelProperty implements IMaterialProperty, IFissionFuelStats {
 
