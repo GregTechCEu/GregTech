@@ -1521,7 +1521,6 @@ public final class RecipeMaps {
     public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS = new RecipeMapBuilder<>("plasma_generator",
             new FuelRecipeBuilder())
                     .fluidInputs(1)
-                    .fluidOutputs(1)
                     .fluidSlotOverlay(GuiTextures.CENTRIFUGE_OVERLAY, false)
                     .progressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR)
                     .sound(GTSoundEvents.TURBINE)
@@ -1532,7 +1531,6 @@ public final class RecipeMaps {
     public static final RecipeMap<BoilerFuelRecipeBuilder> BOILER_FUELS = new RecipeMapBuilder<>(
             "large_steam_boiler", new BoilerFuelRecipeBuilder())
             .fluidInputs(1)
-            .fluidOutputs(1)
             .fluidSlotOverlay(GuiTextures.FURNACE_OVERLAY_2, false)
             .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
             .sound(GTSoundEvents.COMBUSTION)
