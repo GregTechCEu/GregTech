@@ -7,6 +7,7 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.recipes.builders.BoilerFuelRecipeBuilder;
 import gregtech.api.recipes.builders.CircuitAssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.ComputationRecipeBuilder;
 import gregtech.api.recipes.builders.FuelRecipeBuilder;
@@ -1526,6 +1527,17 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.TURBINE)
                     .allowEmptyOutputs()
                     .build();
+
+    // No ZenProperty because it steals the info from COMBUSTION_GENERATOR_FUELS and SEMI_FLUID_GENERATOR_FUELS
+    public static final RecipeMap<BoilerFuelRecipeBuilder> BOILER_FUELS = new RecipeMapBuilder<>(
+            "large_steam_boiler", new BoilerFuelRecipeBuilder())
+            .fluidInputs(1)
+            .fluidOutputs(1)
+            .fluidSlotOverlay(GuiTextures.FURNACE_OVERLAY_2, false)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
+            .sound(GTSoundEvents.COMBUSTION)
+            .allowEmptyOutputs()
+            .build();
 
     private RecipeMaps() {}
 }
