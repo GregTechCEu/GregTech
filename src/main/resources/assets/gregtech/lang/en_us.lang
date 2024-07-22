@@ -716,18 +716,18 @@ metaitem.wafer.system_on_chip.name=SoC Wafer
 metaitem.wafer.system_on_chip.tooltip=Raw Basic Circuit
 metaitem.wafer.simple_system_on_chip.name=Simple SoC Wafer
 metaitem.wafer.simple_system_on_chip.tooltip=Raw Simple Circuit
-metaitem.engraved.crystal_chip.name=Engraved Crystal Chip
-metaitem.engraved.crystal_chip.tooltip=Needed for Circuits
-metaitem.crystal.raw.name=Raw Crystal Chip
-metaitem.crystal.raw.tooltip=Raw Crystal Processor
-metaitem.crystal.raw_chip.name=Raw Crystal Chip Parts
-metaitem.crystal.raw_chip.tooltip=Raw Crystal Processor Parts
+metaitem.crystal.lattice.name=Duranium Monotelluride Lattice
+metaitem.crystal.lattice.tooltip=Dr. Tellurium
+metaitem.crystal.wafer.name=Crystalline Wafer
+metaitem.crystal.wafer.tooltip=Crystal Superlattice
+metaitem.crystal.memory_fragment.name=Crystal Memory Fragment
+metaitem.crystal.memory_fragment.tooltip=Micro Memory
 metaitem.engraved.lapotron_chip.name=Engraved Lapotron Crystal Chip
 
-metaitem.crystal.central_processing_unit.name=Crystal CPU
-metaitem.crystal.central_processing_unit.tooltip=Crystal Processing Unit
-metaitem.crystal.system_on_chip.name=Crystal SoC
-metaitem.crystal.system_on_chip.tooltip=Crystal System on Chip
+metaitem.crystal.memory_unit.name=Crystalline Memory Unit
+metaitem.crystal.memory_unit.tooltip=Better Processor Memory
+metaitem.crystal.pram.name=PRAM
+metaitem.crystal.pram.tooltip=Promethium Random Access Memory
 metaitem.plate.advanced_system_on_chip.name=ASoC
 metaitem.plate.advanced_system_on_chip.tooltip=Advanced System on Chip
 metaitem.plate.highly_advanced_system_on_chip.name=HASoC
@@ -814,13 +814,13 @@ metaitem.circuit.quantum_mainframe.tooltip=Quantum Computing comes to life!/n§a
 
 # T6: Crystal
 metaitem.circuit.crystal_processor.name=Crystal Processor
-metaitem.circuit.crystal_processor.tooltip=Taking Advantage of Crystal Engraving/n§9IV-Tier Circuit
+metaitem.circuit.crystal_processor.tooltip=Taking Advantage of Crystal Memory/n§9IV-Tier Circuit
 metaitem.circuit.crystal_assembly.name=Crystal Processor Assembly
-metaitem.circuit.crystal_assembly.tooltip=Taking Advantage of Crystal Engraving/n§9LuV-Tier Circuit
+metaitem.circuit.crystal_assembly.tooltip=Taking Advantage of Crystal Memory/n§9LuV-Tier Circuit
 metaitem.circuit.crystal_computer.name=Crystal Supercomputer
-metaitem.circuit.crystal_computer.tooltip=Taking Advantage of Crystal Engraving/n§9ZPM-Tier Circuit
+metaitem.circuit.crystal_computer.tooltip=Taking Advantage of Crystal Memory/n§9ZPM-Tier Circuit
 metaitem.circuit.crystal_mainframe.name=Crystal Processor Mainframe
-metaitem.circuit.crystal_mainframe.tooltip=Taking Advantage of Crystal Engraving/n§9UV-Tier Circuit
+metaitem.circuit.crystal_mainframe.tooltip=Taking Advantage of Crystal Memory/n§9UV-Tier Circuit
 
 # T7: Wetware
 metaitem.circuit.wetware_processor.name=Wetware Processor
@@ -1899,6 +1899,8 @@ gregtech.material.boron_trioxide=Boron Trioxide
 gregtech.material.boron_carbide=Boron Carbide
 gregtech.material.heavy_water=Heavy Water
 gregtech.material.high_pressure_heavy_water=High Pressure Heavy Water
+gregtech.material.antimony_telluride=Antimony Telluride
+
 
 # Organic Chemistry Materials
 gregtech.material.silicone_rubber=Silicone Rubber

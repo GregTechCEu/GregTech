@@ -594,5 +594,11 @@ public class MixerRecipes {
                 .circuitMeta(1)
                 .output(dust, RTMAlloy, 7)
                 .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(350).EUt(VA[IV])
+                .input(dust, Antimony, 2)
+                .input(dust, Tellurium, 3)
+                .output(dust, AntimonyTelluride, 5)
+                .buildAndRegister();
     }
 }

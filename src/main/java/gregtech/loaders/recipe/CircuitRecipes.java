@@ -663,75 +663,47 @@ public class CircuitRecipes {
                 .duration(37).EUt(VA[EV]).buildAndRegister();
 
         // Crystal Circuit Components
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(plate, Tellurium)
+                .fluidInputs(Duranium.getFluid(144))
+                .output(SPARSE_CRYSTALLINE_LATTICE)
+                .duration(130).EUt(VA[LuV]).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(SPARSE_CRYSTALLINE_LATTICE)
+                .fluidInputs(Water.getFluid(1000))
+                .input(dust, AntimonyTelluride, 3)
+                .output(CRYSTALLINE_WAFER)
+                .duration(18000).EUt(VA[IV]).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(SPARSE_CRYSTALLINE_LATTICE)
+                .fluidInputs(DistilledWater.getFluid(1000))
+                .input(dust, AntimonyTelluride, 3)
+                .output(CRYSTALLINE_WAFER)
+                .duration(12000).EUt(VA[IV]).buildAndRegister();
+
         LASER_ENGRAVER_RECIPES.recipeBuilder()
-                .input(ENGRAVED_CRYSTAL_CHIP)
+                .input(CRYSTALLINE_WAFER)
                 .notConsumable(craftingLens, Color.Lime)
-                .output(CRYSTAL_CENTRAL_PROCESSING_UNIT)
+                .output(CRYSTALLINE_MEMORY_UNIT)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(100).EUt(10000).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder()
-                .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
-                .notConsumable(craftingLens, Color.Blue)
-                .output(CRYSTAL_SYSTEM_ON_CHIP)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(100).EUt(40000).buildAndRegister();
-
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(gemExquisite, Emerald)
-                .fluidInputs(Europium.getFluid(L / 9))
-                .chancedOutput(RAW_CRYSTAL_CHIP, 1000, 2000)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(12000).EUt(320).buildAndRegister();
-
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(gemExquisite, Olivine)
-                .fluidInputs(Europium.getFluid(L / 9))
-                .chancedOutput(RAW_CRYSTAL_CHIP, 1000, 2000)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(12000).EUt(320).buildAndRegister();
-
         FORGE_HAMMER_RECIPES.recipeBuilder()
-                .input(RAW_CRYSTAL_CHIP)
-                .output(RAW_CRYSTAL_CHIP_PART, 9)
+                .input(CRYSTALLINE_MEMORY_UNIT)
+                .output(CRYSTAL_MEMORY_FRAGMENT, 9)
+                .cleanroom(CleanroomType.CLEANROOM)
                 .EUt(VA[HV]).duration(100).buildAndRegister();
 
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(RAW_CRYSTAL_CHIP_PART)
-                .fluidInputs(Europium.getFluid(L / 9))
-                .output(RAW_CRYSTAL_CHIP)
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(CRYSTAL_MEMORY_FRAGMENT)
+                .input(wireFine, Promethium)
+                .input(foil, Tantalum)
+                .fluidInputs(SolderingAlloy.getFluid(L / 3))
+                .output(PROMETHIUM_RANDOM_ACCESS_MEMORY)
                 .cleanroom(CleanroomType.CLEANROOM)
-                .duration(12000).EUt(VA[HV]).buildAndRegister();
-
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(RAW_CRYSTAL_CHIP_PART)
-                .fluidInputs(Mutagen.getFluid(250))
-                .chancedOutput(RAW_CRYSTAL_CHIP, 8000, 250)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(12000).EUt(VA[HV]).buildAndRegister();
-
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(RAW_CRYSTAL_CHIP_PART)
-                .fluidInputs(BacterialSludge.getFluid(250))
-                .chancedOutput(RAW_CRYSTAL_CHIP, 8000, 250)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(12000).EUt(VA[HV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(plate, Emerald)
-                .input(RAW_CRYSTAL_CHIP)
-                .fluidInputs(Helium.getFluid(1000))
-                .output(ENGRAVED_CRYSTAL_CHIP)
-                .blastFurnaceTemp(5000)
-                .duration(900).EUt(VA[HV]).buildAndRegister();
-
-        BLAST_RECIPES.recipeBuilder()
-                .input(plate, Olivine)
-                .input(RAW_CRYSTAL_CHIP)
-                .fluidInputs(Helium.getFluid(1000))
-                .output(ENGRAVED_CRYSTAL_CHIP)
-                .blastFurnaceTemp(5000)
-                .duration(900).EUt(VA[HV]).buildAndRegister();
+                .duration(200).EUt(VA[IV]).buildAndRegister();
 
         // Quantum Parts
         CHEMICAL_BATH_RECIPES.recipeBuilder()
@@ -1399,7 +1371,7 @@ public class CircuitRecipes {
         // IV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(9600).duration(200)
                 .input(ELITE_CIRCUIT_BOARD)
-                .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
+                .input(CRYSTALLINE_MEMORY_UNIT, 2)
                 .input(NANO_CENTRAL_PROCESSING_UNIT, 2)
                 .input(ADVANCED_SMD_CAPACITOR, 6)
                 .input(ADVANCED_SMD_TRANSISTOR, 6)
@@ -1411,7 +1383,8 @@ public class CircuitRecipes {
         // IV SoC
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(86000).duration(100)
                 .input(ELITE_CIRCUIT_BOARD)
-                .input(CRYSTAL_SYSTEM_ON_CHIP)
+                .input(CRYSTALLINE_MEMORY_UNIT, 3)
+                .input(HIGHLY_ADVANCED_SOC)
                 .input(wireFine, NiobiumTitanium, 8)
                 .input(bolt, YttriumBariumCuprate, 8)
                 .output(CRYSTAL_PROCESSOR_IV, outputAmount * 2)
@@ -1424,7 +1397,7 @@ public class CircuitRecipes {
                 .input(CRYSTAL_PROCESSOR_IV, 2)
                 .input(ADVANCED_SMD_INDUCTOR, 4)
                 .input(ADVANCED_SMD_CAPACITOR, 8)
-                .input(RANDOM_ACCESS_MEMORY, 24)
+                .input(PROMETHIUM_RANDOM_ACCESS_MEMORY, 24)
                 .input(wireFine, NiobiumTitanium, 16)
                 .output(CRYSTAL_ASSEMBLY_LUV)
                 .solderMultiplier(2)
@@ -1435,7 +1408,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(9600).duration(400)
                 .input(ELITE_CIRCUIT_BOARD)
                 .input(CRYSTAL_ASSEMBLY_LUV, 2)
-                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(PROMETHIUM_RANDOM_ACCESS_MEMORY, 4)
                 .input(NOR_MEMORY_CHIP, 32)
                 .input(NAND_MEMORY_CHIP, 64)
                 .input(wireFine, NiobiumTitanium, 32)
@@ -1448,7 +1421,7 @@ public class CircuitRecipes {
         ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(VA[LuV]).duration(800)
                 .input(frameGt, HSSE, 2)
                 .input(CRYSTAL_COMPUTER_ZPM, 2)
-                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(PROMETHIUM_RANDOM_ACCESS_MEMORY, 32)
                 .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
                 .input(wireGtSingle, NiobiumTitanium, 8)
                 .input(ADVANCED_SMD_INDUCTOR, 8)
@@ -1479,7 +1452,7 @@ public class CircuitRecipes {
         // LuV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(38400).duration(200)
                 .input(NEURO_PROCESSOR)
-                .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
+                .input(CRYSTALLINE_MEMORY_UNIT, 2)
                 .input(NANO_CENTRAL_PROCESSING_UNIT)
                 .input(ADVANCED_SMD_CAPACITOR, 8)
                 .input(ADVANCED_SMD_TRANSISTOR, 8)
@@ -1491,6 +1464,7 @@ public class CircuitRecipes {
         // SoC LuV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(150000).duration(100)
                 .input(NEURO_PROCESSOR)
+                .input(CRYSTALLINE_MEMORY_UNIT, 3)
                 .input(HIGHLY_ADVANCED_SOC)
                 .input(wireFine, YttriumBariumCuprate, 8)
                 .input(bolt, Naquadah, 8)
@@ -1504,7 +1478,7 @@ public class CircuitRecipes {
                 .input(WETWARE_PROCESSOR_LUV, 2)
                 .input(ADVANCED_SMD_INDUCTOR, 6)
                 .input(ADVANCED_SMD_CAPACITOR, 12)
-                .input(RANDOM_ACCESS_MEMORY, 24)
+                .input(PROMETHIUM_RANDOM_ACCESS_MEMORY, 24)
                 .input(wireFine, YttriumBariumCuprate, 16)
                 .solderMultiplier(2)
                 .output(WETWARE_PROCESSOR_ASSEMBLY_ZPM)
@@ -1517,7 +1491,7 @@ public class CircuitRecipes {
                 .input(WETWARE_PROCESSOR_ASSEMBLY_ZPM, 2)
                 .input(ADVANCED_SMD_DIODE, 8)
                 .input(NOR_MEMORY_CHIP, 16)
-                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(PROMETHIUM_RANDOM_ACCESS_MEMORY, 32)
                 .input(wireFine, YttriumBariumCuprate, 24)
                 .input(foil, Polybenzimidazole, 32)
                 .input(plate, Europium, 4)
@@ -1538,7 +1512,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_RESISTOR, 32)
                 .input(ADVANCED_SMD_INDUCTOR, 32)
                 .input(foil, Polybenzimidazole, 64)
-                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(PROMETHIUM_RANDOM_ACCESS_MEMORY, 32)
                 .input(wireGtDouble, EnrichedNaquadahTriniumEuropiumDuranide, 16)
                 .input(plate, Europium, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
@@ -1582,7 +1556,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder()
                 .input(WETWARE_CIRCUIT_BOARD)
                 .input(circuit, Tier.ZPM, 2)
-                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(PROMETHIUM_RANDOM_ACCESS_MEMORY, 32)
                 .input(NOR_MEMORY_CHIP, 64)
                 .input(NAND_MEMORY_CHIP, 64)
                 .input(wireFine, YttriumBariumCuprate, 32)

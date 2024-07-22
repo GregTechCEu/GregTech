@@ -978,11 +978,11 @@ public class MetaItem1 extends StandardMetaItem {
         // T13: ???
 
         // Crystal Circuit Components: ID 701-705
-        RAW_CRYSTAL_CHIP = addItem(701, "crystal.raw");
-        RAW_CRYSTAL_CHIP_PART = addItem(702, "crystal.raw_chip");
-        ENGRAVED_CRYSTAL_CHIP = addItem(703, "engraved.crystal_chip");
-        CRYSTAL_CENTRAL_PROCESSING_UNIT = addItem(704, "crystal.central_processing_unit");
-        CRYSTAL_SYSTEM_ON_CHIP = addItem(705, "crystal.system_on_chip");
+        SPARSE_CRYSTALLINE_LATTICE = addItem(701, "crystal.lattice");
+        CRYSTALLINE_WAFER = addItem(702, "crystal.wafer");
+        CRYSTALLINE_MEMORY_UNIT = addItem(703, "crystal.memory_unit");
+        CRYSTAL_MEMORY_FRAGMENT = addItem(704, "crystal.memory_fragment");
+        PROMETHIUM_RANDOM_ACCESS_MEMORY = addItem(705, "crystal.pram");
 
         // Wetware Circuit Components: ID 706-710
         NEURO_PROCESSOR = addItem(708, "processor.neuro");
