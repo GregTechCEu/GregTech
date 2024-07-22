@@ -416,6 +416,6 @@ public class MaterialFlagAddition {
         HeavyWater.setProperty(PropertyKey.COOLANT,
                 new CoolantProperty(HeavyWater, HighPressureHeavyWater, FluidStorageKeys.LIQUID, 4., 1000,
                         374.4, 2064000, 4228.)
-                        .setAccumulatesHydrogen(true));
+                                .setAccumulatesHydrogen(true));
     }
 }

@@ -27,7 +27,8 @@ public class CoolantProperty implements IMaterialProperty, ICoolantStats {
 
     private double mass;
 
-    public CoolantProperty(Material mat, Material hotHPCoolant, FluidStorageKey key, double moderatorFactor, double coolingFactor,
+    public CoolantProperty(Material mat, Material hotHPCoolant, FluidStorageKey key, double moderatorFactor,
+                           double coolingFactor,
                            double boilingPoint, double heatOfVaporization,
                            double specificHeatCapacity) {
         this.hotHPCoolant = hotHPCoolant;

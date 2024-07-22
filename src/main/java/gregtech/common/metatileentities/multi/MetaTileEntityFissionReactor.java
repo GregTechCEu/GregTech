@@ -53,7 +53,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityControlRodPort;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCoolantExportHatch;
-
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFuelRodImportBus;
 
 import net.minecraft.block.state.IBlockState;
@@ -85,7 +84,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
-        implements IDataInfoProvider, IProgressBarMultiblock, ICustomEnergyCover {
+                                          implements IDataInfoProvider, IProgressBarMultiblock, ICustomEnergyCover {
 
     private FissionReactor fissionReactor;
     private int diameter;
@@ -129,21 +128,21 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                 () -> this.getFillPercentage(0),
                 4, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_HEAT, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
+                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 0));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(1),
                 82, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_PRESSURE, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
+                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 1));
         builder.widget(progressBar);
 
         progressBar = new ProgressWidget(
                 () -> this.getFillPercentage(2),
                 160, 115, 76, 7,
                 GuiTextures.PROGRESS_BAR_FISSION_ENERGY, ProgressWidget.MoveType.HORIZONTAL)
-                .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
+                        .setHoverTextConsumer(list -> this.addBarHoverText(list, 2));
         builder.widget(progressBar);
 
         builder.label(9, 9, getMetaFullName(), 0xFFFFFF);
@@ -161,7 +160,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         }.setBackground(GuiTextures.DARK_SLIDER_BACKGROUND).setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
         builder.widget(new SliderWidget("gregtech.gui.fission.coolant_flow", 10, 80, 220, 18, 0.0f, 16000.f, flowRate,
                 this::setFlowRate).setBackground(GuiTextures.DARK_SLIDER_BACKGROUND)
-                .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
+                        .setSliderIcon(GuiTextures.DARK_SLIDER_ICON));
 
         builder.widget(new AdvancedTextWidget(9, 20, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(220)
@@ -171,7 +170,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
 
         builder.widget(new ToggleButtonWidget(215, 183, 18, 18, GuiTextures.BUTTON_LOCK,
                 this::isLocked, this::tryLocking).shouldUseBaseBackground()
-                .setTooltipText("gregtech.gui.fission.lock"));
+                        .setTooltipText("gregtech.gui.fission.lock"));
         builder.widget(new ImageWidget(215, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
 
         // Voiding Mode Button
@@ -206,7 +205,7 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
     protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
         return new ToggleButtonWidget(x, y, width, height, this::areControlRodsRegulated,
                 this::toggleControlRodRegulation).setButtonTexture(GuiTextures.BUTTON_CONTROL_ROD_HELPER)
-                .setTooltipText("gregtech.gui.fission.helper");
+                        .setTooltipText("gregtech.gui.fission.helper");
     }
 
     /**
@@ -382,16 +381,16 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
                             this.lockingState = LockingState.MISSING_FUEL;
                             break;
                         } else if (!((MetaTileEntityFuelRodImportBus) fuelImport).getExportHatch(this.height -
-                                        1)
+                                1)
                                 .getExportItems().insertItem(0,
                                         FissionFuelRegistry.getDepletedFuel(fuelImport.getFuel()), true)
                                 .isEmpty()) {
-                            // We still need to know if the output is blocked, even if the recipe doesn't start
-                            // yet
-                            canWork = false;
-                            this.lockingState = LockingState.FUEL_CLOGGED;
-                            break;
-                        }
+                                    // We still need to know if the output is blocked, even if the recipe doesn't start
+                                    // yet
+                                    canWork = false;
+                                    this.lockingState = LockingState.FUEL_CLOGGED;
+                                    break;
+                                }
 
                     }
 
@@ -579,19 +578,19 @@ public class MetaTileEntityFissionReactor extends MultiblockWithDisplayBase
         MultiblockAbility<?>[] allowedAbilities = { MultiblockAbility.IMPORT_COOLANT, MultiblockAbility.IMPORT_FUEL_ROD,
                 MultiblockAbility.CONTROL_ROD_PORT };
         return tilePredicate((state, tile) -> {
-                    if (!(tile instanceof IMultiblockAbilityPart<?> &&
-                            ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
-                        return false;
-                    }
-                    if (tile instanceof IFissionReactorHatch hatchPart) {
-                        if (!hatchPart.checkValidity(height - 1)) {
-                            state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
-                            return false;
-                        }
-                        return true;
-                    }
+            if (!(tile instanceof IMultiblockAbilityPart<?> &&
+                    ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()))) {
+                return false;
+            }
+            if (tile instanceof IFissionReactorHatch hatchPart) {
+                if (!hatchPart.checkValidity(height - 1)) {
+                    state.setError(new PatternStringError("gregtech.multiblock.pattern.error.hatch_invalid"));
                     return false;
-                },
+                }
+                return true;
+            }
+            return false;
+        },
                 () -> Arrays.stream(allowedAbilities)
                         .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
                         .filter(Objects::nonNull).map(tile -> {

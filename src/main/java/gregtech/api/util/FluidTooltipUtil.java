@@ -5,8 +5,6 @@ import gregtech.api.fluids.GTFluid;
 import gregtech.api.nuclear.fission.CoolantRegistry;
 import gregtech.api.nuclear.fission.ICoolantStats;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.CoolantProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
