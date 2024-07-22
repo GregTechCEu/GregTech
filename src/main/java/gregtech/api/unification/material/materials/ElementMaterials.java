@@ -784,7 +784,7 @@ public class ElementMaterials {
 
         Tellurium = new Material.Builder(106, gregtechId("tellurium"))
                 .dust().ingot()
-                .flags(STD_METAL)
+                .flags(STD_METAL, GENERATE_FOIL)
                 .color(0xEFDDED).iconSet(METALLIC)
                 .element(Elements.Te)
                 .build();

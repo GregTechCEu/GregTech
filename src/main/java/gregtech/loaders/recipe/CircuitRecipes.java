@@ -663,23 +663,23 @@ public class CircuitRecipes {
                 .duration(37).EUt(VA[EV]).buildAndRegister();
 
         // Crystal Circuit Components
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(plate, Tellurium)
-                .fluidInputs(Duranium.getFluid(144))
-                .output(SPARSE_CRYSTALLINE_LATTICE)
-                .duration(130).EUt(VA[LuV]).buildAndRegister();
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(foil, Tellurium, 21) // this ratio results in 1 tellurium + 1 promethium = 8 PRAM
+                .fluidInputs(Duranium.getFluid(L * 10))
+                .output(SPARSE_CRYSTALLINE_LATTICE, 10)
+                .duration(1300).EUt(VA[LuV]).buildAndRegister();
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(SPARSE_CRYSTALLINE_LATTICE)
                 .fluidInputs(Water.getFluid(1000))
-                .input(dust, AntimonyTelluride, 3)
+                .input(dust, AntimonyTelluride)
                 .output(CRYSTALLINE_WAFER)
                 .duration(18000).EUt(VA[IV]).buildAndRegister();
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(SPARSE_CRYSTALLINE_LATTICE)
                 .fluidInputs(DistilledWater.getFluid(1000))
-                .input(dust, AntimonyTelluride, 3)
+                .input(dust, AntimonyTelluride)
                 .output(CRYSTALLINE_WAFER)
                 .duration(12000).EUt(VA[IV]).buildAndRegister();
 
