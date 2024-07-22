@@ -310,7 +310,7 @@ public class NuclearRecipes {
                 .chancedOutput(dust, Technetium, 750, 0)
                 .chancedOutput(dust, Lead, 2490, 0)
                 .chancedOutput(dust, Neodymium, 519, 0)
-                .chancedOutput(dust, Zirconium, 749, 0)
+                .chancedOutput(dust, Tellurium, 611, 0)
                 .chancedOutput(dust, Barium, 1874, 0)
                 .chancedOutput(dust, Palladium, 463, 0)
                 .fluidOutputs(Xenon.getFluid(102), Radon.getFluid(118))
