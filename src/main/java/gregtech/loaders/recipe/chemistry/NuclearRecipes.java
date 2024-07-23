@@ -190,7 +190,7 @@ public class NuclearRecipes {
                 .input(fuelPelletDepleted, LEU235)
                 .output(dustSpentFuel, LEU235)
                 .output(dustBredFuel, LEU235)
-                .chancedOutput(dustFissionByproduct, LEU235, 266, 0)
+                .chancedOutput(dustFissionByproduct, LEU235, 633, 0)
                 .buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
@@ -199,7 +199,7 @@ public class NuclearRecipes {
                 .input(fuelPelletDepleted, HEU235)
                 .output(dustSpentFuel, HEU235)
                 .output(dustBredFuel, HEU235)
-                .chancedOutput(dustFissionByproduct, HEU235, 301, 0)
+                .chancedOutput(dustFissionByproduct, HEU235, 821, 0)
                 .buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
@@ -208,7 +208,7 @@ public class NuclearRecipes {
                 .input(fuelPelletDepleted, LowGradeMOX)
                 .output(dustSpentFuel, LowGradeMOX)
                 .output(dustBredFuel, LowGradeMOX)
-                .chancedOutput(dustFissionByproduct, LowGradeMOX, 229, 0)
+                .chancedOutput(dustFissionByproduct, LowGradeMOX, 565, 0)
                 .buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(800).EUt(VA[EV])
@@ -217,7 +217,7 @@ public class NuclearRecipes {
                 .input(fuelPelletDepleted, HighGradeMOX)
                 .output(dustSpentFuel, HighGradeMOX)
                 .output(dustBredFuel, HighGradeMOX)
-                .chancedOutput(dustFissionByproduct, HighGradeMOX, 443, 0)
+                .chancedOutput(dustFissionByproduct, HighGradeMOX, 1141, 0)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
@@ -285,46 +285,46 @@ public class NuclearRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustFissionByproduct, LEU235)
-                .chancedOutput(dust, Molybdenum, 800, 0)
-                .chancedOutput(dust, Technetium, 755, 0)
-                .chancedOutput(dust, Lead, 2390, 0)
-                .chancedOutput(dust, Barium, 1751, 0)
-                .chancedOutput(dust, Bismuth, 778, 0)
-                .chancedOutput(dust, Zirconium, 779, 0)
-                .fluidOutputs(Xenon.getFluid(88), Radon.getFluid(125))
+                .chancedOutput(dust, Zirconium, 1645, 0)
+                .chancedOutput(dust, Molybdenum, 1169, 0)
+                .chancedOutput(dust, Neodymium, 1030, 0)
+                .chancedOutput(dust, Ruthenium, 609, 0)
+                .chancedOutput(dust, Lead, 659, 0)
+                .chancedOutput(dust, Technetium, 297, 0)
+                .fluidOutputs(Krypton.getFluid(16), Xenon.getFluid(111), Radon.getFluid(125))
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustFissionByproduct, HEU235)
-                .chancedOutput(dust, Strontium, 706, 0)
-                .chancedOutput(dust, Technetium, 755, 0)
-                .chancedOutput(dust, Lead, 2390, 0)
-                .chancedOutput(dust, Barium, 1751, 0)
-                .chancedOutput(dust, Bismuth, 777, 0)
-                .chancedOutput(dust, Neodymium, 519, 0)
-                .fluidOutputs(Xenon.getFluid(88), Radon.getFluid(129))
+                .chancedOutput(dust, Zirconium, 1645, 0)
+                .chancedOutput(dust, Molybdenum, 1182, 0)
+                .chancedOutput(dust, Neodymium, 1031, 0)
+                .chancedOutput(dust, Ruthenium, 600, 0)
+                .chancedOutput(dust, Technetium, 300, 0)
+                .chancedOutput(dust, Yttrium, 211, 0)
+                .fluidOutputs(Krypton.getFluid(16), Xenon.getFluid(110), Radon.getFluid(129))
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustFissionByproduct, LowGradeMOX)
-                .chancedOutput(dust, Technetium, 750, 0)
-                .chancedOutput(dust, Lead, 2490, 0)
-                .chancedOutput(dust, Neodymium, 519, 0)
-                .chancedOutput(dust, Tellurium, 611, 0)
-                .chancedOutput(dust, Barium, 1874, 0)
-                .chancedOutput(dust, Palladium, 463, 0)
-                .fluidOutputs(Xenon.getFluid(102), Radon.getFluid(118))
+                .chancedOutput(dust, Neodymium, 1015, 0)
+                .chancedOutput(dust, Molybdenum, 937, 0)
+                .chancedOutput(dust, Zirconium, 863, 0)
+                .chancedOutput(dust, Palladium, 738, 0)
+                .chancedOutput(dust, Bismuth, 300, 0)
+                .chancedOutput(dust, Tellurium, 188, 0)
+                .fluidOutputs(Krypton.getFluid(6), Xenon.getFluid(126), Radon.getFluid(118))
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
                 .input(dustFissionByproduct, HighGradeMOX)
-                .chancedOutput(dust, Technetium, 744, 0)
-                .chancedOutput(dust, Lead, 2497, 0)
-                .chancedOutput(dust, Barium, 1893, 0)
-                .chancedOutput(dust, Bismuth, 693, 0)
-                .chancedOutput(dust, Zirconium, 779, 0)
-                .chancedOutput(dust, Promethium, 265, 0)
-                .fluidOutputs(Xenon.getFluid(103), Radon.getFluid(114))
+                .chancedOutput(dust, Neodymium, 1020, 0)
+                .chancedOutput(dust, Molybdenum, 937, 0)
+                .chancedOutput(dust, Zirconium, 863, 0)
+                .chancedOutput(dust, Palladium, 738, 0)
+                .chancedOutput(dust, Samarium, 319, 0)
+                .chancedOutput(dust, Tellurium, 187, 0)
+                .fluidOutputs(Krypton.getFluid(6), Xenon.getFluid(126), Radon.getFluid(114))
                 .buildAndRegister();
 
         // Radon from uranium bearing ores
