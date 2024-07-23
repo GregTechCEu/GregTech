@@ -17,6 +17,7 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.recipeproperties.ComputationProperty;
+import gregtech.api.recipes.recipeproperties.FuelProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.ScanProperty;
 import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
@@ -245,7 +246,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (drawEUt) defaultLines++;
         if (drawDuration) defaultLines++;
 
-        int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
+        int yPosition = recipeHeight - ((recipe.getAdditionalLinesCount() + defaultLines) * 10 - 3);
 
         // Default entries
         if (drawTotalEU) {
@@ -262,7 +263,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
         if (drawEUt) {
             minecraft.fontRenderer.drawString(
-                    I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
+                    I18n.format(recipe.hasProperty(FuelProperty.getInstance()) ? "gregtech.recipe.eu_inverted" : "gregtech.recipe.eu",
                             Math.abs(recipe.getEUt()), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
                     0, yPosition += LINE_HEIGHT, 0x111111);
         }

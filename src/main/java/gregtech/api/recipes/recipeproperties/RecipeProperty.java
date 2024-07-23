@@ -45,6 +45,13 @@ public abstract class RecipeProperty<T> {
     }
 
     /**
+     * Get how many lines a property adds to it's JEI page.
+     *
+     * @return 0 lines if hidden, 1 if not
+     */
+    public int getInfoLineCount(Object value) { return isHidden() ? 0 : 1; }
+
+    /**
      * Controls if the property should display any information in JEI
      *
      * @return true to hide information from JEI

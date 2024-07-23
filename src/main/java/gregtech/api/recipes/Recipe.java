@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 /**
  * Class that represent machine recipe.
@@ -777,6 +778,17 @@ public class Recipe {
     public int getUnhiddenPropertyCount() {
         return (int) recipePropertyStorage.getRecipeProperties().stream()
                 .filter((property) -> !property.getKey().isHidden()).count();
+    }
+
+    /**
+     * Calculates the number of lines added to the JEI page by properties.
+     * Written to replace the getUnhiddenPropertyCount() method for more versatility.
+     *
+     * @return the number of lines
+     */
+    public int getAdditionalLinesCount() {
+        return recipePropertyStorage.getRecipeProperties().stream()
+                .flatMapToInt((property) -> IntStream.of(property.getKey().getInfoLineCount(property.getValue()))).sum();
     }
 
     public IRecipePropertyStorage getRecipePropertyStorage() {

@@ -1,6 +1,11 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.common.ConfigHolder;
+
+import java.util.stream.Collectors;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -315,5 +320,23 @@ public class FuelRecipes {
                 .duration(320)
                 .EUt((int) V[EV])
                 .buildAndRegister();
+
+        // large steam boiler
+        for(Recipe recipe : RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList()) {
+            RecipeMaps.BOILER_FUELS.recipeBuilder()
+                    .durationModifier(0.5f) // half burntime for combustable diesel fuels (calculated in the recipe builder)
+                    .fluidInputs(recipe.getFluidInputs())
+                    .duration(recipe.getDuration())
+                    .EUt(recipe.getEUt())
+                    .buildAndRegister();
+        }
+        for(Recipe recipe : RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.getRecipeList()) {
+            RecipeMaps.BOILER_FUELS.recipeBuilder()
+                    .durationModifier(2.0f) // 2x burntime for semi-fluid dense fuels (calculated in the recipe builder)
+                    .fluidInputs(recipe.getFluidInputs())
+                    .duration(recipe.getDuration())
+                    .EUt(recipe.getEUt())
+                    .buildAndRegister();
+        }
     }
 }

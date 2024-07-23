@@ -6,6 +6,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.builders.BoilerFuelRecipeBuilder;
 import gregtech.api.recipes.category.ICategoryOverride;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
@@ -33,9 +34,6 @@ import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
 public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryOverride {
 
     private static final long STEAM_PER_WATER = 160;
-
-    private static final int FLUID_DRAIN_MULTIPLIER = 100;
-    private static final int FLUID_BURNTIME_TO_EU = 800 / FLUID_DRAIN_MULTIPLIER;
 
     private int currentHeat;
     private int lastTickSteamOutput;
@@ -80,29 +78,16 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
             if (fuelStack == null || CommonFluidFilters.BOILER_FLUID.test(fuelStack)) continue;
 
-            Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
+            Recipe boilerRecipe = RecipeMaps.BOILER_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
-            // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (dieselRecipe != null &&
-                    fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
-                // divide by 2, as it is half burntime for combustion
-                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost(
-                        (Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) / FLUID_BURNTIME_TO_EU / 2))));
-                didStartRecipe = true;
-                break;
-            }
-
-            Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
-                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
-            // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (denseFuelRecipe != null &&
-                    fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
-                // multiply by 2, as it is 2x burntime for semi-fluid
-                setMaxProgress(adjustBurnTimeForThrottle(
-                        Math.max(1, boiler.boilerType.runtimeBoost((Math.abs(denseFuelRecipe.getEUt()) *
-                                denseFuelRecipe.getDuration() / FLUID_BURNTIME_TO_EU * 2)))));
+            // FLUID_DRAIN_MULTIPLIER is now applied in the recipe builder
+            if (boilerRecipe != null &&
+                    fuelStack.amount >= boilerRecipe.getFluidInputs().get(0).getAmount()) {
+                fluidTank.drain(boilerRecipe.getFluidInputs().get(0).getAmount(), true);
+                // No longer needs two seperate setMaxProgress() calls as the differing durations from diesel vs. dense is handled at registration
+                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost(boilerRecipe.getDuration()))));
+                // Since FLUID_DRAIN_MULTIPLIER was not properly applied to the duration, fuels would only burn 1/100th of the time that they should've
+                // This has been changed
                 didStartRecipe = true;
                 break;
             }
@@ -352,7 +337,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
 
     @Override
     public @NotNull RecipeMap<?> @NotNull [] getJEIRecipeMapCategoryOverrides() {
-        return new RecipeMap<?>[] { RecipeMaps.COMBUSTION_GENERATOR_FUELS, RecipeMaps.SEMI_FLUID_GENERATOR_FUELS };
+        return new RecipeMap<?>[] { RecipeMaps.BOILER_FUELS };
     }
 
     @Override
