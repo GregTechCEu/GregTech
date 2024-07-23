@@ -8,10 +8,10 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
-public class BoilerFuelProperty extends RecipeProperty<String> {
+public class BoilerFuelProperty extends RecipeProperty<Float> {
     public static final String KEY = "boiler_fuel";
     private static BoilerFuelProperty INSTANCE;
-    private BoilerFuelProperty() {super( KEY, String.class ); }
+    private BoilerFuelProperty() {super( KEY, Float.class ); }
 
     public static BoilerFuelProperty getInstance() {
         if (INSTANCE == null) {

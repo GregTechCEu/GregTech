@@ -324,7 +324,7 @@ public class FuelRecipes {
         // large steam boiler
         for(Recipe recipe : RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList()) {
             RecipeMaps.BOILER_FUELS.recipeBuilder()
-                    .fuelType("diesel") // half burntime for combustable diesel fuels (calculated in the recipe builder)
+                    .durationModifier(0.5f) // half burntime for combustable diesel fuels (calculated in the recipe builder)
                     .fluidInputs(recipe.getFluidInputs())
                     .duration(recipe.getDuration())
                     .EUt(recipe.getEUt())
@@ -332,7 +332,7 @@ public class FuelRecipes {
         }
         for(Recipe recipe : RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.getRecipeList()) {
             RecipeMaps.BOILER_FUELS.recipeBuilder()
-                    .fuelType("dense") // 2x burntime for semi-fluid dense fuels (calculated in the recipe builder)
+                    .durationModifier(2.0f) // 2x burntime for semi-fluid dense fuels (calculated in the recipe builder)
                     .fluidInputs(recipe.getFluidInputs())
                     .duration(recipe.getDuration())
                     .EUt(recipe.getEUt())

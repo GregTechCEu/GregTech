@@ -77,14 +77,11 @@ public class BoilerFuelRecipeBuilder extends RecipeBuilder<BoilerFuelRecipeBuild
     @Override
     public BoilerFuelRecipeBuilder duration(int duration) {
         this.duration = duration * FLUID_DRAIN_MULTIPLIER;
-        switch(recipePropertyStorage.getRecipePropertyValue(BoilerFuelProperty.getInstance(), "")) {
-            case "diesel": this.duration /= 2; break;
-            case "dense" : this.duration *= 2; break;
-        }
+        this.duration = (int) (this.duration * recipePropertyStorage.getRecipePropertyValue(BoilerFuelProperty.getInstance(), 1f));
         return this;
     }
 
-    public BoilerFuelRecipeBuilder fuelType(String fuelType) {
+    public BoilerFuelRecipeBuilder durationModifier(float fuelType) {
         this.applyProperty(BoilerFuelProperty.getInstance(), fuelType);
         return this;
     }
