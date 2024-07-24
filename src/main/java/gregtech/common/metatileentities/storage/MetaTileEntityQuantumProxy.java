@@ -39,7 +39,7 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         var newPipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
-        if (isConnected() && getController().isPowered()) {
+        if (isConnected() && getQuantumController().isPowered()) {
             Textures.QUANTUM_PROXY_ACTIVE.render(renderState, translation, newPipeline);
         } else {
             Textures.QUANTUM_PROXY_INACTIVE.render(renderState, translation, newPipeline);
@@ -88,7 +88,7 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
     @Override
     public IDualHandler getTypeValue() {
         if (!isConnected()) return null;
-        var controller = getController();
+        var controller = getQuantumController();
         if (!controller.isPowered()) return null;
         return controller.getHandler();
     }

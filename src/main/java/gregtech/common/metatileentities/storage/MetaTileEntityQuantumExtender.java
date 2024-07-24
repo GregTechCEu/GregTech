@@ -35,7 +35,7 @@ public class MetaTileEntityQuantumExtender extends MetaTileEntityQuantumStorage<
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         var newPipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
-        if (isConnected() && getController().isPowered()) {
+        if (isConnected() && getQuantumController().isPowered()) {
             Textures.QUANTUM_EXTENDER_ACTIVE.render(renderState, translation, newPipeline);
         } else {
             Textures.QUANTUM_EXTENDER.render(renderState, translation, newPipeline);

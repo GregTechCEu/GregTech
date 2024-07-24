@@ -1030,14 +1030,6 @@ public class MetaTileEntityLoader {
                 'C', new UnificationEntry(OrePrefix.pipeSmallItem, Materials.SterlingSilver),
                 'H', MetaTileEntities.HULL[GTValues.MV].getStackForm());
 
-        // Quantum Energy Acceptor
-        ModHandler.addShapedRecipe(true, "quantum_energy_acceptor",
-                MetaTileEntities.QUANTUM_ENERGY_ACCEPTOR.getStackForm(),
-                "PPP", "CTC", "PPP",
-                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
-                'T', MetaTileEntities.TRANSFORMER[GTValues.MV].getStackForm(),
-                'C', MetaItems.VOLTAGE_COIL_MV.getStackForm());
-
         // Super / Quantum Chests
         ModHandler.addShapedRecipe(true, "super_chest_lv", MetaTileEntities.QUANTUM_CHEST[0].getStackForm(), "CPC",
                 "PFP", "CPC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'P',
