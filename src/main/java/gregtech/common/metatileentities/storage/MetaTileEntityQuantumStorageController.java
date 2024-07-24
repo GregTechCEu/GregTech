@@ -48,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -60,7 +61,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     private static final int MAX_DISTANCE_RADIUS = 16;
 
-    private EnergyContainerList energyContainer;
+    private EnergyContainerList energyContainer = new EnergyContainerList(Collections.emptyList());
     /** Somewhat lazily initialized, make sure to call {@code getStorage()} before trying to access anything in this */
     private Map<BlockPos, WeakReference<IQuantumStorage<?>>> storageInstances = new HashMap<>();
 
@@ -217,7 +218,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         Queue<BlockPos> searchQueue = new LinkedList<>();
         Set<BlockPos> checked = new HashSet<>();
-        List<IEnergyContainer> energyContainers = new ArrayList<>();
 
         // check the posses around the controller
         for (EnumFacing facing : EnumFacing.VALUES) {
@@ -246,10 +246,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
-
-            if (storage.getType() == IQuantumStorage.Type.ENERGY) {
-                energyContainers.add((IEnergyContainer) storage.getTypeValue());
-            }
 
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
@@ -283,11 +279,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         }
         handler.rebuildCache();
         calculateEnergyUsage();
-        energyContainer = new EnergyContainerList(energyContainers);
         markDirty();
     }
 
     private void calculateEnergyUsage() {
+        List<IEnergyContainer> energyContainers = new ArrayList<>();
         energyConsumption = 0;
         for (var pos : storagePositions) {
             var storage = getStorage(pos, false);
@@ -302,9 +298,13 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 }
                 case PROXY -> 8L;
                 case EXTENDER -> 2L;
-                default -> 0L;
+                case ENERGY -> {
+                    energyContainers.add((IEnergyContainer) storage.getTypeValue());
+                    yield 1L;
+                }
             };
         }
+        energyContainer = new EnergyContainerList(energyContainers);
         writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
