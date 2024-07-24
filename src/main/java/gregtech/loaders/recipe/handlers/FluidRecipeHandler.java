@@ -6,6 +6,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.common.ConfigHolder;
 
 public class FluidRecipeHandler {
 
@@ -18,9 +19,12 @@ public class FluidRecipeHandler {
 
     public static void processCoolant(Material mat, CoolantProperty coolant) {
         int waterAmt = 6;
+        double multiplier = ConfigHolder.machines.nuclear.heatExchangerEfficiencyMultiplier;
+
         // water temp difference * water heat capacity * amount / coolantHeatCapacity * (hotHpTemp - coolantTemp)
         int coolantAmt = (int) Math.ceil(100 * 4168 * waterAmt / (coolant.getSpecificHeatCapacity() *
-                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())));
+                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())) *
+                multiplier);
 
         RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(1).circuitMeta(1)
                 .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt), Materials.Water.getFluid(waterAmt))
@@ -33,7 +37,8 @@ public class FluidRecipeHandler {
         waterAmt = 600;
         // Slightly more efficient
         coolantAmt = (int) Math.ceil(100 * 4168 * waterAmt / (coolant.getSpecificHeatCapacity() *
-                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())));
+                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())) *
+                multiplier);
 
         RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(1).circuitMeta(2)
                 .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt), Materials.Water.getFluid(waterAmt))

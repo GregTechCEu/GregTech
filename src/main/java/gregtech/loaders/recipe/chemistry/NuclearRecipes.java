@@ -288,8 +288,8 @@ public class NuclearRecipes {
                 .chancedOutput(dust, Zirconium, 1645, 0)
                 .chancedOutput(dust, Molybdenum, 1169, 0)
                 .chancedOutput(dust, Neodymium, 1030, 0)
-                .chancedOutput(dust, Ruthenium, 609, 0)
                 .chancedOutput(dust, Lead, 659, 0)
+                .chancedOutput(dust, Ruthenium, 609, 0)
                 .chancedOutput(dust, Technetium, 297, 0)
                 .fluidOutputs(Krypton.getFluid(16), Xenon.getFluid(111), Radon.getFluid(125))
                 .buildAndRegister();
