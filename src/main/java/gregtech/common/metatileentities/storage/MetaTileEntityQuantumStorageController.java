@@ -438,13 +438,23 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         @Nullable
         @Override
         public FluidStack drain(FluidStack stack, boolean doFill) {
-            return fluidTanks.drain(stack, doFill);
+            var f = fluidTanks.drain(stack, doFill);
+
+            if (f != null && f.amount > stack.amount)
+                f.amount = stack.amount;
+
+            return f;
         }
 
         @Nullable
         @Override
         public FluidStack drain(int maxDrain, boolean doFill) {
-            return fluidTanks.drain(maxDrain, doFill);
+            var f = fluidTanks.drain(maxDrain, doFill);
+
+            if (f != null && f.amount > maxDrain)
+                f.amount = maxDrain;
+
+            return f;
         }
 
         // IItemHandler
@@ -476,7 +486,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return itemHandlers.extractItem(slot, amount, simulate);
+            var s = itemHandlers.extractItem(slot, amount, simulate);
+            if (s.getCount() > amount)
+                s.setCount(amount);
+
+            return s;
         }
 
         @Override
