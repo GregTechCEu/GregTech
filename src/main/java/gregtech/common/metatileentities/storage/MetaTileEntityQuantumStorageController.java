@@ -7,6 +7,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -59,7 +60,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     private static final int MAX_DISTANCE_RADIUS = 16;
 
-    private QuantumControllerEnergyContainer energyContainer;
+    private EnergyContainerList energyContainer;
     /** Somewhat lazily initialized, make sure to call {@code getStorage()} before trying to access anything in this */
     private Map<BlockPos, WeakReference<IQuantumStorage<?>>> storageInstances = new HashMap<>();
 
@@ -73,7 +74,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     public MetaTileEntityQuantumStorageController(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        reinitializeEnergyContainer();
     }
 
     @Override
@@ -137,7 +137,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     @Override
     protected boolean openGUIOnRightClick() {
-        return false;
+        return false; // todo use mui2 for ui?
     }
 
     @Override
@@ -217,6 +217,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         Queue<BlockPos> searchQueue = new LinkedList<>();
         Set<BlockPos> checked = new HashSet<>();
+        List<IEnergyContainer> energyContainers = new ArrayList<>();
 
         // check the posses around the controller
         for (EnumFacing facing : EnumFacing.VALUES) {
@@ -245,6 +246,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
+
+            if (storage.getType() == IQuantumStorage.Type.ENERGY) {
+                energyContainers.add((IEnergyContainer) storage.getTypeValue());
+            }
 
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
@@ -278,7 +283,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         }
         handler.rebuildCache();
         calculateEnergyUsage();
-        energyContainer.setMaxCapacity(energyConsumption * 16L);
+        energyContainer = new EnergyContainerList(energyContainers);
         markDirty();
     }
 
@@ -305,10 +310,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     public final long getEnergyUsage() {
         return energyConsumption;
-    }
-
-    private void reinitializeEnergyContainer() {
-        energyContainer = new QuantumControllerEnergyContainer(this);
     }
 
     @Override

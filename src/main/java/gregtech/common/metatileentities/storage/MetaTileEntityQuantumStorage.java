@@ -55,7 +55,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     protected void renderIndicatorOverlay(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         SimpleOverlayRenderer texture;
         if (isConnected()) {
-            texture = getController().isPowered() ?
+            texture = getQuantumController().isPowered() ?
                     Textures.QUANTUM_INDICATOR_POWERED :
                     Textures.QUANTUM_INDICATOR_CONNECTED;
         } else {
@@ -93,7 +93,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     // use this to make sure controller is properly initialized
     @Override
-    public final IQuantumController getController() {
+    public final IQuantumController getQuantumController() {
         if (isConnected()) {
             if (controller.get() != null) return controller.get();
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), controllerPos);
@@ -123,7 +123,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     @Override
     public void onRemoval() {
         if (!getWorld().isRemote && isConnected()) {
-            IQuantumController controller = getController();
+            IQuantumController controller = getQuantumController();
             if (controller != null) controller.rebuildNetwork();
         }
     }
@@ -150,7 +150,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             IQuantumController candidate = null;
             if (mte instanceof IQuantumStorage<?>storage) {
                 if (storage.isConnected()) {
-                    IQuantumController controller = storage.getController();
+                    IQuantumController controller = storage.getQuantumController();
                     if (controller == null || controller.getPos().equals(controllerPos)) continue;
                     if (controller.canConnect(this)) {
                         candidate = controller;

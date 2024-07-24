@@ -15,11 +15,13 @@ public interface IQuantumStorage<T> {
     BlockPos getControllerPos();
 
     @Nullable
-    IQuantumController getController();
+    IQuantumController getQuantumController();
 
     BlockPos getPos();
 
-    boolean isConnected();
+    default boolean isConnected() {
+        return getControllerPos() != null;
+    }
 
     T getTypeValue();
 

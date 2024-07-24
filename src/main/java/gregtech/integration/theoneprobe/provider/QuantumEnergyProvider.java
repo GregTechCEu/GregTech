@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.common.metatileentities.storage.MetaTileEntityQuantumEnergyAcceptor;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,12 +30,6 @@ public class QuantumEnergyProvider implements IProbeInfoProvider {
                 world.getTileEntity(data.getPos()) instanceof IGregTechTileEntity gtte) {
             if (gtte.getMetaTileEntity() instanceof IQuantumController controller) {
                 configureEnergyUsage(controller.getEnergyUsage() / 10, probeInfo);
-            } else if (gtte.getMetaTileEntity() instanceof MetaTileEntityQuantumEnergyAcceptor energyAcceptor) {
-
-                // todo show something when disconnected?
-                if (energyAcceptor.isConnected()) {
-                    configureEnergyUsage(energyAcceptor.getController().getEnergyUsage() / 10, probeInfo);
-                }
             }
         }
     }
