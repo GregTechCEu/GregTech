@@ -210,29 +210,30 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             ItemStack stack = super.getStackInSlot(slot);
             stack.setCount(itemsPerCycle);
+            return simulate ? stack : stack.copy();
 
-            IItemHandler otherHandler = null;
-            for (EnumFacing side : EnumFacing.VALUES) {
-                TileEntity tile = getWorld().getTileEntity(getControllerPos().offset(side));
-                if (tile == null) continue;
-                if (tile instanceof IGregTechTileEntity gte && gte.getMetaTileEntity() instanceof IQuantumStorage<?>)
-                    continue;
-
-                otherHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
-                if (otherHandler != null && otherHandler.getSlots() > 0) break;
-            }
-
-            if (otherHandler != null && active) {
-                ItemStack remainder = GTTransferUtils.insertItem(otherHandler, stack, true);
-
-                int amountToInsert = stack.getCount() - remainder.getCount();
-
-                if (amountToInsert > 0) {
-                    GTTransferUtils.insertItem(otherHandler, stack, false);
-                }
-                return remainder;
-            }
-            return ItemStack.EMPTY;
+//            IItemHandler otherHandler = null;
+//            for (EnumFacing side : EnumFacing.VALUES) {
+//                TileEntity tile = getWorld().getTileEntity(getControllerPos().offset(side));
+//                if (tile == null) continue;
+//                if (tile instanceof IGregTechTileEntity gte && gte.getMetaTileEntity() instanceof IQuantumStorage<?>)
+//                    continue;
+//
+//                otherHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+//                if (otherHandler != null && otherHandler.getSlots() > 0) break;
+//            }
+//
+//            if (otherHandler != null && active) {
+//                ItemStack remainder = GTTransferUtils.insertItem(otherHandler, stack, true);
+//
+//                int amountToInsert = stack.getCount() - remainder.getCount();
+//
+//                if (amountToInsert > 0) {
+//                    GTTransferUtils.insertItem(otherHandler, stack, false);
+//                }
+//                return remainder;
+//            }
+//            return ItemStack.EMPTY;
         }
 
         @Override

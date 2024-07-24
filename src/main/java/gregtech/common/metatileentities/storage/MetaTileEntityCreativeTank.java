@@ -126,7 +126,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 return;
 
             FluidStack stack = fluidTank.getFluid().copy();
-            stack.amount = mBPerCycle;
             int canInsertAmount = fluidHandler.fill(stack, false);
             stack.amount = Math.min(mBPerCycle, canInsertAmount);
 
@@ -188,7 +187,9 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
             if (active) {
-                return super.drain(mBPerCycle, false) == null ? null : super.drain(mBPerCycle, false);
+                var f = super.drain(mBPerCycle, false);
+                if (f != null) f.amount = mBPerCycle;
+                return f;
             }
             return null;
         }
