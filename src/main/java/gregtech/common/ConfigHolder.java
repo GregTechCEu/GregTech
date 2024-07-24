@@ -178,6 +178,11 @@ public class ConfigHolder {
                     "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
             @Config.RangeInt(min = 5, max = 10000)
             public double fissionReactorResolution = 100;
+
+            @Config.Comment({ "Nuclear coolant heat exchanger recipe efficiency multiplier for balancing purposes",
+                    "Default: 0.1" })
+            @Config.RangeDouble(min = 0, max = 1000)
+            public double heatExchangerEfficiencyMultiplier = 0.0625;
         }
     }
 
