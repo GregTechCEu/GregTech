@@ -6,7 +6,6 @@ import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
-import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -30,10 +29,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -88,16 +85,18 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         if (getWorld().isRemote) return;
 
         if (getOffsetTimer() % 10 == 0) {
-            if (isPowered) {
-                energyContainer.removeEnergy(energyConsumption);
+            boolean isPowered = energyContainer.getEnergyStored() > energyConsumption && energyConsumption > 0;
+            if (isPowered) energyContainer.removeEnergy(energyConsumption);
+
+            if (isPowered != this.isPowered) {
+                this.isPowered = isPowered;
+                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(this.isPowered));
             }
-            isPowered = energyContainer.getEnergyStored() >= energyConsumption && energyConsumption > 0;
-            writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(isPowered));
         }
     }
 
     public boolean isPowered() {
-        return isPowered && energyConsumption > 0;
+        return isPowered;
     }
 
     @Override
@@ -334,6 +333,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             list.appendTag(new NBTTagLong(pos.toLong()));
         }
         tagCompound.setTag("StorageInstances", list);
+        tagCompound.setBoolean("isPowered", this.isPowered);
         return tagCompound;
     }
 
@@ -344,6 +344,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         for (int i = 0; i < list.tagCount(); i++) {
             storagePositions.add(BlockPos.fromLong(((NBTTagLong) list.get(i)).getLong()));
         }
+        this.isPowered = data.getBoolean("isPowered");
     }
 
     @SuppressWarnings("unchecked")
@@ -351,9 +352,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
         if (isPowered()) {
             if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && handler.hasItemHandlers()) {
-                return (T) handler;
+                return (T) handler.getItemHandlers();
             } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && handler.hasFluidTanks()) {
-                return (T) handler;
+                return (T) handler.getFluidTanks();
             }
         }
 
@@ -376,6 +377,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         return this.energyContainer;
     }
 
+    // todo use DualHandler instead once the multis ability pr is merged
     private class QuantumControllerHandler implements IDualHandler {
 
         // IFluidHandler saved values
@@ -386,7 +388,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         private void invalidate() {
             fluidTanks = new FluidTankList(false);
-            itemHandlers = new ItemHandlerList(new ArrayList<>());
+            itemHandlers = new ItemHandlerList(Collections.emptyList());
         }
 
         private void rebuildCache() {
@@ -416,9 +418,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             return !getItemHandlers().getBackingHandlers().isEmpty();
         }
 
-        // IFluidHandler
-
-        protected FluidTankList getFluidTanks() {
+        @Override
+        public FluidTankList getFluidTanks() {
             if (fluidTanks == null) {
                 rebuildCache();
             }
@@ -426,76 +427,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         }
 
         @Override
-        public IFluidTankProperties[] getTankProperties() {
-            return fluidTanks.getTankProperties();
-        }
-
-        @Override
-        public int fill(FluidStack stack, boolean doFill) {
-            return fluidTanks.fill(stack, doFill);
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(FluidStack stack, boolean doFill) {
-            var f = fluidTanks.drain(stack, doFill);
-
-            if (f != null && f.amount > stack.amount)
-                f.amount = stack.amount;
-
-            return f;
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(int maxDrain, boolean doFill) {
-            var f = fluidTanks.drain(maxDrain, doFill);
-
-            if (f != null && f.amount > maxDrain)
-                f.amount = maxDrain;
-
-            return f;
-        }
-
-        // IItemHandler
-
-        protected ItemHandlerList getItemHandlers() {
+        public ItemHandlerList getItemHandlers() {
             if (itemHandlers == null) {
                 rebuildCache();
             }
             return itemHandlers;
-        }
-
-        @Override
-        public int getSlots() {
-            return getItemHandlers().getSlots();
-        }
-
-        @NotNull
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            return itemHandlers.getStackInSlot(slot);
-        }
-
-        @NotNull
-        @Override
-        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            return itemHandlers.insertItem(slot, stack, simulate);
-        }
-
-        @NotNull
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            var s = itemHandlers.extractItem(slot, amount, simulate);
-            if (s.getCount() > amount)
-                s.setCount(amount);
-
-            return s;
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
-            return getItemHandlers().getSlotLimit(slot);
         }
     }
 }

@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
+import gregtech.api.capability.IQuantumController;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -23,6 +24,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
 
@@ -66,15 +68,13 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (getTypeValue() == null) return super.getCapability(capability, side);
-
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) getTypeValue();
-        } else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return (T) getTypeValue();
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ||
+                capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            var controller = getPoweredController();
+            if (controller != null)
+                return controller.getCapability(capability, side);
         }
         return super.getCapability(capability, side);
     }
@@ -84,13 +84,19 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         return Type.PROXY;
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override
     public IDualHandler getTypeValue() {
+        IQuantumController c = getPoweredController();
+        if (c == null) return null;
+        return c.getHandler();
+    }
+
+    @Nullable
+    private IQuantumController getPoweredController() {
         if (!isConnected()) return null;
         var controller = getQuantumController();
-        if (!controller.isPowered()) return null;
-        return controller.getHandler();
+        if (controller == null || !controller.isPowered()) return null;
+        return controller;
     }
 
     @Override
