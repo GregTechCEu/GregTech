@@ -498,35 +498,4 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             return getItemHandlers().getSlotLimit(slot);
         }
     }
-
-    private static class QuantumControllerEnergyContainer extends EnergyContainerHandler {
-
-        private long maxCapacity = 0;
-
-        public QuantumControllerEnergyContainer(MetaTileEntity tileEntity) {
-            super(tileEntity, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
-        }
-
-        @Override
-        public long getEnergyCapacity() {
-            return this.maxCapacity;
-        }
-
-        protected void setMaxCapacity(long capacity) {
-            this.maxCapacity = capacity;
-        }
-
-        @Override
-        public @NotNull NBTTagCompound serializeNBT() {
-            var tag = super.serializeNBT();
-            tag.setLong("MaxCapacity", this.maxCapacity);
-            return tag;
-        }
-
-        @Override
-        public void deserializeNBT(@NotNull NBTTagCompound compound) {
-            this.maxCapacity = compound.getLong("MaxCapacity");
-            super.deserializeNBT(compound);
-        }
-    }
 }
