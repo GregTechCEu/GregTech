@@ -207,6 +207,8 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (!active) return ItemStack.EMPTY;
+
             ItemStack stack = super.getStackInSlot(slot);
             stack.setCount(itemsPerCycle);
             return simulate ? stack : stack.copy();
