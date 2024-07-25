@@ -5786,7 +5786,7 @@ gregtech.chat.cape=§5恭喜你：你刚刚解锁了一件新披风！查看终�
 gregtech.universal.clear_nbt_recipe.tooltip=§c这将清除所有内容物！
 
 gregtech.cover.detector_base.message_normal_state=监控状态：普通
-gregtech.cover.detector_base.message_inverted_state=监控状态： 反相
+gregtech.cover.detector_base.message_inverted_state=监控状态：反相
 
 gregtech.creative.chest.item=物品
 gregtech.creative.chest.ipc=每次输出物品数
