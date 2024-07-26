@@ -931,6 +931,7 @@ public class FirstDegreeMaterials {
         SodiumBicarbonate = new Material.Builder(366, gregtechId("sodium_bicarbonate"))
                 .dust(1)
                 .color(0x565b96).iconSet(ROUGH)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Hydrogen, 1, Carbon, 1, Oxygen, 3)
                 .build();
 
@@ -1552,6 +1553,11 @@ public class FirstDegreeMaterials {
                         .temp(3000, GasTier.MID)
                         .blastStats(VA[EV], 1400)
                         .vacuumStats(VA[HV], 250))
+                .build();
+
+        IlmeniteSlag = new Material.Builder(452, gregtechId("ilmenite_slag"))
+                .dust(1)
+                .color(0x8B0000).iconSet(SAND)
                 .build();
     }
 }

@@ -1029,25 +1029,6 @@ public class MachineRecipeLoader {
         BLAST_RECIPES.recipeBuilder().duration(320).EUt(100).input(gem, Sapphire).output(nugget, Aluminium, 3)
                 .blastFurnaceTemp(1200).buildAndRegister();
 
-        // Titanium tetrachloride
-        BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[HV])
-                .input(dust, Magnesium, 2)
-                .fluidInputs(TitaniumTetrachloride.getFluid(1000))
-                .output(ingotHot, Titanium)
-                .output(dust, MagnesiumChloride, 6)
-                .blastFurnaceTemp(Titanium.getBlastTemperature() + 200)
-                .buildAndRegister();
-
-        // Rutile from ilmenite
-        BLAST_RECIPES.recipeBuilder()
-                .input(dust, Ilmenite, 10)
-                .input(dust, Carbon, 4)
-                .output(ingot, WroughtIron, 2)
-                .output(dust, Rutile, 4)
-                .fluidOutputs(CarbonDioxide.getFluid(2000))
-                .blastFurnaceTemp(1700)
-                .duration(1600).EUt(VA[HV]).buildAndRegister();
-
         // Tempered Glass
         BLAST_RECIPES.recipeBuilder()
                 .input(block, Glass)
