@@ -645,7 +645,7 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0x051650).build();
 
         CrackedBauxiteSlurry = new Material.Builder(1652, gregtechId("cracked_bauxite_slurry"))
-                .fluid().color(0x052C50).build();
+                .liquid(new FluidBuilder().temperature(775)).color(0x052C50).build();
 
         BauxiteSludge = new Material.Builder(1653, gregtechId("bauxite_sludge"))
                 .fluid().color(0x563D2D).build();
