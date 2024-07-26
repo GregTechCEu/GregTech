@@ -15,7 +15,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
-import com.google.common.base.Preconditions;
 import org.lwjgl.input.Mouse;
 
 import java.util.Arrays;
@@ -64,7 +63,6 @@ public class ClickButtonWidget extends Widget {
     }
 
     public ClickButtonWidget setTooltipText(String tooltipText, Object... args) {
-        Preconditions.checkNotNull(tooltipText, "tooltipText");
         this.tooltipText = tooltipText;
         this.tooltipArgs = args;
         return this;
