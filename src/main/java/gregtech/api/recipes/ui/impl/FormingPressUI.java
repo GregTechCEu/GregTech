@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class FormingPressUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     public FormingPressUI(@NotNull R recipeMap) {
-        super(recipeMap, true, true, true, true);
+        super(recipeMap, true, true, true, true, false);
         setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, ProgressWidget.MoveType.HORIZONTAL);
     }
 

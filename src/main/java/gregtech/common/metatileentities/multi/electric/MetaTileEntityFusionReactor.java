@@ -29,6 +29,7 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.RelativeDirection;
@@ -82,6 +83,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+
+import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_DURATION_FACTOR;
+import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_VOLTAGE_FACTOR;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                                          implements IFastRenderMetaTileEntity, IBloomEffect {
@@ -577,13 +581,13 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        protected double getOverclockingDurationDivisor() {
-            return 2.0D;
+        protected double getOverclockingDurationFactor() {
+            return PERFECT_HALF_DURATION_FACTOR;
         }
 
         @Override
-        protected double getOverclockingVoltageMultiplier() {
-            return 2.0D;
+        protected double getOverclockingVoltageFactor() {
+            return PERFECT_HALF_VOLTAGE_FACTOR;
         }
 
         @Override
@@ -632,8 +636,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        protected void modifyOverclockPre(int @NotNull [] values, @NotNull IRecipePropertyStorage storage) {
-            super.modifyOverclockPre(values, storage);
+        protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull IRecipePropertyStorage storage) {
+            super.modifyOverclockPre(ocParams, storage);
 
             // Limit the number of OCs to the difference in fusion reactor MK.
             // I.e., a MK2 reactor can overclock a MK1 recipe once, and a
@@ -641,7 +645,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
             long euToStart = storage.getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
             int fusionTier = FusionEUToStartProperty.getFusionTier(euToStart);
             if (fusionTier != 0) fusionTier = MetaTileEntityFusionReactor.this.tier - fusionTier;
-            values[2] = Math.min(fusionTier, values[2]);
+            ocParams.setOcAmount(Math.min(fusionTier, ocParams.ocAmount()));
         }
 
         @NotNull

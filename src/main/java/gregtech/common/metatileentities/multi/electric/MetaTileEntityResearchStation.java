@@ -262,12 +262,11 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         }
 
         @Override
-        protected boolean setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
-                                                      @NotNull IItemHandlerModifiable importInventory) {
+        protected @Nullable Recipe setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
+                                                               @NotNull IItemHandlerModifiable importInventory) {
             // this machine cannot overclock, so don't bother calling it
-            this.overclockResults = new int[] { recipe.getEUt(), recipe.getDuration() };
-            if (!hasEnoughPower(overclockResults)) {
-                return false;
+            if (!hasEnoughPower(recipe.getEUt(), recipe.getDuration())) {
+                return null;
             }
 
             // skip "can fit" checks, it can always fit
@@ -275,14 +274,14 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
             // do not consume inputs here, consume them on completion
             if (recipe.matches(false, importInventory, getInputTank())) {
                 this.metaTileEntity.addNotifiedInput(importInventory);
-                return true;
+                return recipe;
             }
-            return false;
+            return null;
         }
 
         // lock the object holder on recipe start
         @Override
-        protected void setupRecipe(Recipe recipe) {
+        protected void setupRecipe(@NotNull Recipe recipe) {
             IObjectHolder holder = getMetaTileEntity().getObjectHolder();
             holder.setLocked(true);
             super.setupRecipe(recipe);

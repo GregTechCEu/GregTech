@@ -9,13 +9,22 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.DummyCleanroom;
+import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
+import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -47,6 +56,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
+import static gregtech.api.recipes.logic.OverclockingLogic.subTickNonParallelOC;
 
 public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController implements IMachineHatchMultiblock {
 
@@ -377,7 +387,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected int getNumberOfOCs(int recipeEUt) {
+        protected int getNumberOfOCs(long recipeEUt) {
             if (!isAllowOverclocking()) return 0;
 
             int recipeTier = Math.max(0,
@@ -391,6 +401,13 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             if (recipeTier == ULV) numberOfOCs--; // no ULV overclocking
 
             return numberOfOCs;
+        }
+
+        @Override
+        protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
+                                            @NotNull IRecipePropertyStorage propertyStorage, long maxVoltage) {
+            subTickNonParallelOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
+                    getOverclockingVoltageFactor());
         }
 
         private ItemStack getMachineStack() {
