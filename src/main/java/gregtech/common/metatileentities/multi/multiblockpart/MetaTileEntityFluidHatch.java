@@ -56,7 +56,6 @@ import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
@@ -249,13 +248,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     @Override
     public MultiblockAbility<IFluidTank> getAbility() {
         return isExportHatch ? MultiblockAbility.EXPORT_FLUIDS : MultiblockAbility.IMPORT_FLUIDS;
-    }
-
-    @Override
-    public @NotNull List<MultiblockAbility<?>> getAbilities() {
-        return isExportHatch ?
-                Collections.singletonList(MultiblockAbility.EXPORT_FLUIDS) :
-                Collections.singletonList(MultiblockAbility.IMPORT_FLUIDS);
     }
 
     @Override
