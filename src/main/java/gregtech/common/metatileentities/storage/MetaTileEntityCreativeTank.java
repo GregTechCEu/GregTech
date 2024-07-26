@@ -193,6 +193,12 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                                 if (f != null) f.amount = mBPerCycle;
                                 return f;
                             }
+
+                            @Override
+                            public boolean canDrainFluidType(FluidStack fluidStack) {
+                                if (!active) return false;
+                                return super.canDrainFluidType(fluidStack);
+                            }
                         }
                 };
             }
