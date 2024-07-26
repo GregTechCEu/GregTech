@@ -7,7 +7,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -195,9 +194,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
             if (this.connectedIcon != null) {
                 this.connectedIcon.setButtonTexture(GuiTextures.GREGTECH_LOGO);
-                String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(),
-                        controllerPos.getY());
-                this.connectedIcon.setTooltipText("Connected to Quantum Controller at/n" + pos);
+                this.connectedIcon.setTooltipText("gregtech.machine.quantum_storage.connected",
+                        controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
             }
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) {
@@ -234,13 +232,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     protected ClickButtonWidget createConnectedGui(int y) {
-        // todo do something for rendering a highlight at the controller
-        // todo look into BlockPosHighlightRenderer
-        // connectedIcon = new ImageWidget(151, y, 18, 18,
-        // isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
-        connectedIcon = new ClickButtonWidget(151, y, 18, 18,
-                "", clickData -> {
-                    GTLog.logger.warn("click");
+        connectedIcon = new ClickButtonWidget(151, y, 18, 18, "",
+                clickData -> {
                     writeCustomData(GregtechDataCodes.LOCATE_CONTROLLER, buffer -> {
                         buffer.writeBoolean(this.isConnected());
                     });
@@ -248,9 +241,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         connectedIcon.setButtonTexture(isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
 
         if (isConnected()) {
-            String pos = String.format("X=%d, Z=%d, Y=%d", controllerPos.getX(), controllerPos.getZ(),
-                    controllerPos.getY());
-            connectedIcon.setTooltipText("Connected to Quantum Controller at/n" + pos);
+            connectedIcon.setTooltipText("gregtech.machine.quantum_storage.connected",
+                    controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
         }
 
         return connectedIcon;
