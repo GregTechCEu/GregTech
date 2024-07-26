@@ -19,7 +19,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 
-import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;

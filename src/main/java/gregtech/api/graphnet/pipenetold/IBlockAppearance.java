@@ -28,7 +28,7 @@ public interface IBlockAppearance {
     IBlockState getVisualState(@NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing side);
 
     /**
-     * This function returns whether the block's renderer will visually connect to other blocks implementing
+     * This function returns whether the block's model will visually connect to other blocks implementing
      * IBlockAppearance.
      */
     boolean supportsVisualConnections();

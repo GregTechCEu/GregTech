@@ -11,7 +11,7 @@ import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.client.renderer.pipeold.PipeRenderer;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;

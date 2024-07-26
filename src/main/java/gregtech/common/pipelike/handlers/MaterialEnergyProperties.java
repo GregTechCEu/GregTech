@@ -1,10 +1,9 @@
-package gregtech.common.pipelike.properties;
+package gregtech.common.pipelike.handlers;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.pipenet.logic.EnumLossFunction;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
@@ -29,8 +28,6 @@ import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
 import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 
-import it.unimi.dsi.fastutil.floats.Float2ObjectArrayMap;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -38,8 +35,6 @@ import net.minecraftforge.fluids.Fluid;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
@@ -70,6 +65,10 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
         this.temperatureLimit = temperatureLimit;
         this.lossPerAmp = lossPerAmp;
         this.superconductorCriticalTemperature = superconductorCriticalTemperature;
+    }
+
+    public long getVoltageLimit() {
+        return voltageLimit;
     }
 
     public static MaterialEnergyProperties createT(long voltageLimit, long amperageLimit, long lossPerAmp, int temperatureLimit) {
@@ -133,9 +132,9 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     @Override
     public void addToNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof CableStructure cable) {
+        if (structure instanceof CableStructure) {
             WorldPipeNetNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
-            mutateData(node.getData(), cable);
+            mutateData(node.getData(), structure);
         } else if (structure instanceof PipeStructure pipe) {
             long amperage = amperageLimit * pipe.material() / 2;
             if (amperage == 0) return; // skip pipes that are too small

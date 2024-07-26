@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
@@ -21,8 +22,6 @@ import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
-import gregtech.client.renderer.pipe.LaserPipeRenderer;
-import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.explosive.BlockITNT;
 import gregtech.common.blocks.explosive.BlockPowderbarrel;
@@ -40,6 +39,10 @@ import gregtech.common.blocks.wood.BlockWoodenDoor;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.block.cable.CableBlock;
 import gregtech.common.pipelike.block.cable.CableStructure;
+import gregtech.common.pipelike.block.laser.LaserPipeBlock;
+import gregtech.common.pipelike.block.laser.LaserStructure;
+import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
+import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.PipeBlock;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelikeold.fluidpipe.longdistance.LDFluidPipeType;
@@ -107,8 +110,8 @@ public class MetaBlocks {
     public static BlockMachine MACHINE;
     public static final Map<String, CableBlock[]> CABLES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, PipeBlock[]> MATERIAL_PIPES = new Object2ObjectOpenHashMap<>();
-    public static final BlockOpticalPipe[] OPTICAL_PIPES = new BlockOpticalPipe[OpticalPipeType.values().length];
-    public static final BlockLaserPipe[] LASER_PIPES = new BlockLaserPipe[OpticalPipeType.values().length];
+    public static OpticalPipeBlock[] OPTICAL_PIPES;
+    public static LaserPipeBlock[] LASER_PIPES;
     public static BlockLongDistancePipe LD_ITEM_PIPE;
     public static BlockLongDistancePipe LD_FLUID_PIPE;
 
@@ -205,15 +208,24 @@ public class MetaBlocks {
             }
             MATERIAL_PIPES.put(modid, pipes);
         }
-        for (OpticalPipeType type : OpticalPipeType.values()) {
-            OPTICAL_PIPES[type.ordinal()] = new BlockOpticalPipe(type);
-            OPTICAL_PIPES[type.ordinal()].setRegistryName(String.format("optical_pipe_%s", type.getName()));
-            OPTICAL_PIPES[type.ordinal()].setTranslationKey(String.format("optical_pipe_%s", type.getName()));
+
+        Set<OpticalStructure> structuresOptical = OpticalPipeBlock.gatherStructures();
+        OPTICAL_PIPES = new OpticalPipeBlock[structuresOptical.size()];
+        int i = 0;
+        for (OpticalStructure struct : structuresOptical) {
+            OpticalPipeBlock block = new OpticalPipeBlock(struct);
+            block.setRegistryName(GTValues.MODID, String.format("optical_pipe_%s", struct.getName()));
+            OPTICAL_PIPES[i] = block;
+            i++;
         }
-        for (LaserPipeType type : LaserPipeType.values()) {
-            LASER_PIPES[type.ordinal()] = new BlockLaserPipe(type);
-            LASER_PIPES[type.ordinal()].setRegistryName(String.format("laser_pipe_%s", type.getName()));
-            LASER_PIPES[type.ordinal()].setTranslationKey(String.format("laser_pipe_%s", type.getName()));
+        Set<LaserStructure> structuresLaser = LaserPipeBlock.gatherStructures();
+        LASER_PIPES = new LaserPipeBlock[structuresOptical.size()];
+        i = 0;
+        for (LaserStructure struct : structuresLaser) {
+            LaserPipeBlock block = new LaserPipeBlock(struct);
+            block.setRegistryName(GTValues.MODID, String.format("laser_pipe_%s", struct.getName()));
+            LASER_PIPES[i] = block;
+            i++;
         }
 
         LD_ITEM_PIPE = new BlockLongDistancePipe(LDItemPipeType.INSTANCE);
@@ -426,15 +438,19 @@ public class MetaBlocks {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE),
                 stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-            for (CableBlock cable : CABLES.get(registry.getModid())) cable.onModelRegister();
-            for (PipeBlock pipe : MATERIAL_PIPES.get(registry.getModid())) pipe.onModelRegister();
+            for (CableBlock cable : CABLES.get(registry.getModid()))
+                ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable),
+                        stack -> cable.getStructure().getModel().getLoc());
+            for (PipeBlock pipe : MATERIAL_PIPES.get(registry.getModid()))
+                ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
+                        stack -> pipe.getStructure().getModel().getLoc());
         }
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES)
+        for (OpticalPipeBlock pipe : OPTICAL_PIPES)
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
-                    stack -> OpticalPipeRenderer.INSTANCE.getModelLocation());
-        for (BlockLaserPipe pipe : LASER_PIPES)
+                    stack -> pipe.getStructure().getModel().getLoc());
+        for (LaserPipeBlock pipe : LASER_PIPES)
             ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
-                    stack -> LaserPipeRenderer.INSTANCE.getModelLocation());
+                    stack -> pipe.getStructure().getModel().getLoc());
 
         registerItemModel(BOILER_CASING);
         registerItemModel(METAL_CASING);
@@ -523,31 +539,22 @@ public class MetaBlocks {
     public static void registerStateMappers() {
         ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
 
-        IStateMapper normalStateMapper;
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-            // TODO rendering
-//            normalStateMapper = new SimpleStateMapper(CableRenderer.INSTANCE.getModelLocation());
-//            for (BlockCable cable : CABLES.get(registry.getModid())) {
-//                ModelLoader.setCustomStateMapper(cable, normalStateMapper);
-//            }
-//            normalStateMapper = new SimpleStateMapper(FluidPipeRenderer.INSTANCE.getModelLocation());
-//            for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) {
-//                ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
-//            }
-//            normalStateMapper = new SimpleStateMapper(ItemPipeRenderer.INSTANCE.getModelLocation());
-//            for (BlockItemPipe pipe : ITEM_PIPES.get(registry.getModid())) {
-//                ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
-//            }
+            for (CableBlock cable : CABLES.get(registry.getModid())) {
+                ModelLoader.setCustomStateMapper(cable, new SimpleStateMapper(cable.getStructure().getModel().getLoc()));
+            }
+            for (PipeBlock pipe : MATERIAL_PIPES.get(registry.getModid())) {
+                ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getStructure().getModel().getLoc()));
+            }
         }
-        normalStateMapper = new SimpleStateMapper(OpticalPipeRenderer.INSTANCE.getModelLocation());
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        for (OpticalPipeBlock pipe : OPTICAL_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getStructure().getModel().getLoc()));
         }
-        normalStateMapper = new SimpleStateMapper(LaserPipeRenderer.INSTANCE.getModelLocation());
-        for (BlockLaserPipe pipe : LASER_PIPES) {
-            ModelLoader.setCustomStateMapper(pipe, normalStateMapper);
+        for (LaserPipeBlock pipe : LASER_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getStructure().getModel().getLoc()));
         }
 
+        IStateMapper normalStateMapper;
         normalStateMapper = new SimpleStateMapper(BlockSurfaceRock.MODEL_LOCATION);
         for (BlockSurfaceRock surfaceRock : SURFACE_ROCK_BLOCKS) {
             ModelLoader.setCustomStateMapper(surfaceRock, normalStateMapper);

@@ -10,7 +10,7 @@ import gregtech.api.unification.material.properties.*;
 
 import crafttweaker.annotations.ZenRegister;
 
-import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
 
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;

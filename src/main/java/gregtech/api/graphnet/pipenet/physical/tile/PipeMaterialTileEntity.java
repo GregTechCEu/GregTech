@@ -5,8 +5,15 @@ import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.GTUtility;
+
+import gregtech.client.renderer.pipe.PipeModel;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.common.property.IExtendedBlockState;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,5 +43,15 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
     public Material getMaterial() {
         if (material == null) return Materials.Aluminium;
         return material;
+    }
+
+    @Override
+    public int getDefaultPaintingColor() {
+        return GTUtility.convertRGBtoARGB(getMaterial().getMaterialRGB());
+    }
+
+    @Override
+    public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
+        return super.getRenderInformation(state).withProperty(PipeModel.MATERIAL_PROPERTY, getMaterial());
     }
 }

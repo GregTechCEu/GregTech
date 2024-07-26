@@ -1,4 +1,4 @@
-package gregtech.client.renderer.pipe;
+package gregtech.client.renderer.pipeold;
 
 import gregtech.api.graphnet.pipenetold.block.BlockPipe;
 import gregtech.api.graphnet.pipenetold.block.IPipeType;

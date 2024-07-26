@@ -57,10 +57,4 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
             world.setBlockState(pos, newBlock.getStateFromMeta(this.getMetaFromState(state)));
         }
     }
-
-    // TODO rendering
-    @Override
-    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return null;
-    }
 }

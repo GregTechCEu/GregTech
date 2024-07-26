@@ -22,7 +22,7 @@ import gregtech.api.unification.material.properties.WoodProperty;
 import com.cleanroommc.groovyscript.api.GroovyBlacklist;
 import com.cleanroommc.groovyscript.api.GroovyLog;
 
-import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
 
 import static gregtech.integration.groovy.GroovyScriptModule.checkFrozen;
 

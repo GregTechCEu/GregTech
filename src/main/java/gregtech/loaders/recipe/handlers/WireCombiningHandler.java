@@ -5,13 +5,12 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 
 import com.google.common.collect.ImmutableMap;
 
-import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
 
 import org.apache.commons.lang3.ArrayUtils;
 

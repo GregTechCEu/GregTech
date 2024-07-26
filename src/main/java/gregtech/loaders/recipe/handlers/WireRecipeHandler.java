@@ -12,7 +12,7 @@ import gregtech.api.util.GTUtility;
 
 import com.google.common.collect.ImmutableMap;
 
-import gregtech.common.pipelike.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
 
 import java.util.Map;
 
@@ -108,7 +108,7 @@ public class WireRecipeHandler {
 
         int cableAmount = (int) (wirePrefix.getMaterialAmount(material) * 2 / GTValues.M);
         OrePrefix cablePrefix = OrePrefix.getPrefix("cable" + wirePrefix.name().substring(4));
-        int voltageTier = GTUtility.getTierByVoltage(property.getVoltage());
+        int voltageTier = GTUtility.getTierByVoltage(property.getVoltageLimit());
         int insulationAmount = INSULATION_AMOUNT.get(cablePrefix);
 
         // Generate hand-crafting recipes for ULV and LV cables

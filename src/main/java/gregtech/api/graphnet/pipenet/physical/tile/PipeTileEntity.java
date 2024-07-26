@@ -18,6 +18,7 @@ import gregtech.api.unification.material.Material;
 
 import gregtech.client.particle.GTOverheatParticle;
 
+import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
@@ -37,6 +38,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -49,10 +51,11 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_PAINT;
-import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_LOGIC;
+import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITickable {
+
+    public static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
     private final Object2ObjectOpenHashMap<String, NetLogicData> netLogicDatas = new Object2ObjectOpenHashMap<>();
     private final ObjectOpenHashSet<NetLogicData.LogicDataListener> listeners = new ObjectOpenHashSet<>();
@@ -68,7 +71,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private int paintingColor;
 
 
-    private Material frameMaterial;
+    private @Nullable Material frameMaterial;
 
     private final Set<ITickable> tickers = new ObjectOpenHashSet<>();
 
@@ -129,12 +132,22 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         } else {
             this.renderMask &= ~(1 << facing.ordinal());
         }
+        syncConnected();
     }
 
     public void setDisconnected(EnumFacing facing) {
         this.connectionMask &= ~(1 << facing.ordinal());
         this.renderMask &= ~(1 << facing.ordinal());
         updateActiveStatus(facing, false);
+        syncConnected();
+    }
+
+    private void syncConnected() {
+        writeCustomData(UPDATE_CONNECTIONS, buffer -> {
+            buffer.writeByte(connectionMask);
+            buffer.writeByte(renderMask);
+        });
+        markDirty();
     }
 
     public boolean isConnected(EnumFacing facing) {
@@ -151,10 +164,17 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public void setBlocked(EnumFacing facing) {
         this.blockedMask |= 1 << facing.ordinal();
+        syncBlocked();
     }
 
     public void setUnblocked(EnumFacing facing) {
         this.blockedMask &= ~(1 << facing.ordinal());
+        syncBlocked();
+    }
+
+    private void syncBlocked() {
+        writeCustomData(UPDATE_BLOCKED_CONNECTIONS, buffer -> buffer.writeByte(blockedMask));
+        markDirty();
     }
 
     public boolean isBlocked(EnumFacing facing) {
@@ -171,10 +191,13 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return isPainted() ? paintingColor : getDefaultPaintingColor();
     }
 
-    public void setPaintingColor(int paintingColor) {
+    public void setPaintingColor(int paintingColor, boolean alphaSensitive) {
+        if (!alphaSensitive) {
+            paintingColor |= 0xFF000000;
+        }
         this.paintingColor = paintingColor;
         if (!getWorld().isRemote) {
-            writeCustomData(UPDATE_PAINT, buffer -> buffer.writeInt(paintingColor));
+            writeCustomData(UPDATE_PAINT, buffer -> buffer.writeInt(this.paintingColor));
             markDirty();
         }
     }
@@ -184,16 +207,25 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     public int getDefaultPaintingColor() {
-        return 0xFFFFFF;
+        return DEFAULT_COLOR;
     }
 
     // frame //
 
-    public void setFrameMaterial(Material frameMaterial) {
+    public void setFrameMaterial(@Nullable Material frameMaterial) {
         this.frameMaterial = frameMaterial;
+        syncFrameMaterial();
     }
 
-    public Material getFrameMaterial() {
+    private void syncFrameMaterial() {
+        writeCustomData(UPDATE_FRAME_MATERIAL, buffer -> {
+            if (frameMaterial != null) buffer.writeString(this.frameMaterial.getRegistryName());
+            else buffer.writeString("");
+        });
+        markDirty();
+    }
+
+    public @Nullable Material getFrameMaterial() {
         return frameMaterial;
     }
 
@@ -406,7 +438,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         compound.setByte("ConnectionMask", connectionMask);
         compound.setByte("BlockedMask", blockedMask);
         compound.setInteger("Paint", paintingColor);
-        compound.setString("Frame", frameMaterial.getRegistryName());
+        if (frameMaterial != null) compound.setString("Frame", frameMaterial.getRegistryName());
         compound.setTag("Covers", getCoverHolder().serializeNBT());
         return compound;
     }
@@ -417,7 +449,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         connectionMask = compound.getByte("ConnectionMask");
         blockedMask = compound.getByte("BlockedMask");
         paintingColor = compound.getInteger("Paint");
-        this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("Frame"));
+        if (compound.hasKey("Frame")) this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("Frame"));
+        else this.frameMaterial = null;
         this.getCoverHolder().deserializeNBT(compound.getCompoundTag("Covers"));
     }
 
@@ -479,6 +512,15 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                     }
                 }
             }
+        } else if (discriminator == UPDATE_CONNECTIONS) {
+            this.connectionMask = buf.readByte();
+            this.renderMask = buf.readByte();
+        } else if (discriminator == UPDATE_BLOCKED_CONNECTIONS) {
+            this.blockedMask = buf.readByte();
+        } else if (discriminator == UPDATE_FRAME_MATERIAL) {
+            String name = buf.readString(255);
+            if (name.equals("")) this.frameMaterial = null;
+            else this.frameMaterial = GregTechAPI.materialManager.getMaterial(name);
         } else if (discriminator == UPDATE_PAINT) {
             this.paintingColor = buf.readInt();
         } else {
@@ -561,5 +603,20 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeTileEntity pipe) return pipe;
         else return null;
+    }
+
+    public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
+        byte frameMask = 0;
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            if (getCoverHolder().hasCover(facing)) frameMask |= 1 << facing.ordinal();
+        }
+        frameMask = (byte) ~frameMask;
+        return state.withProperty(AbstractPipeModel.THICKNESS_PROPERTY, this.getStructure().getRenderThickness())
+                .withProperty(AbstractPipeModel.CONNECTION_MASK_PROPERTY, connectionMask)
+                .withProperty(AbstractPipeModel.CLOSED_MASK_PROPERTY, renderMask)
+                .withProperty(AbstractPipeModel.BLOCKED_MASK_PROPERTY, blockedMask)
+                .withProperty(AbstractPipeModel.COLOR_PROPERTY, getPaintingColor())
+                .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
+                .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask);
     }
 }

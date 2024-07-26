@@ -1,11 +1,9 @@
-package gregtech.common.pipelike.properties;
+package gregtech.common.pipelike.handlers;
 
-import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
-import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.logic.NetLogicData;
@@ -21,17 +19,10 @@ import gregtech.api.unification.material.properties.PipeNetProperties;
 
 import gregtech.api.unification.material.properties.PropertyKey;
 
-import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 
-import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
-import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
-
-import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.util.math.BlockPos;
@@ -144,9 +135,9 @@ public class MaterialFluidProperties implements PipeNetProperties.IPipeNetMateri
 
     @Override
     public void addToNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof PipeStructure pipe) {
+        if (structure instanceof PipeStructure) {
             WorldPipeNetNode node = WorldFluidNet.getWorldNet(world).getOrCreateNode(pos);
-            mutateData(node.getData(), pipe);
+            mutateData(node.getData(), structure);
         }
     }
 

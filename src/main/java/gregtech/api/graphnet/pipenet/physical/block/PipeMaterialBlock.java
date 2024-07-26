@@ -17,7 +17,10 @@ import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,6 +34,11 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +64,7 @@ public abstract class PipeMaterialBlock extends WorldPipeBlock {
         return new ItemStack(this, 1, registry.getIDForObject(material));
     }
 
+    @Nullable
     public Material getMaterialForStack(@NotNull ItemStack stack) {
         return registry.getObjectById(stack.getMetadata());
     }
@@ -74,23 +83,6 @@ public abstract class PipeMaterialBlock extends WorldPipeBlock {
         PipeMaterialTileEntity tile = getTileEntity(world, pos);
         if (tile != null) tile.getMaterial().getProperty(PropertyKey.PIPENET_PROPERTIES);
         return Materials.Aluminium.getProperty(PropertyKey.PIPENET_PROPERTIES);
-    }
-
-    /**
-     * to do {@link MetaBlocks#registerStateMappers()}
-     */
-    public void onModelRegister() {
-        // TODO rendering
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(this), stack -> getPipeRenderer().getModelLocation());
-        for (IBlockState state : this.getBlockState().getValidStates()) {
-            ModelResourceLocation resourceLocation = new ModelResourceLocation(
-                    new ResourceLocation(GTValues.MODID, // force pipe models to always be GT's
-                            Objects.requireNonNull(this.getRegistryName()).getPath()),
-                    MetaBlocks.statePropertiesToString(state.getProperties()));
-            // noinspection ConstantConditions
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this),
-                    this.getMetaFromState(state), resourceLocation);
-        }
     }
 
     // tile entity //
@@ -113,5 +105,14 @@ public abstract class PipeMaterialBlock extends WorldPipeBlock {
     @Override
     public @NotNull PipeTileEntity createTileEntity(@NotNull World world, @NotNull IBlockState state) {
         return new PipeMaterialTileEntity(this);
+    }
+
+    @Override
+    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
+        PipeMaterialTileEntity tile = getTileEntity(world, blockPos);
+        if (tile != null) {
+            return ImmutablePair.of(getStructure().getModel().getParticleTexture(tile.getMaterial()), tile.getPaintingColor());
+        }
+        return null;
     }
 }

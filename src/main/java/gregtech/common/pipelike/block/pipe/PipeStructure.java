@@ -1,50 +1,77 @@
 package gregtech.common.pipelike.block.pipe;
 
+import com.github.bsideup.jabel.Desugar;
+
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.unification.ore.OrePrefix;
 
-import gregtech.common.pipelike.block.cable.CableStructure;
+import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.PipeItemModel;
+import gregtech.client.renderer.pipe.PipeModel;
+
+import gregtech.client.renderer.pipe.util.WoodCacheKey;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public record PipeStructure(String name, int material, int channelCount, boolean restrictive, OrePrefix ore, float renderThickness)
+@Desugar
+public record PipeStructure(String name, int material, int channelCount, boolean restrictive, OrePrefix ore,
+                            float renderThickness, PipeModel model)
         implements IPipeMaterialStructure {
 
-    public static final PipeStructure TINY = new PipeStructure("tiny", 1, 1, false, OrePrefix.pipeTiny, 0.25f);
-    public static final PipeStructure SMALL = new PipeStructure("small", 2, 1, false, OrePrefix.pipeSmall, 0.375f);
-    public static final PipeStructure NORMAL = new PipeStructure("normal", 6, 1, false, OrePrefix.pipeNormal, 0.5f);
-    public static final PipeStructure LARGE = new PipeStructure("large", 12, 1, false, OrePrefix.pipeLarge, 0.75f);
-    public static final PipeStructure HUGE = new PipeStructure("huge", 24, 1, false, OrePrefix.pipeHuge, 0.875f);
+    public static final PipeStructure TINY =
+            new PipeStructure("tiny", 1, 1, false, OrePrefix.pipeTiny, 0.25f, PipeModel.INSTANCES[0]);
+    public static final PipeStructure SMALL =
+            new PipeStructure("small", 2, 1, false, OrePrefix.pipeSmall, 0.375f, PipeModel.INSTANCES[1]);
+    public static final PipeStructure NORMAL =
+            new PipeStructure("normal", 6, 1, false, OrePrefix.pipeNormal, 0.5f, PipeModel.INSTANCES[2]);
+    public static final PipeStructure LARGE =
+            new PipeStructure("large", 12, 1, false, OrePrefix.pipeLarge, 0.75f, PipeModel.INSTANCES[3]);
+    public static final PipeStructure HUGE =
+            new PipeStructure("huge", 24, 1, false, OrePrefix.pipeHuge, 0.875f, PipeModel.INSTANCES[4]);
 
     // TODO adjust quadruple and nonuple thicknesses to 0.5f and 0.75f respectively, and update textures accordingly
-    public static final PipeStructure QUADRUPLE = new PipeStructure("quadruple", 8, 4, false, OrePrefix.pipeQuadruple, 0.95f);
-    public static final PipeStructure NONUPLE = new PipeStructure("nonuple", 18, 9, false, OrePrefix.pipeNonuple, 0.95f);
+    public static final PipeStructure QUADRUPLE =
+            new PipeStructure("quadruple", 8, 4, false, OrePrefix.pipeQuadruple, 0.95f, PipeModel.INSTANCES[5]);
+    public static final PipeStructure NONUPLE =
+            new PipeStructure("nonuple", 18, 9, false, OrePrefix.pipeNonuple, 0.95f, PipeModel.INSTANCES[6]);
 
 
-    public static final PipeStructure TINY_RESTRICTIVE = new PipeStructure("tiny_restrictive", 1, 1, true, OrePrefix.pipeTinyRestrictive, 0.25f);
-    public static final PipeStructure SMALL_RESTRICTIVE = new PipeStructure("small_restrictive", 2, 1, true, OrePrefix.pipeSmallRestrictive, 0.375f);
-    public static final PipeStructure NORMAL_RESTRICTIVE = new PipeStructure("normal_restrictive", 6, 1, true, OrePrefix.pipeNormalRestrictive, 0.5f);
-    public static final PipeStructure LARGE_RESTRICTIVE = new PipeStructure("large_restrictive", 12, 1, true, OrePrefix.pipeLargeRestrictive, 0.75f);
-    public static final PipeStructure HUGE_RESTRICTIVE = new PipeStructure("huge_restrictive", 24, 1, true, OrePrefix.pipeHugeRestrictive, 0.875f);
+    public static final PipeStructure TINY_RESTRICTIVE =
+            new PipeStructure("tiny_restrictive", 1, 1, true, OrePrefix.pipeTinyRestrictive, 0.25f, PipeModel.RESTRICTIVE_INSTANCES[0]);
+    public static final PipeStructure SMALL_RESTRICTIVE =
+            new PipeStructure("small_restrictive", 2, 1, true, OrePrefix.pipeSmallRestrictive, 0.375f, PipeModel.RESTRICTIVE_INSTANCES[1]);
+    public static final PipeStructure NORMAL_RESTRICTIVE =
+            new PipeStructure("normal_restrictive", 6, 1, true, OrePrefix.pipeNormalRestrictive, 0.5f, PipeModel.RESTRICTIVE_INSTANCES[2]);
+    public static final PipeStructure LARGE_RESTRICTIVE =
+            new PipeStructure("large_restrictive", 12, 1, true, OrePrefix.pipeLargeRestrictive, 0.75f, PipeModel.RESTRICTIVE_INSTANCES[3]);
+    public static final PipeStructure HUGE_RESTRICTIVE =
+            new PipeStructure("huge_restrictive", 24, 1, true, OrePrefix.pipeHugeRestrictive, 0.875f, PipeModel.RESTRICTIVE_INSTANCES[4]);
 
-    public static final PipeStructure QUADRUPLE_RESTRICTIVE = new PipeStructure("quadruple_restrictive", 8, 4, true, OrePrefix.pipeQuadrupleRestrictive, 0.95f);
-    public static final PipeStructure NONUPLE_RESTRICTIVE = new PipeStructure("nonuple_restrictive", 18, 9, true, OrePrefix.pipeNonupleRestrictive, 0.95f);
+    public static final PipeStructure QUADRUPLE_RESTRICTIVE =
+            new PipeStructure("quadruple_restrictive", 8, 4, true, OrePrefix.pipeQuadrupleRestrictive, 0.95f, PipeModel.RESTRICTIVE_INSTANCES[5]);
+    public static final PipeStructure NONUPLE_RESTRICTIVE =
+            new PipeStructure("nonuple_restrictive", 18, 9, true, OrePrefix.pipeNonupleRestrictive, 0.95f, PipeModel.RESTRICTIVE_INSTANCES[6]);
 
     @Override
     public @NotNull String getName() {
-        return this.name();
+        return name;
     }
 
     @Override
     public OrePrefix getOrePrefix() {
-        return this.ore();
+        return ore;
     }
 
     @Override
     public float getRenderThickness() {
-        return this.renderThickness();
+        return renderThickness;
+    }
+
+    @Override
+    public AbstractPipeModel<?> getModel() {
+        return model;
     }
 
     @Override

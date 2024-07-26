@@ -7,7 +7,7 @@ import gregtech.api.graphnet.pipenetold.block.BlockPipe;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
-import gregtech.client.renderer.pipe.OpticalPipeRenderer;
+import gregtech.client.renderer.pipeold.OpticalPipeRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelikeold.optical.net.WorldOpticalPipeNet;
 import gregtech.common.pipelikeold.optical.tile.TileEntityOpticalPipe;

@@ -7,7 +7,7 @@ import gregtech.api.graphnet.pipenetold.block.BlockPipe;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
-import gregtech.client.renderer.pipe.LaserPipeRenderer;
+import gregtech.client.renderer.pipeold.LaserPipeRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelikeold.laser.net.WorldLaserPipeNet;

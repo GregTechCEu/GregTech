@@ -37,10 +37,4 @@ public class PipeBlock extends PipeMaterialBlock implements IBurnable {
         MinecraftForge.EVENT_BUS.post(event);
         return event.getGathered();
     }
-
-    // TODO rendering
-    @Override
-    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return null;
-    }
 }

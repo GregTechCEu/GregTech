@@ -4,22 +4,47 @@ import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.worldnet.WorldNetNode;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraft.world.World;
+
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
 
 public final class WorldPipeNetNode extends WorldNetNode {
 
     @Nullable
     MultiNodeHelper overlapHelper;
 
+    private WeakReference<PipeTileEntity> tileReference;
+
     public WorldPipeNetNode(WorldPipeNet net) {
         super(net);
     }
 
     public PipeTileEntity getTileEntity() {
-        // should this be cached? It's only ever used for active nodes when they are being targeted by a path traversal.
-        return (PipeTileEntity) getNet().getWorld().getTileEntity(getEquivalencyData());
+        return getTileEntity(true);
+    }
+
+    @Nullable
+    public PipeTileEntity getTileEntityNoLoading() {
+        return getTileEntity(false);
+    }
+
+    private PipeTileEntity getTileEntity(boolean allowLoading) {
+        if (tileReference != null) {
+            PipeTileEntity tile = tileReference.get();
+            if (tile != null) return tile;
+        }
+        World world = getNet().getWorld();
+        if (!allowLoading && !world.isBlockLoaded(getEquivalencyData())) return null;
+        TileEntity tile = world.getTileEntity(getEquivalencyData());
+        if (tile instanceof PipeTileEntity pipe) {
+            this.tileReference = new WeakReference<>(pipe);
+            return pipe;
+        } else return null;
     }
 
     @Override

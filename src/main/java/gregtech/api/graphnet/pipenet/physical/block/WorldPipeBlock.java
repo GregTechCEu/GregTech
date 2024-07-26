@@ -18,13 +18,14 @@ import gregtech.common.ConfigHolder;
 
 import gregtech.common.blocks.BlockFrame;
 
+import gregtech.common.creativetab.GTCreativeTabs;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -41,11 +43,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +73,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
         setResistance(3.0f);
         setLightOpacity(0);
         disableStats();
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
     }
 
     public IPipeStructure getStructure() {
@@ -196,11 +199,25 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
         if (getStructure().isPaintable()) {
             PipeTileEntity tile = getTileEntity(world, pos);
             if (tile != null && tile.getPaintingColor() != color.colorValue) {
-                tile.setPaintingColor(color.colorValue);
+                tile.setPaintingColor(color.colorValue, false);
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
+        return getStructure().getModel().canRenderInLayer(layer);
+    }
+
+    @Override
+    protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
+        PipeTileEntity tile = getTileEntity(world, blockPos);
+        if (tile != null) {
+            return ImmutablePair.of(getStructure().getModel().getParticleTexture(), tile.getPaintingColor());
+        }
+        return null;
     }
 
     // collision boxes //
@@ -271,6 +288,12 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
         return stack.getItem() instanceof ItemPipeBlock block && this.getClass().isInstance(block.getBlock());
     }
 
+    @Nullable
+    public static WorldPipeBlock getBlockFromItem(@NotNull ItemStack stack) {
+        if (stack.getItem() instanceof ItemPipeBlock block) return block.getBlock();
+        else return null;
+    }
+
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {
         if (isPipeTool(stack)) return true;
 
@@ -291,6 +314,14 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     }
 
     // tile entity //
+
+    @Override
+    public @NotNull IBlockState getExtendedState(@NotNull IBlockState state, @NotNull IBlockAccess world,
+                                                 @NotNull BlockPos pos) {
+        PipeTileEntity tile = getTileEntity(world, pos);
+        if (tile == null) return state;
+        else return tile.getRenderInformation((IExtendedBlockState) state);
+    }
 
     @Override
     public boolean hasTileEntity(@NotNull IBlockState state) {

@@ -918,4 +918,17 @@ public class GTUtility {
         }
         return ascending ? maxValue : minValue;
     }
+
+    public static int[] convertARGBtoArray(int argb) {
+        int a = argb >> 24 & 255;
+        int r = argb >> 16 & 255;
+        int g = argb >> 8 & 255;
+        int b = argb & 255;
+        return new int[] {a, r, g, b};
+    }
+
+    @Contract(pure = true)
+    public static boolean evalMask(@NotNull EnumFacing facing, byte mask) {
+        return (mask & (1 << facing.ordinal())) > 0;
+    }
 }
