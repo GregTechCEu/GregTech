@@ -38,7 +38,6 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -113,9 +112,10 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public @NotNull List<? extends IFluidTank> registerAbilities(
-                                                                 @NotNull MultiblockAbility<? extends IFluidTank> multiblockAbility) {
-        return Collections.singletonList(fluidTank);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IFluidTank> multiblockAbility,
+                                  @NotNull List<IFluidTank> abilities) {
+        abilities.add(fluidTank);
     }
 
     @Override

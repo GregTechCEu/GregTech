@@ -32,7 +32,6 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultiblockPart implements IPassthroughHatch,
@@ -156,9 +155,10 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public @NotNull List<? extends IPassthroughHatch> registerAbilities(
-                                                                        @NotNull MultiblockAbility<? extends IPassthroughHatch> multiblockAbility) {
-        return Collections.singletonList(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IPassthroughHatch> multiblockAbility,
+                                  @NotNull List<IPassthroughHatch> abilities) {
+        abilities.add(this);
     }
 
     @NotNull
