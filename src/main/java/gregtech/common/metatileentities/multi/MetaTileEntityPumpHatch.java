@@ -35,7 +35,6 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart
@@ -105,9 +104,10 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public @NotNull List<? extends IFluidTank> registerAbilities(
-                                                                 @NotNull MultiblockAbility<? extends IFluidTank> multiblockAbility) {
-        return Collections.singletonList(exportFluids.getTankAt(0));
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IFluidTank> multiblockAbility,
+                                  @NotNull List<IFluidTank> abilities) {
+        abilities.add(exportFluids.getTankAt(0));
     }
 
     @Override
