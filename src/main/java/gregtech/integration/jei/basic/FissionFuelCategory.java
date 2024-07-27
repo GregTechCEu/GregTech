@@ -21,11 +21,6 @@ public class FissionFuelCategory extends BasicRecipeCategory<FissionFuelInfo, Fi
     private final IDrawable icon;
     protected final IDrawable slot;
     private final IDrawable arrow;
-    private String duration;
-    private String maxTemp;
-    private String crossSectionFast;
-    private String crossSectionSlow;
-    private String neutronGenerationTime;
 
     public FissionFuelCategory(IGuiHelper guiHelper) {
         super("fission_fuel", "fission.fuel.name", guiHelper.createBlankDrawable(176, 90), guiHelper);
@@ -51,18 +46,6 @@ public class FissionFuelCategory extends BasicRecipeCategory<FissionFuelInfo, Fi
         itemStackGroup.set(0, recipeWrapper.rod);
         itemStackGroup.init(1, true, 104, 8);
         itemStackGroup.set(1, recipeWrapper.depletedRod);
-
-        IFissionFuelStats prop = FissionFuelRegistry.getFissionFuel(recipeWrapper.rod);
-
-        duration = I18n.format("metaitem.nuclear.tooltip.duration", prop.getDuration());
-        maxTemp = I18n.format("metaitem.nuclear.tooltip.temperature", prop.getMaxTemperature());
-        crossSectionFast = I18n.format("metaitem.nuclear.tooltip.cross_section_fast",
-                prop.getFastNeutronFissionCrossSection());
-        crossSectionSlow = I18n.format("metaitem.nuclear.tooltip.cross_section_slow",
-                prop.getSlowNeutronFissionCrossSection());
-        neutronGenerationTime = I18n.format(
-                "metaitem.nuclear.tooltip.neutron_time." + prop.getNeutronGenerationTimeCategory(),
-                prop.getNeutronGenerationTime());
     }
 
     @Override
@@ -71,17 +54,6 @@ public class FissionFuelCategory extends BasicRecipeCategory<FissionFuelInfo, Fi
         slot.draw(minecraft, 104, 8);
         arrow.draw(minecraft, 77, 6);
 
-        int start = 40;
-        int linesDrawn = 0;
-        minecraft.fontRenderer.drawString(duration, 0, FONT_HEIGHT * linesDrawn + start, 0x111111);
-        linesDrawn++;
-        minecraft.fontRenderer.drawString(maxTemp, 0, FONT_HEIGHT * linesDrawn + start, 0x111111);
-        linesDrawn++;
-        minecraft.fontRenderer.drawString(crossSectionFast, 0, FONT_HEIGHT * linesDrawn + start, 0x111111);
-        linesDrawn++;
-        minecraft.fontRenderer.drawString(crossSectionSlow, 0, FONT_HEIGHT * linesDrawn + start, 0x111111);
-        linesDrawn++;
-        minecraft.fontRenderer.drawString(neutronGenerationTime, 0, FONT_HEIGHT * linesDrawn + start, 0x111111);
     }
 
     @Override
