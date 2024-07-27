@@ -34,7 +34,6 @@ import java.util.Iterator;
 public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyContainer {
 
     private final WorldPipeNet net;
-    private final FlowWorldPipeNetPath.Provider provider;
     private @Nullable PipeTileEntity tile;
 
     private final EnumMap<EnumFacing, AbstractNetFlowEdge> internalBuffers = new EnumMap<>(EnumFacing.class);
@@ -42,14 +41,16 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     private boolean transferring = false;
 
     public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> EnergyCapabilityObject(@NotNull N net, WorldPipeNetNode node) {
-        // eh, duplicate references so what
         this.net = net;
-        this.provider = net;
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
             edge.setData(NetLogicData.union(node.getData(), (NetLogicData) null));
             internalBuffers.put(facing, edge);
         }
+    }
+
+    private FlowWorldPipeNetPath.Provider getProvider() {
+        return (FlowWorldPipeNetPath.Provider) net;
     }
 
     @Override
@@ -89,7 +90,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
 
     private Iterator<FlowWorldPipeNetPath> getPaths(EnergyTraverseData data) {
         assert tile != null;
-        return provider.getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(), data.getQueryTick());
+        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(), data.getQueryTick());
     }
 
     @Nullable

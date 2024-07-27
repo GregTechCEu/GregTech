@@ -515,14 +515,18 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         } else if (discriminator == UPDATE_CONNECTIONS) {
             this.connectionMask = buf.readByte();
             this.renderMask = buf.readByte();
+            scheduleRenderUpdate();
         } else if (discriminator == UPDATE_BLOCKED_CONNECTIONS) {
             this.blockedMask = buf.readByte();
+            scheduleRenderUpdate();
         } else if (discriminator == UPDATE_FRAME_MATERIAL) {
             String name = buf.readString(255);
             if (name.equals("")) this.frameMaterial = null;
             else this.frameMaterial = GregTechAPI.materialManager.getMaterial(name);
+            scheduleRenderUpdate();
         } else if (discriminator == UPDATE_PAINT) {
             this.paintingColor = buf.readInt();
+            scheduleRenderUpdate();
         } else {
             this.getCoverHolder().readCustomData(discriminator, buf);
         }

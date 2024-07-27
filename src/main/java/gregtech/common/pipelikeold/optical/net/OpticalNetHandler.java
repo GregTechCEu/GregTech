@@ -1,9 +1,8 @@
 package gregtech.common.pipelikeold.optical.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IDataAccessHatch;
-import gregtech.api.capability.IOpticalComputationProvider;
-import gregtech.api.capability.IOpticalDataAccessHatch;
+import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.IHatchDataAccess;
 import gregtech.api.graphnet.pipenetold.IPipeNetHandler;
 import gregtech.api.graphnet.NetGroup;
 import gregtech.api.graphnet.pipenetold.PipeNetNode;
@@ -24,7 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationProvider, IPipeNetHandler {
+public class OpticalNetHandler implements IDataAccess, IOpticalComputationProvider, IPipeNetHandler {
 
     private final TileEntityOpticalPipe pipe;
     private final EnumFacing facing;
@@ -49,7 +48,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
     }
 
     @Override
-    public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
+    public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccess> seen) {
         boolean isAvailable = traverseRecipeAvailable(recipe, seen);
         if (isAvailable) setPipesActive();
         return isAvailable;
@@ -93,7 +92,7 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
         return net == null || pipe.isInvalid() || facing == null;
     }
 
-    private boolean traverseRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
+    private boolean traverseRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccess> seen) {
         if (isNetInvalidForTraversal()) return false;
 
         Iterator<PipeNetPath<OpticalPipeType, OpticalPipeProperties, NetEdge>> inv = net.getPaths(this.pipe);
@@ -103,9 +102,9 @@ public class OpticalNetHandler implements IDataAccessHatch, IOpticalComputationP
         if (connecteds.size() != 1) return false;
         EnumFacing facing = connecteds.keySet().iterator().next();
 
-        IDataAccessHatch access = connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
+        IDataAccess access = connecteds.get(facing).getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
                 facing.getOpposite());
-        if (!(access instanceof IOpticalDataAccessHatch hatch) || seen.contains(hatch)) return false;
+        if (!(access instanceof IHatchDataAccess hatch) || seen.contains(hatch)) return false;
 
         if (hatch.isTransmitter()) {
             return hatch.isRecipeAvailable(recipe, seen);

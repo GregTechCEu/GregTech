@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.capability.ILaserRelay;
 import gregtech.api.metatileentity.MetaTileEntity;
 
 import net.minecraft.tileentity.TileEntity;
@@ -24,6 +25,13 @@ public class LaserContainerHandler extends EnergyContainerHandler implements ILa
     public static LaserContainerHandler receiverContainer(MetaTileEntity tileEntity, long maxCapacity,
                                                           long maxInputVoltage, long maxInputAmperage) {
         return new LaserContainerHandler(tileEntity, maxCapacity, maxInputVoltage, maxInputAmperage, 0L, 0L);
+    }
+
+    @Override
+    public long receiveLaser(long laserVoltage, long laserAmperage) {
+        long allowedAmps = getEnergyCanBeInserted() / laserVoltage;
+        addEnergy(laserVoltage * allowedAmps);
+        return allowedAmps;
     }
 
     @Override
@@ -56,11 +64,10 @@ public class LaserContainerHandler extends EnergyContainerHandler implements ILa
                 EnumFacing oppositeSide = side.getOpposite();
                 if (tileEntity != null &&
                         tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide)) {
-                    IEnergyContainer energyContainer = tileEntity
+                    ILaserRelay relay = tileEntity
                             .getCapability(GregtechTileCapabilities.CAPABILITY_LASER, oppositeSide);
-                    if (energyContainer == null || !energyContainer.inputsEnergy(oppositeSide)) continue;
-                    amperesUsed += energyContainer.acceptEnergyFromNetwork(oppositeSide, outputVoltage,
-                            outputAmperes - amperesUsed);
+                    if (relay == null) continue;
+                    amperesUsed += relay.receiveLaser(outputVoltage, outputAmperes - amperesUsed);
                     if (amperesUsed == outputAmperes) break;
                 }
             }

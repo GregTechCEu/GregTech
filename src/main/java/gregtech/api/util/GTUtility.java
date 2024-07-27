@@ -67,11 +67,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -930,5 +932,9 @@ public class GTUtility {
     @Contract(pure = true)
     public static boolean evalMask(@NotNull EnumFacing facing, byte mask) {
         return (mask & (1 << facing.ordinal())) > 0;
+    }
+
+    public static <T> Set<T> createWeakHashSet() {
+        return Collections.newSetFromMap(new WeakHashMap<>());
     }
 }

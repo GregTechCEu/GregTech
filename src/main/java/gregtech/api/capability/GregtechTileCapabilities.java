@@ -1,13 +1,12 @@
 package gregtech.api.capability;
 
+import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-
-import org.jetbrains.annotations.ApiStatus;
 
 public class GregtechTileCapabilities {
 
@@ -32,17 +31,9 @@ public class GregtechTileCapabilities {
     @CapabilityInject(IMaintenance.class)
     public static Capability<IMaintenance> CAPABILITY_MAINTENANCE = null;
 
-    @CapabilityInject(IDataAccessHatch.class)
-    public static Capability<IDataAccessHatch> CAPABILITY_DATA_ACCESS = null;
+    @CapabilityInject(IDataAccess.class)
+    public static Capability<IDataAccess> CAPABILITY_DATA_ACCESS = null;
 
-    @CapabilityInject(ILaserContainer.class)
-    public static Capability<ILaserContainer> CAPABILITY_LASER = null;
-
-    @CapabilityInject(IOpticalComputationProvider.class)
-    public static Capability<IOpticalComputationProvider> CAPABILITY_COMPUTATION_PROVIDER = null;
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @CapabilityInject(IOpticalComputationProvider.class)
-    public static Capability<IOpticalComputationProvider> CABABILITY_COMPUTATION_PROVIDER = null;
+    @CapabilityInject(ILaserRelay.class)
+    public static Capability<ILaserRelay> CAPABILITY_LASER = null;
 }

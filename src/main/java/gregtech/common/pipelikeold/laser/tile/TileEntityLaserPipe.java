@@ -2,7 +2,7 @@ package gregtech.common.pipelikeold.laser.tile;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.ILaserContainer;
+import gregtech.api.capability.ILaserRelay;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
@@ -28,7 +28,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
 
     private final EnumMap<EnumFacing, LaserNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the LaserNetHandler can only be created on the server, so we have an empty placeholder for the client
-    private final ILaserContainer clientCapability = new DefaultLaserContainer();
+    private final ILaserRelay clientCapability = new DefaultLaserContainer();
     private LaserNetHandler defaultHandler;
 
     private int ticksActive = 0;
@@ -192,7 +192,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
         }
     }
 
-    private static class DefaultLaserContainer implements ILaserContainer {
+    private static class DefaultLaserContainer implements ILaserRelay {
 
         @Override
         public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {

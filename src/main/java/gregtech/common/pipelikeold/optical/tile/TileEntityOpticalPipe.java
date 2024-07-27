@@ -2,13 +2,12 @@ package gregtech.common.pipelikeold.optical.tile;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IDataAccessHatch;
-import gregtech.api.capability.IOpticalComputationProvider;
+import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.util.TaskScheduler;
+import gregtech.api.capability.data.query.DataQueryObject;
 import gregtech.common.pipelikeold.optical.OpticalPipeProperties;
 import gregtech.common.pipelikeold.optical.OpticalPipeType;
 import gregtech.common.pipelikeold.optical.net.OpticalNetHandler;
@@ -29,7 +28,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
 
     private final EnumMap<EnumFacing, OpticalNetHandler> handlers = new EnumMap<>(EnumFacing.class);
     // the OpticalNetHandler can only be created on the server, so we have an empty placeholder for the client
-    private final IDataAccessHatch clientDataHandler = new DefaultDataHandler();
+    private final IDataAccess clientDataHandler = new DefaultDataHandler();
     private final IOpticalComputationProvider clientComputationHandler = new DefaultComputationHandler();
     private OpticalNetHandler defaultHandler;
 
@@ -143,7 +142,7 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
         }
 
         if (stateChanged) {
-            writeCustomData(GregtechDataCodes.PIPE_OPTICAL_ACTIVE, buf -> {
+            writeCustomData(GregtechDataCodes.PIPE_ACTIVE, buf -> {
                 buf.writeBoolean(this.isActive);
             });
             notifyBlockUpdate();
@@ -154,21 +153,16 @@ public class TileEntityOpticalPipe extends TileEntityPipeBase<OpticalPipeType, O
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
         super.receiveCustomData(discriminator, buf);
-        if (discriminator == GregtechDataCodes.PIPE_OPTICAL_ACTIVE) {
+        if (discriminator == GregtechDataCodes.PIPE_ACTIVE) {
             this.isActive = buf.readBoolean();
             scheduleRenderUpdate();
         }
     }
 
-    private static class DefaultDataHandler implements IDataAccessHatch {
+    private static class DefaultDataHandler implements IDataAccess {
 
         @Override
-        public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
-            return false;
-        }
-
-        @Override
-        public boolean isCreative() {
+        public boolean accessData(@NotNull DataQueryObject queryObject) {
             return false;
         }
     }

@@ -68,8 +68,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_COVER_DATA_PIPE = assignId();
     public static final int COVER_ATTACHED_PIPE = assignId();
     public static final int COVER_REMOVED_PIPE = assignId();
-    public static final int PIPE_OPTICAL_ACTIVE = assignId();
-    public static final int PIPE_LASER_ACTIVE = assignId();
+    public static final int PIPE_ACTIVE = assignId();
     public static final int CABLE_TEMPERATURE = assignId();
     public static final int UPDATE_PIPE_LOGIC = assignId();
 

@@ -1,7 +1,7 @@
 package gregtech.common.pipelikeold.laser.net;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.ILaserContainer;
+import gregtech.api.capability.ILaserRelay;
 import gregtech.api.graphnet.pipenetold.IPipeNetHandler;
 import gregtech.api.graphnet.NetGroup;
 import gregtech.api.graphnet.pipenetold.PipeNetNode;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 
-public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
+public class LaserNetHandler implements ILaserRelay, IPipeNetHandler {
 
     private final WorldLaserPipeNet net;
     private final TileEntityLaserPipe pipe;
@@ -55,7 +55,7 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
     }
 
     @Nullable
-    private ILaserContainer getInnerContainer() {
+    private ILaserRelay getInnerContainer() {
         if (net == null || pipe.isInvalid() || facing == null) {
             return null;
         }
@@ -72,7 +72,7 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
-        ILaserContainer handler = getInnerContainer();
+        ILaserRelay handler = getInnerContainer();
         if (handler == null) return 0;
         setPipesActive();
         return handler.acceptEnergyFromNetwork(side, voltage, amperage, simulate);
@@ -80,21 +80,21 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
 
     @Override
     public boolean inputsEnergy(EnumFacing side) {
-        ILaserContainer handler = getInnerContainer();
+        ILaserRelay handler = getInnerContainer();
         if (handler == null) return false;
         return handler.inputsEnergy(side);
     }
 
     @Override
     public boolean outputsEnergy(EnumFacing side) {
-        ILaserContainer handler = getInnerContainer();
+        ILaserRelay handler = getInnerContainer();
         if (handler == null) return false;
         return handler.outputsEnergy(side);
     }
 
     @Override
     public long changeEnergy(long amount) {
-        ILaserContainer handler = getInnerContainer();
+        ILaserRelay handler = getInnerContainer();
         if (handler == null) return 0;
         setPipesActive();
         return handler.changeEnergy(amount);
@@ -102,14 +102,14 @@ public class LaserNetHandler implements ILaserContainer, IPipeNetHandler {
 
     @Override
     public long getEnergyStored() {
-        ILaserContainer handler = getInnerContainer();
+        ILaserRelay handler = getInnerContainer();
         if (handler == null) return 0;
         return handler.getEnergyStored();
     }
 
     @Override
     public long getEnergyCapacity() {
-        ILaserContainer handler = getInnerContainer();
+        ILaserRelay handler = getInnerContainer();
         if (handler == null) return 0;
         return handler.getEnergyCapacity();
     }

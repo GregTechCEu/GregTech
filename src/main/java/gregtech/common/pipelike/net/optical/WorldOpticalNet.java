@@ -11,12 +11,8 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
-import gregtech.common.pipelike.net.item.WorldItemNet;
-
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +20,7 @@ import java.util.Iterator;
 
 public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPath.Provider {
 
-    public static final Capability<?>[] CAPABILITIES = new Capability[] { GregtechTileCapabilities.CAPABILITY_COMPUTATION_PROVIDER, GregtechTileCapabilities.CAPABILITY_DATA_ACCESS };
+    public static final Capability<?>[] CAPABILITIES = new Capability[] { GregtechTileCapabilities.CAPABILITY_DATA_ACCESS };
 
     private static final String DATA_ID_BASE = "gregtech.world_optical_net";
 
@@ -55,6 +51,6 @@ public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPa
 
     @Override
     public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
-        return null; // TODO
+        return new IPipeCapabilityObject[] { new DataCapabilityObject(this) };
     }
 }

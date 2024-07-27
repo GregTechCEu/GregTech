@@ -6,7 +6,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.ILaserContainer;
+import gregtech.api.capability.ILaserRelay;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -48,7 +48,7 @@ import static gregtech.api.GTValues.V;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ACTIVE;
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_IO_SPEED;
 
-public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserContainer, IControllable {
+public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILaserRelay, IControllable {
 
     private long voltage = 0;
     private int amps = 1;
