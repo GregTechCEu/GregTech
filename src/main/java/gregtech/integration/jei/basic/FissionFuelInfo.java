@@ -60,6 +60,5 @@ public class FissionFuelInfo implements IRecipeWrapper {
         minecraft.fontRenderer.drawString(crossSectionSlow, 0, fontHeight * linesDrawn + start, 0x111111);
         linesDrawn++;
         minecraft.fontRenderer.drawString(neutronGenerationTime, 0, fontHeight * linesDrawn + start, 0x111111);
-
     }
 }
