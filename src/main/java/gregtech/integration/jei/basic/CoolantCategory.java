@@ -1,12 +1,9 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.nuclear.fission.CoolantRegistry;
-import gregtech.api.nuclear.fission.ICoolantStats;
 import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -54,8 +51,6 @@ public class CoolantCategory extends BasicRecipeCategory<CoolantInfo, CoolantInf
         slot.draw(minecraft, 104, 8);
         arrow.draw(minecraft, 77, 6);
     }
-
-
 
     @Override
     public IRecipeWrapper getRecipeWrapper(CoolantInfo recipe) {
