@@ -9,11 +9,8 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
-import gregtech.common.pipelike.net.energy.EnergyTraverseData;
 import gregtech.common.pipelike.net.energy.WorldEnergyNet;
-import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;

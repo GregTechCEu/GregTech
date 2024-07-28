@@ -3,6 +3,7 @@ package gregtech.api.graphnet.pipenet.physical.block;
 import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 
+import gregtech.api.unification.material.Material;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.state.IBlockState;

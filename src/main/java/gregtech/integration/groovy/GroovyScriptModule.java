@@ -27,9 +27,6 @@ import gregtech.common.pipelike.block.cable.CableBlock;
 import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
 import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
 import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
-import gregtech.common.pipelikeold.cable.BlockCable;
-import gregtech.common.pipelikeold.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelikeold.itempipe.BlockItemPipe;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.modules.GregTechModules;
 

@@ -301,7 +301,10 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
             buf.writeVarInt(this.thermalMass);
             this.temperatureLossFunction.encode(buf);
             buf.writeVarInt(this.functionPriority);
-            buf.writeVarInt(Objects.requireNonNullElse(this.partialBurnTemperature, -1));
+            // laughs in java 9
+            //noinspection ReplaceNullCheck
+            if (this.partialBurnTemperature == null) buf.writeVarInt(-1);
+            else buf.writeVarInt(this.partialBurnTemperature);
         }
     }
 

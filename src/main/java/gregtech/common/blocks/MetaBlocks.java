@@ -47,10 +47,6 @@ import gregtech.common.pipelike.block.pipe.PipeBlock;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelikeold.fluidpipe.longdistance.LDFluidPipeType;
 import gregtech.common.pipelikeold.itempipe.longdistance.LDItemPipeType;
-import gregtech.common.pipelikeold.laser.BlockLaserPipe;
-import gregtech.common.pipelikeold.laser.LaserPipeType;
-import gregtech.common.pipelikeold.optical.BlockOpticalPipe;
-import gregtech.common.pipelikeold.optical.OpticalPipeType;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;

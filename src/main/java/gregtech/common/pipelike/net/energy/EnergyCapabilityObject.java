@@ -18,6 +18,7 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
 import gregtech.api.util.GTLog;
+
 import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
 
 import net.minecraft.util.EnumFacing;

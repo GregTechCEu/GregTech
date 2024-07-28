@@ -7,6 +7,8 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverHolder;
+import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -14,9 +16,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.graphnet.pipenetold.block.BlockPipe;
-import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TaskScheduler;
 import gregtech.common.items.tool.rotation.CustomBlockRotations;
@@ -303,7 +302,7 @@ public class ToolEventHandlers {
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@NotNull IBlockState state, @Nullable TileEntity tile,
                                                     ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
-        if (state.getBlock() instanceof BlockPipe<?, ?, ?, ?>pipe) {
+        if (state.getBlock() instanceof WorldPipeBlock pipe) {
             if (isSneaking &&
                     (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;
@@ -316,15 +315,15 @@ public class ToolEventHandlers {
 
                 BooleanSupplier hasCover;
                 Predicate<CoverDefinition> canCover;
-                if (tile instanceof IPipeTile<?, ?, ?>pipeTile) {
-                    final boolean hasAnyCover = pipeTile.getCoverableImplementation().hasAnyCover();
+                if (tile instanceof PipeTileEntity pipeTile) {
+                    final boolean hasAnyCover = pipeTile.getCoverHolder().hasAnyCover();
                     if (hasAnyCover) {
                         if (mainToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
                         if (offToolClasses.contains(ToolClasses.SCREWDRIVER)) return true;
                     }
                     hasCover = () -> hasAnyCover;
 
-                    final boolean acceptsCovers = pipeTile.getCoverableImplementation().acceptsCovers();
+                    final boolean acceptsCovers = pipeTile.getCoverHolder().acceptsCovers();
                     canCover = coverDefinition -> acceptsCovers;
 
                     if (GTUtility.isCoverBehaviorItem(mainHand, hasCover, canCover) ||
@@ -384,9 +383,9 @@ public class ToolEventHandlers {
             rColour = gColour = bColour = 0.2F +
                     (float) Math.sin((float) (System.currentTimeMillis() % (Math.PI * 800)) / 800) / 2;
 
-            if (tile instanceof TileEntityPipeBase<?, ?, ?>tepb) {
-                drawGridOverlays(facing, box, face -> tepb.isConnected(face) ||
-                        tepb.getCoverableImplementation().getCoverAtSide(face) != null);
+            if (tile instanceof PipeTileEntity pipe) {
+                drawGridOverlays(facing, box, face -> pipe.isConnected(face) ||
+                        pipe.getCoverHolder().getCoverAtSide(face) != null);
             } else if (tile instanceof MetaTileEntityHolder) {
                 MetaTileEntity mte = ((MetaTileEntityHolder) tile).getMetaTileEntity();
                 drawGridOverlays(facing, box, mte::isSideUsed);

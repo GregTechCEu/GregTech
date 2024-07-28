@@ -1,9 +1,9 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.util.GradientUtil;
 import gregtech.api.util.Mods;
 import gregtech.core.sound.GTSoundEvents;
@@ -135,9 +135,9 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
 
         // TileEntityPipeBase special case
-        if (te instanceof IPipeTile<?, ?, ?>pipe) {
+        if (te instanceof PipeTileEntity pipe) {
             if (pipe.isPainted()) {
-                pipe.setPaintingColor(-1);
+                pipe.setPaintingColor(-1, false);
                 return true;
             } else return false;
         }

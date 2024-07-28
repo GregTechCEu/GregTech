@@ -1,7 +1,5 @@
 package gregtech.api.graphnet.pipenetold.longdist;
 
-import gregtech.api.graphnet.pipenetold.WorldPipeNetBase;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -331,7 +329,7 @@ public class LongDistanceNetwork {
             if (worldData != null) {
                 return worldData;
             }
-            String DATA_ID = WorldPipeNetBase.getDataID("long_dist_pipe", world);
+            String DATA_ID = getDataID("long_dist_pipe", world);
             WorldData netWorldData = (WorldData) world.loadData(WorldData.class, DATA_ID);
             if (netWorldData == null) {
                 netWorldData = new WorldData(DATA_ID);
@@ -340,6 +338,13 @@ public class LongDistanceNetwork {
             }
             netWorldData.setWorldAndInit(world);
             return netWorldData;
+        }
+
+        public static String getDataID(final String baseID, final World world) {
+            if (world == null || world.isRemote)
+                throw new RuntimeException("Long Distance Nets should only be created on the server!");
+            int dimension = world.provider.getDimension();
+            return dimension == 0 ? baseID : baseID + '.' + dimension;
         }
 
         private static long getChunkPos(BlockPos pos) {

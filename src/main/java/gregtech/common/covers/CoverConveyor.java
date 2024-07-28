@@ -15,7 +15,6 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-import gregtech.common.pipelikeold.itempipe.tile.TileEntityItemPipe;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,14 +99,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         if (getWorld() != null && getWorld().isRemote) {
             // tile at cover holder pos
             TileEntity te = getTileEntityHere();
-            if (te instanceof TileEntityItemPipe) {
-                ((TileEntityItemPipe) te).resetTransferred();
-            }
-            // tile neighbour to holder pos at attached side
-            te = getNeighbor(getAttachedSide());
-            if (te instanceof TileEntityItemPipe) {
-                ((TileEntityItemPipe) te).resetTransferred();
-            }
         }
     }
 

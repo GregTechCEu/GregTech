@@ -307,6 +307,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return caps;
     }
 
+    /**
+     * Updates the pipe's active status based on the tile entity connected to the side.
+     * @param facing the side to check. Can be null, in which case all sides will be checked.
+     * @param canOpenConnection whether the pipe is allowed to open a new connection if it finds a tile it can connect to.
+     */
     public void updateActiveStatus(@Nullable EnumFacing facing, boolean canOpenConnection) {
         if (facing == null) {
             for (EnumFacing side : EnumFacing.VALUES) {
@@ -314,7 +319,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             }
             return;
         }
-        if (!this.isConnected(facing) && !canOpenConnection) {
+        if (!this.isConnected(facing) && !(canOpenConnection && canConnectTo(facing))) {
             setAllIdle(facing);
             return;
         }

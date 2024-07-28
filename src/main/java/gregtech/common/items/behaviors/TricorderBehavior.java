@@ -4,18 +4,17 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelikeold.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;
@@ -263,13 +262,12 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.addAll(provider.getDataInfo());
             }
 
-        } else if (tileEntity instanceof IPipeTile<?, ?, ?>pipeTile) {
+        } else if (tileEntity instanceof PipeTileEntity pipeTile) {
             // pipes need special name handling
-
-            if (pipeTile.getPipeBlock().getRegistryName() != null) {
+            if (pipeTile.getBlockType().getRegistryName() != null) {
                 list.add(new TextComponentTranslation("behavior.tricorder.block_name",
                         new TextComponentTranslation(
-                                LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey()))
+                                LocalizationUtils.format(pipeTile.getBlockType().getTranslationKey()))
                                         .setStyle(new Style().setColor(TextFormatting.BLUE)),
                         new TextComponentTranslation(
                                 TextFormattingUtil.formatNumbers(block.getMetaFromState(world.getBlockState(pos))))
@@ -282,11 +280,6 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
                 list.addAll(provider.getDataInfo());
-            }
-
-            if (tileEntity instanceof TileEntityFluidPipe) {
-                // getting fluid info always costs 500
-                energyCost += 500;
             }
         } else if (tileEntity instanceof IDataInfoProvider) {
             IDataInfoProvider provider = (IDataInfoProvider) tileEntity;

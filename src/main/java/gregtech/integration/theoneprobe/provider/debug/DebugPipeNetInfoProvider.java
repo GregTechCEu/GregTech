@@ -1,13 +1,8 @@
 package gregtech.integration.theoneprobe.provider.debug;
 
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.pipenetold.PipeNetNode;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.graphnet.pipenetold.WorldPipeNetBase;
-import gregtech.api.graphnet.pipenetold.block.BlockPipe;
-import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.state.IBlockState;

@@ -1,5 +1,7 @@
 package gregtech.api.graphnet.pipenet.physical.block;
 
+import codechicken.lib.raytracer.RayTracer;
+
 import gregtech.api.GTValues;
 import gregtech.api.block.BuiltInRenderBlock;
 
@@ -253,7 +255,18 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     @Override
     public RayTraceResult collisionRayTrace(@NotNull IBlockState blockState, @NotNull World worldIn, @NotNull BlockPos pos,
                                             @NotNull Vec3d start, @NotNull Vec3d end) {
-        if (worldIn.isRemote && hasPipeCollisionChangingItem(worldIn, pos, GTUtility.getSP())) {
+        return collisionRayTrace(worldIn.isRemote ? GTUtility.getSP() : null, blockState, worldIn, pos, start, end);
+    }
+
+    public RayTraceResult collisionRayTrace(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos) {
+        return collisionRayTrace(player, null, world, pos, RayTracer.getStartVec(player), RayTracer.getEndVec(player));
+    }
+
+    @SuppressWarnings("deprecation")
+    public RayTraceResult collisionRayTrace(@Nullable EntityPlayer player, @Nullable IBlockState blockState, @NotNull World worldIn, @NotNull BlockPos pos,
+                                            @NotNull Vec3d start, @NotNull Vec3d end) {
+        if (blockState == null) blockState = worldIn.getBlockState(pos);
+        if (hasPipeCollisionChangingItem(worldIn, pos, player)) {
             return super.collisionRayTrace(blockState, worldIn, pos, start, end);
         }
         PipeTileEntity tile = getTileEntity(worldIn, pos);

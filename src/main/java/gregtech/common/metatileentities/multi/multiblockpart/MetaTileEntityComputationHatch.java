@@ -15,7 +15,6 @@ import gregtech.api.capability.data.query.DataQueryObject;
 import gregtech.api.capability.data.query.IBridgeable;
 import gregtech.api.capability.data.query.IComputationQuery;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.pipelikeold.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;

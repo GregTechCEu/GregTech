@@ -1,11 +1,10 @@
 package gregtech.common.blocks;
 
+import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.graphnet.pipenetold.block.BlockPipe;
-import gregtech.api.graphnet.pipenetold.block.ItemBlockPipe;
-import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
@@ -123,34 +122,30 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
                                          ItemStack stackInHand, EnumFacing facing) {
-        BlockPipe<?, ?, ?, ?> blockPipe = (BlockPipe<?, ?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem())
-                .getBlock();
-        if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
+        WorldPipeBlock block = WorldPipeBlock.getBlockFromItem(stackInHand);
+        if (block != null && block.getStructure().getRenderThickness() < 1) {
             ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
-            IBlockState pipeState = blockPipe.getDefaultState();
+            IBlockState pipeState = block.getDefaultState();
             // these 0 values are not actually used by forge
             itemBlock.placeBlockAt(stackInHand, playerIn, worldIn, pos, facing, 0, 0, 0, pipeState);
-            IPipeTile<?, ?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
-            if (pipeTile instanceof TileEntityPipeBase<?, ?, ?>tile) {
-                tile.setFrameMaterial(getGtMaterial(state));
-            } else {
-                GTLog.logger.error("Pipe was not placed!");
-                return false;
+            PipeTileEntity pipeTile = block.getTileEntity(worldIn, pos);
+            if (pipeTile != null) {
+                pipeTile.setFrameMaterial(getGtMaterial(state));
+                SoundType type = block.getSoundType(state, worldIn, pos, playerIn);
+                worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
+                        (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                if (!playerIn.capabilities.isCreativeMode) {
+                    stackInHand.shrink(1);
+                }
+                return true;
             }
-            SoundType type = blockPipe.getSoundType(state, worldIn, pos, playerIn);
-            worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
-                    (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
-            if (!playerIn.capabilities.isCreativeMode) {
-                stackInHand.shrink(1);
-            }
-            return true;
         }
         return false;
     }
 
     public boolean removeFrame(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityPipeBase<?, ?, ?>pipeTile) {
+        if (te instanceof PipeTileEntity pipeTile) {
             Material frameMaterial = pipeTile.getFrameMaterial();
             if (frameMaterial != null) {
                 pipeTile.setFrameMaterial(null);
@@ -172,7 +167,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
             return false;
         }
         // replace frame with pipe and set the frame material to this frame
-        if (stack.getItem() instanceof ItemBlockPipe) {
+        if (stack.getItem() instanceof ItemPipeBlock) {
             return replaceWithFramedPipe(world, pos, state, player, stack, facing);
         }
 
@@ -191,8 +186,9 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 continue;
             }
             TileEntity te = world.getTileEntity(blockPos);
-            if (te instanceof IPipeTile && ((IPipeTile<?, ?, ?>) te).getFrameMaterial() != null) {
+            if (te instanceof PipeTileEntity tile && tile.getFrameMaterial() != null) {
                 blockPos.move(EnumFacing.UP);
+                te = world.getTileEntity(blockPos);
                 continue;
             }
             if (canPlaceBlockAt(world, blockPos)) {
@@ -206,11 +202,11 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 }
                 blockPos.release();
                 return true;
-            } else if (te instanceof TileEntityPipeBase<?, ?, ?>tile && tile.getFrameMaterial() == null) {
+            } else if (te instanceof PipeTileEntity tile && tile.getFrameMaterial() == null) {
                 tile.setFrameMaterial(frameBlock.getGtMaterial(stack));
                 SoundType type = getSoundType(stack);
-                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F,
-                        type.getPitch() * 0.8F);
+                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
+                        (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
                     stack.shrink(1);
                 }
