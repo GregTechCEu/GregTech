@@ -1,4 +1,5 @@
 {
+  "parent": "block/block",
 	"credit": "Made with Blockbench",
 	"elements": [
 		{
@@ -14,21 +15,5 @@
 				"down": {"uv": [0, 0, 16, 16], "texture": "#1"}
 			}
 		}
-	],
-  "display": {
-    "firstperson_righthand": {
-      "rotation": [0, 7, 0],
-      "translation": [0, -1.5, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "firstperson_lefthand": {
-      "rotation": [0, 7, 0],
-      "translation": [0, -1.5, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "gui": {
-      "rotation": [34, 45, 0],
-      "scale": [0.7, 0.7, 0.7]
-    }
-  }
+	]
 }
