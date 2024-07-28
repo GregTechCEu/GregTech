@@ -10,7 +10,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 
 import com.google.common.collect.ImmutableMap;
 
-import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
 
 import org.apache.commons.lang3.ArrayUtils;
 

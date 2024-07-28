@@ -2,6 +2,7 @@ package gregtech.integration.theoneprobe.provider;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.ILaserContainer;
 import gregtech.api.capability.ILaserRelay;
 import gregtech.api.util.TextFormattingUtil;
 
@@ -24,19 +25,21 @@ public class LaserContainerInfoProvider extends CapabilityInfoProvider<ILaserRel
 
     @Override
     protected boolean allowDisplaying(@NotNull ILaserRelay capability) {
-        return !capability.isOneProbeHidden();
+        return capability instanceof ILaserContainer c && !c.isOneProbeHidden();
     }
 
     @Override
-    protected void addProbeInfo(ILaserRelay capability, IProbeInfo probeInfo, EntityPlayer player,
+    protected void addProbeInfo(ILaserRelay cap, IProbeInfo probeInfo, EntityPlayer player,
                                 TileEntity tileEntity, IProbeHitData data) {
-        long maxStorage = capability.getEnergyCapacity();
-        if (maxStorage == 0) return; // do not add empty max storage progress bar
-        probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()
-                .suffix(" / " + TextFormattingUtil.formatNumbers(maxStorage) + " EU")
-                .filledColor(0xFFEEE600)
-                .alternateFilledColor(0xFFEEE600)
-                .borderColor(0xFF555555).numberFormat(NumberFormat.COMMAS));
+        if (cap instanceof ILaserContainer capability) {
+            long maxStorage = capability.getEnergyCapacity();
+            if (maxStorage == 0) return; // do not add empty max storage progress bar
+            probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()
+                    .suffix(" / " + TextFormattingUtil.formatNumbers(maxStorage) + " EU")
+                    .filledColor(0xFFEEE600)
+                    .alternateFilledColor(0xFFEEE600)
+                    .borderColor(0xFF555555).numberFormat(NumberFormat.COMMAS));
+        }
     }
 
     @Override

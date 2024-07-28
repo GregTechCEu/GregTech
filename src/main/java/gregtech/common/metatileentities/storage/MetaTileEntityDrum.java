@@ -3,17 +3,18 @@ package gregtech.common.metatileentities.storage;
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
+
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -85,12 +86,18 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     protected void initializeInventory() {
         if (this.material == null) return; // call before field initialization, should be called later with fields set
         super.initializeInventory();
-        IPropertyFluidFilter filter = this.material.getProperty(PropertyKey.FLUID_PIPE);
+        IPropertyFluidFilter filter = getFluidProperty();
         if (filter == null) {
             throw new IllegalArgumentException(
                     String.format("Material %s requires FluidPipeProperty for Drums", material));
         }
         this.fluidInventory = this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(filter);
+    }
+
+    private @Nullable MaterialFluidProperties getFluidProperty() {
+        PipeNetProperties properties = this.material.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        if (properties != null) return properties.getProperty(MaterialFluidProperties.KEY);
+        else return null;
     }
 
     @Override
@@ -243,8 +250,8 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
-        FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-        pipeProperties.appendTooltips(tooltip, true, true);
+        MaterialFluidProperties pipeProperties = getFluidProperty();
+        if (pipeProperties != null) pipeProperties.appendTooltips(tooltip, true, true);
 
         if (TooltipHelper.isShiftDown()) {
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
@@ -265,11 +272,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     public boolean showToolUsages() {
         return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

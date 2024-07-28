@@ -9,7 +9,6 @@ import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.client.renderer.pipeold.FluidPipeRenderer;

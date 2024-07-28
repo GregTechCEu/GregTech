@@ -252,8 +252,15 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
-                                                 boolean cryoProof, boolean plasmaProof) {
-        backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof);
+                                                 boolean plasmaProof) {
+        backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof, acidProof, plasmaProof);
+        return this;
+    }
+
+    @ZenMethod
+    public CTMaterialBuilder fluidPipeProperties(int maxTemp, int minTemp, int throughput, boolean gasProof, boolean acidProof,
+                                                 boolean plasmaProof) {
+        backingBuilder.fluidPipeProperties(maxTemp, minTemp, throughput, gasProof, acidProof, plasmaProof);
         return this;
     }
 

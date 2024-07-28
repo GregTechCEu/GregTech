@@ -9,7 +9,7 @@ public interface IEqualizableTraverseData<N extends NetNode, P extends INetPath<
 
     /**
      * Whether a path should be skipped before running the collection process on it.
-     * The return of {@link ITraverseData#prepareForPathWalk(INetPath)} will be ignored during traversal.
+     * The return of {@link ITraverseData#prepareForPathWalk(INetPath, long)} will be ignored during traversal.
      */
     boolean shouldSkipPath(P path);
 

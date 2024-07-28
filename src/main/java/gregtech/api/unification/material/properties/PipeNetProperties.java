@@ -6,17 +6,11 @@ import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.IOreRegistrationHandler;
-
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.function.TriConsumer;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -26,26 +20,28 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
-
 public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler {
 
-    protected final Map<String, IPipeNetMaterialProperty> properties = new Object2ObjectOpenHashMap<>();
+    protected final Map<IPipeNetMaterialProperty.MaterialPropertyKey<?>, IPipeNetMaterialProperty> properties = new Object2ObjectOpenHashMap<>();
 
     public void setProperty(IPipeNetMaterialProperty property) {
-        this.properties.put(property.getName(), property);
+        this.properties.put(property.getKey(), property);
     }
 
-    public boolean hasProperty(String propertyName) {
-        return this.properties.containsKey(propertyName);
+    public boolean hasProperty(IPipeNetMaterialProperty.MaterialPropertyKey<?> key) {
+        return this.properties.containsKey(key);
     }
 
-    public <T extends IPipeNetMaterialProperty> T getProperty(String propertyName) {
-        return (T) this.properties.get(propertyName);
+    public Collection<IPipeNetMaterialProperty> getRegisteredProperties() {
+        return properties.values();
     }
 
-    public void removeProperty(String propertyName) {
-        this.properties.remove(propertyName);
+    public <T extends IPipeNetMaterialProperty> T getProperty(IPipeNetMaterialProperty.MaterialPropertyKey<T> key) {
+        return key.cast(this.properties.get(key));
+    }
+
+    public void removeProperty(IPipeNetMaterialProperty.MaterialPropertyKey<?> key) {
+        this.properties.remove(key);
     }
 
     public boolean generatesStructure(IPipeStructure structure) {
@@ -86,7 +82,7 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
         }
     }
 
-    public interface IPipeNetMaterialProperty extends IMaterialProperty, IStringSerializable {
+    public interface IPipeNetMaterialProperty extends IMaterialProperty {
 
         void addToNet(World world, BlockPos pos, IPipeStructure structure);
 
@@ -98,5 +94,15 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
         void removeFromNet(World world, BlockPos pos, IPipeStructure structure);
 
         boolean generatesStructure(IPipeStructure structure);
+
+        MaterialPropertyKey<?> getKey();
+
+        class MaterialPropertyKey<T extends IPipeNetMaterialProperty> {
+
+            T cast(IPipeNetMaterialProperty property) {
+                return (T) property;
+            }
+        }
     }
+
 }

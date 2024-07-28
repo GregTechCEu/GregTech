@@ -4,7 +4,6 @@ import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.pipenetold.WorldPipeNetSimple;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverItemFilter;
 import gregtech.common.covers.ItemFilterMode;

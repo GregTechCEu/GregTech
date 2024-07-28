@@ -5,7 +5,6 @@ import gregtech.api.graphnet.pipenetold.IPipeNetHandler;
 import gregtech.api.graphnet.pipenetold.PipeNetPath;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;

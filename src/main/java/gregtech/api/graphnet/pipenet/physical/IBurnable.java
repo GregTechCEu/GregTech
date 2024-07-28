@@ -20,6 +20,5 @@ public interface IBurnable {
     default void fullyBurn(IBlockState state, World world, BlockPos pos) {
         assert Blocks.FIRE != null;
         world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-        world.setBlockToAir(pos);
     }
 }

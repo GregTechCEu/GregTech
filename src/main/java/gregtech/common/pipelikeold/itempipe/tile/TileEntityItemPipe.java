@@ -3,7 +3,6 @@ package gregtech.common.pipelikeold.itempipe.tile;
 import gregtech.api.graphnet.pipenetold.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.FacingPos;
 import gregtech.common.pipelikeold.itempipe.ItemPipeType;
 import gregtech.common.pipelikeold.itempipe.net.ItemNetHandler;

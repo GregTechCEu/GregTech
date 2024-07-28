@@ -1,4 +1,4 @@
-package gregtech.common.pipelike.handlers;
+package gregtech.common.pipelike.handlers.properties;
 
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.logic.NetLogicData;
@@ -6,9 +6,14 @@ import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.IOreRegistrationHandler;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 
 import gregtech.common.pipelike.net.item.WorldItemNet;
@@ -16,12 +21,13 @@ import gregtech.common.pipelike.net.item.WorldItemNet;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MaterialItemProperties implements PipeNetProperties.IPipeNetMaterialProperty {
+import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
 
-    public static final String KEY = "item";
+public final class MaterialItemProperties implements PipeNetProperties.IPipeNetMaterialProperty {
+
+    public static final MaterialPropertyKey<MaterialItemProperties> KEY = new MaterialPropertyKey<>();
 
     private final long baseItemsPer5Ticks;
     private final float priority;
@@ -35,7 +41,7 @@ public class MaterialItemProperties implements PipeNetProperties.IPipeNetMateria
     }
 
     @Override
-    public @NotNull String getName() {
+    public MaterialPropertyKey<?> getKey() {
         return KEY;
     }
 

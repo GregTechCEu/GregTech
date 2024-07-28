@@ -7,9 +7,13 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.ActivablePipeModel;
 
+import gregtech.common.pipelike.block.optical.OpticalStructure;
+
 import net.minecraft.util.EnumFacing;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 @Desugar
 public record LaserStructure(String name, float renderThickness, ActivablePipeModel model) implements IPipeStructure {
@@ -44,5 +48,9 @@ public record LaserStructure(String name, float renderThickness, ActivablePipeMo
     @Override
     public AbstractPipeModel<?> getModel() {
         return model;
+    }
+
+    public static void registerDefaultStructures(Consumer<LaserStructure> register) {
+        register.accept(INSTANCE);
     }
 }

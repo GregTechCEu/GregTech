@@ -4,7 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.INetLogicEntry;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.predicate.ShutterPredicate;
 import gregtech.common.pipelike.block.cable.CableStructure;
+import gregtech.common.pipelike.block.laser.LaserStructure;
+import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
 import gregtech.api.graphnet.logic.MultiNetCountLogic;
@@ -13,6 +16,7 @@ import gregtech.api.graphnet.logic.WeightFactorLogic;
 
 import gregtech.api.graphnet.predicate.IEdgePredicate;
 
+import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -48,6 +52,7 @@ public final class GTGraphGatherables {
 
     @SubscribeEvent
     public static void gatherPredicates(GatherPredicatesEvent event) {
+        event.registerPredicate(ShutterPredicate.INSTANCE);
     }
 
     @SubscribeEvent
@@ -58,6 +63,7 @@ public final class GTGraphGatherables {
         event.registerLogic(MultiNetCountLogic.INSTANCE);
         event.registerLogic(LossAbsoluteLogic.INSTANCE);
         event.registerLogic(VoltageLimitLogic.INSTANCE);
+        event.registerLogic(SuperconductorLogic.INSTANCE);
         event.registerLogic(TemperatureLogic.INSTANCE);
     }
 
@@ -70,6 +76,14 @@ public final class GTGraphGatherables {
         if (event.getStructure() == CableStructure.class) {
             GatherStructuresEvent<CableStructure> cast = (GatherStructuresEvent<CableStructure>) event;
             CableStructure.registerDefaultStructures(cast::registerMaterialStructure);
+        }
+        if (event.getStructure() == OpticalStructure.class) {
+            GatherStructuresEvent<OpticalStructure> cast = (GatherStructuresEvent<OpticalStructure>) event;
+            OpticalStructure.registerDefaultStructures(cast::registerMaterialStructure);
+        }
+        if (event.getStructure() == LaserStructure.class) {
+            GatherStructuresEvent<LaserStructure> cast = (GatherStructuresEvent<LaserStructure>) event;
+            LaserStructure.registerDefaultStructures(cast::registerMaterialStructure);
         }
     }
 }

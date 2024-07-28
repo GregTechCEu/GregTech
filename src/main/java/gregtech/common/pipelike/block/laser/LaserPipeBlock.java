@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class LaserPipeBlock extends WorldPipeBlock implements IBurnable {
+public class LaserPipeBlock extends WorldPipeBlock {
 
     public LaserPipeBlock(LaserStructure structure) {
         super(structure);

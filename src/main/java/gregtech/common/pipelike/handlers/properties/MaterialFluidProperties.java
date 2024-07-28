@@ -1,5 +1,6 @@
-package gregtech.common.pipelike.handlers;
+package gregtech.common.pipelike.handlers.properties;
 
+import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
@@ -13,14 +14,20 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidProperty;
+import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import gregtech.api.unification.ore.IOreRegistrationHandler;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 
+import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -31,13 +38,17 @@ import net.minecraftforge.fluids.Fluid;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class MaterialFluidProperties implements PipeNetProperties.IPipeNetMaterialProperty {
+import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
 
-    public static final String KEY = "fluid";
+public final class MaterialFluidProperties implements PipeNetProperties.IPipeNetMaterialProperty, IPropertyFluidFilter {
+
+    public static final MaterialPropertyKey<MaterialFluidProperties> KEY = new MaterialPropertyKey<>();
 
     private final Set<FluidAttribute> containableAttributes = new ObjectOpenHashSet<>();
     private final EnumSet<FluidState> containableStates = EnumSet.of(FluidState.LIQUID);
@@ -53,6 +64,10 @@ public class MaterialFluidProperties implements PipeNetProperties.IPipeNetMateri
         this.maxFluidTemperature = maxFluidTemperature;
         this.minFluidTemperature = minFluidTemperature;
         this.priority = priority;
+    }
+
+    public MaterialFluidProperties(long baseThroughput, int maxFluidTemperature, int minFluidTemperature) {
+        this(baseThroughput, maxFluidTemperature, minFluidTemperature, 2048f / baseThroughput);
     }
 
     public static MaterialFluidProperties createMax(long baseThroughput, int maxFluidTemperature) {
@@ -79,36 +94,61 @@ public class MaterialFluidProperties implements PipeNetProperties.IPipeNetMateri
         return new MaterialFluidProperties(baseThroughput, 0, 0, priority);
     }
 
-    public MaterialFluidProperties contains(FluidState state) {
+    public MaterialFluidProperties setContain(FluidState state, boolean canContain) {
+        if (canContain) contain(state);
+        else notContain(state);
+        return this;
+    }
+
+    public MaterialFluidProperties setContain(FluidAttribute attribute, boolean canContain) {
+        if (canContain) contain(attribute);
+        else notContain(attribute);
+        return this;
+    }
+
+    public MaterialFluidProperties contain(FluidState state) {
         this.containableStates.add(state);
         return this;
     }
 
-    public MaterialFluidProperties contains(FluidAttribute attribute) {
+    public MaterialFluidProperties contain(FluidAttribute attribute) {
         this.containableAttributes.add(attribute);
         return this;
     }
 
-    public MaterialFluidProperties notContains(FluidState state) {
+    public MaterialFluidProperties notContain(FluidState state) {
         this.containableStates.remove(state);
         return this;
     }
 
-    public MaterialFluidProperties notContains(FluidAttribute attribute) {
+    public MaterialFluidProperties notContain(FluidAttribute attribute) {
         this.containableAttributes.remove(attribute);
         return this;
     }
 
-    public boolean canContain(FluidState state) {
+    public boolean canContain(@NotNull FluidState state) {
         return this.containableStates.contains(state);
     }
 
-    public boolean canContain(FluidAttribute attribute) {
+    public boolean canContain(@NotNull FluidAttribute attribute) {
         return this.containableAttributes.contains(attribute);
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NotNull @UnmodifiableView Collection<@NotNull FluidAttribute> getContainedAttributes() {
+        return containableAttributes;
+    }
+
+    public int getMaxFluidTemperature() {
+        return maxFluidTemperature;
+    }
+
+    public int getMinFluidTemperature() {
+        return minFluidTemperature;
+    }
+
+    @Override
+    public MaterialPropertyKey<?> getKey() {
         return KEY;
     }
 
@@ -149,6 +189,7 @@ public class MaterialFluidProperties implements PipeNetProperties.IPipeNetMateri
             double weight = priority * (pipe.restrictive() ? 100d : 1d) * pipe.channelCount() / pipe.material();
             data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(weight))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput))
+                    .setLogicEntry(FluidContainmentLogic.INSTANCE.getWith(containableStates, containableAttributes))
                     .setLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), maxFluidTemperature,
                                     minFluidTemperature, 50 * pipe.material(), null));

@@ -20,6 +20,10 @@ public final class FluidTestObject implements IPredicateTestObject {
         return new FluidStack(fluid, 1, tag);
     }
 
+    public FluidStack recombine(int amount) {
+        return new FluidStack(fluid, amount, tag);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

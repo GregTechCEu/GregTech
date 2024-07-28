@@ -23,10 +23,12 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
 
     /**
      * Called before walking the next path. Should reset per-path logics to prepare.
+     *
      * @param path the next path
+     * @param flow how much flow can be provided to the path.
      * @return whether the path should be skipped
      */
-    boolean prepareForPathWalk(P path);
+    boolean prepareForPathWalk(P path, long flow);
 
     /**
      * Reports that the traverse is traversing to a node, for additional logic to be run.
@@ -54,5 +56,16 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      */
     default long getFlowLimit(AbstractNetFlowEdge edge) {
         return edge.getFlowLimit(this.getTestObject(), this.getGraphNet(), this.getQueryTick(), this.getSimulatorKey());
+    }
+
+    /**
+     * Allows for consuming more than just the edge flow limits on a consumption event. Must always consume the correct
+     * amount of edge flow or things will break.
+     * @param edge the edge to consume along.
+     * @param targetNode the target node of the edge.
+     * @param consumption the amount to consume from the edge's flow limit.
+     */
+    default void consumeFlowLimit(AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
+        edge.consumeFlowLimit(this.getTestObject(), this.getGraphNet(), consumption, this.getQueryTick(), this.getSimulatorKey());
     }
 }

@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.graphnet.pipenetold.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.TaskScheduler;
 import gregtech.common.pipelikeold.fluidpipe.FluidPipeType;
 import gregtech.common.pipelikeold.fluidpipe.net.FluidNetHandler;

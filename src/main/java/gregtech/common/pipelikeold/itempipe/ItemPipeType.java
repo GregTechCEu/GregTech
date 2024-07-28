@@ -1,7 +1,6 @@
 package gregtech.common.pipelikeold.itempipe;
 
 import gregtech.api.graphnet.pipenetold.block.material.IMaterialPipeType;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
 import org.jetbrains.annotations.NotNull;

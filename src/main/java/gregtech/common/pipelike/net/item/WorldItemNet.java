@@ -59,7 +59,7 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
 
     @Override
     public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
-        return new IPipeCapabilityObject[] {  };
+        return new IPipeCapabilityObject[] { new ItemCapabilityObject(this, node) };
     }
 
     @Override

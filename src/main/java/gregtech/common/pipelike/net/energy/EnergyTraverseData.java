@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
+import gregtech.api.graphnet.pipenet.NodeLossCache;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
@@ -12,7 +13,6 @@ import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
 
 import gregtech.api.graphnet.traverse.util.FlatLossOperator;
-import gregtech.api.graphnet.traverse.util.IdentityLossOperator;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 import gregtech.api.util.GTUtility;
 
@@ -27,8 +27,6 @@ import java.util.function.Supplier;
 
 public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
 
-    private final Object2ObjectOpenHashMap<WorldPipeNetNode, NodeLossResult> lossCache;
-
     private final Object2ObjectOpenHashMap<WorldPipeNetNode, OverVoltageInformation> overVoltageInformation;
 
     private final long startVoltage;
@@ -40,7 +38,6 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     public EnergyTraverseData(IGraphNet net, IPredicateTestObject testObject, SimulatorKey simulator, long queryTick,
                               long startVoltage, BlockPos sourcePos, EnumFacing inputFacing) {
         super(net, testObject, simulator, queryTick);
-        this.lossCache = new Object2ObjectOpenHashMap<>();
         this.overVoltageInformation = new Object2ObjectOpenHashMap<>();
         this.startVoltage = startVoltage;
         this.sourcePos = sourcePos;
@@ -48,7 +45,8 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     }
 
     @Override
-    public boolean prepareForPathWalk(FlowWorldPipeNetPath path) {
+    public boolean prepareForPathWalk(FlowWorldPipeNetPath path, long flow) {
+        if (flow <= 0) return true;
         this.pathVoltage = startVoltage;
         this.overVoltageInformation.clear();
         this.overVoltageInformation.trim(10);
@@ -64,8 +62,8 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                     new OverVoltageInformation(voltage, flowReachingNode));
         }
 
-
-        NodeLossResult result = lossCache.get(node);
+        NodeLossCache.Key key = NodeLossCache.key(node, this);
+        NodeLossResult result = NodeLossCache.getLossResult(key);
         if (result != null) {
             return result.getLossFunction();
         } else {
@@ -75,11 +73,11 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                 if (node.getData().getLogicEntryDefaultable(SuperconductorLogic.INSTANCE)
                         .canSuperconduct(temperatureLogic == null ? TemperatureLogic.DEFAULT_TEMPERATURE :
                                 temperatureLogic.getTemperature(getQueryTick()))) {
-                    return IdentityLossOperator.INSTANCE;
+                    return ReversibleLossOperator.IDENTITY;
                 }
                 return new FlatLossOperator(node.getData().getLogicEntryDefaultable(LossAbsoluteLogic.INSTANCE).getValue());
             }
-            if (result.hasPostAction()) lossCache.put(node, result);
+            if (result.hasPostAction()) NodeLossCache.registerLossResult(key, result);
             return result.getLossFunction();
         }
     }
@@ -115,10 +113,6 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
             data.addEnergyOutPerSec(accepted * pathVoltage, getQueryTick());
         }
         return accepted;
-    }
-
-    public void runPostActions() {
-        lossCache.forEach((k, v) -> v.triggerPostAction(k));
     }
 
     private static int calculateHeatV(long amperage, long voltage, long maxVoltage) {

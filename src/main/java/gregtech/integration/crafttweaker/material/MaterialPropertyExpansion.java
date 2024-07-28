@@ -1,7 +1,9 @@
 package gregtech.integration.crafttweaker.material;
 
 import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageKeys;
@@ -10,7 +12,11 @@ import gregtech.api.unification.material.properties.*;
 
 import crafttweaker.annotations.ZenRegister;
 
-import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
+
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
+
+import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
@@ -39,11 +45,6 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static boolean hasFluidPipes(Material m) {
-        return m.hasProperty(PropertyKey.FLUID_PIPE);
-    }
-
-    @ZenMethod
     public static boolean hasFluid(Material m) {
         return m.hasProperty(PropertyKey.FLUID);
     }
@@ -59,11 +60,6 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static boolean hasItemPipes(Material m) {
-        return m.hasProperty(PropertyKey.ITEM_PIPE);
-    }
-
-    @ZenMethod
     public static boolean hasOre(Material m) {
         return m.hasProperty(PropertyKey.ORE);
     }
@@ -74,9 +70,21 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
+    public static boolean hasFluidPipes(Material m) {
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        return properties != null && properties.hasProperty(MaterialFluidProperties.KEY);
+    }
+
+    @ZenMethod
+    public static boolean hasItemPipes(Material m) {
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        return properties != null && properties.hasProperty(MaterialItemProperties.KEY);
+    }
+
+    @ZenMethod
     public static boolean hasWires(Material m) {
-        return m.hasProperty(PropertyKey.PIPENET_PROPERTIES) &&
-                m.getProperty(PropertyKey.PIPENET_PROPERTIES).hasProperty(MaterialEnergyProperties.KEY);
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        return properties != null && properties.hasProperty(MaterialEnergyProperties.KEY);
     }
 
     ////////////////////////////////////
@@ -122,28 +130,6 @@ public class MaterialPropertyExpansion {
             m.getProperty(PropertyKey.DUST).setHarvestLevel(harvestLevel);
             m.getProperty(PropertyKey.DUST).setBurnTime(burnTime);
         } else m.setProperty(PropertyKey.DUST, new DustProperty(harvestLevel, burnTime));
-    }
-
-    @ZenMethod
-    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof) {
-        addFluidPipes(m, maxFluidTemperature, throughput, gasProof, false, false, false);
-    }
-
-    @ZenMethod
-    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof,
-                                     boolean acidProof, boolean cryoProof, boolean plasmaProof) {
-        if (checkFrozen("add fluid pipes to a material")) return;
-        if (m.hasProperty(PropertyKey.FLUID_PIPE)) {
-            m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);
-            m.getProperty(PropertyKey.FLUID_PIPE).setThroughput(throughput);
-            m.getProperty(PropertyKey.FLUID_PIPE).setGasProof(gasProof);
-            m.getProperty(PropertyKey.FLUID_PIPE).setCanContain(FluidAttributes.ACID, acidProof);
-            m.getProperty(PropertyKey.FLUID_PIPE).setCryoProof(cryoProof);
-            m.getProperty(PropertyKey.FLUID_PIPE).setPlasmaProof(plasmaProof);
-        } else {
-            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof,
-                    acidProof, cryoProof, plasmaProof));
-        }
     }
 
     @ZenMethod
@@ -209,15 +195,6 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
-    public static void addItemPipes(Material m, int priority, float transferRate) {
-        if (checkFrozen("add Item Pipes to a material")) return;
-        if (m.hasProperty(PropertyKey.ITEM_PIPE)) {
-            m.getProperty(PropertyKey.ITEM_PIPE).setPriority(priority);
-            m.getProperty(PropertyKey.ITEM_PIPE).setTransferRate(transferRate);
-        } else m.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, transferRate));
-    }
-
-    @ZenMethod
     public static void addPlasma(Material m) {
         if (checkFrozen("add a Plasma to a material")) return;
         if (!m.hasProperty(PropertyKey.FLUID)) {
@@ -250,12 +227,51 @@ public class MaterialPropertyExpansion {
     }
 
     @ZenMethod
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof) {
+        addFluidPipes(m, maxFluidTemperature, throughput, gasProof, false, false);
+    }
+
+    @ZenMethod
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof,
+                                     boolean acidProof, boolean plasmaProof) {
+        addFluidPipes(m, maxFluidTemperature, FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, throughput, gasProof, acidProof, plasmaProof);
+    }
+
+    @ZenMethod
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int minFluidTemperature, int throughput, boolean gasProof,
+                                     boolean acidProof, boolean plasmaProof) {
+        if (checkFrozen("add fluid pipes to a material")) return;
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        if (properties == null) {
+            properties = new PipeNetProperties();
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
+        }
+        properties.setProperty(new MaterialFluidProperties(throughput, maxFluidTemperature, minFluidTemperature)
+                .setContain(FluidState.GAS, gasProof).setContain(FluidAttributes.ACID, acidProof)
+                .setContain(FluidState.PLASMA, plasmaProof));
+    }
+
+    @ZenMethod
+    public static void addItemPipes(Material m, int priority, float transferRate) {
+        if (checkFrozen("add Item Pipes to a material")) return;
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        if (properties == null) {
+            properties = new PipeNetProperties();
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
+        }
+        properties.setProperty(new MaterialItemProperties((long) (transferRate * 16), priority));
+    }
+
+    @ZenMethod
     public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock,
                                 @Optional int meltTemperature, @Optional int superconductorTemp) {
         if (checkFrozen("add Wires to a material")) return;
-        if (!m.hasProperty(PropertyKey.PIPENET_PROPERTIES)) {
-            m.setProperty(PropertyKey.PIPENET_PROPERTIES, new PipeNetProperties());
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        if (properties == null) {
+            properties = new PipeNetProperties();
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
         }
-        m.getProperty(PropertyKey.PIPENET_PROPERTIES).setProperty(new MaterialEnergyProperties(voltage, baseAmperage, lossPerBlock, meltTemperature, superconductorTemp));
+        properties.setProperty(new MaterialEnergyProperties(voltage, baseAmperage, lossPerBlock, meltTemperature,
+                superconductorTemp));
     }
 }

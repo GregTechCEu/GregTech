@@ -2,7 +2,6 @@ package gregtech.common.pipelikeold.fluidpipe;
 
 import gregtech.api.graphnet.pipenetold.block.material.BlockMaterialPipe;
 import gregtech.api.graphnet.pipenetold.block.material.ItemBlockMaterialPipe;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 

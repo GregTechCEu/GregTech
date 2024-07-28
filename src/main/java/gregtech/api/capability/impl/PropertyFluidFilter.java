@@ -17,19 +17,18 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
     private final Object2BooleanMap<FluidAttribute> containmentPredicate = new Object2BooleanOpenHashMap<>();
 
     private final int maxFluidTemperature;
+    private final int minFluidTemperature;
     private final boolean gasProof;
-    private final boolean cryoProof;
     private final boolean plasmaProof;
 
-    public PropertyFluidFilter(int maxFluidTemperature,
+    public PropertyFluidFilter(int maxFluidTemperature, int minFluidTemperature,
                                boolean gasProof,
                                boolean acidProof,
-                               boolean cryoProof,
                                boolean plasmaProof) {
         this.maxFluidTemperature = maxFluidTemperature;
+        this.minFluidTemperature = minFluidTemperature;
         this.gasProof = gasProof;
         if (acidProof) setCanContain(FluidAttributes.ACID, true);
-        this.cryoProof = cryoProof;
         this.plasmaProof = plasmaProof;
     }
 
@@ -47,7 +46,6 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
         return containmentPredicate.getBoolean(attribute);
     }
 
-    @Override
     public void setCanContain(@NotNull FluidAttribute attribute, boolean canContain) {
         containmentPredicate.put(attribute, canContain);
     }
@@ -63,13 +61,13 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
     }
 
     @Override
-    public boolean isGasProof() {
-        return this.gasProof;
+    public int getMinFluidTemperature() {
+        return minFluidTemperature;
     }
 
     @Override
-    public boolean isCryoProof() {
-        return this.cryoProof;
+    public boolean isGasProof() {
+        return this.gasProof;
     }
 
     @Override
@@ -79,12 +77,12 @@ public class PropertyFluidFilter implements IPropertyFluidFilter {
 
     @Override
     public String toString() {
-        return "SimplePropertyFluidFilter{" +
-                "maxFluidTemperature=" + maxFluidTemperature +
+        return "PropertyFluidFilter{" +
+                "containmentPredicate=" + containmentPredicate +
+                ", maxFluidTemperature=" + maxFluidTemperature +
+                ", minFluidTemperature=" + minFluidTemperature +
                 ", gasProof=" + gasProof +
-                ", cryoProof=" + cryoProof +
                 ", plasmaProof=" + plasmaProof +
-                ", containmentPredicate=" + containmentPredicate +
                 '}';
     }
 }

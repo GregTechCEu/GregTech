@@ -8,7 +8,7 @@ public class SuperconductorLogic extends AbstractIntLogicData<SuperconductorLogi
 
     public static final SuperconductorLogic INSTANCE = new SuperconductorLogic().setValue(0);
 
-    boolean canSuperconduct(int temp) {
+    public boolean canSuperconduct(int temp) {
         return this.getValue() > temp;
     }
 

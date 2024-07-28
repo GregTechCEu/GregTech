@@ -14,7 +14,7 @@ public class FlowConsumptionStack {
     private final ReversibleLossOperator initialOperator;
 
     public FlowConsumptionStack() {
-        this.initialOperator = IdentityLossOperator.INSTANCE;
+        this.initialOperator = ReversibleLossOperator.IDENTITY;
     }
 
     public FlowConsumptionStack(ReversibleLossOperator initialOperator) {

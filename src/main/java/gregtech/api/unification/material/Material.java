@@ -3,6 +3,7 @@ package gregtech.api.unification.material;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
@@ -18,7 +19,11 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 
-import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
+
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
+
+import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
@@ -1064,19 +1069,33 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
-            return fluidPipeProperties(maxTemp, throughput, gasProof, false, false, false);
+        public Builder fluidPipeProperties(int maxTemp, long throughput, boolean gasProof) {
+            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof));
+            return this;
+        }
+
+        public Builder fluidPipeProperties(int maxTemp, long throughput, boolean gasProof, float priority) {
+            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp, priority).setContain(FluidState.GAS, gasProof));
+            return this;
         }
 
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
-                                           boolean cryoProof, boolean plasmaProof) {
-            properties.setProperty(PropertyKey.FLUID_PIPE,
-                    new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+                                           boolean plasmaProof) {
+            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof)
+                    .setContain(FluidAttributes.ACID, acidProof).setContain(FluidState.PLASMA, plasmaProof));
+            return this;
+        }
+
+        public Builder fluidPipeProperties(int maxTemp, int minTemp, int throughput, boolean gasProof, boolean acidProof,
+                                           boolean plasmaProof) {
+            getOrCreatePipeNetProperties().setProperty(new MaterialFluidProperties(throughput, maxTemp, minTemp)
+                    .setContain(FluidState.GAS, gasProof).setContain(FluidAttributes.ACID, acidProof)
+                    .setContain(FluidState.PLASMA, plasmaProof));
             return this;
         }
 
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
-            properties.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
+            getOrCreatePipeNetProperties().setProperty(new MaterialItemProperties((long) (stacksPerSec * 16), priority));
             return this;
         }
 

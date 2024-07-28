@@ -17,12 +17,6 @@ public class PropertyKey<T extends IMaterialProperty> {
     // Empty property used to allow property-less Materials without removing base type enforcement
     public static final PropertyKey<EmptyProperty> EMPTY = new PropertyKey<>("empty", EmptyProperty.class);
 
-
-    public static final PropertyKey<FluidPipeProperties> FLUID_PIPE = new PropertyKey<>("fluid_pipe",
-            FluidPipeProperties.class);
-    public static final PropertyKey<ItemPipeProperties> ITEM_PIPE = new PropertyKey<>("item_pipe",
-            ItemPipeProperties.class);
-
     private final String key;
     private final Class<T> type;
 

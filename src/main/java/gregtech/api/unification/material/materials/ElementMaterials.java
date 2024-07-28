@@ -168,7 +168,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_ROTOR, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Cr)
                 .rotorStats(12.0f, 3.0f, 512)
-                .fluidPipeProperties(2180, 35, true, true, false, false)
+                .fluidPipeProperties(2180, 104, 35, true, true, false)
                 .blast(1700, GasTier.LOW)
                 .build();
 
@@ -302,7 +302,7 @@ public class ElementMaterials {
                         GENERATE_DOUBLE_PLATE)
                 .element(Elements.Au)
                 .cableProperties(V[HV], 3, 2)
-                .fluidPipeProperties(1671, 25, true, true, false, false)
+                .fluidPipeProperties(1671, 25, true, true, false)
                 .build();
 
         Hafnium = new Material.Builder(42, gregtechId("hafnium"))
@@ -366,7 +366,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.Ir)
                 .rotorStats(7.0f, 3.0f, 2560)
-                .fluidPipeProperties(3398, 250, true, false, true, false)
+                .fluidPipeProperties(3398, 5, 250, true, false, false)
                 .blast(b -> b
                         .temp(4500, GasTier.HIGH)
                         .blastStats(VA[IV], 1100)
@@ -835,7 +835,7 @@ public class ElementMaterials {
                 .toolStats(ToolProperty.Builder.of(8.0F, 6.0F, 1536, 3)
                         .enchantability(14).build())
                 .rotorStats(7.0f, 3.0f, 1600)
-                .fluidPipeProperties(2426, 150, true, true, false, false)
+                .fluidPipeProperties(2426, 150, true, true, false)
                 .blast(b -> b
                         .temp(1941, GasTier.MID)
                         .blastStats(VA[HV], 1500)
@@ -858,7 +858,7 @@ public class ElementMaterials {
                 .element(Elements.W)
                 .rotorStats(7.0f, 3.0f, 2560)
                 .cableProperties(V[IV], 2, 2)
-                .fluidPipeProperties(4618, 50, true, true, false, true)
+                .fluidPipeProperties(4618, 50, true, true, true)
                 .blast(b -> b
                         .temp(3600, GasTier.MID)
                         .blastStats(VA[EV], 1800)
@@ -929,7 +929,7 @@ public class ElementMaterials {
                 .element(Elements.Nq)
                 .rotorStats(6.0f, 4.0f, 1280)
                 .cableProperties(V[ZPM], 2, 2)
-                .fluidPipeProperties(3776, 200, true, false, true, true)
+                .fluidPipeProperties(3776, 3, 200, true, false, true)
                 .blast(b -> b
                         .temp(5000, GasTier.HIGH)
                         .blastStats(VA[IV], 600)
@@ -971,7 +971,7 @@ public class ElementMaterials {
                 .toolStats(ToolProperty.Builder.of(180.0F, 100.0F, 65535, 6)
                         .attackSpeed(0.5F).enchantability(33).magnetic().unbreakable().build())
                 .rotorStats(24.0f, 12.0f, 655360)
-                .fluidPipeProperties(100_000, 5000, true, true, true, true)
+                .fluidPipeProperties(100_000, 1, 5000, true, true, true)
                 .build();
 
         Tritanium = new Material.Builder(128, gregtechId("tritanium"))
@@ -993,7 +993,7 @@ public class ElementMaterials {
                 .element(Elements.Dr)
                 .toolStats(ToolProperty.Builder.of(14.0F, 12.0F, 8192, 5)
                         .attackSpeed(0.3F).enchantability(33).magnetic().build())
-                .fluidPipeProperties(9625, 500, true, true, true, true)
+                .fluidPipeProperties(9625, 1, 500, true, true, true)
                 .build();
 
         Trinium = new Material.Builder(130, gregtechId("trinium"))

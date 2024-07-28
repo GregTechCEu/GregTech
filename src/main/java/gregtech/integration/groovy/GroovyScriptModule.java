@@ -3,6 +3,7 @@ package gregtech.integration.groovy;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.modules.GregTechModule;
@@ -14,12 +15,18 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
+import gregtech.api.unification.material.properties.PipeNetProperties;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.Mods;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.pipelike.block.cable.CableBlock;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 import gregtech.common.pipelikeold.cable.BlockCable;
 import gregtech.common.pipelikeold.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelikeold.itempipe.BlockItemPipe;
@@ -190,25 +197,25 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
             String modid = registry.getModid();
             Map<String, ItemStack> map = metaItems.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
 
-            for (BlockCable cable : MetaBlocks.CABLES.get(modid)) {
-                for (Material material : cable.getEnabledMaterials()) {
-                    String name = cable.getPrefix().name + material.toCamelCaseString();
-                    ItemStack stack = cable.getItem(material);
-                    map.put(name, stack);
-                }
-            }
-            for (BlockItemPipe pipe : MetaBlocks.ITEM_PIPES.get(modid)) {
-                for (Material material : pipe.getEnabledMaterials()) {
-                    String name = pipe.getPrefix().name + material.toCamelCaseString();
-                    ItemStack stack = pipe.getItem(material);
-                    map.put(name, stack);
-                }
-            }
-            for (BlockFluidPipe pipe : MetaBlocks.FLUID_PIPES.get(modid)) {
-                for (Material material : pipe.getEnabledMaterials()) {
-                    String name = pipe.getPrefix().name + material.toCamelCaseString();
-                    ItemStack stack = pipe.getItem(material);
-                    map.put(name, stack);
+            for (Material material : registry) {
+                PipeNetProperties prop = material.getProperty(PropertyKey.PIPENET_PROPERTIES);
+                if (prop == null) continue;
+
+                for (PipeNetProperties.IPipeNetMaterialProperty property : prop.getRegisteredProperties()) {
+                    // TODO this is awkward, surely there's a better solution?
+                    if (property instanceof MaterialEnergyProperties) {
+                        for (CableBlock cable : MetaBlocks.CABLES.get(modid)) {
+                            String name = cable.getStructure().getOrePrefix().name + material.toCamelCaseString();
+                            ItemStack stack = cable.getItem(material);
+                            map.put(name, stack);
+                        }
+                    } else if (property instanceof MaterialItemProperties || property instanceof MaterialFluidProperties) {
+                        for (PipeMaterialBlock pipe : MetaBlocks.MATERIAL_PIPES.get(modid)) {
+                            String name = pipe.getStructure().getOrePrefix().name + material.toCamelCaseString();
+                            ItemStack stack = pipe.getItem(material);
+                            map.put(name, stack);
+                        }
+                    }
                 }
             }
             metaItems.put(modid, map);

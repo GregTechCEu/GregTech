@@ -1,5 +1,9 @@
 package gregtech.api.fluids;
 
+import gregtech.api.fluids.attribute.AttributedFluid;
+
+import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.NotNull;
 
 public enum FluidState {
@@ -16,5 +20,10 @@ public enum FluidState {
 
     public @NotNull String getTranslationKey() {
         return this.translationKey;
+    }
+
+    public static FluidState inferState(FluidStack stack) {
+        if (stack.getFluid() instanceof AttributedFluid fluid) return fluid.getState();
+        else return stack.getFluid().isGaseous(stack) ? GAS : LIQUID;
     }
 }

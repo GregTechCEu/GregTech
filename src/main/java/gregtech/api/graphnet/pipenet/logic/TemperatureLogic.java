@@ -9,6 +9,7 @@ import gregtech.api.graphnet.pipenet.NodeLossResult;
 
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 
+import gregtech.api.graphnet.pipenet.physical.IFreezable;
 import gregtech.api.graphnet.traverse.util.CompleteLossOperator;
 
 import gregtech.api.graphnet.traverse.util.MultLossOperator;
@@ -19,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -96,9 +98,33 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
         return new TemperatureLogic();
     }
 
+    public boolean isOverMaximum(int temperature) {
+        return temperature > getTemperatureMaximum();
+    }
+
+    public boolean isOverPartialBurnThreshold(int temperature) {
+        return getPartialBurnTemperature() != null && temperature > getPartialBurnTemperature();
+    }
+
+    public boolean isUnderMinimum(int temperature) {
+        return temperature < getTemperatureMinimum();
+    }
+
     @Nullable
     public NodeLossResult getLossResult(long tick) {
-        if (getTemperature(tick) > getTemperatureMaximum()) {
+        int temp = getTemperature(tick);
+        if (isUnderMinimum(temp)) {
+            return new NodeLossResult(n -> {
+                World world = n.getNet().getWorld();
+                BlockPos pos = n.getEquivalencyData();
+                IBlockState state = world.getBlockState(pos);
+                if (state.getBlock() instanceof IFreezable freezable) {
+                    freezable.fullyFreeze(state, world, pos);
+                } else {
+                    world.setBlockToAir(pos);
+                }
+            }, CompleteLossOperator.INSTANCE);
+        } else if (isOverMaximum(temp)) {
             return new NodeLossResult(n -> {
                 World world = n.getNet().getWorld();
                 BlockPos pos = n.getEquivalencyData();
@@ -109,7 +135,7 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
                     world.setBlockToAir(pos);
                 }
             }, CompleteLossOperator.INSTANCE);
-        } else if (getPartialBurnTemperature() != null && getTemperature(tick) > getPartialBurnTemperature()) {
+        } else if (isOverPartialBurnThreshold(temp)) {
             return new NodeLossResult(n -> {
                 World world = n.getNet().getWorld();
                 BlockPos pos = n.getEquivalencyData();
@@ -117,7 +143,7 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
                 if (state.getBlock() instanceof IBurnable burnable) {
                     burnable.partialBurn(state, world, pos);
                 }
-            }, new MultLossOperator(0.5));
+            }, MultLossOperator.TENTHS[5]);
         } else {
             return null;
         }
@@ -131,6 +157,14 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
         if (listener != null) listener.markLogicEntryAsUpdated(this, false);
 
         this.energy += energy;
+    }
+
+    public void moveTowardsTemperature(int temperature, long tick, float mult, boolean safe) {
+        if (safe) {
+            temperature = MathHelper.clamp(temperature, getTemperatureMinimum() + 1, getTemperatureMaximum() - 1);
+        }
+        int temp = getTemperature(tick);
+        applyThermalEnergy(mult * (temperature - temp), tick);
     }
 
     public int getTemperature(long tick) {

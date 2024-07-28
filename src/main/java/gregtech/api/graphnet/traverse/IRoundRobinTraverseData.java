@@ -6,7 +6,6 @@ import gregtech.api.graphnet.path.INetPath;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
-import java.util.LinkedHashSet;
 
 public interface IRoundRobinTraverseData<N extends NetNode, P extends INetPath<N, ?>> {
 
@@ -20,7 +19,7 @@ public interface IRoundRobinTraverseData<N extends NetNode, P extends INetPath<N
 
     /**
      * Whether a path should be skipped before checking it against the round robin cache.
-     * The return of {@link ITraverseData#prepareForPathWalk(INetPath)} will be ignored during traversal.
+     * The return of {@link ITraverseData#prepareForPathWalk(INetPath, long)} will be ignored during traversal.
      */
     boolean shouldSkipPath(P path);
 }

@@ -1,4 +1,4 @@
-package gregtech.common.pipelike.handlers;
+package gregtech.common.pipelike.handlers.properties;
 
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
@@ -41,7 +41,7 @@ import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATIO
 
 public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNetMaterialProperty {
 
-    public static final String KEY = "energy";
+    public static final MaterialPropertyKey<MaterialEnergyProperties> KEY = new MaterialPropertyKey<>();
 
     private final long voltageLimit;
     private final long amperageLimit;
@@ -101,7 +101,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     }
 
     @Override
-    public @NotNull String getName() {
+    public MaterialPropertyKey<?> getKey() {
         return KEY;
     }
 

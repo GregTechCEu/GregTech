@@ -173,7 +173,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe(true, "filter_casing_sterile",
                 MetaBlocks.CLEANROOM_CASING.getItemVariant(BlockCleanroomCasing.CasingType.FILTER_CASING_STERILE,
                         ConfigHolder.recipes.casingsPerCraft),
-                "BEB", "ISI", "MFR", 'B', new UnificationEntry(OrePrefix.pipeLargeFluid, Polybenzimidazole), 'E',
+                "BEB", "ISI", "MFR", 'B', new UnificationEntry(OrePrefix.pipeLarge, Polybenzimidazole), 'E',
                 EMITTER_ZPM.getStackForm(), 'I', ITEM_FILTER.getStackForm(), 'S', BLACKLIGHT.getStackForm(), 'M',
                 ELECTRIC_MOTOR_ZPM.getStackForm(), 'F', new UnificationEntry(OrePrefix.frameGt, Tritanium), 'R',
                 new UnificationEntry(OrePrefix.rotor, NaquadahAlloy));
@@ -307,7 +307,7 @@ public class CraftingRecipeLoader {
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'S',
                 MetaItems.FLUID_CELL_LARGE_STEEL.getStackForm(), 'U', MetaItems.ELECTRIC_PUMP_LV.getStackForm(), 'R',
                 new UnificationEntry(OrePrefix.rotor, Lead), 'I',
-                new UnificationEntry(OrePrefix.pipeSmallFluid, Potin));
+                new UnificationEntry(OrePrefix.pipeSmall, Potin));
         ModHandler.addShapedRecipe("electric_jetpack", MetaItems.ELECTRIC_JETPACK.getStackForm(), "xCd", "TBT", "I I",
                 'C', new UnificationEntry(OrePrefix.circuit, Tier.MV), 'T', MetaItems.POWER_THRUSTER.getStackForm(),
                 'B', MetaItems.BATTERY_MV_LITHIUM.getStackForm(), 'I',

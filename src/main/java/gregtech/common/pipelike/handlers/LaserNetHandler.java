@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import java.util.Collection;
 import java.util.Collections;
 
-public class LaserNetHandler implements IPipeNetNodeHandler {
+public final class LaserNetHandler implements IPipeNetNodeHandler {
 
     public static final LaserNetHandler INSTANCE = new LaserNetHandler();
 

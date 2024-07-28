@@ -1,5 +1,6 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
@@ -22,20 +23,27 @@ import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -48,8 +56,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -86,6 +96,9 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private GTOverheatParticle overheatParticle;
 
     private final int offset = (int) (Math.random() * 20);
+
+    private long nextDamageTime = 0;
+    private long nextSoundTime = 0;
 
     public PipeTileEntity(WorldPipeBlock block) {
         this.block = block;
@@ -565,6 +578,20 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return overheatParticle != null && overheatParticle.isAlive();
     }
 
+    public void spawnParticles(EnumFacing direction, EnumParticleTypes particleType, int particleCount) {
+        if (getWorld() instanceof WorldServer server) {
+            server.spawnParticle(particleType,
+                    getPos().getX() + 0.5,
+                    getPos().getY() + 0.5,
+                    getPos().getZ() + 0.5,
+                    particleCount,
+                    direction.getXOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
+                    direction.getYOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
+                    direction.getZOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
+                    0.1);
+        }
+    }
+
     // misc overrides //
 
     @Override
@@ -622,5 +649,40 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 .withProperty(AbstractPipeModel.COLOR_PROPERTY, getPaintingColor())
                 .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
                 .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask);
+    }
+
+    public void dealAreaDamage(int size, Consumer<EntityLivingBase> damageFunction) {
+        long timer = getOffsetTimer();
+        if (timer >= this.nextDamageTime) {
+            List<EntityLivingBase> entities = getWorld().getEntitiesWithinAABB(EntityLivingBase.class,
+                    new AxisAlignedBB(getPos()).grow(size));
+            entities.forEach(damageFunction);
+            this.nextDamageTime = timer + 20;
+        }
+    }
+
+    public void playLossSound() {
+        long timer = getOffsetTimer();
+        if (timer >= this.nextSoundTime) {
+            getWorld().playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            this.nextSoundTime = timer + 20;
+        }
+    }
+
+    public void visuallyExplode() {
+        getWorld().createExplosion(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                1.0f + GTValues.RNG.nextFloat(), false);
+    }
+
+    public void setNeighborsToFire() {
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (!GTValues.RNG.nextBoolean()) continue;
+            BlockPos blockPos = getPos().offset(side);
+            IBlockState blockState = getWorld().getBlockState(blockPos);
+            if (blockState.getBlock().isAir(blockState, getWorld(), blockPos) ||
+                    blockState.getBlock().isFlammable(getWorld(), blockPos, side.getOpposite())) {
+                getWorld().setBlockState(blockPos, Blocks.FIRE.getDefaultState());
+            }
+        }
     }
 }

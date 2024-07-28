@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class OpticalPipeBlock extends WorldPipeBlock implements IBurnable {
+public class OpticalPipeBlock extends WorldPipeBlock {
 
     public OpticalPipeBlock(OpticalStructure structure) {
         super(structure);

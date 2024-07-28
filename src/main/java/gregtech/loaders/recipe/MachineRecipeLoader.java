@@ -755,7 +755,7 @@ public class MachineRecipeLoader {
                 .inputs(MetaItems.FIELD_GENERATOR_IV.getStackForm(2)).inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                 .inputs(MetaItems.NEUTRON_REFLECTOR.getStackForm(2))
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.LuV, 4)
-                .input(OrePrefix.pipeSmallFluid, Materials.Naquadah, 4).input(OrePrefix.plate, Materials.Europium, 4)
+                .input(OrePrefix.pipeSmall, Materials.Naquadah, 4).input(OrePrefix.plate, Materials.Europium, 4)
                 .fluidInputs(Materials.VanadiumGallium.getFluid(GTValues.L * 4))
                 .outputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL))
                 .duration(100).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();

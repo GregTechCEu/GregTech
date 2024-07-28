@@ -599,7 +599,7 @@ public class FirstDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(7.0F, 5.0F, 1024, 3)
                         .enchantability(14).build())
                 .rotorStats(7.0f, 4.0f, 480)
-                .fluidPipeProperties(2428, 75, true, true, true, false)
+                .fluidPipeProperties(2428, 59, 75, true, true, false)
                 .blast(b -> b.temp(1700, GasTier.LOW).blastStats(VA[HV], 1100))
                 .build();
 

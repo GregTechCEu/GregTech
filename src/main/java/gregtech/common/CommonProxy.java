@@ -26,6 +26,8 @@ import gregtech.common.blocks.*;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.block.cable.CableBlock;
+import gregtech.common.pipelike.block.laser.LaserPipeBlock;
+import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
 import gregtech.common.pipelike.block.pipe.PipeBlock;
 import gregtech.common.pipelikeold.cable.BlockCable;
 import gregtech.common.pipelikeold.cable.ItemBlockCable;
@@ -94,8 +96,8 @@ public class CommonProxy {
             for (CableBlock cable : CABLES.get(materialRegistry.getModid())) registry.register(cable);
             for (PipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid())) registry.register(cable);
         }
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(pipe);
-        for (BlockLaserPipe pipe : LASER_PIPES) registry.register(pipe);
+        for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(pipe);
+        for (LaserPipeBlock pipe : LASER_PIPES) registry.register(pipe);
 
         registry.register(LD_ITEM_PIPE);
         registry.register(LD_FLUID_PIPE);
@@ -210,8 +212,8 @@ public class CommonProxy {
             for (PipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid()))
                 registry.register(createItemBlock(cable, ItemPipeBlock::new));
         }
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
-        for (BlockLaserPipe pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemBlockLaserPipe::new));
+        for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
+        for (LaserPipeBlock pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
 
         registry.register(createItemBlock(LD_ITEM_PIPE, ItemBlock::new));
         registry.register(createItemBlock(LD_FLUID_PIPE, ItemBlock::new));

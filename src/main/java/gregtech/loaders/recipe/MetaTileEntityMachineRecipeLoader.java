@@ -44,7 +44,7 @@ public class MetaTileEntityMachineRecipeLoader {
         // Quadruple Fluid Input Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[EV])
-                .input(pipeQuadrupleFluid, Titanium)
+                .input(pipeQuadruple, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_IMPORT_HATCH[0])
@@ -52,7 +52,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[IV])
-                .input(pipeQuadrupleFluid, TungstenSteel)
+                .input(pipeQuadruple, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_IMPORT_HATCH[1])
@@ -60,7 +60,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[LuV])
-                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .input(pipeQuadruple, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_IMPORT_HATCH[2])
@@ -68,7 +68,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[ZPM])
-                .input(pipeQuadrupleFluid, Iridium)
+                .input(pipeQuadruple, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_IMPORT_HATCH[3])
@@ -76,7 +76,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[UV])
-                .input(pipeQuadrupleFluid, Naquadah)
+                .input(pipeQuadruple, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_IMPORT_HATCH[4])
@@ -84,7 +84,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[UHV])
-                .input(pipeQuadrupleFluid, Neutronium)
+                .input(pipeQuadruple, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_IMPORT_HATCH[5])
@@ -93,7 +93,7 @@ public class MetaTileEntityMachineRecipeLoader {
         // Nonuple Fluid Input Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[EV])
-                .input(pipeNonupleFluid, Titanium)
+                .input(pipeNonuple, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_IMPORT_HATCH[0])
@@ -101,7 +101,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[IV])
-                .input(pipeNonupleFluid, TungstenSteel)
+                .input(pipeNonuple, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_IMPORT_HATCH[1])
@@ -109,7 +109,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[LuV])
-                .input(pipeNonupleFluid, NiobiumTitanium)
+                .input(pipeNonuple, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_IMPORT_HATCH[2])
@@ -117,7 +117,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[ZPM])
-                .input(pipeNonupleFluid, Iridium)
+                .input(pipeNonuple, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_IMPORT_HATCH[3])
@@ -125,7 +125,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[UV])
-                .input(pipeNonupleFluid, Naquadah)
+                .input(pipeNonuple, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_IMPORT_HATCH[4])
@@ -133,7 +133,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_IMPORT_HATCH[UHV])
-                .input(pipeNonupleFluid, Neutronium)
+                .input(pipeNonuple, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_IMPORT_HATCH[5])
@@ -142,7 +142,7 @@ public class MetaTileEntityMachineRecipeLoader {
         // Quadruple Fluid Output Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[EV])
-                .input(pipeQuadrupleFluid, Titanium)
+                .input(pipeQuadruple, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_EXPORT_HATCH[0])
@@ -150,7 +150,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[IV])
-                .input(pipeQuadrupleFluid, TungstenSteel)
+                .input(pipeQuadruple, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_EXPORT_HATCH[1])
@@ -158,7 +158,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[LuV])
-                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .input(pipeQuadruple, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_EXPORT_HATCH[2])
@@ -166,7 +166,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[ZPM])
-                .input(pipeQuadrupleFluid, Iridium)
+                .input(pipeQuadruple, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_EXPORT_HATCH[3])
@@ -174,7 +174,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[UV])
-                .input(pipeQuadrupleFluid, Naquadah)
+                .input(pipeQuadruple, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_EXPORT_HATCH[4])
@@ -182,7 +182,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[UHV])
-                .input(pipeQuadrupleFluid, Neutronium)
+                .input(pipeQuadruple, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
                 .output(QUADRUPLE_EXPORT_HATCH[5])
@@ -191,7 +191,7 @@ public class MetaTileEntityMachineRecipeLoader {
         // Nonuple Fluid Output Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[EV])
-                .input(pipeNonupleFluid, Titanium)
+                .input(pipeNonuple, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_EXPORT_HATCH[0])
@@ -199,7 +199,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[IV])
-                .input(pipeNonupleFluid, TungstenSteel)
+                .input(pipeNonuple, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_EXPORT_HATCH[1])
@@ -207,7 +207,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[LuV])
-                .input(pipeNonupleFluid, NiobiumTitanium)
+                .input(pipeNonuple, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_EXPORT_HATCH[2])
@@ -215,7 +215,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[ZPM])
-                .input(pipeNonupleFluid, Iridium)
+                .input(pipeNonuple, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_EXPORT_HATCH[3])
@@ -223,7 +223,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[UV])
-                .input(pipeNonupleFluid, Naquadah)
+                .input(pipeNonuple, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_EXPORT_HATCH[4])
@@ -231,7 +231,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(FLUID_EXPORT_HATCH[UHV])
-                .input(pipeNonupleFluid, Neutronium)
+                .input(pipeNonuple, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
                 .output(NONUPLE_EXPORT_HATCH[5])
@@ -957,7 +957,7 @@ public class MetaTileEntityMachineRecipeLoader {
 
         // Long Distance Pipes
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeItem, Tin, 2)
+                .input(pipeLarge, Tin, 2)
                 .input(plate, Steel, 8)
                 .input(gear, Steel, 2)
                 .circuitMeta(1)
@@ -966,7 +966,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(400).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeFluid, Bronze, 2)
+                .input(pipeLarge, Bronze, 2)
                 .input(plate, Steel, 8)
                 .input(gear, Steel, 2)
                 .circuitMeta(1)
@@ -975,7 +975,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(400).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeItem, Tin, 2)
+                .input(pipeLarge, Tin, 2)
                 .input(plate, Steel, 8)
                 .circuitMeta(2)
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))
@@ -983,7 +983,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(600).EUt(24).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeFluid, Bronze, 2)
+                .input(pipeLarge, Bronze, 2)
                 .input(plate, Steel, 8)
                 .circuitMeta(2)
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))

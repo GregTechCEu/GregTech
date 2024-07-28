@@ -31,7 +31,6 @@ public record PipeStructure(String name, int material, int channelCount, boolean
     public static final PipeStructure HUGE =
             new PipeStructure("huge", 24, 1, false, OrePrefix.pipeHuge, 0.875f, PipeModel.INSTANCES[4]);
 
-    // TODO adjust quadruple and nonuple thicknesses to 0.5f and 0.75f respectively, and update textures accordingly
     public static final PipeStructure QUADRUPLE =
             new PipeStructure("quadruple", 8, 4, false, OrePrefix.pipeQuadruple, 0.95f, PipeModel.INSTANCES[5]);
     public static final PipeStructure NONUPLE =

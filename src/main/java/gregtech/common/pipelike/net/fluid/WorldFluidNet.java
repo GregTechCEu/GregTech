@@ -59,7 +59,7 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
 
     @Override
     public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
-        return new IPipeCapabilityObject[] {  };
+        return new IPipeCapabilityObject[] { new FluidCapabilityObject(this, node) };
     }
 
     @Override

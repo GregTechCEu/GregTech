@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import java.util.Collection;
 import java.util.Collections;
 
-public class OpticalNetHandler implements IPipeNetNodeHandler {
+public final class OpticalNetHandler implements IPipeNetNodeHandler {
 
     public static final OpticalNetHandler INSTANCE = new OpticalNetHandler();
 

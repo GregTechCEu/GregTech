@@ -1,5 +1,6 @@
 package gregtech.integration.theoneprobe.provider.debug;
 
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenetold.PipeNetNode;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -44,31 +45,13 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     list.forEach(probeInfo::text);
                 }
             }
-            if (tileEntity instanceof TileEntityPipeBase) {
-                IPipeTile<?, ?, ?> pipeTile = (IPipeTile<?, ?, ?>) tileEntity;
-                BlockPipe<?, ?, ?, ?> blockPipe = pipeTile.getPipeBlock();
-                WorldPipeNetBase<?, ?, ?> pipeNet = blockPipe.getWorldPipeNet(world);
-                if (pipeNet != null) {
-                    probeInfo.text("Net: " + pipeNet.hashCode());
-                    probeInfo.text("WorldPipeNetNode Info: ");
-                    StringBuilder builder = new StringBuilder();
-                    PipeNetNode<?, ?, ?> node = pipeNet.getNode(data.getPos());
-                    if (node != null) {
-                        builder.append("{")
-                                .append("active: ").append(node.isActive)
-                                .append(", mark: ").append(node.mark)
-                                .append(", open: ").append(node.getOpenConnections())
-                                .append(", blocked: ").append(node.getBlockedConnections())
-                                .append("}");
-                    }
-                    probeInfo.text(builder.toString());
-                }
-                probeInfo.text("tile open: " + pipeTile.getConnections());
-                // if (blockPipe instanceof BlockFluidPipe) {
-                // if (pipeTile instanceof TileEntityFluidPipeTickable) {
-                // probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
-                // }
-                // }
+            if (tileEntity instanceof PipeTileEntity pipeTile) {
+                String builder = "{" +
+                        ", mark: " + pipeTile.getPaintingColor() +
+                        ", open: " + pipeTile.getConnectionMask() +
+                        ", blocked: " + pipeTile.getBlockedMask() +
+                        "}";
+                probeInfo.text(builder);
             }
         }
     }

@@ -12,7 +12,7 @@ import gregtech.api.util.GTUtility;
 
 import com.google.common.collect.ImmutableMap;
 
-import gregtech.common.pipelike.handlers.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
 
 import java.util.Map;
 

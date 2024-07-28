@@ -1,16 +1,17 @@
 package gregtech.api.graphnet.pipenet;
 
+import gregtech.api.graphnet.traverse.util.CompositeLossOperator;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 
-import net.minecraft.util.Tuple;
-
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 public final class NodeLossResult {
+
+    public static final NodeLossResult IDENTITY = new NodeLossResult(null, ReversibleLossOperator.IDENTITY);
 
     private final @Nullable Consumer<WorldPipeNetNode> postAction;
     private final @NotNull ReversibleLossOperator lossFunction;
@@ -20,8 +21,24 @@ public final class NodeLossResult {
         this.lossFunction = lossFunction;
     }
 
+    @Contract("!null, !null -> new; !null, null -> param1; null, !null -> param2; null, null -> null")
+    public static NodeLossResult combine(@Nullable NodeLossResult a, @Nullable NodeLossResult b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        Consumer<WorldPipeNetNode> postAction = a.postAction;
+        if (b.postAction != null) {
+            if (postAction == null) postAction = b.postAction;
+            else postAction = postAction.andThen(b.postAction);
+        }
+        return new NodeLossResult(postAction, new CompositeLossOperator(a.lossFunction, b.lossFunction));
+    }
+
     public boolean hasPostAction() {
         return postAction != null;
+    }
+
+    public Consumer<WorldPipeNetNode> getPostAction() {
+        return postAction;
     }
 
     public void triggerPostAction(WorldPipeNetNode node) {

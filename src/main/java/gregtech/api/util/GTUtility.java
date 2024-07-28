@@ -19,6 +19,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 
+import it.unimi.dsi.fastutil.bytes.ByteArrayList;
+import it.unimi.dsi.fastutil.bytes.ByteList;
+
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -67,7 +70,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
+import java.util.BitSet;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -930,10 +935,47 @@ public class GTUtility {
     }
 
     @Contract(pure = true)
-    public static boolean evalMask(@NotNull EnumFacing facing, byte mask) {
-        return (mask & (1 << facing.ordinal())) > 0;
+    public static boolean evalMask(@NotNull Enum<?> anEnum, byte mask) {
+        return (mask & (1L << anEnum.ordinal())) > 0;
     }
 
+    @Contract(pure = true)
+    public static boolean evalMask(@NotNull Enum<?> anEnum, @NotNull BitSet mask) {
+        return mask.get(anEnum.ordinal());
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static <T extends Enum<T>> EnumSet<T> maskToSet(@NotNull Class<T> enumClass, byte mask) {
+        EnumSet<T> set = EnumSet.noneOf(enumClass);
+        for (T anEnum : enumClass.getEnumConstants()) {
+            if (evalMask(anEnum, mask)) set.add(anEnum);
+        }
+        return set;
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static <T extends Enum<T>> EnumSet<T> maskToSet(@NotNull Class<T> enumClass, @NotNull BitSet mask) {
+        EnumSet<T> set = EnumSet.noneOf(enumClass);
+        for (T anEnum : enumClass.getEnumConstants()) {
+            if (evalMask(anEnum, mask)) set.add(anEnum);
+        }
+        return set;
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static BitSet setToMask(@NotNull EnumSet<?> enumSet) {
+        BitSet mask = new BitSet();
+        for (Enum<?> anEnum : enumSet) {
+            mask.set(anEnum.ordinal());
+        }
+        return mask;
+    }
+
+    @Contract(pure = true, value = "->new")
+    @NotNull
     public static <T> Set<T> createWeakHashSet() {
         return Collections.newSetFromMap(new WeakHashMap<>());
     }

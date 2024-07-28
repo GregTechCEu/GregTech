@@ -6,7 +6,6 @@ import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
 import gregtech.api.graphnet.pipenetold.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.client.renderer.pipeold.ItemPipeRenderer;
 import gregtech.client.renderer.pipeold.PipeRenderer;

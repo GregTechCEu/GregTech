@@ -6,7 +6,6 @@ import gregtech.api.graphnet.pipenetold.WorldPipeNetComplex;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.pipenetold.tile.IPipeTile;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.covers.CoverPump;
 import gregtech.common.covers.FluidFilterMode;

@@ -18,8 +18,6 @@ import org.jgrapht.alg.util.Pair;
 
 import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -51,7 +49,7 @@ public final class TraverseHelpers {
             List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
             long pathFlow = availableFlow;
             P path = paths.next();
-            if (data.prepareForPathWalk(path)) continue;
+            if (data.prepareForPathWalk(path, pathFlow)) continue;
 
             List<N> nodes = path.getOrderedNodes();
             List<E> edges = path.getOrderedEdges();
@@ -71,7 +69,7 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> consumeFlowLimit(edge, data, flow), data.traverseToNode(targetNode, pathFlow));
+                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
                 if (pathFlow <= 0) continue pathloop;
@@ -85,10 +83,6 @@ public final class TraverseHelpers {
         }
 
         return flowIn - availableFlow;
-    }
-
-    private static void consumeFlowLimit(AbstractNetFlowEdge edge, ITraverseData<?, ?> data, long consumption) {
-        edge.consumeFlowLimit(data.getTestObject(), data.getGraphNet(), consumption, data.getQueryTick(), data.getSimulatorKey());
     }
 
     /**
@@ -116,7 +110,7 @@ public final class TraverseHelpers {
             List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
             long pathFlow = isFlow ? availableFlow : 1;
             P path = paths.next();
-            if (data.prepareForPathWalk(path)) continue;
+            if (data.prepareForPathWalk(path, pathFlow)) continue;
 
             List<N> nodes = path.getOrderedNodes();
             List<E> edges = path.getOrderedEdges();
@@ -148,7 +142,7 @@ public final class TraverseHelpers {
                             if (finalOverflow > 0) overflowListener.accept(targetNode, finalOverflow);
                         });
                     }
-                    stack.add(flow -> consumeFlowLimit(flowEdge, data, flow), data.traverseToNode(targetNode, pathFlow));
+                    stack.add(flow -> data.consumeFlowLimit(flowEdge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
                     pathFlow = stack.applyLatestLossFunction(pathFlow);
                 }
 
@@ -251,7 +245,7 @@ public final class TraverseHelpers {
             P path = entry.getKey();
 
             // no skipping paths at this stage
-            data.prepareForPathWalk(path);
+            data.prepareForPathWalk(path, pathFlow);
 
             List<N> nodes = path.getOrderedNodes();
             List<E> edges = path.getOrderedEdges();
@@ -271,7 +265,7 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> consumeFlowLimit(edge, data, flow), data.traverseToNode(targetNode, pathFlow));
+                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
                 if (pathFlow <= 0) continue pathloop;
@@ -389,7 +383,7 @@ public final class TraverseHelpers {
         List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
         long pathFlow = flowIn;
 
-        data.prepareForPathWalk(path);
+        data.prepareForPathWalk(path, pathFlow);
 
         List<N> nodes = path.getOrderedNodes();
         List<E> edges = path.getOrderedEdges();
@@ -409,7 +403,7 @@ public final class TraverseHelpers {
             } else return strict ? -1 : 0;
 
             pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-            stack.add(flow -> consumeFlowLimit(edge, data, flow), data.traverseToNode(targetNode, pathFlow));
+            stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
             pathFlow = stack.applyLatestLossFunction(pathFlow);
 
             if (pathFlow <= 0) return 0;

@@ -15,7 +15,7 @@ public class GatherPredicatesEvent extends Event {
 
     GatherPredicatesEvent() {}
 
-    public void registerSupplier(String name, Supplier<IEdgePredicate<?, ?>> supplier) {
-        gathered.put(name, supplier);
+    public void registerPredicate(IEdgePredicate<?, ?> predicate) {
+        gathered.put(predicate.getName(), predicate::getNew);
     }
 }
