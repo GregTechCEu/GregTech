@@ -48,8 +48,7 @@ public class PipeRecipeHandler {
         restrictivePrefix.addProcessingHandler(registrationHandler((o, m) -> processRestrictivePipe(o, m, pipePrefix)));
     }
 
-    public static IOreRegistrationHandler registrationHandler(
-                                                              BiConsumer<OrePrefix, Material> handler) {
+    public static IOreRegistrationHandler registrationHandler(BiConsumer<OrePrefix, Material> handler) {
         return (orePrefix, material) -> {
             if (material.hasFlag(NO_UNIFICATION)) return;
             PipeNetProperties properties = material.getProperty(PropertyKey.PIPENET_PROPERTIES);

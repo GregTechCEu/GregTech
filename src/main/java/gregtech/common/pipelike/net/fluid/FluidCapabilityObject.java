@@ -51,6 +51,12 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         return (FlowWorldPipeNetPath.Provider) net;
     }
 
+    private boolean inputDisallowed(EnumFacing side) {
+        if (side == null) return false;
+        if (tile == null) return true;
+        else return tile.isBlocked(side);
+    }
+
     private Iterator<FlowWorldPipeNetPath> getPaths(FluidTraverseData data) {
         assert tile != null;
         return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
@@ -81,7 +87,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     }
 
     public int fill(FluidStack resource, boolean doFill, EnumFacing side) {
-        if (tile == null || this.transferring) return 0;
+        if (tile == null || this.transferring || inputDisallowed(side)) return 0;
         this.transferring = true;
 
         SimulatorKey simulator = null;

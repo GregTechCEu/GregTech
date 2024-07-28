@@ -16,7 +16,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public final class PipeQuadHelper {
 
-    private static final VertexFormat FORMAT = DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL;
+    private static final VertexFormat FORMAT = DefaultVertexFormats.ITEM;
 
     private final float thickness;
     private final float x;

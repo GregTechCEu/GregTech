@@ -13,10 +13,6 @@ public class PipeActivableTileEntity extends PipeTileEntity implements IActivabl
 
     private boolean active;
 
-    public PipeActivableTileEntity(WorldPipeBlock block) {
-        super(block);
-    }
-
     @Override
     public void setActive(boolean active) {
         if (this.active != active) {

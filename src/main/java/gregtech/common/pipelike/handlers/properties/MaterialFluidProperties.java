@@ -13,15 +13,20 @@ import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
+import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
@@ -33,6 +38,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 public final class MaterialFluidProperties implements PipeNetProperties.IPipeNetMaterialProperty, IPropertyFluidFilter {
@@ -144,6 +150,15 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     }
 
     @Override
+    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", getThroughput(structure)));
+        tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", getMaxFluidTemperature()));
+        tooltip.add(I18n.format("gregtech.fluid_pipe.min_temperature", getMinFluidTemperature()));
+        tooltip.add(I18n.format("gregtech.fluid_pipe.priority", TextFormattingUtil.formatNumbers(getFlowPriority(structure))));
+    }
+
+    @Override
     public void verifyProperty(MaterialProperties properties) {
         if (!properties.hasProperty(PropertyKey.WOOD)) {
             properties.ensureSet(PropertyKey.INGOT, true);
@@ -175,16 +190,27 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     @Override
     public void mutateData(NetLogicData data, IPipeStructure structure) {
         if (structure instanceof PipeStructure pipe) {
-            long throughput = baseThroughput * pipe.material();
+            long throughput = getThroughput(structure);
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
-            double weight = priority * (pipe.restrictive() ? 100d : 1d) * pipe.channelCount() / pipe.material();
-            data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(weight))
+            data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput))
                     .setLogicEntry(FluidContainmentLogic.INSTANCE.getWith(containableStates, containableAttributes))
                     .setLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), maxFluidTemperature,
                                     minFluidTemperature, 50 * pipe.material(), null));
         }
+    }
+
+    private long getThroughput(IPipeStructure structure) {
+        if (structure instanceof PipeStructure pipe) {
+            return baseThroughput * pipe.material();
+        } else return baseThroughput;
+    }
+
+    private double getFlowPriority(IPipeStructure structure) {
+        if (structure instanceof PipeStructure pipe) {
+            return priority * (pipe.restrictive() ? 100d : 1d) * pipe.channelCount() / pipe.material();
+        } else return priority;
     }
 
     @Override

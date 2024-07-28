@@ -25,15 +25,16 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
     public static final Capability<?>[] CAPABILITIES = new Capability[] {
             CapabilityItemHandler.ITEM_HANDLER_CAPABILITY };
 
-    private static final String DATA_ID_BASE = "gregtech.world_energy_net";
+    private static final String DATA_ID_BASE = "gregtech.world_item_net";
 
-    public static WorldItemNet getWorldNet(World world) {
+    public static @NotNull WorldItemNet getWorldNet(World world) {
         final String DATA_ID = getDataID(DATA_ID_BASE, world);
         WorldItemNet net = (WorldItemNet) world.loadData(WorldItemNet.class, DATA_ID);
         if (net == null) {
             net = new WorldItemNet(DATA_ID);
             world.setData(DATA_ID, net);
         }
+        net.setWorld(world);
         return net;
     }
 

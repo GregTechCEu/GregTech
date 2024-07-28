@@ -13,7 +13,7 @@ public class GatherPredicatesEvent extends Event {
 
     final Map<String, Supplier<IEdgePredicate<?, ?>>> gathered = new Object2ObjectOpenHashMap<>();
 
-    GatherPredicatesEvent() {}
+    public GatherPredicatesEvent() {}
 
     public void registerPredicate(IEdgePredicate<?, ?> predicate) {
         gathered.put(predicate.getName(), predicate::getNew);

@@ -10,13 +10,5 @@ public class WoodProperty implements IMaterialProperty {
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.DUST);
         properties.getMaterial().addFlags(MaterialFlags.FLAMMABLE);
-
-        PipeNetProperties netProperties = properties.getProperty(PropertyKey.PIPENET_PROPERTIES);
-        if (netProperties != null && netProperties.hasProperty(MaterialFluidProperties.KEY)) {
-            OrePrefix.pipeTiny.setIgnored(properties.getMaterial());
-            OrePrefix.pipeHuge.setIgnored(properties.getMaterial());
-            OrePrefix.pipeQuadruple.setIgnored(properties.getMaterial());
-            OrePrefix.pipeNonuple.setIgnored(properties.getMaterial());
-        }
     }
 }

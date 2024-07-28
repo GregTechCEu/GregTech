@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 @Desugar
 public record OpticalStructure(String name, float renderThickness, ActivablePipeModel model) implements IPipeStructure {
 
-    public static final OpticalStructure INSTANCE = new OpticalStructure("standard", 0.375f,
+    public static final OpticalStructure INSTANCE = new OpticalStructure("optical_pipe_normal", 0.375f,
             ActivablePipeModel.OPTICAL);
 
     @Override

@@ -7,6 +7,8 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 
+import gregtech.common.creativetab.GTCreativeTabs;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -30,11 +32,17 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
             v.put(structure, this);
             return v;
         });
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_CABLES);
     }
 
     @Override
     public boolean isPipeTool(@NotNull ItemStack stack) {
         return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
+    }
+
+    @Override
+    protected String getConnectLangKey() {
+        return "gregtech.tool_action.wire_cutter.connect";
     }
 
     public static Set<CableStructure> gatherStructures() {

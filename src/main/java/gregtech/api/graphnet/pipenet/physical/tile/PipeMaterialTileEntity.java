@@ -16,10 +16,6 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
 
     private Material material;
 
-    public PipeMaterialTileEntity(PipeMaterialBlock block) {
-        super(block);
-    }
-
     @Override
     public void placedBy(ItemStack stack, EntityPlayer player) {
         super.placedBy(stack, player);

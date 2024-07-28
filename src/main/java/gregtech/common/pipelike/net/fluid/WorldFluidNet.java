@@ -25,15 +25,16 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
     public static final Capability<?>[] CAPABILITIES = new Capability[] {
             CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY };
 
-    private static final String DATA_ID_BASE = "gregtech.world_energy_net";
+    private static final String DATA_ID_BASE = "gregtech.world_fluid_net";
 
-    public static WorldFluidNet getWorldNet(World world) {
+    public static @NotNull WorldFluidNet getWorldNet(World world) {
         final String DATA_ID = getDataID(DATA_ID_BASE, world);
         WorldFluidNet net = (WorldFluidNet) world.loadData(WorldFluidNet.class, DATA_ID);
         if (net == null) {
             net = new WorldFluidNet(DATA_ID);
             world.setData(DATA_ID, net);
         }
+        net.setWorld(world);
         return net;
     }
 

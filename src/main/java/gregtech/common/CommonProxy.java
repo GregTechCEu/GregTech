@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.graphnet.pipenet.physical.block.ItemMaterialPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
@@ -12,9 +13,11 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
@@ -198,9 +201,9 @@ public class CommonProxy {
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (CableBlock cable : CABLES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(cable, ItemPipeBlock::new));
+                registry.register(createItemBlock(cable, ItemMaterialPipeBlock::new));
             for (PipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(cable, ItemPipeBlock::new));
+                registry.register(createItemBlock(cable, ItemMaterialPipeBlock::new));
         }
         for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
         for (LaserPipeBlock pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));

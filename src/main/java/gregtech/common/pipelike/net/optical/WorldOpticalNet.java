@@ -12,6 +12,7 @@ import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
@@ -23,13 +24,14 @@ public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPa
 
     private static final String DATA_ID_BASE = "gregtech.world_optical_net";
 
-    public static WorldOpticalNet getWorldNet(World world) {
+    public static @NotNull WorldOpticalNet getWorldNet(World world) {
         final String DATA_ID = getDataID(DATA_ID_BASE, world);
         WorldOpticalNet net = (WorldOpticalNet) world.loadData(WorldOpticalNet.class, DATA_ID);
         if (net == null) {
             net = new WorldOpticalNet(DATA_ID);
             world.setData(DATA_ID, net);
         }
+        net.setWorld(world);
         return net;
     }
 

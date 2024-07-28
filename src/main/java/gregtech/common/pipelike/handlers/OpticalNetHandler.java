@@ -6,11 +6,17 @@ import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.net.optical.WorldOpticalNet;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public final class OpticalNetHandler implements IPipeNetNodeHandler {
 
@@ -39,5 +45,11 @@ public final class OpticalNetHandler implements IPipeNetNodeHandler {
             WorldPipeNetNode node = net.getNode(pos);
             if (node != null) net.removeNode(node);
         }
+    }
+
+    @Override
+    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn, IPipeStructure structure) {
+        tooltip.add(I18n.format("tile.optical_pipe_normal.tooltip1"));
     }
 }

@@ -10,6 +10,7 @@ import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
+import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidProperty;
@@ -18,6 +19,7 @@ import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.IOreRegistrationHandler;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
@@ -26,11 +28,17 @@ import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
 import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
 import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
@@ -106,6 +114,20 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     }
 
     @Override
+    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
+
+        int tier = GTUtility.getTierByVoltage(voltageLimit);
+        if (isSuperconductor())
+            tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));
+        tooltip.add(I18n.format("gregtech.cable.voltage", voltageLimit, GTValues.VNF[tier]));
+        tooltip.add(I18n.format("gregtech.cable.amperage", getAmperage(structure)));
+        tooltip.add(I18n.format("gregtech.cable.loss_per_block", getLoss(structure)));
+        if (isSuperconductor())
+            tooltip.add(I18n.format("gregtech.cable.superconductor_loss", superconductorCriticalTemperature));
+    }
+
+    @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.DUST, true);
         if (properties.hasProperty(PropertyKey.INGOT)) {
@@ -147,8 +169,8 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     @Override
     public void mutateData(NetLogicData data, IPipeStructure structure) {
         if (structure instanceof CableStructure cable) {
-            long loss = lossPerAmp * cable.costFactor();
-            long amperage = amperageLimit * cable.material();
+            long loss = getLoss(structure);
+            long amperage = getAmperage(structure);
             boolean insulated = cable.partialBurnStructure() != null;
             // insulated cables cool down half as fast
             float coolingFactor = (float) (Math.sqrt(cable.material()) / (insulated ? 8 : 4));
@@ -163,9 +185,9 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                 data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
             }
         } else if (structure instanceof PipeStructure pipe) {
-            long amperage = amperageLimit * pipe.material() / 2;
+            long amperage = getAmperage(structure);
             if (amperage == 0) return; // skip pipes that are too small
-            long loss = lossPerAmp * (pipe.material() > 6 ? 3 : 2);
+            long loss = getLoss(structure);
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
             data.setLogicEntry(LossAbsoluteLogic.INSTANCE.getWith(loss))
                     .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
@@ -178,6 +200,22 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                 data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
             }
         }
+    }
+
+    private long getLoss(IPipeStructure structure) {
+        if (structure instanceof CableStructure cable) {
+            return lossPerAmp * cable.costFactor();
+        } else if (structure instanceof PipeStructure pipe) {
+            return lossPerAmp * (pipe.material() > 6 ? 3 : 2);
+        } else return lossPerAmp;
+    }
+
+    private long getAmperage(IPipeStructure structure) {
+        if (structure instanceof CableStructure cable) {
+            return amperageLimit * cable.material();
+        } else if (structure instanceof PipeStructure pipe) {
+            return amperageLimit * pipe.material() / 2;
+        } else return amperageLimit;
     }
 
     @Override

@@ -32,10 +32,10 @@ import java.util.function.Supplier;
 @SideOnly(Side.CLIENT)
 public class CableModel extends AbstractPipeModel<CacheKey> {
 
+    private static final ResourceLocation loc = GTUtility.gregtechId("block/cable");
+
     public static final CableModel INSTANCE = new CableModel("wire");
     public static final CableModel[] INSULATED_INSTANCES = new CableModel[Textures.INSULATION.length];
-
-    private static final ResourceLocation loc = GTUtility.gregtechId("block/cable");
 
     static {
         for (int i = 0; i < INSULATED_INSTANCES.length; i++) {

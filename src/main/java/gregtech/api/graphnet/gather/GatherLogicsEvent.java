@@ -13,7 +13,7 @@ public class GatherLogicsEvent extends Event {
 
     final Map<String, Supplier<INetLogicEntry<?, ?>>> gathered = new Object2ObjectOpenHashMap<>();
 
-    GatherLogicsEvent() {}
+    public GatherLogicsEvent() {}
 
     public void registerLogic(INetLogicEntry<?, ?> logic) {
         gathered.put(logic.getName(), logic::getNew);

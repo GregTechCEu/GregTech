@@ -41,16 +41,16 @@ public abstract class WorldPipeNet extends WorldNet {
     public WorldPipeNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
                         Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
         super(name, graphBuilder, algorithmBuilders);
-        dimensionNets.compute(getDimension(), (k, v) -> {
-            if (v == null) v = new ObjectOpenHashSet<>();
-            v.add(new WeakReference<>(this));
-            return v;
-        });
     }
 
     @SafeVarargs
     public WorldPipeNet(String name, boolean directed, Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
         super(name, directed, algorithmBuilders);
+    }
+
+    @Override
+    public void setWorld(World world) {
+        super.setWorld(world);
         dimensionNets.compute(getDimension(), (k, v) -> {
             if (v == null) v = new ObjectOpenHashSet<>();
             v.add(new WeakReference<>(this));

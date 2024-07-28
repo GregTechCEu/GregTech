@@ -270,7 +270,7 @@ public class OrePrefix {
     public static final OrePrefix pipeNonuple = new OrePrefix("pipeNonuple", M * 9, null, null,
             ENABLE_UNIFICATION, null);
 
-    public static final OrePrefix pipeTinyRestrictive = new OrePrefix("pipeSmallRestrictive", M / 2, null, null,
+    public static final OrePrefix pipeTinyRestrictive = new OrePrefix("pipeTinyRestrictive", M / 2, null, null,
             ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, null,
             ENABLE_UNIFICATION, null);
@@ -452,10 +452,26 @@ public class OrePrefix {
         toolHeadWrench.addSecondaryMaterial(
                 new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
 
+        Predicate<Material> woodPredicate = m -> !m.hasProperty(PropertyKey.WOOD);
+        pipeTiny.setGenerationCondition(woodPredicate);
+        pipeTinyRestrictive.setGenerationCondition(woodPredicate);
+        pipeSmallRestrictive.setGenerationCondition(woodPredicate);
+        pipeNormalRestrictive.setGenerationCondition(woodPredicate);
+        pipeLargeRestrictive.setGenerationCondition(woodPredicate);
+        pipeHuge.setGenerationCondition(woodPredicate);
+        pipeHugeRestrictive.setGenerationCondition(woodPredicate);
+        pipeQuadruple.setGenerationCondition(woodPredicate);
+        pipeQuadrupleRestrictive.setGenerationCondition(woodPredicate);
+        pipeNonuple.setGenerationCondition(woodPredicate);
+        pipeNonupleRestrictive.setGenerationCondition(woodPredicate);
+
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeTinyRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeHugeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeQuadrupleRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeNonupleRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
 
         cableGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
         cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));

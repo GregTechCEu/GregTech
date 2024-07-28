@@ -6,6 +6,8 @@ import gregtech.api.graphnet.pipenet.physical.IFreezable;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 
+import gregtech.common.creativetab.GTCreativeTabs;
+
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.Set;
@@ -14,6 +16,7 @@ public class PipeBlock extends PipeMaterialBlock implements IBurnable, IFreezabl
 
     public PipeBlock(PipeStructure structure, MaterialRegistry registry) {
         super(structure, registry);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
     }
 
     public static Set<PipeStructure> gatherStructures() {

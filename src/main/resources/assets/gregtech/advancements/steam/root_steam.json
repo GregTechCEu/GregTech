@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.root_steam.name"
     },
     "icon": {
-      "item": "gregtech:fluid_pipe_normal",
+      "item": "gregtech:pipe_normal",
       "data": 260
     },
     "background": "gregtech:textures/blocks/casings/solid/machine_bronze_plated_bricks.png"

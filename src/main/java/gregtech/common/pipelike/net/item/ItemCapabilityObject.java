@@ -48,6 +48,12 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         return (FlowWorldPipeNetPath.Provider) net;
     }
 
+    private boolean inputDisallowed(EnumFacing side) {
+        if (side == null) return false;
+        if (tile == null) return true;
+        else return tile.isBlocked(side);
+    }
+
     private Iterator<FlowWorldPipeNetPath> getPaths(ItemTraverseData data) {
         assert tile != null;
         return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
@@ -73,7 +79,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
     }
 
     public @NotNull ItemStack insertItem(@NotNull ItemStack stack, boolean simulate, EnumFacing side) {
-        if (tile == null || this.transferring) return stack;
+        if (tile == null || this.transferring || inputDisallowed(side)) return stack;
         this.transferring = true;
 
         SimulatorKey simulator = null;

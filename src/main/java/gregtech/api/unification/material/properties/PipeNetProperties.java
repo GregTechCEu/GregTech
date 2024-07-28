@@ -3,13 +3,17 @@ package gregtech.api.unification.material.properties;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -72,6 +76,14 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     }
 
     @Override
+    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn, IPipeStructure structure) {
+        for (IPipeNetMaterialProperty property : properties.values()) {
+            property.addInformation(stack, worldIn, tooltip, flagIn, (IPipeMaterialStructure) structure);
+        }
+    }
+
+    @Override
     public void verifyProperty(MaterialProperties properties) {
         for (IPipeNetMaterialProperty p : this.properties.values()) {
             p.verifyProperty(properties);
@@ -90,6 +102,9 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
         void removeFromNet(World world, BlockPos pos, IPipeStructure structure);
 
         boolean generatesStructure(IPipeStructure structure);
+
+        void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                            @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure);
 
         MaterialPropertyKey<?> getKey();
 

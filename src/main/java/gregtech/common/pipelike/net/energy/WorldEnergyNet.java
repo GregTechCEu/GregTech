@@ -25,13 +25,14 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
 
     private static final String DATA_ID_BASE = "gregtech.world_energy_net";
 
-    public static WorldEnergyNet getWorldNet(World world) {
+    public static @NotNull WorldEnergyNet getWorldNet(World world) {
         final String DATA_ID = getDataID(DATA_ID_BASE, world);
         WorldEnergyNet net = (WorldEnergyNet) world.loadData(WorldEnergyNet.class, DATA_ID);
         if (net == null) {
             net = new WorldEnergyNet(DATA_ID);
             world.setData(DATA_ID, net);
         }
+        net.setWorld(world);
         return net;
     }
 

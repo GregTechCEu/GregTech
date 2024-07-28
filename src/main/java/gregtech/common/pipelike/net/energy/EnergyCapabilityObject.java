@@ -52,9 +52,15 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         return (FlowWorldPipeNetPath.Provider) net;
     }
 
+    private boolean inputDisallowed(EnumFacing side) {
+        if (side == null) return false;
+        if (tile == null) return true;
+        else return tile.isBlocked(side);
+    }
+
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
-        if (tile == null || this.transferring) return 0;
+        if (tile == null || this.transferring || inputDisallowed(side)) return 0;
         this.transferring = true;
 
         SimulatorKey simulator = null;
@@ -158,7 +164,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
 
     @Override
     public boolean inputsEnergy(EnumFacing side) {
-        return true;
+        return !inputDisallowed(side);
     }
 
     @Override

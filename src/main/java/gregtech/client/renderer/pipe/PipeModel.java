@@ -33,12 +33,12 @@ import org.jetbrains.annotations.Nullable;
 @SideOnly(Side.CLIENT)
 public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
 
+    private static final ResourceLocation loc = GTUtility.gregtechId("block/pipe_material");
+
     public static final UnlistedPropertyMaterial MATERIAL_PROPERTY = new UnlistedPropertyMaterial("material");
 
     public static final PipeModel[] INSTANCES = new PipeModel[7];
     public static final PipeModel[] RESTRICTIVE_INSTANCES = new PipeModel[INSTANCES.length];
-
-    private static final ResourceLocation loc = GTUtility.gregtechId("block/pipe_material");
 
     static {
         model(0, wood -> Textures.PIPE_TINY.get());
@@ -121,6 +121,9 @@ public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
 
     public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {
         for (PipeModel model : INSTANCES) {
+            registry.putObject(model.getLoc(), model);
+        }
+        for (PipeModel model : RESTRICTIVE_INSTANCES) {
             registry.putObject(model.getLoc(), model);
         }
     }

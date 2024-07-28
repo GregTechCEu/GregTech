@@ -27,7 +27,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     private boolean isActive = false;
 
     private final IGraphNet net;
-    private NetLogicData data;
+    private @NotNull NetLogicData data;
     private @Nullable NetGroup group = null;
 
     @Nullable
@@ -35,6 +35,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
 
     public NetNode(IGraphNet net) {
         this.net = net;
+        this.data = net.getDefaultNodeData();
     }
 
     public IGraphNet getNet() {
@@ -55,11 +56,11 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
         isActive = active;
     }
 
-    public void setData(NetLogicData data) {
+    public void setData(@NotNull NetLogicData data) {
         this.data = data;
     }
 
-    public NetLogicData getData() {
+    public @NotNull NetLogicData getData() {
         return data;
     }
 

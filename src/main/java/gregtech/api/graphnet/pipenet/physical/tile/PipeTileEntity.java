@@ -64,8 +64,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private final Object2ObjectOpenHashMap<String, NetLogicData> netLogicDatas = new Object2ObjectOpenHashMap<>();
     private final ObjectOpenHashSet<NetLogicData.LogicDataListener> listeners = new ObjectOpenHashSet<>();
 
-    private final WorldPipeBlock block;
-
     // information that is only required for determining graph topology should be stored on the tile entity level,
     // while information interacted with during graph traversal should be stored on the NetLogicData level.
 
@@ -92,10 +90,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     private long nextDamageTime = 0;
     private long nextSoundTime = 0;
-
-    public PipeTileEntity(WorldPipeBlock block) {
-        this.block = block;
-    }
 
     @Nullable
     public PipeTileEntity getPipeNeighbor(EnumFacing facing, boolean allowChunkloading) {
@@ -251,6 +245,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     @Override
     public void onLoad() {
         super.onLoad();
+        initialize();
         // since we're an instance of ITickable, we're automatically added to the tickable list just before this exact
         // moment.
         // it would theoretically be a micro optimization to just pop the last tile from the tickable list, but that's
@@ -400,25 +395,24 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     @Override
     public @NotNull WorldPipeBlock getBlockType() {
-        return block;
+        return (WorldPipeBlock) super.getBlockType();
     }
 
     @Override
     public void setWorld(@NotNull World worldIn) {
         if (worldIn == this.getWorld()) return;
         super.setWorld(worldIn);
-        this.initialize(worldIn);
     }
 
-    protected void initialize(World worldIn) {
-        if (!worldIn.isRemote) {
+    protected void initialize() {
+        if (!getWorld().isRemote) {
             this.netLogicDatas.clear();
             this.capabilities.clear();
             this.netCapabilities.clear();
             this.listeners.forEach(NetLogicData.LogicDataListener::invalidate);
             this.listeners.clear();
             boolean firstNode = true;
-            for (WorldPipeNetNode node : getBlockType().getNodesForTile(this)) {
+            for (WorldPipeNetNode node : WorldPipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(node.getNet().getTargetCapabilities()));
                 String netName = node.getNet().mapName;
@@ -639,6 +633,9 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         else return null;
     }
 
+    /**
+     * Note - the block corresponding to this tile entity must register any new unlisted properties to the default state.
+     */
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
         byte frameMask = 0;
         for (EnumFacing facing : EnumFacing.VALUES) {

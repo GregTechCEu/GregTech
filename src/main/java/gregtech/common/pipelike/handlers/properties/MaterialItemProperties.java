@@ -5,17 +5,25 @@ import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelike.net.item.WorldItemNet;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public final class MaterialItemProperties implements PipeNetProperties.IPipeNetMaterialProperty {
 
@@ -39,6 +47,19 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     }
 
     @Override
+    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
+        if (baseItemsPer5Ticks  % 16 != 0) {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate",
+                    baseItemsPer5Ticks * 4));
+        } else {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks",
+                    baseItemsPer5Ticks / 16));
+        }
+        tooltip.add(I18n.format("gregtech.item_pipe.priority", TextFormattingUtil.formatNumbers(getFlowPriority(structure))));
+    }
+
+    @Override
     public void verifyProperty(MaterialProperties properties) {
         if (!properties.hasProperty(PropertyKey.WOOD)) {
             properties.ensureSet(PropertyKey.INGOT, true);
@@ -57,10 +78,15 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     public void mutateData(NetLogicData data, IPipeStructure structure) {
         if (structure instanceof PipeStructure pipe) {
             long throughput = baseItemsPer5Ticks * pipe.material();
-            double weight = priority * (pipe.restrictive() ? 100d : 1d) * pipe.channelCount() / pipe.material();
-            data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(weight))
+            data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput));
         }
+    }
+
+    private double getFlowPriority(IPipeStructure structure) {
+        if (structure instanceof PipeStructure pipe) {
+            return priority * (pipe.restrictive() ? 100d : 1d) * pipe.channelCount() / pipe.material();
+        } else return priority;
     }
 
     @Override

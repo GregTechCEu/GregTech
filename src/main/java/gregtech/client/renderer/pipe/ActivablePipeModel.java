@@ -35,6 +35,8 @@ import java.util.function.Supplier;
 
 public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
+    private static final ResourceLocation loc = GTUtility.gregtechId("block/pipe_activable");
+
     public static final UnlistedBooleanProperty ACTIVE_PROPERTY = new UnlistedBooleanProperty("active");
 
     public static final ActivablePipeModel OPTICAL = new ActivablePipeModel(Textures.OPTICAL_PIPE_IN,
@@ -43,8 +45,6 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
     public static final ActivablePipeModel LASER = new ActivablePipeModel(Textures.LASER_PIPE_IN,
             Textures.LASER_PIPE_SIDE, Textures.LASER_PIPE_OVERLAY, Textures.LASER_PIPE_OVERLAY_EMISSIVE,
             true, "laser");
-
-    private static final ResourceLocation loc = GTUtility.gregtechId("block/pipe_activable");
 
     private final Supplier<SpriteInformation> inTex;
     private final Supplier<SpriteInformation> sideTex;

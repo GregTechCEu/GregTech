@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenetold.longdist.BlockLongDistancePipe;
@@ -70,6 +71,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -187,7 +189,7 @@ public class MetaBlocks {
             int i = 0;
             for (CableStructure struct : structuresCable) {
                 CableBlock block = new CableBlock(struct, registry);
-                block.setRegistryName(modid, String.format("cable_%s", struct.getName()));
+                block.setRegistryName(modid, String.format(struct.getName()));
                 cables[i] = block;
                 i++;
             }
@@ -198,7 +200,7 @@ public class MetaBlocks {
             i = 0;
             for (PipeStructure struct : structuresPipe) {
                 PipeBlock block = new PipeBlock(struct, registry);
-                block.setRegistryName(modid, String.format("material_pipe_%s", struct.getName()));
+                block.setRegistryName(modid, String.format(struct.getName()));
                 pipes[i] = block;
                 i++;
             }
@@ -210,7 +212,7 @@ public class MetaBlocks {
         int i = 0;
         for (OpticalStructure struct : structuresOptical) {
             OpticalPipeBlock block = new OpticalPipeBlock(struct);
-            block.setRegistryName(GTValues.MODID, String.format("optical_pipe_%s", struct.getName()));
+            block.setRegistryName(GTValues.MODID, String.format(struct.getName()));
             OPTICAL_PIPES[i] = block;
             i++;
         }
@@ -219,7 +221,7 @@ public class MetaBlocks {
         i = 0;
         for (LaserStructure struct : structuresLaser) {
             LaserPipeBlock block = new LaserPipeBlock(struct);
-            block.setRegistryName(GTValues.MODID, String.format("laser_pipe_%s", struct.getName()));
+            block.setRegistryName(GTValues.MODID, String.format(struct.getName()));
             LASER_PIPES[i] = block;
             i++;
         }
@@ -427,6 +429,7 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(MetaTileEntityHolder.class, gregtechId("machine"));
         GameRegistry.registerTileEntity(PipeTileEntity.class, gregtechId("pipe"));
         GameRegistry.registerTileEntity(PipeMaterialTileEntity.class, gregtechId("material_pipe"));
+        GameRegistry.registerTileEntity(PipeActivableTileEntity.class, gregtechId("activable_pipe"));
     }
 
     @SideOnly(Side.CLIENT)
@@ -681,15 +684,17 @@ public class MetaBlocks {
                 PipeNetProperties properties = material.getProperty(PropertyKey.PIPENET_PROPERTIES);
                 if (properties != null) {
                     for (CableBlock cable : CABLES.get(registry.getModid())) {
-                        if (properties.generatesStructure(cable.getStructure())) {
+                        OrePrefix prefix = cable.getStructure().getOrePrefix();
+                        if (prefix.doGenerateItem(material) && properties.generatesStructure(cable.getStructure())) {
                             ItemStack itemStack = cable.getItem(material);
-                            OreDictUnifier.registerOre(itemStack, cable.getStructure().getOrePrefix(), material);
+                            OreDictUnifier.registerOre(itemStack, prefix, material);
                         }
                     }
                     for (PipeBlock pipe : MATERIAL_PIPES.get(registry.getModid())) {
-                        if (properties.generatesStructure(pipe.getStructure())) {
+                        OrePrefix prefix = pipe.getStructure().getOrePrefix();
+                        if (prefix.doGenerateItem(material) && properties.generatesStructure(pipe.getStructure())) {
                             ItemStack itemStack = pipe.getItem(material);
-                            OreDictUnifier.registerOre(itemStack, pipe.getStructure().getOrePrefix(), material);
+                            OreDictUnifier.registerOre(itemStack, prefix, material);
                         }
                     }
                 }
