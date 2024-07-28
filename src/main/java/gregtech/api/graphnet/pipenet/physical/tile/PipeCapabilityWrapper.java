@@ -3,8 +3,6 @@ package gregtech.api.graphnet.pipenet.physical.tile;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-import java.util.EnumSet;
-
 public class PipeCapabilityWrapper {
 
     private byte activeMask;

@@ -1,7 +1,6 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.capability.ILaserRelay;
 import gregtech.api.metatileentity.MetaTileEntity;

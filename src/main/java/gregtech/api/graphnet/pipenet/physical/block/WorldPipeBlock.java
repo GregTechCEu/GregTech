@@ -1,10 +1,6 @@
 package gregtech.api.graphnet.pipenet.physical.block;
 
-import codechicken.lib.raytracer.RayTracer;
-
-import gregtech.api.GTValues;
 import gregtech.api.block.BuiltInRenderBlock;
-
 import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
@@ -18,12 +14,8 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-
 import gregtech.common.blocks.BlockFrame;
-
 import gregtech.common.creativetab.GTCreativeTabs;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -38,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -46,11 +37,11 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import codechicken.lib.raytracer.RayTracer;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -253,7 +244,8 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     @SuppressWarnings("deprecation")
     @Nullable
     @Override
-    public RayTraceResult collisionRayTrace(@NotNull IBlockState blockState, @NotNull World worldIn, @NotNull BlockPos pos,
+    public RayTraceResult collisionRayTrace(@NotNull IBlockState blockState, @NotNull World worldIn,
+                                            @NotNull BlockPos pos,
                                             @NotNull Vec3d start, @NotNull Vec3d end) {
         return collisionRayTrace(worldIn.isRemote ? GTUtility.getSP() : null, blockState, worldIn, pos, start, end);
     }
@@ -263,7 +255,8 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     }
 
     @SuppressWarnings("deprecation")
-    public RayTraceResult collisionRayTrace(@Nullable EntityPlayer player, @Nullable IBlockState blockState, @NotNull World worldIn, @NotNull BlockPos pos,
+    public RayTraceResult collisionRayTrace(@Nullable EntityPlayer player, @Nullable IBlockState blockState,
+                                            @NotNull World worldIn, @NotNull BlockPos pos,
                                             @NotNull Vec3d start, @NotNull Vec3d end) {
         if (blockState == null) blockState = worldIn.getBlockState(pos);
         if (hasPipeCollisionChangingItem(worldIn, pos, player)) {
@@ -355,8 +348,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
             lastTilePos = pos;
             lastTile = new WeakReference<>(pipe);
             return pipe;
-        }
-        else return null;
+        } else return null;
     }
 
     @Override
@@ -378,13 +370,15 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void neighborChanged(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos, @NotNull Block blockIn, @NotNull BlockPos fromPos) {
+    public void neighborChanged(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
+                                @NotNull Block blockIn, @NotNull BlockPos fromPos) {
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile != null) tile.getCoverHolder().updateInputRedstoneSignals();
     }
 
     @Override
-    public boolean shouldCheckWeakPower(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing side) {
+    public boolean shouldCheckWeakPower(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                        @NotNull EnumFacing side) {
         // The check in World::getRedstonePower in the vanilla code base is reversed. Setting this to false will
         // actually cause getWeakPower to be called, rather than prevent it.
         return false;
@@ -392,13 +386,15 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getWeakPower(@NotNull IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos, @NotNull EnumFacing side) {
+    public int getWeakPower(@NotNull IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos,
+                            @NotNull EnumFacing side) {
         PipeTileEntity tile = getTileEntity(blockAccess, pos);
         return tile != null ? tile.getCoverHolder().getOutputRedstoneSignal(side) : 0;
     }
 
     @Override
-    public boolean canConnectRedstone(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, EnumFacing side) {
+    public boolean canConnectRedstone(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos,
+                                      EnumFacing side) {
         PipeTileEntity tile = getTileEntity(world, pos);
         return tile != null && tile.getCoverHolder().canConnectRedstone(side);
     }

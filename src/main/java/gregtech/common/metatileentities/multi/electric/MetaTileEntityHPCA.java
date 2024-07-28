@@ -66,7 +66,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
-        implements IComputationProvider, IControllable, IProgressBarMultiblock {
+                                implements IComputationProvider, IControllable, IProgressBarMultiblock {
 
     private static final double IDLE_TEMPERATURE = 200;
     private static final double DAMAGE_TEMPERATURE = 1000;

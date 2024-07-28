@@ -115,7 +115,8 @@ public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
         Material mater = null;
         boolean wood = block instanceof PipeMaterialBlock mat && (mater = mat.getMaterialForStack(stack)) != null &&
                 mater.hasProperty(PropertyKey.WOOD);
-        return new PipeItemModel<>(this, new WoodCacheKey(block.getStructure().getRenderThickness(), wood), mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) : PipeTileEntity.DEFAULT_COLOR);
+        return new PipeItemModel<>(this, new WoodCacheKey(block.getStructure().getRenderThickness(), wood),
+                mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) : PipeTileEntity.DEFAULT_COLOR);
     }
 
     public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {

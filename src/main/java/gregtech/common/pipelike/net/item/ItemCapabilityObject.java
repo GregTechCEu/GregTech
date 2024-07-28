@@ -15,9 +15,7 @@ import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -36,7 +34,8 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     private boolean transferring = false;
 
-    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> ItemCapabilityObject(@NotNull N net, WorldPipeNetNode node) {
+    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> ItemCapabilityObject(@NotNull N net,
+                                                                                         WorldPipeNetNode node) {
         this.net = net;
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
@@ -51,7 +50,8 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     private Iterator<FlowWorldPipeNetPath> getPaths(ItemTraverseData data) {
         assert tile != null;
-        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(), data.getQueryTick());
+        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
+                data.getQueryTick());
     }
 
     @Override

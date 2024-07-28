@@ -1,27 +1,13 @@
 package gregtech.common.command;
 
-import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
-import gregtech.api.items.materialitem.MetaPrefixItem;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTStringUtils;
-import gregtech.api.util.GTUtility;
-import gregtech.common.blocks.BlockCompressed;
-import gregtech.common.blocks.BlockFrame;
-import gregtech.common.items.MetaItems;
 
-import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.item.ItemStack;

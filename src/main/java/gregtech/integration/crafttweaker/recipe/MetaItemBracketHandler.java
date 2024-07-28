@@ -96,13 +96,14 @@ public class MetaItemBracketHandler implements IBracketHandler {
                             ItemStack stack = cable.getItem(material);
                             map.put(name, stack);
                         }
-                    } else if (property instanceof MaterialItemProperties || property instanceof MaterialFluidProperties) {
-                        for (PipeMaterialBlock pipe : MetaBlocks.MATERIAL_PIPES.get(modid)) {
-                            String name = pipe.getStructure().getOrePrefix().name + material.toCamelCaseString();
-                            ItemStack stack = pipe.getItem(material);
-                            map.put(name, stack);
+                    } else
+                        if (property instanceof MaterialItemProperties || property instanceof MaterialFluidProperties) {
+                            for (PipeMaterialBlock pipe : MetaBlocks.MATERIAL_PIPES.get(modid)) {
+                                String name = pipe.getStructure().getOrePrefix().name + material.toCamelCaseString();
+                                ItemStack stack = pipe.getItem(material);
+                                map.put(name, stack);
+                            }
                         }
-                    }
                 }
             }
             metaBlockNames.put(modid, map);

@@ -2,6 +2,9 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.query.DataAccessFormat;
+import gregtech.api.capability.data.query.DataQueryObject;
+import gregtech.api.capability.data.query.RecipeDataQuery;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -18,9 +21,6 @@ import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.LocalizationUtils;
-import gregtech.api.capability.data.query.DataAccessFormat;
-import gregtech.api.capability.data.query.DataQueryObject;
-import gregtech.api.capability.data.query.RecipeDataQuery;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -50,7 +50,7 @@ import java.util.*;
 
 public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart
                                            implements IMultiblockAbilityPart<IDataAccess>, IDataAccess,
-                                                      IDataInfoProvider {
+                                           IDataInfoProvider {
 
     private final Set<Recipe> recipes;
     private final boolean isCreative;

@@ -5,8 +5,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.graphnet.pipenetold.longdist.BlockLongDistancePipe;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -537,7 +537,8 @@ public class MetaBlocks {
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             for (CableBlock cable : CABLES.get(registry.getModid())) {
-                ModelLoader.setCustomStateMapper(cable, new SimpleStateMapper(cable.getStructure().getModel().getLoc()));
+                ModelLoader.setCustomStateMapper(cable,
+                        new SimpleStateMapper(cable.getStructure().getModel().getLoc()));
             }
             for (PipeBlock pipe : MATERIAL_PIPES.get(registry.getModid())) {
                 ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getStructure().getModel().getLoc()));

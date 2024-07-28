@@ -1,10 +1,10 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.metatileentity.IDataInfoProvider;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.graphnet.pipenetold.longdist.ILDEndpoint;
 import gregtech.api.graphnet.pipenetold.longdist.LongDistanceNetwork;
 import gregtech.api.graphnet.pipenetold.longdist.LongDistancePipeType;
+import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;

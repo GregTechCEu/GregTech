@@ -33,6 +33,7 @@ public class FlowConsumptionStack {
 
     /**
      * Walks backwards along the loss operators and applies consumption to flow consumers.
+     * 
      * @param endValue the target end value
      * @return the value that needs to be pushed into the start of the stack to achieve the end value.
      */

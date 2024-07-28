@@ -68,7 +68,8 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IStandardDataAccess> OPTICAL_DATA_TRANSMISSION = new MultiblockAbility<>(
             "optical_data_transmission");
     public static final MultiblockAbility<ILaserContainer> LASER_RECEPTION = new MultiblockAbility<>("laser_reception");
-    public static final MultiblockAbility<ILaserContainer> LASER_TRANSMISSION = new MultiblockAbility<>("laser_transmission");
+    public static final MultiblockAbility<ILaserContainer> LASER_TRANSMISSION = new MultiblockAbility<>(
+            "laser_transmission");
 
     public static final MultiblockAbility<IComputationDataAccess> COMPUTATION_DATA_RECEPTION = new MultiblockAbility<>(
             "computation_data_reception");

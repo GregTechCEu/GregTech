@@ -18,7 +18,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
-
 import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
 
 import net.minecraft.item.EnumDyeColor;

@@ -12,6 +12,7 @@ public interface IRoundRobinTraverseData<N extends NetNode, P extends INetPath<N
     /**
      * The traversal cache must be cached and persistent between traversals,
      * but not modified by anything external to {@link TraverseHelpers}.
+     * 
      * @return the traversal cache.
      */
     @NotNull

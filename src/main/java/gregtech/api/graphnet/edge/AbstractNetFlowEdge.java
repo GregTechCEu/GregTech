@@ -22,7 +22,8 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
     }
 
     @Override
-    public double getDynamicWeight(IPredicateTestObject channel, IGraphNet net, @Nullable SimulatorKey simulator, long queryTick,
+    public double getDynamicWeight(IPredicateTestObject channel, IGraphNet net, @Nullable SimulatorKey simulator,
+                                   long queryTick,
                                    double defaultWeight) {
         long flow = getFlowLimit(channel, net, queryTick, simulator);
         if (flow <= 0) {
@@ -30,7 +31,8 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
         } else return defaultWeight * getThroughput() / flow;
     }
 
-    public boolean cannotSupportChannel(IPredicateTestObject channel, long queryTick, @Nullable SimulatorKey simulator) {
+    public boolean cannotSupportChannel(IPredicateTestObject channel, long queryTick,
+                                        @Nullable SimulatorKey simulator) {
         if (!this.test(channel)) return false;
         else return getChannels(simulator).cannotSupportChannel(channel, queryTick);
     }
@@ -55,7 +57,8 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
         return getData().getLogicEntryDefaultable(ThroughputLogic.INSTANCE).getValue();
     }
 
-    public long getFlowLimit(IPredicateTestObject channel, IGraphNet graph, long queryTick, @Nullable SimulatorKey simulator) {
+    public long getFlowLimit(IPredicateTestObject channel, IGraphNet graph, long queryTick,
+                             @Nullable SimulatorKey simulator) {
         if (!this.test(channel)) return 0;
         else return getChannels(simulator).getFlowLimit(channel, graph, queryTick);
     }
@@ -65,7 +68,8 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
         else return getChannels(simulator).getConsumedLimit(channel, queryTick);
     }
 
-    public void consumeFlowLimit(IPredicateTestObject channel, IGraphNet graph, long amount, long queryTick, @Nullable SimulatorKey simulator) {
+    public void consumeFlowLimit(IPredicateTestObject channel, IGraphNet graph, long amount, long queryTick,
+                                 @Nullable SimulatorKey simulator) {
         if (this.test(channel)) {
             getChannels(simulator).consumeFlowLimit(channel, graph, amount, queryTick);
         }

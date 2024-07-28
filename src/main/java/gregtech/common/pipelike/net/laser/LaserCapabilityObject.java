@@ -7,14 +7,11 @@ import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
 import gregtech.common.pipelike.net.SlowActiveWalker;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +51,7 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
         transmitting = true;
 
         long available = laserAmperage;
-        for (Iterator<BasicWorldPipeNetPath> it = getPaths(); it.hasNext(); ) {
+        for (Iterator<BasicWorldPipeNetPath> it = getPaths(); it.hasNext();) {
             BasicWorldPipeNetPath path = it.next();
             WorldPipeNetNode destination = path.getTargetNode();
             for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {

@@ -2,15 +2,11 @@ package gregtech.client.renderer.pipe.cache;
 
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
-
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
-
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
-
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -32,7 +28,8 @@ public class RestrictiveSQC extends BlockableSQC {
         this.restrictiveTex = restrictiveTex;
     }
 
-    public static @NotNull RestrictiveSQC create(PipeQuadHelper helper, SpriteInformation endTex, SpriteInformation sideTex,
+    public static @NotNull RestrictiveSQC create(PipeQuadHelper helper, SpriteInformation endTex,
+                                                 SpriteInformation sideTex,
                                                  SpriteInformation blockedTex, SpriteInformation restrictiveTex) {
         RestrictiveSQC sqc = new RestrictiveSQC(helper, endTex, sideTex, blockedTex, restrictiveTex);
         sqc.buildPrototype();

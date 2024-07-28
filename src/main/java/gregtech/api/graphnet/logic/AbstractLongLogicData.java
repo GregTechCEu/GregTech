@@ -1,12 +1,12 @@
 package gregtech.api.graphnet.logic;
 
 import net.minecraft.nbt.NBTTagLong;
-
 import net.minecraft.network.PacketBuffer;
 
 import org.jetbrains.annotations.Contract;
 
-public abstract class AbstractLongLogicData<T extends AbstractLongLogicData<T>> implements INetLogicEntry<T, NBTTagLong> {
+public abstract class AbstractLongLogicData<T extends AbstractLongLogicData<T>>
+                                           implements INetLogicEntry<T, NBTTagLong> {
 
     private long value;
 

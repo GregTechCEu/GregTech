@@ -4,14 +4,14 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.data.IStandardDataAccess;
+import gregtech.api.capability.data.query.DataQueryObject;
+import gregtech.api.capability.data.query.IBridgeable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTUtility;
-import gregtech.api.capability.data.query.DataQueryObject;
-import gregtech.api.capability.data.query.IBridgeable;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNotifiablePart implements
-                                                                                           IMultiblockAbilityPart<IStandardDataAccess>,
-                                                                                           IStandardDataAccess {
+                                            IMultiblockAbilityPart<IStandardDataAccess>,
+                                            IStandardDataAccess {
 
     private final Set<DataQueryObject> recentQueries = GTUtility.createWeakHashSet();
 
@@ -70,7 +70,8 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
                 MultiblockControllerBase controller = getController();
                 if (!controller.isActive()) return false;
 
-                if (IDataAccess.accessDatas(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), queryObject)) return true;
+                if (IDataAccess.accessDatas(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), queryObject))
+                    return true;
 
                 List<IStandardDataAccess> reception = controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION);
                 if (queryObject instanceof IBridgeable bridgeable && reception.size() > 1) {

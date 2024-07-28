@@ -13,7 +13,6 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
-
 import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

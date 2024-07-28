@@ -21,14 +21,14 @@ import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.function.LongConsumer;
 
@@ -72,7 +72,8 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
             return result.getLossFunction();
         } else {
             FluidStack stack = getTestObject().recombine();
-            FluidContainmentLogic containmentLogic = node.getData().getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
+            FluidContainmentLogic containmentLogic = node.getData()
+                    .getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
             FluidState state = FluidState.inferState(stack);
 
             TemperatureLogic temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
@@ -82,15 +83,17 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                 boolean gaseous = stack.getFluid().isGaseous(stack);
                 // prevent plasmas from melting valid pipes due to raw temperature
                 boolean temperatureSafe = state == FluidState.PLASMA && containmentLogic.contains(FluidState.PLASMA);
-                temperatureUpdates.put(node, l -> temperatureLogic.moveTowardsTemperature(fluidTemp, getQueryTick(), l * TEMPERATURE_EFFECT, temperatureSafe));
+                temperatureUpdates.put(node, l -> temperatureLogic.moveTowardsTemperature(fluidTemp, getQueryTick(),
+                        l * TEMPERATURE_EFFECT, temperatureSafe));
                 if (temperatureLogic.isUnderMinimum(fluidTemp)) {
                     result = NodeLossResult.combine(result, new NodeLossResult(pipe -> {
                         PipeTileEntity tile = pipe.getTileEntityNoLoading();
                         if (tile != null) {
                             tile.playLossSound();
                             tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
-                            tile.dealAreaDamage(gaseous ? 2 : 1, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
-                                    fluidTemp, 2.0F, 10));
+                            tile.dealAreaDamage(gaseous ? 2 : 1,
+                                    entity -> EntityDamageUtil.applyTemperatureDamage(entity,
+                                            fluidTemp, 2.0F, 10));
                         }
                     }, MultLossOperator.EIGHTHS[2]));
                 } else if (temperatureLogic.isOverMaximum(fluidTemp)) {
@@ -99,8 +102,9 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                         if (tile != null) {
                             tile.playLossSound();
                             tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
-                            tile.dealAreaDamage(gaseous ? 2 : 1, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
-                                    fluidTemp, 2.0F, 10));
+                            tile.dealAreaDamage(gaseous ? 2 : 1,
+                                    entity -> EntityDamageUtil.applyTemperatureDamage(entity,
+                                            fluidTemp, 2.0F, 10));
                             tile.setNeighborsToFire();
                         }
                     } : pipe -> {
@@ -108,8 +112,9 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                         if (tile != null) {
                             tile.playLossSound();
                             tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
-                            tile.dealAreaDamage(gaseous ? 2 : 1, entity -> EntityDamageUtil.applyTemperatureDamage(entity,
-                                    fluidTemp, 2.0F, 10));
+                            tile.dealAreaDamage(gaseous ? 2 : 1,
+                                    entity -> EntityDamageUtil.applyTemperatureDamage(entity,
+                                            fluidTemp, 2.0F, 10));
                         }
                     }, MultLossOperator.EIGHTHS[2]));
                 }
@@ -122,7 +127,8 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
             if (stack instanceof AttributedFluid fluid) {
                 for (FluidAttribute attribute : fluid.getAttributes()) {
                     if (!containmentLogic.contains(attribute)) {
-                        result = NodeLossResult.combine(result, ContainmentFailure.getFailure(attribute).computeLossResult(stack));
+                        result = NodeLossResult.combine(result,
+                                ContainmentFailure.getFailure(attribute).computeLossResult(stack));
                     }
                 }
             }
@@ -138,7 +144,8 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
         long availableFlow = flowReachingDestination;
         for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
             if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
-                    capability.getKey() == inputFacing) continue; // anti insert-to-our-source logic
+                    capability.getKey() == inputFacing)
+                continue; // anti insert-to-our-source logic
 
             IFluidHandler container = capability.getValue()
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());

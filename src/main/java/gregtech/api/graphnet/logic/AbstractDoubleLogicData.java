@@ -3,7 +3,8 @@ package gregtech.api.graphnet.logic;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.network.PacketBuffer;
 
-public abstract class AbstractDoubleLogicData<T extends AbstractDoubleLogicData<T>> implements INetLogicEntry<T, NBTTagDouble> {
+public abstract class AbstractDoubleLogicData<T extends AbstractDoubleLogicData<T>>
+                                             implements INetLogicEntry<T, NBTTagDouble> {
 
     private double value;
 

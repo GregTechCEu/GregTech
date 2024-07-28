@@ -37,7 +37,8 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     private boolean transferring = false;
 
-    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> FluidCapabilityObject(@NotNull N net, WorldPipeNetNode node) {
+    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> FluidCapabilityObject(@NotNull N net,
+                                                                                          WorldPipeNetNode node) {
         this.net = net;
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
@@ -52,7 +53,8 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     private Iterator<FlowWorldPipeNetPath> getPaths(FluidTraverseData data) {
         assert tile != null;
-        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(), data.getQueryTick());
+        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
+                data.getQueryTick());
     }
 
     @Override

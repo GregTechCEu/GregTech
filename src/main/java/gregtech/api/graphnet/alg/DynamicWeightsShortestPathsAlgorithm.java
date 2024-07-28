@@ -1,11 +1,11 @@
 package gregtech.api.graphnet.alg;
 
 import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.alg.iter.ICacheableIterator;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.alg.iter.ICacheableIterator;
+import gregtech.api.graphnet.path.INetPath;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.alg.shortestpath.DefaultManyToManyShortestPaths;
@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShortestPaths<GraphVertex, GraphEdge>
-        implements INetAlgorithm {
+                                                  implements INetAlgorithm {
 
     public DynamicWeightsShortestPathsAlgorithm(IGraphNet net) {
         super(net.getGraph());

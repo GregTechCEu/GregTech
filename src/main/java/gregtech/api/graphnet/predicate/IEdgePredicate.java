@@ -9,18 +9,22 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Note - all implementers of this interface are suggested to be final, in order to avoid unexpected {@link #union(IEdgePredicate)} behavior.
+ * Note - all implementers of this interface are suggested to be final, in order to avoid unexpected
+ * {@link #union(IEdgePredicate)} behavior.
  */
-public interface IEdgePredicate<T extends IEdgePredicate<T, N>, N extends NBTBase> extends INBTSerializable<N>, IStringSerializable {
+public interface IEdgePredicate<T extends IEdgePredicate<T, N>, N extends NBTBase>
+                               extends INBTSerializable<N>, IStringSerializable {
 
     default void deserializeNBTNaive(NBTBase nbt) {
         deserializeNBT((N) nbt);
     }
 
     /**
-     * Whether this predicate should behave in "and" fashion with other predicates. <br> <br>
+     * Whether this predicate should behave in "and" fashion with other predicates. <br>
+     * <br>
      * For example, if a predicate handler has 2 and-y predicates and 3 or-y predicates,
-     * the effective result of evaluation will be: <br> (andy1) && (andy2) && (ory1 || ory2 || ory3)
+     * the effective result of evaluation will be: <br>
+     * (andy1) && (andy2) && (ory1 || ory2 || ory3)
      */
     boolean andy();
 

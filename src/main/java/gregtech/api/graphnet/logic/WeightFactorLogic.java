@@ -23,6 +23,5 @@ public final class WeightFactorLogic extends AbstractDoubleLogicData<WeightFacto
         if (other instanceof WeightFactorLogic l) {
             return getWith(this.getValue() + l.getValue());
         } else return this;
-
     }
 }

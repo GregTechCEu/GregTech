@@ -6,7 +6,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class SpriteInformationWrapper implements Supplier<SpriteInformation>, Consumer<SpriteInformation>, BiConsumer<TextureAtlasSprite, Boolean> {
+public class SpriteInformationWrapper implements Supplier<SpriteInformation>, Consumer<SpriteInformation>,
+                                      BiConsumer<TextureAtlasSprite, Boolean> {
+
     private SpriteInformation sprite;
 
     @Override

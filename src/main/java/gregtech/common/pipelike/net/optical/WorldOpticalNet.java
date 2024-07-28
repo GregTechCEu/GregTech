@@ -1,8 +1,6 @@
 package gregtech.common.pipelike.net.optical;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
-import gregtech.api.graphnet.alg.ShortestPathsAlgorithm;
 import gregtech.api.graphnet.alg.SinglePathAlgorithm;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.BasicWorldPipeNetPath;
@@ -20,7 +18,8 @@ import java.util.Iterator;
 
 public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPath.Provider {
 
-    public static final Capability<?>[] CAPABILITIES = new Capability[] { GregtechTileCapabilities.CAPABILITY_DATA_ACCESS };
+    public static final Capability<?>[] CAPABILITIES = new Capability[] {
+            GregtechTileCapabilities.CAPABILITY_DATA_ACCESS };
 
     private static final String DATA_ID_BASE = "gregtech.world_optical_net";
 

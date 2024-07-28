@@ -12,8 +12,11 @@ import java.util.List;
 
 /**
  * MultiNodeHelpers are utility objects used to preserve sync between multiple nodes owned by different graphs. They do
- * this by <br>A) keeping a record of traversals to allow for blocking traversal when another net has been traversed
- * recently and <br>B) make sure that logic entries requiring it are the same object across all synced nodes. <br><br>
+ * this by <br>
+ * A) keeping a record of traversals to allow for blocking traversal when another net has been traversed
+ * recently and <br>
+ * B) make sure that logic entries requiring it are the same object across all synced nodes. <br>
+ * <br>
  * MultiNodeHelpers have no standard implementation and must be handled by a net and its nodes; see
  * {@link gregtech.api.graphnet.pipenet.WorldPipeNet} and {@link gregtech.api.graphnet.pipenet.WorldPipeNetNode}
  * for an example of this in action.

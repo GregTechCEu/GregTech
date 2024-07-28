@@ -2,14 +2,11 @@ package gregtech.common.pipelikeold.cable.net;
 
 import gregtech.api.graphnet.AbstractGroupData;
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
 public class EnergyGroupData extends AbstractGroupData {
 
     private final long[] lastEnergyFluxPerSec = new long[2];
     private final long[] energyFluxPerSec = new long[2];
     private long updateTime;
-
 
     public long[] getEnergyFluxPerSec(long queryTick) {
         updateCache(queryTick);

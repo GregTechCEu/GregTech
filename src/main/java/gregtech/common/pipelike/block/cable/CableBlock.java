@@ -3,22 +3,17 @@ package gregtech.common.pipelike.block.cable;
 import gregtech.api.graphnet.gather.GatherStructuresEvent;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
-
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.MinecraftForge;
 
-import org.apache.commons.lang3.tuple.Pair;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -53,7 +48,7 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
         CableStructure structure = (CableStructure) getStructure();
         if (structure.partialBurnStructure() != null) {
             CableBlock newBlock = CACHE.get(registry).get(structure.partialBurnStructure());
-            //noinspection deprecation
+            // noinspection deprecation
             world.setBlockState(pos, newBlock.getStateFromMeta(this.getMetaFromState(state)));
         }
     }

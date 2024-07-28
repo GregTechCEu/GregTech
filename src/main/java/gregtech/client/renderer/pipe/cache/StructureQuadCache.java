@@ -1,23 +1,17 @@
 package gregtech.client.renderer.pipe.cache;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
-
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
-
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.client.renderer.block.model.BakedQuad;
-
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -45,7 +39,8 @@ public class StructureQuadCache {
         this.sideTex = sideTex;
     }
 
-    public static @NotNull StructureQuadCache create(PipeQuadHelper helper, SpriteInformation endTex, SpriteInformation sideTex) {
+    public static @NotNull StructureQuadCache create(PipeQuadHelper helper, SpriteInformation endTex,
+                                                     SpriteInformation sideTex) {
         StructureQuadCache cache = new StructureQuadCache(helper, endTex, sideTex);
         cache.buildPrototype();
         return cache;
@@ -123,5 +118,4 @@ public class StructureQuadCache {
             return list.subList(startInclusive, endExclusive);
         }
     }
-
 }

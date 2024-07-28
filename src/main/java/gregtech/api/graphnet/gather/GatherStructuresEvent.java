@@ -1,12 +1,10 @@
 package gregtech.api.graphnet.gather;
 
-import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
-
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.Set;
 

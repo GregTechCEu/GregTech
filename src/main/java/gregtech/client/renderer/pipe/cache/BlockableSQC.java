@@ -7,7 +7,6 @@ import gregtech.client.renderer.pipe.util.SpriteInformation;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,7 +28,8 @@ public class BlockableSQC extends StructureQuadCache {
         this.blockedTex = blockedTex;
     }
 
-    public static @NotNull BlockableSQC create(PipeQuadHelper helper, SpriteInformation endTex, SpriteInformation sideTex, SpriteInformation blockedTex) {
+    public static @NotNull BlockableSQC create(PipeQuadHelper helper, SpriteInformation endTex,
+                                               SpriteInformation sideTex, SpriteInformation blockedTex) {
         BlockableSQC cache = new BlockableSQC(helper, endTex, sideTex, blockedTex);
         cache.buildPrototype();
         return cache;

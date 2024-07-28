@@ -1,6 +1,5 @@
 package gregtech.api.capability;
 
-import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
@@ -15,8 +14,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.List;
-
-import static gregtech.api.fluids.FluidConstants.CRYOGENIC_FLUID_THRESHOLD;
 
 /**
  * Fluid filter based on fluid properties; i.e. temperature, fluid state, and various material flags such as acid

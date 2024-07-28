@@ -1,13 +1,10 @@
 package gregtech.common.blocks.properties;
 
+import net.minecraft.block.properties.PropertyHelper;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
-import net.minecraft.block.properties.PropertyHelper;
-import net.minecraft.block.properties.PropertyInteger;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +12,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public class PropertyByte extends PropertyHelper<Byte> {
+
     private final ImmutableSet<Byte> allowedValues;
 
     protected PropertyByte(String name, byte min, byte max) {
@@ -22,15 +20,12 @@ public class PropertyByte extends PropertyHelper<Byte> {
 
         if (min < 0) {
             throw new IllegalArgumentException("Min value of " + name + " must be 0 or greater");
-        }
-        else if (max <= min) {
+        } else if (max <= min) {
             throw new IllegalArgumentException("Max value of " + name + " must be greater than min (" + min + ")");
-        }
-        else {
+        } else {
             Set<Byte> set = new ObjectOpenHashSet<>();
 
-            for (byte i = min; i <= max; ++i)
-            {
+            for (byte i = min; i <= max; ++i) {
                 set.add(i);
             }
 
@@ -39,8 +34,7 @@ public class PropertyByte extends PropertyHelper<Byte> {
     }
 
     @Override
-    public @NotNull Collection<Byte> getAllowedValues()
-    {
+    public @NotNull Collection<Byte> getAllowedValues() {
         return this.allowedValues;
     }
 
@@ -48,25 +42,20 @@ public class PropertyByte extends PropertyHelper<Byte> {
     public boolean equals(Object other) {
         if (this == other) {
             return true;
-        }
-        else if (other instanceof PropertyByte propertyByte && super.equals(other)) {
+        } else if (other instanceof PropertyByte propertyByte && super.equals(other)) {
             return this.allowedValues.equals(propertyByte.allowedValues);
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return 31 * super.hashCode() + this.allowedValues.hashCode();
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull PropertyByte create(String name, byte min, byte max)
-    {
+    public static @NotNull PropertyByte create(String name, byte min, byte max) {
         return new PropertyByte(name, min, max);
     }
 
@@ -85,8 +74,7 @@ public class PropertyByte extends PropertyHelper<Byte> {
      * Get the name for the given value.
      */
     @Override
-    public @NotNull String getName(Byte value)
-    {
+    public @NotNull String getName(Byte value) {
         return value.toString();
     }
 }

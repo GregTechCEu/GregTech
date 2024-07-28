@@ -1,6 +1,7 @@
 package gregtech.api.graphnet.traverse.util;
 
 public class CompleteLossOperator implements ReversibleLossOperator {
+
     public static final CompleteLossOperator INSTANCE = new CompleteLossOperator();
 
     private CompleteLossOperator() {}

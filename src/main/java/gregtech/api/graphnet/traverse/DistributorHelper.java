@@ -1,11 +1,5 @@
 package gregtech.api.graphnet.traverse;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import java.util.List;
-import java.util.function.LongSupplier;
-import java.util.function.Supplier;
-
 public class DistributorHelper {
 
     private final long maximum;

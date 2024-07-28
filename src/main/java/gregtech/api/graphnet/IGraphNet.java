@@ -2,12 +2,9 @@ package gregtech.api.graphnet;
 
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
-import gregtech.api.graphnet.graph.INetGraph;
-
 import gregtech.api.graphnet.graph.GraphVertex;
-
+import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.logic.NetLogicData;
-
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -17,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.util.Iterator;
-import java.util.Set;
 
 public interface IGraphNet {
 
@@ -31,12 +27,14 @@ public interface IGraphNet {
 
     /**
      * Adds a node to the graphnet.
+     * 
      * @param node The node to add.
      */
     void addNode(@NotNull NetNode node);
 
     /**
      * Gets the net node with the given equivalency data, if one exists.
+     * 
      * @param equivalencyData the equivalency data to match.
      * @return the matching net node, if one exists.
      */
@@ -45,14 +43,16 @@ public interface IGraphNet {
 
     /**
      * Removes a node from the graphnet.
+     * 
      * @param node The node to remove.
      */
     void removeNode(@NotNull NetNode node);
 
     /**
      * Links two nodes by an edge.
-     * @param source Source node.
-     * @param target Target node.
+     * 
+     * @param source   Source node.
+     * @param target   Target node.
      * @param bothWays If the graph is directional, passing in true will create both the forwards and backwards edge.
      * @return the created edge, if it was created. Returns null if bothWays is set to true.
      */
@@ -62,6 +62,7 @@ public interface IGraphNet {
 
     /**
      * Returns the edge linking two nodes together, if one exists.
+     * 
      * @param source Source node.
      * @param target Target node.
      * @return the linking edge, if one exists.
@@ -71,14 +72,16 @@ public interface IGraphNet {
 
     /**
      * Removes the edge linking two nodes together, if one exists.
-     * @param source Source node.
-     * @param target Target node.
+     * 
+     * @param source   Source node.
+     * @param target   Target node.
      * @param bothWays If the graph is directional, passing in true will remove both the forwards and backwards edge.
      */
     void removeEdge(@NotNull NetNode source, @NotNull NetNode target, boolean bothWays);
 
     /**
      * Gets the net graph backing this graphnet. This should NEVER be modified directly, but can be queried.
+     * 
      * @return the backing net graph
      */
     @ApiStatus.Internal
@@ -88,6 +91,7 @@ public interface IGraphNet {
 
     /**
      * Gets the GraphNetBacker backing this graphnet. This should NEVER be used except inside the graphnet impl.
+     * 
      * @return the backing graphnet backer
      */
     @ApiStatus.Internal
@@ -106,6 +110,7 @@ public interface IGraphNet {
 
     /**
      * Get a default node data for this graph. Generally used for immediate nbt deserialization.
+     * 
      * @return A default node data object.
      */
     @NotNull
@@ -115,6 +120,7 @@ public interface IGraphNet {
 
     /**
      * Returns whether a node exists in this graph.
+     * 
      * @param node the node in question.
      * @return whether the node exists.
      */
@@ -124,6 +130,7 @@ public interface IGraphNet {
 
     /**
      * Returns a breadth-first iterator through this graph, starting from the passed in node.
+     * 
      * @param node the node to start from.
      * @return a breadth-first iterator through this graph.
      */
@@ -131,7 +138,8 @@ public interface IGraphNet {
     default Iterator<NetNode> breadthIterator(NetNode node) {
         return new Iterator<>() {
 
-            private final BreadthFirstIterator<GraphVertex, GraphEdge> iterator = new BreadthFirstIterator<>(getGraph(), node.wrapper);
+            private final BreadthFirstIterator<GraphVertex, GraphEdge> iterator = new BreadthFirstIterator<>(getGraph(),
+                    node.wrapper);
 
             @Override
             public boolean hasNext() {
@@ -148,6 +156,7 @@ public interface IGraphNet {
     /**
      * Used in {@link MultiNodeHelper} to determine if a node can be traversed, based on the nets that have been
      * recently traversed in the {@link MultiNodeHelper}.
+     * 
      * @param net a recently traversed net
      * @return if node traversal should be blocked.
      */
@@ -163,7 +172,8 @@ public interface IGraphNet {
     /**
      * While this is crude, it does allow for avoiding generics literally everywhere.
      * The systems that make up a graphnet intertwine such that generics would be needed in basically every class.
-     * Basically, instead of a bunch of generics everywhere, we just instate an honor system that crashes the game if you violate it.
+     * Basically, instead of a bunch of generics everywhere, we just instate an honor system that crashes the game if
+     * you violate it.
      */
     default void nodeClassCheck(NetNode node) {
         if (!(getNodeClass().isInstance(node)))

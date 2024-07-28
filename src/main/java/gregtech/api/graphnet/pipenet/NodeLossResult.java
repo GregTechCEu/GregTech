@@ -16,7 +16,8 @@ public final class NodeLossResult {
     private final @Nullable Consumer<WorldPipeNetNode> postAction;
     private final @NotNull ReversibleLossOperator lossFunction;
 
-    public NodeLossResult(@Nullable Consumer<WorldPipeNetNode> postAction, @NotNull ReversibleLossOperator lossFunction) {
+    public NodeLossResult(@Nullable Consumer<WorldPipeNetNode> postAction,
+                          @NotNull ReversibleLossOperator lossFunction) {
         this.postAction = postAction;
         this.lossFunction = lossFunction;
     }

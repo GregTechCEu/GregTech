@@ -5,12 +5,15 @@ package gregtech.api.graphnet.pipenet.logic;
  * <a href="https://www.desmos.com/calculator/vjuksr3ut0">Demonstration Graph</a>
  */
 public enum EnumLossFunction {
+
     // DO NOT REORDER FUNCTIONS, THE ORDER IS USED FOR NBT SERIALIZATION
     /**
      * x value is lost every tick.
-     * <br> A constant rate.
+     * <br>
+     * A constant rate.
      */
     ARITHMETIC {
+
         @Override
         public float applyLoss(float value, float factorX, float factorY, int timePassed) {
             float initialThermalEnergy = value;
@@ -21,9 +24,11 @@ public enum EnumLossFunction {
     },
     /**
      * x% of value is lost every tick.
-     * <br> Faster than {@link EnumLossFunction#ARITHMETIC} at large values, but slower at small values.
+     * <br>
+     * Faster than {@link EnumLossFunction#ARITHMETIC} at large values, but slower at small values.
      */
     GEOMETRIC {
+
         @Override
         public float applyLoss(float value, float factorX, float factorY, int timePassed) {
             value *= Math.pow(1 - (factorX / 100), timePassed);
@@ -32,9 +37,11 @@ public enum EnumLossFunction {
     },
     /**
      * value is raised to the power of 1 - x every tick.
-     * <br> Faster than {@link EnumLossFunction#GEOMETRIC} at large values, but incredibly slow at small values.
+     * <br>
+     * Faster than {@link EnumLossFunction#GEOMETRIC} at large values, but incredibly slow at small values.
      */
     POWER {
+
         @Override
         public float applyLoss(float value, float factorX, float factorY, int timePassed) {
             value = (float) (Math.signum(value) *
@@ -44,10 +51,12 @@ public enum EnumLossFunction {
     },
     /**
      * x% of value is lost, then y more, every tick.
-     * <br> Slightly faster than {@link EnumLossFunction#GEOMETRIC} at large values,
+     * <br>
+     * Slightly faster than {@link EnumLossFunction#GEOMETRIC} at large values,
      * slightly faster than {@link EnumLossFunction#ARITHMETIC} at small values.
      */
     GEOMETRIC_ARITHMETIC {
+
         @Override
         public float applyLoss(float value, float factorX, float factorY, int timePassed) {
             float initialThermalEnergy = value;
@@ -63,10 +72,12 @@ public enum EnumLossFunction {
     },
     /**
      * value is raised to the power of 1 - x, then y% more is lost, every tick.
-     * <br> Slightly faster than {@link EnumLossFunction#POWER} at large values,
+     * <br>
+     * Slightly faster than {@link EnumLossFunction#POWER} at large values,
      * slightly faster than {@link EnumLossFunction#GEOMETRIC} at small values.
      */
     POWER_GEOMETRIC {
+
         @Override
         public float applyLoss(float value, float factorX, float factorY, int timePassed) {
             float c = 1 - factorX;
@@ -79,6 +90,7 @@ public enum EnumLossFunction {
      * The evaluation of value = value - x * (value ^ y) is recursively found for every tick passed.
      */
     WEAK_SCALING {
+
         @Override
         public float applyLoss(float value, float factorX, float factorY, int timePassed) {
             for (int i = 0; i < timePassed; i++) {

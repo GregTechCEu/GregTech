@@ -1,8 +1,7 @@
 package gregtech.api.graphnet.pipenet.predicate;
 
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
 import gregtech.api.graphnet.predicate.IEdgePredicate;
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagString;
 

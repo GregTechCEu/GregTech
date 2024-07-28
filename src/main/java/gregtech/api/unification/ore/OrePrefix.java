@@ -280,7 +280,8 @@ public class OrePrefix {
             ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, null,
             ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeQuadrupleRestrictive = new OrePrefix("pipeQuadrupleRestrictive", M * 4, null, null,
+    public static final OrePrefix pipeQuadrupleRestrictive = new OrePrefix("pipeQuadrupleRestrictive", M * 4, null,
+            null,
             ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeNonupleRestrictive = new OrePrefix("pipeNonupleRestrictive", M * 9, null, null,
             ENABLE_UNIFICATION, null);

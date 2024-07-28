@@ -1,10 +1,10 @@
 package gregtech.api.graphnet.alg;
 
 import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.alg.iter.SimpleCacheableIterator;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.alg.iter.SimpleCacheableIterator;
+import gregtech.api.graphnet.path.INetPath;
 
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

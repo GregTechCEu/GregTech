@@ -6,14 +6,11 @@ import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
-
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +20,8 @@ import java.util.Iterator;
 
 public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeNetPath.Provider {
 
-    public static final Capability<?>[] CAPABILITIES = new Capability[] { GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER };
+    public static final Capability<?>[] CAPABILITIES = new Capability[] {
+            GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER };
 
     private static final String DATA_ID_BASE = "gregtech.world_energy_net";
 
@@ -57,7 +55,8 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
     }
 
     @Override
-    public Iterator<FlowWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
+    public Iterator<FlowWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject,
+                                                   @Nullable SimulatorKey simulator, long queryTick) {
         return backer.getPaths(node, 0, FlowWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
     }
 

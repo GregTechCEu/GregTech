@@ -10,7 +10,6 @@ import gregtech.api.graphnet.graph.NetDirectedGraph;
 import gregtech.api.graphnet.graph.NetUndirectedGraph;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
-
 import gregtech.api.util.DimensionPos;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +37,8 @@ public abstract class ServerNet extends WorldSavedData implements IGraphNet {
 
     @SafeVarargs
     public ServerNet(String name, boolean directed, Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
-        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(), algorithmBuilders);
+        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(),
+                algorithmBuilders);
     }
 
     @Override

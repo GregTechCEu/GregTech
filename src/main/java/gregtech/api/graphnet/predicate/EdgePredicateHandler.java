@@ -1,17 +1,15 @@
 package gregtech.api.graphnet.predicate;
 
 import gregtech.api.graphnet.gather.GTGraphGatherables;
-
 import gregtech.api.graphnet.gather.GatherPredicatesEvent;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;
 import java.util.function.Predicate;

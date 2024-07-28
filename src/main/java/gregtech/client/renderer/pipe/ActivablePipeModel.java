@@ -1,7 +1,6 @@
 package gregtech.client.renderer.pipe;
 
 import gregtech.api.block.UnlistedBooleanProperty;
-import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
@@ -10,19 +9,10 @@ import gregtech.client.renderer.pipe.cache.ActivableSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.ActivableCacheKey;
-import gregtech.client.renderer.pipe.util.CacheKey;
-
 import gregtech.client.renderer.pipe.util.SpriteInformation;
-
 import gregtech.client.renderer.texture.Textures;
-
 import gregtech.client.utils.BloomEffectUtil;
-
 import gregtech.common.ConfigHolder;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -36,6 +26,7 @@ import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,12 +98,14 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
     @Override
     protected StructureQuadCache constructForKey(ActivableCacheKey key) {
-        return ActivableSQC.create(PipeQuadHelper.create(key.getThickness()), inTex.get(), sideTex.get(), overlayTex.get(), overlayActiveTex.get());
+        return ActivableSQC.create(PipeQuadHelper.create(key.getThickness()), inTex.get(), sideTex.get(),
+                overlayTex.get(), overlayActiveTex.get());
     }
 
     @Override
     public boolean canRenderInLayer(BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || (allowActive() && emissiveActive && layer == BloomEffectUtil.getEffectiveBloomLayer());
+        return layer == BlockRenderLayer.CUTOUT_MIPPED ||
+                (allowActive() && emissiveActive && layer == BloomEffectUtil.getEffectiveBloomLayer());
     }
 
     public boolean allowActive() {
@@ -121,10 +114,11 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
     @Override
     protected @Nullable PipeItemModel<ActivableCacheKey> getItemModel(@NotNull ItemStack stack, World world,
-                                                             EntityLivingBase entity) {
+                                                                      EntityLivingBase entity) {
         WorldPipeBlock block = WorldPipeBlock.getBlockFromItem(stack);
         if (block == null) return null;
-        return new PipeItemModel<>(this, new ActivableCacheKey(block.getStructure().getRenderThickness(), false), PipeTileEntity.DEFAULT_COLOR);
+        return new PipeItemModel<>(this, new ActivableCacheKey(block.getStructure().getRenderThickness(), false),
+                PipeTileEntity.DEFAULT_COLOR);
     }
 
     public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {

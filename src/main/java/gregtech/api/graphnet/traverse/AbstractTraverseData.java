@@ -15,7 +15,8 @@ public abstract class AbstractTraverseData<N extends NetNode, P extends INetPath
     private final SimulatorKey simulator;
     private final long queryTick;
 
-    public AbstractTraverseData(IGraphNet net, IPredicateTestObject testObject, SimulatorKey simulator, long queryTick) {
+    public AbstractTraverseData(IGraphNet net, IPredicateTestObject testObject, SimulatorKey simulator,
+                                long queryTick) {
         this.net = net;
         this.testObject = testObject;
         this.simulator = simulator;

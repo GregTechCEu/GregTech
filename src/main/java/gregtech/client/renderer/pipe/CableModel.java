@@ -4,15 +4,12 @@ import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ExtraCappedSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
-
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
-import gregtech.client.renderer.pipe.util.WoodCacheKey;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,7 +21,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -84,7 +80,8 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
         if (insulationTex == null) {
             return StructureQuadCache.create(PipeQuadHelper.create(key.getThickness()), wireTex.get(), sideTex);
         } else {
-            return ExtraCappedSQC.create(PipeQuadHelper.create(key.getThickness()), wireTex.get(), sideTex, insulationTex.get());
+            return ExtraCappedSQC.create(PipeQuadHelper.create(key.getThickness()), wireTex.get(), sideTex,
+                    insulationTex.get());
         }
     }
 
@@ -94,7 +91,8 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
         WorldPipeBlock block = WorldPipeBlock.getBlockFromItem(stack);
         if (block == null) return null;
         Material mater = block instanceof PipeMaterialBlock mat ? mat.getMaterialForStack(stack) : null;
-        return new PipeItemModel<>(this, new CacheKey(block.getStructure().getRenderThickness()), mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) : PipeTileEntity.DEFAULT_COLOR);
+        return new PipeItemModel<>(this, new CacheKey(block.getStructure().getRenderThickness()),
+                mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) : PipeTileEntity.DEFAULT_COLOR);
     }
 
     public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {

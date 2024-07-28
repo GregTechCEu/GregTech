@@ -1,11 +1,11 @@
 package gregtech.api.graphnet.alg;
 
 import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.alg.iter.SimpleCacheableIterator;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.alg.iter.SimpleCacheableIterator;
+import gregtech.api.graphnet.path.INetPath;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
@@ -16,7 +16,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class ShortestPathsAlgorithm extends CHManyToManyShortestPaths<GraphVertex, GraphEdge> implements INetAlgorithm {
+public final class ShortestPathsAlgorithm extends CHManyToManyShortestPaths<GraphVertex, GraphEdge>
+                                          implements INetAlgorithm {
 
     public ShortestPathsAlgorithm(IGraphNet net) {
         super(net.getGraph());

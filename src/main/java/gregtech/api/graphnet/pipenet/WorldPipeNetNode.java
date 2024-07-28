@@ -6,7 +6,6 @@ import gregtech.api.graphnet.worldnet.WorldNetNode;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.Nullable;
@@ -71,8 +70,7 @@ public final class WorldPipeNetNode extends WorldNetNode {
     public boolean traverse(long queryTick, boolean simulate) {
         if (overlapHelper != null) {
             return overlapHelper.traverse(this.getNet(), queryTick, simulate);
-        }
-        else return true;
+        } else return true;
     }
 
     @Override

@@ -2,13 +2,12 @@ package gregtech.client.renderer.pipe.cache;
 
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
 

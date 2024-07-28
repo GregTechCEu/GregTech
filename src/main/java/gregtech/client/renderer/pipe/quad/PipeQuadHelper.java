@@ -2,14 +2,14 @@ package gregtech.client.renderer.pipe.quad;
 
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
 
@@ -70,9 +70,13 @@ public final class PipeQuadHelper {
 
     public RecolorableBakedQuad visitCore(EnumFacing facing) {
         return switch (facing.getAxis()) {
-            case X -> visitQuad(facing, 0.5f + thickness / 2 * facing.getAxisDirection().getOffset(), 0, y + small, y + large, z + small, z + large, squareMapper);
-            case Y -> visitQuad(facing, x + small, x + large, 0.5f + thickness / 2 * facing.getAxisDirection().getOffset(), 0, z + small, z + large, squareMapper);
-            case Z -> visitQuad(facing, x + small, x + large, y + small, y + large, 0.5f + thickness / 2 * facing.getAxisDirection().getOffset(), 0, squareMapper);
+            case X -> visitQuad(facing, 0.5f + thickness / 2 * facing.getAxisDirection().getOffset(), 0, y + small,
+                    y + large, z + small, z + large, squareMapper);
+            case Y -> visitQuad(facing, x + small, x + large,
+                    0.5f + thickness / 2 * facing.getAxisDirection().getOffset(), 0, z + small, z + large,
+                    squareMapper);
+            case Z -> visitQuad(facing, x + small, x + large, y + small, y + large,
+                    0.5f + thickness / 2 * facing.getAxisDirection().getOffset(), 0, squareMapper);
         };
     }
 
@@ -130,13 +134,17 @@ public final class PipeQuadHelper {
 
     public RecolorableBakedQuad visitCapper(EnumFacing facing) {
         return switch (facing.getAxis()) {
-            case X -> visitQuad(facing, 0.5f + 0.5f * facing.getAxisDirection().getOffset(), 0, y + small, y + large, z + small, z + large, squareMapper);
-            case Y -> visitQuad(facing, x + small, x + large, 0.5f + 0.5f * facing.getAxisDirection().getOffset(), 0, z + small, z + large, squareMapper);
-            case Z -> visitQuad(facing, x + small, x + large, y + small, y + large, 0.5f + 0.5f * facing.getAxisDirection().getOffset(), 0, squareMapper);
+            case X -> visitQuad(facing, 0.5f + 0.5f * facing.getAxisDirection().getOffset(), 0, y + small, y + large,
+                    z + small, z + large, squareMapper);
+            case Y -> visitQuad(facing, x + small, x + large, 0.5f + 0.5f * facing.getAxisDirection().getOffset(), 0,
+                    z + small, z + large, squareMapper);
+            case Z -> visitQuad(facing, x + small, x + large, y + small, y + large,
+                    0.5f + 0.5f * facing.getAxisDirection().getOffset(), 0, squareMapper);
         };
     }
 
-    public RecolorableBakedQuad visitQuad(EnumFacing normal, float x1, float x2, float y1, float y2, float z1, float z2, UVMapper mapper) {
+    public RecolorableBakedQuad visitQuad(EnumFacing normal, float x1, float x2, float y1, float y2, float z1, float z2,
+                                          UVMapper mapper) {
         building = new RecolorableBakedQuad.Builder(FORMAT);
         switch (normal.getAxis()) {
             case X -> {
@@ -198,7 +206,7 @@ public final class PipeQuadHelper {
                 case COLOR:
                     float a = ((argb >> 24) & 0xFF) / 255f; // alpha
                     float r = ((argb >> 16) & 0xFF) / 255f; // red
-                    float g = ((argb >>  8) & 0xFF) / 255f; // green
+                    float g = ((argb >> 8) & 0xFF) / 255f; // green
                     float b = ((argb) & 0xFF) / 255f; // blue
                     consumer.put(e, r, g, b, a);
                     break;
@@ -209,8 +217,7 @@ public final class PipeQuadHelper {
                     consumer.put(e, offX, offY, offZ, 0f);
                     break;
                 case UV:
-                    if (format.getElement(e).getIndex() == 0)
-                    {
+                    if (format.getElement(e).getIndex() == 0) {
                         consumer.put(e, u, v, 0f, 1f);
                         break;
                     }

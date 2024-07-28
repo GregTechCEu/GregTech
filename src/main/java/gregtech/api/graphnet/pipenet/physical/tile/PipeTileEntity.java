@@ -14,11 +14,8 @@ import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
-
 import gregtech.api.unification.material.Material;
-
 import gregtech.client.particle.GTOverheatParticle;
-
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.common.blocks.MetaBlocks;
 
@@ -39,19 +36,16 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +73,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private byte renderMask;
     private byte blockedMask;
     private int paintingColor;
-
 
     private @Nullable Material frameMaterial;
 
@@ -126,7 +119,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     public void placedBy(ItemStack stack, EntityPlayer player) {}
-    
+
     public IPipeStructure getStructure() {
         return getBlockType().getStructure();
     }
@@ -140,7 +133,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void setConnected(EnumFacing facing, boolean renderClosed) {
         this.connectionMask |= 1 << facing.ordinal();
         updateActiveStatus(facing, false);
-        if (renderClosed) {        
+        if (renderClosed) {
             this.renderMask |= 1 << facing.ordinal();
         } else {
             this.renderMask &= ~(1 << facing.ordinal());
@@ -246,7 +239,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public void addTicker(ITickable ticker) {
         this.tickers.add(ticker);
-        //noinspection ConstantValue
+        // noinspection ConstantValue
         if (getWorld() != null) getWorld().tickableTileEntities.add(this);
     }
 
@@ -258,14 +251,16 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     @Override
     public void onLoad() {
         super.onLoad();
-        // since we're an instance of ITickable, we're automatically added to the tickable list just before this exact moment.
-        // it would theoretically be a micro optimization to just pop the last tile from the tickable list, but that's not guaranteed.
+        // since we're an instance of ITickable, we're automatically added to the tickable list just before this exact
+        // moment.
+        // it would theoretically be a micro optimization to just pop the last tile from the tickable list, but that's
+        // not guaranteed.
         if (!this.isTicking()) this.getWorld().tickableTileEntities.remove(this);
     }
 
     public void removeTicker(ITickable ticker) {
         this.tickers.remove(ticker);
-        //noinspection ConstantValue
+        // noinspection ConstantValue
         if (!this.isTicking() && getWorld() != null) getWorld().tickableTileEntities.remove(this);
     }
 
@@ -289,6 +284,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     /**
      * Returns a map of facings to tile entities that should have at least one of the required capabilities.
+     * 
      * @param node the node for this tile entity. Used to identify the capabilities to match.
      * @return a map of facings to tile entities.
      */
@@ -309,8 +305,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     /**
      * Updates the pipe's active status based on the tile entity connected to the side.
-     * @param facing the side to check. Can be null, in which case all sides will be checked.
-     * @param canOpenConnection whether the pipe is allowed to open a new connection if it finds a tile it can connect to.
+     * 
+     * @param facing            the side to check. Can be null, in which case all sides will be checked.
+     * @param canOpenConnection whether the pipe is allowed to open a new connection if it finds a tile it can connect
+     *                          to.
      */
     public void updateActiveStatus(@Nullable EnumFacing facing, boolean canOpenConnection) {
         if (facing == null) {
@@ -425,8 +423,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(node.getNet().getTargetCapabilities()));
                 String netName = node.getNet().mapName;
                 netLogicDatas.put(netName, node.getData());
-                var listener = node.getData().new LogicDataListener((e, r, f) ->
-                        writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
+                var listener = node.getData().new LogicDataListener(
+                        (e, r, f) -> writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
                             buf.writeString(netName);
                             buf.writeString(e.getName());
                             buf.writeBoolean(r);
@@ -467,7 +465,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         connectionMask = compound.getByte("ConnectionMask");
         blockedMask = compound.getByte("BlockedMask");
         paintingColor = compound.getInteger("Paint");
-        if (compound.hasKey("Frame")) this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("Frame"));
+        if (compound.hasKey("Frame"))
+            this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("Frame"));
         else this.frameMaterial = null;
         this.getCoverHolder().deserializeNBT(compound.getCompoundTag("Covers"));
     }
@@ -613,7 +612,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void notifyBlockUpdate() {
         getWorld().notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
     }
-
 
     @SuppressWarnings("ConstantConditions") // yes this CAN actually be null
     @Override

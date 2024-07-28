@@ -17,13 +17,12 @@ import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.properties.WoodProperty;
-
-import com.cleanroommc.groovyscript.api.GroovyBlacklist;
-import com.cleanroommc.groovyscript.api.GroovyLog;
-
 import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
 import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
 import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
+
+import com.cleanroommc.groovyscript.api.GroovyBlacklist;
+import com.cleanroommc.groovyscript.api.GroovyLog;
 
 import static gregtech.integration.groovy.GroovyScriptModule.checkFrozen;
 
@@ -303,10 +302,12 @@ public class MaterialPropertyExpansion {
 
     public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof,
                                      boolean acidProof, boolean plasmaProof) {
-        addFluidPipes(m, maxFluidTemperature, FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, throughput, gasProof, acidProof, plasmaProof);
+        addFluidPipes(m, maxFluidTemperature, FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, throughput, gasProof,
+                acidProof, plasmaProof);
     }
 
-    public static void addFluidPipes(Material m, int maxFluidTemperature, int minFluidTemperature, int throughput, boolean gasProof,
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int minFluidTemperature, int throughput,
+                                     boolean gasProof,
                                      boolean acidProof, boolean plasmaProof) {
         if (checkFrozen("add fluid pipes to a material")) return;
         PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);

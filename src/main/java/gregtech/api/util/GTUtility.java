@@ -19,9 +19,6 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 
-import it.unimi.dsi.fastutil.bytes.ByteArrayList;
-import it.unimi.dsi.fastutil.bytes.ByteList;
-
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -931,7 +928,7 @@ public class GTUtility {
         int r = argb >> 16 & 255;
         int g = argb >> 8 & 255;
         int b = argb & 255;
-        return new int[] {a, r, g, b};
+        return new int[] { a, r, g, b };
     }
 
     @Contract(pure = true)

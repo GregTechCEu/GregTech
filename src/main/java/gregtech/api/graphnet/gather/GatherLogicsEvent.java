@@ -2,9 +2,9 @@ package gregtech.api.graphnet.gather;
 
 import gregtech.api.graphnet.logic.INetLogicEntry;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;
 import java.util.function.Supplier;

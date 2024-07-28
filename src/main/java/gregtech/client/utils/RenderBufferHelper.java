@@ -56,6 +56,7 @@ public class RenderBufferHelper {
         renderCubeFace(buffer, cuboid.min.x, cuboid.min.y, cuboid.min.z, cuboid.max.x, cuboid.max.y, cuboid.max.z, r, g,
                 b, a, shade);
     }
+
     public static void renderCubeFace(BufferBuilder buffer, AxisAlignedBB cuboid, float r, float g, float b, float a,
                                       boolean shade) {
         renderCubeFace(buffer, cuboid.minX, cuboid.minY, cuboid.minZ, cuboid.maxX, cuboid.maxY, cuboid.maxZ, r, g,

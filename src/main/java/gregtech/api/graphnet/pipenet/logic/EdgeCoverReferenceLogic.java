@@ -2,17 +2,14 @@ package gregtech.api.graphnet.pipenet.logic;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.logic.INetLogicEntry;
-
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.DimensionFacingPos;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -23,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 
 public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenceLogic, NBTTagCompound> {
+
     public static final EdgeCoverReferenceLogic INSTANCE = new EdgeCoverReferenceLogic();
 
     @Nullable
@@ -60,7 +58,8 @@ public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenc
                     this.coverSource = new WeakReference<>(cover);
                     return cover;
                 } else {
-                    // the cover doesn't exist, which makes no sense since we have a reference to its location but whatever
+                    // the cover doesn't exist, which makes no sense since we have a reference to its location but
+                    // whatever
                     this.coverSource = null;
                     return null;
                 }
@@ -88,7 +87,8 @@ public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenc
                     this.coverTarget = new WeakReference<>(cover);
                     return cover;
                 } else {
-                    // the cover doesn't exist, which makes no sense since we have a reference to its location but whatever
+                    // the cover doesn't exist, which makes no sense since we have a reference to its location but
+                    // whatever
                     this.coverTarget = null;
                     return null;
                 }
@@ -142,6 +142,7 @@ public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenc
     public void decode(PacketBuffer buf, boolean fullChange) {}
 
     public interface IThroughputLimiterCover extends Cover {
+
         long getLimit();
     }
 }

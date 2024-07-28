@@ -202,7 +202,8 @@ public class MetaItem1 extends StandardMetaItem {
                         new ItemFluidContainer())
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
-        MaterialFluidProperties properties = Materials.Steel.getProperty(PropertyKey.PIPENET_PROPERTIES).getProperty(MaterialFluidProperties.KEY);
+        MaterialFluidProperties properties = Materials.Steel.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
                 .addComponents(new FilteredFluidStats(8000, properties.getMaxFluidTemperature(),
@@ -211,7 +212,8 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
-        properties = Materials.Aluminium.getProperty(PropertyKey.PIPENET_PROPERTIES).getProperty(MaterialFluidProperties.KEY);
+        properties = Materials.Aluminium.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
                 .addComponents(new FilteredFluidStats(32000,
@@ -220,7 +222,8 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
-        properties = Materials.StainlessSteel.getProperty(PropertyKey.PIPENET_PROPERTIES).getProperty(MaterialFluidProperties.KEY);
+        properties = Materials.StainlessSteel.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
                 .addComponents(new FilteredFluidStats(64000,
@@ -229,7 +232,8 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
-        properties = Materials.Titanium.getProperty(PropertyKey.PIPENET_PROPERTIES).getProperty(MaterialFluidProperties.KEY);
+        properties = Materials.Titanium.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
                 .addComponents(new FilteredFluidStats(128000,
@@ -238,7 +242,8 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
-        properties = Materials.TungstenSteel.getProperty(PropertyKey.PIPENET_PROPERTIES).getProperty(MaterialFluidProperties.KEY);
+        properties = Materials.TungstenSteel.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
                 .addComponents(new FilteredFluidStats(512000,

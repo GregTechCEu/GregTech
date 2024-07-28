@@ -1,8 +1,6 @@
 package gregtech.common.pipelike.net;
 
-import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.path.AbstractNetPath;
-import gregtech.api.graphnet.pipenet.BasicWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.util.TaskScheduler;
@@ -21,8 +19,8 @@ public class SlowActiveWalker implements Task {
         dispatch(world, path, delay, 1, 1);
     }
 
-
-    public static void dispatch(World world, AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay, int stepSize, int activeLength) {
+    public static void dispatch(World world, AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay,
+                                int stepSize, int activeLength) {
         TaskScheduler.scheduleTask(world, new SlowActiveWalker(path, delay, stepSize, activeLength));
     }
 
@@ -35,8 +33,8 @@ public class SlowActiveWalker implements Task {
     private final int activeLength;
     private int counter;
 
-
-    protected SlowActiveWalker(AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay, int stepSize, int activeLength) {
+    protected SlowActiveWalker(AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay, int stepSize,
+                               int activeLength) {
         this.path = path.getOrderedNodes();
         this.delay = delay;
         this.stepSize = stepSize;

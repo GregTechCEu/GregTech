@@ -14,28 +14,19 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidProperty;
-import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
-
 import gregtech.api.unification.material.properties.PropertyKey;
-
-import gregtech.api.unification.ore.IOreRegistrationHandler;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
-
 import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -43,8 +34,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
-
-import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
 
 public final class MaterialFluidProperties implements PipeNetProperties.IPipeNetMaterialProperty, IPropertyFluidFilter {
 
@@ -59,7 +48,8 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     private final long baseThroughput;
     private final float priority;
 
-    public MaterialFluidProperties(long baseThroughput, int maxFluidTemperature, int minFluidTemperature, float priority) {
+    public MaterialFluidProperties(long baseThroughput, int maxFluidTemperature, int minFluidTemperature,
+                                   float priority) {
         this.baseThroughput = baseThroughput;
         this.maxFluidTemperature = maxFluidTemperature;
         this.minFluidTemperature = minFluidTemperature;
@@ -75,7 +65,8 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     }
 
     public static MaterialFluidProperties createMax(long baseThroughput, int maxFluidTemperature, float priority) {
-        return new MaterialFluidProperties(baseThroughput, maxFluidTemperature, FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, priority);
+        return new MaterialFluidProperties(baseThroughput, maxFluidTemperature,
+                FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, priority);
     }
 
     public static MaterialFluidProperties createMin(long baseThroughput, int minFluidTemperature) {

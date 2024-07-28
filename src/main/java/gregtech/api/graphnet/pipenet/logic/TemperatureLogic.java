@@ -6,30 +6,23 @@ import gregtech.api.graphnet.logic.INetLogicEntry;
 import gregtech.api.graphnet.logic.INetLogicEntryListener;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
-
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
-
 import gregtech.api.graphnet.pipenet.physical.IFreezable;
 import gregtech.api.graphnet.traverse.util.CompleteLossOperator;
-
 import gregtech.api.graphnet.traverse.util.MultLossOperator;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraft.network.PacketBuffer;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.Objects;
 
 public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, NBTTagCompound> {
 
@@ -52,23 +45,31 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
 
     private TemperatureLogic() {}
 
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction, int temperatureMaximum) {
+    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                    int temperatureMaximum) {
         return getWith(temperatureRestorationFunction, temperatureMaximum, 1);
     }
 
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction, int temperatureMaximum, int temperatureMinimum) {
+    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                    int temperatureMaximum, int temperatureMinimum) {
         return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, 1000);
     }
 
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction, int temperatureMaximum, int temperatureMinimum, int thermalMass) {
+    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                    int temperatureMaximum, int temperatureMinimum, int thermalMass) {
         return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass, 0);
     }
 
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction, int temperatureMaximum, int temperatureMinimum, int thermalMass, @Nullable Integer partialBurnTemperature) {
-        return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass, partialBurnTemperature, 0);
+    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                    int temperatureMaximum, int temperatureMinimum, int thermalMass,
+                                    @Nullable Integer partialBurnTemperature) {
+        return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass,
+                partialBurnTemperature, 0);
     }
 
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction, int temperatureMaximum, int temperatureMinimum, int thermalMass, @Nullable Integer partialBurnTemperature, int functionPriority) {
+    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                    int temperatureMaximum, int temperatureMinimum, int thermalMass,
+                                    @Nullable Integer partialBurnTemperature, int functionPriority) {
         return getNew()
                 .setRestorationFunction(temperatureRestorationFunction)
                 .setTemperatureMaximum(temperatureMaximum)
@@ -302,7 +303,7 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
             this.temperatureLossFunction.encode(buf);
             buf.writeVarInt(this.functionPriority);
             // laughs in java 9
-            //noinspection ReplaceNullCheck
+            // noinspection ReplaceNullCheck
             if (this.partialBurnTemperature == null) buf.writeVarInt(-1);
             else buf.writeVarInt(this.partialBurnTemperature);
         }

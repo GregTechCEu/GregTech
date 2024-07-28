@@ -15,7 +15,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +78,8 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
         writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
         if (cover.shouldAutoConnectToPipes()) {
             PipeTileEntity other;
-            if (holder.isConnected(side) && (other = holder.getPipeNeighbor(side, true)) != null && !other.isConnected(side.getOpposite()))
+            if (holder.isConnected(side) && (other = holder.getPipeNeighbor(side, true)) != null &&
+                    !other.isConnected(side.getOpposite()))
                 holder.setDisconnected(side);
         }
         holder.notifyBlockUpdate();

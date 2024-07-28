@@ -6,24 +6,16 @@ import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.ore.IOreRegistrationHandler;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
-
 import gregtech.common.pipelike.net.item.WorldItemNet;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.Nullable;
-
-import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
 
 public final class MaterialItemProperties implements PipeNetProperties.IPipeNetMaterialProperty {
 
@@ -36,6 +28,7 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
         this.baseItemsPer5Ticks = baseItemsPer5Ticks;
         this.priority = priority;
     }
+
     public static MaterialItemProperties create(long baseThroughput) {
         return new MaterialItemProperties(baseThroughput, 2048f / baseThroughput);
     }

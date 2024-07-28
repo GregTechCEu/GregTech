@@ -38,5 +38,4 @@ public final class DataAccessFormat {
         if (supportedFormats == null) return true;
         else return supportedFormats.contains(format);
     }
-
 }

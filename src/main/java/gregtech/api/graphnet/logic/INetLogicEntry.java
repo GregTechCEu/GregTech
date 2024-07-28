@@ -3,7 +3,6 @@ package gregtech.api.graphnet.logic;
 import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
-
 import gregtech.api.network.IPacket;
 
 import net.minecraft.nbt.NBTBase;
@@ -14,11 +13,12 @@ import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Note - all implementers of this interface are suggested to be final, in order to avoid unexpected {@link #union(INetLogicEntry)} behavior.
+ * Note - all implementers of this interface are suggested to be final, in order to avoid unexpected
+ * {@link #union(INetLogicEntry)} behavior.
  */
 public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBase> extends INBTSerializable<N>,
-                                                                                           IStringSerializable,
-                                                                                           IPacket {
+                               IStringSerializable,
+                               IPacket {
 
     default void deserializeNBTNaive(NBTBase nbt) {
         deserializeNBT((N) nbt);
@@ -39,6 +39,7 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * all nodes registered to it contain the same object that their entries have been merged to, and when a node
      * leaves the multi node helper {@link #unmerge(NetNode)} will be called for it. Server-Client sync is handled
      * by the MultiNodeHelper, do not sync through NetLogicData. See {@link #registerToMultiNodeHelper(MultiNodeHelper)}
+     * 
      * @return whether logic entry should be merged to a MultiNodeHelper.
      */
     default boolean mergedToMultiNodeHelper() {
@@ -53,8 +54,9 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
 
     /**
      * Should be used exclusively for {@link gregtech.api.graphnet.MultiNodeHelper} logic.
+     * 
      * @param otherOwner the net node being merged in
-     * @param other the logic being merged in
+     * @param other      the logic being merged in
      */
     default void merge(NetNode otherOwner, INetLogicEntry<?, ?> other) {}
 
@@ -64,6 +66,7 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * if your logic needs to keep track then populate a map during {@link #merge(NetNode, INetLogicEntry)}.
      * Keep in mind that this can be called for the data's original owner, despite
      * {@link #merge(NetNode, INetLogicEntry)} not being called for the original owner.
+     * 
      * @param entryOwner the node being unmerged.
      */
     default void unmerge(NetNode entryOwner) {}

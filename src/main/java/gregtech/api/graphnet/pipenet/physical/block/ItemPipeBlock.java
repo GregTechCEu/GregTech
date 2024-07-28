@@ -1,16 +1,12 @@
 package gregtech.api.graphnet.pipenet.physical.block;
 
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-
-import gregtech.api.unification.material.Material;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemBlock;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -31,7 +27,8 @@ public class ItemPipeBlock extends ItemBlock {
     }
 
     @Override
-    public boolean placeBlockAt(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side,
+    public boolean placeBlockAt(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world,
+                                @NotNull BlockPos pos, @NotNull EnumFacing side,
                                 float hitX, float hitY, float hitZ, @NotNull IBlockState newState) {
         if (super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState)) {
             ItemStack offhand = player.getHeldItemOffhand();

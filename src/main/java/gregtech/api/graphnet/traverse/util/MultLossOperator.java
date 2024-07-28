@@ -29,6 +29,6 @@ public class MultLossOperator implements ReversibleLossOperator {
 
     @Override
     public double undoLoss(double value) {
-        return  value / mult;
+        return value / mult;
     }
 }

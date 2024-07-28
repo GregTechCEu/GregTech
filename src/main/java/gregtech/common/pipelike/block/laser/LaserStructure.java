@@ -1,16 +1,13 @@
 package gregtech.common.pipelike.block.laser;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.ActivablePipeModel;
 
-import gregtech.common.pipelike.block.optical.OpticalStructure;
-
 import net.minecraft.util.EnumFacing;
 
+import com.github.bsideup.jabel.Desugar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

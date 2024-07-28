@@ -7,7 +7,6 @@ import gregtech.client.renderer.pipe.util.SpriteInformation;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,7 +28,8 @@ public class ExtraCappedSQC extends StructureQuadCache {
         this.extraEndTex = extraEndTex;
     }
 
-    public static @NotNull ExtraCappedSQC create(PipeQuadHelper helper, SpriteInformation endTex, SpriteInformation sideTex, SpriteInformation extraEndTex) {
+    public static @NotNull ExtraCappedSQC create(PipeQuadHelper helper, SpriteInformation endTex,
+                                                 SpriteInformation sideTex, SpriteInformation extraEndTex) {
         ExtraCappedSQC cache = new ExtraCappedSQC(helper, endTex, sideTex, extraEndTex);
         cache.buildPrototype();
         return cache;

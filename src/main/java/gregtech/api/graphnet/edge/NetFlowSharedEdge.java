@@ -1,7 +1,6 @@
 package gregtech.api.graphnet.edge;
 
 import gregtech.api.graphnet.IGraphNet;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.util.math.MathHelper;

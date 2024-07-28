@@ -7,21 +7,16 @@ import gregtech.api.graphnet.alg.iter.ICacheableIterator;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphEdge;
-import gregtech.api.graphnet.graph.INetGraph;
-
 import gregtech.api.graphnet.graph.GraphVertex;
-
+import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.path.INetPath;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,14 +116,18 @@ public final class GraphNetBacker {
      * most likely a bad remapper was passed in. <br>
      * This method should never be exposed outside the net this backer is backing due to this fragility.
      */
-    public <Path extends INetPath<?, ?>> Iterator<Path> getPaths(@Nullable NetNode node, int algorithmID, @NotNull NetPathMapper<Path> remapper, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
+    public <Path extends INetPath<?, ?>> Iterator<Path> getPaths(@Nullable NetNode node, int algorithmID,
+                                                                 @NotNull NetPathMapper<Path> remapper,
+                                                                 IPredicateTestObject testObject,
+                                                                 @Nullable SimulatorKey simulator, long queryTick) {
         if (node == null) return Collections.emptyIterator();
 
         Iterator<? extends INetPath<?, ?>> cache = node.getPathCache();
         if (cache != null) return (Iterator<Path>) cache;
 
         this.getGraph().setupInternal(this, backedNet.usesDynamicWeights(algorithmID));
-        Iterator<Path> iter = this.netAlgorithms[algorithmID].getPathsIterator(node.wrapper, remapper, testObject, simulator, queryTick);
+        Iterator<Path> iter = this.netAlgorithms[algorithmID].getPathsIterator(node.wrapper, remapper, testObject,
+                simulator, queryTick);
         if (iter instanceof ICacheableIterator) {
             return (Iterator<Path>) node.setPathCache((ICacheableIterator<Path>) iter);
         } else return iter;
@@ -150,20 +149,26 @@ public final class GraphNetBacker {
 
     // PROPOSAL FOR ALTERNATIVE STORAGE MECHANISM TO REDUCE MEMORY COSTS
     // > Always loaded & nbt stored data:
-    // map & weak map of group ids to groups. No references to group objects exist outside of this, only references to grou ids.
+    // map & weak map of group ids to groups. No references to group objects exist outside of this, only references to
+    // grou ids.
     // (for pipenet) pipes store a reference to their group id
     // > Disk-stored data:
     // contents of groups, specifically their nodes and edges.
     // > Impl (for pipenet)
-    // When a pipe is loaded, it goes fetch its group and tells it the pipe's chunk. This chunk is added to a *set* of chunks that are 'loading' this group.
+    // When a pipe is loaded, it goes fetch its group and tells it the pipe's chunk. This chunk is added to a *set* of
+    // chunks that are 'loading' this group.
     // When a chunk is unloaded, it is removed from the set of 'loading' chunks for all groups.
-    // When the set of 'loading' chunks for a group is empty, the group writes its data to disk and removes itself from the map and the graph but not the weak map.
-    // (proposal - create a graph impl that allows for weak references to vertices and edges, in order to remove need for explicit removal of group from graph?)
+    // When the set of 'loading' chunks for a group is empty, the group writes its data to disk and removes itself from
+    // the map and the graph but not the weak map.
+    // (proposal - create a graph impl that allows for weak references to vertices and edges, in order to remove need
+    // for explicit removal of group from graph?)
     // When a pipe fetches its group, if the group is not found in the map, it then checks the weak map.
-    // If found in the weak map, the pipe's chunk is added to the 'loading' chunks and a reference to the group is added to the map and the contents are added to the graph.
+    // If found in the weak map, the pipe's chunk is added to the 'loading' chunks and a reference to the group is added
+    // to the map and the contents are added to the graph.
     // If not found in the weak map, the group is instead read from disk and initialized.
     // > Benefits of this Impl
-    // By only loading the (potentially) large number of edges and nodes into the graph that a group contains when that group is needed,
+    // By only loading the (potentially) large number of edges and nodes into the graph that a group contains when that
+    // group is needed,
     // the number of unnecessary references in the graphnet on, say, a large server is drastically reduced.
     // however, since there are necessarily more read/write actions to disk, the cpu load would increase in turn.
 
@@ -197,7 +202,8 @@ public final class GraphNetBacker {
         int edgeCount = edges.getInteger("Count");
         for (int i = 0; i < edgeCount; i++) {
             NBTTagCompound tag = edges.getCompoundTag(String.valueOf(i));
-            GraphEdge graphEdge = this.getGraph().addEdge(vertexMap.get(tag.getInteger("SourceID")), vertexMap.get(tag.getInteger("TargetID")));
+            GraphEdge graphEdge = this.getGraph().addEdge(vertexMap.get(tag.getInteger("SourceID")),
+                    vertexMap.get(tag.getInteger("TargetID")));
             this.getGraph().setEdgeWeight(graphEdge, tag.getDouble("Weight"));
             graphEdge.wrapped.deserializeNBT(tag);
         }

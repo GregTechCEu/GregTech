@@ -1,7 +1,5 @@
 package gregtech.client.renderer.pipe.util;
 
-import gregtech.client.renderer.pipe.AbstractPipeModel;
-
 import net.minecraft.util.IStringSerializable;
 
 import org.jetbrains.annotations.NotNull;

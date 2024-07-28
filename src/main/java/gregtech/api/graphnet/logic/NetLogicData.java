@@ -1,16 +1,9 @@
 package gregtech.api.graphnet.logic;
 
 import gregtech.api.graphnet.gather.GTGraphGatherables;
-
 import gregtech.api.graphnet.gather.GatherLogicsEvent;
-import gregtech.api.graphnet.gather.GatherPredicatesEvent;
 import gregtech.api.network.IPacket;
 import gregtech.api.util.function.TriConsumer;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectCollection;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,13 +11,16 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectCollection;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.function.Supplier;
+
 /**
  * Note - since the internal map representation encodes keys using {@link IStringSerializable#getName()} on logics,
  * making a logics class return two different names is a valid way to register multiple instances. <br>
@@ -37,7 +33,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
     private final Object2ObjectOpenHashMap<String, INetLogicEntry<?, ?>> logicEntrySet;
 
     private final Set<LogicDataListener> listeners = new ObjectOpenHashSet<>();
-    
+
     public NetLogicData() {
         logicEntrySet = new Object2ObjectOpenHashMap<>(4);
     }
@@ -120,8 +116,8 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     @Contract("_, _ -> new")
     public static @NotNull NetLogicData union(@NotNull NetLogicData sourceData, @Nullable NetLogicData targetData) {
-        Object2ObjectOpenHashMap<String, INetLogicEntry<?, ?>> newLogic =
-                new Object2ObjectOpenHashMap<>(sourceData.logicEntrySet);
+        Object2ObjectOpenHashMap<String, INetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
+                sourceData.logicEntrySet);
         if (targetData != null) {
             for (String key : newLogic.keySet()) {
                 newLogic.computeIfPresent(key, (k, v) -> v.union(targetData.logicEntrySet.get(k)));
@@ -133,8 +129,8 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     @Contract("_, _ -> new")
     public static @NotNull NetLogicData union(@NotNull NetLogicData first, @NotNull NetLogicData... others) {
-        Object2ObjectOpenHashMap<String, INetLogicEntry<?, ?>> newLogic =
-                new Object2ObjectOpenHashMap<>(first.logicEntrySet);
+        Object2ObjectOpenHashMap<String, INetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
+                first.logicEntrySet);
         for (NetLogicData other : others) {
             for (String key : newLogic.keySet()) {
                 newLogic.computeIfPresent(key, (k, v) -> v.union(other.logicEntrySet.get(k)));
@@ -204,6 +200,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
     }
 
     public final class LogicDataListener {
+
         private final TriConsumer<INetLogicEntry<?, ?>, Boolean, Boolean> listener;
 
         public LogicDataListener(TriConsumer<INetLogicEntry<?, ?>, Boolean, Boolean> listener) {

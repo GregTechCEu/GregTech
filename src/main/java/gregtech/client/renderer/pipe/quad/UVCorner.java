@@ -5,6 +5,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public enum UVCorner {
+
     UL,
     UR,
     DR,

@@ -6,9 +6,7 @@ import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-
 import gregtech.api.graphnet.logic.WeightFactorLogic;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import org.jetbrains.annotations.Nullable;
@@ -21,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class GenericGraphNetPath extends AbstractNetPath<NetNode, NetEdge> {
 
-    public static final NetPathMapper<GenericGraphNetPath> MAPPER =
-            new NetPathMapper<>(GenericGraphNetPath::new, GenericGraphNetPath::new, GenericGraphNetPath::new);
+    public static final NetPathMapper<GenericGraphNetPath> MAPPER = new NetPathMapper<>(GenericGraphNetPath::new,
+            GenericGraphNetPath::new, GenericGraphNetPath::new);
 
     public GenericGraphNetPath(GraphVertex vertex) {
         this(Collections.singletonList(vertex), Collections.emptyList(),
@@ -38,7 +36,9 @@ public class GenericGraphNetPath extends AbstractNetPath<NetNode, NetEdge> {
         this(path.getVertexList(), path.getEdgeList(), path.getWeight());
     }
 
-    public interface Provider  {
-        Iterator<GenericGraphNetPath> getPaths(NetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick);
+    public interface Provider {
+
+        Iterator<GenericGraphNetPath> getPaths(NetNode node, IPredicateTestObject testObject,
+                                               @Nullable SimulatorKey simulator, long queryTick);
     }
 }

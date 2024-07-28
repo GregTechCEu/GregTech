@@ -5,15 +5,15 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.data.IComputationDataAccess;
 import gregtech.api.capability.data.IComputationProvider;
 import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.query.DataQueryObject;
+import gregtech.api.capability.data.query.IBridgeable;
+import gregtech.api.capability.data.query.IComputationQuery;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTUtility;
-import gregtech.api.capability.data.query.DataQueryObject;
-import gregtech.api.capability.data.query.IBridgeable;
-import gregtech.api.capability.data.query.IComputationQuery;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
@@ -33,8 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IComputationDataAccess>,
-                                                                                            IComputationDataAccess {
+public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
+                                            implements IMultiblockAbilityPart<IComputationDataAccess>,
+                                            IComputationDataAccess {
 
     private final boolean isTransmitter;
 
@@ -63,10 +64,12 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
                 MultiblockControllerBase controller = getController();
                 if (!controller.isActive()) return false;
 
-                if (controller instanceof IComputationProvider provider && queryObject instanceof IComputationQuery cq) {
+                if (controller instanceof IComputationProvider provider &&
+                        queryObject instanceof IComputationQuery cq) {
                     cq.registerProvider(provider);
                 }
-                List<IComputationDataAccess> reception = controller.getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION);
+                List<IComputationDataAccess> reception = controller
+                        .getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION);
                 if (queryObject instanceof IBridgeable bridgeable && reception.size() > 1) {
                     bridgeable.setBridged();
                 }
@@ -82,7 +85,6 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
         }
         return false;
     }
-
 
     @Override
     protected boolean openGUIOnRightClick() {

@@ -4,8 +4,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import org.jetbrains.annotations.Range;
-
 import java.util.Objects;
 
 public class ItemTestObject implements IPredicateTestObject {

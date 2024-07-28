@@ -1,7 +1,6 @@
 package gregtech.api.graphnet.pipenet.physical;
 
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 
 import net.minecraft.util.EnumFacing;
@@ -15,6 +14,7 @@ public interface IPipeStructure extends IStringSerializable {
 
     /**
      * Used as reference for misc things, e.g. rendering the backing of a cover.
+     * 
      * @return render thickness
      */
     float getRenderThickness();

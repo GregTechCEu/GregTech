@@ -3,21 +3,16 @@ package gregtech.integration.crafttweaker.material;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
-import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorage;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.*;
-
-import crafttweaker.annotations.ZenRegister;
-
 import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
-
 import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
-
 import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
+import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenExpansion;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -234,11 +229,13 @@ public class MaterialPropertyExpansion {
     @ZenMethod
     public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof,
                                      boolean acidProof, boolean plasmaProof) {
-        addFluidPipes(m, maxFluidTemperature, FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, throughput, gasProof, acidProof, plasmaProof);
+        addFluidPipes(m, maxFluidTemperature, FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, throughput, gasProof,
+                acidProof, plasmaProof);
     }
 
     @ZenMethod
-    public static void addFluidPipes(Material m, int maxFluidTemperature, int minFluidTemperature, int throughput, boolean gasProof,
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int minFluidTemperature, int throughput,
+                                     boolean gasProof,
                                      boolean acidProof, boolean plasmaProof) {
         if (checkFrozen("add fluid pipes to a material")) return;
         PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);

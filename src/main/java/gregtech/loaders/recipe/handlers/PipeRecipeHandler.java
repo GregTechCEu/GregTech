@@ -12,9 +12,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
-
 import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
-
 import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
 import net.minecraft.item.ItemStack;
@@ -39,17 +37,19 @@ public class PipeRecipeHandler {
         processStandard(OrePrefix.pipeNormal, OrePrefix.pipeNormalRestrictive, PipeRecipeHandler::processPipeNormal);
         processStandard(OrePrefix.pipeLarge, OrePrefix.pipeLargeRestrictive, PipeRecipeHandler::processPipeLarge);
         processStandard(OrePrefix.pipeHuge, OrePrefix.pipeHugeRestrictive, PipeRecipeHandler::processPipeHuge);
-        processStandard(OrePrefix.pipeQuadruple, OrePrefix.pipeQuadrupleRestrictive, PipeRecipeHandler::processPipeQuadruple);
+        processStandard(OrePrefix.pipeQuadruple, OrePrefix.pipeQuadrupleRestrictive,
+                PipeRecipeHandler::processPipeQuadruple);
         processStandard(OrePrefix.pipeNonuple, OrePrefix.pipeNonupleRestrictive, PipeRecipeHandler::processPipeNonuple);
     }
 
-    private static void processStandard(OrePrefix pipePrefix, OrePrefix restrictivePrefix, BiConsumer<OrePrefix, Material> processor) {
+    private static void processStandard(OrePrefix pipePrefix, OrePrefix restrictivePrefix,
+                                        BiConsumer<OrePrefix, Material> processor) {
         pipePrefix.addProcessingHandler(registrationHandler(processor));
         restrictivePrefix.addProcessingHandler(registrationHandler((o, m) -> processRestrictivePipe(o, m, pipePrefix)));
     }
 
     public static IOreRegistrationHandler registrationHandler(
-            BiConsumer<OrePrefix, Material> handler) {
+                                                              BiConsumer<OrePrefix, Material> handler) {
         return (orePrefix, material) -> {
             if (material.hasFlag(NO_UNIFICATION)) return;
             PipeNetProperties properties = material.getProperty(PropertyKey.PIPENET_PROPERTIES);

@@ -2,13 +2,10 @@ package gregtech.common.pipelike.block.laser;
 
 import gregtech.api.graphnet.gather.GatherStructuresEvent;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
-import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.handlers.LaserNetHandler;
-import gregtech.common.pipelike.handlers.OpticalNetHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

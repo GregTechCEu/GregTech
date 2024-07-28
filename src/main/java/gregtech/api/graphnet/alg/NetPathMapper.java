@@ -1,8 +1,8 @@
 package gregtech.api.graphnet.alg;
 
-import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
+import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.util.function.TriFunction;
 
 import org.jetbrains.annotations.NotNull;

@@ -2,7 +2,6 @@ package gregtech.api.graphnet.servernet;
 
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
-
 import gregtech.api.util.DimensionPos;
 
 import net.minecraft.nbt.NBTTagCompound;

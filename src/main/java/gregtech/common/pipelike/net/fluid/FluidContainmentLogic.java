@@ -3,28 +3,20 @@ package gregtech.common.pipelike.net.fluid;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.graphnet.logic.INetLogicEntry;
-
 import gregtech.api.util.GTUtility;
-import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.PacketBuffer;
-
 import net.minecraft.util.ResourceLocation;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -83,7 +75,7 @@ public class FluidContainmentLogic implements INetLogicEntry<FluidContainmentLog
     public @Nullable FluidContainmentLogic union(INetLogicEntry<?, ?> other) {
         if (other instanceof FluidContainmentLogic logic) {
             if (this.containableAttributes.equals(logic.containableAttributes) &&
-                this.containableStates.equals(logic.containableStates)) {
+                    this.containableStates.equals(logic.containableStates)) {
                 return this;
             } else {
                 FluidContainmentLogic returnable = getNew();

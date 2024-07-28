@@ -1,7 +1,5 @@
 package gregtech.client.renderer.pipe.util;
 
-import gregtech.client.renderer.pipe.PipeModel;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;

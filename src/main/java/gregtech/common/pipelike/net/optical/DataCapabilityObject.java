@@ -2,22 +2,19 @@ package gregtech.common.pipelike.net.optical;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.query.DataAccessFormat;
+import gregtech.api.capability.data.query.DataQueryObject;
 import gregtech.api.graphnet.pipenet.BasicWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
 import gregtech.api.util.GTUtility;
-import gregtech.api.capability.data.query.DataAccessFormat;
-import gregtech.api.capability.data.query.DataQueryObject;
 import gregtech.common.pipelike.net.SlowActiveWalker;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,12 +50,13 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
         // if the add call fails (because the object already exists in the set) then do not recurse
         if (!recentQueries.add(queryObject)) return false;
 
-        for (Iterator<BasicWorldPipeNetPath> it = getPaths(); it.hasNext(); ) {
+        for (Iterator<BasicWorldPipeNetPath> it = getPaths(); it.hasNext();) {
             BasicWorldPipeNetPath path = it.next();
             WorldPipeNetNode destination = path.getTargetNode();
             for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
                 IDataAccess access = capability.getValue()
-                        .getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS, capability.getKey().getOpposite());
+                        .getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
+                                capability.getKey().getOpposite());
                 if (access != null) {
                     queryObject.setShouldTriggerWalker(false);
                     boolean cancelled = access.accessData(queryObject);

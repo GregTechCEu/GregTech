@@ -2,11 +2,11 @@ package gregtech.api.graphnet.pipenet.logic;
 
 import gregtech.api.network.IPacket;
 
-import it.unimi.dsi.fastutil.floats.Float2ObjectArrayMap;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import it.unimi.dsi.fastutil.floats.Float2ObjectArrayMap;
 
 import java.util.Map;
 

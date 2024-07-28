@@ -1,9 +1,6 @@
 package gregtech.api.graphnet.worldnet;
 
-import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
-
-import gregtech.api.graphnet.pipenet.WorldPipeNet;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;

@@ -1,11 +1,8 @@
 package gregtech.api.graphnet;
 
 import gregtech.api.graphnet.alg.iter.ICacheableIterator;
-
 import gregtech.api.graphnet.graph.GraphVertex;
-
 import gregtech.api.graphnet.logic.NetLogicData;
-
 import gregtech.api.graphnet.path.INetPath;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -134,6 +131,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     /**
      * Used to determine if two nodes are equal, for graph purposes.
      * Should not change over the lifetime of a node, except when {@link #deserializeNBT(NBTTagCompound)} is called.
+     * 
      * @return equivalency data. Needs to work with {@link Objects#equals(Object, Object)}
      */
     public abstract Object getEquivalencyData();

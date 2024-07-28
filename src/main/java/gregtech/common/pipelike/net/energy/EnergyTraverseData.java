@@ -4,24 +4,22 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.NodeLossCache;
-import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
+import gregtech.api.graphnet.pipenet.NodeLossCache;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
-
 import gregtech.api.graphnet.traverse.util.FlatLossOperator;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 import gregtech.api.util.GTUtility;
-
 import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.function.Supplier;
 
@@ -75,7 +73,8 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                                 temperatureLogic.getTemperature(getQueryTick()))) {
                     return ReversibleLossOperator.IDENTITY;
                 }
-                return new FlatLossOperator(node.getData().getLogicEntryDefaultable(LossAbsoluteLogic.INSTANCE).getValue());
+                return new FlatLossOperator(
+                        node.getData().getLogicEntryDefaultable(LossAbsoluteLogic.INSTANCE).getValue());
             }
             if (result.hasPostAction()) NodeLossCache.registerLossResult(key, result);
             return result.getLossFunction();
@@ -98,7 +97,8 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
         long availableFlow = flowReachingDestination;
         for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
             if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
-                    capability.getKey() == inputFacing) continue; // anti insert-to-our-source logic
+                    capability.getKey() == inputFacing)
+                continue; // anti insert-to-our-source logic
 
             IEnergyContainer container = capability.getValue()
                     .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, capability.getKey().getOpposite());
@@ -145,6 +145,5 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                 logic.applyThermalEnergy(calculateHeatV(amperage, finalVoltage, voltageCap), tick);
             }
         }
-
     }
 }

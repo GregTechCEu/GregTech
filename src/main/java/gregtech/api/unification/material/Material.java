@@ -18,11 +18,8 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
-
 import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
-
 import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
-
 import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
 import net.minecraft.enchantment.Enchantment;
@@ -1055,38 +1052,46 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder cablePropertiesT(long voltage, long amperage, long loss, int meltTemperature) {
-            getOrCreatePipeNetProperties().setProperty(MaterialEnergyProperties.createT(voltage, amperage, loss, meltTemperature));
+            getOrCreatePipeNetProperties()
+                    .setProperty(MaterialEnergyProperties.createT(voltage, amperage, loss, meltTemperature));
             return this;
         }
 
         public Builder cablePropertiesS(long voltage, long amperage, long loss, int superconductorTemperature) {
-            getOrCreatePipeNetProperties().setProperty(MaterialEnergyProperties.createS(voltage, amperage, loss, superconductorTemperature));
+            getOrCreatePipeNetProperties()
+                    .setProperty(MaterialEnergyProperties.createS(voltage, amperage, loss, superconductorTemperature));
             return this;
         }
 
-        public Builder cableProperties(long voltage, long amperage, long loss, int meltTemperature, int superconductorTemperature) {
-            getOrCreatePipeNetProperties().setProperty(new MaterialEnergyProperties(voltage, amperage, loss, meltTemperature, superconductorTemperature));
+        public Builder cableProperties(long voltage, long amperage, long loss, int meltTemperature,
+                                       int superconductorTemperature) {
+            getOrCreatePipeNetProperties().setProperty(
+                    new MaterialEnergyProperties(voltage, amperage, loss, meltTemperature, superconductorTemperature));
             return this;
         }
 
         public Builder fluidPipeProperties(int maxTemp, long throughput, boolean gasProof) {
-            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof));
+            getOrCreatePipeNetProperties().setProperty(
+                    MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof));
             return this;
         }
 
         public Builder fluidPipeProperties(int maxTemp, long throughput, boolean gasProof, float priority) {
-            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp, priority).setContain(FluidState.GAS, gasProof));
+            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp, priority)
+                    .setContain(FluidState.GAS, gasProof));
             return this;
         }
 
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
                                            boolean plasmaProof) {
-            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof)
-                    .setContain(FluidAttributes.ACID, acidProof).setContain(FluidState.PLASMA, plasmaProof));
+            getOrCreatePipeNetProperties().setProperty(
+                    MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof)
+                            .setContain(FluidAttributes.ACID, acidProof).setContain(FluidState.PLASMA, plasmaProof));
             return this;
         }
 
-        public Builder fluidPipeProperties(int maxTemp, int minTemp, int throughput, boolean gasProof, boolean acidProof,
+        public Builder fluidPipeProperties(int maxTemp, int minTemp, int throughput, boolean gasProof,
+                                           boolean acidProof,
                                            boolean plasmaProof) {
             getOrCreatePipeNetProperties().setProperty(new MaterialFluidProperties(throughput, maxTemp, minTemp)
                     .setContain(FluidState.GAS, gasProof).setContain(FluidAttributes.ACID, acidProof)
@@ -1095,7 +1100,8 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
-            getOrCreatePipeNetProperties().setProperty(new MaterialItemProperties((long) (stacksPerSec * 16), priority));
+            getOrCreatePipeNetProperties()
+                    .setProperty(new MaterialItemProperties((long) (stacksPerSec * 16), priority));
             return this;
         }
 

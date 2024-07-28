@@ -1,25 +1,17 @@
 package gregtech.client.renderer.pipe;
 
-import com.github.bsideup.jabel.Desugar;
-
-import gregtech.client.renderer.pipe.AbstractPipeModel;
-
 import gregtech.client.renderer.pipe.util.CacheKey;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-
-import net.minecraft.util.IStringSerializable;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PipeItemModel<K extends CacheKey> implements IBakedModel {
 

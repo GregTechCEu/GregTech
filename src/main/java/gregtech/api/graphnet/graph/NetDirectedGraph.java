@@ -49,7 +49,8 @@ public class NetDirectedGraph extends SimpleDirectedWeightedGraph<GraphVertex, G
 
         if (graphEdge.wrapped.test(testObject)) {
             if (dynamicWeights) {
-                return graphEdge.wrapped.getDynamicWeight(testObject, net, simulator, queryTick, super.getEdgeWeight(graphEdge));
+                return graphEdge.wrapped.getDynamicWeight(testObject, net, simulator, queryTick,
+                        super.getEdgeWeight(graphEdge));
             } else return super.getEdgeWeight(graphEdge);
         } else return Double.POSITIVE_INFINITY;
     }

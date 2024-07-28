@@ -4,14 +4,12 @@ import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.path.INetPath;
-
 import gregtech.api.graphnet.traverse.util.FlowConsumptionStack;
 import gregtech.api.util.GTUtility;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.alg.util.Pair;
@@ -33,15 +31,16 @@ public final class TraverseHelpers {
      * specifically, find the lowest weight path, fill it to capacity, find the next lowest weight path, etc.
      * Requires dynamic weights to function properly.
      *
-     * @param data the traversal data.
-     * @param paths the paths to traverse.
+     * @param data   the traversal data.
+     * @param paths  the paths to traverse.
      * @param flowIn the flow to traverse with.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>, D extends ITraverseData<N, P>> long traverseFlood(
-            @NotNull D data,
-            @NotNull Iterator<P> paths,
-            long flowIn) {
+    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+            D extends ITraverseData<N, P>> long traverseFlood(
+                                                              @NotNull D data,
+                                                              @NotNull Iterator<P> paths,
+                                                              long flowIn) {
         boolean simulate = data.getSimulatorKey() != null;
         long availableFlow = flowIn;
         pathloop:
@@ -69,7 +68,8 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
+                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow),
+                        data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
                 if (pathFlow <= 0) continue pathloop;
@@ -90,18 +90,19 @@ public final class TraverseHelpers {
      * and then traverses it. Optionally supports flow, in which case overflows will be reported
      * and paths will be iterated over until flow or paths are exhausted.
      *
-     * @param data the traversal data.
-     * @param paths the paths to traverse.
+     * @param data             the traversal data.
+     * @param paths            the paths to traverse.
      * @param overflowListener will be provided with a node and incoming overflow once a path is walked
      *                         and the final overflows are calculated. If null, no overflow logic will be calculated.
-     * @param flowIn the flow to traverse with.
+     * @param flowIn           the flow to traverse with.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends NetEdge, P extends INetPath<N, E>, D extends ITraverseData<N, P>> long traverseDumb(
-            @NotNull D data,
-            @NotNull Iterator<P> paths,
-            @Nullable BiConsumer<N, Long> overflowListener,
-            long flowIn) {
+    public static <N extends NetNode, E extends NetEdge, P extends INetPath<N, E>,
+            D extends ITraverseData<N, P>> long traverseDumb(
+                                                             @NotNull D data,
+                                                             @NotNull Iterator<P> paths,
+                                                             @Nullable BiConsumer<N, Long> overflowListener,
+                                                             long flowIn) {
         boolean simulate = data.getSimulatorKey() != null;
         boolean isFlow = overflowListener != null;
         long availableFlow = isFlow ? flowIn : 0;
@@ -118,7 +119,8 @@ public final class TraverseHelpers {
             List<Consumer<Long>> overflowReporters = isFlow ? new ObjectArrayList<>() : null;
             assert nodes.size() == edges.size() + 1;
 
-            FlowConsumptionStack stack = isFlow ? new FlowConsumptionStack(data.traverseToNode(nodes.get(0), pathFlow)) : null;
+            FlowConsumptionStack stack = isFlow ?
+                    new FlowConsumptionStack(data.traverseToNode(nodes.get(0), pathFlow)) : null;
             if (isFlow) pathFlow = stack.applyLatestLossFunction(pathFlow);
 
             for (int i = 0; i < edges.size(); i++) {
@@ -142,7 +144,8 @@ public final class TraverseHelpers {
                             if (finalOverflow > 0) overflowListener.accept(targetNode, finalOverflow);
                         });
                     }
-                    stack.add(flow -> data.consumeFlowLimit(flowEdge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
+                    stack.add(flow -> data.consumeFlowLimit(flowEdge, targetNode, flow),
+                            data.traverseToNode(targetNode, pathFlow));
                     pathFlow = stack.applyLatestLossFunction(pathFlow);
                 }
 
@@ -164,29 +167,33 @@ public final class TraverseHelpers {
 
     /**
      * Provides logic for traversing a flow net in an equal distribution manner. Operates in the following stages:
-     * <br><br>
+     * <br>
+     * <br>
      * Stage One (collection) -- collect paths into a list while iterating, gathering a map of edges to flow info.
      * Get numbers for what is needed to provide 1 flow per node destination per path, ignoring potential loss.
      * If a path cannot be traversed, it is either trimmed or we abort based on {@code strict}.
-     * <br><br>
+     * <br>
+     * <br>
      * Stage Two (scaling) -- scale up the mult with a binary search until we get the largest mult where no edge
      * capacities are exceeded. If this mult is 0, abort and return 0.
-     * <br><br>
+     * <br>
+     * <br>
      * Stage Three (traversal) -- traverse the collected paths and perform consumption and flow, using the multiplier
      * from stage two.
      *
-     * @param data the traversal data.
-     * @param paths the paths to traverse.
+     * @param data   the traversal data.
+     * @param paths  the paths to traverse.
      * @param flowIn the flow to traverse with.
      * @param strict whether to abort if one of the destination paths cannot be traversed due to node restrictions,
      *               not edge restrictions.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>, D extends ITraverseData<N, P> & IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
-            @NotNull D data,
-            @NotNull Iterator<P> paths,
-            long flowIn,
-            boolean strict) {
+    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+            D extends ITraverseData<N, P> & IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
+                                                                                                           @NotNull D data,
+                                                                                                           @NotNull Iterator<P> paths,
+                                                                                                           long flowIn,
+                                                                                                           boolean strict) {
         // collection
         Map<Pair<E, N>, DistributorHelper> distributorHelperMap = new Object2ObjectOpenHashMap<>();
         Object2IntOpenHashMap<P> desiredMap = new Object2IntOpenHashMap<>();
@@ -265,7 +272,8 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
+                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow),
+                        data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
                 if (pathFlow <= 0) continue pathloop;
@@ -288,18 +296,20 @@ public final class TraverseHelpers {
      * {@link #traverseEqualDistribution(ITraverseData, Iterator, long, boolean)} returns 0 or 100 iterations are
      * performed.
      *
-     * @param data the traversal data.
+     * @param data          the traversal data.
      * @param pathsSupplier the supplier for a fresh set of paths.
-     * @param flowIn the flow to traverse with.
-     * @param strict whether to abort if one of the destination paths cannot be traversed due to node restrictions,
-     *               not edge restrictions.
+     * @param flowIn        the flow to traverse with.
+     * @param strict        whether to abort if one of the destination paths cannot be traversed due to node
+     *                      restrictions,
+     *                      not edge restrictions.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>, D extends ITraverseData<N, P> & IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
-            @NotNull D data,
-            @NotNull Supplier<Iterator<P>> pathsSupplier,
-            long flowIn,
-            boolean strict) {
+    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+            D extends ITraverseData<N, P> & IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
+                                                                                                           @NotNull D data,
+                                                                                                           @NotNull Supplier<Iterator<P>> pathsSupplier,
+                                                                                                           long flowIn,
+                                                                                                           boolean strict) {
         long availableFlow = flowIn;
         byte iterationCount = 0;
         while (iterationCount <= 100) {
@@ -318,18 +328,19 @@ public final class TraverseHelpers {
      * destinations will be walked to in a predictable manner through the use of a cache, any balancing must
      * be done on the {@link ITraverseData}'s end.
      *
-     * @param data the traversal data.
-     * @param paths the paths to traverse.
+     * @param data   the traversal data.
+     * @param paths  the paths to traverse.
      * @param flowIn the flow to traverse with.
      * @param strict whether to abort if one of the destination paths cannot be traversed due to node restrictions,
      *               not edge restrictions.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>, D extends ITraverseData<N, P> & IRoundRobinTraverseData<N, P>> long traverseRoundRobin(
-            @NotNull D data,
-            @NotNull Iterator<P> paths,
-            long flowIn,
-            boolean strict) {
+    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+            D extends ITraverseData<N, P> & IRoundRobinTraverseData<N, P>> long traverseRoundRobin(
+                                                                                                   @NotNull D data,
+                                                                                                   @NotNull Iterator<P> paths,
+                                                                                                   long flowIn,
+                                                                                                   boolean strict) {
         long availableFlow = flowIn;
         ArrayDeque<N> cache = data.getTraversalCache();
 
@@ -373,12 +384,12 @@ public final class TraverseHelpers {
         return flowIn - availableFlow;
     }
 
-    private static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>, D extends ITraverseData<N, P> & IRoundRobinTraverseData<N, P>> long rrTraverse(
-            @NotNull D data,
-            @NotNull P path,
-            long flowIn,
-            boolean strict) {
-
+    private static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+            D extends ITraverseData<N, P> & IRoundRobinTraverseData<N, P>> long rrTraverse(
+                                                                                           @NotNull D data,
+                                                                                           @NotNull P path,
+                                                                                           long flowIn,
+                                                                                           boolean strict) {
         boolean simulate = data.getSimulatorKey() != null;
         List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
         long pathFlow = flowIn;

@@ -2,18 +2,14 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
-
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -104,5 +100,4 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
             }
         }
     }
-
 }

@@ -7,7 +7,6 @@ import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.path.AbstractNetPath;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import org.jetbrains.annotations.Nullable;
@@ -20,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class BasicWorldPipeNetPath extends AbstractNetPath<WorldPipeNetNode, NetEdge> {
 
-    public static final NetPathMapper<BasicWorldPipeNetPath> MAPPER =
-            new NetPathMapper<>(BasicWorldPipeNetPath::new, BasicWorldPipeNetPath::new, BasicWorldPipeNetPath::new);
+    public static final NetPathMapper<BasicWorldPipeNetPath> MAPPER = new NetPathMapper<>(BasicWorldPipeNetPath::new,
+            BasicWorldPipeNetPath::new, BasicWorldPipeNetPath::new);
 
     public BasicWorldPipeNetPath(GraphVertex vertex) {
         this(Collections.singletonList(vertex), Collections.emptyList(),
@@ -38,6 +37,8 @@ public class BasicWorldPipeNetPath extends AbstractNetPath<WorldPipeNetNode, Net
     }
 
     public interface Provider {
-        Iterator<BasicWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick);
+
+        Iterator<BasicWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject,
+                                                 @Nullable SimulatorKey simulator, long queryTick);
     }
 }

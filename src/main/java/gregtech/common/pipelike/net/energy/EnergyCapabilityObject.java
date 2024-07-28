@@ -14,16 +14,13 @@ import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
 import gregtech.api.util.GTLog;
-
 import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +38,8 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
 
     private boolean transferring = false;
 
-    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> EnergyCapabilityObject(@NotNull N net, WorldPipeNetNode node) {
+    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> EnergyCapabilityObject(@NotNull N net,
+                                                                                           WorldPipeNetNode node) {
         this.net = net;
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
@@ -76,11 +74,13 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
                 tile.getPos(), side);
         availableAmperage -= TraverseHelpers.traverseFlood(data, getPaths(data), amperage);
         if (availableAmperage > 0) {
-            availableAmperage -= TraverseHelpers.traverseDumb(data, getPaths(data), data::handleOverflow, availableAmperage);
+            availableAmperage -= TraverseHelpers.traverseDumb(data, getPaths(data), data::handleOverflow,
+                    availableAmperage);
         }
         long accepted = amperage - availableAmperage;
 
-        if (internalBuffer != null) internalBuffer.consumeFlowLimit(IPredicateTestObject.INSTANCE, net, accepted, tick, simulator);
+        if (internalBuffer != null)
+            internalBuffer.consumeFlowLimit(IPredicateTestObject.INSTANCE, net, accepted, tick, simulator);
         if (!simulate) {
             EnergyGroupData group = getEnergyData();
             if (group != null) {
@@ -93,7 +93,8 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
 
     private Iterator<FlowWorldPipeNetPath> getPaths(EnergyTraverseData data) {
         assert tile != null;
-        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(), data.getQueryTick());
+        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
+                data.getQueryTick());
     }
 
     @Nullable
@@ -143,14 +144,16 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     public long getInputPerSec() {
         EnergyGroupData data = getEnergyData();
         if (data == null) return 0;
-        else return data.getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[0];
+        else return data
+                .getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[0];
     }
 
     @Override
     public long getOutputPerSec() {
         EnergyGroupData data = getEnergyData();
         if (data == null) return 0;
-        else return data.getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[1];
+        else return data
+                .getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[1];
     }
 
     @Override

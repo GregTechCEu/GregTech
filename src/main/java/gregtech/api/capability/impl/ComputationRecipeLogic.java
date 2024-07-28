@@ -29,7 +29,8 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     private boolean hasNotEnoughComputation;
     private int currentDrawnCWUt;
 
-    public <T extends RecipeMapMultiblockController & IComputationConsumer> ComputationRecipeLogic(T metaTileEntity, ComputationType type) {
+    public <T extends RecipeMapMultiblockController & IComputationConsumer> ComputationRecipeLogic(T metaTileEntity,
+                                                                                                   ComputationType type) {
         super(metaTileEntity);
         this.type = type;
     }

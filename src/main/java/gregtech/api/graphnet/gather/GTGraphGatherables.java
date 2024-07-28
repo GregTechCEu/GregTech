@@ -3,19 +3,17 @@ package gregtech.api.graphnet.gather;
 import gregtech.api.GTValues;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.INetLogicEntry;
+import gregtech.api.graphnet.logic.MultiNetCountLogic;
+import gregtech.api.graphnet.logic.ThroughputLogic;
+import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.predicate.ShutterPredicate;
+import gregtech.api.graphnet.predicate.IEdgePredicate;
 import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.laser.LaserStructure;
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
-import gregtech.api.graphnet.logic.MultiNetCountLogic;
-import gregtech.api.graphnet.logic.ThroughputLogic;
-import gregtech.api.graphnet.logic.WeightFactorLogic;
-
-import gregtech.api.graphnet.predicate.IEdgePredicate;
-
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
 

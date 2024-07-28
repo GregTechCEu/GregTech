@@ -28,7 +28,9 @@ public class ActivableSQC extends StructureQuadCache {
         this.overlayActiveTex = overlayActiveTex;
     }
 
-    public static @NotNull ActivableSQC create(PipeQuadHelper helper, SpriteInformation endTex, SpriteInformation sideTex, SpriteInformation overlayTex, SpriteInformation overlayActiveTex) {
+    public static @NotNull ActivableSQC create(PipeQuadHelper helper, SpriteInformation endTex,
+                                               SpriteInformation sideTex, SpriteInformation overlayTex,
+                                               SpriteInformation overlayActiveTex) {
         ActivableSQC cache = new ActivableSQC(helper, endTex, sideTex, overlayTex, overlayActiveTex);
         cache.buildPrototype();
         return cache;

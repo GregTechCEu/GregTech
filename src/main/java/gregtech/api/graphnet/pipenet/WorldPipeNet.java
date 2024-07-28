@@ -11,22 +11,17 @@ import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenet.predicate.ShutterPredicate;
 import gregtech.api.graphnet.worldnet.WorldNet;
-
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.CoverShutter;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,6 +61,7 @@ public abstract class WorldPipeNet extends WorldNet {
     /**
      * Called when a PipeTileEntity is marked dirty through {@link IDirtyNotifiable#markAsDirty()}, which is generally
      * when the state of its covers is changed.
+     * 
      * @param tile the tile marked dirty.
      * @param node the associated node.
      */
@@ -85,9 +81,10 @@ public abstract class WorldPipeNet extends WorldNet {
     /**
      * Preferred method to override if your net has custom predication rules. If the net is directed,
      * this method will <b>not</b> be called twice, so special handling for directedness is needed.
-     * @param source the source of the edge.
+     * 
+     * @param source      the source of the edge.
      * @param coverSource the cover on the source facing the target.
-     * @param target the target of the edge.
+     * @param target      the target of the edge.
      * @param coverTarget the cover on the target facing the source.
      */
     public void predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source, @Nullable Cover coverSource,

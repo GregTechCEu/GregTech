@@ -5,19 +5,16 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
-
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.traverse.util.MultLossOperator;
 import gregtech.api.util.EntityDamageUtil;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -52,7 +49,8 @@ public interface ContainmentFailure {
         return ATTRIBUTE_FAILURES.getOrDefault(attribute, FALLBACK);
     }
 
-    @NotNull NodeLossResult computeLossResult(FluidStack fluid);
+    @NotNull
+    NodeLossResult computeLossResult(FluidStack fluid);
 
     static void init() {
         registerFailure(FluidState.GAS, stack -> {
@@ -128,8 +126,8 @@ public interface ContainmentFailure {
                         boolean gaseous = stack.getFluid().isGaseous(stack);
                         tile.spawnParticles(gaseous ? EnumFacing.UP : EnumFacing.DOWN, EnumParticleTypes.CRIT_MAGIC,
                                 3 + GTValues.RNG.nextInt(2));
-                        tile.dealAreaDamage(gaseous ? 2 : 1, entity ->
-                                EntityDamageUtil.applyChemicalDamage(entity, gaseous ? 2 : 3));
+                        tile.dealAreaDamage(gaseous ? 2 : 1,
+                                entity -> EntityDamageUtil.applyChemicalDamage(entity, gaseous ? 2 : 3));
                     }
                 }, MultLossOperator.TENTHS[9]);
             } else {
@@ -144,8 +142,8 @@ public interface ContainmentFailure {
                         }
                         tile.spawnParticles(gaseous ? EnumFacing.UP : EnumFacing.DOWN, EnumParticleTypes.CRIT_MAGIC,
                                 6 + GTValues.RNG.nextInt(4));
-                        tile.dealAreaDamage(gaseous ? 2 : 1, entity ->
-                                EntityDamageUtil.applyChemicalDamage(entity, gaseous ? 3 : 4));
+                        tile.dealAreaDamage(gaseous ? 2 : 1,
+                                entity -> EntityDamageUtil.applyChemicalDamage(entity, gaseous ? 3 : 4));
                     }
                 }, MultLossOperator.EIGHTHS[6]);
             }

@@ -6,7 +6,6 @@ import gregtech.api.graphnet.logic.NetLogicData;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.List;
 
 public abstract class AbstractNetPath<N extends NetNode, E extends NetEdge> implements INetPath<N, E> {

@@ -1,18 +1,13 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
-
 import gregtech.client.renderer.pipe.PipeModel;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import org.jetbrains.annotations.NotNull;

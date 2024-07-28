@@ -1,21 +1,17 @@
 package gregtech.api.graphnet.worldnet;
 
-import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.path.GenericGraphNetPath;
 import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.IGraphNet;
-
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.alg.INetAlgorithm;
-
 import gregtech.api.graphnet.edge.NetEdge;
+import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.INetGraph;
-
 import gregtech.api.graphnet.graph.NetDirectedGraph;
 import gregtech.api.graphnet.graph.NetUndirectedGraph;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
-
+import gregtech.api.graphnet.path.GenericGraphNetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,7 +39,8 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
 
     @SafeVarargs
     public WorldNet(String name, boolean directed, Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
-        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(), algorithmBuilders);
+        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(),
+                algorithmBuilders);
     }
 
     public void setWorld(World world) {
@@ -55,7 +52,8 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
     }
 
     @Override
-    public Iterator<GenericGraphNetPath> getPaths(NetNode node, IPredicateTestObject testObject, @Nullable SimulatorKey simulator, long queryTick) {
+    public Iterator<GenericGraphNetPath> getPaths(NetNode node, IPredicateTestObject testObject,
+                                                  @Nullable SimulatorKey simulator, long queryTick) {
         nodeClassCheck(node);
         return backer.getPaths(node, 0, GenericGraphNetPath.MAPPER, testObject, simulator, queryTick);
     }

@@ -3,7 +3,6 @@ package gregtech.common.pipelike.handlers;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.net.optical.WorldOpticalNet;
 

@@ -4,25 +4,23 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.logic.NetLogicData;
+import gregtech.api.graphnet.logic.ThroughputLogic;
+import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
+import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.FluidProperty;
+import gregtech.api.unification.material.properties.MaterialProperties;
+import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.IOreRegistrationHandler;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.cable.CableStructure;
-import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.logic.ThroughputLogic;
-import gregtech.api.graphnet.logic.WeightFactorLogic;
-import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.unification.material.properties.MaterialProperties;
-import gregtech.api.unification.material.properties.PipeNetProperties;
-
 import gregtech.common.pipelike.block.pipe.PipeStructure;
-
 import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
@@ -30,10 +28,8 @@ import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.Fluid;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FOIL;
@@ -51,15 +47,19 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     /**
      * Generate a MaterialEnergyProperties
-     * @param voltageLimit the voltage limit for the cable
-     * @param amperageLimit the base amperage for the cable.
-     * @param lossPerAmp the base loss per amp per block traveled.
-     * @param temperatureLimit the melt temperature of the cable. If zero, autogeneration will be attempted.
+     * 
+     * @param voltageLimit                      the voltage limit for the cable
+     * @param amperageLimit                     the base amperage for the cable.
+     * @param lossPerAmp                        the base loss per amp per block traveled.
+     * @param temperatureLimit                  the melt temperature of the cable. If zero, autogeneration will be
+     *                                          attempted.
      * @param superconductorCriticalTemperature the superconductor temperature. When the temperature is at or below
-     *                                  superconductor temperature, loss will be treated as zero. A superconductor
-     *                                  temperature of 0 or less will be treated as not a superconductor.
+     *                                          superconductor temperature, loss will be treated as zero. A
+     *                                          superconductor
+     *                                          temperature of 0 or less will be treated as not a superconductor.
      */
-    public MaterialEnergyProperties(long voltageLimit, long amperageLimit, long lossPerAmp, int temperatureLimit, int superconductorCriticalTemperature) {
+    public MaterialEnergyProperties(long voltageLimit, long amperageLimit, long lossPerAmp, int temperatureLimit,
+                                    int superconductorCriticalTemperature) {
         this.voltageLimit = voltageLimit;
         this.amperageLimit = amperageLimit;
         this.temperatureLimit = temperatureLimit;
@@ -71,19 +71,19 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
         return voltageLimit;
     }
 
-    public static MaterialEnergyProperties createT(long voltageLimit, long amperageLimit, long lossPerAmp, int temperatureLimit) {
+    public static MaterialEnergyProperties createT(long voltageLimit, long amperageLimit, long lossPerAmp,
+                                                   int temperatureLimit) {
         return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, temperatureLimit, 0);
-
     }
 
-    public static MaterialEnergyProperties createS(long voltageLimit, long amperageLimit, long lossPerAmp, int superconductorCriticalTemperature) {
-        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, 0, superconductorCriticalTemperature);
-
+    public static MaterialEnergyProperties createS(long voltageLimit, long amperageLimit, long lossPerAmp,
+                                                   int superconductorCriticalTemperature) {
+        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, 0,
+                superconductorCriticalTemperature);
     }
 
     public static MaterialEnergyProperties create(long voltageLimit, long amperageLimit, long lossPerAmp) {
         return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, 0, 0);
-
     }
 
     public static IOreRegistrationHandler registrationHandler(TriConsumer<OrePrefix, Material, MaterialEnergyProperties> handler) {
@@ -111,7 +111,8 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
         if (properties.hasProperty(PropertyKey.INGOT)) {
             // Ensure all Materials with Cables and voltage tier IV or above have a Foil for recipe generation
             Material thisMaterial = properties.getMaterial();
-            if (!isSuperconductor() && voltageLimit >= GTValues.V[GTValues.IV] && !thisMaterial.hasFlag(GENERATE_FOIL)) {
+            if (!isSuperconductor() && voltageLimit >= GTValues.V[GTValues.IV] &&
+                    !thisMaterial.hasFlag(GENERATE_FOIL)) {
                 thisMaterial.addFlags(GENERATE_FOIL);
             }
         }

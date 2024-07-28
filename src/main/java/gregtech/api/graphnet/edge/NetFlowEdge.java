@@ -1,7 +1,6 @@
 package gregtech.api.graphnet.edge;
 
 import gregtech.api.graphnet.IGraphNet;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -31,9 +30,10 @@ public class NetFlowEdge extends AbstractNetFlowEdge {
     /**
      * NetEdge that provides standard flow behavior handling
      *
-     * @param flowBufferMult Determines maximum mult of 'buffer' flow capacity that can be built up along edges. Allows
-     *                        for once-an-interval push/pull operations instead of needing them every unit of time
-     *                        for maximum throughput.
+     * @param flowBufferMult   Determines maximum mult of 'buffer' flow capacity that can be built up along edges.
+     *                         Allows
+     *                         for once-an-interval push/pull operations instead of needing them every unit of time
+     *                         for maximum throughput.
      * @param regenerationTime Ticks required for flow to regenerate once. Allows slowing down the rate of regeneration.
      */
     public NetFlowEdge(int flowBufferMult, int regenerationTime) {

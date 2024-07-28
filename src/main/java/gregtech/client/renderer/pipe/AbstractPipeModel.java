@@ -10,12 +10,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ColorQuadCache;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
-
 import gregtech.client.renderer.pipe.util.CacheKey;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -28,15 +23,15 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,12 +152,14 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     }
 
     protected static class FakeItemOverrideList extends ItemOverrideList {
+
         public static final FakeItemOverrideList INSTANCE = new FakeItemOverrideList();
 
         @Override
-        public @NotNull IBakedModel handleItemState(@NotNull IBakedModel originalModel, @NotNull ItemStack stack, World world,
+        public @NotNull IBakedModel handleItemState(@NotNull IBakedModel originalModel, @NotNull ItemStack stack,
+                                                    World world,
                                                     EntityLivingBase entity) {
-            if (originalModel instanceof AbstractPipeModel<?> model) {
+            if (originalModel instanceof AbstractPipeModel<?>model) {
                 PipeItemModel<?> item = model.getItemModel(stack, world, entity);
                 if (item != null) return item;
             }

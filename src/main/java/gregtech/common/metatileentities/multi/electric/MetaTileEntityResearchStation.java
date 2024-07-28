@@ -1,9 +1,10 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IObjectHolder;
 import gregtech.api.capability.data.IComputationConsumer;
 import gregtech.api.capability.data.IDataAccess;
-import gregtech.api.capability.IObjectHolder;
+import gregtech.api.capability.data.query.ComputationQuery;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -19,7 +20,6 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;
-import gregtech.api.capability.data.query.ComputationQuery;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;

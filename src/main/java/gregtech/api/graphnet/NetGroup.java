@@ -103,7 +103,8 @@ public class NetGroup {
         this.clearPathCaches();
         List<NetNode> targets = this.net.getGraph().outgoingEdgesOf(source.wrapper).stream().map(a -> {
             // handling so undirected graphs don't throw an error
-            if (net.getGraph().isDirected() || Objects.equals(getTarget(a).wrapped, source)) return getTarget(a).wrapped;
+            if (net.getGraph().isDirected() || Objects.equals(getTarget(a).wrapped, source))
+                return getTarget(a).wrapped;
             return getSource(a).wrapped;
         }).collect(Collectors.toList());
         this.net.getBacker().removeVertex(source.wrapper);
