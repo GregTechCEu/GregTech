@@ -192,4 +192,33 @@ public enum RelativeDirection {
 
         return pos.add(oX, oY, oZ);
     }
+
+    public static BlockPos.MutableBlockPos offsetPos(BlockPos.MutableBlockPos pos, EnumFacing frontFacing,
+                                                     EnumFacing upwardsFacing, boolean isFlipped, int upOffset,
+                                                     int leftOffset, int forwardOffset) {
+        if (upOffset == 0 && leftOffset == 0 && forwardOffset == 0) {
+            return pos;
+        }
+
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+
+        final EnumFacing relUp = UP.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+        x += relUp.getXOffset() * upOffset;
+        y += relUp.getYOffset() * upOffset;
+        z += relUp.getZOffset() * upOffset;
+
+        final EnumFacing relLeft = LEFT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+        x += relLeft.getXOffset() * leftOffset;
+        y += relLeft.getYOffset() * leftOffset;
+        z += relLeft.getZOffset() * leftOffset;
+
+        final EnumFacing relForward = FRONT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+        x += relForward.getXOffset() * forwardOffset;
+        y += relForward.getYOffset() * forwardOffset;
+        z += relForward.getZOffset() * forwardOffset;
+
+        return pos.setPos(x, y, z);
+    }
 }

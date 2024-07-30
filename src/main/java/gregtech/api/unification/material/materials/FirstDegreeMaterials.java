@@ -166,7 +166,12 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        // FREE ID 270
+        SuperheatedSteam = new Material.Builder(270, gregtechId("superheated_steam"))
+                .gas(new FluidBuilder().temperature(600).customStill())
+                .color(0xC4C4C4) //TODO color
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hydrogen, 2, Oxygen, 1)
+                .build();
 
         Coal = new Material.Builder(271, gregtechId("coal"))
                 .gem(1, 1600).ore(2, 1) // default coal burn time in vanilla
@@ -599,6 +604,7 @@ public class FirstDegreeMaterials {
                 .toolStats(ToolProperty.Builder.of(7.0F, 5.0F, 1024, 3)
                         .enchantability(14).build())
                 .rotorStats(7.0f, 4.0f, 480)
+                .turbineRotor(b -> b.legacyStats(7.0f, 4.0f, 480, 3))
                 .fluidPipeProperties(2428, 75, true, true, true, false)
                 .blast(b -> b.temp(1700, GasTier.LOW).blastStats(VA[HV], 1100))
                 .build();
