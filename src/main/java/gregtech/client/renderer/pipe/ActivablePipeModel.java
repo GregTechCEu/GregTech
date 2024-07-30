@@ -12,6 +12,7 @@ import gregtech.client.renderer.pipe.util.ActivableCacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
@@ -79,6 +81,8 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
         } else {
             if (emissiveActive && bloomLayer) {
                 ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, argb, true);
+                // TODO bake this into the original quads
+                quads = quads.stream().map(RenderUtil::makeEmissive).collect(Collectors.toList());
             } else if (!emissiveActive && getCurrentRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED) {
                 ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, argb, true);
             }
@@ -87,13 +91,18 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
     }
 
     @Override
+    public SpriteInformation getParticleSprite(@Nullable Material material) {
+        return sideTex.get();
+    }
+
+    @Override
     public @NotNull TextureAtlasSprite getParticleTexture() {
-        return sideTex.get().sprite();
+        return getParticleSprite(null).sprite();
     }
 
     @Override
     protected @NotNull ActivableCacheKey toKey(@NotNull IExtendedBlockState state) {
-        return new ActivableCacheKey(state.getValue(THICKNESS_PROPERTY), state.getValue(ACTIVE_PROPERTY));
+        return ActivableCacheKey.of(state.getValue(THICKNESS_PROPERTY), state.getValue(ACTIVE_PROPERTY));
     }
 
     @Override

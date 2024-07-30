@@ -69,7 +69,7 @@ public class StructureQuadCache {
     }
 
     protected void buildCore(List<RecolorableBakedQuad> list) {
-        helper.setTargetSprite(endTex);
+        helper.setTargetSprite(sideTex);
         for (EnumFacing facing : EnumFacing.VALUES) {
             int start = list.size();
             list.add(helper.visitCore(facing));

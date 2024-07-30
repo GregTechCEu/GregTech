@@ -2,9 +2,12 @@ package gregtech.client.renderer.pipe.quad;
 
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,7 +48,13 @@ public class RecolorableBakedQuad extends UnpackedBakedQuad {
                 this.applyDiffuseLighting, this.format);
     }
 
-    public static class Builder {
+    public static RecolorableBakedQuad.Builder of(BakedQuad quad) {
+        Builder builder = new Builder(quad.getFormat());
+        quad.pipe(builder);
+        return builder;
+    }
+
+    public static class Builder implements IVertexConsumer {
 
         private final VertexFormat format;
         private final float[][][] unpackedData;
@@ -83,6 +92,9 @@ public class RecolorableBakedQuad extends UnpackedBakedQuad {
         public void setTexture(@NotNull SpriteInformation texture) {
             this.texture = texture;
         }
+
+        @Override
+        public void setTexture(@NotNull TextureAtlasSprite texture) {}
 
         public void setApplyDiffuseLighting(boolean diffuse) {
             this.applyDiffuseLighting = diffuse;

@@ -65,8 +65,13 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     }
 
     @Override
+    public SpriteInformation getParticleSprite(@Nullable Material material) {
+        return wireTex.get();
+    }
+
+    @Override
     public @NotNull TextureAtlasSprite getParticleTexture() {
-        return wireTex.get().sprite();
+        return getParticleSprite(null).sprite();
     }
 
     @Override

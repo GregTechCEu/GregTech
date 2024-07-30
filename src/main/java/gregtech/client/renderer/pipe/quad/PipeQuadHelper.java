@@ -5,18 +5,33 @@ import gregtech.client.renderer.pipe.util.SpriteInformation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.pipeline.TRSRTransformer;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public final class PipeQuadHelper {
 
-    private static final VertexFormat FORMAT = DefaultVertexFormats.ITEM;
+    private static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4);
+    private static final VertexFormat FORMAT = new VertexFormat(DefaultVertexFormats.BLOCK).addElement(NORMAL_4F);
+    private static final TRSRTransformation INVERTER;
+    static {
+        Matrix4f matrix4f = new Matrix4f();
+        matrix4f.setIdentity();
+        matrix4f.mul(-1);
+        INVERTER = new TRSRTransformation(matrix4f);
+    }
 
     private final float thickness;
     private final float x;
@@ -29,7 +44,7 @@ public final class PipeQuadHelper {
     private final UVMapper tallMapper;
     private final UVMapper wideMapper;
 
-    private RecolorableBakedQuad.Builder building;
+    private IVertexConsumer building;
 
     private SpriteInformation targetSprite;
 
@@ -95,8 +110,8 @@ public final class PipeQuadHelper {
                 }
                 list.add(visitQuad(EnumFacing.UP, x1, x2, y + large, 0, z + small, z + large, wideMapper));
                 list.add(visitQuad(EnumFacing.DOWN, x1, x2, y + small, 0, z + small, z + large, wideMapper));
-                list.add(visitQuad(EnumFacing.SOUTH, x1, x2, y + small, y + large, z + large, 0, wideMapper));
-                list.add(visitQuad(EnumFacing.NORTH, x1, x2, y + small, y + large, z + small, 0, wideMapper));
+                list.add(visitQuad(EnumFacing.SOUTH, x1, x2, y + small, y + large, z + large, 0, tallMapper));
+                list.add(visitQuad(EnumFacing.NORTH, x1, x2, y + small, y + large, z + small, 0, tallMapper));
             }
             case Y -> {
                 float y1;
@@ -108,8 +123,8 @@ public final class PipeQuadHelper {
                     y1 = this.y + small;
                     y2 = 0;
                 }
-                list.add(visitQuad(EnumFacing.EAST, x + large, 0, y1, y2, z + small, z + large, tallMapper));
-                list.add(visitQuad(EnumFacing.WEST, x + small, 0, y1, y2, z + small, z + large, tallMapper));
+                list.add(visitQuad(EnumFacing.EAST, x + large, 0, y1, y2, z + small, z + large, wideMapper));
+                list.add(visitQuad(EnumFacing.WEST, x + small, 0, y1, y2, z + small, z + large, wideMapper));
                 list.add(visitQuad(EnumFacing.SOUTH, x + small, x + large, y1, y2, z + large, 0, wideMapper));
                 list.add(visitQuad(EnumFacing.NORTH, x + small, x + large, y1, y2, z + small, 0, wideMapper));
             }
@@ -145,32 +160,33 @@ public final class PipeQuadHelper {
 
     public RecolorableBakedQuad visitQuad(EnumFacing normal, float x1, float x2, float y1, float y2, float z1, float z2,
                                           UVMapper mapper) {
-        building = new RecolorableBakedQuad.Builder(FORMAT);
+        RecolorableBakedQuad.Builder builder = new RecolorableBakedQuad.Builder(FORMAT);
+        building = builder;
+        UVCorner[] array = UVCorner.VALUES;
         switch (normal.getAxis()) {
             case X -> {
-                visitVertex(normal, x1, y1, z1, mapper.map(UVCorner.VALUES[0], targetSprite.sprite()));
-                visitVertex(normal, x1, y1, z2, mapper.map(UVCorner.VALUES[1], targetSprite.sprite()));
-                visitVertex(normal, x1, y2, z2, mapper.map(UVCorner.VALUES[2], targetSprite.sprite()));
-                visitVertex(normal, x1, y2, z1, mapper.map(UVCorner.VALUES[3], targetSprite.sprite()));
+                visitVertex(normal, x1, y1, z1, mapper.map(array[0], targetSprite.sprite()));
+                visitVertex(normal, x1, y1, z2, mapper.map(array[1], targetSprite.sprite()));
+                visitVertex(normal, x1, y2, z2, mapper.map(array[2], targetSprite.sprite()));
+                visitVertex(normal, x1, y2, z1, mapper.map(array[3], targetSprite.sprite()));
             }
             case Y -> {
-                visitVertex(normal, x1, y1, z1, mapper.map(UVCorner.VALUES[0], targetSprite.sprite()));
-                visitVertex(normal, x1, y1, z2, mapper.map(UVCorner.VALUES[1], targetSprite.sprite()));
-                visitVertex(normal, x2, y1, z2, mapper.map(UVCorner.VALUES[2], targetSprite.sprite()));
-                visitVertex(normal, x2, y1, z1, mapper.map(UVCorner.VALUES[3], targetSprite.sprite()));
+                visitVertex(normal, x1, y1, z1, mapper.map(array[0], targetSprite.sprite()));
+                visitVertex(normal, x1, y1, z2, mapper.map(array[1], targetSprite.sprite()));
+                visitVertex(normal, x2, y1, z2, mapper.map(array[2], targetSprite.sprite()));
+                visitVertex(normal, x2, y1, z1, mapper.map(array[3], targetSprite.sprite()));
             }
             case Z -> {
-                visitVertex(normal, x1, y1, z1, mapper.map(UVCorner.VALUES[0], targetSprite.sprite()));
-                visitVertex(normal, x2, y1, z1, mapper.map(UVCorner.VALUES[1], targetSprite.sprite()));
-                visitVertex(normal, x2, y2, z1, mapper.map(UVCorner.VALUES[2], targetSprite.sprite()));
-                visitVertex(normal, x1, y2, z1, mapper.map(UVCorner.VALUES[3], targetSprite.sprite()));
+                visitVertex(normal, x1, y1, z1, mapper.map(array[0], targetSprite.sprite()));
+                visitVertex(normal, x2, y1, z1, mapper.map(array[1], targetSprite.sprite()));
+                visitVertex(normal, x2, y2, z1, mapper.map(array[2], targetSprite.sprite()));
+                visitVertex(normal, x1, y2, z1, mapper.map(array[3], targetSprite.sprite()));
             }
         }
-        building.setQuadOrientation(normal);
-        building.setTexture(targetSprite);
-        RecolorableBakedQuad quad = building.build();
         building = null;
-        return quad;
+        builder.setQuadOrientation(normal);
+        builder.setTexture(targetSprite);
+        return builder.build();
     }
 
     private void visitVertex(EnumFacing normal, float x, float y, float z, UVMapper.UVPair pair) {
@@ -196,7 +212,7 @@ public final class PipeQuadHelper {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static void putVertex(RecolorableBakedQuad.Builder consumer, VertexFormat format, EnumFacing normal,
+    private static void putVertex(IVertexConsumer consumer, VertexFormat format, EnumFacing normal,
                                   float x, float y, float z, float u, float v, int argb) {
         for (int e = 0; e < format.getElementCount(); e++) {
             switch (format.getElement(e).getUsage()) {
@@ -214,7 +230,7 @@ public final class PipeQuadHelper {
                     float offX = (float) normal.getXOffset();
                     float offY = (float) normal.getYOffset();
                     float offZ = (float) normal.getZOffset();
-                    consumer.put(e, offX, offY, offZ, 0f);
+                    consumer.put(e, offX, offY, offZ, -1f);
                     break;
                 case UV:
                     if (format.getElement(e).getIndex() == 0) {

@@ -12,6 +12,7 @@ import gregtech.client.renderer.pipe.cache.RestrictiveSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.PipeSpriteWoodClarifier;
+import gregtech.client.renderer.pipe.util.SpriteInformation;
 import gregtech.client.renderer.pipe.util.WoodCacheKey;
 import gregtech.client.renderer.texture.Textures;
 
@@ -27,6 +28,8 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,8 +84,13 @@ public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
     }
 
     @Override
+    public SpriteInformation getParticleSprite(@Nullable Material material) {
+        return sideTex.getSprite(material != null && material.hasProperty(PropertyKey.WOOD));
+    }
+
+    @Override
     public @NotNull TextureAtlasSprite getParticleTexture() {
-        return sideTex.getSprite(false).sprite();
+        return getParticleSprite(null).sprite();
     }
 
     public @NotNull TextureAtlasSprite getParticleTexture(Material material) {
@@ -91,8 +99,7 @@ public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
 
     @Override
     protected @NotNull WoodCacheKey toKey(@NotNull IExtendedBlockState state) {
-        return new WoodCacheKey(state.getValue(THICKNESS_PROPERTY),
-                state.getValue(MATERIAL_PROPERTY).hasProperty(PropertyKey.WOOD));
+        return WoodCacheKey.of(state.getValue(THICKNESS_PROPERTY), state.getValue(MATERIAL_PROPERTY));
     }
 
     @Override

@@ -61,6 +61,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -70,6 +71,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
@@ -436,20 +438,32 @@ public class MetaBlocks {
     public static void registerItemModels() {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE),
                 stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+
+        // prevent the loader from trying to locate the model files as only the IBakedModels exist, and
+        // they are created during runtime.
+        ResourceLocation decoy = new ResourceLocation("minecraft:builtin/generated");
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
-            for (CableBlock cable : CABLES.get(registry.getModid()))
-                ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable),
-                        stack -> cable.getStructure().getModel().getLoc());
-            for (PipeBlock pipe : MATERIAL_PIPES.get(registry.getModid()))
-                ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
-                        stack -> pipe.getStructure().getModel().getLoc());
+            for (CableBlock cable : CABLES.get(registry.getModid())) {
+                Item item = Item.getItemFromBlock(cable);
+                ModelLoader.setCustomMeshDefinition(item, stack -> cable.getStructure().getModel().getLoc());
+                ModelBakery.registerItemVariants(item, decoy);
+            }
+            for (PipeBlock pipe : MATERIAL_PIPES.get(registry.getModid())) {
+                Item item = Item.getItemFromBlock(pipe);
+                ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getStructure().getModel().getLoc());
+                ModelBakery.registerItemVariants(item, decoy);
+            }
         }
-        for (OpticalPipeBlock pipe : OPTICAL_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
-                    stack -> pipe.getStructure().getModel().getLoc());
-        for (LaserPipeBlock pipe : LASER_PIPES)
-            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe),
-                    stack -> pipe.getStructure().getModel().getLoc());
+        for (OpticalPipeBlock pipe : OPTICAL_PIPES) {
+            Item item = Item.getItemFromBlock(pipe);
+            ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getStructure().getModel().getLoc());
+            ModelBakery.registerItemVariants(item, decoy);
+        }
+        for (LaserPipeBlock pipe : LASER_PIPES) {
+            Item item = Item.getItemFromBlock(pipe);
+            ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getStructure().getModel().getLoc());
+            ModelBakery.registerItemVariants(item, decoy);
+        }
 
         registerItemModel(BOILER_CASING);
         registerItemModel(METAL_CASING);

@@ -12,10 +12,13 @@ import gregtech.client.renderer.pipe.cache.StructureQuadCache;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
 
+import gregtech.client.renderer.pipe.util.SpriteInformation;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -32,11 +35,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SideOnly(Side.CLIENT)
 public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedModel {
@@ -51,8 +61,6 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     public static UnlistedByteProperty BLOCKED_MASK_PROPERTY = new UnlistedByteProperty("blocked_mask");
     public static UnlistedIntegerProperty COLOR_PROPERTY = new UnlistedIntegerProperty("color");
 
-    private static final List<BakedQuad> EMPTY = new ArrayList<>();
-
     protected final Object2ObjectOpenHashMap<ResourceLocation, ColorQuadCache> frameCache = new Object2ObjectOpenHashMap<>();
     protected final Object2ObjectOpenHashMap<K, StructureQuadCache> pipeCache = new Object2ObjectOpenHashMap<>();
 
@@ -64,14 +72,21 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
 
     @Override
     public @NotNull List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        if (state instanceof IExtendedBlockState ext) {
-            K key = toKey(ext);
-            Material frameMaterial = ext.getValue(FRAME_MATERIAL_PROPERTY);
-            byte frameMask = ext.getValue(FRAME_MASK_PROPERTY);
-            return getQuads(key, ext.getValue(CONNECTION_MASK_PROPERTY), ext.getValue(CLOSED_MASK_PROPERTY),
-                    ext.getValue(BLOCKED_MASK_PROPERTY), ext.getValue(COLOR_PROPERTY), frameMaterial, frameMask);
+        if (side == null && state instanceof IExtendedBlockState ext) {
+            return getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
+                    safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
+                    safeInt(ext.getValue(COLOR_PROPERTY)), ext.getValue(FRAME_MATERIAL_PROPERTY),
+                    safeByte(ext.getValue(FRAME_MASK_PROPERTY)));
         }
-        return EMPTY;
+        return Collections.emptyList();
+    }
+
+    protected static byte safeByte(@Nullable Byte abyte) {
+        return abyte == null ? 0 : abyte;
+    }
+
+    protected static int safeInt(@Nullable Integer integer) {
+        return integer == null ? 0 : integer;
     }
 
     public @NotNull List<BakedQuad> getQuads(K key, byte connectionMask, byte closedMask, byte blockedMask, int argb,
@@ -107,23 +122,26 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     protected abstract @NotNull K toKey(@NotNull IExtendedBlockState state);
 
     protected final @NotNull CacheKey defaultKey(@NotNull IExtendedBlockState state) {
-        return new CacheKey(state.getValue(THICKNESS_PROPERTY));
+        return CacheKey.of(state.getValue(THICKNESS_PROPERTY));
     }
 
     protected abstract StructureQuadCache constructForKey(K key);
 
-    public @NotNull TextureAtlasSprite getParticleTexture(Material material) {
-        return getParticleTexture();
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture(int paintColor, @Nullable Material material) {
+        SpriteInformation spriteInformation = getParticleSprite(material);
+        return new ImmutablePair<>(spriteInformation.sprite(), spriteInformation.colorable() ? paintColor : 0xFFFFFFFF);
     }
+
+    public abstract SpriteInformation getParticleSprite(@Nullable Material material);
 
     @Override
     public boolean isAmbientOcclusion() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isGui3d() {
-        return true;
+        return false;
     }
 
     @Override

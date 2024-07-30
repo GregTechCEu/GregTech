@@ -1,6 +1,11 @@
 package gregtech.client.renderer.pipe.util;
 
+import gregtech.api.unification.material.Material;
+
+import gregtech.api.unification.material.properties.PropertyKey;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -11,6 +16,18 @@ public class WoodCacheKey extends CacheKey {
     public WoodCacheKey(float thickness, boolean wood) {
         super(thickness);
         this.wood = wood;
+    }
+    
+    public static WoodCacheKey of(@Nullable Float thickness, @Nullable Boolean wood) {
+        float thick = thickness == null ? 0.5f : thickness;
+        boolean wd = wood != null && wood;
+        return new WoodCacheKey(thick, wd);
+    }
+
+    public static WoodCacheKey of(@Nullable Float thickness, @Nullable Material material) {
+        float thick = thickness == null ? 0.5f : thickness;
+        boolean wood = material != null && material.hasProperty(PropertyKey.WOOD);
+        return new WoodCacheKey(thick, wood);
     }
 
     public boolean isWood() {

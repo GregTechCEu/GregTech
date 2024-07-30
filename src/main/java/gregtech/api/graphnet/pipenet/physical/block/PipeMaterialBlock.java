@@ -117,14 +117,14 @@ public abstract class PipeMaterialBlock extends WorldPipeBlock {
 
     @Override
     public @Nullable PipeMaterialTileEntity getTileEntity(@NotNull IBlockAccess world, @NotNull BlockPos pos) {
-        if (GTUtility.arePosEqual(lastTilePos, pos)) {
-            PipeTileEntity tile = lastTile.get();
+        if (GTUtility.arePosEqual(lastTilePos.get(), pos)) {
+            PipeTileEntity tile = lastTile.get().get();
             if (tile != null) return (PipeMaterialTileEntity) tile;
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeMaterialTileEntity pipe) {
-            lastTilePos = pos;
-            lastTile = new WeakReference<>(pipe);
+            lastTilePos.set(pos);
+            lastTile.set(new WeakReference<>(pipe));
             return pipe;
         } else return null;
     }
@@ -138,8 +138,7 @@ public abstract class PipeMaterialBlock extends WorldPipeBlock {
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         PipeMaterialTileEntity tile = getTileEntity(world, blockPos);
         if (tile != null) {
-            return ImmutablePair.of(getStructure().getModel().getParticleTexture(tile.getMaterial()),
-                    tile.getPaintingColor());
+            return getStructure().getModel().getParticleTexture(tile.getPaintingColor(), tile.getMaterial());
         }
         return null;
     }

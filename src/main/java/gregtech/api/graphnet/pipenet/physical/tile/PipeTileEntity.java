@@ -143,10 +143,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     private void syncConnected() {
-        writeCustomData(UPDATE_CONNECTIONS, buffer -> {
-            buffer.writeByte(connectionMask);
-            buffer.writeByte(renderMask);
-        });
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_CONNECTIONS, buffer -> {
+                buffer.writeByte(connectionMask);
+                buffer.writeByte(renderMask);
+            });
+        } else scheduleRenderUpdate();
         markDirty();
     }
 
@@ -173,7 +175,9 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     private void syncBlocked() {
-        writeCustomData(UPDATE_BLOCKED_CONNECTIONS, buffer -> buffer.writeByte(blockedMask));
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_BLOCKED_CONNECTIONS, buffer -> buffer.writeByte(blockedMask));
+        } else scheduleRenderUpdate();
         markDirty();
     }
 
@@ -199,7 +203,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         if (!getWorld().isRemote) {
             writeCustomData(UPDATE_PAINT, buffer -> buffer.writeInt(this.paintingColor));
             markDirty();
-        }
+        } else scheduleRenderUpdate();
     }
 
     public boolean isPainted() {
@@ -218,10 +222,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     private void syncFrameMaterial() {
-        writeCustomData(UPDATE_FRAME_MATERIAL, buffer -> {
-            if (frameMaterial != null) buffer.writeString(this.frameMaterial.getRegistryName());
-            else buffer.writeString("");
-        });
+        if (!getWorld().isRemote) {
+            writeCustomData(UPDATE_FRAME_MATERIAL, buffer -> {
+                if (frameMaterial != null) buffer.writeString(this.frameMaterial.getRegistryName());
+                else buffer.writeString("");
+            });
+        } else scheduleRenderUpdate();
         markDirty();
     }
 
@@ -265,6 +271,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     // cover //
 
+    @NotNull
     public PipeCoverHolder getCoverHolder() {
         return covers;
     }
@@ -366,8 +373,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         if (capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER) {
             return GregtechTileCapabilities.CAPABILITY_COVER_HOLDER.cast(getCoverHolder());
         }
-        T pipeCapability = capabilities.get(capability).getCapabilityForSide(capability, facing);
-        if (pipeCapability == null) pipeCapability = super.getCapability(capability, facing);
+        T pipeCapability;
+        IPipeCapabilityObject object = capabilities.get(capability);
+        if (object == null || (pipeCapability = object.getCapabilityForSide(capability, facing)) == null)
+            pipeCapability = super.getCapability(capability, facing);
 
         Cover cover = facing == null ? null : getCoverHolder().getCoverAtSide(facing);
         if (cover == null) {
@@ -446,6 +455,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public @NotNull NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setByte("ConnectionMask", connectionMask);
+        compound.setByte("RenderMask", renderMask);
         compound.setByte("BlockedMask", blockedMask);
         compound.setInteger("Paint", paintingColor);
         if (frameMaterial != null) compound.setString("Frame", frameMaterial.getRegistryName());
@@ -457,12 +467,14 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void readFromNBT(@NotNull NBTTagCompound compound) {
         super.readFromNBT(compound);
         connectionMask = compound.getByte("ConnectionMask");
+        renderMask = compound.getByte("RenderMask");
         blockedMask = compound.getByte("BlockedMask");
         paintingColor = compound.getInteger("Paint");
         if (compound.hasKey("Frame"))
             this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("Frame"));
         else this.frameMaterial = null;
         this.getCoverHolder().deserializeNBT(compound.getCompoundTag("Covers"));
+        scheduleRenderUpdate();
     }
 
     @Override

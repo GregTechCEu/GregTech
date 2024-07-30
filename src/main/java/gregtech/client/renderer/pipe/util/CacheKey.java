@@ -3,6 +3,7 @@ package gregtech.client.renderer.pipe.util;
 import net.minecraft.util.IStringSerializable;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -15,6 +16,11 @@ public class CacheKey implements IStringSerializable {
     public CacheKey(float thickness) {
         this.thickness = thickness;
         this.hash = computeHash();
+    }
+
+    public static CacheKey of(@Nullable Float thickness) {
+        float thick = thickness == null ? 0.5f : thickness;
+        return new CacheKey(thick);
     }
 
     public float getThickness() {

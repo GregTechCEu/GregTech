@@ -64,8 +64,8 @@ import java.util.Map;
 public abstract class WorldPipeBlock extends BuiltInRenderBlock {
 
     // do not touch these two unless you know what you are doing
-    protected BlockPos lastTilePos = new BlockPos(0, 0, 0);
-    protected WeakReference<PipeTileEntity> lastTile = new WeakReference<>(null);
+    protected ThreadLocal<BlockPos> lastTilePos = ThreadLocal.withInitial(() -> new BlockPos(0, 0, 0));
+    protected ThreadLocal<WeakReference<PipeTileEntity>> lastTile = ThreadLocal.withInitial(() -> new WeakReference<>(null));
 
     private final IPipeStructure structure;
 
@@ -324,7 +324,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         PipeTileEntity tile = getTileEntity(world, blockPos);
         if (tile != null) {
-            return ImmutablePair.of(getStructure().getModel().getParticleTexture(), tile.getPaintingColor());
+            return getStructure().getModel().getParticleTexture(tile.getPaintingColor(), null);
         }
         return null;
     }
@@ -483,14 +483,14 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
 
     @Nullable
     public PipeTileEntity getTileEntity(@NotNull IBlockAccess world, @NotNull BlockPos pos) {
-        if (GTUtility.arePosEqual(lastTilePos, pos)) {
-            PipeTileEntity tile = lastTile.get();
+        if (GTUtility.arePosEqual(lastTilePos.get(), pos)) {
+            PipeTileEntity tile = lastTile.get().get();
             if (tile != null) return tile;
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeTileEntity pipe) {
-            lastTilePos = pos;
-            lastTile = new WeakReference<>(pipe);
+            lastTilePos.set(pos);
+            lastTile.set(new WeakReference<>(pipe));
             return pipe;
         } else return null;
     }
