@@ -40,6 +40,8 @@ public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IRotorHolder> ROTOR_HOLDER = ability(
             "rotor_holder", IRotorHolder.class);
+    public static final MultiblockAbility<RotorHolder> ROTOR_HOLDER_2 = ability(
+            "rotor_holder_2", RotorHolder.class);
 
     public static final MultiblockAbility<IFluidTank> PUMP_FLUID_HATCH = ability(
             "pump_fluid_hatch", IFluidTank.class);

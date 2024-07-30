@@ -1034,7 +1034,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return the current recipe's EU/t for TOP/Waila/Tricorder
      */
     public long getInfoProviderEUt() {
-        return getRecipeEUt();
+        return consumesEnergy() ? getRecipeEUt() : -getRecipeEUt();
     }
 
     /**
