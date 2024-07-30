@@ -42,8 +42,7 @@ public class FissionFuelRegistry {
         return HASHED_FUELS.get(hash);
     }
 
-    @Nullable
-    public static ItemStack getDepletedFuel(IFissionFuelStats stats) {
-        return DEPLETED_FUELS.get(stats);
+    public static @NotNull ItemStack getDepletedFuel(IFissionFuelStats stats) {
+        return DEPLETED_FUELS.get(stats).copy();
     }
 }

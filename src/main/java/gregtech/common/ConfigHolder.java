@@ -182,7 +182,7 @@ public class ConfigHolder {
             @Config.Comment({ "Nuclear coolant heat exchanger recipe efficiency multiplier for balancing purposes",
                     "Default: 0.1" })
             @Config.RangeDouble(min = 0, max = 1000)
-            public double heatExchangerEfficiencyMultiplier = 0.0625;
+            public double heatExchangerEfficiencyMultiplier = 0.25;
         }
     }
 
