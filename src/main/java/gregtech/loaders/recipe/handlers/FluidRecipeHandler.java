@@ -22,9 +22,8 @@ public class FluidRecipeHandler {
         double multiplier = ConfigHolder.machines.nuclear.heatExchangerEfficiencyMultiplier;
 
         // water temp difference * water heat capacity * amount / coolantHeatCapacity * (hotHpTemp - coolantTemp)
-        int coolantAmt = (int) Math.ceil(100 * 4168 * waterAmt / (coolant.getSpecificHeatCapacity() *
-                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())) *
-                multiplier);
+        int coolantAmt = (int) Math.ceil(100 * 4168 * waterAmt * multiplier / (coolant.getSpecificHeatCapacity() *
+                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())));
 
         RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(1).circuitMeta(1)
                 .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt), Materials.Water.getFluid(waterAmt))
@@ -36,9 +35,8 @@ public class FluidRecipeHandler {
                 .fluidOutputs(mat.getFluid(coolantAmt), Materials.Steam.getFluid(waterAmt * 160)).buildAndRegister();
         waterAmt = 600;
         // Slightly more efficient
-        coolantAmt = (int) Math.ceil(100 * 4168 * waterAmt / (coolant.getSpecificHeatCapacity() *
-                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())) *
-                multiplier);
+        coolantAmt = (int) Math.ceil(100 * 4168 * waterAmt * multiplier / (coolant.getSpecificHeatCapacity() *
+                (coolant.getHotHPCoolant().getFluid().getTemperature() - mat.getFluid().getTemperature())));;
 
         RecipeMaps.HEAT_EXCHANGER_RECIPES.recipeBuilder().duration(1).circuitMeta(2)
                 .fluidInputs(coolant.getHotHPCoolant().getFluid(coolantAmt), Materials.Water.getFluid(waterAmt))
