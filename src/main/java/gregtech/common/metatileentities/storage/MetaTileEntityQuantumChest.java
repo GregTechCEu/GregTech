@@ -15,6 +15,7 @@ import gregtech.api.mui.widget.QuantumItemRendererWidget;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 
@@ -333,7 +334,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                 .child(GTGuis.createQuantumDisplay("gregtech.machine.quantum_chest.items_stored",
                         () -> IKey.lang(virtualItemStack.getDisplayName()).get(),
                         textWidget -> !virtualItemStack.isEmpty(),
-                        () -> String.valueOf(itemsStoredInside)))
+                        () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
                 .child(GTGuis.createQuantumIO(importItems, exportItems))
                 .child(new QuantumItemRendererWidget(itemInventory)
                         .pos(148, 41))
