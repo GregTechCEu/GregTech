@@ -206,6 +206,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return ItemStack.EMPTY;
     }
 
+    @NotNull
+    @Override
+    public ItemStack getItem(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
+        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        if (metaTileEntity == null)
+            return ItemStack.EMPTY;
+        return metaTileEntity.getStackForm();
+    }
+
     @Override
     public void addCollisionBoxToList(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
                                       @NotNull AxisAlignedBB entityBox, @NotNull List<AxisAlignedBB> collidingBoxes,
