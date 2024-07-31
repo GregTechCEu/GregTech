@@ -256,7 +256,7 @@ public class OrePrefix {
             material -> material.hasFlag(GENERATE_FRAME));
 
     public static final OrePrefix pipeTiny = new OrePrefix("pipeTiny", M / 2, null, null, ENABLE_UNIFICATION,
-            null);
+            hasNoWoodProperty);
     public static final OrePrefix pipeSmall = new OrePrefix("pipeSmall", M, null, null, ENABLE_UNIFICATION,
             null);
     public static final OrePrefix pipeNormal = new OrePrefix("pipeNormal", M * 3, null, null,
@@ -264,27 +264,27 @@ public class OrePrefix {
     public static final OrePrefix pipeLarge = new OrePrefix("pipeLarge", M * 6, null, null,
             ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeHuge = new OrePrefix("pipeHuge", M * 12, null, null, ENABLE_UNIFICATION,
-            null);
+            hasNoWoodProperty);
     public static final OrePrefix pipeQuadruple = new OrePrefix("pipeQuadruple", M * 4, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeNonuple = new OrePrefix("pipeNonuple", M * 9, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
 
     public static final OrePrefix pipeTinyRestrictive = new OrePrefix("pipeTinyRestrictive", M / 2, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeQuadrupleRestrictive = new OrePrefix("pipeQuadrupleRestrictive", M * 4, null,
             null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeNonupleRestrictive = new OrePrefix("pipeNonupleRestrictive", M * 9, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
 
     public static final OrePrefix wireGtHex = new OrePrefix("wireGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix wireGtOctal = new OrePrefix("wireGtOctal", M * 4, null, null, ENABLE_UNIFICATION,
@@ -338,6 +338,7 @@ public class OrePrefix {
         public static final Predicate<Material> hasIngotProperty = mat -> mat.hasProperty(PropertyKey.INGOT);
         public static final Predicate<Material> hasBlastProperty = mat -> mat.hasProperty(PropertyKey.BLAST);
         public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);
+        public static final Predicate<Material> hasNoWoodProperty = mat -> !mat.hasProperty(PropertyKey.WOOD);
     }
 
     public static void init() {
@@ -451,19 +452,6 @@ public class OrePrefix {
                 new MaterialStack(Materials.Steel, plate.materialAmount * 4 + ring.materialAmount * 2));
         toolHeadWrench.addSecondaryMaterial(
                 new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
-
-        Predicate<Material> woodPredicate = m -> !m.hasProperty(PropertyKey.WOOD);
-        pipeTiny.setGenerationCondition(woodPredicate);
-        pipeTinyRestrictive.setGenerationCondition(woodPredicate);
-        pipeSmallRestrictive.setGenerationCondition(woodPredicate);
-        pipeNormalRestrictive.setGenerationCondition(woodPredicate);
-        pipeLargeRestrictive.setGenerationCondition(woodPredicate);
-        pipeHuge.setGenerationCondition(woodPredicate);
-        pipeHugeRestrictive.setGenerationCondition(woodPredicate);
-        pipeQuadruple.setGenerationCondition(woodPredicate);
-        pipeQuadrupleRestrictive.setGenerationCondition(woodPredicate);
-        pipeNonuple.setGenerationCondition(woodPredicate);
-        pipeNonupleRestrictive.setGenerationCondition(woodPredicate);
 
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeTinyRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));

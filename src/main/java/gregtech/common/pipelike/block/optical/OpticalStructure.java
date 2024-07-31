@@ -22,6 +22,7 @@ public record OpticalStructure(String name, float renderThickness, ActivablePipe
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {
         byte connectionCount = 0;
         for (EnumFacing facing : EnumFacing.VALUES) {
+            if (facing == side) continue;
             if (GTUtility.evalMask(facing, connectionMask)) {
                 connectionCount++;
             }

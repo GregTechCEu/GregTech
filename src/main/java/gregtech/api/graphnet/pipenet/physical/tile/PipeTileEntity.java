@@ -1,5 +1,8 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.vec.Matrix4;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -28,6 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
@@ -37,6 +41,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -70,7 +75,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private byte connectionMask;
     private byte renderMask;
     private byte blockedMask;
-    private int paintingColor;
+    private int paintingColor = -1;
 
     private @Nullable Material frameMaterial;
 
@@ -98,10 +103,21 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         else return null;
     }
 
-    public void getDrops(NonNullList<ItemStack> drops, @NotNull IBlockState state) {
-        drops.add(this.getBlockType().getDrop(this.getWorld(), this.getPos(), state));
+    public void getDrops(@NotNull NonNullList<ItemStack> drops, @NotNull IBlockState state) {
+        drops.add(getMainDrop(state));
         if (getFrameMaterial() != null)
             drops.add(MetaBlocks.FRAMES.get(getFrameMaterial()).getItem(getFrameMaterial()));
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        // TODO I hate this so much can someone please make it so that covers go through getDrops()?
+        getCoverHolder().dropAllCovers();
+    }
+
+    public ItemStack getMainDrop(@NotNull IBlockState state) {
+        return new ItemStack(state.getBlock(), 1);
     }
 
     public ItemStack getDrop() {
@@ -474,11 +490,16 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("Frame"));
         else this.frameMaterial = null;
         this.getCoverHolder().deserializeNBT(compound.getCompoundTag("Covers"));
-        scheduleRenderUpdate();
     }
 
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        buf.writeByte(connectionMask);
+        buf.writeByte(renderMask);
+        buf.writeByte(blockedMask);
+        buf.writeInt(paintingColor);
+        buf.writeBoolean(frameMaterial != null);
+        if (frameMaterial != null) buf.writeString(frameMaterial.getRegistryName());
         buf.writeVarInt(netLogicDatas.size());
         for (Map.Entry<String, NetLogicData> entry : netLogicDatas.entrySet()) {
             buf.writeString(entry.getKey());
@@ -489,6 +510,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         if (world.isRemote) {
+            connectionMask = buf.readByte();
+            renderMask = buf.readByte();
+            blockedMask = buf.readByte();
+            paintingColor = buf.readInt();
+            if (buf.readBoolean()) frameMaterial = GregTechAPI.materialManager.getMaterial(buf.readString(255));
+            else frameMaterial = null;
             netLogicDatas.clear();
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
@@ -498,6 +525,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 netLogicDatas.put(key, data);
             }
         }
+        scheduleRenderUpdate();
     }
 
     @Override

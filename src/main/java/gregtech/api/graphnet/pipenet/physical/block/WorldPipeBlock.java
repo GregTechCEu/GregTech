@@ -37,6 +37,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
@@ -51,7 +52,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import codechicken.lib.raytracer.RayTracer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,8 +75,9 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
         setTranslationKey(structure.getName());
         setSoundType(SoundType.METAL);
         setHardness(2.0f);
+        setHarvestLevel(getToolClass(), 1);
         setResistance(3.0f);
-        setLightOpacity(0);
+        setLightOpacity(1);
         disableStats();
     }
 
@@ -114,11 +115,37 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                     @NotNull EntityPlayer playerIn, @NotNull EnumHand hand, @NotNull EnumFacing facing,
                                     float hitX, float hitY, float hitZ) {
-        if (isPipeTool(playerIn.getHeldItem(hand))) {
-            PipeTileEntity tile = getTileEntity(worldIn, pos);
-            if (tile != null) {
-                EnumFacing actualSide = CoverRayTracer.determineGridSideHit(collisionRayTrace(playerIn, worldIn, pos).result());
-                if (actualSide != null) facing = actualSide;
+        ItemStack item = playerIn.getHeldItem(hand);
+        PipeTileEntity tile = getTileEntity(worldIn, pos);
+        if (tile != null) {
+            RayTraceAABB trace = collisionRayTrace(playerIn, worldIn, pos);
+            if (trace == null) return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+
+            EnumFacing actualSide = CoverRayTracer.determineGridSideHit(trace);
+            if (actualSide != null) facing = actualSide;
+
+            // cover comes first
+            PipeCoverHolder coverable = tile.getCoverHolder();
+            Cover cover = coverable.getCoverAtSide(facing);
+            if (cover != null) {
+                if (ToolHelper.isTool(item, ToolClasses.SCREWDRIVER)) {
+                    EnumActionResult result = cover.onScrewdriverClick(playerIn, hand, trace);
+                    if (result != EnumActionResult.PASS) return result == EnumActionResult.SUCCESS;
+                }
+                if (ToolHelper.isTool(item, ToolClasses.SOFT_MALLET)) {
+                    EnumActionResult result = cover.onSoftMalletClick(playerIn, hand, trace);
+                    if (result != EnumActionResult.PASS) return result == EnumActionResult.SUCCESS;
+                }
+                EnumActionResult result = cover.onRightClick(playerIn, hand, trace);
+                if (result != EnumActionResult.PASS) return result == EnumActionResult.SUCCESS;
+
+                if (ToolHelper.isTool(item, ToolClasses.CROWBAR)) {
+                    coverable.dropCover(facing);
+                    return true;
+                }
+            }
+
+            if (isPipeTool(item)) {
                 PipeTileEntity other = tile.getPipeNeighbor(facing, true);
 
                 if (playerIn.isSneaking() && allowsBlocking()) {
@@ -132,6 +159,22 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
             }
         }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public void onBlockClicked(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull EntityPlayer playerIn) {
+        PipeTileEntity tile = getTileEntity(worldIn, pos);
+        if (tile != null) {
+            RayTraceAABB trace = collisionRayTrace(playerIn, worldIn, pos);
+            EnumFacing facing = trace.sideHit;
+            EnumFacing actualSide = CoverRayTracer.determineGridSideHit(trace);
+            if (actualSide != null) facing = actualSide;
+            Cover cover = tile.getCoverHolder().getCoverAtSide(facing);
+            if (cover != null) {
+                if (cover.onLeftClick(playerIn, trace)) return;
+            }
+        }
+        super.onBlockClicked(worldIn, pos, playerIn);
     }
 
     public static void connectTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross, EnumFacing facing) {
@@ -239,7 +282,9 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     @Override
     public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         super.breakBlock(worldIn, pos, state);
-        if (!worldIn.isRemote) getHandler(worldIn, pos).removeFromNets(worldIn, pos, getStructure());
+        if (!worldIn.isRemote) {
+            getHandler(worldIn, pos).removeFromNets(worldIn, pos, getStructure());
+        }
     }
 
     @NotNull
@@ -274,12 +319,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     public void getDrops(@NotNull NonNullList<ItemStack> drops, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                          @NotNull IBlockState state, int fortune) {
         PipeTileEntity tile = getTileEntity(world, pos);
-        if (tile == null) drops.add(getDrop(world, pos, state));
-        else tile.getDrops(drops, state);
-    }
-
-    public ItemStack getDrop(IBlockAccess world, BlockPos pos, IBlockState state) {
-        return new ItemStack(this, 1, damageDropped(state));
+        if (tile != null) tile.getDrops(drops, state);
     }
 
     @Override
@@ -335,8 +375,8 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     @Override
     public @NotNull AxisAlignedBB getSelectedBoundingBox(@NotNull IBlockState state, @NotNull World worldIn,
                                                          @NotNull BlockPos pos) {
-        RayTracePair trace = this.collisionRayTrace(GTUtility.getSP(), worldIn, pos);
-        return (trace.bb() == null ? FULL_BLOCK_AABB : trace.bb()).offset(pos);
+        RayTraceAABB trace = this.collisionRayTrace(GTUtility.getSP(), worldIn, pos);
+        return (trace == null || trace.getBB() == null ? FULL_BLOCK_AABB : trace.getBB()).offset(pos);
     }
 
     @SuppressWarnings("deprecation")
@@ -345,6 +385,10 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
                                       @NotNull AxisAlignedBB entityBox, @NotNull List<AxisAlignedBB> collidingBoxes,
                                       @Nullable Entity entityIn, boolean isActualState) {
         PipeTileEntity tile = getTileEntity(worldIn, pos);
+        if (hasPipeCollisionChangingItem(worldIn, pos, entityIn)) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
+            return;
+        }
         if (tile != null) {
             if (tile.getFrameMaterial() != null) {
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, BlockFrame.COLLISION_BOX);
@@ -364,23 +408,23 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     public RayTraceResult collisionRayTrace(@NotNull IBlockState blockState, @NotNull World worldIn,
                                             @NotNull BlockPos pos,
                                             @NotNull Vec3d start, @NotNull Vec3d end) {
-        return collisionRayTrace(worldIn.isRemote ? GTUtility.getSP() : null, worldIn, pos, start, end).result();
+        return collisionRayTrace(worldIn.isRemote ? GTUtility.getSP() : null, worldIn, pos, start, end);
     }
 
-    public @NotNull RayTracePair collisionRayTrace(@NotNull EntityPlayer player,
+    public @Nullable RayTraceAABB collisionRayTrace(@NotNull EntityPlayer player,
                                                    @NotNull World world, @NotNull BlockPos pos) {
         return collisionRayTrace(player, world, pos, RayTracer.getStartVec(player), RayTracer.getEndVec(player));
     }
 
-    public @NotNull RayTracePair collisionRayTrace(@Nullable EntityPlayer player,
+    public @Nullable RayTraceAABB collisionRayTrace(@Nullable EntityPlayer player,
                                                    @NotNull World worldIn, @NotNull BlockPos pos,
-                                            @NotNull Vec3d start, @NotNull Vec3d end) {
+                                                   @NotNull Vec3d start, @NotNull Vec3d end) {
         if (hasPipeCollisionChangingItem(worldIn, pos, player)) {
-            return new RayTracePair(rayTrace(pos, start, end, FULL_BLOCK_AABB), FULL_BLOCK_AABB);
+            return RayTraceAABB.of(rayTrace(pos, start, end, FULL_BLOCK_AABB), FULL_BLOCK_AABB);
         }
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile == null) {
-            return new RayTracePair(rayTrace(pos, start, end, FULL_BLOCK_AABB), FULL_BLOCK_AABB);
+            return RayTraceAABB.of(rayTrace(pos, start, end, FULL_BLOCK_AABB), FULL_BLOCK_AABB);
         }
         RayTraceResult min = null;
         AxisAlignedBB minbb = null;
@@ -395,7 +439,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
                 minDistSqrd = distSqrd;
             }
         }
-        return new RayTracePair(min, minbb);
+        return RayTraceAABB.of(min, minbb);
     }
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, Entity entity) {
@@ -437,7 +481,11 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     }
 
     public boolean isPipeTool(@NotNull ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WRENCH);
+        return ToolHelper.isTool(stack, getToolClass());
+    }
+
+    public String getToolClass() {
+        return ToolClasses.WRENCH;
     }
 
     @SuppressWarnings("deprecation")

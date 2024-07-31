@@ -22,7 +22,6 @@ public class OpticalPipeBlock extends PipeActivableBlock {
 
     public OpticalPipeBlock(OpticalStructure structure) {
         super(structure);
-        setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
     }
 
@@ -33,8 +32,8 @@ public class OpticalPipeBlock extends PipeActivableBlock {
     }
 
     @Override
-    public boolean isPipeTool(@NotNull ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
+    public String getToolClass() {
+        return ToolClasses.WIRE_CUTTER;
     }
 
     @Override

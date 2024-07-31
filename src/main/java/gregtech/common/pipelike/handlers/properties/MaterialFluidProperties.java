@@ -20,6 +20,7 @@ import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
 import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
@@ -232,5 +233,10 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     @Override
     public boolean generatesStructure(IPipeStructure structure) {
         return structure.getClass() == PipeStructure.class;
+    }
+
+    @Override
+    public boolean supportsStructure(IPipeStructure structure) {
+        return structure instanceof PipeStructure;
     }
 }

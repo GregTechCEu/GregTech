@@ -20,6 +20,7 @@ public record LaserStructure(String name, float renderThickness, ActivablePipeMo
     @Override
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {
         for (EnumFacing facing : EnumFacing.VALUES) {
+            if (facing == side) continue;
             if (GTUtility.evalMask(facing, connectionMask)) {
                 return facing.getOpposite() == side;
             }

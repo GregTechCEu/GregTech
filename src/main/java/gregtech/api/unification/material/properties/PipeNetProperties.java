@@ -54,7 +54,7 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     @Override
     public void addToNets(World world, BlockPos pos, IPipeStructure structure) {
         for (IPipeNetMaterialProperty p : properties.values()) {
-            p.addToNet(world, pos, structure);
+            if (p.supportsStructure(structure)) p.addToNet(world, pos, structure);
         }
     }
 
@@ -62,8 +62,10 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     public Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
         List<WorldPipeNetNode> list = new ObjectArrayList<>();
         for (IPipeNetMaterialProperty p : properties.values()) {
-            WorldPipeNetNode node = p.getFromNet(world, pos, structure);
-            if (node != null) list.add(node);
+            if (p.supportsStructure(structure)) {
+                WorldPipeNetNode node = p.getFromNet(world, pos, structure);
+                if (node != null) list.add(node);
+            }
         }
         return list;
     }
@@ -71,15 +73,16 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     @Override
     public void removeFromNets(World world, BlockPos pos, IPipeStructure structure) {
         for (IPipeNetMaterialProperty p : properties.values()) {
-            p.removeFromNet(world, pos, structure);
+            if (p.supportsStructure(structure)) p.removeFromNet(world, pos, structure);
         }
     }
 
     @Override
     public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flagIn, IPipeStructure structure) {
-        for (IPipeNetMaterialProperty property : properties.values()) {
-            property.addInformation(stack, worldIn, tooltip, flagIn, (IPipeMaterialStructure) structure);
+        for (IPipeNetMaterialProperty p : properties.values()) {
+            if (p.supportsStructure(structure))
+                p.addInformation(stack, worldIn, tooltip, flagIn, (IPipeMaterialStructure) structure);
         }
     }
 
@@ -102,6 +105,8 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
         void removeFromNet(World world, BlockPos pos, IPipeStructure structure);
 
         boolean generatesStructure(IPipeStructure structure);
+
+        boolean supportsStructure(IPipeStructure structure);
 
         void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
                             @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure);

@@ -109,4 +109,9 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     public boolean generatesStructure(IPipeStructure structure) {
         return structure.getClass() == PipeStructure.class;
     }
+
+    @Override
+    public boolean supportsStructure(IPipeStructure structure) {
+        return structure instanceof PipeStructure;
+    }
 }

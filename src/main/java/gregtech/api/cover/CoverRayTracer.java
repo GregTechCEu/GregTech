@@ -21,8 +21,7 @@ public final class CoverRayTracer {
         // if the coverable view is from a blockpipe, use the proper raytrace method
         RayTraceResult result = coverableView.getWorld().getBlockState(coverableView.getPos())
                 .getBlock() instanceof WorldPipeBlock pipe ?
-                        pipe.collisionRayTrace(player, coverableView.getWorld(), coverableView.getPos())
-                                .result() :
+                        pipe.collisionRayTrace(player, coverableView.getWorld(), coverableView.getPos()) :
                         RayTracer.retraceBlock(coverableView.getWorld(), player, coverableView.getPos());
         if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) {
             return null;

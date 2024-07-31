@@ -36,8 +36,8 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
     }
 
     @Override
-    public boolean isPipeTool(@NotNull ItemStack stack) {
-        return ToolHelper.isTool(stack, ToolClasses.WIRE_CUTTER);
+    public String getToolClass() {
+        return ToolClasses.WIRE_CUTTER;
     }
 
     @Override

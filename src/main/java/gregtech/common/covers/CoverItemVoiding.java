@@ -11,12 +11,12 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -117,7 +117,7 @@ public class CoverItemVoiding extends CoverConveyor {
 
     @Override
     public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                       @NotNull CuboidRayTraceResult hitResult) {
+                                                       @NotNull RayTraceResult hitResult) {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
             playerIn.sendStatusMessage(new TextComponentTranslation(isWorkingEnabled() ?

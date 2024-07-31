@@ -54,7 +54,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -299,7 +298,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         if (!this.getWorld().isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
         }
@@ -308,7 +307,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
 
     @Override
     public @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                  @NotNull CuboidRayTraceResult rayTraceResult) {
+                                                  @NotNull RayTraceResult rayTraceResult) {
         if (!isRemote()) {
             if (this.getWorld().getTotalWorldTime() - lastClickTime < 2 &&
                     playerIn.getPersistentID().equals(lastClickUUID)) {
@@ -349,7 +348,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
     }
 
     @Override
-    public boolean onLeftClick(@NotNull EntityPlayer entityPlayer, @NotNull CuboidRayTraceResult hitResult) {
+    public boolean onLeftClick(@NotNull EntityPlayer entityPlayer, @NotNull RayTraceResult hitResult) {
         if (!isRemote()) {
             if (this.getWorld().getTotalWorldTime() - lastClickTime < 2 &&
                     entityPlayer.getPersistentID().equals(lastClickUUID)) {

@@ -30,13 +30,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -462,7 +462,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         if (!getCoverableView().getWorld().isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }

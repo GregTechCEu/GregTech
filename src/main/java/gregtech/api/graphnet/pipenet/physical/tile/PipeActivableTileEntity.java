@@ -44,5 +44,17 @@ public class PipeActivableTileEntity extends PipeTileEntity implements IActivabl
         }
     }
 
+    @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        buf.writeBoolean(active);
+        super.writeInitialSyncData(buf);
+    }
+
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        active = buf.readBoolean();
+        super.receiveInitialSyncData(buf);
+    }
+
     // do not save activeness to nbt, it should go away on world save & load.
 }
