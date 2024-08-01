@@ -213,6 +213,22 @@ public interface ChancedOutputLogic {
                                                                                   int baseTier, int machineTier,
                                                                                   @Nullable Map<I, Integer> cache);
 
+    /**
+     * Roll the chance and attempt to produce the output
+     *
+     * @param chancedEntries the list of entries to roll
+     * @param boostFunction  the function to boost the entries' chances
+     * @param baseTier       the base tier of the recipe
+     * @param machineTier    the tier the recipe is run at
+     * @return a list of the produced outputs
+     */
+    default  <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
+                                                                                  @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
+                                                                                  @NotNull ChanceBoostFunction boostFunction,
+                                                                                  int baseTier, int machineTier) {
+        return roll(chancedEntries, boostFunction, baseTier, machineTier, null);
+    }
+
     @NotNull
     String getTranslationKey();
 }
