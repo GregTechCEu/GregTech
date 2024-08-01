@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChancedOutputLogicTest {
@@ -44,7 +45,7 @@ public class ChancedOutputLogicTest {
                 new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue()));
 
         List<TestChancedOutput> list = ChancedOutputLogic.OR.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0,
-                Collections.emptyMap());
+                new HashMap<>());
         listsMatch(chanceEntries, list);
     }
 
@@ -56,7 +57,7 @@ public class ChancedOutputLogicTest {
                 new TestChancedOutput("c", 0));
 
         List<TestChancedOutput> list = ChancedOutputLogic.AND.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0,
-                Collections.emptyMap());
+                new HashMap<>());
         MatcherAssert.assertThat(list, CoreMatchers.nullValue());
 
         chanceEntries = ImmutableList.of(
@@ -76,7 +77,7 @@ public class ChancedOutputLogicTest {
                 new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue()));
 
         List<TestChancedOutput> list = ChancedOutputLogic.XOR.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0,
-                Collections.emptyMap());
+                new HashMap<>());
         MatcherAssert.assertThat(list, CoreMatchers.notNullValue());
         MatcherAssert.assertThat(list.size(), CoreMatchers.is(1));
         MatcherAssert.assertThat(list.get(0).getIngredient(), CoreMatchers.is(chanceEntries.get(0).getIngredient()));
@@ -90,7 +91,7 @@ public class ChancedOutputLogicTest {
                 new TestChancedOutput("c", ChancedOutputLogic.getMaxChancedValue()));
 
         List<TestChancedOutput> list = ChancedOutputLogic.NONE.roll(chanceEntries, ChanceBoostFunction.NONE, 0, 0,
-                Collections.emptyMap());
+                new HashMap<>());
         MatcherAssert.assertThat(list, CoreMatchers.nullValue());
     }
 }
