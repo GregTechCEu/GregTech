@@ -29,6 +29,7 @@ public class ElementsTest {
         assertNull(Elements.get("Naquadahenriched"));
         assertNull(Elements.get("naquadahenriched"));
         assertEquals(Elements.Nq1, Elements.get("naquadah_enriched"));
+        assertNull(Elements.get("NAQUADAH_ENRICHED"));
         assertEquals(Elements.Nq1, Elements.get("Nq+"));
         assertEquals(Elements.Nq2, Elements.get("*Nq*"));
 
