@@ -40,9 +40,6 @@ public interface ChancedOutputLogic {
                     } while (passesChance(numerator, denominator));
                 }
                 cache.put(entry.getIngredient(), numerator);
-                // if (passesChance(getChance(entry, boostFunction, baseTier, machineTier))) {
-                // builder.add(entry);
-                // }
             }
 
             List<T> list = builder.build();
