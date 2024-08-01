@@ -27,10 +27,13 @@ public interface ChancedOutputLogic {
                 T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries,
                                                                   @NotNull ChanceBoostFunction boostFunction,
                                                                   int baseTier, int machineTier,
-                                                                  Map<I, Integer> cache) {
+                                                                  @Nullable Map<I, Integer> cache) {
             ImmutableList.Builder<T> builder = ImmutableList.builder();
             for (T entry : chancedEntries) {
-                int cached = cache.getOrDefault(entry.getIngredient(), 0);
+                int cached = 0;
+                if (cache != null)
+                    cached = cache.getOrDefault(entry.getIngredient(), 0);
+
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int denominator = entry.getDenominator();
                 if (passesChance(numerator, denominator)) {
@@ -39,7 +42,8 @@ public interface ChancedOutputLogic {
                         numerator -= denominator;
                     } while (passesChance(numerator, denominator));
                 }
-                cache.put(entry.getIngredient(), numerator);
+                if (cache != null)
+                    cache.put(entry.getIngredient(), numerator);
             }
 
             List<T> list = builder.build();
@@ -67,14 +71,19 @@ public interface ChancedOutputLogic {
                 T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries,
                                                                   @NotNull ChanceBoostFunction boostFunction,
                                                                   int baseTier, int machineTier,
-                                                                  Map<I, Integer> cache) {
+                                                                  @Nullable Map<I, Integer> cache) {
             boolean failed = false;
             for (T entry : chancedEntries) {
-                int cached = cache.getOrDefault(entry.getIngredient(), 0);
+                int cached = 0;
+                if (cache != null)
+                    cached = cache.getOrDefault(entry.getIngredient(), 0);
+
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int denominator = entry.getDenominator();
                 if (!passesChance(numerator, denominator)) {
-                    cache.put(entry.getIngredient(), numerator);
+                    if (cache != null)
+                        cache.put(entry.getIngredient(), numerator);
+
                     failed = true;
                 }
             }
@@ -102,13 +111,18 @@ public interface ChancedOutputLogic {
                 T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries,
                                                                   @NotNull ChanceBoostFunction boostFunction,
                                                                   int baseTier, int machineTier,
-                                                                  Map<I, Integer> cache) {
+                                                                  @Nullable Map<I, Integer> cache) {
             for (T entry : chancedEntries) {
-                int cached = cache.getOrDefault(entry.getIngredient(), 0);
+                int cached = 0;
+                if (cache != null)
+                    cached = cache.getOrDefault(entry.getIngredient(), 0);
+
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int denominator = entry.getDenominator();
                 if (passesChance(numerator, denominator)) {
-                    cache.put(entry.getIngredient(), numerator);
+                    if (cache != null)
+                        cache.put(entry.getIngredient(), numerator);
+
                     return Collections.singletonList(entry);
                 }
             }
@@ -136,7 +150,7 @@ public interface ChancedOutputLogic {
                 T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries,
                                                                   @NotNull ChanceBoostFunction boostFunction,
                                                                   int baseTier, int machineTier,
-                                                                  Map<I, Integer> cache) {
+                                                                  @Nullable Map<I, Integer> cache) {
             return null;
         }
 
@@ -197,7 +211,7 @@ public interface ChancedOutputLogic {
                                                                                   @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
                                                                                   @NotNull ChanceBoostFunction boostFunction,
                                                                                   int baseTier, int machineTier,
-                                                                                  Map<I, Integer> cache);
+                                                                                  @Nullable Map<I, Integer> cache);
 
     @NotNull
     String getTranslationKey();

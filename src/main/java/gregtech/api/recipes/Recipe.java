@@ -505,7 +505,7 @@ public class Recipe {
     }
 
     public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
-        return getResultItemOutputs(recipeTier, machineTier, recipeMap, Collections.emptyMap());
+        return getResultItemOutputs(recipeTier, machineTier, recipeMap, null);
     }
 
     /**
