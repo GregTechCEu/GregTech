@@ -33,7 +33,7 @@ public class ItemTraverseData extends AbstractTraverseData<WorldPipeNetNode, Flo
 
     @Override
     public boolean prepareForPathWalk(FlowWorldPipeNetPath path, long flow) {
-        return flow > 0;
+        return flow <= 0;
     }
 
     @Override

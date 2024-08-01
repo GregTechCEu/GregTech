@@ -23,14 +23,15 @@ public final class LaserNetHandler implements IPipeNetNodeHandler {
     public static final LaserNetHandler INSTANCE = new LaserNetHandler();
 
     @Override
-    public void addToNets(World world, BlockPos pos, IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof LaserStructure) {
-            WorldLaserNet.getWorldNet(world).getOrCreateNode(pos);
+            return Collections.singletonList(WorldLaserNet.getWorldNet(world).getOrCreateNode(pos));
         }
+        return Collections.emptyList();
     }
 
     @Override
-    public Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof LaserStructure) {
             WorldPipeNetNode node = WorldLaserNet.getWorldNet(world).getNode(pos);
             if (node != null) return Collections.singletonList(node);

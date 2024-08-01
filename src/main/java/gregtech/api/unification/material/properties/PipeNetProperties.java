@@ -52,14 +52,19 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     }
 
     @Override
-    public void addToNets(World world, BlockPos pos, IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos, IPipeStructure structure) {
+        List<WorldPipeNetNode> list = new ObjectArrayList<>();
         for (IPipeNetMaterialProperty p : properties.values()) {
-            if (p.supportsStructure(structure)) p.addToNet(world, pos, structure);
+            if (p.supportsStructure(structure)) {
+                WorldPipeNetNode node = p.getOrCreateFromNet(world, pos, structure);
+                if (node != null) list.add(node);
+            }
         }
+        return list;
     }
 
     @Override
-    public Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
         List<WorldPipeNetNode> list = new ObjectArrayList<>();
         for (IPipeNetMaterialProperty p : properties.values()) {
             if (p.supportsStructure(structure)) {
@@ -95,7 +100,8 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
 
     public interface IPipeNetMaterialProperty extends IMaterialProperty {
 
-        void addToNet(World world, BlockPos pos, IPipeStructure structure);
+        @Nullable
+        WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure);
 
         @Nullable
         WorldPipeNetNode getFromNet(World world, BlockPos pos, IPipeStructure structure);

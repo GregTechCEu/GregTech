@@ -5,6 +5,8 @@ import gregtech.api.graphnet.NetNode;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
+import org.jetbrains.annotations.NotNull;
+
 public class WorldNetNode extends NetNode {
 
     private BlockPos pos;
@@ -14,7 +16,7 @@ public class WorldNetNode extends NetNode {
     }
 
     @Override
-    public WorldNet getNet() {
+    public @NotNull WorldNet getNet() {
         return (WorldNet) super.getNet();
     }
 

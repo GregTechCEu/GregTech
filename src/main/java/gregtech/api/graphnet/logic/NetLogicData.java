@@ -71,6 +71,11 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         return logicEntrySet.values();
     }
 
+    public void clearData() {
+        logicEntrySet.clear();
+        logicEntrySet.trim(4);
+    }
+
     public NetLogicData removeLogicEntry(@NotNull INetLogicEntry<?, ?> key) {
         return removeLogicEntry(key.getName());
     }
@@ -184,7 +189,6 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         for (int i = 0; i < entryCount; i++) {
             String name = buf.readString(255);
             INetLogicEntry<?, ?> existing = getSupplier(name).get();
-            // is there a softer exception I can throw that'll disconnect from server but not crash the game?
             if (existing == null)
                 throw new RuntimeException("Could not find a matching supplier for an encoded INetLogicEntry. " +
                         "This suggests that the server and client have different GT versions or modifications.");
@@ -199,20 +203,31 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         return GTGraphGatherables.getLogicsRegistry().getOrDefault(identifier, () -> null);
     }
 
+    public LogicDataListener createListener(ILogicDataListener listener) {
+        return new LogicDataListener(listener);
+    }
+
     public final class LogicDataListener {
 
-        private final TriConsumer<INetLogicEntry<?, ?>, Boolean, Boolean> listener;
+        private final ILogicDataListener listener;
 
-        public LogicDataListener(TriConsumer<INetLogicEntry<?, ?>, Boolean, Boolean> listener) {
+        private LogicDataListener(ILogicDataListener listener) {
             this.listener = listener;
         }
 
         private void markChanged(INetLogicEntry<?, ?> updatedEntry, boolean removed, boolean fullChange) {
-            this.listener.accept(updatedEntry, removed, fullChange);
+            this.listener.markChanged(updatedEntry, removed, fullChange);
         }
 
+        // TODO would a weak set be better?
         public void invalidate() {
             listeners.remove(this);
         }
+    }
+
+    @FunctionalInterface
+    public interface ILogicDataListener {
+
+        void markChanged(INetLogicEntry<?, ?> updatedEntry, boolean removed, boolean fullChange);
     }
 }

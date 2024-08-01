@@ -1,25 +1,37 @@
 package gregtech.api.capability.data.query;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
+import net.minecraft.util.IStringSerializable;
+
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public final class DataAccessFormat {
+public final class DataAccessFormat implements IStringSerializable {
 
-    public static final DataAccessFormat STANDARD = create(DataQueryFormat.RECIPE);
-    public static final DataAccessFormat COMPUTATION = create(DataQueryFormat.COMPUTATION);
+    public static final DataAccessFormat STANDARD = create("gregtech.data_format.access.standard", DataQueryFormat.RECIPE);
+    public static final DataAccessFormat COMPUTATION = create("gregtech.data_format.access.computation", DataQueryFormat.COMPUTATION);
 
-    public static final DataAccessFormat UNIVERSAL = new DataAccessFormat(null);
+    public static final DataAccessFormat UNIVERSAL = new DataAccessFormat("gregtech.data_format.access.universal", null);
 
     private final Set<DataQueryFormat> supportedFormats;
 
-    public static DataAccessFormat create(DataQueryFormat... allowedFormats) {
-        return new DataAccessFormat(new ObjectOpenHashSet<>(allowedFormats));
+    public static DataAccessFormat create(@NotNull String name, DataQueryFormat... allowedFormats) {
+        return new DataAccessFormat(name, new ObjectOpenHashSet<>(allowedFormats));
     }
 
-    private DataAccessFormat(Set<DataQueryFormat> supportedFormats) {
+    private final @NotNull String name;
+
+    private DataAccessFormat(@NotNull String name, Set<DataQueryFormat> supportedFormats) {
+        this.name = name;
         this.supportedFormats = supportedFormats;
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return name;
     }
 
     @Contract("_ -> this")

@@ -7,13 +7,13 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class SpriteInformationWrapper implements Supplier<SpriteInformation>, Consumer<SpriteInformation>,
-                                      BiConsumer<TextureAtlasSprite, Boolean> {
+                                      BiConsumer<TextureAtlasSprite, Integer> {
 
     private SpriteInformation sprite;
 
     @Override
-    public void accept(TextureAtlasSprite sprite, Boolean colorable) {
-        accept(new SpriteInformation(sprite, colorable));
+    public void accept(TextureAtlasSprite sprite, Integer colorID) {
+        accept(new SpriteInformation(sprite, colorID));
     }
 
     @Override

@@ -14,8 +14,10 @@ import java.util.List;
 
 public interface IPipeNetNodeHandler {
 
-    void addToNets(World world, BlockPos pos, IPipeStructure structure);
+    @NotNull
+    Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos, IPipeStructure structure);
 
+    @NotNull
     Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure);
 
     void removeFromNets(World world, BlockPos pos, IPipeStructure structure);

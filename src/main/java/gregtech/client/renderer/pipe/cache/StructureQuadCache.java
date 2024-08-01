@@ -1,6 +1,8 @@
 package gregtech.client.renderer.pipe.cache;
 
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.quad.ColorData;
+import gregtech.client.renderer.pipe.quad.OverlayLayerDefinition;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
@@ -12,13 +14,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.EnumMap;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class StructureQuadCache {
+
+    public static final float OVERLAY_DIST_1 = 0.001f;
+    public static final float OVERLAY_DIST_2 = 0.002f;
 
     protected final PipeQuadHelper helper;
 
@@ -37,11 +46,12 @@ public class StructureQuadCache {
         this.helper = helper;
         this.endTex = endTex;
         this.sideTex = sideTex;
+        if (helper.getLayerCount() < 1) throw new IllegalStateException("Cannot create an SQC without at least one layer present on the helper!");
     }
 
     public static @NotNull StructureQuadCache create(PipeQuadHelper helper, SpriteInformation endTex,
                                                      SpriteInformation sideTex) {
-        StructureQuadCache cache = new StructureQuadCache(helper, endTex, sideTex);
+        StructureQuadCache cache = new StructureQuadCache(helper.initialize(), endTex, sideTex);
         cache.buildPrototype();
         return cache;
     }
@@ -95,8 +105,8 @@ public class StructureQuadCache {
         }
     }
 
-    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, int argb) {
-        List<BakedQuad> quads = cache.getQuads(argb);
+    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data) {
+        List<BakedQuad> quads = cache.getQuads(data);
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (GTUtility.evalMask(facing, connectionMask)) {
                 list.addAll(tubeCoords.get(facing).getSublist(quads));
@@ -117,5 +127,27 @@ public class StructureQuadCache {
         public <T> @NotNull List<T> getSublist(@NotNull List<T> list) {
             return list.subList(startInclusive, endExclusive);
         }
+    }
+
+    public static ImmutablePair<Vector3f, Vector3f> capOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
+        if (facing == null) return PipeQuadHelper.pair(x1 - g, y1 - g, z1 - g, x2 + g, y2 + g, z2 + g);
+        return switch (facing.getAxis()) {
+            case X -> PipeQuadHelper.pair(x1 - g, y1, z1, x2 + g, y2, z2);
+            case Y -> PipeQuadHelper.pair(x1, y1 - g, z1, x2, y2 + g, z2);
+            case Z -> PipeQuadHelper.pair(x1, y1, z1 - g, x2, y2, z2 + g);
+        };
+    }
+
+    public static ImmutablePair<Vector3f, Vector3f> tubeOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
+        if (facing == null) return PipeQuadHelper.pair(x1, y1, z1, x2, y2, z2);
+        return switch (facing.getAxis()) {
+            case X -> PipeQuadHelper.pair(x1, y1 - g, z1 - g, x2, y2 + g, z2 + g);
+            case Y -> PipeQuadHelper.pair(x1 - g, y1, z1 - g, x2 + g, y2, z2 + g);
+            case Z -> PipeQuadHelper.pair(x1 - g, y1 - g, z1, x2 + g, y2 + g, z2);
+        };
+    }
+
+    public static ImmutablePair<Vector3f, Vector3f> fullOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
+        return PipeQuadHelper.pair(x1 - g, y1 - g, z1 - g, x2 + g, y2 + g, z2 + g);
     }
 }

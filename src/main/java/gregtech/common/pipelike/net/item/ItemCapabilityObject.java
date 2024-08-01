@@ -67,7 +67,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     @Override
     public Capability<?>[] getCapabilities() {
-        return WorldEnergyNet.CAPABILITIES;
+        return WorldItemNet.CAPABILITIES;
     }
 
     @Override

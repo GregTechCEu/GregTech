@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Range;
+import org.jetbrains.annotations.Contract;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.EnumMap;
@@ -28,33 +28,68 @@ public final class PipeQuadHelper {
 
     private SpriteInformation targetSprite;
 
-    private final Pair<Vector3f, Vector3f> coreBox;
-    private final EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> sideBoxes = new EnumMap<>(EnumFacing.class);
+    private final List<Pair<Vector3f, Vector3f>> coreBoxList = new ObjectArrayList<>();
+    private final List<EnumMap<EnumFacing, Pair<Vector3f, Vector3f>>> sideBoxesList = new ObjectArrayList<>();
 
-    public PipeQuadHelper(float x, float y, float z, int argb, float small, float large) {
+    private float[] definition;
+
+    public static ImmutablePair<Vector3f, Vector3f> pair(float x1, float y1, float z1, float x2, float y2, float z2) {
+        return ImmutablePair.of(new Vector3f(x1, y1, z1), new Vector3f(x2, y2, z2));
+    }
+
+    public PipeQuadHelper(float x, float y, float z, float small, float large) {
         float xS = (x + small) * 16;
         float xL = (x + large) * 16;
         float yS = (y + small) * 16;
         float yL = (y + large) * 16;
         float zS = (z + small) * 16;
         float zL = (z + large) * 16;
-        coreBox = ImmutablePair.of(new Vector3f(xS, yS, zS), new Vector3f(xL, yL, zL));
-        sideBoxes.put(EnumFacing.DOWN, ImmutablePair.of(new Vector3f(xS, 0, zS), new Vector3f(xL, yS, zL)));
-        sideBoxes.put(EnumFacing.UP, ImmutablePair.of(new Vector3f(xS, yL, zS), new Vector3f(xL, 16, zL)));
-        sideBoxes.put(EnumFacing.NORTH, ImmutablePair.of(new Vector3f(xS, yS, 0), new Vector3f(xL, yL, zS)));
-        sideBoxes.put(EnumFacing.SOUTH, ImmutablePair.of(new Vector3f(xS, yS, zL), new Vector3f(xL, yL, 16)));
-        sideBoxes.put(EnumFacing.WEST, ImmutablePair.of(new Vector3f(0, yS, zS), new Vector3f(xS, yL, zL)));
-        sideBoxes.put(EnumFacing.EAST, ImmutablePair.of(new Vector3f(xL, yS, zS), new Vector3f(16, yL, zL)));
+        definition = new float[] {xS, xL, yS, yL, zS, zL};
     }
 
-    public static PipeQuadHelper create(float thickness, double x, double y, double z, int argb) {
+    @Contract("_ -> this")
+    public PipeQuadHelper initialize(OverlayLayerDefinition... overlayLayers) {
+        if (definition != null) {
+            float xS = definition[0];
+            float xL = definition[1];
+            float yS = definition[2];
+            float yL = definition[3];
+            float zS = definition[4];
+            float zL = definition[5];
+            definition = null;
+            generateBox(xS, xL, yS, yL, zS, zL, (facing, x1, y1, z1, x2, y2, z2) ->
+                    ImmutablePair.of(new Vector3f(x1, y1, z1), new Vector3f(x2, y2, z2)));
+            for (OverlayLayerDefinition definition : overlayLayers) {
+                generateBox(xS, xL, yS, yL, zS, zL, definition);
+            }
+        }
+        return this;
+    }
+
+    public int getLayerCount() {
+        return coreBoxList.size();
+    }
+
+    private void generateBox(float xS, float xL, float yS, float yL, float zS, float zL, OverlayLayerDefinition definition) {
+        coreBoxList.add(definition.computeBox(null, xS, yS, zS, xL, yL, zL));
+        EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> sideBoxes = new EnumMap<>(EnumFacing.class);
+        sideBoxes.put(EnumFacing.DOWN, definition.computeBox(EnumFacing.DOWN, xS, 0, zS, xL, yS, zL));
+        sideBoxes.put(EnumFacing.UP, definition.computeBox(EnumFacing.UP, xS, yL, zS, xL, 16, zL));
+        sideBoxes.put(EnumFacing.NORTH, definition.computeBox(EnumFacing.NORTH, xS, yS, 0, xL, yL, zS));
+        sideBoxes.put(EnumFacing.SOUTH, definition.computeBox(EnumFacing.SOUTH, xS, yS, zL, xL, yL, 16));
+        sideBoxes.put(EnumFacing.WEST, definition.computeBox(EnumFacing.WEST, 0, yS, zS, xS, yL, zL));
+        sideBoxes.put(EnumFacing.EAST, definition.computeBox(EnumFacing.EAST, xL, yS, zS, 16, yL, zL));
+        sideBoxesList.add(sideBoxes);
+    }
+
+    public static PipeQuadHelper create(float thickness, double x, double y, double z) {
         float small = 0.5f - thickness / 2;
         float large = 0.5f + thickness / 2;
-        return new PipeQuadHelper((float) x, (float) y, (float) z, argb, small, large);
+        return new PipeQuadHelper((float) x, (float) y, (float) z, small, large);
     }
 
     public static PipeQuadHelper create(float thickness) {
-        return create(thickness, 0, 0, 0, 0xFFFFFFFF);
+        return create(thickness, 0, 0, 0);
     }
 
     public void setTargetSprite(SpriteInformation sprite) {
@@ -62,12 +97,20 @@ public final class PipeQuadHelper {
     }
 
     public RecolorableBakedQuad visitCore(EnumFacing facing) {
-        return visitQuad(facing, coreBox, uvMapper(0));
+        return visitCore(facing, 0);
+    }
+
+    public RecolorableBakedQuad visitCore(EnumFacing facing, int overlayLayer) {
+        return visitQuad(facing, coreBoxList.get(overlayLayer), uvMapper(0));
     }
 
     public List<RecolorableBakedQuad> visitTube(EnumFacing facing) {
+        return visitTube(facing, 0);
+    }
+
+    public List<RecolorableBakedQuad> visitTube(EnumFacing facing, int overlayLayer) {
         List<RecolorableBakedQuad> list = new ObjectArrayList<>();
-        Pair<Vector3f, Vector3f> box = sideBoxes.get(facing);
+        Pair<Vector3f, Vector3f> box = sideBoxesList.get(overlayLayer).get(facing);
         switch (facing.getAxis()) {
             case X -> {
                 UVMapper mapper = uvMapper(0);
@@ -94,7 +137,11 @@ public final class PipeQuadHelper {
     }
 
     public RecolorableBakedQuad visitCapper(EnumFacing facing) {
-        return visitQuad(facing, sideBoxes.get(facing), uvMapper(0));
+        return visitCapper(facing, 0);
+    }
+
+    public RecolorableBakedQuad visitCapper(EnumFacing facing, int overlayLayer) {
+        return visitQuad(facing, sideBoxesList.get(overlayLayer).get(facing), uvMapper(0));
     }
 
     public RecolorableBakedQuad visitQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box, UVMapper uv) {
@@ -122,7 +169,7 @@ public final class PipeQuadHelper {
 
     public static List<RecolorableBakedQuad> createFrame(TextureAtlasSprite sprite) {
         PipeQuadHelper helper = PipeQuadHelper.create(0.998f);
-        helper.setTargetSprite(new SpriteInformation(sprite, true));
+        helper.setTargetSprite(new SpriteInformation(sprite, 0));
         List<RecolorableBakedQuad> list = new ObjectArrayList<>();
         for (EnumFacing facing : EnumFacing.VALUES) {
             list.add(helper.visitCore(facing));

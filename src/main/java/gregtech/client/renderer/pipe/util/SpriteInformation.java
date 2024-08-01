@@ -8,4 +8,8 @@ import com.github.bsideup.jabel.Desugar;
 
 @SideOnly(Side.CLIENT)
 @Desugar
-public record SpriteInformation(TextureAtlasSprite sprite, boolean colorable) {}
+public record SpriteInformation(TextureAtlasSprite sprite, int colorID) {
+    public boolean colorable() {
+        return colorID >= 0;
+    }
+}

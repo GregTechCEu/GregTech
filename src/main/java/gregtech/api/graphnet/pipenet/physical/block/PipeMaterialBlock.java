@@ -11,11 +11,9 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
 
-import gregtech.client.renderer.pipe.PipeModel;
+import gregtech.client.renderer.pipe.AbstractPipeModel;
 
 import gregtech.common.ConfigHolder;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -31,14 +29,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Set;
 
 public abstract class PipeMaterialBlock extends WorldPipeBlock {
 
@@ -113,14 +109,14 @@ public abstract class PipeMaterialBlock extends WorldPipeBlock {
     @NotNull
     @Override
     protected BlockStateContainer.Builder constructState(BlockStateContainer.@NotNull Builder builder) {
-        return super.constructState(builder).add(PipeModel.MATERIAL_PROPERTY);
+        return super.constructState(builder).add(AbstractPipeModel.MATERIAL_PROPERTY);
     }
 
     @Override
     public @Nullable PipeMaterialTileEntity getTileEntity(@NotNull IBlockAccess world, @NotNull BlockPos pos) {
         if (GTUtility.arePosEqual(lastTilePos.get(), pos)) {
             PipeTileEntity tile = lastTile.get().get();
-            if (tile != null) return (PipeMaterialTileEntity) tile;
+            if (tile != null && !tile.isInvalid()) return (PipeMaterialTileEntity) tile;
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeMaterialTileEntity pipe) {

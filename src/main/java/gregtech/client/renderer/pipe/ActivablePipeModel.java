@@ -7,6 +7,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ActivableSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
+import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.ActivableCacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
@@ -69,22 +70,22 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
     @Override
     public @NotNull List<BakedQuad> getQuads(ActivableCacheKey key, byte connectionMask, byte closedMask,
-                                             byte blockedMask, int argb, @Nullable Material frameMaterial,
+                                             byte blockedMask, ColorData data, @Nullable Material frameMaterial,
                                              byte frameMask) {
         boolean bloomLayer = getCurrentRenderLayer() == BloomEffectUtil.getEffectiveBloomLayer();
         // don't render the main shape to the bloom layer
         List<BakedQuad> quads = bloomLayer ? new ObjectArrayList<>() :
-                super.getQuads(key, connectionMask, closedMask, blockedMask, argb, frameMaterial, frameMask);
+                super.getQuads(key, connectionMask, closedMask, blockedMask, data, frameMaterial, frameMask);
 
         if (!bloomLayer && (!key.isActive() || !allowActive())) {
-            ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, argb, false);
+            ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, data, false);
         } else {
             if (emissiveActive && bloomLayer) {
-                ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, argb, true);
+                ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, data, true);
                 // TODO bake this into the original quads
                 quads = quads.stream().map(RenderUtil::makeEmissive).collect(Collectors.toList());
             } else if (!emissiveActive && getCurrentRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED) {
-                ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, argb, true);
+                ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, data, true);
             }
         }
         return quads;
@@ -127,7 +128,7 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
         WorldPipeBlock block = WorldPipeBlock.getBlockFromItem(stack);
         if (block == null) return null;
         return new PipeItemModel<>(this, new ActivableCacheKey(block.getStructure().getRenderThickness(), false),
-                PipeTileEntity.DEFAULT_COLOR);
+                new ColorData(PipeTileEntity.DEFAULT_COLOR));
     }
 
     public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {

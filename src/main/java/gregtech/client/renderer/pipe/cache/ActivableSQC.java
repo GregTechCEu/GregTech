@@ -1,6 +1,7 @@
 package gregtech.client.renderer.pipe.cache;
 
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
@@ -26,11 +27,13 @@ public class ActivableSQC extends StructureQuadCache {
         super(helper, endTex, sideTex);
         this.overlayTex = overlayTex;
         this.overlayActiveTex = overlayActiveTex;
+        if (helper.getLayerCount() < 2) throw new IllegalStateException("Cannot create an ActivableSQC without 2 or more layers present on the helper!");
     }
 
     public static @NotNull ActivableSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                SpriteInformation sideTex, SpriteInformation overlayTex,
                                                SpriteInformation overlayActiveTex) {
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> StructureQuadCache.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
         ActivableSQC cache = new ActivableSQC(helper, endTex, sideTex, overlayTex, overlayActiveTex);
         cache.buildPrototype();
         return cache;
@@ -48,7 +51,7 @@ public class ActivableSQC extends StructureQuadCache {
         helper.setTargetSprite(overlayTex);
         for (EnumFacing facing : EnumFacing.VALUES) {
             int start = list.size();
-            list.addAll(helper.visitTube(facing));
+            list.addAll(helper.visitTube(facing, 1));
             overlayCoords.put(facing, new SubListAddress(start, list.size()));
         }
     }
@@ -57,13 +60,13 @@ public class ActivableSQC extends StructureQuadCache {
         helper.setTargetSprite(overlayActiveTex);
         for (EnumFacing facing : EnumFacing.VALUES) {
             int start = list.size();
-            list.addAll(helper.visitTube(facing));
+            list.addAll(helper.visitTube(facing, 1));
             overlayActiveCoords.put(facing, new SubListAddress(start, list.size()));
         }
     }
 
-    public void addOverlay(List<BakedQuad> list, byte overlayMask, int argb, boolean active) {
-        List<BakedQuad> quads = cache.getQuads(argb);
+    public void addOverlay(List<BakedQuad> list, byte overlayMask, ColorData data, boolean active) {
+        List<BakedQuad> quads = cache.getQuads(data);
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (GTUtility.evalMask(facing, overlayMask)) {
                 if (active) {

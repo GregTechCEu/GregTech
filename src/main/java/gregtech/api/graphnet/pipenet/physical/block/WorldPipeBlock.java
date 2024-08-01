@@ -64,8 +64,8 @@ import java.util.Map;
 public abstract class WorldPipeBlock extends BuiltInRenderBlock {
 
     // do not touch these two unless you know what you are doing
-    protected ThreadLocal<BlockPos> lastTilePos = ThreadLocal.withInitial(() -> new BlockPos(0, 0, 0));
-    protected ThreadLocal<WeakReference<PipeTileEntity>> lastTile = ThreadLocal.withInitial(() -> new WeakReference<>(null));
+    protected final ThreadLocal<BlockPos> lastTilePos = ThreadLocal.withInitial(() -> new BlockPos(0, 0, 0));
+    protected final ThreadLocal<WeakReference<PipeTileEntity>> lastTile = ThreadLocal.withInitial(() -> new WeakReference<>(null));
 
     private final IPipeStructure structure;
 
@@ -101,7 +101,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
                     continue;
                 }
                 // third check -- connect to pipes with an open connection, no matter the mark status.
-                if (tile.isConnected(facing.getOpposite())) {
+                if (other.isConnected(facing.getOpposite())) {
                     connectTile(tile, other, facing);
                 }
             } else if (facing == placedBlockSearchSide) {
@@ -166,6 +166,10 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile != null) {
             RayTraceAABB trace = collisionRayTrace(playerIn, worldIn, pos);
+            if (trace == null) {
+                super.onBlockClicked(worldIn, pos, playerIn);
+                return;
+            }
             EnumFacing facing = trace.sideHit;
             EnumFacing actualSide = CoverRayTracer.determineGridSideHit(trace);
             if (actualSide != null) facing = actualSide;
@@ -270,13 +274,13 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     public static Collection<WorldPipeNetNode> getNodesForTile(PipeTileEntity tile) {
         assert !tile.getWorld().isRemote;
         return tile.getBlockType().getHandler(tile.getWorld(), tile.getPos())
-                .getFromNets(tile.getWorld(), tile.getPos(), tile.getStructure());
+                .getOrCreateFromNets(tile.getWorld(), tile.getPos(), tile.getStructure());
     }
 
     @Override
     public void onBlockAdded(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
-        if (!worldIn.isRemote) getHandler(worldIn, pos).addToNets(worldIn, pos, getStructure());
+//        if (!worldIn.isRemote) getHandler(worldIn, pos).getOrCreateFromNets(worldIn, pos, getStructure());
     }
 
     @Override
@@ -533,7 +537,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     public PipeTileEntity getTileEntity(@NotNull IBlockAccess world, @NotNull BlockPos pos) {
         if (GTUtility.arePosEqual(lastTilePos.get(), pos)) {
             PipeTileEntity tile = lastTile.get().get();
-            if (tile != null) return tile;
+            if (tile != null && !tile.isInvalid()) return tile;
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeTileEntity pipe) {
@@ -588,14 +592,18 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
         return 0;
     }
 
-    // cover compatibility annoyance //
+    // cover compatibility //
 
     @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
                                 @NotNull Block blockIn, @NotNull BlockPos fromPos) {
         PipeTileEntity tile = getTileEntity(worldIn, pos);
-        if (tile != null) tile.getCoverHolder().updateInputRedstoneSignals();
+        if (tile != null) {
+            EnumFacing facing = GTUtility.getFacingToNeighbor(pos, fromPos);
+            if (facing != null) tile.onNeighborChanged(facing);
+            tile.getCoverHolder().updateInputRedstoneSignals();
+        }
     }
 
     @Override

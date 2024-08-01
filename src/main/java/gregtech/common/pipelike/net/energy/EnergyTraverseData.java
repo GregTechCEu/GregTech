@@ -11,7 +11,6 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
-import gregtech.api.graphnet.traverse.util.FlatLossOperator;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
@@ -59,22 +58,21 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
             if (voltage < pathVoltage) overVoltageInformation.put(node,
                     new OverVoltageInformation(voltage, flowReachingNode));
         }
+        TemperatureLogic temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+        if (!node.getData().getLogicEntryDefaultable(SuperconductorLogic.INSTANCE)
+                .canSuperconduct(temperatureLogic == null ? TemperatureLogic.DEFAULT_TEMPERATURE :
+                        temperatureLogic.getTemperature(getQueryTick()))) {
+            pathVoltage -= node.getData().getLogicEntryDefaultable(VoltageLossLogic.INSTANCE).getValue();
+        }
 
         NodeLossCache.Key key = NodeLossCache.key(node, this);
         NodeLossResult result = NodeLossCache.getLossResult(key);
         if (result != null) {
             return result.getLossFunction();
         } else {
-            TemperatureLogic temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
             result = temperatureLogic == null ? null : temperatureLogic.getLossResult(getQueryTick());
             if (result == null) {
-                if (node.getData().getLogicEntryDefaultable(SuperconductorLogic.INSTANCE)
-                        .canSuperconduct(temperatureLogic == null ? TemperatureLogic.DEFAULT_TEMPERATURE :
-                                temperatureLogic.getTemperature(getQueryTick()))) {
-                    return ReversibleLossOperator.IDENTITY;
-                }
-                return new FlatLossOperator(
-                        node.getData().getLogicEntryDefaultable(LossAbsoluteLogic.INSTANCE).getValue());
+                return ReversibleLossOperator.IDENTITY;
             }
             if (result.hasPostAction()) NodeLossCache.registerLossResult(key, result);
             return result.getLossFunction();
@@ -92,7 +90,8 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     @Override
     public long finalizeAtDestination(WorldPipeNetNode destination, long flowReachingDestination) {
         this.pathVoltage = (long) GTUtility.geometricMean(pathVoltage,
-                overVoltageInformation.values().stream().mapToDouble(o -> (double) o.voltageCap).toArray());
+                overVoltageInformation.values().stream().filter(o -> o.voltageCap < this.pathVoltage)
+                        .mapToDouble(o -> (double) o.voltageCap).toArray());
         overVoltageInformation.forEach((k, v) -> v.doHeating(k, pathVoltage, getQueryTick()));
         long availableFlow = flowReachingDestination;
         for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {

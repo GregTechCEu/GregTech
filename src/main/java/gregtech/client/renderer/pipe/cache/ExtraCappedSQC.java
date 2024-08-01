@@ -1,6 +1,7 @@
 package gregtech.client.renderer.pipe.cache;
 
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
@@ -26,10 +27,12 @@ public class ExtraCappedSQC extends StructureQuadCache {
                              SpriteInformation extraEndTex) {
         super(helper, endTex, sideTex);
         this.extraEndTex = extraEndTex;
+        if (helper.getLayerCount() < 2) throw new IllegalStateException("Cannot create an ExtraCappedSQC without 2 or more layers present on the helper!");
     }
 
     public static @NotNull ExtraCappedSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                  SpriteInformation sideTex, SpriteInformation extraEndTex) {
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> StructureQuadCache.capOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
         ExtraCappedSQC cache = new ExtraCappedSQC(helper, endTex, sideTex, extraEndTex);
         cache.buildPrototype();
         return cache;
@@ -46,14 +49,14 @@ public class ExtraCappedSQC extends StructureQuadCache {
         helper.setTargetSprite(extraEndTex);
         for (EnumFacing facing : EnumFacing.VALUES) {
             int start = list.size();
-            list.addAll(helper.visitTube(facing));
+            list.add(helper.visitCapper(facing, 1));
             extraCapperCoords.put(facing, new SubListAddress(start, list.size()));
         }
     }
 
     @Override
-    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, int argb) {
-        List<BakedQuad> quads = cache.getQuads(argb);
+    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data) {
+        List<BakedQuad> quads = cache.getQuads(data);
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (GTUtility.evalMask(facing, connectionMask)) {
                 list.addAll(tubeCoords.get(facing).getSublist(quads));

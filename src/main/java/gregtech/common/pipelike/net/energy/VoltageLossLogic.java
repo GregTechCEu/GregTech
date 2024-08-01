@@ -5,9 +5,9 @@ import gregtech.api.graphnet.logic.INetLogicEntry;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class LossAbsoluteLogic extends AbstractLongLogicData<LossAbsoluteLogic> {
+public final class VoltageLossLogic extends AbstractLongLogicData<VoltageLossLogic> {
 
-    public static final LossAbsoluteLogic INSTANCE = new LossAbsoluteLogic().setValue(0);
+    public static final VoltageLossLogic INSTANCE = new VoltageLossLogic().setValue(0);
 
     @Override
     public @NotNull String getName() {
@@ -15,13 +15,13 @@ public final class LossAbsoluteLogic extends AbstractLongLogicData<LossAbsoluteL
     }
 
     @Override
-    public LossAbsoluteLogic getNew() {
-        return new LossAbsoluteLogic();
+    public VoltageLossLogic getNew() {
+        return new VoltageLossLogic();
     }
 
     @Override
-    public LossAbsoluteLogic union(INetLogicEntry<?, ?> other) {
-        if (other instanceof LossAbsoluteLogic l) {
+    public VoltageLossLogic union(INetLogicEntry<?, ?> other) {
+        if (other instanceof VoltageLossLogic l) {
             return this.getWith(this.getValue() + l.getValue());
         } else return this;
     }

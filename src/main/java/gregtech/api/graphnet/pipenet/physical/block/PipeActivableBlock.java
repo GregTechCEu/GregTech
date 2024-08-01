@@ -41,7 +41,7 @@ public abstract class PipeActivableBlock extends WorldPipeBlock {
     public @Nullable PipeActivableTileEntity getTileEntity(@NotNull IBlockAccess world, @NotNull BlockPos pos) {
         if (GTUtility.arePosEqual(lastTilePos.get(), pos)) {
             PipeTileEntity tile = lastTile.get().get();
-            if (tile != null) return (PipeActivableTileEntity) tile;
+            if (tile != null && !tile.isInvalid()) return (PipeActivableTileEntity) tile;
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeActivableTileEntity pipe) {

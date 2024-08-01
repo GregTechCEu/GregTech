@@ -23,7 +23,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
-import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
+import gregtech.common.pipelike.net.energy.VoltageLossLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
 import gregtech.common.pipelike.net.energy.WorldEnergyNet;
@@ -154,16 +154,20 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     }
 
     @Override
-    public void addToNet(World world, BlockPos pos, IPipeStructure structure) {
+    @Nullable
+    public WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof CableStructure) {
             WorldPipeNetNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), structure);
+            return node;
         } else if (structure instanceof PipeStructure pipe) {
             long amperage = amperageLimit * pipe.material() / 2;
-            if (amperage == 0) return; // skip pipes that are too small
+            if (amperage == 0) return null; // skip pipes that are too small
             WorldPipeNetNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), pipe);
+            return node;
         }
+        return null;
     }
 
     @Override
@@ -174,7 +178,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             boolean insulated = cable.partialBurnStructure() != null;
             // insulated cables cool down half as fast
             float coolingFactor = (float) (Math.sqrt(cable.material()) / (insulated ? 8 : 4));
-            data.setLogicEntry(LossAbsoluteLogic.INSTANCE.getWith(loss))
+            data.setLogicEntry(VoltageLossLogic.INSTANCE.getWith(loss))
                     .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
@@ -189,7 +193,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             if (amperage == 0) return; // skip pipes that are too small
             long loss = getLoss(structure);
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
-            data.setLogicEntry(LossAbsoluteLogic.INSTANCE.getWith(loss))
+            data.setLogicEntry(VoltageLossLogic.INSTANCE.getWith(loss))
                     .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))

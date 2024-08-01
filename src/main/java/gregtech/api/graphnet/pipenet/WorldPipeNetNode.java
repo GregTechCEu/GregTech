@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -55,7 +56,7 @@ public final class WorldPipeNetNode extends WorldNetNode {
     }
 
     @Override
-    public WorldPipeNet getNet() {
+    public @NotNull WorldPipeNet getNet() {
         return (WorldPipeNet) super.getNet();
     }
 

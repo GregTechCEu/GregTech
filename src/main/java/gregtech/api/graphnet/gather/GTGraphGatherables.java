@@ -13,9 +13,11 @@ import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.laser.LaserStructure;
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.PipeStructure;
-import gregtech.common.pipelike.net.energy.LossAbsoluteLogic;
+import gregtech.common.pipelike.net.energy.VoltageLossLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
+
+import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -59,10 +61,11 @@ public final class GTGraphGatherables {
         event.registerLogic(ThroughputLogic.INSTANCE);
         event.registerLogic(ChannelCountLogic.INSTANCE);
         event.registerLogic(MultiNetCountLogic.INSTANCE);
-        event.registerLogic(LossAbsoluteLogic.INSTANCE);
+        event.registerLogic(VoltageLossLogic.INSTANCE);
         event.registerLogic(VoltageLimitLogic.INSTANCE);
         event.registerLogic(SuperconductorLogic.INSTANCE);
         event.registerLogic(TemperatureLogic.INSTANCE);
+        event.registerLogic(FluidContainmentLogic.INSTANCE);
     }
 
     @SubscribeEvent

@@ -7,6 +7,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ExtraCappedSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
+import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
@@ -31,6 +32,8 @@ import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
 public class CableModel extends AbstractPipeModel<CacheKey> {
+
+    public static final int DEFAULT_INSULATION_COLOR = 0xFF404040;
 
     private static final ResourceLocation loc = GTUtility.gregtechId("block/cable");
 
@@ -62,6 +65,22 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
 
     public CableModel(String variant) {
         this(null, null, variant);
+    }
+
+    @Override
+    protected ColorData computeColorData(IExtendedBlockState ext) {
+        if (insulationTex == null) return super.computeColorData(ext);
+        Material material = ext.getValue(AbstractPipeModel.MATERIAL_PROPERTY);
+        int insulationColor = safeInt(ext.getValue(COLOR_PROPERTY));
+        if (material != null) {
+            int matColor = GTUtility.convertRGBtoARGB(material.getMaterialRGB());
+            if (insulationColor == 0 || insulationColor == matColor) {
+                // unpainted
+                insulationColor = DEFAULT_INSULATION_COLOR;
+            }
+            return new ColorData(matColor, insulationColor);
+        }
+        return new ColorData(0, 0);
     }
 
     @Override
@@ -97,7 +116,8 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
         if (block == null) return null;
         Material mater = block instanceof PipeMaterialBlock mat ? mat.getMaterialForStack(stack) : null;
         return new PipeItemModel<>(this, new CacheKey(block.getStructure().getRenderThickness()),
-                mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) : PipeTileEntity.DEFAULT_COLOR);
+                new ColorData(mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) :
+                        PipeTileEntity.DEFAULT_COLOR, DEFAULT_INSULATION_COLOR));
     }
 
     public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {

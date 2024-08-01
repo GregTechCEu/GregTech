@@ -971,7 +971,7 @@ public class GTUtility {
         return mask;
     }
 
-    @Contract(pure = true, value = "->new")
+    @Contract(pure = true, value = "-> new")
     @NotNull
     public static <T> Set<T> createWeakHashSet() {
         return Collections.newSetFromMap(new WeakHashMap<>());

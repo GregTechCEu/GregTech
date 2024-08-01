@@ -1,6 +1,5 @@
 package gregtech.client.renderer.pipe;
 
-import gregtech.api.block.UnlistedPropertyMaterial;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
@@ -10,6 +9,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.BlockableSQC;
 import gregtech.client.renderer.pipe.cache.RestrictiveSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
+import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.PipeSpriteWoodClarifier;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
@@ -28,8 +28,6 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,8 +35,6 @@ import org.jetbrains.annotations.Nullable;
 public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
 
     private static final ResourceLocation loc = GTUtility.gregtechId("block/pipe_material");
-
-    public static final UnlistedPropertyMaterial MATERIAL_PROPERTY = new UnlistedPropertyMaterial("material");
 
     public static final PipeModel[] INSTANCES = new PipeModel[7];
     public static final PipeModel[] RESTRICTIVE_INSTANCES = new PipeModel[INSTANCES.length];
@@ -123,7 +119,8 @@ public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
         boolean wood = block instanceof PipeMaterialBlock mat && (mater = mat.getMaterialForStack(stack)) != null &&
                 mater.hasProperty(PropertyKey.WOOD);
         return new PipeItemModel<>(this, new WoodCacheKey(block.getStructure().getRenderThickness(), wood),
-                mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) : PipeTileEntity.DEFAULT_COLOR);
+                new ColorData(mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) :
+                        PipeTileEntity.DEFAULT_COLOR));
     }
 
     public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {

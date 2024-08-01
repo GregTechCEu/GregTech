@@ -26,19 +26,19 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
 
     private boolean isActive = false;
 
-    private final IGraphNet net;
-    private @NotNull NetLogicData data;
+    private final @NotNull IGraphNet net;
+    private final @NotNull NetLogicData data;
     private @Nullable NetGroup group = null;
 
     @Nullable
     private ICacheableIterator<? extends INetPath<?, ?>> pathCache = null;
 
-    public NetNode(IGraphNet net) {
+    public NetNode(@NotNull IGraphNet net) {
         this.net = net;
         this.data = net.getDefaultNodeData();
     }
 
-    public IGraphNet getNet() {
+    public @NotNull IGraphNet getNet() {
         return net;
     }
 
@@ -53,11 +53,12 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
      * Sets whether the node should be treated as a valid destination of pathing algorithms
      */
     public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public void setData(@NotNull NetLogicData data) {
-        this.data = data;
+        if (isActive != active) {
+            isActive = active;
+            NetGroup group = getGroupUnsafe();
+            if (group != null) group.clearPathCaches();
+            else this.clearPathCache();
+        }
     }
 
     public @NotNull NetLogicData getData() {
@@ -125,7 +126,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         this.isActive = nbt.getBoolean("IsActive");
-        this.data = this.net.getDefaultNodeData();
+        this.data.clearData();
         this.data.deserializeNBT((NBTTagList) nbt.getTag("Data"));
     }
 

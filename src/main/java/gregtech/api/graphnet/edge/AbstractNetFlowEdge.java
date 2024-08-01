@@ -53,7 +53,7 @@ public abstract class AbstractNetFlowEdge extends NetEdge {
         return getData().getLogicEntryDefaultable(ChannelCountLogic.INSTANCE).getValue();
     }
 
-    protected long getThroughput() {
+    public long getThroughput() {
         return getData().getLogicEntryDefaultable(ThroughputLogic.INSTANCE).getValue();
     }
 

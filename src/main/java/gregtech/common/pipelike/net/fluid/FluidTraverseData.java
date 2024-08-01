@@ -59,9 +59,10 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
 
     @Override
     public boolean prepareForPathWalk(FlowWorldPipeNetPath path, long flow) {
+        if (flow <= 0) return true;
         temperatureUpdates.clear();
         temperatureUpdates.trim(16);
-        return flow > 0;
+        return false;
     }
 
     @Override

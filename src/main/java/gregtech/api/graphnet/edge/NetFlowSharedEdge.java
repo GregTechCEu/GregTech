@@ -36,7 +36,7 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
 
     @Nullable
     private NetFlowSharedEdge getInverse(IGraphNet graph) {
-        NetEdge edge = graph.getEdge(getTarget(), getSource());
+        NetEdge edge = graph.getEdgeNullSafe(getTarget(), getSource());
         if (edge instanceof NetFlowSharedEdge i && i != this) {
             return i;
         }
@@ -118,7 +118,7 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
         @Override
         public void recalculateFlowLimits(long queryTick) {
             if (!this.init) {
-                this.maxCapacity = (long) getThroughput() * flowBufferTicks;
+                this.maxCapacity = getThroughput() * flowBufferTicks;
                 this.init = true;
             }
             int time = (int) (queryTick - this.lastQueryTick);

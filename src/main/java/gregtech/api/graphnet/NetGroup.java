@@ -60,7 +60,7 @@ public class NetGroup {
     }
 
     /**
-     * Merges the groups of an edge if necessary.
+     * Merges the groups of an edge if necessary. Does not actually perform the edge creation.
      * 
      * @param source the source node of the edge
      * @param target the target node of the edge
@@ -79,7 +79,6 @@ public class NetGroup {
         if (sourceGroup != null) {
             sourceGroup.mergeNode(target);
         } else {
-            assert targetGroup != null;
             targetGroup.mergeNode(source);
         }
     }
@@ -102,10 +101,11 @@ public class NetGroup {
         if (!this.net.containsNode(source)) return;
         this.clearPathCaches();
         List<NetNode> targets = this.net.getGraph().outgoingEdgesOf(source.wrapper).stream().map(a -> {
+            GraphVertex target = a.getTarget();
             // handling so undirected graphs don't throw an error
-            if (net.getGraph().isDirected() || Objects.equals(getTarget(a).wrapped, source))
-                return getTarget(a).wrapped;
-            return getSource(a).wrapped;
+            if (!net.getGraph().isDirected() && target == source.wrapper)
+                return a.getSource().wrapped;
+            return target.wrapped;
         }).collect(Collectors.toList());
         this.net.getBacker().removeVertex(source.wrapper);
         this.removeNode(source);
@@ -126,14 +126,6 @@ public class NetGroup {
                 new NetGroup(this.net, targetGroup);
             }
         }
-    }
-
-    private GraphVertex getSource(GraphEdge graphEdge) {
-        return this.net.getGraph().getEdgeSource(graphEdge);
-    }
-
-    private GraphVertex getTarget(GraphEdge graphEdge) {
-        return this.net.getGraph().getEdgeTarget(graphEdge);
     }
 
     /**

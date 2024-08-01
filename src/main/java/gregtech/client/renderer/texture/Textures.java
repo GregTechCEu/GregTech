@@ -632,30 +632,30 @@ public class Textures {
             iconRegister.registerIcons(textureMap);
         }
 
-        WIRE.accept(textureMap.registerSprite(gregtechId("blocks/cable/wire")), true);
-        INSULATION_FULL.accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_full")), false);
+        WIRE.accept(textureMap.registerSprite(gregtechId("blocks/cable/wire")), 0);
+        INSULATION_FULL.accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_full")), 1);
         for (int i = 0; i < INSULATION.length; i++) {
-            INSULATION[i].accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_" + i)), false);
+            INSULATION[i].accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_" + i)), 1);
         }
 
-        RESTRICTIVE_OVERLAY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive")), false);
-        PIPE_TINY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in")), true);
-        PIPE_SMALL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in")), true);
-        PIPE_NORMAL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in")), true);
-        PIPE_LARGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in")), true);
-        PIPE_HUGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_huge_in")), true);
-        PIPE_QUADRUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_quadruple_in")), true);
-        PIPE_NONUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_nonuple_in")), true);
-        PIPE_SIDE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side")), true);
-        PIPE_SMALL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in_wood")), true);
-        PIPE_NORMAL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in_wood")), true);
-        PIPE_LARGE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood")), true);
-        PIPE_SIDE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood")), true);
+        RESTRICTIVE_OVERLAY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive")), -1);
+        PIPE_TINY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in")), 0);
+        PIPE_SMALL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in")), 0);
+        PIPE_NORMAL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in")), 0);
+        PIPE_LARGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in")), 0);
+        PIPE_HUGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_huge_in")), 0);
+        PIPE_QUADRUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_quadruple_in")), 0);
+        PIPE_NONUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_nonuple_in")), 0);
+        PIPE_SIDE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side")), 0);
+        PIPE_SMALL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in_wood")), 0);
+        PIPE_NORMAL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in_wood")), 0);
+        PIPE_LARGE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood")), 0);
+        PIPE_SIDE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood")), 0);
 
         // Fluid Pipe Blocked overlay textures
         // PIPE_BLOCKED_OVERLAY = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked"));
         PIPE_BLOCKED_OVERLAY_UP.accept(textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_up")),
-                false);
+                -1);
         // PIPE_BLOCKED_OVERLAY_DOWN = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_down"));
         // PIPE_BLOCKED_OVERLAY_LEFT = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_left"));
         // PIPE_BLOCKED_OVERLAY_RIGHT = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_right"));
@@ -671,24 +671,24 @@ public class Textures {
         // PIPE_BLOCKED_OVERLAY_LR = textureMap.registerSprite(gregtechId("blocks/pipe/blocked/pipe_blocked_lr"));
 
         OPTICAL_PIPE_IN.accept(textureMap
-                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_in")), false);
+                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_in")), -1);
         OPTICAL_PIPE_SIDE.accept(textureMap
-                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side")), false);
+                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side")), -1);
         OPTICAL_PIPE_SIDE_OVERLAY.accept(textureMap
-                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay")), true);
+                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay")), 0);
         OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay_active")),
-                true);
+                0);
 
         LASER_PIPE_IN.accept(
-                textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_in")), false);
+                textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_in")), -1);
         LASER_PIPE_SIDE.accept(textureMap
-                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side")), false);
+                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side")), -1);
         LASER_PIPE_OVERLAY.accept(textureMap
-                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay")), true);
+                .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay")), 0);
         LASER_PIPE_OVERLAY_EMISSIVE.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay_emissive")),
-                true);
+                0);
 
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             textureMap.registerSprite(MaterialIconType.frameGt.getBlockTexturePath(iconSet));

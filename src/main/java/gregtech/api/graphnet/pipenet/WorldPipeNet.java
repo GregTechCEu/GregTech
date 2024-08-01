@@ -11,8 +11,12 @@ import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenet.predicate.ShutterPredicate;
 import gregtech.api.graphnet.worldnet.WorldNet;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.common.covers.CoverShutter;
+
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -20,12 +24,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -35,7 +36,7 @@ public abstract class WorldPipeNet extends WorldNet {
 
     public static final int MULTI_NET_TIMEOUT = 10;
 
-    private static final Object2ObjectOpenHashMap<Integer, Set<WeakReference<WorldPipeNet>>> dimensionNets = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<Integer, Set<WorldPipeNet>> dimensionNets = new Object2ObjectOpenHashMap<>();
 
     @SafeVarargs
     public WorldPipeNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
@@ -50,10 +51,11 @@ public abstract class WorldPipeNet extends WorldNet {
 
     @Override
     public void setWorld(World world) {
+        if (getWorld() == world) return;
         super.setWorld(world);
         dimensionNets.compute(getDimension(), (k, v) -> {
-            if (v == null) v = new ObjectOpenHashSet<>();
-            v.add(new WeakReference<>(this));
+            if (v == null) v = GTUtility.createWeakHashSet();
+            v.add(this);
             return v;
         });
     }
@@ -124,15 +126,7 @@ public abstract class WorldPipeNet extends WorldNet {
     }
 
     protected Stream<@NotNull WorldPipeNet> sameDimensionNetsStream() {
-        ObjectArrayList<WeakReference<WorldPipeNet>> expired = new ObjectArrayList<>();
-        Stream<@NotNull WorldPipeNet> returnable = dimensionNets.get(this.getDimension()).stream()
-                .map(ref -> {
-                    WorldPipeNet net = ref.get();
-                    if (net == null) expired.add(ref);
-                    return net;
-                }).filter(Objects::nonNull);
-        expired.forEach(dimensionNets.get(this.getDimension())::remove);
-        return returnable;
+        return dimensionNets.get(this.getDimension()).stream().filter(Objects::nonNull);
     }
 
     public void synchronizeNode(WorldPipeNetNode node) {
@@ -151,6 +145,7 @@ public abstract class WorldPipeNet extends WorldNet {
                     } else if (n.overlapHelper == null) {
                         // both handlers are null
                         node.overlapHelper = new MultiNodeHelper(MULTI_NET_TIMEOUT);
+                        node.overlapHelper.addNode(n);
                     }
                     // n handler does not match cast handler
                     n.overlapHelper = node.overlapHelper;
@@ -173,5 +168,24 @@ public abstract class WorldPipeNet extends WorldNet {
     @Override
     public final @NotNull WorldPipeNetNode getNewNode() {
         return new WorldPipeNetNode(this);
+    }
+
+    public static <T> Object2ObjectOpenCustomHashMap<WorldPipeNetNode, T> getSensitiveHashMap() {
+        return new Object2ObjectOpenCustomHashMap<>(SensitiveStrategy.INSTANCE);
+    }
+
+    protected static class SensitiveStrategy implements Hash.Strategy<WorldPipeNetNode> {
+
+        public static final SensitiveStrategy INSTANCE = new SensitiveStrategy();
+
+        @Override
+        public int hashCode(WorldPipeNetNode o) {
+            return Objects.hash(o, o.getNet());
+        }
+
+        @Override
+        public boolean equals(WorldPipeNetNode a, WorldPipeNetNode b) {
+            return a.equals(b) && a.getNet().equals(b.getNet());
+        }
     }
 }

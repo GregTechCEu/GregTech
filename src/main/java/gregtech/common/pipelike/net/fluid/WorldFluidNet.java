@@ -33,8 +33,8 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
         if (net == null) {
             net = new WorldFluidNet(DATA_ID);
             world.setData(DATA_ID, net);
+            net.setWorld(world);
         }
-        net.setWorld(world);
         return net;
     }
 

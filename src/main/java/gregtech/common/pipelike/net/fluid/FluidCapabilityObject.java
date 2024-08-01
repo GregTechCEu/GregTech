@@ -2,6 +2,7 @@ package gregtech.common.pipelike.net.fluid;
 
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
+import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
@@ -23,23 +24,25 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Iterator;
 
-public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandler {
-
-    private static final IFluidTankProperties[] EMPTY = new IFluidTankProperties[0];
+public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandler, IFluidTankProperties {
 
     private final WorldPipeNet net;
     private @Nullable PipeTileEntity tile;
 
     private final EnumMap<EnumFacing, Wrapper> wrappers = new EnumMap<>(EnumFacing.class);
+    private final IFluidTankProperties[] properties;
 
     private boolean transferring = false;
 
     public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> FluidCapabilityObject(@NotNull N net,
                                                                                           WorldPipeNetNode node) {
         this.net = net;
+        properties = new IFluidTankProperties[node.getData().getLogicEntryDefaultable(ChannelCountLogic.INSTANCE).getValue()];
+        Arrays.fill(properties, this);
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
             edge.setData(NetLogicData.union(node.getData(), (NetLogicData) null));
@@ -70,7 +73,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public Capability<?>[] getCapabilities() {
-        return WorldEnergyNet.CAPABILITIES;
+        return WorldFluidNet.CAPABILITIES;
     }
 
     @Override
@@ -114,7 +117,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        return EMPTY;
+        return properties;
     }
 
     @Override
@@ -127,14 +130,47 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         return null;
     }
 
-    protected class Wrapper implements IFluidHandler {
+    @Override
+    public FluidStack getContents() {
+        return null;
+    }
+
+    @Override
+    public int getCapacity() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public boolean canFill() {
+        return true;
+    }
+
+    @Override
+    public boolean canDrain() {
+        return false;
+    }
+
+    @Override
+    public boolean canFillFluidType(FluidStack fluidStack) {
+        return true;
+    }
+
+    @Override
+    public boolean canDrainFluidType(FluidStack fluidStack) {
+        return false;
+    }
+
+    protected class Wrapper implements IFluidHandler, IFluidTankProperties {
 
         private final EnumFacing facing;
         private final AbstractNetFlowEdge buffer;
+        private final IFluidTankProperties[] properties;
 
         public Wrapper(EnumFacing facing, AbstractNetFlowEdge buffer) {
             this.facing = facing;
             this.buffer = buffer;
+            properties = new IFluidTankProperties[FluidCapabilityObject.this.properties.length];
+            Arrays.fill(properties, this);
         }
 
         public AbstractNetFlowEdge getBuffer() {
@@ -143,7 +179,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
         @Override
         public IFluidTankProperties[] getTankProperties() {
-            return EMPTY;
+            return properties;
         }
 
         @Override
@@ -159,6 +195,36 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
             return null;
+        }
+
+        @Override
+        public FluidStack getContents() {
+            return null;
+        }
+
+        @Override
+        public int getCapacity() {
+            return (int) Math.min(Integer.MAX_VALUE, buffer.getThroughput());
+        }
+
+        @Override
+        public boolean canFill() {
+            return true;
+        }
+
+        @Override
+        public boolean canDrain() {
+            return false;
+        }
+
+        @Override
+        public boolean canFillFluidType(FluidStack fluidStack) {
+            return true;
+        }
+
+        @Override
+        public boolean canDrainFluidType(FluidStack fluidStack) {
+            return false;
         }
     }
 }

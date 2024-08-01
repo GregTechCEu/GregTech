@@ -1,5 +1,6 @@
 package gregtech.client.renderer.pipe;
 
+import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.util.CacheKey;
 
 import net.minecraft.block.state.IBlockState;
@@ -65,17 +66,17 @@ public class PipeItemModel<K extends CacheKey> implements IBakedModel {
 
     private final AbstractPipeModel<K> basis;
     private final K key;
-    private final int argb;
+    private final ColorData data;
 
-    public PipeItemModel(AbstractPipeModel<K> basis, K key, int argb) {
+    public PipeItemModel(AbstractPipeModel<K> basis, K key, ColorData data) {
         this.basis = basis;
         this.key = key;
-        this.argb = argb;
+        this.data = data;
     }
 
     @Override
     public @NotNull List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        return basis.getQuads(key, (byte) 0b1100, (byte) 0b0, (byte) 0b0, argb, null, (byte) 0b0);
+        return basis.getQuads(key, (byte) 0b1100, (byte) 0b0, (byte) 0b0, data, null, (byte) 0b0);
     }
 
     @Override

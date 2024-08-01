@@ -68,8 +68,9 @@ public final class GraphNetBacker {
     public boolean removeNode(@Nullable NetNode node) {
         if (node != null) {
             if (this.getGraph().edgesOf(node.wrapper).size() != 0) this.invalidateAlgs();
-            if (node.getGroupUnsafe() != null) {
-                node.getGroupUnsafe().splitNode(node);
+            NetGroup group = node.getGroupUnsafe();
+            if (group != null) {
+                group.splitNode(node);
             } else this.removeVertex(node.wrapper);
             return true;
         } else return false;
@@ -85,7 +86,10 @@ public final class GraphNetBacker {
     @Nullable
     public NetEdge addEdge(NetNode source, NetNode target, double weight) {
         GraphEdge graphEdge = getGraph().addEdge(source.wrapper, target.wrapper);
-        if (graphEdge != null) getGraph().setEdgeWeight(graphEdge, weight);
+        if (graphEdge != null) {
+            getGraph().setEdgeWeight(graphEdge, weight);
+            NetGroup.mergeEdge(source, target);
+        }
         return graphEdge == null ? null : graphEdge.wrapped;
     }
 
@@ -96,9 +100,11 @@ public final class GraphNetBacker {
     }
 
     public boolean removeEdge(NetNode source, NetNode target) {
-        if (source.getGroupUnsafe() == null) {
+        NetGroup group = source.getGroupUnsafe();
+        if (group == null) {
+            // weird since there should always be a group for two joined nodes, but whatever
             return removeEdge(source.wrapper, target.wrapper) != null;
-        } else return source.getGroupUnsafe().splitEdge(source, target);
+        } else return group.splitEdge(source, target);
     }
 
     @ApiStatus.Internal

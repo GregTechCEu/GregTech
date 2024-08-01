@@ -9,6 +9,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ColorQuadCache;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
+import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
 
@@ -59,7 +60,9 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     public static UnlistedByteProperty CONNECTION_MASK_PROPERTY = new UnlistedByteProperty("connection_mask");
     public static UnlistedByteProperty CLOSED_MASK_PROPERTY = new UnlistedByteProperty("closed_mask");
     public static UnlistedByteProperty BLOCKED_MASK_PROPERTY = new UnlistedByteProperty("blocked_mask");
+
     public static UnlistedIntegerProperty COLOR_PROPERTY = new UnlistedIntegerProperty("color");
+    public static final UnlistedPropertyMaterial MATERIAL_PROPERTY = new UnlistedPropertyMaterial("material");
 
     protected final Object2ObjectOpenHashMap<ResourceLocation, ColorQuadCache> frameCache = new Object2ObjectOpenHashMap<>();
     protected final Object2ObjectOpenHashMap<K, StructureQuadCache> pipeCache = new Object2ObjectOpenHashMap<>();
@@ -75,10 +78,14 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
         if (side == null && state instanceof IExtendedBlockState ext) {
             return getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
                     safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
-                    safeInt(ext.getValue(COLOR_PROPERTY)), ext.getValue(FRAME_MATERIAL_PROPERTY),
+                    computeColorData(ext), ext.getValue(FRAME_MATERIAL_PROPERTY),
                     safeByte(ext.getValue(FRAME_MASK_PROPERTY)));
         }
         return Collections.emptyList();
+    }
+
+    protected ColorData computeColorData(IExtendedBlockState ext) {
+        return new ColorData(safeInt(ext.getValue(COLOR_PROPERTY)));
     }
 
     protected static byte safeByte(@Nullable Byte abyte) {
@@ -89,7 +96,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
         return integer == null ? 0 : integer;
     }
 
-    public @NotNull List<BakedQuad> getQuads(K key, byte connectionMask, byte closedMask, byte blockedMask, int argb,
+    public @NotNull List<BakedQuad> getQuads(K key, byte connectionMask, byte closedMask, byte blockedMask, ColorData data,
                                              @Nullable Material frameMaterial, byte frameMask) {
         List<BakedQuad> quads = new ObjectArrayList<>();
 
@@ -99,7 +106,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
             pipeCache.put(key, cache);
         }
         cache.addToList(quads, connectionMask, closedMask,
-                blockedMask, argb);
+                blockedMask, data);
 
         if (frameMaterial != null) {
             ResourceLocation rl = MaterialIconType.frameGt.getBlockTexturePath(frameMaterial.getMaterialIconSet());
@@ -109,7 +116,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
                         .createFrame(Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString())));
                 frameCache.put(rl, frame);
             }
-            List<BakedQuad> frameQuads = frame.getQuads(GTUtility.convertRGBtoARGB(frameMaterial.getMaterialRGB()));
+            List<BakedQuad> frameQuads = frame.getQuads(new ColorData(GTUtility.convertRGBtoARGB(frameMaterial.getMaterialRGB())));
             for (int i = 0; i < 6; i++) {
                 if ((frameMask & (1 << i)) > 0) {
                     quads.add(frameQuads.get(i));

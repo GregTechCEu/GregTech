@@ -25,8 +25,9 @@ public class RecolorableBakedQuad extends UnpackedBakedQuad {
         this.spriteInformation = texture;
     }
 
-    public RecolorableBakedQuad withColor(int argb) {
+    public RecolorableBakedQuad withColor(ColorData data) {
         if (!spriteInformation.colorable()) return this;
+        int argb = data.colorsARGB()[spriteInformation.colorID()];
 
         float[][][] newData = new float[4][format.getElementCount()][];
 

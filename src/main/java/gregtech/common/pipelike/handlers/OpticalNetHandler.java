@@ -23,14 +23,15 @@ public final class OpticalNetHandler implements IPipeNetNodeHandler {
     public static final OpticalNetHandler INSTANCE = new OpticalNetHandler();
 
     @Override
-    public void addToNets(World world, BlockPos pos, IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof OpticalStructure) {
-            WorldOpticalNet.getWorldNet(world).getOrCreateNode(pos);
+            return Collections.singletonList(WorldOpticalNet.getWorldNet(world).getOrCreateNode(pos));
         }
+        return Collections.emptyList();
     }
 
     @Override
-    public Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof OpticalStructure) {
             WorldPipeNetNode node = WorldOpticalNet.getWorldNet(world).getNode(pos);
             if (node != null) return Collections.singletonList(node);

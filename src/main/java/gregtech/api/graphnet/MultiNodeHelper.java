@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  * this by <br>
  * A) keeping a record of traversals to allow for blocking traversal when another net has been traversed
  * recently and <br>
- * B) make sure that logic entries requiring it are the same object across all synced nodes. <br>
+ * B) making sure that logic entries requiring it are the same object across all synced nodes. <br>
  * <br>
  * MultiNodeHelpers have no standard implementation and must be handled by a net and its nodes; see
  * {@link gregtech.api.graphnet.pipenet.WorldPipeNet} and {@link gregtech.api.graphnet.pipenet.WorldPipeNetNode}
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class MultiNodeHelper implements INetLogicEntryListener {
 
-    protected final Object2ObjectOpenHashMap<IGraphNet, NetNode> handledNodes = new Object2ObjectOpenHashMap<>();
+    protected final Object2ObjectOpenHashMap<IGraphNet, LogicDataHandler> handledDatas = new Object2ObjectOpenHashMap<>();
 
     protected final Object2ObjectOpenHashMap<IGraphNet, @NotNull Long> recentTransferNets = new Object2ObjectOpenHashMap<>();
     protected final int transferTimeout;
@@ -57,11 +58,10 @@ public class MultiNodeHelper implements INetLogicEntryListener {
     @Override
     public void markLogicEntryAsUpdated(INetLogicEntry<?, ?> entry, boolean fullChange) {
         // TODO have a helper or something on clientside to avoid redundant packets
-        handledNodes.forEach((k, v) -> v.getData().markLogicEntryAsUpdated(entry, fullChange));
+        handledDatas.forEach((k, v) -> v.data.markLogicEntryAsUpdated(entry, fullChange));
     }
 
-    public void addNode(NetNode node) {
-        handledNodes.put(node.getNet(), node);
+    public void addNode(@NotNull NetNode node) {
         List<INetLogicEntry<?, ?>> toSet = new ObjectArrayList<>();
         for (INetLogicEntry<?, ?> entry : node.getData().getEntries()) {
             if (entry.mergedToMultiNodeHelper()) {
@@ -71,21 +71,66 @@ public class MultiNodeHelper implements INetLogicEntryListener {
                     // don't put it into the data yet because we're currently iterating through the data's entries.
                     toSet.add(existing);
                 } else {
-                    entry.registerToMultiNodeHelper(this);
-                    mergedData.setLogicEntry(entry);
+                    addNewLogicEntry(entry);
                 }
             }
         }
+        handledDatas.put(node.getNet(), new LogicDataHandler(node));
         for (INetLogicEntry<?, ?> entry : toSet) {
             node.getData().setLogicEntry(entry);
         }
     }
 
     public void removeNode(NetNode node) {
-        if (handledNodes.remove(node.getNet(), node)) {
+        LogicDataHandler removed = handledDatas.remove(node.getNet());
+        if (removed != null) {
+            removed.invalidate();
             for (INetLogicEntry<?, ?> entry : this.mergedData.getEntries()) {
                 node.getData().removeLogicEntry(entry);
                 entry.unmerge(node);
+            }
+        }
+    }
+
+    private void addNewLogicEntry(@NotNull INetLogicEntry<?, ?> entry) {
+        entry.registerToMultiNodeHelper(this);
+        mergedData.setLogicEntry(entry);
+        handledDatas.values().forEach(h -> h.data.setLogicEntry(entry));
+    }
+
+    protected class LogicDataHandler implements NetLogicData.ILogicDataListener {
+
+        public final WeakReference<NetNode> nodeRef;
+        public final @NotNull NetLogicData.LogicDataListener listener;
+        public final @NotNull NetLogicData data;
+
+        public LogicDataHandler(@NotNull NetNode node) {
+            this.data = node.getData();
+            this.listener = data.createListener(this);
+            this.nodeRef = new WeakReference<>(node);
+        }
+
+        public void invalidate() {
+            this.listener.invalidate();
+        }
+
+        @Override
+        public void markChanged(INetLogicEntry<?, ?> updatedEntry, boolean removed, boolean fullChange) {
+            if (!fullChange || !updatedEntry.mergedToMultiNodeHelper()) return;
+            NetNode node = nodeRef.get();
+            if (node == null) return;
+            INetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(updatedEntry);
+            if (removed) {
+                if (existing != null) mergedData.removeLogicEntry(existing);
+            } else {
+                if (existing != null) {
+                    if (existing != updatedEntry) {
+                        existing.merge(node, updatedEntry);
+                        data.setLogicEntry(existing);
+                    }
+                } else {
+                    addNewLogicEntry(updatedEntry);
+                }
             }
         }
     }

@@ -71,6 +71,20 @@ public interface IGraphNet {
     NetEdge getEdge(@NotNull NetNode source, @NotNull NetNode target);
 
     /**
+     * Returns the edge linking two nodes together, if one exists and both provided nodes are not null.
+     *
+     * @param source Source node.
+     * @param target Target node.
+     * @return the linking edge, if one exists.
+     */
+    @Contract("null, _ -> null; _, null -> null; _, _ -> _")
+    @Nullable
+    default NetEdge getEdgeNullSafe(@Nullable NetNode source, @Nullable NetNode target) {
+        if (source == null || target == null) return null;
+        else return getEdge(source, target);
+    }
+
+    /**
      * Removes the edge linking two nodes together, if one exists.
      * 
      * @param source   Source node.

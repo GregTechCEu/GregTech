@@ -181,11 +181,14 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     }
 
     @Override
-    public void addToNet(World world, BlockPos pos, IPipeStructure structure) {
+    @Nullable
+    public WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof PipeStructure) {
             WorldPipeNetNode node = WorldFluidNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), structure);
+            return node;
         }
+        return null;
     }
 
     @Override

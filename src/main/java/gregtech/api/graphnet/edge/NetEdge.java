@@ -21,17 +21,19 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
      * For interacting with the internal graph representation ONLY, do not use or set this field otherwise.
      */
     @ApiStatus.Internal
-    public GraphEdge wrapper;
+    public @Nullable GraphEdge wrapper;
 
     private EdgePredicateHandler predicateHandler;
 
     private NetLogicData data;
 
-    protected NetNode getSource() {
+    protected @Nullable NetNode getSource() {
+        if (wrapper == null) return null;
         return wrapper.getSource().wrapped;
     }
 
-    protected NetNode getTarget() {
+    protected @Nullable NetNode getTarget() {
+        if (wrapper == null) return null;
         return wrapper.getTarget().wrapped;
     }
 

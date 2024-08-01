@@ -10,6 +10,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.gather.GTGraphGatherables;
 import gregtech.api.graphnet.logic.INetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicData;
+import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.IInsulatable;
@@ -21,6 +22,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.common.blocks.MetaBlocks;
+
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -57,6 +61,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -83,7 +88,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     protected final PipeCoverHolder covers = new PipeCoverHolder(this);
     private final Object2ObjectOpenHashMap<Capability<?>, IPipeCapabilityObject> capabilities = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectOpenHashMap<WorldPipeNetNode, PipeCapabilityWrapper> netCapabilities = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectOpenCustomHashMap<WorldPipeNetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet.getSensitiveHashMap();
 
     @Nullable
     private TemperatureLogic temperatureLogic;
@@ -107,6 +112,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         drops.add(getMainDrop(state));
         if (getFrameMaterial() != null)
             drops.add(MetaBlocks.FRAMES.get(getFrameMaterial()).getItem(getFrameMaterial()));
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        scheduleRenderUpdate();
     }
 
     @Override
@@ -348,23 +359,20 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
         boolean oneActive = false;
         for (var netCapability : netCapabilities.entrySet()) {
-            boolean oneMatch = false;
             for (Capability<?> cap : netCapability.getValue().capabilities) {
                 if (tile.hasCapability(cap, facing.getOpposite())) {
-                    oneMatch = true;
                     oneActive = true;
+                    netCapability.getValue().setActive(facing);
                     break;
                 }
             }
-            netCapability.getKey().setActive(oneMatch);
         }
-        if (oneActive) this.setConnected(facing, false);
+        if (canOpenConnection && oneActive) this.setConnected(facing, false);
     }
 
     private void setAllIdle(EnumFacing facing) {
         for (var netCapability : netCapabilities.entrySet()) {
             netCapability.getValue().setIdle(facing);
-            netCapability.getKey().setActive(false);
         }
     }
 
@@ -439,10 +447,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             boolean firstNode = true;
             for (WorldPipeNetNode node : WorldPipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
-                this.netCapabilities.put(node, new PipeCapabilityWrapper(node.getNet().getTargetCapabilities()));
+                this.netCapabilities.put(node, new PipeCapabilityWrapper(node));
                 String netName = node.getNet().mapName;
                 netLogicDatas.put(netName, node.getData());
-                var listener = node.getData().new LogicDataListener(
+                var listener = node.getData().createListener(
                         (e, r, f) -> writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
                             buf.writeString(netName);
                             buf.writeString(e.getName());
@@ -464,6 +472,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.listeners.trim();
             this.capabilities.trim();
             this.netCapabilities.trim();
+            updateActiveStatus(null, false);
         }
     }
 
