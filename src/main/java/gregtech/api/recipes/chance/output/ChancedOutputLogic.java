@@ -30,15 +30,16 @@ public interface ChancedOutputLogic {
                                                                   Map<I, Integer> cache) {
             ImmutableList.Builder<T> builder = ImmutableList.builder();
             for (T entry : chancedEntries) {
-                int numerator = getChance(entry, boostFunction, baseTier, machineTier);
+                int cached = cache.getOrDefault(entry.getIngredient(), 0);
+                int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int denominator = entry.getDenominator();
-                int cached = cache.get(entry.getIngredient());
-                if (passesChance(cached + numerator, denominator)) {
-                    builder.add(entry);
-                    cache.put(entry.getIngredient(), cached + numerator - denominator);
-                } else {
-                    cache.put(entry.getIngredient(), cached + numerator);
+                if (passesChance(numerator, denominator)) {
+                    do {
+                        builder.add(entry);
+                        numerator -= denominator;
+                    } while (passesChance(numerator, denominator));
                 }
+                cache.put(entry.getIngredient(), numerator);
                 // if (passesChance(getChance(entry, boostFunction, baseTier, machineTier))) {
                 // builder.add(entry);
                 // }
@@ -72,7 +73,7 @@ public interface ChancedOutputLogic {
                                                                   Map<I, Integer> cache) {
             boolean failed = false;
             for (T entry : chancedEntries) {
-                int cached = cache.get(entry.getIngredient());
+                int cached = cache.getOrDefault(entry.getIngredient(), 0);
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int denominator = entry.getDenominator();
                 if (!passesChance(numerator, denominator)) {
@@ -106,7 +107,7 @@ public interface ChancedOutputLogic {
                                                                   int baseTier, int machineTier,
                                                                   Map<I, Integer> cache) {
             for (T entry : chancedEntries) {
-                int cached = cache.get(entry.getIngredient());
+                int cached = cache.getOrDefault(entry.getIngredient(), 0);
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int denominator = entry.getDenominator();
                 if (passesChance(numerator, denominator)) {
