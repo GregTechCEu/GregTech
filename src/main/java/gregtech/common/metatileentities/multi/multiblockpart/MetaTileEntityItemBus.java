@@ -286,8 +286,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                                         .slotGroup("item_inv")
                                         .changeListener((newItem, onlyAmountChanged, client, init) -> {
                                             if (onlyAmountChanged &&
-                                                    handler instanceof NotifiableItemStackHandler notif) {
-                                                notif.onContentsChanged(index);
+                                                    handler instanceof GTItemStackHandler gtHandler) {
+                                                gtHandler.onContentsChanged(index);
                                             }
                                         })
                                         .accessibility(!isExportHatch, true)));
