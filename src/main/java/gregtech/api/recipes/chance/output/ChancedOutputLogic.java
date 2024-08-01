@@ -82,7 +82,7 @@ public interface ChancedOutputLogic {
                 int denominator = entry.getDenominator();
                 if (!passesChance(numerator, denominator)) {
                     if (cache != null)
-                        cache.put(entry.getIngredient(), numerator);
+                        cache.put(entry.getIngredient(), numerator % denominator);
 
                     failed = true;
                 }
@@ -112,6 +112,7 @@ public interface ChancedOutputLogic {
                                                                   @NotNull ChanceBoostFunction boostFunction,
                                                                   int baseTier, int machineTier,
                                                                   @Nullable Map<I, Integer> cache) {
+            T selected = null;
             for (T entry : chancedEntries) {
                 int cached = 0;
                 if (cache != null)
@@ -121,12 +122,13 @@ public interface ChancedOutputLogic {
                 int denominator = entry.getDenominator();
                 if (passesChance(numerator, denominator)) {
                     if (cache != null)
-                        cache.put(entry.getIngredient(), numerator);
+                        cache.put(entry.getIngredient(), numerator % denominator);
 
-                    return Collections.singletonList(entry);
+                    if (selected == null)
+                        selected = entry;
                 }
             }
-            return null;
+            return selected == null ? null : Collections.singletonList(selected);
         }
 
         @Override
