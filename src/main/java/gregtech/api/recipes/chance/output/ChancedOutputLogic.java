@@ -1,6 +1,5 @@
 package gregtech.api.recipes.chance.output;
 
-import gregtech.api.GTValues;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 
@@ -34,7 +33,7 @@ public interface ChancedOutputLogic {
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier);
                 int denominator = entry.getDenominator();
                 int cached = cache.get(entry.getIngredient());
-                if (cached + numerator >= denominator) {
+                if (passesChance(cached + numerator, denominator)) {
                     builder.add(entry);
                     cache.put(entry.getIngredient(), cached + numerator - denominator);
                 } else {
@@ -71,12 +70,17 @@ public interface ChancedOutputLogic {
                                                                   @NotNull ChanceBoostFunction boostFunction,
                                                                   int baseTier, int machineTier,
                                                                   Map<I, Integer> cache) {
+            boolean failed = false;
             for (T entry : chancedEntries) {
-                if (!passesChance(getChance(entry, boostFunction, baseTier, machineTier))) {
-                    return null;
+                int cached = cache.get(entry.getIngredient());
+                int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
+                int denominator = entry.getDenominator();
+                if (!passesChance(numerator, denominator)) {
+                    cache.put(entry.getIngredient(), numerator);
+                    failed = true;
                 }
             }
-            return ImmutableList.copyOf(chancedEntries);
+            return failed ? null : ImmutableList.copyOf(chancedEntries);
         }
 
         @Override
@@ -102,7 +106,11 @@ public interface ChancedOutputLogic {
                                                                   int baseTier, int machineTier,
                                                                   Map<I, Integer> cache) {
             for (T entry : chancedEntries) {
-                if (passesChance(getChance(entry, boostFunction, baseTier, machineTier))) {
+                int cached = cache.get(entry.getIngredient());
+                int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
+                int denominator = entry.getDenominator();
+                if (passesChance(numerator, denominator)) {
+                    cache.put(entry.getIngredient(), numerator);
                     return Collections.singletonList(entry);
                 }
             }
@@ -161,11 +169,13 @@ public interface ChancedOutputLogic {
     }
 
     /**
-     * @param chance the chance to check
+     * @param numerator   the chance to check
+     * @param denominator
      * @return if the roll with the chance is successful
      */
-    static boolean passesChance(int chance) {
-        return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
+    static boolean passesChance(int numerator, int denominator) {
+        return numerator >= denominator;
+//        return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
     }
 
     /**
