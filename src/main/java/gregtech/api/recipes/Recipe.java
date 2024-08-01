@@ -469,10 +469,11 @@ public class Recipe {
      * @param recipeMap   The RecipeMap that the recipe is being performed upon, used for chanced output calculation
      * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
      */
-    public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
+    public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap,
+                                                Map<ItemStack, Integer> cache) {
         List<ItemStack> outputs = new ArrayList<>(getOutputs());
         ChanceBoostFunction function = recipeMap.getChanceFunction();
-        List<ChancedItemOutput> chancedOutputsList = getChancedOutputs().roll(function, recipeTier, machineTier);
+        List<ChancedItemOutput> chancedOutputsList = getChancedOutputs().roll(function, recipeTier, machineTier, cache);
 
         if (chancedOutputsList == null) return outputs;
 
@@ -500,6 +501,10 @@ public class Recipe {
         outputs.addAll(resultChanced);
 
         return outputs;
+    }
+
+    public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
+        return getResultItemOutputs(recipeTier, machineTier, recipeMap, Collections.emptyMap());
     }
 
     /**
@@ -664,11 +669,13 @@ public class Recipe {
      * @param recipeMap   The RecipeMap that the recipe is being performed upon, used for chanced output calculation
      * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
      */
-    public List<FluidStack> getResultFluidOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
+    public List<FluidStack> getResultFluidOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap,
+                                                  Map<FluidStack, Integer> cache) {
         List<FluidStack> outputs = new ArrayList<>(GTUtility.copyFluidList(getFluidOutputs()));
 
         ChanceBoostFunction function = recipeMap.getChanceFunction();
-        List<ChancedFluidOutput> chancedOutputsList = getChancedFluidOutputs().roll(function, recipeTier, machineTier);
+        List<ChancedFluidOutput> chancedOutputsList = getChancedFluidOutputs().roll(function, recipeTier, machineTier,
+                cache);
 
         if (chancedOutputsList == null) return outputs;
 

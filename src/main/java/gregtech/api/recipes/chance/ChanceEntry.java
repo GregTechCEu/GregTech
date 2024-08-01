@@ -21,6 +21,7 @@ public interface ChanceEntry<T> {
     int getChance();
 
     int getNumerator();
+
     int getDenominator();
 
     /**
