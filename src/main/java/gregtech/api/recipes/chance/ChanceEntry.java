@@ -20,10 +20,6 @@ public interface ChanceEntry<T> {
      */
     int getChance();
 
-    int getNumerator();
-
-    int getDenominator();
-
     /**
      * @return a copy of the chance entry
      */
