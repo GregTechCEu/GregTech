@@ -24,6 +24,7 @@ import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -38,12 +39,15 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
@@ -71,7 +75,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int maxProgressTime;
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
+    protected Map<FluidStack, Integer> fluidChancesCache = new Object2IntArrayMap<>();
     protected NonNullList<ItemStack> itemOutputs;
+    protected Map<ItemStack, Integer> itemChancesCache = new Object2IntOpenCustomHashMap<>(
+            ItemStackHashStrategy.builder()
+                    .compareItem(true)
+                    .compareDamage(true)
+                    .build());
 
     protected boolean isActive;
     protected boolean workingEnabled = true;
@@ -948,9 +958,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         RecipeMap<?> map = getRecipeMap();
         if (map != null) {
             this.fluidOutputs = GTUtility
-                    .copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, map));
+                    .copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, map, fluidChancesCache));
             this.itemOutputs = GTUtility
-                    .copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, map));
+                    .copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, map, itemChancesCache));
         }
 
         if (this.wasActiveAndNeedsUpdate) {

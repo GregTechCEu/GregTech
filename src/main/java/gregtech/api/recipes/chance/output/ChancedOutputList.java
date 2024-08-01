@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A list of rollable chanced outputs
@@ -39,8 +40,8 @@ public class ChancedOutputList<I, T extends ChancedOutput<I>> {
      * @return a list of the rolled outputs
      */
     public @Nullable @Unmodifiable List<T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier,
-                                                int machineTier) {
-        return chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier);
+                                                int machineTier, Map<I, Integer> cache) {
+        return chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier, cache);
     }
 
     public @NotNull ChancedOutputLogic getChancedOutputLogic() {
