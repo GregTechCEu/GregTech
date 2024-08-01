@@ -35,12 +35,11 @@ public interface ChancedOutputLogic {
                     cached = cache.getOrDefault(entry.getIngredient(), 0);
 
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                int denominator = entry.getDenominator();
-                if (passesChance(numerator, denominator)) {
+                if (passesChance(numerator)) {
                     do {
                         builder.add(entry);
-                        numerator -= denominator;
-                    } while (passesChance(numerator, denominator));
+                        numerator -= getMaxChancedValue();
+                    } while (passesChance(numerator));
                 }
                 if (cache != null)
                     cache.put(entry.getIngredient(), numerator);
@@ -79,10 +78,9 @@ public interface ChancedOutputLogic {
                     cached = cache.getOrDefault(entry.getIngredient(), 0);
 
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                int denominator = entry.getDenominator();
-                if (!passesChance(numerator, denominator)) {
+                if (!passesChance(numerator)) {
                     if (cache != null)
-                        cache.put(entry.getIngredient(), numerator % denominator);
+                        cache.put(entry.getIngredient(), numerator % getMaxChancedValue());
 
                     failed = true;
                 }
@@ -119,10 +117,9 @@ public interface ChancedOutputLogic {
                     cached = cache.getOrDefault(entry.getIngredient(), 0);
 
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                int denominator = entry.getDenominator();
-                if (passesChance(numerator, denominator)) {
+                if (passesChance(numerator)) {
                     if (cache != null)
-                        cache.put(entry.getIngredient(), numerator % denominator);
+                        cache.put(entry.getIngredient(), numerator % getMaxChancedValue());
 
                     if (selected == null)
                         selected = entry;
@@ -184,11 +181,10 @@ public interface ChancedOutputLogic {
 
     /**
      * @param numerator   the chance to check
-     * @param denominator
      * @return if the roll with the chance is successful
      */
-    static boolean passesChance(int numerator, int denominator) {
-        return numerator >= denominator;
+    static boolean passesChance(int numerator) {
+        return numerator >= getMaxChancedValue();
 //        return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
     }
 
