@@ -1,7 +1,5 @@
 package gregtech.api.recipes.chance;
 
-import gregtech.api.recipes.chance.output.ChancedOutputLogic;
-
 import org.jetbrains.annotations.NotNull;
 
 /**

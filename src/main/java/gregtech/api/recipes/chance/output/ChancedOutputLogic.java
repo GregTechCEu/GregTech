@@ -180,12 +180,12 @@ public interface ChancedOutputLogic {
     }
 
     /**
-     * @param numerator   the chance to check
+     * @param numerator the chance to check
      * @return if the roll with the chance is successful
      */
     static boolean passesChance(int numerator) {
         return numerator >= getMaxChancedValue();
-//        return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
+        // return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
     }
 
     /**
@@ -220,10 +220,11 @@ public interface ChancedOutputLogic {
      * @param machineTier    the tier the recipe is run at
      * @return a list of the produced outputs
      */
-    default  <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
-                                                                                  @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
-                                                                                  @NotNull ChanceBoostFunction boostFunction,
-                                                                                  int baseTier, int machineTier) {
+    default <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
+                                                                                          @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
+                                                                                          @NotNull ChanceBoostFunction boostFunction,
+                                                                                          int baseTier,
+                                                                                          int machineTier) {
         return roll(chancedEntries, boostFunction, baseTier, machineTier, null);
     }
 

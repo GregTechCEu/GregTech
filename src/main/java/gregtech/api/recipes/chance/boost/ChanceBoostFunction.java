@@ -15,9 +15,9 @@ public interface ChanceBoostFunction {
      */
     ChanceBoostFunction OVERCLOCK = (entry, recipeTier, machineTier) -> {
         int tierDiff = machineTier - recipeTier;
-        if (tierDiff <= 0) return entry.getNumerator(); // equal or invalid tiers do not boost at all
+        if (tierDiff <= 0) return entry.getChance(); // equal or invalid tiers do not boost at all
         if (recipeTier == GTValues.ULV) tierDiff--; // LV does not boost over ULV
-        return entry.getNumerator() + (entry.getChanceBoost() * tierDiff);
+        return entry.getChance() + (entry.getChanceBoost() * tierDiff);
     };
 
     /**
