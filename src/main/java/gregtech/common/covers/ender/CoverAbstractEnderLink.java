@@ -9,8 +9,8 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.virtualregistry.EntryTypes;
+import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.util.virtualregistry.VirtualEntry;
-import gregtech.api.util.virtualregistry.VirtualRegistryBase;
 import gregtech.common.mui.widget.InteractableText;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -75,7 +75,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     protected void updateLink() {
-        this.activeEntry = VirtualRegistryBase.getOrCreateEntry(getOwner(), getType(), createName());
+        this.activeEntry = VirtualEnderRegistry.getOrCreateEntry(getOwner(), getType(), createName());
         this.activeEntry.setColor(this.color);
         markDirty();
     }
@@ -266,7 +266,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         // does client even need uuid info? just in case
         String uuidStr = packetBuffer.readString(36);
         this.playerUUID = uuidStr.equals("null") ? null : UUID.fromString(uuidStr);
-        // client does not need the actual tank reference, the default one will do just fine
     }
 
     @Override
@@ -308,7 +307,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         @Override
         public ModularPanel createUI(PanelSyncManager syncManager) {
-            List<String> names = new ArrayList<>(VirtualRegistryBase.getEntryNames(getOwner(), type));
+            List<String> names = new ArrayList<>(VirtualEnderRegistry.getEntryNames(getOwner(), type));
             return super.createUI(syncManager)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR).asWidget()
@@ -325,7 +324,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
-            T entry = VirtualRegistryBase.getEntry(getOwner(), this.type, name);
+            T entry = VirtualEnderRegistry.getEntry(getOwner(), this.type, name);
             String key = String.format("entry#%s_description:%d", entry.getColorStr(), isPrivate ? 1 : 0);
             PanelSyncHandler entryDescriptionSH = syncManager.panel(key, mainPanel,
                     (syncManager1, syncHandler) -> GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
@@ -350,7 +349,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                     .marginBottom(2)
                     .height(18)
                     .widthRel(0.98f)
-                    .setEnabledIf(row -> VirtualRegistryBase.hasEntry(getOwner(), this.type, name))
+                    .setEnabledIf(row -> VirtualEnderRegistry.hasEntry(getOwner(), this.type, name))
                     .child(new Rectangle()
                             .setColor(entry.getColor())
                             .asWidget()

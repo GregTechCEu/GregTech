@@ -1,30 +1,32 @@
 package gregtech.api.util.virtualregistry;
 
+import gregtech.api.util.GTLog;
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static gregtech.api.util.GTUtility.gregtechId;
+
 public final class EntryTypes<T extends VirtualEntry> {
 
-    private static final Map<String, EntryTypes<?>> TYPES_MAP = new HashMap<>();
-    public static final EntryTypes<VirtualTank> ENDER_FLUID = new EntryTypes<>("ender_fluid", VirtualTank::new);
+    private static final Map<ResourceLocation, EntryTypes<?>> TYPES_MAP = new Object2ObjectOpenHashMap<>();
+    public static final EntryTypes<VirtualTank> ENDER_FLUID = addEntryType(gregtechId("ender_fluid"), VirtualTank::new);
     // ENDER_ITEM("ender_item", null),
     // ENDER_ENERGY("ender_energy", null),
     // ENDER_REDSTONE("ender_redstone", null);
-    private final String name;
+    private final ResourceLocation location;
     private final Supplier<T> factory;
 
-    private EntryTypes(String name, Supplier<T> supplier) {
-        this.name = name.toLowerCase();
+    private EntryTypes(ResourceLocation location, Supplier<T> supplier) {
+        this.location = location;
         this.factory = supplier;
-        if (!TYPES_MAP.containsKey(name.toLowerCase()))
-            TYPES_MAP.put(this.name, this);
     }
 
     public T createInstance(NBTTagCompound nbt) {
@@ -39,11 +41,27 @@ public final class EntryTypes<T extends VirtualEntry> {
 
     @Override
     public String toString() {
-        return this.name;
+        return this.location.toString();
     }
 
     @Nullable
     public static EntryTypes<? extends VirtualEntry> fromString(String name) {
-        return TYPES_MAP.get(name);
+        return TYPES_MAP.get(gregtechId(name));
+    }
+
+    @Nullable
+    public static EntryTypes<? extends VirtualEntry> fromLocation(ResourceLocation location) {
+        return TYPES_MAP.get(location);
+    }
+
+    public static <E extends VirtualEntry> EntryTypes<E> addEntryType(ResourceLocation location, Supplier<E> supplier) {
+        var type = new EntryTypes<E>(location, supplier);
+        if (!TYPES_MAP.containsKey(location)) {
+            TYPES_MAP.put(location, type);
+            return type;
+        } else {
+            GTLog.logger.warn("Entry \"{}\" is already registered!", location);
+            return type;
+        }
     }
 }
