@@ -70,9 +70,8 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
         return this;
     }
 
-    private List<Pair<UUID, String>> findVirtualTanks() {
+    private List<Pair<UUID, String>> findVirtualTanks(Map<UUID, Map<String, IFluidTank>> tankMap) {
         List<Pair<UUID, String>> result = new LinkedList<>();
-        Map<UUID, Map<String, IFluidTank>> tankMap = VirtualEnderRegistry.createTankMap();
         for (UUID uuid : tankMap.keySet().stream().sorted(Comparator.nullsLast(UUID::compareTo))
                 .collect(Collectors.toList())) {
             if (uuid == null || uuid.equals(gui.entityPlayer.getUniqueID())) {
@@ -95,7 +94,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
     private void refresh() {
         Map<UUID, Map<String, IFluidTank>> tankMap = VirtualEnderRegistry.createTankMap();
         Map<Pair<UUID, String>, FluidStack> access = new HashMap<>();
-        for (Pair<UUID, String> virtualTankEntry : findVirtualTanks()) {
+        for (Pair<UUID, String> virtualTankEntry : findVirtualTanks(tankMap)) {
             UUID uuid = virtualTankEntry.getKey();
             String key = virtualTankEntry.getValue();
             FluidStack fluidStack = tankMap.get(uuid).get(key).getFluid();
