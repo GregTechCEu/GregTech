@@ -87,33 +87,45 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
             if (fuelStack == null || CommonFluidFilters.BOILER_FLUID.test(fuelStack)) continue;
 
-            Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
+            var iter = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (dieselRecipe != null &&
-                    fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
-                // divide by 2, as it is half burntime for combustion
-                setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost(
-                        GTUtility.safeCastLongToInt((Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) /
-                                FLUID_BURNTIME_TO_EU / 2)))));
-                didStartRecipe = true;
+            while (iter.hasNext()) {
+                Recipe dieselRecipe = iter.next();
+                if (fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+                    fluidTank.drain(dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
+                    // divide by 2, as it is half burntime for combustion
+                    setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost(
+                            GTUtility.safeCastLongToInt((Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) /
+                                    FLUID_BURNTIME_TO_EU / 2)))));
+                    didStartRecipe = true;
+                    break;
+                }
+            }
+            if (didStartRecipe) {
                 break;
             }
 
-            Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
+            iter = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
                     GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
-            if (denseFuelRecipe != null &&
-                    fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
-                // multiply by 2, as it is 2x burntime for semi-fluid
-                setMaxProgress(adjustBurnTimeForThrottle(
-                        Math.max(1,
-                                boiler.boilerType
-                                        .runtimeBoost(GTUtility.safeCastLongToInt((Math.abs(denseFuelRecipe.getEUt()) *
-                                                denseFuelRecipe.getDuration() / FLUID_BURNTIME_TO_EU * 2))))));
-                didStartRecipe = true;
+            while (iter.hasNext()) {
+                Recipe denseFuelRecipe = iter.next();
+                if (fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+                    fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
+                    // multiply by 2, as it is 2x burntime for semi-fluid
+                    setMaxProgress(adjustBurnTimeForThrottle(
+                            Math.max(1,
+                                    boiler.boilerType
+                                            .runtimeBoost(
+                                                    GTUtility.safeCastLongToInt((Math.abs(denseFuelRecipe.getEUt()) *
+                                                            denseFuelRecipe.getDuration() / FLUID_BURNTIME_TO_EU *
+                                                            2))))));
+                    didStartRecipe = true;
+                    break;
+                }
+            }
+            if (didStartRecipe) {
                 break;
             }
         }

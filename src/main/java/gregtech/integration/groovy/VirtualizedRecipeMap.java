@@ -52,7 +52,11 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     public Recipe find(long voltage, List<ItemStack> items, List<FluidStack> fluids) {
         if (items == null || items.isEmpty()) items = Collections.emptyList();
         if (fluids == null || fluids.isEmpty()) fluids = Collections.emptyList();
-        return this.recipeMap.findRecipe(voltage, items, fluids, true);
+        var iter = this.recipeMap.findRecipe(voltage, items, fluids, true);
+        if (iter.hasNext()) {
+            return iter.next();
+        }
+        return null;
     }
 
     public boolean removeByInput(long voltage, List<ItemStack> items, List<FluidStack> fluids) {

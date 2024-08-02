@@ -20,8 +20,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,11 +54,11 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
         if (previousRecipe == null) {
             // previousRecipe is set whenever a valid recipe is found
             // if it's not set, find *any* recipe we have at least the base (non-parallel) inputs for
-            Recipe recipe = super.findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+            var iter = super.findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
 
-            return recipe == null ? null : getInputTank().drain(
-                    new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
-                    false);
+            return iter.hasNext() ? getInputTank().drain(
+                    new FluidStack(iter.next().getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
+                    false) : null;
         }
         FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
@@ -112,11 +113,11 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
     }
 
     @Override
-    protected @Nullable Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs,
-                                          IMultipleTankHandler fluidInputs) {
+    protected @NotNull Iterator<@NotNull Recipe> findRecipe(long maxVoltage, IItemHandlerModifiable inputs,
+                                                            IMultipleTankHandler fluidInputs) {
         RecipeMap<?> map = getRecipeMap();
         if (map == null || !isRecipeMapValid(map)) {
-            return null;
+            return Collections.emptyIterator();
         }
 
         final List<ItemStack> items = GTUtility.itemHandlerToList(inputs).stream().filter(s -> !s.isEmpty()).collect(
@@ -125,7 +126,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
                 .filter(f -> f != null && f.amount != 0)
                 .collect(Collectors.toList());
 
-        return map.find(items, fluids, recipe -> {
+        return map.searchIterator(items, fluids, recipe -> {
             if (recipe.getEUt() > maxVoltage) return false;
             return recipe.matches(false, inputs, fluidInputs) && this.canDoRecipeWithParallel(recipe);
         });

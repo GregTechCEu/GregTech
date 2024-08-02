@@ -132,8 +132,12 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         // Previous Recipe is always null on first world load, so try to acquire a new recipe
         Recipe recipe;
         if (previousRecipe == null) {
-            recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
-            if (recipe == null) return null;
+            var iter = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+            if (iter.hasNext()) {
+                recipe = iter.next();
+            } else {
+                return null;
+            }
         } else {
             recipe = previousRecipe;
         }
@@ -152,11 +156,11 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     public FluidStack getInputFluidStack() {
         // Previous Recipe is always null on first world load, so try to acquire a new recipe
         if (previousRecipe == null) {
-            Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+            var iter = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
 
-            return recipe == null ? null : getInputTank().drain(
-                    new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
-                    false);
+            return iter.hasNext() ? getInputTank().drain(
+                    new FluidStack(iter.next().getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
+                    false) : null;
         }
         FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
         return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);

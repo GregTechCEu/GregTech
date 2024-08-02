@@ -1,5 +1,7 @@
 package gregtech.api.recipes;
 
+import com.google.common.collect.Iterators;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -73,13 +75,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.WeakHashMap;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
 @ZenRegister
@@ -532,11 +540,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return ValidationResult.newResult(recipeStatus, recipe);
     }
 
-    @Nullable
-    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
-    }
-
     /**
      * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
      *
@@ -545,28 +548,46 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param fluidInputs the Fluid Inputs
      * @return the Recipe it has found or null for no matching Recipe
      */
-    @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
+    public @Nullable Recipe findSingleRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
+        var iter = findRecipe(voltage, inputs, fluidInputs, false);
+        if (iter.hasNext()) {
+            return iter.next();
+        }
+        return null;
+    }
+
+    public @NotNull Iterator<@NotNull Recipe> findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
+        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs));
+    }
+
+    /**
+     * Finds Recipes matching the Fluid and/or ItemStack Inputs.
+     *
+     * @param voltage     Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs      the Item Inputs
+     * @param fluidInputs the Fluid Inputs
+     * @return the Recipes it has found
+     */
+    public @NotNull Iterator<@NotNull Recipe> findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
         return findRecipe(voltage, inputs, fluidInputs, false);
     }
 
     /**
-     * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
+     * Finds Recipes matching the Fluid and/or ItemStack Inputs.
      *
      * @param voltage      Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
      * @param inputs       the Item Inputs
      * @param fluidInputs  the Fluid Inputs
      * @param exactVoltage should require exact voltage matching on recipe. used by craftweaker
-     * @return the Recipe it has found or null for no matching Recipe
+     * @return the Recipes it has found
      */
-    @Nullable
-    public Recipe findRecipe(long voltage, final List<ItemStack> inputs, final List<FluidStack> fluidInputs,
-                             boolean exactVoltage) {
+    public @NotNull Iterator<@NotNull Recipe> findRecipe(long voltage, @NotNull List<ItemStack> inputs,
+                                                         @NotNull List<FluidStack> fluidInputs, boolean exactVoltage) {
         final List<ItemStack> items = inputs.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         final List<FluidStack> fluids = fluidInputs.stream().filter(f -> f != null && f.amount != 0)
                 .collect(Collectors.toList());
 
-        return find(items, fluids, recipe -> {
+        return searchIterator(items, fluids, recipe -> {
             if (exactVoltage && recipe.getEUt() != voltage) {
                 // if exact voltage is required, the recipe is not considered valid
                 return false;
@@ -615,13 +636,61 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param canHandle a predicate for determining if a recipe is valid
      * @return the recipe found
      */
-    @Nullable
-    public Recipe find(@NotNull Collection<ItemStack> items, @NotNull Collection<FluidStack> fluids,
-                       @NotNull Predicate<Recipe> canHandle) {
+    public @Nullable Recipe find(@NotNull Collection<ItemStack> items, @NotNull Collection<FluidStack> fluids,
+                                 @NotNull Predicate<Recipe> canHandle) {
+        var iterator = searchIterator(items, fluids, canHandle);
+        if (iterator.hasNext()) {
+            return iterator.next();
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds recipes using Items and Fluids.
+     *
+     * @param items     a collection of items
+     * @param fluids    a collection of fluids
+     * @param canHandle a predicate for determining if a recipe is valid
+     * @return an Iterator of each recipe found
+     */
+    public @NotNull Iterator<@NotNull Recipe> searchIterator(@NotNull Collection<ItemStack> items,
+                                                             @NotNull Collection<FluidStack> fluids,
+                                                             @NotNull Predicate<Recipe> canHandle) {
+        var iterator = findInternal(items, fluids, canHandle);
+        if (iterator == null) {
+            return Collections.emptyIterator();
+        }
+        return iterator;
+    }
+
+    /**
+     * Finds recipes using Items and Fluids.
+     *
+     * @param items     a collection of items
+     * @param fluids    a collection of fluids
+     * @param canHandle a predicate for determining if a recipe is valid
+     * @return a Stream of each recipe found
+     */
+    public @NotNull Stream<@NotNull Recipe> searchStream(@NotNull Collection<ItemStack> items,
+                                                         @NotNull Collection<FluidStack> fluids,
+                                                         @NotNull Predicate<Recipe> canHandle, boolean parallel) {
+        var spliterator = findInternal(items, fluids, canHandle);
+        if (spliterator == null) {
+            return Stream.empty();
+        }
+        return StreamSupport.stream(spliterator, parallel);
+    }
+
+    private @Nullable RecipeMapSearchIterator findInternal(@NotNull Collection<ItemStack> items,
+                                                           @NotNull Collection<FluidStack> fluids,
+                                                           @NotNull Predicate<Recipe> canHandle) {
         List<List<AbstractMapIngredient>> list = prepareRecipeFind(items, fluids);
         // couldn't build any inputs to use for search, so no recipe could be found
-        if (list == null) return null;
-        return recurseIngredientTreeFindRecipe(list, lookup, canHandle);
+        if (list == null) {
+            return null;
+        }
+        return new RecipeMapSearchIterator(this, list, canHandle);
     }
 
     /**
@@ -687,28 +756,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             }
         }
         return list;
-    }
-
-    /**
-     * Recursively finds a recipe, top level.
-     *
-     * @param ingredients the ingredients part
-     * @param branchRoot  the root branch to search from.
-     * @param canHandle   if the found recipe is valid
-     * @return a recipe
-     */
-    @Nullable
-    private Recipe recurseIngredientTreeFindRecipe(@NotNull List<List<AbstractMapIngredient>> ingredients,
-                                                   @NotNull Branch branchRoot, @NotNull Predicate<Recipe> canHandle) {
-        // Try each ingredient as a starting point, adding it to the skip-list.
-        // The skip-list is a packed long, where each 1 bit represents an index to skip
-        for (int i = 0; i < ingredients.size(); i++) {
-            Recipe r = recurseIngredientTreeFindRecipe(ingredients, branchRoot, canHandle, i, 0, (1L << i));
-            if (r != null) {
-                return r;
-            }
-        }
-        return null;
     }
 
     /**
@@ -1326,8 +1373,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 Arrays.stream(itemInputs).map(CraftTweakerMC::getItemStack).collect(Collectors.toList());
         List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() :
                 Arrays.stream(fluidInputs).map(CraftTweakerMC::getLiquidStack).collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, true);
-        return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
+        var iter = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, true);
+        return iter.hasNext() ? new CTRecipe(this, iter.next()) : null;
     }
 
     @ZenGetter("recipes")
@@ -1529,5 +1576,123 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public boolean equals(Object obj) {
         if (!(obj instanceof RecipeMap)) return false;
         return ((RecipeMap<?>) obj).unlocalizedName.equals(this.unlocalizedName);
+    }
+
+    private static final class RecipeMapSearchIterator implements Iterator<Recipe>, Spliterator<Recipe> {
+
+        private static final int CHARACTERISTICS = Spliterator.NONNULL | Spliterator.IMMUTABLE;
+
+        private final RecipeMap<?> recipeMap;
+        private final List<List<AbstractMapIngredient>> ingredients;
+        private final Predicate<Recipe> canHandle;
+        private final int end;
+
+        private Recipe nextRecipe;
+        private int pos;
+
+        private RecipeMapSearchIterator(RecipeMap<?> recipeMap, @NotNull List<List<AbstractMapIngredient>> ingredients,
+                                        @NotNull Predicate<Recipe> canHandle) {
+            this.recipeMap = recipeMap;
+            this.ingredients = ingredients;
+            this.canHandle = canHandle;
+            this.end = ingredients.size();
+            this.pos = 0;
+        }
+
+        private RecipeMapSearchIterator(@NotNull RecipeMapSearchIterator iterator, int start, int end) {
+            this.recipeMap = iterator.recipeMap;
+            this.ingredients = iterator.ingredients;
+            this.canHandle = iterator.canHandle;
+            this.end = end;
+            this.nextRecipe = iterator.nextRecipe;
+            this.pos = start;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (pos >= end) {
+                return false;
+            }
+
+            if (nextRecipe != null) {
+                return true;
+            }
+
+            this.nextRecipe = seek();
+            return nextRecipe != null;
+        }
+
+        @Override
+        public @NotNull Recipe next() {
+            if (nextRecipe != null) {
+                Recipe r = nextRecipe;
+                this.nextRecipe = null;
+                return r;
+            }
+
+            Recipe r = seek();
+            if (r == null) {
+                throw new NoSuchElementException();
+            }
+
+            return r;
+       }
+
+        @Override
+        public void remove() {
+            Iterator.super.remove();
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super Recipe> action) {
+            Iterator.super.forEachRemaining(action);
+        }
+
+        private @Nullable Recipe seek() {
+            while (pos < end) {
+                // Try each ingredient as a starting point, adding it to the skip-list.
+                // The skip-list is a packed long, where each 1 bit represents an index to skip
+                Recipe r = recipeMap.recurseIngredientTreeFindRecipe(ingredients, recipeMap.lookup, canHandle,
+                        pos, 0, (1L << pos));
+                pos++;
+                if (r != null) {
+                    return r;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public boolean tryAdvance(Consumer<? super Recipe> action) {
+            if (hasNext()) {
+                action.accept(next());
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public @Nullable Spliterator<Recipe> trySplit() {
+            int mid = (pos + end) >>> 1;
+            if (pos > mid) {
+                return null;
+            }
+
+            Spliterator<Recipe> split = new RecipeMapSearchIterator(this, pos, mid);
+            this.nextRecipe = null;
+            this.pos = mid;
+
+            return split;
+        }
+
+        @Override
+        public long estimateSize() {
+            return end - pos;
+        }
+
+        @Override
+        public int characteristics() {
+            return CHARACTERISTICS;
+        }
     }
 }

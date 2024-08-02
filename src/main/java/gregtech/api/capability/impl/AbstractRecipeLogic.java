@@ -43,6 +43,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
@@ -241,7 +243,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return true if recipes should be searched for
      */
     protected boolean shouldSearchForRecipes() {
-        return canWorkWithInputs() && canFitNewOutputs();
+        return canWorkWithInputs() || canFitNewOutputs();
     }
 
     /**
@@ -385,20 +387,28 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         // see if the last recipe we used still works
         if (checkPreviousRecipe()) {
             currentRecipe = this.previousRecipe;
-            // If there is no active recipe, then we need to find one.
-        } else {
-            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
-        }
-        // If a recipe was found, then inputs were valid. Cache found recipe.
-        if (currentRecipe != null) {
-            this.previousRecipe = currentRecipe;
-        }
-        this.invalidInputsForRecipes = (currentRecipe == null);
+            this.invalidInputsForRecipes = (currentRecipe == null);
 
-        // proceed if we have a usable recipe.
-        if (currentRecipe != null && checkRecipe(currentRecipe)) {
-            prepareRecipe(currentRecipe);
+            // proceed if we have a usable recipe.
+            if (currentRecipe != null && checkRecipe(currentRecipe) && prepareRecipe(currentRecipe)) {
+                return;
+            }
         }
+
+        // If there is no active recipe, then we need to find one.
+        var iter = findRecipe(maxVoltage, importInventory, importFluids);
+        while (iter.hasNext()) {
+            Recipe recipe = iter.next();
+            if (checkRecipe(recipe)) {
+                this.invalidInputsForRecipes = false;
+                if (prepareRecipe(recipe)) {
+                    this.previousRecipe = recipe;
+                    return;
+                }
+            }
+        }
+
+        this.invalidInputsForRecipes = true;
     }
 
     /**
@@ -611,18 +621,17 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * Find a recipe using inputs
+     * Find recipes using inputs
      * 
      * @param maxVoltage  the maximum voltage the recipe can have
      * @param inputs      the item inputs used to search for the recipe
      * @param fluidInputs the fluid inputs used to search for the recipe
-     * @return the recipe if found, otherwise null
+     * @return the recipes if found
      */
-    @Nullable
-    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
+    protected @NotNull Iterator<@NotNull Recipe> findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
         RecipeMap<?> map = getRecipeMap();
         if (map == null || !isRecipeMapValid(map)) {
-            return null;
+            return Collections.emptyIterator();
         }
 
         return map.findRecipe(maxVoltage, inputs, fluidInputs);

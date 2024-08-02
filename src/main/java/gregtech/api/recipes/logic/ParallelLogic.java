@@ -549,7 +549,7 @@ public abstract class ParallelLogic {
                 continue;
 
             // Determine if there is a valid recipe for this item. If not, skip it.
-            Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
+            Recipe matchingRecipe = recipeMap.findSingleRecipe(maxVoltage, //TODO port to iterator
                     Collections.singletonList(currentInputItem),
                     Collections.emptyList());
 

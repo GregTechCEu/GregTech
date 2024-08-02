@@ -216,6 +216,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
         // On a cache miss, our efficiency is much worse, as it will check
         // each bus individually instead of the combined inventory all at once.
+        boolean wasOutputsFull = false;
         for (int i = 0; i < importInventory.size(); i++) {
             IItemHandlerModifiable bus = importInventory.get(i);
             // Skip this bus if no recipe was found last time
@@ -223,21 +224,29 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 continue;
             }
             // Look for a new recipe after a cache miss
-            currentRecipe = findRecipe(maxVoltage, bus, importFluids);
-            // Cache the current recipe, if one is found
-            if (currentRecipe != null && checkRecipe(currentRecipe)) {
-                this.previousRecipe = currentRecipe;
-                currentDistinctInputBus = bus;
-                if (prepareRecipeDistinct(currentRecipe)) {
-                    lastRecipeIndex = i;
-                    return;
+            var iter = findRecipe(maxVoltage, bus, importFluids);
+            while (iter.hasNext()) {
+                Recipe recipe = iter.next();
+                if (checkRecipe(recipe)) {
+                    // Cache the current recipe, if one is found
+                    this.previousRecipe = recipe;
+                    this.currentDistinctInputBus = bus;
+                    this.invalidInputsForRecipes = false;
+                    this.isOutputsFull = false;
+
+                    if (prepareRecipeDistinct(recipe)) {
+                        lastRecipeIndex = i;
+                        return;
+                    }
+
+                    wasOutputsFull = true;
                 }
             }
-            if (currentRecipe == null) {
-                // no valid recipe found, invalidate this bus
-                invalidatedInputList.add(bus);
-            }
+            // no valid recipe found, invalidate this bus
+            invalidatedInputList.add(bus);
         }
+        this.isOutputsFull = wasOutputsFull;
+        this.invalidInputsForRecipes = true;
     }
 
     @Override
