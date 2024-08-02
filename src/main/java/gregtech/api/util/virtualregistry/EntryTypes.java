@@ -46,16 +46,16 @@ public final class EntryTypes<T extends VirtualEntry> {
 
     @Nullable
     public static EntryTypes<? extends VirtualEntry> fromString(String name) {
-        return TYPES_MAP.get(gregtechId(name));
+        return TYPES_MAP.getOrDefault(gregtechId(name), null);
     }
 
     @Nullable
     public static EntryTypes<? extends VirtualEntry> fromLocation(ResourceLocation location) {
-        return TYPES_MAP.get(location);
+        return TYPES_MAP.getOrDefault(location, null);
     }
 
     public static <E extends VirtualEntry> EntryTypes<E> addEntryType(ResourceLocation location, Supplier<E> supplier) {
-        var type = new EntryTypes<E>(location, supplier);
+        var type = new EntryTypes<>(location, supplier);
         if (!TYPES_MAP.containsKey(location)) {
             TYPES_MAP.put(location, type);
         } else {
