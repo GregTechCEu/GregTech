@@ -58,10 +58,9 @@ public final class EntryTypes<T extends VirtualEntry> {
         var type = new EntryTypes<E>(location, supplier);
         if (!TYPES_MAP.containsKey(location)) {
             TYPES_MAP.put(location, type);
-            return type;
         } else {
             GTLog.logger.warn("Entry \"{}\" is already registered!", location);
-            return type;
         }
+        return type;
     }
 }
