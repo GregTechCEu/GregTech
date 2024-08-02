@@ -278,10 +278,18 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         for (int i = 0; i < rowSize; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < rowSize; j++) {
+                int index = i * rowSize + j;
+                IItemHandlerModifiable handler = isExportHatch ? exportItems : importItems;
                 widgets.get(i)
                         .add(new ItemSlot()
-                                .slot(SyncHandlers.itemSlot(isExportHatch ? exportItems : importItems, i * rowSize + j)
+                                .slot(SyncHandlers.itemSlot(handler, index)
                                         .slotGroup("item_inv")
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            if (onlyAmountChanged &&
+                                                    handler instanceof GTItemStackHandler gtHandler) {
+                                                gtHandler.onContentsChanged(index);
+                                            }
+                                        })
                                         .accessibility(!isExportHatch, true)));
             }
         }

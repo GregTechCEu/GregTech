@@ -26,7 +26,7 @@ public class GTItemStackHandler extends ItemStackHandler {
     }
 
     @Override
-    protected void onContentsChanged(int slot) {
+    public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
         metaTileEntity.markDirty();
     }
