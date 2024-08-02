@@ -1,6 +1,7 @@
 package gregtech.api.util.virtualregistry;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,12 @@ public class VirtualRegistryMap implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         for (var entryType : nbt.getKeySet()) {
-            var type = EntryTypes.fromString(entryType);
+            EntryTypes<?> type;
+            if (entryType.contains(":")) {
+                type = EntryTypes.fromLocation(entryType);
+            } else {
+                type = EntryTypes.fromString(entryType);
+            }
             if (type == null) continue;
 
             var virtualEntries = nbt.getCompoundTag(entryType);
