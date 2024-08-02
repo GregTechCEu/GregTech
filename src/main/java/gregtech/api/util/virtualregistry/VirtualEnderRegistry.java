@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.fluids.IFluidTank;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +20,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @SuppressWarnings("SameParameterValue")
-public class VirtualRegistryBase extends WorldSavedData {
+public class VirtualEnderRegistry extends WorldSavedData {
 
     private static final String DATA_ID = GTValues.MODID + ".virtual_entry_data";
     private static final String OLD_DATA_ID = GTValues.MODID + ".vtank_data";
@@ -27,7 +28,7 @@ public class VirtualRegistryBase extends WorldSavedData {
     private static final String PRIVATE_KEY = "Private";
     private static final Map<UUID, VirtualRegistryMap> VIRTUAL_REGISTRIES = new HashMap<>();
 
-    public VirtualRegistryBase(String name) {
+    public VirtualEnderRegistry(String name) {
         super(name);
     }
 
@@ -89,6 +90,18 @@ public class VirtualRegistryBase extends WorldSavedData {
         return VIRTUAL_REGISTRIES.computeIfAbsent(owner, key -> new VirtualRegistryMap());
     }
 
+    // remove if tank app is removed
+    public static Map<UUID, Map<String, IFluidTank>> createTankMap() {
+        Map<UUID, Map<String, IFluidTank>> map = new HashMap<>();
+        for (var uuid : VIRTUAL_REGISTRIES.keySet()) {
+            map.put(uuid, new HashMap<>());
+            for (var name : getEntryNames(uuid, EntryTypes.ENDER_FLUID)) {
+                map.get(uuid).put(name, getEntry(uuid, EntryTypes.ENDER_FLUID, name));
+            }
+        }
+        return map;
+    }
+
     @Override
     public final void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey(PUBLIC_KEY)) {
@@ -132,11 +145,13 @@ public class VirtualRegistryBase extends WorldSavedData {
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
 
-        VirtualRegistryBase instance = (VirtualRegistryBase) storage.getOrLoadData(VirtualRegistryBase.class, DATA_ID);
-        VirtualTankRegistry old = (VirtualTankRegistry) storage.getOrLoadData(VirtualTankRegistry.class, OLD_DATA_ID);
+        VirtualEnderRegistry instance = (VirtualEnderRegistry) storage.getOrLoadData(VirtualEnderRegistry.class,
+                DATA_ID);
+        VirtualEnderRegistry old = (VirtualEnderRegistry) storage.getOrLoadData(VirtualEnderRegistry.class,
+                OLD_DATA_ID);
 
         if (instance == null) {
-            instance = new VirtualRegistryBase(DATA_ID);
+            instance = new VirtualEnderRegistry(DATA_ID);
             storage.setData(DATA_ID, instance);
         }
 

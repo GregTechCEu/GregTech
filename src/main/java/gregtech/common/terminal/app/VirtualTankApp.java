@@ -12,7 +12,7 @@ import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.virtualregistry.VirtualTankRegistry;
+import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.common.terminal.component.SearchComponent;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -72,7 +72,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
 
     private List<Pair<UUID, String>> findVirtualTanks() {
         List<Pair<UUID, String>> result = new LinkedList<>();
-        Map<UUID, Map<String, IFluidTank>> tankMap = VirtualTankRegistry.getTankMap();
+        Map<UUID, Map<String, IFluidTank>> tankMap = VirtualEnderRegistry.createTankMap();
         for (UUID uuid : tankMap.keySet().stream().sorted(Comparator.nullsLast(UUID::compareTo))
                 .collect(Collectors.toList())) {
             if (uuid == null || uuid.equals(gui.entityPlayer.getUniqueID())) {
@@ -93,7 +93,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
     }
 
     private void refresh() {
-        Map<UUID, Map<String, IFluidTank>> tankMap = VirtualTankRegistry.getTankMap();
+        Map<UUID, Map<String, IFluidTank>> tankMap = VirtualEnderRegistry.createTankMap();
         Map<Pair<UUID, String>, FluidStack> access = new HashMap<>();
         for (Pair<UUID, String> virtualTankEntry : findVirtualTanks()) {
             UUID uuid = virtualTankEntry.getKey();
@@ -229,7 +229,8 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
 
     @Override
     public String resultDisplay(Pair<UUID, String> result) {
-        FluidStack fluidStack = VirtualTankRegistry.getTankMap().get(result.getKey()).get(result.getValue()).getFluid();
+        FluidStack fluidStack = VirtualEnderRegistry.createTankMap().get(result.getKey()).get(result.getValue())
+                .getFluid();
         return String.format("Lock: %b, ID: %s, Fluid: %s", result.getKey() != null, result.getValue(),
                 fluidStack == null ? "-" : fluidStack.getLocalizedName());
     }

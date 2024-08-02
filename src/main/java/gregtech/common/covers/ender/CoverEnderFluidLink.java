@@ -9,7 +9,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.virtualregistry.EntryTypes;
-import gregtech.api.util.virtualregistry.VirtualRegistryBase;
+import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.util.virtualregistry.entries.VirtualTank;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.CoverPump;
@@ -135,7 +135,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
 
             @Override
             protected void deleteEntry(String name) {
-                VirtualRegistryBase.deleteEntry(getOwner(), getType(), name, tank -> tank.getFluidAmount() == 0);
+                VirtualEnderRegistry.deleteEntry(getOwner(), getType(), name, tank -> tank.getFluidAmount() == 0);
             }
         };
     }
