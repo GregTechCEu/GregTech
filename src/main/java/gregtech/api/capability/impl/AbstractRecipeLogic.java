@@ -397,8 +397,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             // If there is no active recipe, then we need to find one.
         } else {
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
-            fluidChancesCache.clear();
-            itemChancesCache.clear();
         }
         // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {
@@ -715,6 +713,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.isOutputsFull = false;
             if (recipe.matches(true, importInventory, importFluids)) {
                 this.metaTileEntity.addNotifiedInput(importInventory);
+                this.itemChancesCache.clear();
+                this.fluidChancesCache.clear();
                 return recipe;
             }
         }
