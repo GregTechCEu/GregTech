@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import java.text.NumberFormat;
-import java.util.Formatter;
 
 public class TextFormattingUtil {
 
@@ -18,7 +17,6 @@ public class TextFormattingUtil {
             'k', 'M', 'G', 'T', 'P', 'E'
     };
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
-    private static final Formatter STRING_FORMAT = new Formatter();
 
     public static String formatLongToCompactString(long value, int precision) {
         if (value == 0 || Math.abs(value) < Math.pow(10, precision)) {
@@ -58,7 +56,7 @@ public class TextFormattingUtil {
     }
 
     public static String formatPercent(double number) {
-        return STRING_FORMAT.format("%,.2f", number).toString();
+        return String.format("%,.2f", number);
     }
 
     /** Allows for formatting Long, Integer, Short, Byte, Number, AtomicInteger, AtomicLong, and BigInteger. */
