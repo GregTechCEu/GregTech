@@ -35,11 +35,11 @@ public interface ChancedOutputLogic {
                     cached = cache.getOrDefault(entry.getIngredient(), 0);
 
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                if (passesChance(numerator)) {
+                int maxChance = entry.getMaxChance();
+                if (passesChance(numerator, maxChance)) {
                     do {
                         builder.add(entry);
-                        numerator -= getMaxChancedValue();
-                    } while (passesChance(numerator));
+                    } while ((numerator -= maxChance) > maxChance);
                 }
                 if (cache != null)
                     cache.put(entry.getIngredient(), numerator);
@@ -78,9 +78,9 @@ public interface ChancedOutputLogic {
                     cached = cache.getOrDefault(entry.getIngredient(), 0);
 
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                if (!passesChance(numerator)) {
+                if (!passesChance(numerator, entry.getMaxChance())) {
                     if (cache != null)
-                        cache.put(entry.getIngredient(), numerator % getMaxChancedValue());
+                        cache.put(entry.getIngredient(), numerator % entry.getMaxChance());
 
                     failed = true;
                 }
@@ -117,9 +117,9 @@ public interface ChancedOutputLogic {
                     cached = cache.getOrDefault(entry.getIngredient(), 0);
 
                 int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                if (passesChance(numerator)) {
+                if (passesChance(numerator, entry.getMaxChance())) {
                     if (cache != null)
-                        cache.put(entry.getIngredient(), numerator % getMaxChancedValue());
+                        cache.put(entry.getIngredient(), numerator % entry.getMaxChance());
 
                     if (selected == null)
                         selected = entry;
@@ -180,11 +180,11 @@ public interface ChancedOutputLogic {
     }
 
     /**
-     * @param numerator the chance to check
+     * @param chance the chance to check
      * @return if the roll with the chance is successful
      */
-    static boolean passesChance(int numerator) {
-        return numerator >= getMaxChancedValue();
+    static boolean passesChance(int chance, int maxChance) {
+        return chance >= maxChance;
         // return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
     }
 
