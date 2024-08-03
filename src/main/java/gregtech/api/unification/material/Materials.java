@@ -212,6 +212,7 @@ public class Materials {
     public static Material Phosphorus;
     public static Material Polonium;
     public static Material Platinum;
+    public static Material Plutonium;
     public static Material Plutonium239;
     public static Material Plutonium241;
     public static Material Potassium;
@@ -247,6 +248,7 @@ public class Materials {
     public static Material Titanium;
     public static Material Tritium;
     public static Material Tungsten;
+    public static Material Uranium;
     public static Material Uranium238;
     public static Material Uranium235;
     public static Material Vanadium;
