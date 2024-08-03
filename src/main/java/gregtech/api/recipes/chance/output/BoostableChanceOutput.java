@@ -33,6 +33,7 @@ public abstract class BoostableChanceOutput<T> extends ChancedOutput<T> implemen
         return "BoostableChanceOutput{" +
                 "ingredient=" + getIngredient() +
                 ", chance=" + getChance() +
+                ", maxChance=" + getMaxChance() +
                 ", chanceBoost=" + getChanceBoost() +
                 '}';
     }
