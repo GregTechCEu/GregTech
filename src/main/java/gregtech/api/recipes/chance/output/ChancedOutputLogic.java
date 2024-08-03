@@ -30,19 +30,17 @@ public interface ChancedOutputLogic {
                                                                   @Nullable Map<I, Integer> cache) {
             ImmutableList.Builder<T> builder = ImmutableList.builder();
             for (T entry : chancedEntries) {
-                int cached = 0;
-                if (cache != null)
-                    cached = cache.getOrDefault(entry.getIngredient(), 0);
+                int cached = getCachedChance(entry.getIngredient(), cache);
 
-                int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
+                int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int maxChance = entry.getMaxChance();
-                if (passesChance(numerator, maxChance)) {
+                if (passesChance(chance, maxChance)) {
                     do {
                         builder.add(entry);
-                    } while ((numerator -= maxChance) > maxChance);
+                        chance -= maxChance;
+                    } while (passesChance(chance, maxChance));
                 }
-                if (cache != null)
-                    cache.put(entry.getIngredient(), numerator);
+                updateCachedChance(entry.getIngredient(), cache, chance);
             }
 
             List<T> list = builder.build();
@@ -73,17 +71,13 @@ public interface ChancedOutputLogic {
                                                                   @Nullable Map<I, Integer> cache) {
             boolean failed = false;
             for (T entry : chancedEntries) {
-                int cached = 0;
-                if (cache != null)
-                    cached = cache.getOrDefault(entry.getIngredient(), 0);
+                int cached = getCachedChance(entry.getIngredient(), cache);
 
-                int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                if (!passesChance(numerator, entry.getMaxChance())) {
-                    if (cache != null)
-                        cache.put(entry.getIngredient(), numerator % entry.getMaxChance());
-
+                int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
+                if (!passesChance(chance, entry.getMaxChance())) {
                     failed = true;
                 }
+                updateCachedChance(entry.getIngredient(), cache, chance);
             }
             return failed ? null : ImmutableList.copyOf(chancedEntries);
         }
@@ -116,14 +110,11 @@ public interface ChancedOutputLogic {
                 if (cache != null)
                     cached = cache.getOrDefault(entry.getIngredient(), 0);
 
-                int numerator = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                if (passesChance(numerator, entry.getMaxChance())) {
-                    if (cache != null)
-                        cache.put(entry.getIngredient(), numerator % entry.getMaxChance());
-
-                    if (selected == null)
-                        selected = entry;
+                int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
+                if (passesChance(chance, entry.getMaxChance()) && selected == null) {
+                    selected = entry;
                 }
+                updateCachedChance(entry.getIngredient(), cache, chance);
             }
             return selected == null ? null : Collections.singletonList(selected);
         }
@@ -193,6 +184,15 @@ public interface ChancedOutputLogic {
      */
     static int getMaxChancedValue() {
         return 10_000;
+    }
+
+    static <I> int getCachedChance(I ingredient, @Nullable Map<I, Integer> cache) {
+        return cache == null ? 0 : cache.getOrDefault(ingredient, 0);
+    }
+
+    static <I> void updateCachedChance(I ingredient, @Nullable Map<I, Integer> cache, int chance) {
+        if (cache == null) return;
+        cache.put(ingredient, chance);
     }
 
     /**
