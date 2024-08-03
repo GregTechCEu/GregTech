@@ -27,7 +27,6 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
