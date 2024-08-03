@@ -650,10 +650,31 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return chancedOutput(item, 1, chance, tierChanceBoost);
     }
 
-    public R chancedOutput2(ItemStack stack, int chance, int maxChance, int tierChanceBoost) {
+    public R chancedOutput(ItemStack stack, String fraction, int tierChanceBoost) {
         if (stack == null || stack.isEmpty()) {
             return (R) this;
         }
+
+        String[] split = fraction.split("/");
+        if (split.length != 2) {
+            GTLog.logger.error("Fraction was not parsed correctly! Expected format is \"1/3\". Actual: \"{}\".",
+                    fraction, new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+            return (R) this;
+        }
+
+        int chance;
+        int maxChance;
+        try {
+            chance = Integer.parseInt(split[0]);
+            maxChance = Integer.parseInt(split[1]);
+        } catch (NumberFormatException e) {
+            GTLog.logger.error("Fraction was not parsed correctly! Expected format is \"1/3\". Actual: \"{}\".",
+                    fraction, new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+            return (R) this;
+        }
+
         if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
             GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
                     ChancedOutputLogic.getMaxChancedValue(), chance, new Throwable());
@@ -670,20 +691,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R chancedOutput2(OrePrefix prefix, Material material, int count, int chance, int maxChance, int tierChanceBoost) {
-        return chancedOutput2(OreDictUnifier.get(prefix, material, count), chance, maxChance, tierChanceBoost);
+    public R chancedOutput(OrePrefix prefix, Material material, int count, String fraction, int tierChanceBoost) {
+        return chancedOutput(OreDictUnifier.get(prefix, material, count), fraction, tierChanceBoost);
     }
 
-    public R chancedOutput2(OrePrefix prefix, Material material, int chance, int maxChance, int tierChanceBoost) {
-        return chancedOutput2(prefix, material, 1, chance, maxChance, tierChanceBoost);
+    public R chancedOutput(OrePrefix prefix, Material material, String fraction, int tierChanceBoost) {
+        return chancedOutput(prefix, material, 1, fraction, tierChanceBoost);
     }
 
-    public R chancedOutput2(MetaItem<?>.MetaValueItem item, int count, int chance, int maxChance, int tierChanceBoost) {
-        return chancedOutput2(item.getStackForm(count), chance, maxChance, tierChanceBoost);
+    public R chancedOutput(MetaItem<?>.MetaValueItem item, int count, String fraction, int tierChanceBoost) {
+        return chancedOutput(item.getStackForm(count), fraction, tierChanceBoost);
     }
 
-    public R chancedOutput2(MetaItem<?>.MetaValueItem item, int chance, int maxChance, int tierChanceBoost) {
-        return chancedOutput2(item, 1, chance, maxChance, tierChanceBoost);
+    public R chancedOutput(MetaItem<?>.MetaValueItem item, String fraction, int tierChanceBoost) {
+        return chancedOutput(item, 1, fraction, tierChanceBoost);
     }
 
     public R chancedOutputs(List<ChancedItemOutput> chancedOutputs) {
