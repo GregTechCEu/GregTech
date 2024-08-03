@@ -650,6 +650,42 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return chancedOutput(item, 1, chance, tierChanceBoost);
     }
 
+    public R chancedOutput2(ItemStack stack, int chance, int maxChance, int tierChanceBoost) {
+        if (stack == null || stack.isEmpty()) {
+            return (R) this;
+        }
+        if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
+            GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
+                    ChancedOutputLogic.getMaxChancedValue(), chance, new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+            return (R) this;
+        }
+        if (chance >= maxChance || maxChance > ChancedOutputLogic.getMaxChancedValue()) {
+            GTLog.logger.error("Max Chance cannot be less or equal to Chance or more than {}. Actual: {}.",
+                    ChancedOutputLogic.getMaxChancedValue(), maxChance, new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+            return (R) this;
+        }
+        this.chancedOutputs.add(new ChancedItemOutput(stack.copy(), chance, maxChance, tierChanceBoost));
+        return (R) this;
+    }
+
+    public R chancedOutput2(OrePrefix prefix, Material material, int count, int chance, int maxChance, int tierChanceBoost) {
+        return chancedOutput2(OreDictUnifier.get(prefix, material, count), chance, maxChance, tierChanceBoost);
+    }
+
+    public R chancedOutput2(OrePrefix prefix, Material material, int chance, int maxChance, int tierChanceBoost) {
+        return chancedOutput2(prefix, material, 1, chance, maxChance, tierChanceBoost);
+    }
+
+    public R chancedOutput2(MetaItem<?>.MetaValueItem item, int count, int chance, int maxChance, int tierChanceBoost) {
+        return chancedOutput2(item.getStackForm(count), chance, maxChance, tierChanceBoost);
+    }
+
+    public R chancedOutput2(MetaItem<?>.MetaValueItem item, int chance, int maxChance, int tierChanceBoost) {
+        return chancedOutput2(item, 1, chance, maxChance, tierChanceBoost);
+    }
+
     public R chancedOutputs(List<ChancedItemOutput> chancedOutputs) {
         for (ChancedItemOutput output : chancedOutputs) {
             this.chancedOutputs.add(output.copy());

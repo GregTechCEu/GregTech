@@ -18,6 +18,11 @@ public abstract class BoostableChanceOutput<T> extends ChancedOutput<T> implemen
         this.chanceBoost = chanceBoost;
     }
 
+    public BoostableChanceOutput(@NotNull T ingredient, int chance, int maxChance, int chanceBoost) {
+        super(ingredient, chance, maxChance);
+        this.chanceBoost = chanceBoost;
+    }
+
     @Override
     public int getChanceBoost() {
         return this.chanceBoost;

@@ -14,4 +14,9 @@ public abstract class ChancedOutput<T> extends BaseChanceEntry<T> {
     public ChancedOutput(@NotNull T ingredient, int chance) {
         super(ingredient, chance);
     }
+
+
+    public ChancedOutput(@NotNull T ingredient, int chance, int maxChance) {
+        super(ingredient, chance, maxChance);
+    }
 }

@@ -16,6 +16,10 @@ public class ChancedItemOutput extends BoostableChanceOutput<ItemStack> {
         super(ingredient, chance, chanceBoost);
     }
 
+    public ChancedItemOutput(@NotNull ItemStack ingredient, int chance, int maxChance, int chanceBoost) {
+        super(ingredient, chance, maxChance, chanceBoost);
+    }
+
     @Override
     public @NotNull ChancedItemOutput copy() {
         return new ChancedItemOutput(getIngredient().copy(), getChance(), getChanceBoost());
