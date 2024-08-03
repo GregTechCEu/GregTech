@@ -37,6 +37,7 @@ public abstract class BaseChanceEntry<T> implements ChanceEntry<T> {
         return chance;
     }
 
+    @Override
     public int getMaxChance() {
         return maxChance;
     }
