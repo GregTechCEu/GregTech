@@ -22,7 +22,7 @@ public class ChancedItemOutput extends BoostableChanceOutput<ItemStack> {
 
     @Override
     public @NotNull ChancedItemOutput copy() {
-        return new ChancedItemOutput(getIngredient().copy(), getChance(), getChanceBoost());
+        return new ChancedItemOutput(getIngredient().copy(), getChance(), getMaxChance(), getChanceBoost());
     }
 
     @Override
