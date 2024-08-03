@@ -11,11 +11,14 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.model.TRSRTransformation;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.EnumMap;
 import java.util.List;
@@ -26,42 +29,24 @@ public class PipeItemModel<K extends CacheKey> implements IBakedModel {
             new EnumMap<>(ItemCameraTransforms.TransformType.class);
 
     static {
-        // TODO these transforms are atrocious
-        Matrix4f matrix4f = new Matrix4f();
-        matrix4f.setIdentity();
-        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.NONE, matrix4f);
-        matrix4f = new Matrix4f();
-        matrix4f.rotY((float) Math.toRadians(225));
-        matrix4f.rotX((float) Math.toRadians(30));
-        matrix4f.setScale(0.625f);
-        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GUI, matrix4f);
-        matrix4f = new Matrix4f();
-        matrix4f.setTranslation(new Vector3f(0, 3, 0));
-        matrix4f.setScale(0.25f);
-        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GROUND, matrix4f);
-        matrix4f = new Matrix4f();
-        matrix4f.setScale(0.5f);
-        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.FIXED, matrix4f);
-        matrix4f = new Matrix4f();
-        matrix4f.rotY((float) Math.toRadians(45));
-        matrix4f.rotX((float) Math.toRadians(75));
-        matrix4f.setTranslation(new Vector3f(0, 2.5f, 0));
-        matrix4f.setScale(0.375f);
+        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.NONE, TRSRTransformation.mul(null, null, null, null));
+        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GUI, TRSRTransformation.mul(null, rotDegrees(30, -45, 0), scale(0.625f), null));
+        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GROUND, TRSRTransformation.mul(null, null, scale(0.25f), null));
+        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.FIXED, TRSRTransformation.mul(null, rotDegrees(0, 90, 0), scale(0.5f), null));
+        Matrix4f matrix4f = TRSRTransformation.mul(null, rotDegrees(75, 45, 0), scale(0.375f), null);
         CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, matrix4f);
-        matrix4f = new Matrix4f();
-        matrix4f.rotY((float) Math.toRadians(45));
-        matrix4f.rotX((float) Math.toRadians(75));
-        matrix4f.setTranslation(new Vector3f(0, 2.5f, 0));
-        matrix4f.setScale(0.375f);
         CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, matrix4f);
-        matrix4f = new Matrix4f();
-        matrix4f.rotY((float) Math.toRadians(45));
-        matrix4f.setScale(0.4f);
+        matrix4f = TRSRTransformation.mul(null, rotDegrees(0, 45, 0), scale(0.4f), null);
         CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, matrix4f);
-        matrix4f = new Matrix4f();
-        matrix4f.rotY((float) Math.toRadians(225));
-        matrix4f.setScale(0.4f);
         CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, matrix4f);
+    }
+
+    private static Vector3f scale(float scale) {
+        return new Vector3f(scale, scale, scale);
+    }
+
+    private static Quat4f rotDegrees(float x, float y, float z) {
+        return TRSRTransformation.quatFromXYZDegrees(new Vector3f(x, y, z));
     }
 
     private final AbstractPipeModel<K> basis;

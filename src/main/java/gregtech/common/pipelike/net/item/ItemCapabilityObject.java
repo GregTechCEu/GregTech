@@ -92,7 +92,10 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         int available = stack.getCount();
         if (internalBuffer != null) {
             long limit = internalBuffer.getFlowLimit(testObject, net, tick, simulator);
-            if (limit <= 0) return stack;
+            if (limit <= 0) {
+                this.transferring = false;
+                return stack;
+            }
             available = (int) Math.min(limit, available);
         }
 

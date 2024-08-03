@@ -1,5 +1,7 @@
 package gregtech.api.graphnet.pipenet.physical.block;
 
+import codechicken.lib.raytracer.IndexedCuboid6;
+
 import gregtech.api.block.BuiltInRenderBlock;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverRayTracer;
@@ -19,6 +21,8 @@ import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -61,7 +65,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public abstract class WorldPipeBlock extends BuiltInRenderBlock {
+public abstract class PipeBlock extends BuiltInRenderBlock {
 
     // do not touch these two unless you know what you are doing
     protected final ThreadLocal<BlockPos> lastTilePos = ThreadLocal.withInitial(() -> new BlockPos(0, 0, 0));
@@ -69,7 +73,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
 
     private final IPipeStructure structure;
 
-    public WorldPipeBlock(IPipeStructure structure) {
+    public PipeBlock(IPipeStructure structure) {
         super(net.minecraft.block.material.Material.IRON);
         this.structure = structure;
         setTranslationKey(structure.getName());
@@ -97,12 +101,12 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
                 // second check -- connect to matching mark pipes if side matches or config allows.
                 if (tile.getPaintingColor() == other.getPaintingColor() && (facing == placedBlockSearchSide ||
                         !ConfigHolder.machines.gt6StylePipesCables)) {
-                    connectTile(tile, other, facing);
+                    if (coverCheck(tile, other, facing)) connectTile(tile, other, facing);
                     continue;
                 }
                 // third check -- connect to pipes with an open connection, no matter the mark status.
                 if (other.isConnected(facing.getOpposite())) {
-                    connectTile(tile, other, facing);
+                    if (coverCheck(tile, other, facing)) connectTile(tile, other, facing);
                 }
             } else if (facing == placedBlockSearchSide) {
                 // if the placed on tile supports one of our capabilities, connect to it.
@@ -130,30 +134,58 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
             if (cover != null) {
                 if (ToolHelper.isTool(item, ToolClasses.SCREWDRIVER)) {
                     EnumActionResult result = cover.onScrewdriverClick(playerIn, hand, trace);
-                    if (result != EnumActionResult.PASS) return result == EnumActionResult.SUCCESS;
+                    if (result != EnumActionResult.PASS) {
+                        if (result == EnumActionResult.SUCCESS) {
+                            ToolHelper.damageItem(item, playerIn);
+                            ToolHelper.playToolSound(item, playerIn);
+                            return true;
+                        }
+                        return false;
+                    }
                 }
                 if (ToolHelper.isTool(item, ToolClasses.SOFT_MALLET)) {
                     EnumActionResult result = cover.onSoftMalletClick(playerIn, hand, trace);
-                    if (result != EnumActionResult.PASS) return result == EnumActionResult.SUCCESS;
+                    if (result != EnumActionResult.PASS) {
+                        if (result == EnumActionResult.SUCCESS) {
+                            ToolHelper.damageItem(item, playerIn);
+                            ToolHelper.playToolSound(item, playerIn);
+                            return true;
+                        }
+                        return false;
+                    }
                 }
                 EnumActionResult result = cover.onRightClick(playerIn, hand, trace);
-                if (result != EnumActionResult.PASS) return result == EnumActionResult.SUCCESS;
+                if (result == EnumActionResult.SUCCESS) return true;
 
+                // allow crowbar to run even if the right click returns a failure
                 if (ToolHelper.isTool(item, ToolClasses.CROWBAR)) {
-                    coverable.dropCover(facing);
+                    coverable.removeCover(facing);
+                    ToolHelper.damageItem(item, playerIn);
+                    ToolHelper.playToolSound(item, playerIn);
                     return true;
                 }
-            }
 
+                if (result == EnumActionResult.FAIL) return false;
+            }
             if (isPipeTool(item)) {
                 PipeTileEntity other = tile.getPipeNeighbor(facing, true);
 
                 if (playerIn.isSneaking() && allowsBlocking()) {
+                    ToolHelper.damageItem(item, playerIn);
+                    ToolHelper.playToolSound(item, playerIn);
                     if (tile.isBlocked(facing)) unblockTile(tile, other, facing);
                     else blockTile(tile, other, facing);
                 } else {
-                    if (tile.isConnected(facing)) disconnectTile(tile, other, facing);
-                    else connectTile(tile, other, facing);
+                    if (tile.isConnected(facing)) {
+                        ToolHelper.damageItem(item, playerIn);
+                        ToolHelper.playToolSound(item, playerIn);
+                        disconnectTile(tile, other, facing);
+                    }
+                    else if (coverCheck(tile, other, facing)) {
+                        ToolHelper.damageItem(item, playerIn);
+                        ToolHelper.playToolSound(item, playerIn);
+                        connectTile(tile, other, facing);
+                    }
                 }
                 return true;
             }
@@ -179,6 +211,17 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
             }
         }
         super.onBlockClicked(worldIn, pos, playerIn);
+    }
+
+    /**
+     * Should be called to verify if a connection can be formed before
+     * {@link #connectTile(PipeTileEntity, PipeTileEntity, EnumFacing)} is called.
+     * @return whether the connection is allowed.
+     */
+    public static boolean coverCheck(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross, EnumFacing facing) {
+        Cover tileCover = tile.getCoverHolder().getCoverAtSide(facing);
+        Cover acrossCover = tileAcross != null ? tileAcross.getCoverHolder().getCoverAtSide(facing.getOpposite()) : null;
+        return (tileCover == null || tileCover.canPipePassThrough()) && (acrossCover == null || acrossCover.canPipePassThrough());
     }
 
     public static void connectTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross, EnumFacing facing) {
@@ -389,14 +432,18 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
                                       @NotNull AxisAlignedBB entityBox, @NotNull List<AxisAlignedBB> collidingBoxes,
                                       @Nullable Entity entityIn, boolean isActualState) {
         PipeTileEntity tile = getTileEntity(worldIn, pos);
-        if (hasPipeCollisionChangingItem(worldIn, pos, entityIn)) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
-            return;
-        }
         if (tile != null) {
+            if (hasPipeCollisionChangingItem(worldIn, pos, entityIn)) {
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
+            } else {
+                List<IndexedCuboid6> covers = new ObjectArrayList<>();
+                tile.getCoverHolder().addCoverCollisionBoundingBox(covers);
+                for (IndexedCuboid6 cuboid6 : covers) {
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, cuboid6.aabb());
+                }
+            }
             if (tile.getFrameMaterial() != null) {
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, BlockFrame.COLLISION_BOX);
-                return;
             }
             for (AxisAlignedBB axisAlignedBB : getStructure().getPipeBoxes(tile)) {
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, axisAlignedBB);
@@ -464,7 +511,7 @@ public abstract class WorldPipeBlock extends BuiltInRenderBlock {
     }
 
     @Nullable
-    public static WorldPipeBlock getBlockFromItem(@NotNull ItemStack stack) {
+    public static PipeBlock getBlockFromItem(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof ItemPipeBlock block) return block.getBlock();
         else return null;
     }

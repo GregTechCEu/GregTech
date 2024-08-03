@@ -1,7 +1,7 @@
 package gregtech.client.renderer.pipe;
 
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -72,7 +72,7 @@ public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
     public PipeModel(@NotNull PipeSpriteWoodClarifier inTex, @NotNull PipeSpriteWoodClarifier sideTex,
                      boolean restrictive, String variant) {
         this(inTex, sideTex, restrictive ? wood -> Textures.RESTRICTIVE_OVERLAY.get() : null,
-                wood -> Textures.PIPE_BLOCKED_OVERLAY_UP.get(), variant);
+                wood -> Textures.PIPE_BLOCKED_OVERLAY.get(), variant);
     }
 
     public PipeModel(@NotNull PipeSpriteWoodClarifier inTex, boolean restrictive, String variant) {
@@ -113,7 +113,7 @@ public class PipeModel extends AbstractPipeModel<WoodCacheKey> {
     @Override
     @Nullable
     protected PipeItemModel<WoodCacheKey> getItemModel(@NotNull ItemStack stack, World world, EntityLivingBase entity) {
-        WorldPipeBlock block = WorldPipeBlock.getBlockFromItem(stack);
+        PipeBlock block = PipeBlock.getBlockFromItem(stack);
         if (block == null) return null;
         Material mater = null;
         boolean wood = block instanceof PipeMaterialBlock mat && (mater = mat.getMaterialForStack(stack)) != null &&

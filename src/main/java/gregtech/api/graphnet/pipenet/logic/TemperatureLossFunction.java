@@ -65,7 +65,7 @@ public class TemperatureLossFunction implements INBTSerializable<NBTTagCompound>
         tag.setInteger("Ordinal", function.ordinal());
         tag.setFloat("X", factorX);
         if (factorY != 0) tag.setFloat("Y", factorY);
-        return null;
+        return tag;
     }
 
     @Override

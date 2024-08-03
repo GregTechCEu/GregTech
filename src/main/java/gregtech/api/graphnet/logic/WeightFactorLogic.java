@@ -6,20 +6,17 @@ public final class WeightFactorLogic extends AbstractDoubleLogicData<WeightFacto
 
     public static final WeightFactorLogic INSTANCE = new WeightFactorLogic().setValue(0.1d);
 
-    private WeightFactorLogic() {}
-
-    @Override
-    public @NotNull String getName() {
-        return "WeightFactor";
+    private WeightFactorLogic() {
+        super("WeightFactor");
     }
 
     @Override
-    public WeightFactorLogic getNew() {
+    public @NotNull WeightFactorLogic getNew() {
         return new WeightFactorLogic();
     }
 
     @Override
-    public WeightFactorLogic union(INetLogicEntry<?, ?> other) {
+    public WeightFactorLogic union(NetLogicEntry<?, ?> other) {
         if (other instanceof WeightFactorLogic l) {
             return getWith(this.getValue() + l.getValue());
         } else return this;

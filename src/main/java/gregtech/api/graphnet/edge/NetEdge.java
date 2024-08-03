@@ -23,9 +23,9 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
     @ApiStatus.Internal
     public @Nullable GraphEdge wrapper;
 
-    private EdgePredicateHandler predicateHandler;
+    private @Nullable EdgePredicateHandler predicateHandler;
 
-    private NetLogicData data;
+    private @Nullable NetLogicData data;
 
     protected @Nullable NetNode getSource() {
         if (wrapper == null) return null;
@@ -37,16 +37,21 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
         return wrapper.getTarget().wrapped;
     }
 
-    public void setData(NetLogicData data) {
-        this.data = data;
+    /**
+     * Should only be used on fake edges that are not registered to the graph.
+     */
+    public void setData(@NotNull NetLogicData data) {
+        if (this.wrapper == null) this.data = data;
     }
 
-    public NetLogicData getData() {
+    public @NotNull NetLogicData getData() {
+        if (this.data == null) {
+            this.data = NetLogicData.unionNullable(getSource() == null ? null : getSource().getData(),
+                    getTarget() == null ? null : getTarget().getData());
+            // if we can't calculate it, create a new one just to guarantee nonnullness
+            if (this.data == null) this.data = new NetLogicData();
+        }
         return this.data;
-    }
-
-    public void setPredicateHandler(EdgePredicateHandler predicateHandler) {
-        this.predicateHandler = predicateHandler;
     }
 
     @NotNull
@@ -68,7 +73,9 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        if (predicateHandler != null) tag.setTag("Predicate", predicateHandler.serializeNBT());
+        // we don't need to write our NetLogicData to NBT because we can regenerate it from our nodes
+        if (predicateHandler != null && !predicateHandler.shouldIgnore())
+            tag.setTag("Predicate", predicateHandler.serializeNBT());
         return tag;
     }
 

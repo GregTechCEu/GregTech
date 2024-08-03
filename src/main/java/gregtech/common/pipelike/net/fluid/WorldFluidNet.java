@@ -1,14 +1,21 @@
 package gregtech.common.pipelike.net.fluid;
 
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
+import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
+import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+import gregtech.common.covers.FluidFilterMode;
+import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.net.item.WorldItemNet;
 
 import net.minecraft.world.World;
@@ -33,13 +40,43 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
         if (net == null) {
             net = new WorldFluidNet(DATA_ID);
             world.setData(DATA_ID, net);
-            net.setWorld(world);
         }
+        net.setWorld(world);
         return net;
     }
 
     public WorldFluidNet(String name) {
         super(name, false, DynamicWeightsShortestPathsAlgorithm::new);
+    }
+
+    @Override
+    protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
+        super.coverPredication(edge, a, b);
+        if (edge.getPredicateHandler().hasPredicate(BlockedPredicate.INSTANCE)) return;
+        FilterPredicate predicate = null;
+        if (a instanceof CoverWithFluidFilter filter) {
+            if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
+                edge.getPredicateHandler().clearPredicates();
+                edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+                return;
+            } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
+                    filter.getFilterMode() != FluidFilterMode.FILTER_FILL) {
+                predicate = FilterPredicate.INSTANCE.getNew();
+                predicate.setSourceFilter(filter.getFluidFilter());
+            }
+        }
+        if (b instanceof CoverWithFluidFilter filter) {
+            if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
+                edge.getPredicateHandler().clearPredicates();
+                edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+                return;
+            } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
+                    filter.getFilterMode() != FluidFilterMode.FILTER_DRAIN) {
+                if (predicate == null) predicate = FilterPredicate.INSTANCE.getNew();
+                predicate.setTargetFilter(filter.getFluidFilter());
+            }
+        }
+        if (predicate != null) edge.getPredicateHandler().setPredicate(predicate);
     }
 
     @Override

@@ -69,11 +69,9 @@ public abstract class ServerNet extends WorldSavedData implements IGraphNet {
         double weight = source.getData().getLogicEntryDefaultable(WeightFactorLogic.INSTANCE).getValue() +
                 target.getData().getLogicEntryDefaultable(WeightFactorLogic.INSTANCE).getValue();
         NetEdge edge = backer.addEdge(source, target, weight);
-        if (edge != null) initializeEdge(source, target, edge);
         if (bothWays) {
             if (this.getGraph().isDirected()) {
-                edge = backer.addEdge(target, source, weight);
-                if (edge != null) initializeEdge(target, source, edge);
+                backer.addEdge(target, source, weight);
             }
             return null;
         } else return edge;
@@ -94,10 +92,6 @@ public abstract class ServerNet extends WorldSavedData implements IGraphNet {
         if (bothWays && this.getGraph().isDirected()) {
             this.backer.removeEdge(target, source);
         }
-    }
-
-    protected void initializeEdge(@NotNull NetNode source, @NotNull NetNode target, @NotNull NetEdge edge) {
-        edge.setData(NetLogicData.union(source.getData(), target.getData()));
     }
 
     @Override

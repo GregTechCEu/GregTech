@@ -1,6 +1,6 @@
 package gregtech.api.graphnet;
 
-import gregtech.api.graphnet.logic.INetLogicEntry;
+import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.INetLogicEntryListener;
 import gregtech.api.graphnet.logic.NetLogicData;
 
@@ -56,16 +56,16 @@ public class MultiNodeHelper implements INetLogicEntryListener {
     }
 
     @Override
-    public void markLogicEntryAsUpdated(INetLogicEntry<?, ?> entry, boolean fullChange) {
+    public void markLogicEntryAsUpdated(NetLogicEntry<?, ?> entry, boolean fullChange) {
         // TODO have a helper or something on clientside to avoid redundant packets
         handledDatas.forEach((k, v) -> v.data.markLogicEntryAsUpdated(entry, fullChange));
     }
 
     public void addNode(@NotNull NetNode node) {
-        List<INetLogicEntry<?, ?>> toSet = new ObjectArrayList<>();
-        for (INetLogicEntry<?, ?> entry : node.getData().getEntries()) {
+        List<NetLogicEntry<?, ?>> toSet = new ObjectArrayList<>();
+        for (NetLogicEntry<?, ?> entry : node.getData().getEntries()) {
             if (entry.mergedToMultiNodeHelper()) {
-                INetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(entry);
+                NetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(entry);
                 if (existing != null) {
                     existing.merge(node, entry);
                     // don't put it into the data yet because we're currently iterating through the data's entries.
@@ -76,7 +76,7 @@ public class MultiNodeHelper implements INetLogicEntryListener {
             }
         }
         handledDatas.put(node.getNet(), new LogicDataHandler(node));
-        for (INetLogicEntry<?, ?> entry : toSet) {
+        for (NetLogicEntry<?, ?> entry : toSet) {
             node.getData().setLogicEntry(entry);
         }
     }
@@ -85,14 +85,14 @@ public class MultiNodeHelper implements INetLogicEntryListener {
         LogicDataHandler removed = handledDatas.remove(node.getNet());
         if (removed != null) {
             removed.invalidate();
-            for (INetLogicEntry<?, ?> entry : this.mergedData.getEntries()) {
+            for (NetLogicEntry<?, ?> entry : this.mergedData.getEntries()) {
                 node.getData().removeLogicEntry(entry);
                 entry.unmerge(node);
             }
         }
     }
 
-    private void addNewLogicEntry(@NotNull INetLogicEntry<?, ?> entry) {
+    private void addNewLogicEntry(@NotNull NetLogicEntry<?, ?> entry) {
         entry.registerToMultiNodeHelper(this);
         mergedData.setLogicEntry(entry);
         handledDatas.values().forEach(h -> h.data.setLogicEntry(entry));
@@ -115,11 +115,11 @@ public class MultiNodeHelper implements INetLogicEntryListener {
         }
 
         @Override
-        public void markChanged(INetLogicEntry<?, ?> updatedEntry, boolean removed, boolean fullChange) {
+        public void markChanged(NetLogicEntry<?, ?> updatedEntry, boolean removed, boolean fullChange) {
             if (!fullChange || !updatedEntry.mergedToMultiNodeHelper()) return;
             NetNode node = nodeRef.get();
             if (node == null) return;
-            INetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(updatedEntry);
+            NetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(updatedEntry);
             if (removed) {
                 if (existing != null) mergedData.removeLogicEntry(existing);
             } else {

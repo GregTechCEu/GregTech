@@ -1,29 +1,26 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.vec.Matrix4;
-
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
-import gregtech.api.graphnet.gather.GTGraphGatherables;
-import gregtech.api.graphnet.logic.INetLogicEntry;
+import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicData;
+import gregtech.api.graphnet.logic.NetLogicRegistry;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.IInsulatable;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.unification.material.Material;
+import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.common.blocks.MetaBlocks;
 
-import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
 import net.minecraft.block.state.IBlockState;
@@ -35,7 +32,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
@@ -45,7 +41,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -61,7 +56,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -427,8 +421,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     @Override
-    public @NotNull WorldPipeBlock getBlockType() {
-        return (WorldPipeBlock) super.getBlockType();
+    public @NotNull PipeBlock getBlockType() {
+        return (PipeBlock) super.getBlockType();
     }
 
     @Override
@@ -445,7 +439,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.listeners.forEach(NetLogicData.LogicDataListener::invalidate);
             this.listeners.clear();
             boolean firstNode = true;
-            for (WorldPipeNetNode node : WorldPipeBlock.getNodesForTile(this)) {
+            for (WorldPipeNetNode node : PipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(node));
                 String netName = node.getNet().mapName;
@@ -514,6 +508,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             buf.writeString(entry.getKey());
             entry.getValue().encode(buf);
         }
+        this.getCoverHolder().writeInitialSyncData(buf);
     }
 
     @Override
@@ -533,6 +528,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 data.decode(buf);
                 netLogicDatas.put(key, data);
             }
+            this.getCoverHolder().readInitialSyncData(buf);
         }
         scheduleRenderUpdate();
     }
@@ -550,8 +546,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                     this.netLogicDatas.computeIfPresent(netName, (k, v) -> v.removeLogicEntry(identifier));
                 } else {
                     if (fullChange) {
-                        INetLogicEntry<?, ?> logic = GTGraphGatherables.getLogicsRegistry()
-                                .getOrDefault(identifier, () -> null).get();
+                        NetLogicEntry<?, ?> logic = NetLogicRegistry.getSupplierErroring(identifier).get();
                         logic.decode(buf, fullChange);
                         this.netLogicDatas.compute(netName, (k, v) -> {
                             if (v == null) v = new NetLogicData();
@@ -561,7 +556,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                     } else {
                         NetLogicData data = this.netLogicDatas.get(netName);
                         if (data != null) {
-                            INetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
+                            NetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
                             if (entry != null) entry.decode(buf);
                         } else return;
                     }
@@ -668,6 +663,13 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void markAsDirty() {
         markDirty();
         // this most notably gets called when the covers of a pipe get updated, aka the edge predicates need syncing.
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            if (!GTUtility.evalMask(facing, connectionMask)) continue;
+            Cover cover = getCoverHolder().getCoverAtSide(facing);
+            if (cover != null && !cover.canPipePassThrough()) {
+                PipeBlock.disconnectTile(this, getPipeNeighbor(facing, true), facing);
+            }
+        }
         for (var node : this.netCapabilities.keySet()) {
             node.getNet().updatePredication(node, this);
         }

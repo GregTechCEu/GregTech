@@ -10,17 +10,30 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Note - all implementers of this interface are suggested to be final, in order to avoid unexpected
- * {@link #union(INetLogicEntry)} behavior.
+ * Note - all extenders of this class are suggested to be final, in order to avoid unexpected
+ * {@link #union(NetLogicEntry)} behavior.
  */
-public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBase> extends INBTSerializable<N>,
-                               IStringSerializable,
-                               IPacket {
+public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBTBase>
+        implements INBTSerializable<N>, IStringSerializable, IPacket {
 
-    default void deserializeNBTNaive(NBTBase nbt) {
+    private final @NotNull String name;
+
+    protected NetLogicEntry(@NotNull String name) {
+        this.name = name;
+        NetLogicRegistry.register(this);
+    }
+
+    @Override
+    public final @NotNull String getName() {
+        return name;
+    }
+
+    public void deserializeNBTNaive(NBTBase nbt) {
         deserializeNBT((N) nbt);
     }
 
@@ -28,13 +41,13 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * Returns null if the operation is not supported.
      */
     @Nullable
-    default T union(INetLogicEntry<?, ?> other) {
+    public T union(NetLogicEntry<?, ?> other) {
         return null;
     }
 
     /**
      * Controls whether this logic entry should be merged to a MultiNodeHelper, if one is declared.
-     * The data entry must support {@link #merge(NetNode, INetLogicEntry)} with other entries of the same type,
+     * The data entry must support {@link #merge(NetNode, NetLogicEntry)} with other entries of the same type,
      * so that new nodes being added to the MultiNodeHelper can merge in. The multi node helper will ensure that
      * all nodes registered to it contain the same object that their entries have been merged to, and when a node
      * leaves the multi node helper {@link #unmerge(NetNode)} will be called for it. Server-Client sync is handled
@@ -42,7 +55,7 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * 
      * @return whether logic entry should be merged to a MultiNodeHelper.
      */
-    default boolean mergedToMultiNodeHelper() {
+    public boolean mergedToMultiNodeHelper() {
         return false;
     }
 
@@ -50,7 +63,7 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * Called when this logic entry is added to a MultiNodeHelper. Any data syncing should go through the
      * MultiNodeHelper after this method is called.
      */
-    default void registerToMultiNodeHelper(MultiNodeHelper helper) {}
+    public void registerToMultiNodeHelper(MultiNodeHelper helper) {}
 
     /**
      * Should be used exclusively for {@link gregtech.api.graphnet.MultiNodeHelper} logic.
@@ -58,30 +71,30 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * @param otherOwner the net node being merged in
      * @param other      the logic being merged in
      */
-    default void merge(NetNode otherOwner, INetLogicEntry<?, ?> other) {}
+    public void merge(NetNode otherOwner, NetLogicEntry<?, ?> other) {}
 
     /**
      * Should be used exclusively for {@link gregtech.api.graphnet.MultiNodeHelper} logic. <br>
      * Cannot be passed a logic entry since said logic entry would just be the instance this is being called for;
-     * if your logic needs to keep track then populate a map during {@link #merge(NetNode, INetLogicEntry)}.
+     * if your logic needs to keep track then populate a map during {@link #merge(NetNode, NetLogicEntry)}.
      * Keep in mind that this can be called for the data's original owner, despite
-     * {@link #merge(NetNode, INetLogicEntry)} not being called for the original owner.
+     * {@link #merge(NetNode, NetLogicEntry)} not being called for the original owner.
      * 
      * @param entryOwner the node being unmerged.
      */
-    default void unmerge(NetNode entryOwner) {}
+    public void unmerge(NetNode entryOwner) {}
 
-    default void registerToNetLogicData(NetLogicData data) {}
+    public void registerToNetLogicData(NetLogicData data) {}
 
-    default void deregisterFromNetLogicData(NetLogicData data) {}
+    public void deregisterFromNetLogicData(NetLogicData data) {}
 
-    T getNew();
+    public abstract @NotNull T getNew();
 
-    default T cast(INetLogicEntry<?, ?> entry) {
+    public T cast(NetLogicEntry<?, ?> entry) {
         return (T) entry;
     }
 
-    default void encode(PacketBuffer buf) {
+    public void encode(PacketBuffer buf) {
         encode(buf, true);
     }
 
@@ -89,9 +102,9 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * @param fullChange allows for less-full buffers to be sent and received.
      *                   Useful for logics that can be partially modified, see {@link TemperatureLogic}
      */
-    void encode(PacketBuffer buf, boolean fullChange);
+    public abstract void encode(PacketBuffer buf, boolean fullChange);
 
-    default void decode(PacketBuffer buf) {
+    public void decode(PacketBuffer buf) {
         decode(buf, true);
     }
 
@@ -99,5 +112,5 @@ public interface INetLogicEntry<T extends INetLogicEntry<T, N>, N extends NBTBas
      * @param fullChange allows for less-full buffers to be sent and received.
      *                   Useful for logics that can be partially modified, see {@link TemperatureLogic}
      */
-    void decode(PacketBuffer buf, boolean fullChange);
+    public abstract void decode(PacketBuffer buf, boolean fullChange);
 }

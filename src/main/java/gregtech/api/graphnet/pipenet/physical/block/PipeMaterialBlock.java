@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public abstract class PipeMaterialBlock extends WorldPipeBlock {
+public abstract class PipeMaterialBlock extends PipeBlock {
 
     public final MaterialRegistry registry;
 

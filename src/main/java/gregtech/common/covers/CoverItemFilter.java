@@ -5,6 +5,7 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.cover.filter.CoverWithItemFilter;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -45,7 +46,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CoverItemFilter extends CoverBase implements CoverWithUI {
+public class CoverItemFilter extends CoverBase implements CoverWithUI, CoverWithItemFilter {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -59,6 +60,16 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         this.titleLocale = titleLocale;
         this.texture = texture;
         this.itemFilterContainer = new ItemFilterContainer(this);
+    }
+
+    @Override
+    public @NotNull ItemFilterContainer getItemFilter() {
+        return itemFilterContainer;
+    }
+
+    @Override
+    public ManualImportExportMode getManualMode() {
+        return ManualImportExportMode.FILTERED;
     }
 
     @Override

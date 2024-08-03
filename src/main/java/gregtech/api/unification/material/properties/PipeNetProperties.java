@@ -6,8 +6,13 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
+
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -17,12 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler {
 
-    protected final Map<IPipeNetMaterialProperty.MaterialPropertyKey<?>, IPipeNetMaterialProperty> properties = new Object2ObjectOpenHashMap<>();
+    protected final Map<IPipeNetMaterialProperty.MaterialPropertyKey<?>, IPipeNetMaterialProperty> properties =
+            new Object2ObjectRBTreeMap<>(Comparator.comparing(IPipeNetMaterialProperty.MaterialPropertyKey::getName));
 
     public void setProperty(IPipeNetMaterialProperty property) {
         this.properties.put(property.getKey(), property);
@@ -98,6 +105,14 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
         }
     }
 
+    protected final class MaterialPropertyComparator implements Comparator<IPipeNetMaterialProperty> {
+
+        @Override
+        public int compare(IPipeNetMaterialProperty o1, IPipeNetMaterialProperty o2) {
+            return 0;
+        }
+    }
+
     public interface IPipeNetMaterialProperty extends IMaterialProperty {
 
         @Nullable
@@ -119,7 +134,18 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
 
         MaterialPropertyKey<?> getKey();
 
-        class MaterialPropertyKey<T extends IPipeNetMaterialProperty> {
+        class MaterialPropertyKey<T extends IPipeNetMaterialProperty> implements IStringSerializable {
+
+            private final @NotNull String name;
+
+            public MaterialPropertyKey(@NotNull String name) {
+                this.name = name;
+            }
+
+            @Override
+            public @NotNull String getName() {
+                return name;
+            }
 
             T cast(IPipeNetMaterialProperty property) {
                 return (T) property;

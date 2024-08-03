@@ -20,8 +20,7 @@ import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.common.pipelike.block.cable.CableStructure;
-import gregtech.common.pipelike.block.pipe.PipeStructure;
+import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
 import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
 
@@ -44,7 +43,7 @@ import java.util.Set;
 
 public final class MaterialFluidProperties implements PipeNetProperties.IPipeNetMaterialProperty, IPropertyFluidFilter {
 
-    public static final MaterialPropertyKey<MaterialFluidProperties> KEY = new MaterialPropertyKey<>();
+    public static final MaterialPropertyKey<MaterialFluidProperties> KEY = new MaterialPropertyKey<>("FluidProperties");
 
     private final Set<FluidAttribute> containableAttributes = new ObjectOpenHashSet<>();
     private final EnumSet<FluidState> containableStates = EnumSet.of(FluidState.LIQUID);
@@ -183,7 +182,7 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     @Override
     @Nullable
     public WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof PipeStructure) {
+        if (structure instanceof MaterialPipeStructure) {
             WorldPipeNetNode node = WorldFluidNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), structure);
             return node;
@@ -193,7 +192,7 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
 
     @Override
     public void mutateData(NetLogicData data, IPipeStructure structure) {
-        if (structure instanceof PipeStructure pipe) {
+        if (structure instanceof MaterialPipeStructure pipe) {
             long throughput = getThroughput(structure);
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
             data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
@@ -206,27 +205,27 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     }
 
     private long getThroughput(IPipeStructure structure) {
-        if (structure instanceof PipeStructure pipe) {
+        if (structure instanceof MaterialPipeStructure pipe) {
             return baseThroughput * pipe.material();
         } else return baseThroughput;
     }
 
     private double getFlowPriority(IPipeStructure structure) {
-        if (structure instanceof PipeStructure pipe) {
+        if (structure instanceof MaterialPipeStructure pipe) {
             return priority * (pipe.restrictive() ? 100d : 1d) * pipe.channelCount() / pipe.material();
         } else return priority;
     }
 
     @Override
     public @Nullable WorldPipeNetNode getFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof PipeStructure)
+        if (structure instanceof MaterialPipeStructure)
             return WorldFluidNet.getWorldNet(world).getNode(pos);
         else return null;
     }
 
     @Override
     public void removeFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof PipeStructure) {
+        if (structure instanceof MaterialPipeStructure) {
             WorldFluidNet net = WorldFluidNet.getWorldNet(world);
             NetNode node = net.getNode(pos);
             if (node != null) net.removeNode(node);
@@ -235,11 +234,11 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
 
     @Override
     public boolean generatesStructure(IPipeStructure structure) {
-        return structure.getClass() == PipeStructure.class;
+        return structure.getClass() == MaterialPipeStructure.class;
     }
 
     @Override
     public boolean supportsStructure(IPipeStructure structure) {
-        return structure instanceof PipeStructure;
+        return structure instanceof MaterialPipeStructure;
     }
 }

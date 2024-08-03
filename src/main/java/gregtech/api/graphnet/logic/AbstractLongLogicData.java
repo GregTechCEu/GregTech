@@ -4,11 +4,15 @@ import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.network.PacketBuffer;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractLongLogicData<T extends AbstractLongLogicData<T>>
-                                           implements INetLogicEntry<T, NBTTagLong> {
+public abstract class AbstractLongLogicData<T extends AbstractLongLogicData<T>> extends NetLogicEntry<T, NBTTagLong> {
 
     private long value;
+
+    protected AbstractLongLogicData(@NotNull String name) {
+        super(name);
+    }
 
     public T getWith(long value) {
         return getNew().setValue(value);

@@ -2,5 +2,5 @@ package gregtech.api.graphnet.logic;
 
 public interface INetLogicEntryListener {
 
-    void markLogicEntryAsUpdated(INetLogicEntry<?, ?> entry, boolean fullChange);
+    void markLogicEntryAsUpdated(NetLogicEntry<?, ?> entry, boolean fullChange);
 }

@@ -2,7 +2,7 @@ package gregtech.common.pipelike.net.fluid;
 
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
-import gregtech.api.graphnet.logic.INetLogicEntry;
+import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,12 +20,16 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class FluidContainmentLogic implements INetLogicEntry<FluidContainmentLogic, NBTTagCompound> {
+public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentLogic, NBTTagCompound> {
 
     public static final FluidContainmentLogic INSTANCE = new FluidContainmentLogic().contain(FluidState.LIQUID);
 
     private final Set<ResourceLocation> containableAttributes = new ObjectOpenHashSet<>();
     private @NotNull EnumSet<FluidState> containableStates = EnumSet.noneOf(FluidState.class);
+
+    public FluidContainmentLogic() {
+        super("FluidContainment");
+    }
 
     public FluidContainmentLogic getWith(Collection<FluidState> states, Collection<FluidAttribute> attributes) {
         FluidContainmentLogic logic = getNew();
@@ -35,8 +39,6 @@ public class FluidContainmentLogic implements INetLogicEntry<FluidContainmentLog
         }
         return logic;
     }
-
-    private FluidContainmentLogic() {}
 
     public FluidContainmentLogic contain(FluidState state) {
         this.containableStates.add(state);
@@ -67,12 +69,7 @@ public class FluidContainmentLogic implements INetLogicEntry<FluidContainmentLog
     }
 
     @Override
-    public @NotNull String getName() {
-        return "FluidContainment";
-    }
-
-    @Override
-    public @Nullable FluidContainmentLogic union(INetLogicEntry<?, ?> other) {
+    public @Nullable FluidContainmentLogic union(NetLogicEntry<?, ?> other) {
         if (other instanceof FluidContainmentLogic logic) {
             if (this.containableAttributes.equals(logic.containableAttributes) &&
                     this.containableStates.equals(logic.containableStates)) {
@@ -111,7 +108,7 @@ public class FluidContainmentLogic implements INetLogicEntry<FluidContainmentLog
     }
 
     @Override
-    public FluidContainmentLogic getNew() {
+    public @NotNull FluidContainmentLogic getNew() {
         return new FluidContainmentLogic();
     }
 

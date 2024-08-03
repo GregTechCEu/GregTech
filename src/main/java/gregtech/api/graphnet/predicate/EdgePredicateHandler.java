@@ -1,7 +1,5 @@
 package gregtech.api.graphnet.predicate;
 
-import gregtech.api.graphnet.gather.GTGraphGatherables;
-import gregtech.api.graphnet.gather.GatherPredicatesEvent;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,35 +8,29 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Note - since the internal map representation encodes keys using {@link IStringSerializable#getName()} on predicates,
- * making a predicate class return two different names is a valid way to register multiple instances. <br>
- * Just make sure that a supplier is registered to {@link GatherPredicatesEvent} for all
- * associated names, so that decoding from nbt and packets is possible.
+ * making a predicate class return two different names is a valid way to register multiple instances.
  */
 public final class EdgePredicateHandler implements INBTSerializable<NBTTagList>, Predicate<IPredicateTestObject> {
 
-    private final Map<String, IEdgePredicate<?, ?>> predicateSet;
+    private final Map<String, EdgePredicate<?, ?>> predicateSet;
 
     public EdgePredicateHandler() {
         predicateSet = new Object2ObjectOpenHashMap<>();
     }
 
-    private EdgePredicateHandler(Map<String, IEdgePredicate<?, ?>> predicateSet) {
-        this.predicateSet = predicateSet;
-    }
-
     /**
-     * If the {@link IEdgePredicate#union(IEdgePredicate)} operation is not supported for this predicate,
+     * If the {@link EdgePredicate#union(EdgePredicate)} operation is not supported for this predicate,
      * nothing happens if a predicate is already present.
      */
-    public EdgePredicateHandler mergePredicate(IEdgePredicate<?, ?> predicate) {
-        IEdgePredicate<?, ?> current = predicateSet.get(predicate.getName());
+    public EdgePredicateHandler mergePredicate(@NotNull EdgePredicate<?, ?> predicate) {
+        EdgePredicate<?, ?> current = predicateSet.get(predicate.getName());
         if (current == null) return setPredicate(predicate);
 
         if (predicate.getClass().isInstance(current)) {
@@ -48,13 +40,20 @@ public final class EdgePredicateHandler implements INBTSerializable<NBTTagList>,
         return setPredicate(predicate);
     }
 
-    public EdgePredicateHandler setPredicate(IEdgePredicate<?, ?> predicate) {
+    /**
+     * Do not modify the returned value
+     */
+    public Map<String, EdgePredicate<?, ?>> getPredicateSet() {
+        return predicateSet;
+    }
+
+    public EdgePredicateHandler setPredicate(@NotNull EdgePredicate<?, ?> predicate) {
         predicateSet.put(predicate.getName(), predicate);
         return this;
     }
 
-    public EdgePredicateHandler removePredicate(IEdgePredicate<?, ?> key) {
-        return removePredicate(key.getName());
+    public EdgePredicateHandler removePredicate(@NotNull EdgePredicate<?, ?> predicate) {
+        return removePredicate(predicate.getName());
     }
 
     public EdgePredicateHandler removePredicate(String key) {
@@ -62,15 +61,28 @@ public final class EdgePredicateHandler implements INBTSerializable<NBTTagList>,
         return this;
     }
 
+    public boolean hasPredicate(@NotNull EdgePredicate<?, ?> predicate) {
+        return predicateSet.containsKey(predicate.getName());
+    }
+
+    public boolean hasPredicate(String key) {
+        return predicateSet.containsKey(key);
+    }
+
     public void clearPredicates() {
         this.predicateSet.clear();
     }
 
+    public boolean shouldIgnore() {
+        return predicateSet.isEmpty();
+    }
+
     @Override
     public boolean test(IPredicateTestObject iPredicateTestObject) {
-        // TODO predicate 'categories' or 'affinities' that determine order of operations with and-y and or-y behavior?
+        if (shouldIgnore()) return true;
         boolean result = false;
-        for (IEdgePredicate<?, ?> predicate : predicateSet.values()) {
+        for (EdgePredicate<?, ?> predicate : predicateSet.values()) {
+            // TODO predicate 'categories' or 'affinities' that determine order of operations with and-y and or-y behavior?
             boolean test = predicate.test(iPredicateTestObject);
             if (predicate.andy() && !test) return false;
             else result |= test;
@@ -81,7 +93,7 @@ public final class EdgePredicateHandler implements INBTSerializable<NBTTagList>,
     @Override
     public NBTTagList serializeNBT() {
         NBTTagList list = new NBTTagList();
-        for (IEdgePredicate<?, ?> entry : predicateSet.values()) {
+        for (EdgePredicate<?, ?> entry : predicateSet.values()) {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setTag("Tag", entry.serializeNBT());
             tag.setString("Name", entry.getName());
@@ -95,14 +107,10 @@ public final class EdgePredicateHandler implements INBTSerializable<NBTTagList>,
         for (int i = 0; i < nbt.tagCount(); i++) {
             NBTTagCompound tag = nbt.getCompoundTagAt(i);
             String key = tag.getString("Name");
-            IEdgePredicate<?, ?> entry = this.predicateSet.get(key);
-            if (entry == null) entry = getSupplier(key).get();
+            EdgePredicate<?, ?> entry = this.predicateSet.get(key);
+            if (entry == null) entry = NetPredicateRegistry.getSupplierNotNull(key).get();
             if (entry == null) continue;
             entry.deserializeNBTNaive(tag.getTag("Tag"));
         }
-    }
-
-    private static Supplier<IEdgePredicate<?, ?>> getSupplier(String identifier) {
-        return GTGraphGatherables.getPredicatesRegistry().getOrDefault(identifier, () -> null);
     }
 }

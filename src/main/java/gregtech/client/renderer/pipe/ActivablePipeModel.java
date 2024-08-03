@@ -1,7 +1,7 @@
 package gregtech.client.renderer.pipe;
 
 import gregtech.api.block.UnlistedBooleanProperty;
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
@@ -125,7 +125,7 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
     @Override
     protected @Nullable PipeItemModel<ActivableCacheKey> getItemModel(@NotNull ItemStack stack, World world,
                                                                       EntityLivingBase entity) {
-        WorldPipeBlock block = WorldPipeBlock.getBlockFromItem(stack);
+        PipeBlock block = PipeBlock.getBlockFromItem(stack);
         if (block == null) return null;
         return new PipeItemModel<>(this, new ActivableCacheKey(block.getStructure().getRenderThickness(), false),
                 new ColorData(PipeTileEntity.DEFAULT_COLOR));

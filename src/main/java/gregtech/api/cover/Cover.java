@@ -1,5 +1,7 @@
 package gregtech.api.cover;
 
+import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.client.utils.BloomEffectUtil;
 
 import net.minecraft.entity.player.EntityPlayer;

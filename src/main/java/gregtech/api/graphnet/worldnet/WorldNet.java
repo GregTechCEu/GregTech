@@ -30,9 +30,10 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
 
     protected final GraphNetBacker backer;
     private World world;
+    private int fallbackDimensionID;
 
     @SafeVarargs
-    public WorldNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
+    public WorldNet(String name, @NotNull Function<IGraphNet, INetGraph> graphBuilder,
                     Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
         super(name);
         this.backer = new GraphNetBacker(this, graphBuilder.apply(this), algorithmBuilders);
@@ -97,11 +98,9 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
         double weight = source.getData().getLogicEntryDefaultable(WeightFactorLogic.INSTANCE).getValue() +
                 target.getData().getLogicEntryDefaultable(WeightFactorLogic.INSTANCE).getValue();
         NetEdge edge = backer.addEdge(source, target, weight);
-        if (edge != null) initializeEdge(source, target, edge);
         if (bothWays) {
             if (this.getGraph().isDirected()) {
-                edge = backer.addEdge(target, source, weight);
-                if (edge != null) initializeEdge(target, source, edge);
+                backer.addEdge(target, source, weight);
             }
             return null;
         } else return edge;
@@ -124,21 +123,20 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
         }
     }
 
-    protected void initializeEdge(@NotNull NetNode source, @NotNull NetNode target, @NotNull NetEdge edge) {
-        edge.setData(NetLogicData.union(source.getData(), target.getData()));
-    }
-
     protected int getDimension() {
-        return world.provider.getDimension();
+        if (world == null) return fallbackDimensionID;
+        else return world.provider.getDimension();
     }
 
     @Override
     public void readFromNBT(@NotNull NBTTagCompound nbt) {
+        fallbackDimensionID = nbt.getInteger("Dimension");
         backer.readFromNBT(nbt);
     }
 
     @Override
     public @NotNull NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
+        compound.setInteger("Dimension", getDimension());
         return backer.writeToNBT(compound);
     }
 

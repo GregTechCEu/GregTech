@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.block.laser;
 
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.ActivablePipeModel;
@@ -16,6 +17,13 @@ import java.util.function.Consumer;
 public record LaserStructure(String name, float renderThickness, ActivablePipeModel model) implements IPipeStructure {
 
     public static final LaserStructure INSTANCE = new LaserStructure("laser_pipe_normal", 0.375f, ActivablePipeModel.LASER);
+
+    public LaserStructure(String name, float renderThickness, ActivablePipeModel model) {
+        this.name = name;
+        this.renderThickness = renderThickness;
+        this.model = model;
+        PipeStructureRegistry.register(this);
+    }
 
     @Override
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {

@@ -8,6 +8,8 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.cover.filter.CoverWithItemFilter;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
@@ -61,12 +63,13 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable {
+public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithItemFilter {
 
     public final int tier;
     public final int maxItemTransferRate;
@@ -89,6 +92,21 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.conveyorMode = ConveyorMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
         this.itemFilterContainer = new ItemFilterContainer(this);
+    }
+
+    @Override
+    public @Nullable ItemFilterContainer getItemFilter() {
+        return itemFilterContainer;
+    }
+
+    @Override
+    public ItemFilterMode getFilterMode() {
+        return ItemFilterMode.FILTER_BOTH;
+    }
+
+    @Override
+    public ManualImportExportMode getManualMode() {
+        return this.manualImportExportMode;
     }
 
     public void setTransferRate(int transferRate) {

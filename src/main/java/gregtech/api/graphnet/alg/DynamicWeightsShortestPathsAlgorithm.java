@@ -2,12 +2,17 @@ package gregtech.api.graphnet.alg;
 
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.alg.iter.ICacheableIterator;
+import gregtech.api.graphnet.alg.iter.IteratorFactory;
+import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
+import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.path.INetPath;
 
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.Nullable;
 import org.jgrapht.alg.shortestpath.DefaultManyToManyShortestPaths;
 
 import java.util.Collections;
@@ -15,6 +20,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,16 +32,23 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
     }
 
     @Override
-    public <Path extends INetPath<?, ?>> Iterator<Path> getPathsIterator(GraphVertex source,
-                                                                         NetPathMapper<Path> remapper) {
+    public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
+                                                                                       NetPathMapper<Path> remapper) {
         Set<GraphVertex> searchSpace = source.wrapped.getGroupSafe().getNodes().stream().filter(NetNode::isActive)
                 .map(n -> n.wrapper).filter(node -> !source.equals(node)).collect(Collectors.toSet());
-        return new LimitedIterator<>(source, searchSpace, remapper);
+        return (graph, testObject, simulator, queryTick) -> {
+            IteratorFactory.defaultPrepareRun(graph, testObject, simulator, queryTick);
+            return new LimitedIterator<>(source, searchSpace, remapper, testObject, simulator, queryTick);
+        };
     }
 
-    protected class LimitedIterator<Path extends INetPath<?, ?>> implements ICacheableIterator<Path> {
+    protected class LimitedIterator<Path extends INetPath<?, ?>> implements Iterator<Path> {
 
         private static final int MAX_ITERATIONS = 100;
+
+        private final IPredicateTestObject testObject;
+        private final SimulatorKey simulator;
+        private final long queryTick;
 
         private final GraphVertex source;
         private final Set<GraphVertex> searchSpace;
@@ -43,22 +56,16 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
 
         private int iterationCount = 0;
         private final ObjectArrayList<Path> visited = new ObjectArrayList<>();
-        private Path next;
+        private @Nullable Path next;
 
-        public LimitedIterator(GraphVertex source, Set<GraphVertex> searchSpace, NetPathMapper<Path> remapper) {
+        public LimitedIterator(GraphVertex source, Set<GraphVertex> searchSpace, NetPathMapper<Path> remapper,
+                               IPredicateTestObject testObject, SimulatorKey simulator, long queryTick) {
             this.source = source;
             this.searchSpace = searchSpace;
             this.remapper = remapper;
-        }
-
-        @Override
-        public ICacheableIterator<Path> newCacheableIterator() {
-            return new LimitedIterator<>(source, searchSpace, remapper);
-        }
-
-        @Override
-        public Iterator<Path> newIterator() {
-            return newCacheableIterator();
+            this.testObject = testObject;
+            this.simulator = simulator;
+            this.queryTick = queryTick;
         }
 
         @Override
@@ -83,16 +90,10 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
             }
             ManyToManyShortestPaths<GraphVertex, GraphEdge> paths = getManyToManyPaths(Collections.singleton(source),
                     searchSpace);
-            var iter = searchSpace.stream().map(node -> paths.getPath(source, node)).filter(Objects::nonNull)
-                    .map(remapper::map).sorted(Comparator.comparingDouble(INetPath::getWeight)).iterator();
-            while (iter.hasNext()) {
-                var next = iter.next();
-                if (isUnique(next)) {
-                    this.next = next;
-                    break;
-                }
-            }
-            if (next != null) visited.add(next);
+            Optional<Path> next = searchSpace.stream().map(node -> paths.getPath(source, node)).filter(Objects::nonNull)
+                    .map(remapper::map).filter(this::isUnique).min(Comparator.comparingDouble(INetPath::getWeight));
+            this.next = next.orElse(null);
+            next.ifPresent(this.visited::add);
         }
 
         private boolean isUnique(Path path) {

@@ -976,4 +976,19 @@ public class GTUtility {
     public static <T> Set<T> createWeakHashSet() {
         return Collections.newSetFromMap(new WeakHashMap<>());
     }
+
+    /**
+     * Forces the initialization of a class; this includes things like loading its static fields.
+     * This can be useful because a statement like {@code AClass.class} does not initialize a class.
+     * <br> <br>
+     * Does nothing if the class is already initialized.
+     * @param clazz the class object to initialize.
+     */
+    public static void forceInitialization(Class<?> clazz) {
+        try {
+            Class.forName(clazz.getName(), true, clazz.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError(e);  // Can't happen
+        }
+    }
 }

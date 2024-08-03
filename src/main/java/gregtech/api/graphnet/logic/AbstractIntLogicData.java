@@ -3,9 +3,15 @@ package gregtech.api.graphnet.logic;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.network.PacketBuffer;
 
-public abstract class AbstractIntLogicData<T extends AbstractIntLogicData<T>> implements INetLogicEntry<T, NBTTagInt> {
+import org.jetbrains.annotations.NotNull;
+
+public abstract class AbstractIntLogicData<T extends AbstractIntLogicData<T>> extends NetLogicEntry<T, NBTTagInt> {
 
     private int value;
+
+    protected AbstractIntLogicData(@NotNull String name) {
+        super(name);
+    }
 
     public T getWith(int value) {
         return getNew().setValue(value);

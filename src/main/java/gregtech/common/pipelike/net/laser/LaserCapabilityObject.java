@@ -47,8 +47,8 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
 
     @Override
     public long receiveLaser(long laserVoltage, long laserAmperage) {
-        if (tile == null || transmitting) return 0;
-        transmitting = true;
+        if (tile == null || this.transmitting) return 0;
+        this.transmitting = true;
 
         long available = laserAmperage;
         for (Iterator<BasicWorldPipeNetPath> it = getPaths(); it.hasNext();) {
@@ -62,12 +62,15 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
                     if (transmitted > 0) {
                         SlowActiveWalker.dispatch(tile.getWorld(), path, 1, 2, 2);
                         available -= transmitted;
-                        if (available <= 0) return laserAmperage;
+                        if (available <= 0) {
+                            this.transmitting = false;
+                            return laserAmperage;
+                        }
                     }
                 }
             }
         }
-        transmitting = false;
+        this.transmitting = false;
 
         return laserAmperage - available;
     }

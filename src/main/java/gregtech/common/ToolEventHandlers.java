@@ -7,7 +7,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverHolder;
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -302,7 +302,7 @@ public class ToolEventHandlers {
     @SideOnly(Side.CLIENT)
     private static boolean shouldRenderGridOverlays(@NotNull IBlockState state, @Nullable TileEntity tile,
                                                     ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
-        if (state.getBlock() instanceof WorldPipeBlock pipe) {
+        if (state.getBlock() instanceof PipeBlock pipe) {
             if (isSneaking &&
                     (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
                 return true;

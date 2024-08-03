@@ -13,11 +13,9 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
@@ -31,7 +29,7 @@ import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.block.cable.CableBlock;
 import gregtech.common.pipelike.block.laser.LaserPipeBlock;
 import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
-import gregtech.common.pipelike.block.pipe.PipeBlock;
+import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -87,7 +85,7 @@ public class CommonProxy {
             }
 
             for (CableBlock cable : CABLES.get(materialRegistry.getModid())) registry.register(cable);
-            for (PipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid())) registry.register(cable);
+            for (MaterialPipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid())) registry.register(cable);
         }
         for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(pipe);
         for (LaserPipeBlock pipe : LASER_PIPES) registry.register(pipe);
@@ -202,7 +200,7 @@ public class CommonProxy {
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (CableBlock cable : CABLES.get(materialRegistry.getModid()))
                 registry.register(createItemBlock(cable, ItemMaterialPipeBlock::new));
-            for (PipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid()))
+            for (MaterialPipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid()))
                 registry.register(createItemBlock(cable, ItemMaterialPipeBlock::new));
         }
         for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));

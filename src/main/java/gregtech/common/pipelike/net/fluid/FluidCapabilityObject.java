@@ -103,7 +103,10 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         long allowed = resource.amount;
         if (internalBuffer != null) {
             long limit = internalBuffer.getFlowLimit(testObject, net, tick, simulator);
-            if (limit <= 0) return 0;
+            if (limit <= 0) {
+                this.transferring = false;
+                return 0;
+            }
             allowed = Math.min(limit, allowed);
         }
 

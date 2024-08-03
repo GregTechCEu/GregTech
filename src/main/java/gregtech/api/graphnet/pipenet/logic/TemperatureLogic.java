@@ -2,7 +2,7 @@ package gregtech.api.graphnet.pipenet.logic;
 
 import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.logic.INetLogicEntry;
+import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.INetLogicEntryListener;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
-public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, NBTTagCompound> {
+public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTTagCompound> {
 
     public static final TemperatureLogic INSTANCE = new TemperatureLogic();
 
@@ -43,7 +43,9 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
     private int functionPriority;
     private long lastRestorationTick;
 
-    private TemperatureLogic() {}
+    public TemperatureLogic() {
+        super("Temperature");
+    }
 
     public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
                                     int temperatureMaximum) {
@@ -95,7 +97,7 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
         if (!isMultiNodeHelper) this.netListener = new WeakReference<>(null);
     }
 
-    public TemperatureLogic getNew() {
+    public @NotNull TemperatureLogic getNew() {
         return new TemperatureLogic();
     }
 
@@ -240,21 +242,16 @@ public final class TemperatureLogic implements INetLogicEntry<TemperatureLogic, 
     }
 
     @Override
-    public @NotNull String getName() {
-        return "Temperature";
-    }
-
-    @Override
     public boolean mergedToMultiNodeHelper() {
         return true;
     }
 
     @Override
-    public void merge(NetNode otherOwner, INetLogicEntry<?, ?> unknown) {
+    public void merge(NetNode otherOwner, NetLogicEntry<?, ?> unknown) {
         if (!(unknown instanceof TemperatureLogic other)) return;
-        if (other.getTemperatureMinimum() > this.getTemperatureMinimum())
+        if (other.getTemperatureMinimum() < this.getTemperatureMinimum())
             this.setTemperatureMinimum(other.getTemperatureMinimum());
-        if (other.getTemperatureMaximum() < this.getTemperatureMaximum())
+        if (other.getTemperatureMaximum() > this.getTemperatureMaximum())
             this.setTemperatureMaximum(other.getTemperatureMaximum());
         // since merge also occurs during nbt load, ignore the other's thermal energy.
         if (other.getThermalMass() < this.getThermalMass()) this.setThermalMass(other.getThermalMass());

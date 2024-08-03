@@ -11,7 +11,7 @@ import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.common.pipelike.block.pipe.PipeStructure;
+import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
 import gregtech.common.pipelike.net.item.WorldItemNet;
 
 import net.minecraft.client.resources.I18n;
@@ -27,7 +27,7 @@ import java.util.List;
 
 public final class MaterialItemProperties implements PipeNetProperties.IPipeNetMaterialProperty {
 
-    public static final MaterialPropertyKey<MaterialItemProperties> KEY = new MaterialPropertyKey<>();
+    public static final MaterialPropertyKey<MaterialItemProperties> KEY = new MaterialPropertyKey<>("ItemProperties");
 
     private final long baseItemsPer5Ticks;
     private final float priority;
@@ -69,7 +69,7 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     @Override
     @Nullable
     public WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof PipeStructure) {
+        if (structure instanceof MaterialPipeStructure) {
             WorldPipeNetNode node = WorldItemNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), structure);
             return node;
@@ -79,7 +79,7 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
 
     @Override
     public void mutateData(NetLogicData data, IPipeStructure structure) {
-        if (structure instanceof PipeStructure pipe) {
+        if (structure instanceof MaterialPipeStructure pipe) {
             long throughput = baseItemsPer5Ticks * pipe.material();
             data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput));
@@ -87,21 +87,21 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     }
 
     private double getFlowPriority(IPipeStructure structure) {
-        if (structure instanceof PipeStructure pipe) {
+        if (structure instanceof MaterialPipeStructure pipe) {
             return priority * (pipe.restrictive() ? 100d : 1d) * pipe.channelCount() / pipe.material();
         } else return priority;
     }
 
     @Override
     public @Nullable WorldPipeNetNode getFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof PipeStructure)
+        if (structure instanceof MaterialPipeStructure)
             return WorldItemNet.getWorldNet(world).getNode(pos);
         else return null;
     }
 
     @Override
     public void removeFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof PipeStructure) {
+        if (structure instanceof MaterialPipeStructure) {
             WorldItemNet net = WorldItemNet.getWorldNet(world);
             NetNode node = net.getNode(pos);
             if (node != null) net.removeNode(node);
@@ -110,11 +110,11 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
 
     @Override
     public boolean generatesStructure(IPipeStructure structure) {
-        return structure.getClass() == PipeStructure.class;
+        return structure.getClass() == MaterialPipeStructure.class;
     }
 
     @Override
     public boolean supportsStructure(IPipeStructure structure) {
-        return structure instanceof PipeStructure;
+        return structure instanceof MaterialPipeStructure;
     }
 }

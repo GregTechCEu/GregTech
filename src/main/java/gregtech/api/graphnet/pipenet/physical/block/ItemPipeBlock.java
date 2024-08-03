@@ -17,13 +17,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class ItemPipeBlock extends ItemBlock {
 
-    public ItemPipeBlock(WorldPipeBlock block) {
+    public ItemPipeBlock(PipeBlock block) {
         super(block);
     }
 
     @Override
-    public @NotNull WorldPipeBlock getBlock() {
-        return (WorldPipeBlock) super.getBlock();
+    public @NotNull PipeBlock getBlock() {
+        return (PipeBlock) super.getBlock();
     }
 
     @Override

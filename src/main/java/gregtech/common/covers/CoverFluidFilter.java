@@ -3,6 +3,7 @@ package gregtech.common.covers;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
+import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
@@ -46,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CoverFluidFilter extends CoverBase implements CoverWithUI {
+public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWithFluidFilter {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -61,6 +62,16 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
         this.texture = texture;
+    }
+
+    @Override
+    public @NotNull FluidFilterContainer getFluidFilter() {
+        return fluidFilterContainer;
+    }
+
+    @Override
+    public ManualImportExportMode getManualMode() {
+        return ManualImportExportMode.FILTERED;
     }
 
     public void setFilterMode(FluidFilterMode filterMode) {

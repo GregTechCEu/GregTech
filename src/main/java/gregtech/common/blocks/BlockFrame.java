@@ -1,7 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -121,7 +121,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
                                          ItemStack stackInHand, EnumFacing facing) {
-        WorldPipeBlock block = WorldPipeBlock.getBlockFromItem(stackInHand);
+        PipeBlock block = PipeBlock.getBlockFromItem(stackInHand);
         if (block != null && block.getStructure().getRenderThickness() < 1) {
             ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
             IBlockState pipeState = block.getDefaultState();

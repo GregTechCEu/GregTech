@@ -3,7 +3,6 @@ package gregtech.api.graphnet.pipenet.physical.block;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.ActivablePipeModel;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
-public abstract class PipeActivableBlock extends WorldPipeBlock {
+public abstract class PipeActivableBlock extends PipeBlock {
 
     public PipeActivableBlock(IPipeStructure structure) {
         super(structure);

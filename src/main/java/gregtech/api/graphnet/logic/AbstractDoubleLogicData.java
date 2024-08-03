@@ -3,10 +3,16 @@ package gregtech.api.graphnet.logic;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.network.PacketBuffer;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class AbstractDoubleLogicData<T extends AbstractDoubleLogicData<T>>
-                                             implements INetLogicEntry<T, NBTTagDouble> {
+        extends NetLogicEntry<T, NBTTagDouble> {
 
     private double value;
+
+    protected AbstractDoubleLogicData(@NotNull String name) {
+        super(name);
+    }
 
     public T getWith(double value) {
         return getNew().setValue(value);

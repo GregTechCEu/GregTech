@@ -9,11 +9,10 @@ import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.pipenet.predicate.ShutterPredicate;
+import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.worldnet.WorldNet;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.common.covers.CoverShutter;
 
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -27,6 +26,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -68,6 +69,7 @@ public abstract class WorldPipeNet extends WorldNet {
      * @param node the associated node.
      */
     public void updatePredication(@NotNull WorldPipeNetNode node, @NotNull PipeTileEntity tile) {
+        boolean dirty = false;
         for (EnumFacing facing : EnumFacing.VALUES) {
             PipeTileEntity neighbor = tile.getPipeNeighbor(facing, false);
             if (neighbor == null) continue;
@@ -75,9 +77,10 @@ public abstract class WorldPipeNet extends WorldNet {
             if (neighborNode == null) continue;
             NetEdge edge = getEdge(node, neighborNode);
             if (edge == null) continue;
-            predicateEdge(edge, node, tile.getCoverHolder().getCoverAtSide(facing), neighborNode,
+            dirty |= predicateEdge(edge, node, tile.getCoverHolder().getCoverAtSide(facing), neighborNode,
                     neighbor.getCoverHolder().getCoverAtSide(facing.getOpposite()));
         }
+        if (dirty) markDirty();
     }
 
     /**
@@ -88,28 +91,40 @@ public abstract class WorldPipeNet extends WorldNet {
      * @param coverSource the cover on the source facing the target.
      * @param target      the target of the edge.
      * @param coverTarget the cover on the target facing the source.
+     * @return whether the predication state has changed and this net needs to be marked dirty.
      */
-    public void predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source, @Nullable Cover coverSource,
+    public boolean predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source, @Nullable Cover coverSource,
                               @NotNull WorldPipeNetNode target, @Nullable Cover coverTarget) {
+        Map<String, EdgePredicate<? ,?>> prevValue =
+                new Object2ObjectOpenHashMap<>(edge.getPredicateHandler().getPredicateSet());
         edge.getPredicateHandler().clearPredicates();
-        shutterify(edge, coverSource, coverTarget);
+        coverPredication(edge, coverSource, coverTarget);
+        boolean edgeSame = !prevValue.equals(edge.getPredicateHandler().getPredicateSet());
         if (getGraph().isDirected()) {
             edge = getEdge(target, source);
-            if (edge == null) return;
+            if (edge == null) return edgeSame;
+            if (edgeSame) {
+                prevValue.clear();
+                prevValue.putAll(edge.getPredicateHandler().getPredicateSet());
+            }
             edge.getPredicateHandler().clearPredicates();
-            shutterify(edge, coverSource, coverTarget);
+            coverPredication(edge, coverSource, coverTarget);
+            if (edgeSame) {
+                edgeSame = !prevValue.equals(edge.getPredicateHandler().getPredicateSet());
+            }
         }
+        return edgeSame;
     }
 
-    protected final void shutterify(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
-        if (a instanceof CoverShutter s && !s.canPipePassThrough()) {
-            edge.getPredicateHandler().setPredicate(ShutterPredicate.INSTANCE);
-            return;
-        }
-        if (b instanceof CoverShutter s && !s.canPipePassThrough()) {
-            edge.getPredicateHandler().setPredicate(ShutterPredicate.INSTANCE);
-        }
-    }
+    /**
+     * Preferred method to override if your net has custom predication rules that only depend on covers.
+     * If the net is directed, this method <b>will</b> be called twice, so special handling for directedness is not needed.
+     *
+     * @param edge the edge to predicate
+     * @param a the cover on the source of the edge
+     * @param b the cover on the sink of the edge
+     */
+    protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {}
 
     public abstract Capability<?>[] getTargetCapabilities();
 
@@ -126,7 +141,7 @@ public abstract class WorldPipeNet extends WorldNet {
     }
 
     protected Stream<@NotNull WorldPipeNet> sameDimensionNetsStream() {
-        return dimensionNets.get(this.getDimension()).stream().filter(Objects::nonNull);
+        return dimensionNets.getOrDefault(this.getDimension(), Collections.emptySet()).stream().filter(Objects::nonNull);
     }
 
     public void synchronizeNode(WorldPipeNetNode node) {

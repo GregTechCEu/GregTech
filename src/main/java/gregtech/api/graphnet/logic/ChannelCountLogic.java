@@ -6,18 +6,17 @@ public final class ChannelCountLogic extends AbstractIntLogicData<ChannelCountLo
 
     public static final ChannelCountLogic INSTANCE = new ChannelCountLogic().setValue(1);
 
-    @Override
-    public @NotNull String getName() {
-        return "ChannelCount";
+    public ChannelCountLogic() {
+        super("ChannelCount");
     }
 
     @Override
-    public ChannelCountLogic getNew() {
+    public @NotNull ChannelCountLogic getNew() {
         return new ChannelCountLogic();
     }
 
     @Override
-    public ChannelCountLogic union(INetLogicEntry<?, ?> other) {
+    public ChannelCountLogic union(NetLogicEntry<?, ?> other) {
         if (other instanceof ChannelCountLogic l) {
             return this.getValue() < l.getValue() ? this : l;
         } else return this;

@@ -5562,7 +5562,7 @@ gregtech.cable.superconductor_loss=§cLoss is set to §f0§c under critical temp
 gregtech.cable.superconductor=§d%s Superconductor
 
 gregtech.fluid_pipe.max_temperature=§cTemperature Limit: §f%,d K
-gregtech.fluid_pipe.min_temperature=§6Can handle fluids above §f%,d K
+gregtech.fluid_pipe.min_temperature=§6Can handle fluids at or above §f%,d K
 gregtech.pipe.channels=§eChannels: §f%d
 gregtech.fluid_pipe.gas_proof=§6Can handle Gases
 gregtech.fluid_pipe.acid_proof=§6Can handle Acids

@@ -1,14 +1,21 @@
 package gregtech.common.pipelike.net.item;
 
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.filter.CoverWithItemFilter;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
+import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
+import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+import gregtech.common.covers.ItemFilterMode;
+import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
 
 import net.minecraft.world.World;
@@ -40,6 +47,36 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
 
     public WorldItemNet(String name) {
         super(name, false, DynamicWeightsShortestPathsAlgorithm::new);
+    }
+
+    @Override
+    protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
+        super.coverPredication(edge, a, b);
+        if (edge.getPredicateHandler().hasPredicate(BlockedPredicate.INSTANCE)) return;
+        FilterPredicate predicate = null;
+        if (a instanceof CoverWithItemFilter filter) {
+            if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
+                edge.getPredicateHandler().clearPredicates();
+                edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+                return;
+            } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
+                    filter.getFilterMode() != ItemFilterMode.FILTER_INSERT) {
+                predicate = FilterPredicate.INSTANCE.getNew();
+                predicate.setSourceFilter(filter.getItemFilter());
+            }
+        }
+        if (b instanceof CoverWithItemFilter filter) {
+            if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
+                edge.getPredicateHandler().clearPredicates();
+                edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+                return;
+            } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
+                    filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
+                if (predicate == null) predicate = FilterPredicate.INSTANCE.getNew();
+                predicate.setTargetFilter(filter.getItemFilter());
+            }
+        }
+        if (predicate != null) edge.getPredicateHandler().setPredicate(predicate);
     }
 
     @Override

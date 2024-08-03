@@ -94,7 +94,7 @@ public interface IGraphNet {
     void removeEdge(@NotNull NetNode source, @NotNull NetNode target, boolean bothWays);
 
     /**
-     * Gets the net graph backing this graphnet. This should NEVER be modified directly, but can be queried.
+     * Gets the {@link INetGraph} backing this graphnet. This should NEVER be modified directly, but can be queried.
      * 
      * @return the backing net graph
      */
@@ -104,7 +104,7 @@ public interface IGraphNet {
     }
 
     /**
-     * Gets the GraphNetBacker backing this graphnet. This should NEVER be used except inside the graphnet impl.
+     * Gets the {@link GraphNetBacker} backing this graphnet. This should NEVER be used except inside the graphnet impl.
      * 
      * @return the backing graphnet backer
      */
@@ -208,4 +208,10 @@ public interface IGraphNet {
     default NetEdge getNewEdge() {
         return new NetEdge();
     }
+
+    /**
+     * Should only be used by the internal {@link GraphNetBacker} backing this graphnet.
+     */
+    @ApiStatus.Internal
+    void markDirty();
 }

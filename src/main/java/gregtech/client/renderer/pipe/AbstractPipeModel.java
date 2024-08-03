@@ -148,7 +148,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
 
     @Override
     public boolean isGui3d() {
-        return false;
+        return true;
     }
 
     @Override

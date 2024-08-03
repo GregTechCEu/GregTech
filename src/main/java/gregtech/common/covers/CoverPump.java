@@ -8,6 +8,7 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
@@ -57,7 +58,7 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable {
+public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter {
 
     public final int tier;
     public final int maxFluidTransferRate;
@@ -79,6 +80,21 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.transferRate = mbPerTick;
         this.fluidLeftToTransferLastSecond = transferRate;
         this.fluidFilterContainer = new FluidFilterContainer(this);
+    }
+
+    @Override
+    public @Nullable FluidFilterContainer getFluidFilter() {
+        return this.fluidFilterContainer;
+    }
+
+    @Override
+    public FluidFilterMode getFilterMode() {
+        return FluidFilterMode.FILTER_BOTH;
+    }
+
+    @Override
+    public ManualImportExportMode getManualMode() {
+        return this.manualImportExportMode;
     }
 
     public void setStringTransferRate(String s) {

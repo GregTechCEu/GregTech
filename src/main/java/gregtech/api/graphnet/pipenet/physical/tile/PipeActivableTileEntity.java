@@ -1,7 +1,6 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.graphnet.pipenet.physical.block.WorldPipeBlock;
 import gregtech.client.renderer.pipe.ActivablePipeModel;
 
 import net.minecraft.network.PacketBuffer;

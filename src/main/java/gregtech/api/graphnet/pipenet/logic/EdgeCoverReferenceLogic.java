@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.pipenet.logic;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.graphnet.logic.INetLogicEntry;
+import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.DimensionFacingPos;
 
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
-public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenceLogic, NBTTagCompound> {
+public final class EdgeCoverReferenceLogic extends NetLogicEntry<EdgeCoverReferenceLogic, NBTTagCompound> {
 
     public static final EdgeCoverReferenceLogic INSTANCE = new EdgeCoverReferenceLogic();
 
@@ -29,6 +29,10 @@ public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenc
     @Nullable
     private WeakReference<Cover> coverTarget;
     private DimensionFacingPos coverTargetPos;
+
+    public EdgeCoverReferenceLogic() {
+        super("EdgeCoverReference");
+    }
 
     @Contract("_,_ -> this")
     public EdgeCoverReferenceLogic coverSource(@NotNull DimensionFacingPos pos, @NotNull Cover cover) {
@@ -103,11 +107,6 @@ public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenc
     }
 
     @Override
-    public @NotNull String getName() {
-        return "EdgeCoverReference";
-    }
-
-    @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setLong("SourcePos", coverSourcePos.getPos().toLong());
@@ -130,7 +129,7 @@ public class EdgeCoverReferenceLogic implements INetLogicEntry<EdgeCoverReferenc
     }
 
     @Override
-    public EdgeCoverReferenceLogic getNew() {
+    public @NotNull EdgeCoverReferenceLogic getNew() {
         return new EdgeCoverReferenceLogic();
     }
 

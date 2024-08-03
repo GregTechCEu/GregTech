@@ -1,9 +1,12 @@
 package gregtech.api.graphnet;
 
-import gregtech.api.graphnet.alg.iter.ICacheableIterator;
+import gregtech.api.graphnet.alg.iter.IteratorFactory;
+import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.path.INetPath;
+
+import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -31,7 +34,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     private @Nullable NetGroup group = null;
 
     @Nullable
-    private ICacheableIterator<? extends INetPath<?, ?>> pathCache = null;
+    private IteratorFactory<? extends INetPath<?, ?>> pathCache = null;
 
     public NetNode(@NotNull IGraphNet net) {
         this.net = net;
@@ -70,20 +73,21 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     }
 
     @Nullable
-    public Iterator<? extends INetPath<?, ?>> getPathCache() {
+    public Iterator<? extends INetPath<?, ?>> getPathCache(IPredicateTestObject testObject,
+                                                           @Nullable SimulatorKey simulator, long queryTick) {
         if (pathCache == null) return null;
-        return pathCache.newIterator();
+        return pathCache.newIterator(net.getGraph(), testObject, simulator, queryTick);
     }
 
     /**
-     * Sets the path cache to the provided cache. Returns a new iterator from the cache for convenience.
+     * Sets the path cache to the provided iterator factory. Returns itself for convenience.
      *
      * @param pathCache The new cache.
      * @return The new cache.
      */
-    public Iterator<? extends INetPath<?, ?>> setPathCache(ICacheableIterator<? extends INetPath<?, ?>> pathCache) {
+    public NetNode setPathCache(IteratorFactory<? extends INetPath<?, ?>> pathCache) {
         this.pathCache = pathCache;
-        return getPathCache();
+        return this;
     }
 
     public void clearPathCache() {

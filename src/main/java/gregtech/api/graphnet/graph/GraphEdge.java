@@ -30,6 +30,16 @@ public final class GraphEdge extends DefaultWeightedEdge {
         return (GraphVertex) super.getTarget();
     }
 
+    /**
+     * Use this very sparingly. It's significantly better to go through {@link org.jgrapht.Graph#getEdgeWeight(Object)}
+     * instead, unless you are doing nbt serialization for example.
+     * @return the edge weight.
+     */
+    @Override
+    public double getWeight() {
+        return super.getWeight();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

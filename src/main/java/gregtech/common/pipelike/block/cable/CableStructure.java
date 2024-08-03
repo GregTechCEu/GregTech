@@ -2,6 +2,7 @@ package gregtech.common.pipelike.block.cable;
 
 import gregtech.api.graphnet.pipenet.physical.IInsulatable;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.CableModel;
@@ -41,6 +42,20 @@ public record CableStructure(String name, int material, int costFactor, OrePrefi
             WIRE_OCTAL, INSULATION_BURN_TEMP, 0.75f, CableModel.INSULATED_INSTANCES[3]);
     public static final CableStructure CABLE_HEX = new CableStructure("cable_hex", 16, 1, OrePrefix.cableGtHex,
             WIRE_HEX, INSULATION_BURN_TEMP, 1f, CableModel.INSULATED_INSTANCES[4]);
+
+    public CableStructure(String name, int material, int costFactor, OrePrefix ore,
+                          @Nullable CableStructure partialBurnStructure, @Nullable Integer partialBurnThreshold,
+                          float renderThickness, AbstractPipeModel<?> model) {
+        this.name = name;
+        this.material = material;
+        this.costFactor = costFactor;
+        this.ore = ore;
+        this.partialBurnStructure = partialBurnStructure;
+        this.partialBurnThreshold = partialBurnThreshold;
+        this.renderThickness = renderThickness;
+        this.model = model;
+        PipeStructureRegistry.register(this);
+    }
 
     @Override
     public @NotNull String getName() {

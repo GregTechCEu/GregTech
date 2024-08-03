@@ -71,7 +71,10 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         long availableAmperage = amperage;
         if (internalBuffer != null) {
             long limit = internalBuffer.getFlowLimit(IPredicateTestObject.INSTANCE, net, tick, simulator);
-            if (limit <= 0) return 0;
+            if (limit <= 0) {
+                this.transferring = false;
+                return 0;
+            }
 
             availableAmperage = Math.min(amperage, limit);
         }

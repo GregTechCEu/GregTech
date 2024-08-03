@@ -22,7 +22,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.cable.CableStructure;
-import gregtech.common.pipelike.block.pipe.PipeStructure;
+import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
 import gregtech.common.pipelike.net.energy.VoltageLossLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
@@ -45,7 +45,7 @@ import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATIO
 
 public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNetMaterialProperty {
 
-    public static final MaterialPropertyKey<MaterialEnergyProperties> KEY = new MaterialPropertyKey<>();
+    public static final MaterialPropertyKey<MaterialEnergyProperties> KEY = new MaterialPropertyKey<>("EnergyProperties");
 
     private final long voltageLimit;
     private final long amperageLimit;
@@ -160,7 +160,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             WorldPipeNetNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), structure);
             return node;
-        } else if (structure instanceof PipeStructure pipe) {
+        } else if (structure instanceof MaterialPipeStructure pipe) {
             long amperage = amperageLimit * pipe.material() / 2;
             if (amperage == 0) return null; // skip pipes that are too small
             WorldPipeNetNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
@@ -188,7 +188,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             if (superconductorCriticalTemperature > 0) {
                 data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
             }
-        } else if (structure instanceof PipeStructure pipe) {
+        } else if (structure instanceof MaterialPipeStructure pipe) {
             long amperage = getAmperage(structure);
             if (amperage == 0) return; // skip pipes that are too small
             long loss = getLoss(structure);
@@ -209,7 +209,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     private long getLoss(IPipeStructure structure) {
         if (structure instanceof CableStructure cable) {
             return lossPerAmp * cable.costFactor();
-        } else if (structure instanceof PipeStructure pipe) {
+        } else if (structure instanceof MaterialPipeStructure pipe) {
             return lossPerAmp * (pipe.material() > 6 ? 3 : 2);
         } else return lossPerAmp;
     }
@@ -217,7 +217,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     private long getAmperage(IPipeStructure structure) {
         if (structure instanceof CableStructure cable) {
             return amperageLimit * cable.material();
-        } else if (structure instanceof PipeStructure pipe) {
+        } else if (structure instanceof MaterialPipeStructure pipe) {
             return amperageLimit * pipe.material() / 2;
         } else return amperageLimit;
     }
@@ -225,14 +225,14 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     @Override
     @Nullable
     public WorldPipeNetNode getFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof CableStructure || structure instanceof PipeStructure)
+        if (structure instanceof CableStructure || structure instanceof MaterialPipeStructure)
             return WorldEnergyNet.getWorldNet(world).getNode(pos);
         else return null;
     }
 
     @Override
     public void removeFromNet(World world, BlockPos pos, IPipeStructure structure) {
-        if (structure instanceof CableStructure || structure instanceof PipeStructure) {
+        if (structure instanceof CableStructure || structure instanceof MaterialPipeStructure) {
             WorldEnergyNet net = WorldEnergyNet.getWorldNet(world);
             NetNode node = net.getNode(pos);
             if (node != null) net.removeNode(node);
@@ -246,6 +246,6 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     @Override
     public boolean supportsStructure(IPipeStructure structure) {
-        return structure instanceof CableStructure || structure instanceof PipeStructure;
+        return structure instanceof CableStructure || structure instanceof MaterialPipeStructure;
     }
 }

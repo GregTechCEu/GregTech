@@ -26,8 +26,8 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class StructureQuadCache {
 
-    public static final float OVERLAY_DIST_1 = 0.001f;
-    public static final float OVERLAY_DIST_2 = 0.002f;
+    public static final float OVERLAY_DIST_1 = 0.003f;
+    public static final float OVERLAY_DIST_2 = 0.006f;
 
     protected final PipeQuadHelper helper;
 
