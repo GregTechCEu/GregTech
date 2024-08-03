@@ -695,6 +695,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
+
+        int scalar = Math.floorDiv(ChancedOutputLogic.getMaxChancedValue(), maxChance);
+        chance *= scalar;
+        maxChance *= scalar;
+
         this.chancedOutputs.add(new ChancedItemOutput(stack.copy(), chance, maxChance, tierChanceBoost));
         return (R) this;
     }
@@ -784,7 +789,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             return (R) this;
         }
 
-        this.chancedFluidOutputs.add(new ChancedFluidOutput(stack.copy(), chance, tierChanceBoost));
+        int scalar = Math.floorDiv(ChancedOutputLogic.getMaxChancedValue(), maxChance);
+        chance *= scalar;
+        maxChance *= scalar;
+
+        this.chancedFluidOutputs.add(new ChancedFluidOutput(stack.copy(), chance, maxChance, tierChanceBoost));
         return (R) this;
     }
 
