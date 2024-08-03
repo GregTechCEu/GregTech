@@ -1220,40 +1220,40 @@ public class MachineRecipeLoader {
                 .inputs(new ItemStack(Items.PORKCHOP))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.CHICKEN))
                 .output(dust, Meat)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.BEEF))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.RABBIT))
                 .output(dust, Meat)
                 .chancedOutput(dust, Meat, 5000, 0)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.MUTTON))
                 .output(dust, Meat)
-                .output(dustTiny, Bone)
+                .chancedOutput(dust, Bone, 1111, 0)
                 .duration(102).buildAndRegister();
     }
 

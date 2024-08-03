@@ -427,7 +427,7 @@ public class UnknownCompositionMaterials {
         Stone = new Material.Builder(1599, gregtechId("stone"))
                 .dust(2)
                 .color(0xCDCDCD).iconSet(ROUGH)
-                .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING, NO_SMELTING)
+                .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, GENERATE_SMALL_DUST)
                 .build();
 
         Lava = new Material.Builder(1600, gregtechId("lava"))
@@ -517,7 +517,7 @@ public class UnknownCompositionMaterials {
                 .wood()
                 .color(0x896727).iconSet(WOOD)
                 .flags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD, GENERATE_GEAR,
-                        GENERATE_FRAME)
+                        GENERATE_FRAME, GENERATE_TINY_DUST, GENERATE_SMALL_DUST)
                 .fluidPipeProperties(340, 5, false)
                 .build();
 

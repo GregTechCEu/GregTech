@@ -3,6 +3,7 @@ package gregtech.api.unification;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
@@ -315,10 +316,19 @@ public class OreDictUnifier {
             return ItemStack.EMPTY;
         if (materialAmount % M == 0 || materialAmount >= M * 16)
             return get(OrePrefix.dust, material, (int) (materialAmount / M));
-        else if ((materialAmount * 4) % M == 0 || materialAmount >= M * 8)
-            return get(OrePrefix.dustSmall, material, (int) ((materialAmount * 4) / M));
-        else if ((materialAmount * 9) >= M)
-            return get(OrePrefix.dustTiny, material, (int) ((materialAmount * 9) / M));
+        else if ((materialAmount * 4) % M == 0 || materialAmount >= M * 8) {
+            if (material.hasFlag(MaterialFlags.GENERATE_SMALL_DUST))
+                return get(OrePrefix.dustSmall, material, (int) ((materialAmount * 4) / M));
+            else
+                return get(OrePrefix.dust, material, 1);
+        }
+        else if ((materialAmount * 9) >= M) {
+            if(material.hasFlag(MaterialFlags.GENERATE_TINY_DUST))
+                return get(OrePrefix.dustTiny, material, (int) (((materialAmount * 9) / M)));
+            else
+                return get(OrePrefix.dust, material, 1);
+        }
+
         return ItemStack.EMPTY;
     }
 
