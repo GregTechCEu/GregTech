@@ -161,6 +161,7 @@ public class TitaniumRecipes {
         ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
                 .input(dust, IlmeniteSlag)
                 .chancedOutput(dust, Iron, 8000, 0)
+                .chancedOutput(dust, Zircon, 2500, 0)
                 .chancedOutput(dust, Tantalum, 2000, 0)
                 .chancedOutput(dust, Niobium, 500, 0)
                 .duration(50).EUt(VA[MV]).buildAndRegister();
