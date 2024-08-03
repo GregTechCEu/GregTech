@@ -1,5 +1,7 @@
 package gregtech.api.recipes.chance;
 
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,10 +13,18 @@ public abstract class BaseChanceEntry<T> implements ChanceEntry<T> {
 
     private final T ingredient;
     private final int chance;
+    private final int maxChance;
 
     public BaseChanceEntry(@NotNull T ingredient, int chance) {
         this.ingredient = ingredient;
         this.chance = chance;
+        this.maxChance = ChancedOutputLogic.getMaxChancedValue();
+    }
+
+    public BaseChanceEntry(@NotNull T ingredient, int chance, int maxChance) {
+        this.ingredient = ingredient;
+        this.chance = chance;
+        this.maxChance = maxChance;
     }
 
     @Override
@@ -25,5 +35,9 @@ public abstract class BaseChanceEntry<T> implements ChanceEntry<T> {
     @Override
     public int getChance() {
         return chance;
+    }
+
+    public int getMaxChance() {
+        return maxChance;
     }
 }
