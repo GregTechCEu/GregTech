@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ChancedOutput<T> implements ChanceEntry<T> {
 
     private final T ingredient;
-    private int chance;
-    private int maxChance;
+    private final int chance;
+    private final int maxChance;
 
     public ChancedOutput(@NotNull T ingredient, int chance) {
         this.ingredient = ingredient;
@@ -40,10 +40,5 @@ public abstract class ChancedOutput<T> implements ChanceEntry<T> {
     @Override
     public int getMaxChance() {
         return maxChance;
-    }
-
-    public void scale(int scalar) {
-        this.chance *= scalar;
-        this.maxChance *= scalar;
     }
 }
