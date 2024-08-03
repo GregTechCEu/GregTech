@@ -1227,6 +1227,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
             compound.setTag("ItemOutputs", itemOutputsList);
             compound.setTag("FluidOutputs", fluidOutputsList);
+
+            NBTTagList itemCache = new NBTTagList();
+            for (var entry : itemChancesCache.entrySet()) {
+                var tag = entry.getKey().serializeNBT();
+                tag.setInteger("CachedChance", entry.getValue());
+                itemCache.appendTag(tag);
+            }
+            NBTTagList fluidCache = new NBTTagList();
+            for (var entry : fluidChancesCache.entrySet()) {
+                var tag = entry.getKey().writeToNBT(new NBTTagCompound());
+                tag.setInteger("CachedChance", entry.getValue());
+                fluidCache.appendTag(tag);
+            }
+            compound.setTag("ItemChanceCache", itemCache);
+            compound.setTag("FluidChanceCache", fluidCache);
         }
         return compound;
     }
@@ -1252,6 +1267,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.fluidOutputs = new ArrayList<>();
             for (int i = 0; i < fluidOutputsList.tagCount(); i++) {
                 this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(fluidOutputsList.getCompoundTagAt(i)));
+            }
+
+            NBTTagList itemCache = compound.getTagList("ItemChanceCache", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < itemCache.tagCount(); i++) {
+                var stack = itemCache.getCompoundTagAt(i);
+                int cache = stack.getInteger("CachedChance");
+                this.itemChancesCache.put(new ItemStack(stack), cache);
+            }
+
+            NBTTagList fluidCache = compound.getTagList("FluidChanceCache", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < fluidCache.tagCount(); i++) {
+                var stack = fluidCache.getCompoundTagAt(i);
+                int cache = stack.getInteger("CachedChance");
+                this.fluidChancesCache.put(FluidStack.loadFluidStackFromNBT(stack), cache);
             }
         }
     }
