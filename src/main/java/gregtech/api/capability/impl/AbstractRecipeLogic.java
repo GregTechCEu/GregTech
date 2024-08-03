@@ -400,6 +400,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {
+
+            // we found a new recipe, clear the cache
+            if (!currentRecipe.equals(this.previousRecipe)) {
+                this.itemChancesCache.clear();
+                this.fluidChancesCache.clear();
+            }
             this.previousRecipe = currentRecipe;
         }
         this.invalidInputsForRecipes = (currentRecipe == null);
@@ -713,8 +719,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.isOutputsFull = false;
             if (recipe.matches(true, importInventory, importFluids)) {
                 this.metaTileEntity.addNotifiedInput(importInventory);
-                this.itemChancesCache.clear();
-                this.fluidChancesCache.clear();
                 return recipe;
             }
         }
