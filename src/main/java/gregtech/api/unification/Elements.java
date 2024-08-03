@@ -121,13 +121,13 @@ public class Elements {
     public static final Element Ac = add(89, 136, "Actinium", "Ac");
     public static final Element Th = add(90, 140, "Thorium", "Th");
     public static final Element Pa = add(91, 138, "Protactinium", "Pa");
-    public static final Element U = add(92, 146, "Uranium", "U");
-    public static final Element U238 = add(92, 146, "Uranium-238", "U-238");
-    public static final Element U235 = add(92, 143, "Uranium-235", "U-235", true);
+    public static final Element U = add(92, 146, 1.4090285e+17, null, "Uranium", "U", false);
+    public static final Element U238 = add(92, 146, 1.4090285e+17, null, "Uranium-238", "U-238", true);
+    public static final Element U235 = add(92, 143, 2.2195037e+16, null, "Uranium-235", "U-235", true);
     public static final Element Np = add(93, 144, "Neptunium", "Np");
-    public static final Element Pu = add(94, 152, "Plutonium", "Pu");
-    public static final Element Pu239 = add(94, 145, "Plutonium-239", "Pu-239");
-    public static final Element Pu241 = add(94, 149, "Plutonium-241", "Pu-241", true);
+    public static final Element Pu = add(94, 152, 760332960000.0, null, "Plutonium", "Pu", false);
+    public static final Element Pu239 = add(94, 145, 760332960000.0, null, "Plutonium-239", "Pu-239", true);
+    public static final Element Pu241 = add(94, 147, 450649440.0, null, "Plutonium-241", "Pu-241", true);
     public static final Element Am = add(95, 150, "Americium", "Am");
     public static final Element Cm = add(96, 153, "Curium", "Cm");
     public static final Element Bk = add(97, 152, "Berkelium", "Bk");
@@ -177,7 +177,7 @@ public class Elements {
     }
 
     @ZenMethod
-    public static Element add(long protons, long neutrons, long halfLifeSeconds, String decayTo, String name,
+    public static Element add(long protons, long neutrons, double halfLifeSeconds, String decayTo, String name,
                               String symbol, boolean isIsotope) {
         validateNameAndSymbol(name, symbol);
         String key = toMapKey(name);

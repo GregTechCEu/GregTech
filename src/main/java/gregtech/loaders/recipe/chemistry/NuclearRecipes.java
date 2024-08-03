@@ -23,6 +23,12 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
+                .fluidInputs(UraniumHexafluoride.getFluid(1000))
+                .output(dust, Uranium)
+                .fluidOutputs(Fluorine.getFluid(6000))
+                .buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
                 .fluidInputs(EnrichedUraniumHexafluoride.getFluid(1000))
                 .output(dust, Uranium235)
                 .fluidOutputs(Fluorine.getFluid(6000))

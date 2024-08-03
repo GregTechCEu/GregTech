@@ -59,9 +59,6 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Palladium);
         oreProp.setWashedIn(Mercury);
 
-        oreProp = Plutonium239.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Uraninite, Lead, Uraninite);
-
         // oreProp = Silicon.getProperty(PropertyKey.ORE);
         // oreProp.setOreByProducts(SiliconDioxide);
 
