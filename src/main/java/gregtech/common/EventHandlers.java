@@ -125,7 +125,7 @@ public class EventHandlers {
             if (holder instanceof IGregTechTileEntity &&
                     ((IGregTechTileEntity) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
                 ((MetaTileEntityCentralMonitor) ((IGregTechTileEntity) holder).getMetaTileEntity())
-                        .invalidateStructure();
+                        .invalidateStructure("MAIN");
             }
         }
     }

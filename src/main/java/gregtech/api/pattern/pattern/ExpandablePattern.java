@@ -3,8 +3,6 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
-import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.StructureInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
@@ -33,17 +31,19 @@ public class ExpandablePattern implements IBlockPattern {
      * In the form of [ aisleDir, stringDir, charDir ]
      */
     protected final RelativeDirection[] directions;
-    protected final PatternMatchContext matchContext = new PatternMatchContext();
-    protected final StructureInfo info;
     protected final BlockWorldState worldState;
-    protected final Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
     protected final Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCount = new Object2IntOpenHashMap<>();
+    protected final PatternState state = new PatternState();
+    protected final Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
 
     /**
      * New expandable pattern normally you would use {@link FactoryExpandablePattern} instead.
-     * @param boundsFunction A function to supply bounds, order in the way .values() are ordered in RelativeDirection.
-     * @param predicateFunction Given a pos and bounds(the one you just passed in, not mutated), return a predicate. The pos is offset as explained in the builder method.
-     * @param directions The structure directions, explained in the builder method.
+     * 
+     * @param boundsFunction    A function to supply bounds, order in the way .values() are ordered in
+     *                          RelativeDirection.
+     * @param predicateFunction Given a pos and bounds(the one you just passed in, not mutated), return a predicate. The
+     *                          pos is offset as explained in the builder method.
+     * @param directions        The structure directions, explained in the builder method.
      */
     public ExpandablePattern(@NotNull QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction,
                              @NotNull BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction,
@@ -52,13 +52,13 @@ public class ExpandablePattern implements IBlockPattern {
         this.predicateFunction = predicateFunction;
         this.directions = directions;
 
-        this.info = new StructureInfo(matchContext, null);
-        this.worldState = new BlockWorldState(info);
+        this.worldState = new BlockWorldState();
     }
 
+    @NotNull
     @Override
-    public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
-                                                  EnumFacing upwardsFacing, boolean allowsFlip) {
+    public PatternState checkPatternFastAt(World world, BlockPos centerPos, EnumFacing frontFacing,
+                                           EnumFacing upwardsFacing, boolean allowsFlip) {
         if (!cache.isEmpty()) {
             boolean pass = true;
             GreggyBlockPos gregPos = new GreggyBlockPos();
@@ -81,14 +81,28 @@ public class ExpandablePattern implements IBlockPattern {
                     }
                 }
             }
-            if (pass) return info.hasError() ? null : matchContext;
+            if (pass) {
+                if (state.hasError()) {
+                    state.setState(PatternState.EnumCheckState.INVALID_CACHED);
+                } else {
+                    state.setState(PatternState.EnumCheckState.VALID_CACHED);
+                }
+
+                return state;
+            }
         }
 
+        // doesn't support flipping yet so its always false
+        state.setFlipped(false);
         boolean valid = checkPatternAt(world, centerPos, frontFacing, upwardsFacing, false);
-        if (valid) return matchContext;
+        if (valid) {
+            state.setState(PatternState.EnumCheckState.VALID_UNCACHED);
+            return state;
+        }
 
         clearCache(); // we don't want a random cache of a partially formed multi
-        return null;
+        state.setState(PatternState.EnumCheckState.INVALID_UNCACHED);
+        return state;
     }
 
     @Override
@@ -103,23 +117,16 @@ public class ExpandablePattern implements IBlockPattern {
         GreggyBlockPos positiveCorner = new GreggyBlockPos();
 
         for (int i = 0; i < 3; i++) {
-            // iteration in: [ char, string, aisle ]
-            RelativeDirection selected = directions[2 - i];
+            RelativeDirection selected = directions[i];
 
-            // this is which direction the start goes in relation to the origin
-            // this progresses by the direction
-            int positiveOrdinal = selected.ordinal();
+            EnumFacing absoluteSelected = selected.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
+            boolean axisPositive = absoluteSelected.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
 
-            // opposite of the selected direction
-            RelativeDirection opposite = selected.getOpposite();
-            // this is in which direction the start is in relation to the origin
-            int negativeOrdinal = opposite.ordinal();
-
-            // todo maybe fix this to allow flipping and update the quadfunction
-            negativeCorner.offset(opposite.getRelativeFacing(frontFacing, upwardsFacing, false),
-                    bounds[negativeOrdinal]);
-            positiveCorner.offset(selected.getRelativeFacing(frontFacing, upwardsFacing, false),
-                    bounds[positiveOrdinal]);
+            // negativeCorner always goes in the negative direction, while positiveCorner always goes in the positive
+            // direction
+            (axisPositive ? negativeCorner : positiveCorner).offset(absoluteSelected.getOpposite(),
+                    bounds[selected.oppositeOrdinal()]);
+            (axisPositive ? positiveCorner : negativeCorner).offset(absoluteSelected, bounds[selected.ordinal()]);
         }
 
         // which way each direction progresses absolutely, in [ char, string, aisle ]
@@ -145,19 +152,16 @@ public class ExpandablePattern implements IBlockPattern {
                         !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
             }
 
-            // GTLog.logger.info("Checked pos at " + pos);
-
-            boolean result = predicate.test(worldState, info, globalCount, null);
+            boolean result = predicate.test(worldState, state, globalCount, null);
             if (!result) return false;
         }
 
         for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : globalCount.object2IntEntrySet()) {
             if (entry.getIntValue() < entry.getKey().minGlobalCount) {
-                info.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 1));
+                state.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 1));
                 return false;
             }
         }
-
         return true;
     }
 
@@ -165,6 +169,16 @@ public class ExpandablePattern implements IBlockPattern {
     public PreviewBlockPattern getDefaultShape() {
         // todo undo
         return null;
+    }
+
+    @Override
+    public PatternState getPatternState() {
+        return state;
+    }
+
+    @Override
+    public Long2ObjectMap<BlockInfo> getCache() {
+        return this.cache;
     }
 
     @Override

@@ -97,8 +97,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
-        super.addToMultiBlock(controllerBase);
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase, @NotNull String name) {
+        super.addToMultiBlock(controllerBase, name);
         if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
             for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
                 if (handler instanceof INotifiableHandler notifiable) {

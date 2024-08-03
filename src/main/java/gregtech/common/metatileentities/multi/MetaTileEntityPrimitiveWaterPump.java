@@ -6,7 +6,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.IPrimitivePump;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.unification.material.Materials;
@@ -104,14 +103,14 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     protected void updateFormedValid() {}
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         initializeAbilities();
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         resetTileAbilities();
     }
 

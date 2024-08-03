@@ -7,7 +7,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.pattern.PatternInfo;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
@@ -30,6 +29,7 @@ import java.util.List;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 
+// todo fix this stupid multiblock back to its original form
 public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
 
     public MetaTileEntityVacuumFreezer(ResourceLocation metaTileEntityId) {
@@ -56,11 +56,11 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     @Override
     protected void createStructurePatterns() {
         super.createStructurePatterns();
-        structures.put("SECOND", new PatternInfo(FactoryBlockPattern.start()
+        structures.put("SECOND", FactoryBlockPattern.start()
                 .aisle("X")
                 .where('X', states(getCasingState()))
                 .startOffset(RelativeDirection.FRONT, 5)
-                .build()));
+                .build());
     }
 
     @Override
@@ -68,22 +68,23 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
         super.addDisplayText(textList);
 
         ITextComponent button = new TextComponentString("Second structure offset: " +
-                ((BlockPattern) getSubstructure("SECOND").getPattern()).getStartOffset(RelativeDirection.FRONT));
+                ((BlockPattern) getSubstructure("SECOND")).getStartOffset(RelativeDirection.FRONT));
         button.appendText(" ");
         button.appendSibling(withButton(new TextComponentString("[-]"), "sub"));
         button.appendText(" ");
         button.appendSibling(withButton(new TextComponentString("[+]"), "add"));
         textList.add(button);
 
-        textList.add(new TextComponentString("Second structure: " + (isStructureFormed("SECOND") ? "FORMED" : "UNFORMED")));
+        textList.add(
+                new TextComponentString("Second structure: " + (isStructureFormed("SECOND") ? "FORMED" : "UNFORMED")));
     }
 
     @Override
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
         int mod = componentData.equals("add") ? 1 : -1;
-        ((BlockPattern) getSubstructure("SECOND").getPattern()).moveStartOffset(RelativeDirection.FRONT, mod);
-        getSubstructure("SECOND").getPattern().clearCache();
+        // ((BlockPattern) getSubstructure("SECOND").moveStartOffset(RelativeDirection.FRONT, mod);
+        // getSubstructure("SECOND").clearCache();
     }
 
     @SideOnly(Side.CLIENT)

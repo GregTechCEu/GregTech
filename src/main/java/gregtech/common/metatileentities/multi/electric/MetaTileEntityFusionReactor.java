@@ -24,7 +24,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
@@ -249,16 +248,16 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
+    protected void formStructure(String name) {
         long energyStored = this.energyContainer.getEnergyStored();
-        super.formStructure(context);
+        super.formStructure(name);
         this.initializeAbilities();
         ((EnergyContainerHandler) this.energyContainer).setEnergyStored(energyStored);
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
 
             @NotNull

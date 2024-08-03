@@ -98,8 +98,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         List<IEnergyContainer> inputs = new ArrayList<>();
         inputs.addAll(getAbilities(MultiblockAbility.INPUT_ENERGY));
         inputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
@@ -112,18 +112,11 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
         this.outputHatches = new EnergyContainerList(outputs);
 
-        List<IBatteryData> parts = new ArrayList<>();
-        for (Map.Entry<String, Object> battery : context.entrySet()) {
-            if (battery.getKey().startsWith(PMC_BATTERY_HEADER) &&
-                    battery.getValue() instanceof BatteryMatchWrapper wrapper) {
-                for (int i = 0; i < wrapper.amount; i++) {
-                    parts.add(wrapper.partType);
-                }
-            }
-        }
+        List<IBatteryData> parts = determineBatteryParts();
+
         if (parts.isEmpty()) {
             // only empty batteries found in the structure
-            invalidateStructure();
+            invalidateStructure("MAIN");
             return;
         }
         if (this.energyBank == null) {
@@ -134,8 +127,18 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         this.passiveDrain = this.energyBank.getPassiveDrainPerTick();
     }
 
+    protected List<IBatteryData> determineBatteryParts() {
+        List<IBatteryData> data = new ArrayList<>();
+        for (BlockInfo info : getSubstructure("MAIN").getCache().values()) {
+            if (GregTechAPI.PSS_BATTERIES.containsKey(info.getBlockState())) {
+                data.add(GregTechAPI.PSS_BATTERIES.get(info.getBlockState()));
+            }
+        }
+        return data;
+    }
+
     @Override
-    public void invalidateStructure() {
+    public void invalidateStructure(String name) {
         // don't null out energyBank since it holds the stored energy, which
         // we need to hold on to across rebuilds to not void all energy if a
         // multiblock part or block other than the controller is broken.
@@ -146,7 +149,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         averageInLastSec = 0;
         netOutLastSec = 0;
         averageOutLastSec = 0;
-        super.invalidateStructure();
+        super.invalidateStructure(name);
     }
 
     @Override
@@ -286,22 +289,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     protected static final Supplier<TraceabilityPredicate> BATTERY_PREDICATE = () -> new TraceabilityPredicate(
-            (blockWorldState, info) -> {
-                IBlockState state = blockWorldState.getBlockState();
-                if (GregTechAPI.PSS_BATTERIES.containsKey(state)) {
-                    IBatteryData battery = GregTechAPI.PSS_BATTERIES.get(state);
-                    // Allow unfilled batteries in the structure, but do not add them to match context.
-                    // This lets you use empty batteries as "filler slots" for convenience if desired.
-                    if (battery.getTier() != -1 && battery.getCapacity() > 0) {
-                        String key = PMC_BATTERY_HEADER + battery.getBatteryName();
-                        BatteryMatchWrapper wrapper = info.getContext().get(key);
-                        if (wrapper == null) wrapper = new BatteryMatchWrapper(battery);
-                        info.getContext().set(key, wrapper.increment());
-                    }
-                    return true;
-                }
-                return false;
-            }, () -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
+            (worldState, patternState) -> GregTechAPI.PSS_BATTERIES.containsKey(worldState.getBlockState()),
+            () -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
                     .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                     .map(entry -> new BlockInfo(entry.getKey(), null))
                     .toArray(BlockInfo[]::new))

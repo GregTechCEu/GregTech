@@ -99,8 +99,8 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
     }
 
     @Override
-    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
-        super.addToMultiBlock(controllerBase);
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase, @NotNull String name) {
+        super.addToMultiBlock(controllerBase, name);
         this.autoPullTest = stack -> !this.testConfiguredInOtherHatch(stack);
         validateConfig();
     }

@@ -6,7 +6,15 @@ public interface IMultiblockPart {
 
     boolean isAttachedToMultiBlock();
 
-    void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase);
+    /**
+     * Use {@link IMultiblockPart#addToMultiBlock(MultiblockControllerBase, String)} insead!
+     */
+    @Deprecated
+    default void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
+        addToMultiBlock(controllerBase, "MAIN");
+    }
+
+    void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase, @NotNull String substructureName);
 
     void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase);
 
@@ -14,6 +22,11 @@ public interface IMultiblockPart {
      * Gets how many multiblocks are currently using the part.
      */
     int getWallshareCount();
+
+    /**
+     * Gets the name of the substructure the part is attached to.
+     */
+    String getSubstructureName();
 
     boolean canPartShare(MultiblockControllerBase target, String substructureName);
 

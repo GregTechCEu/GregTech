@@ -4,10 +4,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.StructureInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
@@ -353,27 +350,27 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             TraceabilityPredicate predicates = patterns[currentRendererPage].predicateMap
                     .get(rayTraceResult.getBlockPos());
             if (predicates != null) {
-
-                StructureInfo info = new StructureInfo(new PatternMatchContext(), null);
-                BlockWorldState worldState = new BlockWorldState(info);
-
-                worldState.setWorld(renderer.world);
-                worldState.setPos(rayTraceResult.getBlockPos());
-
-                for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
-                    if (common.test(worldState, info)) {
-                        predicateTips = common.getToolTips(predicates);
-                        break;
-                    }
-                }
-                if (predicateTips == null) {
-                    for (TraceabilityPredicate.SimplePredicate limit : predicates.limited) {
-                        if (limit.test(worldState, info)) {
-                            predicateTips = limit.getToolTips(predicates);
-                            break;
-                        }
-                    }
-                }
+                //
+                // StructureInfo info = new StructureInfo(new PatternMatchContext(), null);
+                // BlockWorldState worldState = new BlockWorldState(info);
+                //
+                // worldState.setWorld(renderer.world);
+                // worldState.setPos(rayTraceResult.getBlockPos());
+                //
+                // for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
+                // if (common.test(worldState, info)) {
+                // predicateTips = common.getToolTips(predicates);
+                // break;
+                // }
+                // }
+                // if (predicateTips == null) {
+                // for (TraceabilityPredicate.SimplePredicate limit : predicates.limited) {
+                // if (limit.test(worldState, info)) {
+                // predicateTips = limit.getToolTips(predicates);
+                // break;
+                // }
+                // }
+                // }
             }
             if (!itemStack.isEmpty()) {
                 tooltipBlockStack = itemStack;

@@ -105,16 +105,16 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         setActive(false);
         this.progressTime = 0;
         this.maxProgress = 0;
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         // calculate the duration upon formation
         updateMaxProgressTime();
     }
@@ -258,7 +258,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         }
 
         if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || hDist < MIN_DEPTH) {
-            invalidateStructure();
+            invalidateStructure("MAIN");
             return false;
         }
 

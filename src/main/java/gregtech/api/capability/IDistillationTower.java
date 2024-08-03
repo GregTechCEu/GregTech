@@ -4,7 +4,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 
 import net.minecraft.util.math.BlockPos;
 
-import java.util.List;
+import java.util.NavigableSet;
 
 /**
  * intended for use in conjunction with {@link gregtech.api.capability.impl.DistillationTowerLogicHandler}
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface IDistillationTower {
 
-    List<IMultiblockPart> getMultiblockParts();
+    NavigableSet<IMultiblockPart> getMultiblockParts();
 
     BlockPos getPos();
 

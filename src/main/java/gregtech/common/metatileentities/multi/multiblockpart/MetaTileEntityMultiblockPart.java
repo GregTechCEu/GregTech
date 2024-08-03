@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.SYNC_CONTROLLER;
@@ -78,6 +79,15 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         return tier;
     }
 
+    /**
+     * Returns the last controller, which is the one that controls the texture of the part. If the world is null, return
+     * null.
+     * If this is called client side, the controller is fetched if not already and returned, this can lead to null. If
+     * this is called on server,
+     * returns the last controller if it is valid, or null if it is not. Note that calling this multiple times in
+     * succession can
+     * have different results, due to invalid controllers being removed after detected in this method.
+     */
     @Nullable
     public MultiblockControllerBase getController() {
         tryInitControllers();
@@ -91,7 +101,8 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         if (getWorld().isRemote) { // client check, on client controllers is always empty
             if (lastController == null) {
                 if (controllerPos != null) {
-                    this.lastController = (MultiblockControllerBase) GTUtility.getMetaTileEntity(getWorld(), controllerPos);
+                    this.lastController = (MultiblockControllerBase) GTUtility.getMetaTileEntity(getWorld(),
+                            controllerPos);
                 }
             } else if (!lastController.isValid()) {
                 this.lastController = null;
@@ -106,9 +117,53 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
 
         if (!controller.isValid()) {
             removeController(controller);
+            return null;
         }
 
         return controller;
+    }
+
+    /**
+     * Gets a list of all the controllers owning the part. Calling this when the world is null returns an empty list.
+     * Calling this on client side is unsupported(as the client has no knowledge of this) and logs an error(and returns
+     * an empty list).
+     * Calling this on server side returns the controllers list, with all invalid controllers removed.
+     */
+    @NotNull
+    public List<MultiblockControllerBase> getControllers() {
+        tryInitControllers();
+
+        if (getWorld() == null) {
+            this.controllers.clear();
+            lastController = null;
+            return Collections.emptyList();
+        }
+
+        if (getWorld().isRemote) {
+            GTLog.logger.error("getControllers() was called on client side on " + getClass().getName() +
+                    ", the author probably intended to use getController()! Ignoring and returning empty list.");
+            return Collections.emptyList();
+        }
+
+        // empty list check
+        if (controllers.isEmpty()) return controllers;
+
+        // last controller in list
+        MultiblockControllerBase last = controllers.get(controllers.size() - 1);
+
+        // remove all invalid controllers
+        controllers.removeIf(controller -> !controller.isValid());
+
+        // check again
+        if (controllers.isEmpty()) {
+            syncLastController();
+            return controllers;
+        }
+
+        // only sync if last controller changed
+        if (last != controllers.get(controllers.size() - 1)) syncLastController();
+
+        return controllers;
     }
 
     public ICubeRenderer getBaseTexture() {
@@ -169,7 +224,9 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
 
         // this should be called after canPartShare has already checked the class, just a safeguard
         if (controllerClass != null && controller.getClass() != controllerClass) {
-            GTLog.logger.error("addController(MultiblockControllerBase) was called on " + getClass().getName() + " with a mismatched name(original: " + controllerClass.getName() + " new: " + controller.getClass().getName() +")! Ignoring the call.");
+            GTLog.logger.error("addContr oller(MultiblockControllerBase) was called on " + getClass().getName() +
+                    " with a mismatched class(original: " + controllerClass.getName() + ", new: " +
+                    controller.getClass().getName() + ")! Ignoring the call.");
             return;
         }
 
@@ -177,21 +234,32 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
 
         this.controllers.add(controller);
 
+        // controllers always add at end of list, so always sync
         syncLastController();
     }
 
     private void removeController(@NotNull MultiblockControllerBase controller) {
         tryInitControllers();
 
-        if (!controllers.remove(controller)) {
-            GTLog.logger.error("removeController(MultiblockControllerBase) was called on " + getClass().getName() + " while the given controller wasn't in the list!");
+        int index = controllers.indexOf(controller);
+
+        if (index == -1) {
+            GTLog.logger.error("removeController(MultiblockControllerBase) was called on " + getClass().getName() +
+                    " while the given controller wasn't in the list!");
+            return;
+        }
+
+        controllers.remove(index);
+
+        // if the last controller changed, sync it
+        if (index == (controllers.size() - 1)) {
+            syncLastController();
         }
 
         if (controllers.isEmpty()) {
             controllerClass = null;
+            attachedSubstructureName = null;
         }
-
-        syncLastController();
     }
 
     private void syncLastController() {
@@ -210,14 +278,25 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     @Override
     public void onRemoval() {
         super.onRemoval();
-        MultiblockControllerBase controller = getController();
-        if (!getWorld().isRemote && controller != null) {
-            controller.invalidateStructure();
+        if (getWorld().isRemote) return;
+
+        for (MultiblockControllerBase controller : getControllers()) {
+            controller.invalidateStructure("MAIN");
         }
     }
 
     @Override
-    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase, @NotNull String substructureName) {
+        // canPartShare() should
+        if (!substructureName.equals(attachedSubstructureName) && attachedSubstructureName != null) {
+            GTLog.logger.error("addToMultiBlock(MultiblockControllerBase, String) was called on " +
+                    getClass().getName() + " with a mismatched name(original: " + attachedSubstructureName + ", new: " +
+                    substructureName + ")! Ignoring the call.");
+            return;
+        }
+
+        attachedSubstructureName = substructureName;
+
         addController(controllerBase);
         scheduleRenderUpdate();
         wallshareCount++;
@@ -240,12 +319,18 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         // when this is called normally isAttachedToMultiBlock has already been called and returned true
         // so we know controllerClass is notnull
 
-        return canPartShare() && target.getClass() == controllerClass && substructureName.equals(attachedSubstructureName);
+        return canPartShare() && target.getClass() == controllerClass &&
+                (substructureName.equals(attachedSubstructureName) || attachedSubstructureName == null);
     }
 
     @Override
     public int getWallshareCount() {
         return wallshareCount;
+    }
+
+    @Override
+    public String getSubstructureName() {
+        return attachedSubstructureName;
     }
 
     @Override

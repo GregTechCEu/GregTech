@@ -78,8 +78,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         ((ProcessingArrayWorkable) this.recipeMapWorkable).findMachineStack();
     }
 

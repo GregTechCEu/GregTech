@@ -73,8 +73,8 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         recipeMapWorkable.invalidate();
     }
 

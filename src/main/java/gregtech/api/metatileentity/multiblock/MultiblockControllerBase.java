@@ -9,11 +9,11 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.IBlockPattern;
-import gregtech.api.pattern.pattern.PatternInfo;
+import gregtech.api.pattern.pattern.PatternState;
 import gregtech.api.pattern.pattern.PreviewBlockPattern;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
@@ -53,6 +53,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -67,14 +68,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Objects;
-import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -88,10 +89,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     protected PreviewBlockPattern defaultPattern;
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
-    private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
+
+    // treeset here to get logn time for contains, and for automatically sorting itself
+    // prioritize the manually specified sorter first, defaulting to the hashcode for tiebreakers
+    private final NavigableSet<IMultiblockPart> multiblockParts = new TreeSet<>(Comparator.comparingLong(part -> {
+        MetaTileEntity mte = (MetaTileEntity) part;
+        return ((long) multiblockPartSorter().apply(mte.getPos()) << 32) | mte.getPos().hashCode();
+    }));
 
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
-    protected final Object2ObjectMap<String, PatternInfo> structures = new Object2ObjectOpenHashMap<>();
+    protected final Object2ObjectMap<String, IBlockPattern> structures = new Object2ObjectOpenHashMap<>();
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -139,16 +146,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * frequent new BlockPatterns from being made.
      */
     protected void createStructurePatterns() {
-        structures.put("MAIN", new PatternInfo(createStructurePattern()));
+        structures.put("MAIN", createStructurePattern());
     }
 
     private void validateStructurePatterns() {
         List<String> failures = new ArrayList<>();
 
-        for (Object2ObjectMap.Entry<String, PatternInfo> pattern : structures.object2ObjectEntrySet()) {
+        for (Object2ObjectMap.Entry<String, IBlockPattern> pattern : structures.object2ObjectEntrySet()) {
             if ("MAIN".equals(pattern.getKey())) continue;
 
-            if (pattern.getValue().getPattern().legacyBuilderError()) {
+            if (pattern.getValue().legacyBuilderError()) {
                 failures.add(pattern.getKey());
             }
         }
@@ -175,8 +182,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 notifyBlockUpdate();
                 markDirty();
                 writeCustomData(UPDATE_UPWARDS_FACING, buf -> buf.writeByte(upwardsFacing.getIndex()));
-                for (PatternInfo pattern : structures.values()) {
-                    pattern.getPattern().clearCache();
+                for (IBlockPattern pattern : structures.values()) {
+                    pattern.clearCache();
                 }
                 checkStructurePatterns();
             }
@@ -184,19 +191,17 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isFlipped() {
-        return getSubstructure("MAIN").isFlipped();
+        return getSubstructure("MAIN").getPatternState().isFlipped();
     }
 
     /** <strong>Should not be called outside of structure formation logic!</strong> */
     @ApiStatus.Internal
     protected void setFlipped(boolean flipped, String name) {
-        PatternInfo structure = getSubstructure(name);
+        PatternState structure = getSubstructure(name).getPatternState();
 
-        if (structure == null) return;
-
-        boolean flip = structure.isFlipped();
+        boolean flip = structure.isActualFlipped();
         if (flip != flipped) {
-            structure.setFlipped(flipped);
+            structure.setActualFlipped(flipped);
             notifyBlockUpdate();
             markDirty();
             writeCustomData(UPDATE_FLIP, buf -> buf.writeString(name).writeBoolean(flipped));
@@ -207,7 +212,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public abstract ICubeRenderer getBaseTexture(IMultiblockPart sourcePart);
 
     /**
-     * Gets the inactive texture for this part, used for when the multiblock is unformed and you want the part to keep its overlay. Return null to ignore and make hatches go back to their default textures on unform.
+     * Gets the inactive texture for this part, used for when the multiblock is unformed and you want the part to keep
+     * its overlay. Return null to ignore and make hatches go back to their default textures on unform.
      */
     public @Nullable ICubeRenderer getInactiveTexture(IMultiblockPart part) {
         return null;
@@ -235,20 +241,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
                                                       @Nullable Supplier<BlockInfo[]> candidates) {
-        return new TraceabilityPredicate((blockWorldState, info) -> {
-            TileEntity tileEntity = blockWorldState.getTileEntity();
+        return new TraceabilityPredicate((worldState, patternState) -> {
+            TileEntity tileEntity = worldState.getTileEntity();
             if (!(tileEntity instanceof IGregTechTileEntity))
                 return false;
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-            if (predicate.apply(blockWorldState, metaTileEntity)) {
-                if (metaTileEntity instanceof IMultiblockPart) {
-                    Set<IMultiblockPart> partsFound = info.getContext().getOrCreate("MultiblockParts",
-                            HashSet::new);
-                    partsFound.add((IMultiblockPart) metaTileEntity);
-                }
-                return true;
-            }
-            return false;
+            return predicate.apply(worldState, metaTileEntity);
         }, candidates);
     }
 
@@ -282,13 +280,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
-        return new TraceabilityPredicate((blockWorldState, info) -> {
-            IBlockState state = blockWorldState.getBlockState();
-            if (state.getBlock() instanceof VariantActiveBlock) {
-                info.getContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
-            }
-            return ArrayUtils.contains(allowedStates, state);
-        }, getCandidates(allowedStates));
+        return new TraceabilityPredicate(
+                (worldState, patternState) -> ArrayUtils.contains(allowedStates, worldState.getBlockState()),
+                getCandidates(allowedStates));
     }
 
     /**
@@ -308,7 +302,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public static TraceabilityPredicate blocks(Block... block) {
         return new TraceabilityPredicate(
-                (blockWorldState, info) -> ArrayUtils.contains(block, blockWorldState.getBlockState().getBlock()),
+                (worldState, patternState) -> ArrayUtils.contains(block, worldState.getBlockState().getBlock()),
                 getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
     }
 
@@ -322,6 +316,29 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public static TraceabilityPredicate heatingCoils() {
         return TraceabilityPredicate.HEATING_COILS.get();
+    }
+
+    /**
+     * Ensures that all the blockstates that are in the map are the same type. Returns the type if all match, or null if
+     * they don't.
+     * Example: {@code allSameType(GregTechAPI.HEATING_COILS, getSubstructure("MAIN").getCache())}
+     * 
+     * @param info  The info, such as GregTechAPI.HEATING_COILS
+     * @param cache The cache for the pattern.
+     */
+    public static <V> V allSameType(Object2ObjectMap<IBlockState, V> info, Long2ObjectMap<BlockInfo> cache) {
+        V type = null;
+        for (BlockInfo blockInfo : cache.values()) {
+            V state = info.get(blockInfo.getBlockState());
+            if (state != null) {
+                if (type != state) {
+                    if (type == null) type = state;
+                    else return null;
+                }
+            }
+        }
+
+        return type;
     }
 
     public TraceabilityPredicate selfPredicate() {
@@ -386,90 +403,160 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void checkStructurePattern(String name) {
-        PatternInfo pattern = getSubstructure(name);
-        if (!pattern.shouldUpdate) return;
+        IBlockPattern pattern = getSubstructure(name);
+        if (!pattern.getPatternState().shouldUpdate()) return;
 
         long time = System.nanoTime();
-        PatternMatchContext context = pattern.getPattern().checkPatternFastAt(getWorld(), getPos(),
+        PatternState result = pattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing(), getUpwardsFacing(), allowsFlip());
         System.out.println(
                 "structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
 
-        if (context != null && !pattern.isFormed()) {
-            Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
-            ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
-            for (IMultiblockPart part : parts) {
-                if (part.isAttachedToMultiBlock()) {
-                    if (!part.canPartShare(this, name)) {
-                        return;
-                    }
+        if (result.getState().isValid()) { // structure check succeeds
+            // if structure isn't formed or cache fails
+            if (result.isFormed()) {
+                // fast rebuild parts
+                if (result.getState() == PatternState.EnumCheckState.VALID_UNCACHED) {
+                    // add any new parts, because removal of parts is impossible
+                    // it is possible for old parts to persist, so check that
+                    forEachMultiblockPart(name, part -> {
+                        if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
+                            invalidateStructure(name);
+                            return false;
+                        } ;
+                        if (multiblockParts.add(part)) {
+                            part.addToMultiBlock(this, name);
+                        }
+                        if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
+                            // noinspection unchecked
+                            registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
+                        }
+                        return true;
+                    });
+                    formStructure(name);
                 }
+                return;
             }
-            this.setFlipped(context.neededFlip(), name);
 
-            parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
-            Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
-            for (IMultiblockPart multiblockPart : parts) {
-                if (multiblockPart instanceof IMultiblockAbilityPart) {
-                    @SuppressWarnings("unchecked")
-                    IMultiblockAbilityPart<Object> abilityPart = (IMultiblockAbilityPart<Object>) multiblockPart;
-                    List<Object> abilityInstancesList = abilities.computeIfAbsent(abilityPart.getAbility(),
-                            k -> new ArrayList<>());
-                    abilityPart.registerAbilities(abilityInstancesList);
+            // normal rebuild parts
+            forEachMultiblockPart(name, part -> {
+                // structure is already invalidated at this point so don't bother
+                if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
+                    return false;
                 }
-            }
-
-            this.multiblockParts.addAll(parts);
-            this.multiblockAbilities.putAll(abilities);
-            parts.forEach(part -> part.addToMultiBlock(this));
-            writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(true));
-            formStructure(context, name);
-        } else if (context == null && pattern.isFormed()) {
-            invalidateStructure(name);
-        } else if (context != null) {
-            // ensure flip is ok, possibly not necessary but good to check just in case
-            if (context.neededFlip() != isFlipped()) {
-                setFlipped(context.neededFlip(), name);
+                // parts *should* not have this controller added
+                multiblockParts.add(part);
+                if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
+                    // noinspection unchecked
+                    registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
+                }
+                return true;
+            });
+            formStructure(name);
+        } else { // structure check fails
+            if (result.isFormed()) { // invalidate if not already
+                invalidateStructure(name);
             }
         }
     }
 
-    protected void formStructure(PatternMatchContext context) {}
-
-    protected void formStructure(PatternMatchContext context, String name) {
-        // form the main structure
-        if ("MAIN".equals(name)) formStructure(context);
-
-        getSubstructure(name).setFormed(true);
+    /**
+     * Perform an action for each multiblock part in the substructure. This uses the pattern's cache, which is always
+     * accurate if the structure is valid(and has undefined behavior(probably empty) if not). Using the cache means
+     * you can clear the multi's multiblock parts during this without causing a CME(which would happen if this iteratoes
+     * over multiblockParts instead)
+     * 
+     * @param name   The name of the substructure.
+     * @param action The action to perform. Return true if the iteration should keep going, or false if it should stop.
+     *               This is for stuff like non-wallshareable hatches which instantly invalidate a multiblock.
+     */
+    protected void forEachMultiblockPart(String name, Predicate<IMultiblockPart> action) {
+        Long2ObjectMap<BlockInfo> cache = getSubstructure(name).getCache();
+        for (BlockInfo info : cache.values()) {
+            TileEntity te = info.getTileEntity();
+            if (!(te instanceof IGregTechTileEntity gtte)) return;
+            MetaTileEntity mte = gtte.getMetaTileEntity();
+            if (mte instanceof IMultiblockPart part) {
+                if (!action.test(part)) return;
+            }
+        }
     }
 
+    protected List<BlockPos> getVABlocks(Long2ObjectMap<BlockInfo> cache) {
+        List<BlockPos> pos = new ArrayList<>();
+        for (Long2ObjectMap.Entry<BlockInfo> entry : cache.long2ObjectEntrySet()) {
+            if (entry.getValue().getBlockState().getBlock() instanceof VariantActiveBlock<?>) {
+                pos.add(BlockPos.fromLong(entry.getLongKey()));
+            }
+        }
+        return pos;
+    }
+
+    protected void registerMultiblockAbility(IMultiblockAbilityPart<Object> part) {
+        List<Object> abilityList = multiblockAbilities.computeIfAbsent(part.getAbility(), k -> new ArrayList<>());
+        part.registerAbilities(abilityList);
+    }
+
+    protected void forEachFormed(GreggyBlockPos pos) {
+        IBlockState state = getWorld().getBlockState(pos.immutable());
+    }
+
+    protected void formStructure(String name) {
+        // form the main structure
+        if ("MAIN".equals(name)) formStructure();
+
+        setFlipped(getSubstructure(name).getPatternState().isFlipped(), name);
+        writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(true));
+    }
+
+    /**
+     * Use {@link MultiblockControllerBase#formStructure(String)} instead!
+     */
+    @Deprecated
+    protected void formStructure() {
+        formStructure("MAIN");
+    }
+
+    /**
+     * Use {@link MultiblockControllerBase#invalidateStructure(String)} instead!
+     */
+    @Deprecated
     public void invalidateStructure() {
-        this.multiblockParts.forEach(part -> part.removeFromMultiBlock(this));
-        this.multiblockAbilities.clear();
-        this.multiblockParts.clear();
-        structures.forEach((s, p) -> {
-            p.setFormed(false);
-            p.setFlipped(false);
-        });
-        writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString("null"));
+        invalidateStructure("MAIN");
     }
 
     public void invalidateStructure(String name) {
         // invalidate the main structure
-        if ("MAIN".equals(name)) invalidateStructure();
-        else {
-            getSubstructure(name).setFormed(false);
+        if ("MAIN".equals(name)) {
+            this.multiblockParts.forEach(part -> part.removeFromMultiBlock(this));
+            this.multiblockAbilities.clear();
+            this.multiblockParts.clear();
+            structures.forEach((s, p) -> {
+                p.getPatternState().setFormed(false);
+                p.getPatternState().setFlipped(false);
+            });
+            writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString("null"));
+        } else {
+            getSubstructure(name).getPatternState().setFormed(false);
             writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(false));
+
+            multiblockParts.removeIf(part -> {
+                if (name.equals(part.getSubstructureName())) {
+                    part.removeFromMultiBlock(this);
+                    return true;
+                }
+                return false;
+            });
         }
     }
 
     protected void invalidStructureCaches() {
-        for (PatternInfo pattern : structures.values()) {
-            pattern.getPattern().clearCache();
+        for (IBlockPattern pattern : structures.values()) {
+            pattern.clearCache();
         }
     }
 
-    protected PatternInfo getSubstructure(String name) {
+    protected IBlockPattern getSubstructure(String name) {
         return structures.get(name);
     }
 
@@ -477,7 +564,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void onRemoval() {
         super.onRemoval();
         if (!getWorld().isRemote) {
-            invalidateStructure();
+            invalidateStructure("MAIN");
         }
     }
 
@@ -487,8 +574,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return Collections.unmodifiableList(rawList);
     }
 
-    public List<IMultiblockPart> getMultiblockParts() {
-        return Collections.unmodifiableList(multiblockParts);
+    // todo fix/update usages of this
+    public NavigableSet<IMultiblockPart> getMultiblockParts() {
+        return Collections.unmodifiableNavigableSet(multiblockParts);
     }
 
     @Override
@@ -532,11 +620,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             // it forces me so uh yay
             String name = buf.readString(65536);
             if ("null".equals(name)) {
-                for (PatternInfo pattern : structures.values()) {
-                    pattern.setFormed(false);
+                for (IBlockPattern pattern : structures.values()) {
+                    pattern.getPatternState().setFormed(false);
                 }
             } else {
-                getSubstructure(name).setFormed(buf.readBoolean());
+                getSubstructure(name).getPatternState().setFormed(buf.readBoolean());
             }
 
             if (!isStructureFormed()) {
@@ -563,7 +651,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public boolean isStructureFormed(String name) {
         if (getWorld() == null) return false;
 
-        return getSubstructure(name).isFormed();
+        return getSubstructure(name).getPatternState().isFlipped();
     }
 
     @Override
@@ -667,7 +755,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (defaultPattern == null) {
 
                 // only generate for the first pattern, if you have more than 1 pattern you better override this
-                defaultPattern = getSubstructure("MAIN").getPattern().getDefaultShape();
+                defaultPattern = getSubstructure("MAIN").getDefaultShape();
 
                 if (defaultPattern == null) return Collections.emptyList();
             }
@@ -691,8 +779,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void explodeMultiblock(float explosionPower) {
-        List<IMultiblockPart> parts = new ArrayList<>(getMultiblockParts());
-        for (IMultiblockPart part : parts) {
+        ;
+        for (IMultiblockPart part : multiblockParts) {
             part.removeFromMultiBlock(this);
             ((MetaTileEntity) part).doExplosion(explosionPower);
         }
