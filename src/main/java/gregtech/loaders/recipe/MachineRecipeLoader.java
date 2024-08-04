@@ -1164,8 +1164,7 @@ public class MachineRecipeLoader {
             MACERATOR_RECIPES.recipeBuilder()
                     .input(stone, Soapstone)
                     .output(dustImpure, Talc)
-                    // todo fraction 1/90 and handle tier boost
-                    .chancedOutput(dust, Chromite, 111, 30)
+                    .chancedOutput(dust, Chromite, "1/90", 30)
                     .buildAndRegister();
 
         if (!OreDictionary.getOres("stoneRedrock").isEmpty())

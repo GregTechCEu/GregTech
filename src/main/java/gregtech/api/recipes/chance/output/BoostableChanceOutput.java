@@ -29,10 +29,11 @@ public abstract class BoostableChanceOutput<T> extends ChancedOutput<T> implemen
 
     /**
      * Attempts to fix and round the given chance boost due to potential differences
-     * between the max chance and {@link  ChancedOutputLogic#getMaxChancedValue()}.
+     * between the max chance and {@link ChancedOutputLogic#getMaxChancedValue()}.
      * <br />
      * The worst case would be {@code 5,001 / 10,000} , meaning the boost would
      * have to be halved to have the intended effect.
+     * 
      * @param chanceBoost the chance boost to be fixed
      * @return the fixed chance boost
      */
