@@ -21,6 +21,7 @@ import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.DimensionProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.FluidStackHashStrategy;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -39,7 +40,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +75,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int maxProgressTime;
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
-    protected Map<FluidStack, Integer> fluidChancesCache = new Object2IntArrayMap<>();
+    protected Map<FluidStack, Integer> fluidChancesCache = new Object2IntOpenCustomHashMap<>(
+            FluidStackHashStrategy.comparingAllButCount());
     protected NonNullList<ItemStack> itemOutputs;
     protected Map<ItemStack, Integer> itemChancesCache = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.builder()
