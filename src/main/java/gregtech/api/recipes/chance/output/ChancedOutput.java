@@ -16,9 +16,7 @@ public abstract class ChancedOutput<T> implements ChanceEntry<T> {
     private final int maxChance;
 
     public ChancedOutput(@NotNull T ingredient, int chance) {
-        this.ingredient = ingredient;
-        this.chance = chance;
-        this.maxChance = ChancedOutputLogic.getMaxChancedValue();
+        this(ingredient, chance, ChancedOutputLogic.getMaxChancedValue());
     }
 
     public ChancedOutput(@NotNull T ingredient, int chance, int maxChance) {
