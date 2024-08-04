@@ -186,7 +186,10 @@ public interface ChancedOutputLogic {
     }
 
     static <I, T extends ChancedOutput<I>> int getCachedChance(T entry, @Nullable Map<I, Integer> cache) {
-        return cache == null ? 0 : cache.getOrDefault(entry.getIngredient(), GTValues.RNG.nextInt(entry.getMaxChance() + 1));
+        if (cache == null || !cache.containsKey(entry.getIngredient()))
+            return GTValues.RNG.nextInt(entry.getMaxChance() + 1);
+
+        return cache.get(entry.getIngredient());
     }
 
     static <I> void updateCachedChance(I ingredient, @Nullable Map<I, Integer> cache, int chance) {
