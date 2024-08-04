@@ -353,7 +353,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             this.currentMachineStack = machine;
         }
 
-        public void updateCleanroom() {
+        private void updateCleanroom() {
             // Set the cleanroom of the MTEs to the PA's cleanroom reference
             if (mte instanceof ICleanroomReceiver receiver) {
                 if (ConfigHolder.machines.cleanMultiblocks) {
