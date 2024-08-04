@@ -76,7 +76,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
     protected Map<FluidStack, Integer> fluidChancesCache = new Object2IntOpenCustomHashMap<>(
-            FluidStackHashStrategy.comparingAllButCount());
+            FluidStackHashStrategy.builder()
+                    .compareFluid(true)
+                    .build());
     protected NonNullList<ItemStack> itemOutputs;
     protected Map<ItemStack, Integer> itemChancesCache = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.builder()
