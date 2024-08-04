@@ -1,6 +1,7 @@
 package gregtech.api.recipes.chance.output;
 
 import gregtech.api.GTValues;
+import gregtech.api.recipes.chance.ChanceEntry;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 
@@ -170,12 +171,12 @@ public interface ChancedOutputLogic {
     }
 
     /**
-     * @param chance the chance to check
+     * @param chance    the chance to be checked
+     * @param maxChance the max chance of the current entry
      * @return if the roll with the chance is successful
      */
     static boolean passesChance(int chance, int maxChance) {
         return chance >= maxChance;
-        // return chance > 0 && GTValues.RNG.nextInt(getMaxChancedValue()) <= chance;
     }
 
     /**
@@ -185,13 +186,24 @@ public interface ChancedOutputLogic {
         return 10_000;
     }
 
+    /**
+     * @param entry the current entry
+     * @param cache the cache of previously rolled chances, can be null
+     * @return the cached chance, otherwise a random initial chance
+     *         between 0 and {@link ChanceEntry#getMaxChance()} (exclusive)
+     */
     static <I, T extends ChancedOutput<I>> int getCachedChance(T entry, @Nullable Map<I, Integer> cache) {
         if (cache == null || !cache.containsKey(entry.getIngredient()))
-            return GTValues.RNG.nextInt(entry.getMaxChance() + 1);
+            return GTValues.RNG.nextInt(entry.getMaxChance());
 
         return cache.get(entry.getIngredient());
     }
 
+    /**
+     * @param ingredient the key used for the cache
+     * @param cache      the cache of previously rolled chances, can be null
+     * @param chance     the chance to update the cache with
+     */
     static <I> void updateCachedChance(I ingredient, @Nullable Map<I, Integer> cache, int chance) {
         if (cache == null) return;
         cache.put(ingredient, chance);
@@ -204,8 +216,8 @@ public interface ChancedOutputLogic {
      * @param boostFunction  the function to boost the entries' chances
      * @param baseTier       the base tier of the recipe
      * @param machineTier    the tier the recipe is run at
-     * @param cache
-     * @return a list of the produced outputs
+     * @param cache          the cache of previously rolled chances, can be null
+     * @return a list of the produced outputs, or null if failed
      */
     <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
                                                                                   @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
