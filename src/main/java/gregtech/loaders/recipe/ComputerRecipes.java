@@ -100,7 +100,7 @@ public class ComputerRecipes {
                 .input(OPTICAL_PIPES[0], 4)
                 .input(wireGtDouble, IndiumTinBariumTitaniumCuprate, 16)
                 .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 2))
-                .fluidInputs(Lubricant.getFluid(500))
+                .fluidInputs(MolybdeniteLubricant.getFluid(500))
                 .output(DATA_BANK)
                 .scannerResearch(b -> b
                         .researchStack(DATA_ACCESS_HATCH.getStackForm())
