@@ -1,7 +1,6 @@
 package gregtech.api.recipes.chance.output;
 
 import gregtech.api.GTValues;
-import gregtech.api.recipes.chance.ChanceEntry;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 
@@ -31,18 +30,14 @@ public interface ChancedOutputLogic {
                                                                   int baseTier, int machineTier,
                                                                   @Nullable Map<I, Integer> cache) {
             ImmutableList.Builder<T> builder = ImmutableList.builder();
-            for (T entry : chancedEntries) {
-                int cached = getCachedChance(entry, cache);
 
-                int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                int maxChance = entry.getMaxChance();
-                if (passesChance(chance, maxChance)) {
+            for (T entry : chancedEntries) {
+                int chance = getChance(entry, boostFunction, baseTier, machineTier);
+                if (passesChance(chance, entry, cache)) {
                     do {
                         builder.add(entry);
-                        chance -= maxChance;
-                    } while (passesChance(chance, maxChance));
+                    } while (passesChance(chance, entry, cache));
                 }
-                updateCachedChance(entry.getIngredient(), cache, chance);
             }
 
             List<T> list = builder.build();
@@ -73,13 +68,10 @@ public interface ChancedOutputLogic {
                                                                   @Nullable Map<I, Integer> cache) {
             boolean failed = false;
             for (T entry : chancedEntries) {
-                int cached = getCachedChance(entry, cache);
-
-                int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                if (!passesChance(chance, entry.getMaxChance())) {
+                int chance = getChance(entry, boostFunction, baseTier, machineTier);
+                if (!passesChance(chance, entry, cache)) {
                     failed = true;
                 }
-                updateCachedChance(entry.getIngredient(), cache, chance);
             }
             return failed ? null : ImmutableList.copyOf(chancedEntries);
         }
@@ -108,13 +100,10 @@ public interface ChancedOutputLogic {
                                                                   @Nullable Map<I, Integer> cache) {
             T selected = null;
             for (T entry : chancedEntries) {
-                int cached = getCachedChance(entry, cache);
-
-                int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
-                if (passesChance(chance, entry.getMaxChance()) && selected == null) {
+                int chance = getChance(entry, boostFunction, baseTier, machineTier);
+                if (passesChance(chance, entry, cache) && selected == null) {
                     selected = entry;
                 }
-                updateCachedChance(entry.getIngredient(), cache, chance);
             }
             return selected == null ? null : Collections.singletonList(selected);
         }
@@ -171,12 +160,27 @@ public interface ChancedOutputLogic {
     }
 
     /**
-     * @param chance    the chance to be checked
-     * @param maxChance the max chance of the current entry
+     * @param chance the boosted chance to be checked
+     * @param entry  the entry to get the max chance and ingredient of for comparison and cache
+     * @param cache  the cache of previously rolled chances, can be null
      * @return if the roll with the chance is successful
      */
-    static boolean passesChance(int chance, int maxChance) {
-        return chance >= maxChance;
+    static <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry, @Nullable Map<I, Integer> cache) {
+        if (cache == null || !cache.containsKey(entry.getIngredient())) {
+            int initial = GTValues.RNG.nextInt(entry.getMaxChance() + 1);
+            updateCachedChance(entry.getIngredient(), cache, initial);
+            return GTValues.RNG.nextInt(entry.getMaxChance()) <= entry.getChance();
+        }
+
+        int fullChance = getCachedChance(entry, cache) + chance;
+        if (fullChance >= entry.getMaxChance()) {
+            fullChance -= entry.getMaxChance();
+            updateCachedChance(entry.getIngredient(), cache, fullChance);
+            return true;
+        }
+
+        updateCachedChance(entry.getIngredient(), cache, fullChance);
+        return false;
     }
 
     /**
@@ -189,12 +193,12 @@ public interface ChancedOutputLogic {
     /**
      * @param entry the current entry
      * @param cache the cache of previously rolled chances, can be null
-     * @return the cached chance, otherwise a random initial chance
-     *         between 0 and {@link ChanceEntry#getMaxChance()} (exclusive)
+     * @return the cached chance, otherwise 0 if
+     *         the cache is null or does not contain the key
      */
     static <I, T extends ChancedOutput<I>> int getCachedChance(T entry, @Nullable Map<I, Integer> cache) {
         if (cache == null || !cache.containsKey(entry.getIngredient()))
-            return GTValues.RNG.nextInt(entry.getMaxChance());
+            return 0;
 
         return cache.get(entry.getIngredient());
     }
