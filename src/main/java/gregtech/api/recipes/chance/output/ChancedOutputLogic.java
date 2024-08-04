@@ -1,5 +1,6 @@
 package gregtech.api.recipes.chance.output;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 
@@ -30,7 +31,7 @@ public interface ChancedOutputLogic {
                                                                   @Nullable Map<I, Integer> cache) {
             ImmutableList.Builder<T> builder = ImmutableList.builder();
             for (T entry : chancedEntries) {
-                int cached = getCachedChance(entry.getIngredient(), cache);
+                int cached = getCachedChance(entry, cache);
 
                 int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 int maxChance = entry.getMaxChance();
@@ -71,7 +72,7 @@ public interface ChancedOutputLogic {
                                                                   @Nullable Map<I, Integer> cache) {
             boolean failed = false;
             for (T entry : chancedEntries) {
-                int cached = getCachedChance(entry.getIngredient(), cache);
+                int cached = getCachedChance(entry, cache);
 
                 int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 if (!passesChance(chance, entry.getMaxChance())) {
@@ -106,9 +107,7 @@ public interface ChancedOutputLogic {
                                                                   @Nullable Map<I, Integer> cache) {
             T selected = null;
             for (T entry : chancedEntries) {
-                int cached = 0;
-                if (cache != null)
-                    cached = cache.getOrDefault(entry.getIngredient(), 0);
+                int cached = getCachedChance(entry, cache);
 
                 int chance = getChance(entry, boostFunction, baseTier, machineTier) + cached;
                 if (passesChance(chance, entry.getMaxChance()) && selected == null) {
@@ -186,8 +185,8 @@ public interface ChancedOutputLogic {
         return 10_000;
     }
 
-    static <I> int getCachedChance(I ingredient, @Nullable Map<I, Integer> cache) {
-        return cache == null ? 0 : cache.getOrDefault(ingredient, 0);
+    static <I, T extends ChancedOutput<I>> int getCachedChance(T entry, @Nullable Map<I, Integer> cache) {
+        return cache == null ? 0 : cache.getOrDefault(entry.getIngredient(), GTValues.RNG.nextInt(entry.getMaxChance() + 1));
     }
 
     static <I> void updateCachedChance(I ingredient, @Nullable Map<I, Integer> cache, int chance) {
