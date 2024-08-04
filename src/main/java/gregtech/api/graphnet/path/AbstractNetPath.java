@@ -7,6 +7,7 @@ import gregtech.api.graphnet.logic.NetLogicData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractNetPath<N extends NetNode, E extends NetEdge> implements INetPath<N, E> {
 
@@ -71,5 +72,19 @@ public abstract class AbstractNetPath<N extends NetNode, E extends NetEdge> impl
             }
         }
         return unifiedEdgeData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractNetPath<?, ?> that = (AbstractNetPath<?, ?>) o;
+        return Double.compare(that.weight, weight) == 0 && Objects.equals(nodes, that.nodes) &&
+                Objects.equals(edges, that.edges);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nodes, edges, weight);
     }
 }

@@ -1,7 +1,6 @@
 package gregtech.api.cover;
 
-import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -141,9 +140,9 @@ public interface Cover {
     }
 
     /**
-     * @return if the pipe this cover is placed on should render a connection to the cover
+     * @return if the pipe this cover is placed on should always render a connection to the cover
      */
-    default boolean shouldAutoConnectToPipes() {
+    default boolean forcePipeRenderConnection() {
         return true;
     }
 
@@ -249,6 +248,9 @@ public interface Cover {
     void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                           @NotNull IVertexOperation[] pipeline,
                           @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer);
+
+    @SideOnly(Side.CLIENT)
+    @NotNull CoverRenderer getRenderer();
 
     default boolean canRenderBackside() {
         return true;

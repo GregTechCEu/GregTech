@@ -12,6 +12,8 @@ import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -71,6 +73,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected boolean isWorkingAllowed = true;
     protected FluidFilterContainer fluidFilterContainer;
     protected BucketMode bucketMode = BucketMode.MILLI_BUCKET;
+
+    protected @Nullable CoverRenderer rendererInverted;
 
     public CoverPump(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                      @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
@@ -361,6 +365,25 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         } else {
             Textures.PUMP_OVERLAY_INVERTED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         }
+    }
+
+    @Override
+    public @NotNull CoverRenderer getRenderer() {
+        if (pumpMode == PumpMode.EXPORT) {
+            if (renderer == null) renderer = buildRenderer();
+            return renderer;
+        } else {
+            if (rendererInverted == null) rendererInverted = buildRendererInverted();
+            return rendererInverted;
+        }
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.PUMP_OVERLAY).build();
+    }
+    protected CoverRenderer buildRendererInverted() {
+        return new CoverRendererBuilder(Textures.PUMP_OVERLAY_INVERTED).build();
     }
 
     @Override

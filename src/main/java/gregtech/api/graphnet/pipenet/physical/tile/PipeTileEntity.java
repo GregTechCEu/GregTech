@@ -19,6 +19,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.common.blocks.MetaBlocks;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -381,6 +382,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         }
     }
 
+    public <T> T getCapabilityCoverQuery(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
+        // covers have access to the capability objects no matter the connection status
+        IPipeCapabilityObject object = capabilities.get(capability);
+        return object == null ? null : object.getCapabilityForSide(capability, facing);
+    }
+
     @Override
     public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
         return getCapability(capability, facing) != null;
@@ -663,13 +670,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void markAsDirty() {
         markDirty();
         // this most notably gets called when the covers of a pipe get updated, aka the edge predicates need syncing.
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            if (!GTUtility.evalMask(facing, connectionMask)) continue;
-            Cover cover = getCoverHolder().getCoverAtSide(facing);
-            if (cover != null && !cover.canPipePassThrough()) {
-                PipeBlock.disconnectTile(this, getPipeNeighbor(facing, true), facing);
-            }
-        }
         for (var node : this.netCapabilities.keySet()) {
             node.getNet().updatePredication(node, this);
         }
@@ -689,8 +689,13 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
      */
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
         byte frameMask = 0;
+        byte connectionMask = this.connectionMask;
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if (getCoverHolder().hasCover(facing)) frameMask |= 1 << facing.ordinal();
+            Cover cover = getCoverHolder().getCoverAtSide(facing);
+            if (cover != null) {
+                frameMask |= 1 << facing.ordinal();
+                if (cover.forcePipeRenderConnection()) connectionMask |= 1 << facing.ordinal();
+            }
         }
         frameMask = (byte) ~frameMask;
         return state.withProperty(AbstractPipeModel.THICKNESS_PROPERTY, this.getStructure().getRenderThickness())
@@ -699,7 +704,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 .withProperty(AbstractPipeModel.BLOCKED_MASK_PROPERTY, blockedMask)
                 .withProperty(AbstractPipeModel.COLOR_PROPERTY, getPaintingColor())
                 .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
-                .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask);
+                .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask)
+                .withProperty(CoverRendererPackage.PROPERTY, getCoverHolder().createPackage());
     }
 
     public void dealAreaDamage(int size, Consumer<EntityLivingBase> damageFunction) {

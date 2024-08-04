@@ -4,6 +4,8 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.SmartItemFilter;
 
@@ -53,6 +55,16 @@ public class CoverRoboticArm extends CoverConveyor {
         } else {
             Textures.ARM_OVERLAY_INVERTED.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
         }
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.ARM_OVERLAY).build();
+    }
+
+    @Override
+    protected CoverRenderer buildRendererInverted() {
+        return new CoverRendererBuilder(Textures.ARM_OVERLAY_INVERTED).build();
     }
 
     @Override

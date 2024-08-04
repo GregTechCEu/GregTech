@@ -44,7 +44,7 @@ public abstract class PipeActivableBlock extends PipeBlock {
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeActivableTileEntity pipe) {
-            lastTilePos.set(pos);
+            lastTilePos.set(pos.toImmutable());
             lastTile.set(new WeakReference<>(pipe));
             return pipe;
         } else return null;

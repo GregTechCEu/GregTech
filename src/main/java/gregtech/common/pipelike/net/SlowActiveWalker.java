@@ -1,10 +1,16 @@
 package gregtech.common.pipelike.net;
 
+import com.google.common.collect.BiMap;
+
+import com.google.common.collect.HashBiMap;
+
 import gregtech.api.graphnet.path.AbstractNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.function.Task;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.world.World;
 
@@ -15,13 +21,20 @@ import java.util.List;
 
 public class SlowActiveWalker implements Task {
 
+    private static final int RECENT_WALKER_CUTOFF = 5;
+
+    private static final BiMap<AbstractNetPath<? extends WorldPipeNetNode, ?>, SlowActiveWalker> RECENT_WALKERS = HashBiMap.create();
+
     public static void dispatch(World world, AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay) {
         dispatch(world, path, delay, 1, 1);
     }
 
     public static void dispatch(World world, AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay,
                                 int stepSize, int activeLength) {
-        TaskScheduler.scheduleTask(world, new SlowActiveWalker(path, delay, stepSize, activeLength));
+        if (RECENT_WALKERS.containsKey(path)) return; // do not dispatch a walker to a path recently walked
+        SlowActiveWalker walker = new SlowActiveWalker(path, delay, stepSize, activeLength);
+        RECENT_WALKERS.put(path, walker);
+        TaskScheduler.scheduleTask(world, walker);
     }
 
     private final List<? extends WorldPipeNetNode> path;
@@ -46,12 +59,16 @@ public class SlowActiveWalker implements Task {
     @Override
     public boolean run() {
         counter++;
+        if (counter > RECENT_WALKER_CUTOFF) RECENT_WALKERS.inverse().remove(this);
         if (counter >= delay) {
             counter = 0;
             for (int i = 0; i < stepSize; i++) {
                 index++;
                 this.step(getSafe(index - activeLength), getSafe(index));
-                if (index >= lastStep) return false;
+                if (index >= lastStep) {
+                    if (counter <= RECENT_WALKER_CUTOFF) RECENT_WALKERS.inverse().remove(this);
+                    return false;
+                }
             }
         }
         return true;

@@ -9,11 +9,12 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithItemFilter;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -81,6 +82,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     protected int itemsLeftToTransferLastSecond;
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
+
+    protected @Nullable CoverRenderer rendererInverted;
 
     public CoverConveyor(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                          @NotNull EnumFacing attachedSide, int tier, int itemsPerSecond) {
@@ -454,7 +457,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
-        return coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide()) != null;
+        return coverable.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide());
     }
 
     @Override
@@ -684,6 +687,25 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
         this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         this.itemFilterContainer.handleLegacyNBT(tagCompound.getCompoundTag("Filter"));
+    }
+
+    @Override
+    public @NotNull CoverRenderer getRenderer() {
+        if (conveyorMode == ConveyorMode.EXPORT) {
+            if (renderer == null) renderer = buildRenderer();
+            return renderer;
+        } else {
+            if (rendererInverted == null) rendererInverted = buildRendererInverted();
+            return rendererInverted;
+        }
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY).build();
+    }
+    protected CoverRenderer buildRendererInverted() {
+        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY_INVERTED).build();
     }
 
     @Override

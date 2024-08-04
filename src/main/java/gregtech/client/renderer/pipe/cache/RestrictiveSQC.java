@@ -3,6 +3,7 @@ package gregtech.client.renderer.pipe.cache;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
+import gregtech.client.renderer.pipe.quad.QuadHelper;
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
@@ -33,8 +34,8 @@ public class RestrictiveSQC extends BlockableSQC {
     public static @NotNull RestrictiveSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                  SpriteInformation sideTex,
                                                  SpriteInformation blockedTex, SpriteInformation restrictiveTex) {
-        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> StructureQuadCache.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_2),
-                (facing, x1, y1, z1, x2, y2, z2) -> StructureQuadCache.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_2),
+                (facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
         RestrictiveSQC sqc = new RestrictiveSQC(helper, endTex, sideTex, blockedTex, restrictiveTex);
         sqc.buildPrototype();
         return sqc;

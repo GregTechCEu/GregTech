@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCoverHolder;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -17,6 +18,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
@@ -891,7 +893,7 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
 
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
-        return canCapabilityAttach();
+        return !(coverable instanceof PipeCoverHolder) && canCapabilityAttach();
     }
 
     public boolean canCapabilityAttach() {
@@ -951,6 +953,16 @@ public class CoverDigitalInterface extends CoverBase implements IFastRenderMetaT
                         ArrayUtils.addAll(ops, rotation), translation);
             }
         }
+    }
+
+    @Override
+    public @NotNull CoverRenderer getRenderer() {
+        return (quads, facing, renderPlate, renderBackside, renderLayer, data) -> {};
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return null;
     }
 
     @SideOnly(Side.CLIENT)

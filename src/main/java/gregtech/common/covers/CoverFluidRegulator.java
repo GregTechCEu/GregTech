@@ -317,10 +317,4 @@ public class CoverFluidRegulator extends CoverPump {
             }
         }
     }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected @NotNull TextureAtlasSprite getPlateSprite() {
-        return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
-    }
 }

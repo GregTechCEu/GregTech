@@ -18,6 +18,8 @@ import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
+import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
@@ -185,6 +187,9 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                         ToolHelper.damageItem(item, playerIn);
                         ToolHelper.playToolSound(item, playerIn);
                         connectTile(tile, other, facing);
+                    } else {
+                        // if the covers disallow the connection, simply try to render a connection.
+                        connectTile(tile, null, facing);
                     }
                 }
                 return true;
@@ -404,7 +409,9 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
     @Override
     public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
-        return getStructure().getModel().canRenderInLayer(layer);
+        // guaranteed cutout & bloom for covers
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getEffectiveBloomLayer() ||
+                getStructure().getModel().canRenderInLayer(layer);
     }
 
     @Override
@@ -562,7 +569,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         return builder.add(AbstractPipeModel.THICKNESS_PROPERTY).add(AbstractPipeModel.CONNECTION_MASK_PROPERTY)
                 .add(AbstractPipeModel.CLOSED_MASK_PROPERTY).add(AbstractPipeModel.BLOCKED_MASK_PROPERTY)
                 .add(AbstractPipeModel.COLOR_PROPERTY).add(AbstractPipeModel.FRAME_MATERIAL_PROPERTY)
-                .add(AbstractPipeModel.FRAME_MASK_PROPERTY);
+                .add(AbstractPipeModel.FRAME_MASK_PROPERTY).add(CoverRendererPackage.PROPERTY);
     }
 
     @Override
@@ -588,7 +595,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         }
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof PipeTileEntity pipe) {
-            lastTilePos.set(pos);
+            lastTilePos.set(pos.toImmutable());
             lastTile.set(new WeakReference<>(pipe));
             return pipe;
         } else return null;

@@ -3,7 +3,10 @@ package gregtech.api.graphnet.pipenet.physical.tile;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.client.renderer.pipe.ActivablePipeModel;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import org.jetbrains.annotations.NotNull;

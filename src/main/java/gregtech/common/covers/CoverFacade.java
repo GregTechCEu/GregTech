@@ -7,10 +7,13 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.handler.FacadeRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -27,6 +30,10 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,6 +77,12 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
         FacadeRenderer.renderBlockCover(renderState, translation, getCoverableView().getWorld(),
                 getCoverableView().getPos(), getAttachedSide().getIndex(), facadeState, plateBox, layer);
         ForgeHooksClient.setRenderLayer(oldLayer);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected CoverRenderer buildRenderer() {
+        return FacadeRenderer.createRenderer(getWorld(), getPos(), facadeState);
     }
 
     @Override
@@ -140,6 +153,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
 
     private void updateFacadeState() {
         this.facadeState = FacadeHelper.lookupBlockForItem(facadeStack);
+        this.renderer = null;
         // called during world load, where world can be null
         if (getWorld() != null && !getWorld().isRemote) {
             scheduleRenderUpdate();
@@ -147,7 +161,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
-    public boolean shouldAutoConnectToPipes() {
+    public boolean forcePipeRenderConnection() {
         return false;
     }
 

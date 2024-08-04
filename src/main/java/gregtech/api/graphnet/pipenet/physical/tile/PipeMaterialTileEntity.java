@@ -12,6 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +23,18 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
     private Material material;
 
     @Override
+    protected void initialize() {
+        // prevent initialization when we don't know our material;
+        // this specifically happens right after we have been
+        // placed and placedBy() has yet to be called.
+        if (material != null) super.initialize();
+    }
+
+    @Override
     public void placedBy(ItemStack stack, EntityPlayer player) {
         super.placedBy(stack, player);
         setMaterial(getBlockType().getMaterialForStack(stack));
+        initialize();
     }
 
     @Override

@@ -5,6 +5,8 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +41,11 @@ public class CoverShutter extends CoverBase implements IControllable {
     }
 
     @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.SHUTTER).build();
+    }
+
+    @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return true;
     }
@@ -64,7 +71,7 @@ public class CoverShutter extends CoverBase implements IControllable {
     }
 
     @Override
-    public boolean shouldAutoConnectToPipes() {
+    public boolean forcePipeRenderConnection() {
         return false;
     }
 

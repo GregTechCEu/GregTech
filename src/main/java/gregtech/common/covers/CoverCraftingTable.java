@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.cover.*;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
 
 import net.minecraft.item.ItemStack;
@@ -51,13 +52,23 @@ public class CoverCraftingTable extends CoverBase implements ITickable {
     }
 
     @Override
-    public boolean shouldAutoConnectToPipes() {
+    public boolean forcePipeRenderConnection() {
         return false;
     }
 
     @Override
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {}
+
+    @Override
+    public @NotNull CoverRenderer getRenderer() {
+        return (quads, facing, renderPlate, renderBackside, renderLayer, data) -> {};
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return null;
+    }
 
     @Override
     public void update() {

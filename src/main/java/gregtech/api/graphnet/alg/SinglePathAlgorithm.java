@@ -60,10 +60,16 @@ public final class SinglePathAlgorithm implements INetAlgorithm {
             if (!i.hasNext()) break; // we've reached the end, exit the loop while still valid
             graphEdge = i.next();
             // if we are directed, we know that the target is the target.
-            // if we aren't directed, we need to see if the graphEdge's source was secretly the target
-            boolean reversedEdge = !this.net.getGraph().isDirected() && graphEdge.getSource() == lastNode;
-            if (graphEdge.getTarget() == lastNode || reversedEdge) {
-                if (i.hasNext()) graphEdge = i.next();
+            // if we aren't directed, we need to see if the graphEdge's target is secretly the source
+            boolean reversedEdge = !this.net.getGraph().isDirected() && graphEdge.getTarget() == node;
+            if ((!reversedEdge && graphEdge.getTarget() == lastNode) ||
+                    (reversedEdge && graphEdge.getSource() == lastNode)) {
+                // current edge points to a previous node, either get the other edge or exit safely.
+                if (i.hasNext()) {
+                    graphEdge = i.next();
+                    reversedEdge = !this.net.getGraph().isDirected() && graphEdge.getTarget() == node;
+                    // we know that the new edge cannot point to the previous node
+                }
                 else break; // we've reached the end, exit the loop while still valid
             } else if (i.hasNext()) i.next();
             if (i.hasNext()) valid = false; // third graphEdge detected - that's an invalid group

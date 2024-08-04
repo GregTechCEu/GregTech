@@ -3,7 +3,9 @@ package gregtech.api.graphnet.pipenet.physical.tile;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverSaveHandler;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -39,13 +41,12 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
     }
 
     protected final void addCoverSilent(@NotNull EnumFacing side, @NotNull Cover cover) {
-        if (cover instanceof ITickable && !holder.isTicking()) {
-            holder.addTicker(this);
-            tickingCovers.add(side);
-            return;
-        }
         // we checked before if the side already has a cover
         this.covers.put(side, cover);
+        if (cover instanceof ITickable) {
+            tickingCovers.add(side);
+            holder.addTicker(this);
+        }
     }
 
     @Override
@@ -54,8 +55,8 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
         if (!getWorld().isRemote) {
             // do not sync or handle logic on client side
             CoverSaveHandler.writeCoverPlacement(this, COVER_ATTACHED_PIPE, side, cover);
-            if (cover.shouldAutoConnectToPipes()) {
-                if (holder.canConnectTo(side)) holder.setConnected(side, false);
+            if (holder.isConnected(side) && !cover.canPipePassThrough()) {
+                PipeBlock.disconnectTile(holder, holder.getPipeNeighbor(side, true), side);
             }
         }
 
@@ -68,20 +69,11 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
         Cover cover = getCoverAtSide(side);
         if (cover == null) return;
 
-        if (cover instanceof ITickable) {
-            tickingCovers.remove(side);
-            if (tickingCovers.isEmpty()) holder.removeTicker(this);
-        }
-
         dropCover(side);
         covers.remove(side);
+        tickingCovers.remove(side);
+        if (tickingCovers.isEmpty()) holder.removeTicker(this);
         writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
-        if (cover.shouldAutoConnectToPipes()) {
-            PipeTileEntity other;
-            if (holder.isConnected(side) && (other = holder.getPipeNeighbor(side, true)) != null &&
-                    !other.isConnected(side.getOpposite()))
-                holder.setDisconnected(side);
-        }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
     }
@@ -229,6 +221,8 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
             // cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.covers.remove(placementSide);
+            this.tickingCovers.remove(placementSide);
+            if (this.tickingCovers.isEmpty()) holder.removeTicker(this);
             holder.scheduleRenderUpdate();
         } else if (dataId == UPDATE_COVER_DATA_PIPE) {
             // cover custom data received
@@ -261,10 +255,6 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
     @Override
     public BlockPos getPos() {
         return holder.getPos();
-    }
-
-    public TileEntity getTileEntityHere() {
-        return holder;
     }
 
     @Override
@@ -300,6 +290,15 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
 
     @Override
     public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing side) {
-        return holder.getCapability(capability, side);
+        return holder.getCapabilityCoverQuery(capability, side);
+    }
+
+    public CoverRendererPackage createPackage() {
+        if (covers.isEmpty()) return CoverRendererPackage.EMPTY;
+        CoverRendererPackage rendererPackage = new CoverRendererPackage(shouldRenderCoverBackSides());
+        for (var cover : covers.entrySet()) {
+            rendererPackage.addRenderer(cover.getValue().getRenderer(), cover.getKey());
+        }
+        return rendererPackage;
     }
 }

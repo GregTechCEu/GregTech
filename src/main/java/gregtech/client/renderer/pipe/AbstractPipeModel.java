@@ -9,6 +9,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ColorQuadCache;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
+import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
@@ -76,12 +77,33 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     @Override
     public @NotNull List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
         if (side == null && state instanceof IExtendedBlockState ext) {
-            return getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
-                    safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
-                    computeColorData(ext), ext.getValue(FRAME_MATERIAL_PROPERTY),
-                    safeByte(ext.getValue(FRAME_MASK_PROPERTY)));
+            List<BakedQuad> quads;
+            ColorData data = computeColorData(ext);
+            if (canRenderInLayer(getCurrentRenderLayer())) {
+                 quads = getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
+                        safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
+                        data, ext.getValue(FRAME_MATERIAL_PROPERTY),
+                        safeByte(ext.getValue(FRAME_MASK_PROPERTY)));
+            } else quads = new ObjectArrayList<>();
+            CoverRendererPackage rendererPackage = ext.getValue(CoverRendererPackage.PROPERTY);
+            if (rendererPackage != null) renderCovers(quads, rendererPackage, ext);
+            return quads;
         }
         return Collections.emptyList();
+    }
+
+    protected void renderCovers(List<BakedQuad> quads, @NotNull CoverRendererPackage rendererPackage, IExtendedBlockState ext) {
+        if (!ext.getUnlistedProperties().containsKey(AbstractPipeModel.MATERIAL_PROPERTY)) return;
+        Material material = ext.getValue(AbstractPipeModel.MATERIAL_PROPERTY);
+        int color = safeInt(ext.getValue(COLOR_PROPERTY));
+        if (material != null) {
+            int matColor = GTUtility.convertRGBtoARGB(material.getMaterialRGB());
+            if (color == 0 || color == matColor) {
+                // unpainted
+                color = 0xFFFFFFFF;
+            }
+        }
+        rendererPackage.addQuads(quads, getCurrentRenderLayer(), new ColorData(color));
     }
 
     protected ColorData computeColorData(IExtendedBlockState ext) {

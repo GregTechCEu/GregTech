@@ -3,6 +3,7 @@ package gregtech.client.renderer.pipe.cache;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
+import gregtech.client.renderer.pipe.quad.QuadHelper;
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
@@ -32,7 +33,7 @@ public class BlockableSQC extends StructureQuadCache {
 
     public static @NotNull BlockableSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                SpriteInformation sideTex, SpriteInformation blockedTex) {
-        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> StructureQuadCache.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
         BlockableSQC cache = new BlockableSQC(helper, endTex, sideTex, blockedTex);
         cache.buildPrototype();
         return cache;

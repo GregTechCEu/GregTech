@@ -2,6 +2,8 @@ package gregtech.api.cover;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 
@@ -20,12 +22,16 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class CoverBase implements Cover {
 
     private final CoverDefinition definition;
     private final CoverableView coverableView;
     private final EnumFacing attachedSide;
+
+    @SideOnly(Side.CLIENT)
+    protected @Nullable CoverRenderer renderer;
 
     public CoverBase(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                      @NotNull EnumFacing attachedSide) {
@@ -76,6 +82,15 @@ public abstract class CoverBase implements Cover {
             }
         }
     }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public @NotNull CoverRenderer getRenderer() {
+        if (renderer == null) renderer = buildRenderer();
+        return renderer;
+    }
+
+    protected abstract CoverRenderer buildRenderer();
 
     @SideOnly(Side.CLIENT)
     protected @NotNull TextureAtlasSprite getPlateSprite() {

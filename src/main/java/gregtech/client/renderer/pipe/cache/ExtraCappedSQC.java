@@ -3,6 +3,7 @@ package gregtech.client.renderer.pipe.cache;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
+import gregtech.client.renderer.pipe.quad.QuadHelper;
 import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
@@ -32,7 +33,7 @@ public class ExtraCappedSQC extends StructureQuadCache {
 
     public static @NotNull ExtraCappedSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                  SpriteInformation sideTex, SpriteInformation extraEndTex) {
-        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> StructureQuadCache.capOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.capOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
         ExtraCappedSQC cache = new ExtraCappedSQC(helper, endTex, sideTex, extraEndTex);
         cache.buildPrototype();
         return cache;

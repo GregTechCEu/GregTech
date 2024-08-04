@@ -1,10 +1,7 @@
 package gregtech.client.renderer.pipe.cache;
 
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.pipe.quad.ColorData;
-import gregtech.client.renderer.pipe.quad.OverlayLayerDefinition;
-import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
-import gregtech.client.renderer.pipe.quad.RecolorableBakedQuad;
+import gregtech.client.renderer.pipe.quad.*;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -12,13 +9,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -121,33 +113,4 @@ public class StructureQuadCache {
         }
     }
 
-    @Desugar
-    protected record SubListAddress(int startInclusive, int endExclusive) {
-
-        public <T> @NotNull List<T> getSublist(@NotNull List<T> list) {
-            return list.subList(startInclusive, endExclusive);
-        }
-    }
-
-    public static ImmutablePair<Vector3f, Vector3f> capOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
-        if (facing == null) return PipeQuadHelper.pair(x1 - g, y1 - g, z1 - g, x2 + g, y2 + g, z2 + g);
-        return switch (facing.getAxis()) {
-            case X -> PipeQuadHelper.pair(x1 - g, y1, z1, x2 + g, y2, z2);
-            case Y -> PipeQuadHelper.pair(x1, y1 - g, z1, x2, y2 + g, z2);
-            case Z -> PipeQuadHelper.pair(x1, y1, z1 - g, x2, y2, z2 + g);
-        };
-    }
-
-    public static ImmutablePair<Vector3f, Vector3f> tubeOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
-        if (facing == null) return PipeQuadHelper.pair(x1, y1, z1, x2, y2, z2);
-        return switch (facing.getAxis()) {
-            case X -> PipeQuadHelper.pair(x1, y1 - g, z1 - g, x2, y2 + g, z2 + g);
-            case Y -> PipeQuadHelper.pair(x1 - g, y1, z1 - g, x2 + g, y2, z2 + g);
-            case Z -> PipeQuadHelper.pair(x1 - g, y1 - g, z1, x2 + g, y2 + g, z2);
-        };
-    }
-
-    public static ImmutablePair<Vector3f, Vector3f> fullOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
-        return PipeQuadHelper.pair(x1 - g, y1 - g, z1 - g, x2 + g, y2 + g, z2 + g);
-    }
 }

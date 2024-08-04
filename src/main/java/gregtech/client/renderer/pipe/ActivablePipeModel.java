@@ -77,16 +77,16 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
         List<BakedQuad> quads = bloomLayer ? new ObjectArrayList<>() :
                 super.getQuads(key, connectionMask, closedMask, blockedMask, data, frameMaterial, frameMask);
 
-        if (!bloomLayer && (!key.isActive() || !allowActive())) {
-            ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, data, false);
-        } else {
+        if (key.isActive() && allowActive()) {
             if (emissiveActive && bloomLayer) {
                 ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, data, true);
                 // TODO bake this into the original quads
                 quads = quads.stream().map(RenderUtil::makeEmissive).collect(Collectors.toList());
-            } else if (!emissiveActive && getCurrentRenderLayer() == BlockRenderLayer.CUTOUT_MIPPED) {
+            } else if (!emissiveActive && !bloomLayer) {
                 ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, data, true);
             }
+        } else if (!bloomLayer) {
+            ((ActivableSQC) pipeCache.get(key)).addOverlay(quads, connectionMask, data, false);
         }
         return quads;
     }
