@@ -8,74 +8,74 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * A configurable generator of hashing strategies, allowing for consideration of select properties of ItemStacks when
+ * A configurable generator of hashing strategies, allowing for consideration of select properties of FluidStacks when
  * considering equality.
  */
 public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
 
     /**
-     * @return a builder object for producing a custom ItemStackHashStrategy.
+     * @return a builder object for producing a custom FluidStackHashStrategy.
      */
     static FluidStackHashStrategyBuilder builder() {
         return new FluidStackHashStrategyBuilder();
     }
 
     /**
-     * Generates an ItemStackHash configured to compare every aspect of ItemStacks.
+     * Generates an FluidStackHash configured to compare every aspect of FluidStacks.
      *
-     * @return the ItemStackHashStrategy as described above.
+     * @return the FluidStackHashStrategy as described above.
      */
     static FluidStackHashStrategy comparingAll() {
         return builder().compareFluid(true)
-                .compareCount(true)
+                .compareAmount(true)
                 .compareTag(true)
                 .build();
     }
 
     /**
-     * Generates an ItemStackHash configured to compare every aspect of ItemStacks except the number
-     * of items in the stack.
+     * Generates a FluidStackHash configured to compare every aspect of FluidStacks except the amount
+     * of fluid in the stack.
      *
-     * @return the ItemStackHashStrategy as described above.
+     * @return the FluidStackHashStrategy as described above.
      */
-    static FluidStackHashStrategy comparingAllButCount() {
+    static FluidStackHashStrategy comparingAllButAmount() {
         return builder().compareFluid(true)
                 .compareTag(true)
                 .build();
     }
 
-    static FluidStackHashStrategy comparingItemDamageCount() {
+    static FluidStackHashStrategy comparingFluidAndAmount() {
         return builder().compareFluid(true)
-                .compareCount(true)
+                .compareAmount(true)
                 .build();
     }
 
     /**
-     * Builder pattern class for generating customized ItemStackHashStrategy
+     * Builder pattern class for generating customized FluidStackHashStrategy
      */
     class FluidStackHashStrategyBuilder {
 
-        private boolean item, count, tag;
+        private boolean fluid, amount, tag;
 
         /**
-         * Defines whether the Item type should be considered for equality.
+         * Defines whether the Fluid type should be considered for equality.
          *
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
         public FluidStackHashStrategyBuilder compareFluid(boolean choice) {
-            item = choice;
+            fluid = choice;
             return this;
         }
 
         /**
-         * Defines whether stack size should be considered for equality.
+         * Defines whether fluid amount should be considered for equality.
          *
          * @param choice {@code true} to consider this property, {@code false} to ignore it.
          * @return {@code this}
          */
-        public FluidStackHashStrategyBuilder compareCount(boolean choice) {
-            count = choice;
+        public FluidStackHashStrategyBuilder compareAmount(boolean choice) {
+            amount = choice;
             return this;
         }
 
@@ -91,7 +91,7 @@ public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
         }
 
         /**
-         * @return the ItemStackHashStrategy as configured by "compare" methods.
+         * @return the FluidStackHashStrategy as configured by "compare" methods.
          */
         public FluidStackHashStrategy build() {
             return new FluidStackHashStrategy() {
@@ -99,8 +99,8 @@ public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
                 @Override
                 public int hashCode(@Nullable FluidStack o) {
                     return o == null || o.amount == 0 ? 0 : Objects.hash(
-                            item ? o.getFluid() : null,
-                            count ? o.amount : null,
+                            fluid ? o.getFluid() : null,
+                            amount ? o.amount : null,
                             tag ? o.tag : null);
                 }
 
@@ -109,8 +109,8 @@ public interface FluidStackHashStrategy extends Hash.Strategy<FluidStack> {
                     if (a == null || a.amount == 0) return b == null || b.amount == 0;
                     if (b == null || b.amount == 0) return false;
 
-                    return (!item || a.getFluid() == b.getFluid()) &&
-                            (!count || a.amount == b.amount) &&
+                    return (!fluid || a.getFluid() == b.getFluid()) &&
+                            (!amount || a.amount == b.amount) &&
                             (!tag || Objects.equals(a.tag, b.tag));
                 }
             };
