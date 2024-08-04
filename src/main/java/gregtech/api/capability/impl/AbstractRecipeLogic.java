@@ -402,7 +402,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (currentRecipe != null) {
 
             // we found a new recipe, clear the cache
-            if (!currentRecipe.equals(this.previousRecipe)) {
+            if (this.previousRecipe != null && !currentRecipe.equals(this.previousRecipe)) {
                 this.itemChancesCache.clear();
                 this.fluidChancesCache.clear();
             }
