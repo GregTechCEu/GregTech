@@ -34,9 +34,7 @@ public interface ChancedOutputLogic {
             for (T entry : chancedEntries) {
                 int chance = getChance(entry, boostFunction, baseTier, machineTier);
                 if (passesChance(chance, entry, cache)) {
-                    do {
-                        builder.add(entry);
-                    } while (passesChance(chance, entry, cache));
+                    builder.add(entry);
                 }
             }
 
@@ -174,7 +172,7 @@ public interface ChancedOutputLogic {
 
         int fullChance = getCachedChance(entry, cache) + chance;
         if (fullChance >= entry.getMaxChance()) {
-            fullChance -= entry.getMaxChance();
+            fullChance %= entry.getMaxChance();
             updateCachedChance(entry.getIngredient(), cache, fullChance);
             return true;
         }
