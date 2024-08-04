@@ -594,5 +594,12 @@ public class MixerRecipes {
                 .circuitMeta(1)
                 .output(dust, RTMAlloy, 7)
                 .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(800).EUt(VA[IV])
+                .input(dust, Cadmium, 4)
+                .input(dust, Antimony, 3)
+                .input(dust, Indium)
+                .output(dust, HighGradeSolderingAlloy, 8)
+                .buildAndRegister();
     }
 }

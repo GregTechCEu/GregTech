@@ -1831,6 +1831,7 @@ gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
 gregtech.material.ilmenite_slag=Ilmenite Slag
+gregtech.material.high_grade_soldering_alloy=High-Grade Soldering Alloy
 
 
 # Organic Chemistry Materials
@@ -2049,6 +2050,7 @@ gregtech.material.cracked_bauxite_slurry=Cracked Bauxite Slurry
 gregtech.material.bauxite_sludge=Bauxite Sludge
 gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
 gregtech.material.bauxite_slag=Bauxite Slag
+gregtech.material.molybdenite_lubricant=Molybdenite Lubricant
 
 
 # Second Degree Materials
@@ -2105,6 +2107,7 @@ gregtech.material.aqua_regia=Aqua Regia
 gregtech.material.salt_water=Salt Water
 gregtech.material.clay=Clay
 gregtech.material.redstone=Redstone
+gregtech.material.chromium_doped_molybdenite=Chromium-Doped Molybdenite
 
 
 # Third Degree Materials

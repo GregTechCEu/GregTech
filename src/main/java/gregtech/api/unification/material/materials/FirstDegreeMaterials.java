@@ -1555,5 +1555,16 @@ public class FirstDegreeMaterials {
                 .dust(1)
                 .color(0x8B0000).iconSet(SAND)
                 .build();
+
+        HighGradeSolderingAlloy = new Material.Builder(453, gregtechId("high_grade_soldering_alloy"))
+                .ingot(3)
+                .liquid(new FluidBuilder().temperature(544))
+                .color(0x5C009A).iconSet(SHINY)
+                .components(Cadmium, 4, Antimony, 3, Indium, 1)
+                .blast(b -> b
+                        .temp(4500, GasTier.HIGH)
+                        .blastStats(VA[IV], 1200)
+                        .vacuumStats(VA[EV], 300))
+                .build();
     }
 }

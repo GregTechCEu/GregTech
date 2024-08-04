@@ -337,7 +337,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.LuV)
                 .input(VOLTAGE_COIL_LuV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(6000))
-                .fluidInputs(SolderingAlloy.getFluid(720))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(720))
                 .output(ENERGY_OUTPUT_HATCH[LuV])
                 .scannerResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[IV].getStackForm())
@@ -351,7 +351,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.ZPM)
                 .input(VOLTAGE_COIL_ZPM, 2)
                 .fluidInputs(SodiumPotassium.getFluid(8000))
-                .fluidInputs(SolderingAlloy.getFluid(1440))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(1440))
                 .output(ENERGY_OUTPUT_HATCH[ZPM])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[LuV].getStackForm())
@@ -365,7 +365,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.UV)
                 .input(VOLTAGE_COIL_UV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(10000))
-                .fluidInputs(SolderingAlloy.getFluid(2880))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(2880))
                 .output(ENERGY_OUTPUT_HATCH[UV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[ZPM].getStackForm())
@@ -380,7 +380,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.UHV)
                 .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
                 .fluidInputs(SodiumPotassium.getFluid(12000))
-                .fluidInputs(SolderingAlloy.getFluid(5760))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(5760))
                 .output(ENERGY_OUTPUT_HATCH[UHV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
@@ -465,7 +465,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.LuV)
                 .input(VOLTAGE_COIL_LuV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(6000))
-                .fluidInputs(SolderingAlloy.getFluid(720))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(720))
                 .output(ENERGY_INPUT_HATCH[LuV])
                 .scannerResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[IV].getStackForm())
@@ -479,7 +479,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.ZPM)
                 .input(VOLTAGE_COIL_ZPM, 2)
                 .fluidInputs(SodiumPotassium.getFluid(8000))
-                .fluidInputs(SolderingAlloy.getFluid(1440))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(1440))
                 .output(ENERGY_INPUT_HATCH[ZPM])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[LuV].getStackForm())
@@ -493,7 +493,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.UV)
                 .input(VOLTAGE_COIL_UV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(10000))
-                .fluidInputs(SolderingAlloy.getFluid(2880))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(2880))
                 .output(ENERGY_INPUT_HATCH[UV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[ZPM].getStackForm())
@@ -508,7 +508,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(circuit, Tier.UHV)
                 .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
                 .fluidInputs(SodiumPotassium.getFluid(12000))
-                .fluidInputs(SolderingAlloy.getFluid(5760))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(5760))
                 .output(ENERGY_INPUT_HATCH[UHV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())

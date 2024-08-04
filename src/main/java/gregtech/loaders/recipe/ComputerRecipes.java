@@ -36,7 +36,7 @@ public class ComputerRecipes {
                 .inputNBT(TOOL_DATA_ORB, 4, NBTMatcher.ANY, NBTCondition.ANY)
                 .input(circuit, Tier.ZPM, 4)
                 .output(ADVANCED_DATA_ACCESS_HATCH)
-                .fluidInputs(SolderingAlloy.getFluid(L * 4))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .stationResearch(b -> b.researchStack(DATA_BANK.getStackForm()).CWUt(4))
                 .duration(400).EUt(6000).buildAndRegister();
@@ -99,7 +99,7 @@ public class ComputerRecipes {
                 .input(wireFine, Copper, 64)
                 .input(OPTICAL_PIPES[0], 4)
                 .input(wireGtDouble, IndiumTinBariumTitaniumCuprate, 16)
-                .fluidInputs(SolderingAlloy.getFluid(L * 2))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 2))
                 .fluidInputs(Lubricant.getFluid(500))
                 .output(DATA_BANK)
                 .scannerResearch(b -> b
@@ -117,7 +117,7 @@ public class ComputerRecipes {
                 .input(wireGtDouble, UraniumRhodiumDinaquadide, 32)
                 .input(foil, Trinium, 32)
                 .input(OPTICAL_PIPES[0], 16)
-                .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 8))
                 .fluidInputs(VanadiumGallium.getFluid(L * 8))
                 .output(RESEARCH_STATION)
                 .scannerResearch(b -> b
@@ -134,7 +134,7 @@ public class ComputerRecipes {
                 .input(ELECTRIC_MOTOR_ZPM, 2)
                 .input(wireGtDouble, UraniumRhodiumDinaquadide, 16)
                 .input(OPTICAL_PIPES[0], 2)
-                .fluidInputs(SolderingAlloy.getFluid(L * 4))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 2))
                 .output(OBJECT_HOLDER)
                 .scannerResearch(b -> b
@@ -152,7 +152,7 @@ public class ComputerRecipes {
                 .input(foil, Tritanium, 64)
                 .input(foil, Tritanium, 64)
                 .input(OPTICAL_PIPES[0], 8)
-                .fluidInputs(SolderingAlloy.getFluid(L * 4))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 4))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .output(NETWORK_SWITCH)
                 .stationResearch(b -> b
@@ -169,7 +169,7 @@ public class ComputerRecipes {
                 .input(COVER_SCREEN)
                 .input(wireGtDouble, UraniumRhodiumDinaquadide, 64)
                 .input(OPTICAL_PIPES[0], 16)
-                .fluidInputs(SolderingAlloy.getFluid(L * 8))
+                .fluidInputs(HighGradeSolderingAlloy.getFluid(L * 8))
                 .fluidInputs(VanadiumGallium.getFluid(L * 8))
                 .fluidInputs(PCBCoolant.getFluid(4000))
                 .output(HIGH_PERFORMANCE_COMPUTING_ARRAY)

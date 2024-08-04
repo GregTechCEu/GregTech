@@ -6,6 +6,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.GTValues.HV;
+import static gregtech.api.GTValues.VA;
 import static gregtech.api.recipes.RecipeMaps.BREWING_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
@@ -32,6 +34,15 @@ public class BrewingRecipes {
                     .fluidInputs(SeedOil.getFluid(1000))
                     .fluidOutputs(Lubricant.getFluid(1000))
                     .duration(128).EUt(4).buildAndRegister();
+        }
+
+        for (Material material : new Material[] { Oil, Creosote, SeedOil }) {
+            BREWING_RECIPES.recipeBuilder()
+                    .input(dust, ChromiumDopedMolybdenite)
+                    .input(dust, Graphite)
+                    .fluidInputs(material.getFluid(1000))
+                    .fluidOutputs(MolybdeniteLubricant.getFluid(1000))
+                    .duration(256).EUt(VA[HV]).buildAndRegister();
         }
 
         // Biomass

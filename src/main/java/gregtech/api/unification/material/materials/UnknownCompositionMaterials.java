@@ -657,5 +657,9 @@ public class UnknownCompositionMaterials {
                 .dust(1)
                 .color(0x0C0550).iconSet(SAND)
                 .build();
+
+        MolybdeniteLubricant = new Material.Builder(1656, gregtechId("molybdenite_lubricant"))
+                .color(0xB7A5F9).liquid(new FluidBuilder())
+                .build();
     }
 }
