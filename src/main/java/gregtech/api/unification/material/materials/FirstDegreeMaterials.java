@@ -1559,7 +1559,7 @@ public class FirstDegreeMaterials {
         HighGradeSolderingAlloy = new Material.Builder(453, gregtechId("high_grade_soldering_alloy"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(544))
-                .color(0x5C009A).iconSet(SHINY)
+                .color(0x8A65F0).iconSet(SHINY)
                 .components(Cadmium, 4, Antimony, 3, Indium, 1)
                 .blast(b -> b
                         .temp(4500, GasTier.HIGH)
