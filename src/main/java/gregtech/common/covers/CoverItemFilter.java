@@ -182,10 +182,14 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         var filterTag = tagCompound.getCompoundTag("Filter");
         if (!filterTag.hasKey("FilterInventory")) {
             this.itemFilterContainer.setFilterStack(getDefinition().getDropItemStack());
+        }
+
+        if (tagCompound.hasKey("IsBlacklist")) {
+            this.itemFilterContainer.handleLegacyNBT(filterTag);
+            this.itemFilterContainer.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         } else {
             this.itemFilterContainer.deserializeNBT(filterTag);
         }
-        this.itemFilterContainer.handleLegacyNBT(tagCompound);
     }
 
     @Override
