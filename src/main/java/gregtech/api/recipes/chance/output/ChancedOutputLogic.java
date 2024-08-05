@@ -165,9 +165,9 @@ public interface ChancedOutputLogic {
      */
     static <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry, @Nullable Map<I, Integer> cache) {
         if (cache == null || !cache.containsKey(entry.getIngredient())) {
-            int initial = GTValues.RNG.nextInt(entry.getMaxChance() + 1);
+            int initial = GTValues.RNG.nextInt(entry.getMaxChance());
             updateCachedChance(entry.getIngredient(), cache, initial);
-            return GTValues.RNG.nextInt(entry.getMaxChance()) <= entry.getChance();
+            return initial <= entry.getChance();
         }
 
         int fullChance = getCachedChance(entry, cache) + chance;
