@@ -211,6 +211,18 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance",
                             chance, boost));
                 }
+
+                // Add the total chance to the tooltip
+                if (recipeMap.jeiOverclockButtonEnabled()) {
+                    int tier = jeiTexts.get(0).getState();
+                    int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
+                    int tierDifference = tier - recipeTier;
+
+                    // The total chance may or may not max out at 100%.
+                    // TODO possibly change in the future.
+                    double totalChance = Math.min(chance + boost * tierDifference, 100);
+                    tooltip.add(I18n.format("gregtech.recipe.chance_total", GTValues.VNF[tier], totalChance));
+                }
             }
         } else if (notConsumed) {
             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
