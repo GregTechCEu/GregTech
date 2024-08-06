@@ -309,7 +309,7 @@ public class ElementMaterials {
                 .ingot()
                 .color(0x99999A).iconSet(SHINY)
                 .element(Elements.Hf)
-                .blast(b -> b.temp(2227, GasTier.MID)
+                .blast(b -> b.temp(2227, GasTier.HIGH)
                         .blastStats(GTValues.VA[GTValues.EV], 2000))
                 .build();
 
@@ -358,6 +358,8 @@ public class ElementMaterials {
                 .build();
 
         Iodine = new Material.Builder(49, gregtechId("iodine"))
+                .dust()
+                .gas(new FluidBuilder().temperature(457))
                 .color(0x2C344F).iconSet(SHINY)
                 .element(Elements.I)
                 .build();

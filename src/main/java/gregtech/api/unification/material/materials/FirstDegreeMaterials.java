@@ -892,6 +892,7 @@ public class FirstDegreeMaterials {
         MagnesiumChloride = new Material.Builder(357, gregtechId("magnesium_chloride"))
                 .dust(1)
                 .color(0xD40D5C)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Magnesium, 1, Chlorine, 2)
                 .build();
 
@@ -1088,23 +1089,28 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
                 .build();
 
-        Zircaloy4 = new Material.Builder(389, gregtechId("zircaloy_4"))
+        ImpureHafnium = new Material.Builder(389, gregtechId("impure_hafnium"))
+                .dust()
+                .color(0x60606B).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1)
+                .build()
+                .setFormula("Hf?", true);
+
+        HafniumTetraiodide = new Material.Builder(390, gregtechId("hafnium_tetraiodide"))
+                .dust()
+                .color(0xB3694F).iconSet(ROUGH)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1, Iodine, 4)
+                .build();
+
+        Zircaloy4 = new Material.Builder(391, gregtechId("zircaloy_4"))
                 .ingot()
                 .color(0x8A6E68).iconSet(METALLIC)
                 .components(Zirconium, 16, Tin, 2, Chrome, 1)
                 .blast(b -> b.temp(2123, GasTier.MID)
                         .blastStats(GTValues.VA[EV]))
                 .build();
-
-        Inconel718 = new Material.Builder(390, gregtechId("inconel_718"))
-                .ingot()
-                .color(0x566570).iconSet(SHINY)
-                .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
-                .blast(b -> b.temp(2622, GasTier.LOW)
-                        .blastStats(GTValues.VA[HV]))
-                .build();
-
-        // Free ID 391
 
         Talc = new Material.Builder(392, gregtechId("talc"))
                 .dust().ore(2, 1)
@@ -1574,7 +1580,13 @@ public class FirstDegreeMaterials {
                 .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
 
-        // FREE ID 450
+        Inconel718 = new Material.Builder(450, gregtechId("inconel_718"))
+                .ingot()
+                .color(0x566570).iconSet(SHINY)
+                .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
+                .blast(b -> b.temp(2622, GasTier.LOW)
+                        .blastStats(GTValues.VA[HV]))
+                .build();
 
         RTMAlloy = new Material.Builder(451, gregtechId("rtm_alloy"))
                 .ingot().fluid()

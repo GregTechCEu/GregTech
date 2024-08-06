@@ -48,6 +48,13 @@ public class TitaniumRecipes {
                 .output(dust, MagnesiumChloride, 6)
                 .blastFurnaceTemp(Titanium.getBlastTemperature() + 200)
                 .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
+                .input(dust, Sodium, 2)
+                .input(dust, MagnesiumChloride, 3)
+                .output(dust, Magnesium)
+                .output(dust, Salt, 4)
+                .buildAndRegister();
     }
 
     // The production of Soda Ash and Calcium Chloride from Salt and Calcite
