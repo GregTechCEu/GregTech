@@ -683,10 +683,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
         var filterTag = tagCompound.getCompoundTag("Filter");
-        if (!filterTag.hasKey("IsBlacklist"))
-            this.itemFilterContainer.deserializeNBT(filterTag);
-        else
+        if (filterTag.hasKey("IsBlacklist")) {
             this.itemFilterContainer.handleLegacyNBT(filterTag);
+        } else {
+            this.itemFilterContainer.deserializeNBT(filterTag);
+        }
     }
 
     @Override

@@ -201,6 +201,8 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     public void handleLegacyNBT(NBTTagCompound nbt) {
+        super.deserializeNBT(nbt.getCompoundTag("FilterInventory"));
+        setFilterStack(getFilterStack());
         if (hasFilter()) {
             getFilter().getFilterReader().handleLegacyNBT(nbt);
         }
