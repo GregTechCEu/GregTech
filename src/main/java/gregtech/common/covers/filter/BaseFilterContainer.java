@@ -187,7 +187,6 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setTag("FilterInventory", super.serializeNBT());
-        // tagCompound.setInteger("MaxStackSize", getMaxTransferSize());
         tagCompound.setInteger("TransferStackSize", getTransferSize());
         return tagCompound;
     }
