@@ -495,8 +495,7 @@ public class Material implements Comparable<Material> {
          */
 
         /**
-         * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created as a {@link FluidStorageKeys#LIQUID}, with
+         * Add a {@link FluidProperty} to this Material.<br> Will be created as a {@link FluidStorageKeys#LIQUID}, with
          * standard {@link FluidBuilder} defaults.
          * <p>
          * Can be called multiple times to add multiple fluids.
@@ -506,8 +505,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link FluidProperty} to this Material.<br>
-         * Will be created with the specified state a with standard
+         * Add a {@link FluidProperty} to this Material.<br> Will be created with the specified state a with standard
          * {@link FluidBuilder} defaults.
          * <p>
          * Can be called multiple times to add multiple fluids.
@@ -600,8 +598,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link DustProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 2 and no Burn Time
+         * Add a {@link DustProperty} to this Material.<br> Will be created with a Harvest Level of 2 and no Burn Time
          * (Furnace Fuel).
          *
          * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
@@ -612,11 +609,9 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link DustProperty} to this Material.<br>
-         * Will be created with no Burn Time (Furnace Fuel).
+         * Add a {@link DustProperty} to this Material.<br> Will be created with no Burn Time (Furnace Fuel).
          *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a
+         * @param harvestLevel The Harvest Level of this block for Mining.<br> If this Material also has a
          *                     {@link ToolProperty}, this value will also be used to determine the tool's Mining Level.
          * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
          */
@@ -627,8 +622,7 @@ public class Material implements Comparable<Material> {
         /**
          * Add a {@link DustProperty} to this Material.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a
+         * @param harvestLevel The Harvest Level of this block for Mining.<br> If this Material also has a
          *                     {@link ToolProperty}, this value will also be used to determine the tool's Mining Level.
          * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.
          * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
@@ -639,8 +633,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link WoodProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 0 and a Burn Time of
+         * Add a {@link WoodProperty} to this Material.<br> Will be created with a Harvest Level of 0 and a Burn Time of
          * 300 (Furnace Fuel).
          */
         public Builder wood() {
@@ -648,11 +641,9 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link WoodProperty} to this Material.<br>
-         * Will be created with a Burn Time of 300 (Furnace Fuel).
+         * Add a {@link WoodProperty} to this Material.<br> Will be created with a Burn Time of 300 (Furnace Fuel).
          *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a
+         * @param harvestLevel The Harvest Level of this block for Mining.<br> If this Material also has a
          *                     {@link ToolProperty}, this value will also be used to determine the tool's Mining Level.
          */
         public Builder wood(int harvestLevel) {
@@ -662,8 +653,7 @@ public class Material implements Comparable<Material> {
         /**
          * Add a {@link WoodProperty} to this Material.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a
+         * @param harvestLevel The Harvest Level of this block for Mining.<br> If this Material also has a
          *                     {@link ToolProperty}, this value will also be used to determine the tool's Mining Level.
          * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.
          */
@@ -674,10 +664,8 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add an {@link IngotProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 2 and no Burn Time
-         * (Furnace Fuel).<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already
+         * Add an {@link IngotProperty} to this Material.<br> Will be created with a Harvest Level of 2 and no Burn Time
+         * (Furnace Fuel).<br> Will automatically add a {@link DustProperty} to this Material if it does not already
          * have one.
          *
          * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
@@ -688,16 +676,12 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add an {@link IngotProperty} to this Material.<br>
-         * Will be created with no Burn Time (Furnace Fuel).<br>
-         * Will
+         * Add an {@link IngotProperty} to this Material.<br> Will be created with no Burn Time (Furnace Fuel).<br> Will
          * automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
-         *                     If
+         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br> If
          *                     this Material also has a {@link ToolProperty}, this value will also be used to determine
-         *                     the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
-         *                     If this
+         *                     the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br> If this
          *                     Material already had a Harvest Level defined, it will be overridden.
          * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
          */
@@ -706,18 +690,14 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add an {@link IngotProperty} to this Material.<br>
-         * Will automatically add a {@link DustProperty} to this
+         * Add an {@link IngotProperty} to this Material.<br> Will automatically add a {@link DustProperty} to this
          * Material if it does not already have one.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br>
-         *                     If
+         * @param harvestLevel The Harvest Level of this block for Mining. 2 will make it require a iron tool.<br> If
          *                     this Material also has a {@link ToolProperty}, this value will also be used to determine
-         *                     the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br>
-         *                     If this
+         *                     the tool's Mining level (-1). So 2 will make the tool harvest diamonds.<br> If this
          *                     Material already had a Harvest Level defined, it will be overridden.
-         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
-         *                     If this Material already
+         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br> If this Material already
          *                     had a Burn Time defined, it will be overridden.
          * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
          */
@@ -733,10 +713,8 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link GemProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 2 and no Burn Time
-         * (Furnace Fuel).<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not already
+         * Add a {@link GemProperty} to this Material.<br> Will be created with a Harvest Level of 2 and no Burn Time
+         * (Furnace Fuel).<br> Will automatically add a {@link DustProperty} to this Material if it does not already
          * have one.
          *
          * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
@@ -747,16 +725,12 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link GemProperty} to this Material.<br>
-         * Will be created with no Burn Time (Furnace Fuel).<br>
-         * Will
+         * Add a {@link GemProperty} to this Material.<br> Will be created with no Burn Time (Furnace Fuel).<br> Will
          * automatically add a {@link DustProperty} to this Material if it does not already have one.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a
+         * @param harvestLevel The Harvest Level of this block for Mining.<br> If this Material also has a
          *                     {@link ToolProperty}, this value will also be used to determine the tool's Mining
-         *                     level.<br>
-         *                     If this Material already had a Harvest Level defined, it will be overridden.
+         *                     level.<br> If this Material already had a Harvest Level defined, it will be overridden.
          * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
          */
         public Builder gem(int harvestLevel) {
@@ -764,17 +738,13 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link GemProperty} to this Material.<br>
-         * Will automatically add a {@link DustProperty} to this
+         * Add a {@link GemProperty} to this Material.<br> Will automatically add a {@link DustProperty} to this
          * Material if it does not already have one.
          *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a
+         * @param harvestLevel The Harvest Level of this block for Mining.<br> If this Material also has a
          *                     {@link ToolProperty}, this value will also be used to determine the tool's Mining
-         *                     level.<br>
-         *                     If this Material already had a Harvest Level defined, it will be overridden.
-         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
-         *                     If this Material already
+         *                     level.<br> If this Material already had a Harvest Level defined, it will be overridden.
+         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br> If this Material already
          *                     had a Burn Time defined, it will be overridden.
          */
         public Builder gem(int harvestLevel, int burnTime) {
@@ -789,10 +759,8 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link PolymerProperty} to this Material.<br>
-         * Will be created with a Harvest Level of 2 and no Burn
-         * Time (Furnace Fuel).<br>
-         * Will automatically add a {@link DustProperty} to this Material if it does not
+         * Add a {@link PolymerProperty} to this Material.<br> Will be created with a Harvest Level of 2 and no Burn
+         * Time (Furnace Fuel).<br> Will automatically add a {@link DustProperty} to this Material if it does not
          * already have one.
          *
          * @throws IllegalArgumentException If an {@link PolymerProperty} has already been added to this Material.
@@ -803,15 +771,12 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add a {@link PolymerProperty} to this Material.<br>
-         * Will automatically add a {@link DustProperty} to this
+         * Add a {@link PolymerProperty} to this Material.<br> Will automatically add a {@link DustProperty} to this
          * Material if it does not already have one. Will have a burn time of 0
          *
-         * @param harvestLevel The Harvest Level of this block for Mining.<br>
-         *                     If this Material also has a
+         * @param harvestLevel The Harvest Level of this block for Mining.<br> If this Material also has a
          *                     {@link ToolProperty}, this value will also be used to determine the tool's Mining
-         *                     level.<br>
-         *                     If this Material already had a Harvest Level defined, it will be overridden.
+         *                     level.<br> If this Material already had a Harvest Level defined, it will be overridden.
          * @throws IllegalArgumentException If an {@link PolymerProperty} has already been added to this Material.
          */
         public Builder polymer(int harvestLevel) {
@@ -833,8 +798,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Set the Color of this Material.<br>
-         * Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called,
+         * Set the Color of this Material.<br> Defaults to 0xFFFFFF unless {@link Builder#colorAverage()} was called,
          * where it will be a weighted average of the components of the Material.
          *
          * @param color The RGB-formatted Color.
@@ -850,8 +814,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Set the {@link MaterialIconSet} of this Material.<br>
-         * Defaults vary depending on if the Material has a:<br>
+         * Set the {@link MaterialIconSet} of this Material.<br> Defaults vary depending on if the Material has a:<br>
          * <ul>
          * <li>{@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
          * <li>{@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
@@ -890,8 +853,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add {@link MaterialFlags} to this Material.<br>
-         * Dependent Flags (for example,
+         * Add {@link MaterialFlags} to this Material.<br> Dependent Flags (for example,
          * {@link MaterialFlags#GENERATE_LONG_ROD} requiring {@link MaterialFlags#GENERATE_ROD}) will be automatically
          * applied.
          */
@@ -901,8 +863,7 @@ public class Material implements Comparable<Material> {
         }
 
         /**
-         * Add {@link MaterialFlags} to this Material.<br>
-         * Dependent Flags (for example,
+         * Add {@link MaterialFlags} to this Material.<br> Dependent Flags (for example,
          * {@link MaterialFlags#GENERATE_LONG_ROD} requiring {@link MaterialFlags#GENERATE_ROD}) will be automatically
          * applied.
          *
@@ -1094,7 +1055,8 @@ public class Material implements Comparable<Material> {
             properties.setProperty(PropertyKey.FISSION_FUEL,
                     new FissionFuelProperty(maxTemperature, duration, slowNeutronCaptureCrossSection,
                             fastNeutronCaptureCrossSection, slowNeutronFissionCrossSection,
-                            fastNeutronFissionCrossSection, neutronGenerationTime));
+                            fastNeutronFissionCrossSection, neutronGenerationTime,
+                            this.materialInfo.resourceLocation.toString()));
             return this;
         }
 
@@ -1181,13 +1143,12 @@ public class Material implements Comparable<Material> {
                     iconSet = MaterialIconSet.GEM_VERTICAL;
                 } else if (p.hasProperty(PropertyKey.DUST) || p.hasProperty(PropertyKey.INGOT) ||
                         p.hasProperty(PropertyKey.POLYMER)) {
-                            iconSet = MaterialIconSet.DULL;
-                        } else
-                    if (p.hasProperty(PropertyKey.FLUID)) {
-                        iconSet = MaterialIconSet.FLUID;
-                    } else {
-                        iconSet = MaterialIconSet.DULL;
-                    }
+                    iconSet = MaterialIconSet.DULL;
+                } else if (p.hasProperty(PropertyKey.FLUID)) {
+                    iconSet = MaterialIconSet.FLUID;
+                } else {
+                    iconSet = MaterialIconSet.DULL;
+                }
             }
 
             // Verify MaterialRGB
