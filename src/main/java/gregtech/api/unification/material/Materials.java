@@ -495,6 +495,7 @@ public class Materials {
     public static Material BoronCarbide;
     public static Material HeavyWater;
     public static Material HighPressureHeavyWater;
+    public static Material AntimonyTelluride;
 
     /**
      * Organic chemistry

@@ -308,7 +308,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP_WAFER;
 
-    public static MetaItem<?>.MetaValueItem ENGRAVED_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem ENGRAVED_LAPOTRON_CHIP;
 
     public static MetaItem<?>.MetaValueItem HIGHLY_ADVANCED_SOC;
@@ -328,10 +327,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP;
 
-    public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP;
-    public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP_PART;
-    public static MetaItem<?>.MetaValueItem CRYSTAL_CENTRAL_PROCESSING_UNIT;
-    public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;
+    public static MetaItem<?>.MetaValueItem SPARSE_CRYSTALLINE_LATTICE;
+    public static MetaItem<?>.MetaValueItem CRYSTALLINE_WAFER;
+    public static MetaItem<?>.MetaValueItem CRYSTALLINE_MEMORY_UNIT;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_MEMORY_FRAGMENT;
+    public static MetaItem<?>.MetaValueItem PROMETHIUM_RANDOM_ACCESS_MEMORY;
 
     public static MetaItem<?>.MetaValueItem COATED_BOARD;
     public static MetaItem<?>.MetaValueItem PHENOLIC_BOARD;

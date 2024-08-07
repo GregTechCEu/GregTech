@@ -1687,5 +1687,11 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Deuterium, 2, Oxygen, 1)
                 .build();
+
+        AntimonyTelluride = new Material.Builder(469, gregtechId("antimony_telluride"))
+                .dust()
+                .color(0xA3A68E).iconSet(METALLIC)
+                .components(Antimony, 2, Tellurium, 3)
+                .build();
     }
 }
