@@ -58,7 +58,8 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
                 ILaserRelay laser = capability.getValue()
                         .getCapability(GregtechTileCapabilities.CAPABILITY_LASER, capability.getKey().getOpposite());
                 if (laser != null) {
-                    long transmitted = laser.receiveLaser(laserVoltage, laserAmperage);
+                    long transmitted = ILaserTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                            .getCoverAtSide(capability.getKey())).insertToHandler(laserVoltage, laserAmperage, laser);
                     if (transmitted > 0) {
                         SlowActiveWalker.dispatch(tile.getWorld(), path, 1, 2, 2);
                         available -= transmitted;

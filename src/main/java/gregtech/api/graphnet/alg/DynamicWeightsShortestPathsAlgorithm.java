@@ -3,13 +3,9 @@ package gregtech.api.graphnet.alg;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.alg.iter.IteratorFactory;
-import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.path.INetPath;
-
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +23,11 @@ import java.util.stream.Collectors;
 public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShortestPaths<GraphVertex, GraphEdge>
                                                   implements INetAlgorithm {
 
-    public DynamicWeightsShortestPathsAlgorithm(IGraphNet net) {
+    private final boolean recomputeEveryCall;
+
+    public DynamicWeightsShortestPathsAlgorithm(IGraphNet net, boolean recomputeEveryCall) {
         super(net.getGraph());
+        this.recomputeEveryCall = recomputeEveryCall;
     }
 
     @Override
@@ -37,18 +36,14 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
         Set<GraphVertex> searchSpace = source.wrapped.getGroupSafe().getNodes().stream().filter(NetNode::isActive)
                 .map(n -> n.wrapper).filter(node -> !source.equals(node)).collect(Collectors.toSet());
         return (graph, testObject, simulator, queryTick) -> {
-            IteratorFactory.defaultPrepareRun(graph, testObject, simulator, queryTick);
-            return new LimitedIterator<>(source, searchSpace, remapper, testObject, simulator, queryTick);
+            if (recomputeEveryCall) graph.prepareForAlgorithmRun(testObject, simulator, queryTick);
+            return new LimitedIterator<>(source, searchSpace, remapper);
         };
     }
 
     protected class LimitedIterator<Path extends INetPath<?, ?>> implements Iterator<Path> {
 
         private static final int MAX_ITERATIONS = 100;
-
-        private final IPredicateTestObject testObject;
-        private final SimulatorKey simulator;
-        private final long queryTick;
 
         private final GraphVertex source;
         private final Set<GraphVertex> searchSpace;
@@ -58,14 +53,10 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
         private final ObjectArrayList<Path> visited = new ObjectArrayList<>();
         private @Nullable Path next;
 
-        public LimitedIterator(GraphVertex source, Set<GraphVertex> searchSpace, NetPathMapper<Path> remapper,
-                               IPredicateTestObject testObject, SimulatorKey simulator, long queryTick) {
+        public LimitedIterator(GraphVertex source, Set<GraphVertex> searchSpace, NetPathMapper<Path> remapper) {
             this.source = source;
             this.searchSpace = searchSpace;
             this.remapper = remapper;
-            this.testObject = testObject;
-            this.simulator = simulator;
-            this.queryTick = queryTick;
         }
 
         @Override

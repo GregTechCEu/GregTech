@@ -68,10 +68,9 @@ public final class FilterPredicate extends EdgePredicate<FilterPredicate, NBTTag
 
     @Override
     public boolean test(IPredicateTestObject object) {
-        if (!(object instanceof FluidTestObject fluid)) return false;
-        FluidStack stack = fluid.recombine();
-        if (sourceFilter != null && !sourceFilter.test(stack)) return false;
-        return targetFilter == null || targetFilter.test(stack);
+        Object test = object.recombine();
+        if (sourceFilter != null && !sourceFilter.test(test)) return false;
+        return targetFilter == null || targetFilter.test(test);
     }
 
     private static class GenericFilterContainer extends BaseFilterContainer {

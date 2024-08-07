@@ -4,6 +4,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.alg.AlgorithmBuilder;
 import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
@@ -39,14 +40,12 @@ public abstract class WorldPipeNet extends WorldNet {
 
     private static final Object2ObjectOpenHashMap<Integer, Set<WorldPipeNet>> dimensionNets = new Object2ObjectOpenHashMap<>();
 
-    @SafeVarargs
     public WorldPipeNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
-                        Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
+                        AlgorithmBuilder... algorithmBuilders) {
         super(name, graphBuilder, algorithmBuilders);
     }
 
-    @SafeVarargs
-    public WorldPipeNet(String name, boolean directed, Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
+    public WorldPipeNet(String name, boolean directed, AlgorithmBuilder... algorithmBuilders) {
         super(name, directed, algorithmBuilders);
     }
 
@@ -61,6 +60,11 @@ public abstract class WorldPipeNet extends WorldNet {
         });
     }
 
+    public final void updatePredication(@NotNull WorldPipeNetNode node, @NotNull PipeTileEntity tile) {
+        if (supportsPredication()) updatePredicationInternal(node, tile);
+    }
+
+
     /**
      * Called when a PipeTileEntity is marked dirty through {@link IDirtyNotifiable#markAsDirty()}, which is generally
      * when the state of its covers is changed.
@@ -68,7 +72,7 @@ public abstract class WorldPipeNet extends WorldNet {
      * @param tile the tile marked dirty.
      * @param node the associated node.
      */
-    public void updatePredication(@NotNull WorldPipeNetNode node, @NotNull PipeTileEntity tile) {
+    protected void updatePredicationInternal(@NotNull WorldPipeNetNode node, @NotNull PipeTileEntity tile) {
         boolean dirty = false;
         for (EnumFacing facing : EnumFacing.VALUES) {
             PipeTileEntity neighbor = tile.getPipeNeighbor(facing, false);
@@ -84,7 +88,7 @@ public abstract class WorldPipeNet extends WorldNet {
     }
 
     /**
-     * Preferred method to override if your net has custom predication rules. If the net is directed,
+     * Preferred method to override if your net has complex custom predication rules. If the net is directed,
      * this method will <b>not</b> be called twice, so special handling for directedness is needed.
      * 
      * @param source      the source of the edge.
@@ -93,7 +97,7 @@ public abstract class WorldPipeNet extends WorldNet {
      * @param coverTarget the cover on the target facing the source.
      * @return whether the predication state has changed and this net needs to be marked dirty.
      */
-    public boolean predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source, @Nullable Cover coverSource,
+    protected boolean predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source, @Nullable Cover coverSource,
                               @NotNull WorldPipeNetNode target, @Nullable Cover coverTarget) {
         Map<String, EdgePredicate<? ,?>> prevValue =
                 new Object2ObjectOpenHashMap<>(edge.getPredicateHandler().getPredicateSet());
@@ -118,7 +122,7 @@ public abstract class WorldPipeNet extends WorldNet {
 
     /**
      * Preferred method to override if your net has custom predication rules that only depend on covers.
-     * If the net is directed, this method <b>will</b> be called twice, so special handling for directedness is not needed.
+     * If the net is directed, this method <b>will</b> be called twice, so no special handling for directedness is needed.
      *
      * @param edge the edge to predicate
      * @param a the cover on the source of the edge

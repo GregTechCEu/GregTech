@@ -4,24 +4,37 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.Objects;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class FluidTestObject implements IPredicateTestObject {
+import java.util.Objects;
+import java.util.function.Predicate;
+
+public final class FluidTestObject implements IPredicateTestObject, Predicate<FluidStack> {
 
     public final Fluid fluid;
     public final NBTTagCompound tag;
 
-    public FluidTestObject(FluidStack stack) {
+    public FluidTestObject(@NotNull FluidStack stack) {
         this.fluid = stack.getFluid();
         this.tag = stack.tag;
     }
 
-    public FluidStack recombine() {
+    @Override
+    @Contract(" -> new")
+    public @NotNull FluidStack recombine() {
         return new FluidStack(fluid, 1, tag);
     }
 
-    public FluidStack recombine(int amount) {
+    @Contract("_ -> new")
+    public @NotNull FluidStack recombine(int amount) {
         return new FluidStack(fluid, amount, tag);
+    }
+
+    @Override
+    public boolean test(@Nullable FluidStack stack) {
+        return stack != null && stack.getFluid() == fluid && Objects.equals(tag, stack.tag);
     }
 
     @Override

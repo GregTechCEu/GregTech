@@ -3,6 +3,7 @@ package gregtech.api.graphnet.servernet;
 import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.alg.AlgorithmBuilder;
 import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
@@ -28,15 +29,13 @@ public abstract class ServerNet extends WorldSavedData implements IGraphNet {
 
     protected final GraphNetBacker backer;
 
-    @SafeVarargs
     public ServerNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
-                     Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
+                     AlgorithmBuilder... algorithmBuilders) {
         super(name);
         this.backer = new GraphNetBacker(this, graphBuilder.apply(this), algorithmBuilders);
     }
 
-    @SafeVarargs
-    public ServerNet(String name, boolean directed, Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
+    public ServerNet(String name, boolean directed, AlgorithmBuilder... algorithmBuilders) {
         this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(),
                 algorithmBuilders);
     }

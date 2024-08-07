@@ -4,9 +4,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Objects;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public class ItemTestObject implements IPredicateTestObject {
+import java.util.Objects;
+import java.util.function.Predicate;
+
+public class ItemTestObject implements IPredicateTestObject, Predicate<ItemStack> {
 
     public final Item item;
     public final int meta;
@@ -14,20 +18,33 @@ public class ItemTestObject implements IPredicateTestObject {
 
     public final int stackLimit;
 
-    public ItemTestObject(ItemStack stack) {
+    public ItemTestObject(@NotNull ItemStack stack) {
         item = stack.getItem();
         meta = stack.getMetadata();
         tag = stack.getTagCompound();
         stackLimit = stack.getMaxStackSize();
     }
 
+    @Override
+    @Contract(" -> new")
     public ItemStack recombine() {
         return new ItemStack(item, 1, meta, tag);
     }
 
+    @Contract("_ -> new")
     public ItemStack recombine(int amount) {
-        assert amount < getStackLimit() && amount > 0;
+        assert amount <= getStackLimit() && amount > 0;
         return new ItemStack(item, amount, meta, tag);
+    }
+
+    @Override
+    public boolean test(@NotNull ItemStack stack) {
+        if (this.stackLimit == stack.getMaxStackSize() && this.item == stack.getItem() &&
+                this.meta == stack.getMetadata()) {
+            NBTTagCompound other = stack.getTagCompound();
+            return Objects.equals(this.tag, other);
+        }
+        return false;
     }
 
     public int getStackLimit() {

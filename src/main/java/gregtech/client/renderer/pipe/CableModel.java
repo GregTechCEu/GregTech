@@ -68,7 +68,7 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     }
 
     @Override
-    protected ColorData computeColorData(IExtendedBlockState ext) {
+    protected ColorData computeColorData(@NotNull IExtendedBlockState ext) {
         if (insulationTex == null) return super.computeColorData(ext);
         Material material = ext.getValue(AbstractPipeModel.MATERIAL_PROPERTY);
         int insulationColor = safeInt(ext.getValue(COLOR_PROPERTY));

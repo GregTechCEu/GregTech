@@ -71,11 +71,11 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
     @Override
     public @NotNull List<BakedQuad> getQuads(ActivableCacheKey key, byte connectionMask, byte closedMask,
                                              byte blockedMask, ColorData data, @Nullable Material frameMaterial,
-                                             byte frameMask) {
+                                             byte frameMask, byte coverMask) {
         boolean bloomLayer = getCurrentRenderLayer() == BloomEffectUtil.getEffectiveBloomLayer();
         // don't render the main shape to the bloom layer
         List<BakedQuad> quads = bloomLayer ? new ObjectArrayList<>() :
-                super.getQuads(key, connectionMask, closedMask, blockedMask, data, frameMaterial, frameMask);
+                super.getQuads(key, connectionMask, closedMask, blockedMask, data, frameMaterial, frameMask, coverMask);
 
         if (key.isActive() && allowActive()) {
             if (emissiveActive && bloomLayer) {

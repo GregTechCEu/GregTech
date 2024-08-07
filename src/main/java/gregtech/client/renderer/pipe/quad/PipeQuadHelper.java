@@ -18,7 +18,6 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public final class PipeQuadHelper {
 
-
     private SpriteInformation targetSprite;
 
     private final List<Pair<Vector3f, Vector3f>> coreBoxList = new ObjectArrayList<>();
@@ -138,7 +137,7 @@ public final class PipeQuadHelper {
     }
 
     public static List<RecolorableBakedQuad> createFrame(TextureAtlasSprite sprite) {
-        PipeQuadHelper helper = PipeQuadHelper.create(0.998f);
+        PipeQuadHelper helper = PipeQuadHelper.create(0.998f).initialize();
         helper.setTargetSprite(new SpriteInformation(sprite, 0));
         List<RecolorableBakedQuad> list = new ObjectArrayList<>();
         for (EnumFacing facing : EnumFacing.VALUES) {

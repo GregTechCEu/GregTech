@@ -165,6 +165,7 @@ public class FacadeRenderer implements IItemRenderer {
         } catch (Exception ignored) {}
         IBlockState finalState = state;
         return (quads, facing, renderPlate, renderBackside, renderLayer, data) -> {
+            if (renderLayer != BlockRenderLayer.CUTOUT_MIPPED) return;
             // since the block model may be sensitive to the current render layer, we have to recalculate
             // every call.
             long posRand = MathHelper.getPositionRandom(pos);

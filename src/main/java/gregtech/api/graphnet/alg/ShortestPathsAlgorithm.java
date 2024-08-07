@@ -19,8 +19,11 @@ import java.util.stream.Collectors;
 public final class ShortestPathsAlgorithm extends CHManyToManyShortestPaths<GraphVertex, GraphEdge>
                                           implements INetAlgorithm {
 
-    public ShortestPathsAlgorithm(IGraphNet net) {
+    private final boolean recomputeEveryCall;
+
+    public ShortestPathsAlgorithm(IGraphNet net, boolean recomputeEveryCall) {
         super(net.getGraph());
+        this.recomputeEveryCall = recomputeEveryCall;
     }
 
     @Override
@@ -38,12 +41,21 @@ public final class ShortestPathsAlgorithm extends CHManyToManyShortestPaths<Grap
         Set<GraphVertex> searchSpace = source.wrapped.getGroupSafe().getNodes().stream()
                 .filter(NetNode::isActive).map(n -> n.wrapper).collect(Collectors.toSet());
         Set<GraphVertex> singleton = Collections.singleton(source);
-        return (graph1, testObject, simulator, queryTick) -> {
-            IteratorFactory.defaultPrepareRun(graph1, testObject, simulator, queryTick);
+        if (recomputeEveryCall) {
+            return (graph1, testObject, simulator, queryTick) -> {
+                graph1.prepareForAlgorithmRun(testObject, simulator, queryTick);
+                ManyToManyShortestPaths<GraphVertex, GraphEdge> manyToManyPaths = getManyToManyPaths(singleton,
+                        searchSpace);
+                return searchSpace.stream().map(node -> manyToManyPaths.getPath(source, node))
+                        .map(remapper::map).sorted(Comparator.comparingDouble(INetPath::getWeight)).iterator();
+            };
+        } else {
             ManyToManyShortestPaths<GraphVertex, GraphEdge> manyToManyPaths = getManyToManyPaths(singleton,
                     searchSpace);
-            return searchSpace.stream().map(node -> manyToManyPaths.getPath(source, node))
-                    .map(remapper::map).sorted(Comparator.comparingDouble(INetPath::getWeight)).iterator();
-        };
+            return SimpleIteratorFactories.fromIterable(searchSpace.stream()
+                    .map(node -> manyToManyPaths.getPath(source, node))
+                    .map(remapper::map).sorted(Comparator.comparingDouble(INetPath::getWeight))
+                    .collect(Collectors.toList()));
+        }
     }
 }

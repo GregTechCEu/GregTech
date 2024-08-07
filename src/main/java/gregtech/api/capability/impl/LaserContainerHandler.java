@@ -5,6 +5,8 @@ import gregtech.api.capability.ILaserContainer;
 import gregtech.api.capability.ILaserRelay;
 import gregtech.api.metatileentity.MetaTileEntity;
 
+import gregtech.api.util.GTUtility;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -28,8 +30,11 @@ public class LaserContainerHandler extends EnergyContainerHandler implements ILa
 
     @Override
     public long receiveLaser(long laserVoltage, long laserAmperage) {
+
         long allowedAmps = getEnergyCanBeInserted() / laserVoltage;
         addEnergy(laserVoltage * allowedAmps);
+        // over voltage explosion
+        if (laserVoltage > getInputVoltage()) getMetaTileEntity().doExplosion(GTUtility.getExplosionPower(laserVoltage));
         return allowedAmps;
     }
 

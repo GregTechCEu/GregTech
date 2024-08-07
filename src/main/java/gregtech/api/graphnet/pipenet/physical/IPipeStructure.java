@@ -3,9 +3,14 @@ package gregtech.api.graphnet.pipenet.physical;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +36,9 @@ public interface IPipeStructure extends IStringSerializable {
         return true;
     }
 
-    default List<AxisAlignedBB> getPipeBoxes(PipeTileEntity tileContext) {
-        List<AxisAlignedBB> pipeBoxes = new ArrayList<>();
+    @Contract("_ -> new")
+    default List<AxisAlignedBB> getPipeBoxes(@NotNull PipeTileEntity tileContext) {
+        List<AxisAlignedBB> pipeBoxes = new ObjectArrayList<>();
         float thickness = getRenderThickness();
         if ((tileContext.getConnectionMask() & 63) < 63) {
             pipeBoxes.add(getSideBox(null, thickness));

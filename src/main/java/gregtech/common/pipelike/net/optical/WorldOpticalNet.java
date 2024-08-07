@@ -36,7 +36,7 @@ public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPa
     }
 
     public WorldOpticalNet(String name) {
-        super(name, false, graphNet -> new SinglePathAlgorithm(graphNet, false));
+        super(name, false, SinglePathAlgorithm::new);
     }
 
     @Override

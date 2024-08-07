@@ -20,7 +20,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -42,13 +41,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SideOnly(Side.CLIENT)
 public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedModel {
@@ -79,34 +73,37 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
         if (side == null && state instanceof IExtendedBlockState ext) {
             List<BakedQuad> quads;
             ColorData data = computeColorData(ext);
+            CoverRendererPackage rendererPackage = ext.getValue(CoverRendererPackage.PROPERTY);
+            byte coverMask = rendererPackage == null ? 0 : rendererPackage.getMask();
             if (canRenderInLayer(getCurrentRenderLayer())) {
                  quads = getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
                         safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
                         data, ext.getValue(FRAME_MATERIAL_PROPERTY),
-                        safeByte(ext.getValue(FRAME_MASK_PROPERTY)));
+                        safeByte(ext.getValue(FRAME_MASK_PROPERTY)), coverMask);
             } else quads = new ObjectArrayList<>();
-            CoverRendererPackage rendererPackage = ext.getValue(CoverRendererPackage.PROPERTY);
             if (rendererPackage != null) renderCovers(quads, rendererPackage, ext);
             return quads;
         }
         return Collections.emptyList();
     }
 
-    protected void renderCovers(List<BakedQuad> quads, @NotNull CoverRendererPackage rendererPackage, IExtendedBlockState ext) {
-        if (!ext.getUnlistedProperties().containsKey(AbstractPipeModel.MATERIAL_PROPERTY)) return;
-        Material material = ext.getValue(AbstractPipeModel.MATERIAL_PROPERTY);
+    protected void renderCovers(List<BakedQuad> quads, @NotNull CoverRendererPackage rendererPackage,
+                                @NotNull IExtendedBlockState ext) {
         int color = safeInt(ext.getValue(COLOR_PROPERTY));
-        if (material != null) {
-            int matColor = GTUtility.convertRGBtoARGB(material.getMaterialRGB());
-            if (color == 0 || color == matColor) {
-                // unpainted
-                color = 0xFFFFFFFF;
+        if (ext.getUnlistedProperties().containsKey(AbstractPipeModel.MATERIAL_PROPERTY)) {
+            Material material = ext.getValue(AbstractPipeModel.MATERIAL_PROPERTY);
+            if (material != null) {
+                int matColor = GTUtility.convertRGBtoARGB(material.getMaterialRGB());
+                if (color == 0 || color == matColor) {
+                    // unpainted
+                    color = 0xFFFFFFFF;
+                }
             }
         }
         rendererPackage.addQuads(quads, getCurrentRenderLayer(), new ColorData(color));
     }
 
-    protected ColorData computeColorData(IExtendedBlockState ext) {
+    protected ColorData computeColorData(@NotNull IExtendedBlockState ext) {
         return new ColorData(safeInt(ext.getValue(COLOR_PROPERTY)));
     }
 
@@ -119,7 +116,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     }
 
     public @NotNull List<BakedQuad> getQuads(K key, byte connectionMask, byte closedMask, byte blockedMask, ColorData data,
-                                             @Nullable Material frameMaterial, byte frameMask) {
+                                             @Nullable Material frameMaterial, byte frameMask, byte coverMask) {
         List<BakedQuad> quads = new ObjectArrayList<>();
 
         StructureQuadCache cache = pipeCache.get(key);
@@ -128,7 +125,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
             pipeCache.put(key, cache);
         }
         cache.addToList(quads, connectionMask, closedMask,
-                blockedMask, data);
+                blockedMask, data, coverMask);
 
         if (frameMaterial != null) {
             ResourceLocation rl = MaterialIconType.frameGt.getBlockTexturePath(frameMaterial.getMaterialIconSet());

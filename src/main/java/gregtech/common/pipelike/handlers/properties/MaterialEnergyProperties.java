@@ -241,7 +241,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     @Override
     public boolean generatesStructure(IPipeStructure structure) {
-        return structure.getClass() == CableStructure.class;
+        return structure instanceof CableStructure cable && (!isSuperconductor() || !cable.isInsulated());
     }
 
     @Override

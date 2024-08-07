@@ -1,5 +1,6 @@
 package gregtech.api.graphnet;
 
+import gregtech.api.graphnet.alg.AlgorithmBuilder;
 import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.alg.NetAlgorithmWrapper;
 import gregtech.api.graphnet.alg.NetPathMapper;
@@ -37,14 +38,13 @@ public final class GraphNetBacker {
     private final Object2ObjectOpenHashMap<Object, GraphVertex> vertexMap;
     private final NetAlgorithmWrapper[] netAlgorithms;
 
-    @SafeVarargs
     public GraphNetBacker(IGraphNet backedNet, INetGraph graph,
-                          Function<IGraphNet, @NotNull INetAlgorithm>... algorithmBuilders) {
+                          AlgorithmBuilder @NotNull ... algorithmBuilders) {
         this.backedNet = backedNet;
         this.pipeGraph = graph;
         this.netAlgorithms = new NetAlgorithmWrapper[algorithmBuilders.length];
         for (int i = 0; i < algorithmBuilders.length; i++) {
-            this.netAlgorithms[i] = new NetAlgorithmWrapper(backedNet, algorithmBuilders[i]);
+            this.netAlgorithms[i] = new NetAlgorithmWrapper(backedNet, algorithmBuilders[i], backedNet.supportsPredication());
         }
         this.vertexMap = new Object2ObjectOpenHashMap<>();
     }
@@ -145,7 +145,8 @@ public final class GraphNetBacker {
         Iterator<? extends INetPath<?, ?>> cache = node.getPathCache(testObject, simulator, queryTick);
         if (cache != null) return (Iterator<Path>) cache;
 
-        IteratorFactory<Path> factory = this.netAlgorithms[algorithmID].getPathsIterator(node.wrapper, remapper);
+        IteratorFactory<Path> factory = this.netAlgorithms[algorithmID]
+                .getPathsIterator(node.wrapper, remapper, testObject, simulator, queryTick);
         if (factory.cacheable()) {
             return (Iterator<Path>) (node.setPathCache(factory).getPathCache(testObject, simulator, queryTick));
         } else return factory.newIterator(getGraph(), testObject, simulator, queryTick);

@@ -3,13 +3,13 @@ package gregtech.api.graphnet.worldnet;
 import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.alg.AlgorithmBuilder;
 import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.graph.NetDirectedGraph;
 import gregtech.api.graphnet.graph.NetUndirectedGraph;
-import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.path.GenericGraphNetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
@@ -19,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,15 +31,13 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
     private World world;
     private int fallbackDimensionID;
 
-    @SafeVarargs
     public WorldNet(String name, @NotNull Function<IGraphNet, INetGraph> graphBuilder,
-                    Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
+                    AlgorithmBuilder... algorithmBuilders) {
         super(name);
         this.backer = new GraphNetBacker(this, graphBuilder.apply(this), algorithmBuilders);
     }
 
-    @SafeVarargs
-    public WorldNet(String name, boolean directed, Function<IGraphNet, INetAlgorithm>... algorithmBuilders) {
+    public WorldNet(String name, boolean directed, AlgorithmBuilder... algorithmBuilders) {
         this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(),
                 algorithmBuilders);
     }

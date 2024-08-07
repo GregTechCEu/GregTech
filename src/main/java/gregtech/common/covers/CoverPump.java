@@ -9,6 +9,9 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
+import gregtech.api.graphnet.pipenet.insertion.TransferControl;
+import gregtech.api.graphnet.pipenet.insertion.TransferControlProvider;
+import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
@@ -17,6 +20,11 @@ import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
+
+import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.pipelike.net.fluid.IFluidTransferController;
+
+import gregtech.common.pipelike.net.item.IItemTransferController;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,7 +68,8 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter {
+public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter,
+                                                    TransferControlProvider, IFluidTransferController {
 
     public final int tier;
     public final int maxFluidTransferRate;
@@ -443,6 +452,40 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     @SideOnly(Side.CLIENT)
     protected @NotNull TextureAtlasSprite getPlateSprite() {
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
+    }
+
+    @Override
+    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
+        if (control == IFluidTransferController.CONTROL) {
+            return control.cast(this);
+        }
+        return null;
+    }
+
+    @Override
+    public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
+                               boolean doFill) {
+        if (getManualImportExportMode() == ManualImportExportMode.DISABLED) return 0;
+        if (getManualImportExportMode() == ManualImportExportMode.UNFILTERED ||
+                getFilterMode() == FluidFilterMode.FILTER_FILL) // insert to handler is a drain for us
+            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
+        FluidFilterContainer filter = getFluidFilter();
+        if (filter == null || filter.test(testObject.recombine())) {
+            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
+        } else return 0;
+    }
+
+    @Override
+    public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
+                                                   IFluidHandler sourceHandler, boolean doDrain) {
+        if (getManualImportExportMode() == ManualImportExportMode.DISABLED) return null;
+        if (testObject == null || getManualImportExportMode() == ManualImportExportMode.UNFILTERED ||
+                getFilterMode() == FluidFilterMode.FILTER_DRAIN) // extract from handler is an insert to us
+            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
+        FluidFilterContainer filter = getFluidFilter();
+        if (filter == null || filter.test(testObject.recombine())) {
+            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
+        } else return null;
     }
 
     public enum PumpMode implements IStringSerializable, IIOMode {

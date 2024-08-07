@@ -9,6 +9,9 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithItemFilter;
+import gregtech.api.graphnet.pipenet.insertion.TransferControl;
+import gregtech.api.graphnet.pipenet.insertion.TransferControlProvider;
+import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
@@ -18,6 +21,8 @@ import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
+
+import gregtech.common.pipelike.net.item.IItemTransferController;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,7 +75,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithItemFilter {
+public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithItemFilter,
+                                                        TransferControlProvider, IItemTransferController {
 
     public final int tier;
     public final int maxItemTransferRate;
@@ -368,6 +374,40 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             }
         }
         return maxTransferAmount - itemsLeftToTransfer;
+    }
+
+    @Override
+    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
+        if (control == IItemTransferController.CONTROL) {
+            return control.cast(this);
+        }
+        return null;
+    }
+
+    @Override
+    public int insertToHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler destHandler,
+                               boolean simulate) {
+        if (getManualImportExportMode() == ManualImportExportMode.DISABLED) return amount;
+        if (getManualImportExportMode() == ManualImportExportMode.UNFILTERED ||
+                getFilterMode() == ItemFilterMode.FILTER_INSERT) // insert to handler is an extract from us
+            return IItemTransferController.super.insertToHandler(testObject, amount, destHandler, simulate);
+        ItemFilterContainer filter = getItemFilter();
+        if (filter == null || filter.test(testObject.recombine())) {
+            return IItemTransferController.super.insertToHandler(testObject, amount, destHandler, simulate);
+        } else return amount;
+    }
+
+    @Override
+    public int extractFromHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler sourceHandler,
+                                  boolean simulate) {
+        if (getManualImportExportMode() == ManualImportExportMode.DISABLED) return 0;
+        if (getManualImportExportMode() == ManualImportExportMode.UNFILTERED ||
+                getFilterMode() == ItemFilterMode.FILTER_EXTRACT) // extract from handler is an insert to us
+            return IItemTransferController.super.extractFromHandler(testObject, amount, sourceHandler, simulate);
+        ItemFilterContainer filter = getItemFilter();
+        if (filter == null || filter.test(testObject.recombine())) {
+            return IItemTransferController.super.extractFromHandler(testObject, amount, sourceHandler, simulate);
+        } else return 0;
     }
 
     protected static class TypeItemInfo {

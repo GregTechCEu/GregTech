@@ -3,12 +3,15 @@ package gregtech.common.pipelike.net.energy;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.NodeLossCache;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
@@ -19,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -102,8 +106,9 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
             IEnergyContainer container = capability.getValue()
                     .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, capability.getKey().getOpposite());
             if (container != null) {
-                availableFlow -= container.acceptEnergyFromNetwork(capability.getKey(), pathVoltage, availableFlow,
-                        getSimulatorKey() != null);
+                availableFlow -= IEnergyTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                        .getCoverAtSide(capability.getKey())).insertToHandler(pathVoltage, availableFlow, container,
+                        capability.getKey(), getSimulatorKey() != null);
             }
         }
         long accepted = flowReachingDestination - availableFlow;
@@ -112,6 +117,17 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
             data.addEnergyOutPerSec(accepted * pathVoltage, getQueryTick());
         }
         return accepted;
+    }
+
+    @Override
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
+        super.consumeFlowLimit(edge, targetNode, consumption);
+        EnergyFlowLogic logic = targetNode.getData().getLogicEntryNullable(EnergyFlowLogic.INSTANCE);
+        if (logic == null) {
+            logic = EnergyFlowLogic.INSTANCE.getNew();
+            targetNode.getData().setLogicEntry(logic);
+        }
+        logic.recordFlow(getQueryTick(), new EnergyFlowData(consumption, pathVoltage));
     }
 
     private static int calculateHeatV(long amperage, long voltage, long maxVoltage) {

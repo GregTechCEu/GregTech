@@ -58,16 +58,18 @@ public class RestrictiveSQC extends BlockableSQC {
     }
 
     @Override
-    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data) {
+    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data, byte coverMask) {
         List<BakedQuad> quads = cache.getQuads(data);
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (GTUtility.evalMask(facing, connectionMask)) {
                 list.addAll(tubeCoords.get(facing).getSublist(quads));
                 list.addAll(restrictiveCoords.get(facing).getSublist(quads));
-                if (GTUtility.evalMask(facing, closedMask)) {
-                    list.addAll(capperClosedCoords.get(facing).getSublist(quads));
-                } else {
-                    list.addAll(capperCoords.get(facing).getSublist(quads));
+                if (!GTUtility.evalMask(facing, coverMask)) {
+                    if (GTUtility.evalMask(facing, closedMask)) {
+                        list.addAll(capperClosedCoords.get(facing).getSublist(quads));
+                    } else {
+                        list.addAll(capperCoords.get(facing).getSublist(quads));
+                    }
                 }
                 if (GTUtility.evalMask(facing, blockedMask)) {
                     list.addAll(blockedCoords.get(facing).getSublist(quads));

@@ -8,6 +8,8 @@ import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
@@ -55,7 +57,7 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      * @param edge the edge to get capacity for.
      * @return a non-negative capacity that is less than or equal to the true capacity of the edge.
      */
-    default long getFlowLimit(AbstractNetFlowEdge edge) {
+    default long getFlowLimit(@NotNull AbstractNetFlowEdge edge) {
         return edge.getFlowLimit(this.getTestObject(), this.getGraphNet(), this.getQueryTick(), this.getSimulatorKey());
     }
 
@@ -67,7 +69,8 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      * @param targetNode  the target node of the edge.
      * @param consumption the amount to consume from the edge's flow limit.
      */
-    default void consumeFlowLimit(AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
+    @MustBeInvokedByOverriders
+    default void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
         edge.consumeFlowLimit(this.getTestObject(), this.getGraphNet(), consumption, this.getQueryTick(),
                 this.getSimulatorKey());
     }

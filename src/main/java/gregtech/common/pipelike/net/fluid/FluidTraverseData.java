@@ -29,6 +29,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.LongConsumer;
 
@@ -151,16 +152,16 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
             IFluidHandler container = capability.getValue()
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
             if (container != null) {
-                availableFlow -= container.fill(
-                        getTestObject().recombine((int) Math.min(Integer.MAX_VALUE, availableFlow)),
-                        getSimulatorKey() == null);
+                availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                        .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
+                        (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() == null);
             }
         }
         return flowReachingDestination - availableFlow;
     }
 
     @Override
-    public void consumeFlowLimit(AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
         super.consumeFlowLimit(edge, targetNode, consumption);
         temperatureUpdates.getOrDefault(targetNode, l -> {}).accept(consumption);
     }

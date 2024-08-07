@@ -26,6 +26,15 @@ public interface IGraphNet {
     }
 
     /**
+     * Controls whether predication of edges is allowed for this net. When false, path caching is improved by
+     * skipping the recomputation required in order to compensate for predication.
+     * @return whether predication should be allowed for this net.
+     */
+    default boolean supportsPredication() {
+        return false;
+    }
+
+    /**
      * Adds a node to the graphnet.
      * 
      * @param node The node to add.

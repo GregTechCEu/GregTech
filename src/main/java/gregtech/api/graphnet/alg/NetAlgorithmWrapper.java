@@ -16,14 +16,16 @@ import java.util.function.Function;
 public class NetAlgorithmWrapper {
 
     private final IGraphNet net;
+    private final boolean recomputeEveryCall;
     @Nullable
     private INetAlgorithm alg;
 
-    private final Function<IGraphNet, @NotNull INetAlgorithm> builder;
+    private final AlgorithmBuilder builder;
 
-    public NetAlgorithmWrapper(IGraphNet net, @NotNull Function<IGraphNet, @NotNull INetAlgorithm> builder) {
+    public NetAlgorithmWrapper(IGraphNet net, @NotNull AlgorithmBuilder builder, boolean recomputeEveryCall) {
         this.net = net;
         this.builder = builder;
+        this.recomputeEveryCall = recomputeEveryCall;
     }
 
     public IGraphNet getNet() {
@@ -35,8 +37,12 @@ public class NetAlgorithmWrapper {
     }
 
     public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIterator(GraphVertex source,
-                                                                                NetPathMapper<Path> remapper) {
-        if (alg == null) alg = builder.apply(net);
+                                                                                NetPathMapper<Path> remapper,
+                                                                                IPredicateTestObject testObject,
+                                                                                @Nullable SimulatorKey simulator,
+                                                                                long queryTick) {
+        if (!recomputeEveryCall) net.getGraph().prepareForAlgorithmRun(testObject, simulator, queryTick);
+        if (alg == null) alg = builder.build(net, recomputeEveryCall);
         return alg.getPathsIteratorFactory(source, remapper);
     }
 }

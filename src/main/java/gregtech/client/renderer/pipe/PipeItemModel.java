@@ -61,7 +61,8 @@ public class PipeItemModel<K extends CacheKey> implements IBakedModel {
 
     @Override
     public @NotNull List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        return basis.getQuads(key, (byte) 0b1100, (byte) 0b0, (byte) 0b0, data, null, (byte) 0b0);
+        byte z = 0;
+        return basis.getQuads(key, (byte) 0b1100, z, z, data, null, z, z);
     }
 
     @Override

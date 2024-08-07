@@ -2,6 +2,7 @@ package gregtech.common.covers;
 
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.client.renderer.texture.Textures;
@@ -31,6 +32,7 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.apache.logging.log4j.message.FormattedMessage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -274,6 +276,20 @@ public class CoverFluidRegulator extends CoverPump {
                                 .setNumbers(0, Integer.MAX_VALUE)
                                 .value(filterTransferSize)
                                 .setTextColor(Color.WHITE.darker(1))));
+    }
+
+    @Override
+    public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
+                               boolean doFill) {
+        // TODO
+        return super.insertToHandler(testObject, amount, destHandler, doFill);
+    }
+
+    @Override
+    public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
+                                                   IFluidHandler sourceHandler, boolean doDrain) {
+        // TODO
+        return super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
     }
 
     @Override

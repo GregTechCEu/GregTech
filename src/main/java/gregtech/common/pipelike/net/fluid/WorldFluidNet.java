@@ -50,6 +50,11 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
     }
 
     @Override
+    public boolean supportsPredication() {
+        return true;
+    }
+
+    @Override
     protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
         super.coverPredication(edge, a, b);
         if (edge.getPredicateHandler().hasPredicate(BlockedPredicate.INSTANCE)) return;

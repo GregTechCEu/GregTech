@@ -6,6 +6,9 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.graphnet.pipenet.insertion.TransferControl;
+import gregtech.api.graphnet.pipenet.insertion.TransferControlProvider;
+import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -16,6 +19,10 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
+
+import gregtech.common.pipelike.net.fluid.IFluidTransferController;
+
+import gregtech.common.pipelike.net.item.IItemTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -49,7 +56,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWithFluidFilter {
+public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWithFluidFilter, TransferControlProvider,
+                                                           IFluidTransferController {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -222,6 +230,35 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWit
         }
 
         this.fluidFilterContainer.handleLegacyNBT(tagCompound);
+    }
+
+    @Override
+    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
+        if (control == IFluidTransferController.CONTROL) {
+            return control.cast(this);
+        }
+        return null;
+    }
+
+    @Override
+    public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
+                               boolean doFill) {
+        if (getFilterMode() == FluidFilterMode.FILTER_FILL) // insert to handler is a drain for us
+            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
+        if (getFluidFilter().test(testObject.recombine())) {
+            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
+        } else return 0;
+    }
+
+    @Override
+    public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
+                                                   IFluidHandler sourceHandler, boolean doDrain) {
+        if (testObject == null ||
+                getFilterMode() == FluidFilterMode.FILTER_DRAIN) // extract from handler is an insert to us
+            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
+        if (getFluidFilter().test(testObject.recombine())) {
+            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
+        } else return null;
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

@@ -44,6 +44,14 @@ public final class CoverRendererPackage {
         }
     }
 
+    public byte getMask() {
+        byte mask = 0;
+        for (EnumFacing facing : renderers.keySet()) {
+            mask |= 1 << facing.ordinal();
+        }
+        return mask;
+    }
+
     public static class UnlistedCRPProperty implements IUnlistedProperty<CoverRendererPackage> {
 
         private final String name;

@@ -17,19 +17,19 @@ import java.util.List;
 public final class SinglePathAlgorithm implements INetAlgorithm {
 
     private final IGraphNet net;
-    private final boolean needsRecalculation;
+    private final boolean recomputeEveryCall;
 
-    public SinglePathAlgorithm(IGraphNet pipenet, boolean needsRecalculation) {
+    public SinglePathAlgorithm(IGraphNet pipenet, boolean recomputeEveryCall) {
         this.net = pipenet;
-        this.needsRecalculation = needsRecalculation;
+        this.recomputeEveryCall = recomputeEveryCall;
     }
 
     @Override
     public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
                                                                                        NetPathMapper<Path> remapper) {
-        if (needsRecalculation) {
+        if (recomputeEveryCall) {
             return (graph, testObject, simulator, queryTick) -> {
-                IteratorFactory.defaultPrepareRun(graph, testObject, simulator, queryTick);
+                graph.prepareForAlgorithmRun(testObject, simulator, queryTick);
                 List<GraphEdge> graphEdges = new ObjectArrayList<>();
                 List<GraphVertex> nodes = new ObjectArrayList<>();
                 Results results = compute(source, nodes, graphEdges);

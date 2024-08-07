@@ -10,22 +10,30 @@ import org.jetbrains.annotations.NotNull;
 public class PipeCapabilityWrapper {
 
     private byte activeMask;
+    private final PipeTileEntity owner;
     private final WorldPipeNetNode node;
     public final Capability<?>[] capabilities;
 
-    public PipeCapabilityWrapper(WorldPipeNetNode node) {
+    public PipeCapabilityWrapper(PipeTileEntity owner, WorldPipeNetNode node) {
+        this.owner = owner;
         this.node = node;
         this.capabilities = node.getNet().getTargetCapabilities();
     }
 
     public void setActive(@NotNull EnumFacing facing) {
-        this.activeMask |= 1 << facing.ordinal();
-        this.node.setActive(this.activeMask > 0);
+        if (!isActive(facing)) {
+            this.activeMask |= 1 << facing.ordinal();
+            this.node.setActive(this.activeMask > 0);
+            this.owner.notifyBlockUpdate();
+        }
     }
 
     public void setIdle(@NotNull EnumFacing facing) {
-        this.activeMask &= ~(1 << facing.ordinal());
-        this.node.setActive(this.activeMask > 0);
+        if (isActive(facing)) {
+            this.activeMask &= ~(1 << facing.ordinal());
+            this.node.setActive(this.activeMask > 0);
+            this.owner.notifyBlockUpdate();
+        }
     }
 
     public boolean isActive(@NotNull EnumFacing facing) {

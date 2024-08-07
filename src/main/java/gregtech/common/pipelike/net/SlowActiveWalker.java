@@ -25,10 +25,26 @@ public class SlowActiveWalker implements Task {
 
     private static final BiMap<AbstractNetPath<? extends WorldPipeNetNode, ?>, SlowActiveWalker> RECENT_WALKERS = HashBiMap.create();
 
+    /**
+     * Dispatches a slow walker along a path with default parameters.
+     * @param world the world to schedule the task in. When this world is unloaded, the task will die no matter
+     *              its state, so be careful!
+     * @param path the path to walk.
+     * @param delay the ticks between steps of the walker
+     */
     public static void dispatch(World world, AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay) {
         dispatch(world, path, delay, 1, 1);
     }
 
+    /**
+     * Dispatches a slow walker along a path.
+     * @param world the world to schedule the task in. When this world is unloaded, the task will die no matter
+     *              its state, so be careful!
+     * @param path the path to walk.
+     * @param delay the ticks between steps of the walker
+     * @param stepSize the number of nodes within the path that the walker progresses every step
+     * @param activeLength the number of tiles that will be left active behind a progressing walker
+     */
     public static void dispatch(World world, AbstractNetPath<? extends WorldPipeNetNode, ?> path, int delay,
                                 int stepSize, int activeLength) {
         if (RECENT_WALKERS.containsKey(path)) return; // do not dispatch a walker to a path recently walked

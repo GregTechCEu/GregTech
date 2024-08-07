@@ -15,14 +15,18 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeCoverHolder;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
+
+import gregtech.common.blocks.MetaBlocks;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -47,6 +51,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -124,6 +129,20 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         ItemStack item = playerIn.getHeldItem(hand);
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile != null) {
+            if (tile.getFrameMaterial() == null) {
+                BlockFrame frame = BlockFrame.getFrameBlockFromItem(item);
+                if (frame != null) {
+                    tile.setFrameMaterial(frame.getGtMaterial(item));
+                    SoundType type = frame.getSoundType(item);
+                    worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
+                            (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                    if (!playerIn.capabilities.isCreativeMode) {
+                        item.shrink(1);
+                    }
+                    return true;
+                }
+            }
+
             RayTraceAABB trace = collisionRayTrace(playerIn, worldIn, pos);
             if (trace == null) return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 
@@ -169,6 +188,16 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
                 if (result == EnumActionResult.FAIL) return false;
             }
+            // frame removal
+            Material frame = tile.getFrameMaterial();
+            if (frame != null && ToolHelper.isTool(item, ToolClasses.CROWBAR)) {
+                tile.setFrameMaterial(null);
+                spawnAsEntity(worldIn, pos, MetaBlocks.FRAMES.get(frame).getItem(frame));
+                ToolHelper.damageItem(item, playerIn);
+                ToolHelper.playToolSound(item, playerIn);
+                return true;
+            }
+            // pipe modification
             if (isPipeTool(item)) {
                 PipeTileEntity other = tile.getPipeNeighbor(facing, true);
 
@@ -443,11 +472,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
             if (hasPipeCollisionChangingItem(worldIn, pos, entityIn)) {
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
             } else {
-                List<IndexedCuboid6> covers = new ObjectArrayList<>();
-                tile.getCoverHolder().addCoverCollisionBoundingBox(covers);
-                for (IndexedCuboid6 cuboid6 : covers) {
-                    addCollisionBoxToList(pos, entityBox, collidingBoxes, cuboid6.aabb());
-                }
+                tile.getCoverBoxes(bb -> addCollisionBoxToList(pos, entityBox, collidingBoxes, bb));
             }
             if (tile.getFrameMaterial() != null) {
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, BlockFrame.COLLISION_BOX);
@@ -487,7 +512,12 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         RayTraceResult min = null;
         AxisAlignedBB minbb = null;
         double minDistSqrd = Double.MAX_VALUE;
-        for (AxisAlignedBB aabb : getStructure().getPipeBoxes(tile)) {
+        List<AxisAlignedBB> bbs = getStructure().getPipeBoxes(tile);
+        tile.getCoverBoxes(bbs::add);
+        if (tile.getFrameMaterial() != null) {
+            bbs.add(FULL_BLOCK_AABB);
+        }
+        for (AxisAlignedBB aabb : bbs) {
             RayTraceResult result = rayTrace(pos, start, end, aabb);
             if (result == null) continue;
             double distSqrd = start.squareDistanceTo(result.hitVec);

@@ -3,6 +3,7 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
@@ -230,6 +231,20 @@ public class CoverRoboticArm extends CoverConveyor {
                                 .setNumbers(0, Integer.MAX_VALUE)
                                 .value(filterTransferSize)
                                 .setTextColor(Color.WHITE.darker(1))));
+    }
+
+    @Override
+    public int insertToHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler destHandler,
+                               boolean simulate) {
+        // TODO
+        return super.insertToHandler(testObject, amount, destHandler, simulate);
+    }
+
+    @Override
+    public int extractFromHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler sourceHandler,
+                                  boolean simulate) {
+        // TODO
+        return super.extractFromHandler(testObject, amount, sourceHandler, simulate);
     }
 
     @Override

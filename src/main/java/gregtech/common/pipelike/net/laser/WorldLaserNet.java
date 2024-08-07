@@ -35,7 +35,7 @@ public class WorldLaserNet extends WorldPipeNet implements BasicWorldPipeNetPath
     }
 
     public WorldLaserNet(String name) {
-        super(name, false, graphNet -> new SinglePathAlgorithm(graphNet, false));
+        super(name, false, SinglePathAlgorithm::new);
     }
 
     @Override

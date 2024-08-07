@@ -19,6 +19,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.common.blocks.MetaBlocks;
 
@@ -51,6 +52,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -176,6 +178,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public boolean isConnected(EnumFacing facing) {
         return (this.connectionMask & 1 << facing.ordinal()) > 0;
+    }
+
+    public boolean isConnectedCoverAdjusted(EnumFacing facing) {
+        Cover cover;
+        return ((this.connectionMask & 1 << facing.ordinal()) > 0) ||
+                (cover = getCoverHolder().getCoverAtSide(facing)) != null && cover.forcePipeRenderConnection();
     }
 
     public boolean renderClosed(EnumFacing facing) {
@@ -320,7 +328,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (wrapper.isActive(facing)) {
                 TileEntity tile = getNeighbor(facing);
-                if (tile == null || tile instanceof PipeTileEntity) updateActiveStatus(facing, false);
+                if (tile == null) updateActiveStatus(facing, false);
                 else caps.put(facing, tile);
             }
         }
@@ -341,7 +349,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             }
             return;
         }
-        if (!this.isConnected(facing) && !(canOpenConnection && canConnectTo(facing))) {
+        if (!this.isConnectedCoverAdjusted(facing) && !(canOpenConnection && canConnectTo(facing))) {
             setAllIdle(facing);
             return;
         }
@@ -413,7 +421,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
         T coverCapability = cover.getCapability(capability, pipeCapability);
         if (coverCapability == pipeCapability) {
-            if (isConnected(facing)) {
+            if (isConnectedCoverAdjusted(facing)) {
                 return pipeCapability;
             }
             return null;
@@ -448,7 +456,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             boolean firstNode = true;
             for (WorldPipeNetNode node : PipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
-                this.netCapabilities.put(node, new PipeCapabilityWrapper(node));
+                this.netCapabilities.put(node, new PipeCapabilityWrapper(this, node));
                 String netName = node.getNet().mapName;
                 netLogicDatas.put(netName, node.getData());
                 var listener = node.getData().createListener(
@@ -467,6 +475,9 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                     firstNode = false;
                     this.temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
                 }
+                // TODO
+                // this and updateActiveStatus() theoretically only need to be called when loading old world data;
+                // is there a way to detect that and skip if so?
                 node.getNet().updatePredication(node, this);
             }
             this.netLogicDatas.trim();
@@ -687,6 +698,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     /**
      * Note - the block corresponding to this tile entity must register any new unlisted properties to the default state.
      */
+    @MustBeInvokedByOverriders
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
         byte frameMask = 0;
         byte connectionMask = this.connectionMask;
@@ -706,6 +718,14 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
                 .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask)
                 .withProperty(CoverRendererPackage.PROPERTY, getCoverHolder().createPackage());
+    }
+
+    public void getCoverBoxes(Consumer<AxisAlignedBB> consumer) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            if (getCoverHolder().hasCover(facing)) {
+                consumer.accept(CoverRendererBuilder.PLATE_AABBS.get(facing));
+            }
+        }
     }
 
     public void dealAreaDamage(int size, Consumer<EntityLivingBase> damageFunction) {
