@@ -18,6 +18,7 @@ public class FissionFuelProperty implements IMaterialProperty, IFissionFuelStats
     private double fastNeutronFissionCrossSection;
     // The average time for a neutron to be emitted during a fission event. Do not make this accurate.
     private double neutronGenerationTime;
+    private String id;
 
     @Override
     public void verifyProperty(MaterialProperties properties) {
@@ -26,7 +27,7 @@ public class FissionFuelProperty implements IMaterialProperty, IFissionFuelStats
 
     public FissionFuelProperty(int maxTemperature, int duration, double slowNeutronCaptureCrossSection,
                                double fastNeutronCaptureCrossSection, double slowNeutronFissionCrossSection,
-                               double fastNeutronFissionCrossSection, double neutronGenerationTime) {
+                               double fastNeutronFissionCrossSection, double neutronGenerationTime, String id) {
         this.maxTemperature = maxTemperature;
         this.duration = duration;
         this.slowNeutronCaptureCrossSection = slowNeutronCaptureCrossSection;
@@ -34,6 +35,7 @@ public class FissionFuelProperty implements IMaterialProperty, IFissionFuelStats
         this.slowNeutronFissionCrossSection = slowNeutronFissionCrossSection;
         this.fastNeutronFissionCrossSection = fastNeutronFissionCrossSection;
         this.neutronGenerationTime = neutronGenerationTime;
+        this.id = id;
     }
 
     @Override
@@ -95,6 +97,11 @@ public class FissionFuelProperty implements IMaterialProperty, IFissionFuelStats
     @Override
     public double getNeutronGenerationTime() {
         return neutronGenerationTime;
+    }
+
+    @Override
+    public String getID() {
+        return this.id;
     }
 
     public void setNeutronGenerationTime(double neutronGenerationTime) {
