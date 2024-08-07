@@ -238,6 +238,14 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         return mte == null ? 0 : mte.getItemOutputLimit();
     }
 
+    @Override
+    public void setCleanroom(ICleanroomProvider provider) {
+        super.setCleanroom(provider);
+
+        // Sync Cleanroom Change to Internal Workable MTE
+        ((ProcessingArrayWorkable) this.recipeMapWorkable).updateCleanroom();
+    }
+
     @SuppressWarnings("InnerClassMayBeStatic")
     protected class ProcessingArrayWorkable extends MultiblockRecipeLogic {
 
@@ -334,15 +342,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 mte = holder.setMetaTileEntity(mte);
                 holder.setWorld(this.metaTileEntity.getWorld());
 
-                // Set the cleanroom of the MTEs to the PA's cleanroom reference
-                if (mte instanceof ICleanroomReceiver receiver) {
-                    if (ConfigHolder.machines.cleanMultiblocks) {
-                        receiver.setCleanroom(DUMMY_CLEANROOM);
-                    } else {
-                        ICleanroomProvider provider = controller.getCleanroom();
-                        if (provider != null) receiver.setCleanroom(provider);
-                    }
-                }
+                updateCleanroom();
             }
 
             // Find the voltage tier of the machine.
@@ -351,6 +351,18 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             this.machineVoltage = GTValues.V[this.machineTier];
 
             this.currentMachineStack = machine;
+        }
+
+        private void updateCleanroom() {
+            // Set the cleanroom of the MTEs to the PA's cleanroom reference
+            if (mte instanceof ICleanroomReceiver receiver) {
+                if (ConfigHolder.machines.cleanMultiblocks) {
+                    receiver.setCleanroom(DUMMY_CLEANROOM);
+                } else {
+                    ICleanroomProvider provider = ((RecipeMapMultiblockController) metaTileEntity).getCleanroom();
+                    if (provider != null) receiver.setCleanroom(provider);
+                }
+            }
         }
 
         @Override
