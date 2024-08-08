@@ -60,7 +60,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntity
+public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler>
                                         implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
     private final int tier;
@@ -110,6 +110,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                 Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
+        renderIndicatorOverlay(renderState, translation, pipeline);
     }
 
     @Override
@@ -157,7 +158,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
             }
 
             if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
-                writeCustomData(UPDATE_ITEM, buf -> buf.writeItemStack(virtualItemStack));
+                writeCustomData(UPDATE_ITEM, buf -> {
+                    virtualItemStack.setCount(1);
+                    buf.writeItemStack(virtualItemStack);
+                });
                 previousStack = virtualItemStack;
             }
             if (previousStackSize != itemsStoredInside) {
@@ -185,7 +189,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_total", maxStoredItems));
 
         NBTTagCompound compound = stack.getTagCompound();
@@ -348,6 +351,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                                 .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory);
 
+        builder.widget(createConnectedGui(64));
+
         return builder.build(getHolder(), entityPlayer);
     }
 
@@ -384,6 +389,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputItems);
+        this.virtualItemStack.setCount(1);
         buf.writeItemStack(virtualItemStack);
         buf.writeLong(itemsStoredInside);
         buf.writeBoolean(voiding);
@@ -544,6 +550,16 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
         if (!getWorld().isRemote) {
             markDirty();
         }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.ITEM;
+    }
+
+    @Override
+    public IItemHandler getTypeValue() {
+        return this.combinedInventory;
     }
 
     @Override

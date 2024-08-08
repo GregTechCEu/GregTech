@@ -50,6 +50,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -71,7 +72,7 @@ import java.util.function.Consumer;
 import static gregtech.api.capability.GregtechDataCodes.*;
 import static net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack.FLUID_NBT_KEY;
 
-public class MetaTileEntityQuantumTank extends MetaTileEntity
+public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFluidTank>
                                        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
     private final int tier;
@@ -285,6 +286,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
         }
         QuantumStorageRenderer.renderTankFluid(renderState, translation, pipeline, fluidTank, getWorld(), getPos(),
                 getFrontFacing());
+        renderIndicatorOverlay(renderState, translation, pipeline);
     }
 
     @Override
@@ -302,7 +304,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_tank.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", maxFluidCapacity));
         NBTTagCompound tag = stack.getTagCompound();
@@ -346,8 +347,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
                 })
                         .setAlwaysShowFull(true).setDrawHoveringText(false);
 
-        return ModularUI.defaultBuilder()
-                .widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
+        ModularUI.Builder builder = ModularUI.defaultBuilder();
+        builder.widget(new ImageWidget(7, 16, 81, 46, GuiTextures.DISPLAY))
                 .widget(new LabelWidget(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF))
                 .widget(tankWidget)
                 .widget(new AdvancedTextWidget(11, 30, getFluidAmountText(tankWidget), 0xFFFFFF))
@@ -368,8 +369,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
                 .widget(new ToggleButtonWidget(43, 64, 18, 18,
                         GuiTextures.BUTTON_FLUID_VOID, this::isVoiding, this::setVoiding)
                                 .setTooltipText("gregtech.gui.fluid_voiding.tooltip")
-                                .shouldUseBaseBackground())
-                .bindPlayerInventory(entityPlayer.inventory)
+                                .shouldUseBaseBackground());
+
+        builder.widget(createConnectedGui(64));
+
+        return builder.bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
 
@@ -710,5 +714,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
         public int getPriority() {
             return !locked || lockedFluid == null ? IFilter.noPriority() : IFilter.whitelistPriority(1);
         }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.FLUID;
+    }
+
+    @Override
+    public IFluidTank getTypeValue() {
+        return fluidTank;
     }
 }
