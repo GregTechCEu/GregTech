@@ -148,6 +148,22 @@ public class TricorderBehavior implements IItemBehaviour {
                                     metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId)))
                                             .setStyle(new Style().setColor(TextFormatting.BLUE))));
 
+            if (metaTileEntity.getOwner() != null) {
+                try {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner",
+                            new TextComponentTranslation(LocalizationUtils.format(
+                                    metaTileEntity.getWorld().getPlayerEntityByUUID(metaTileEntity.getOwner())
+                                            .getName()))
+                                                    .setStyle(new Style().setColor(TextFormatting.AQUA))));
+                } catch (NullPointerException e) {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_offline")
+                            .setStyle(new Style().setColor(TextFormatting.YELLOW)));
+                }
+            } else {
+                list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_null")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
+
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
             // fluid tanks
