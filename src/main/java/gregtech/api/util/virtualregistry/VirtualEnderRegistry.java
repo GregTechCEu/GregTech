@@ -71,7 +71,7 @@ public class VirtualEnderRegistry extends WorldSavedData {
     public static <T extends VirtualEntry> void deleteEntry(@Nullable UUID owner, EntryTypes<T> type, String name,
                                                             Predicate<T> shouldDelete) {
         T entry = getEntry(owner, type, name);
-        if (shouldDelete.test(entry))
+        if (entry != null && shouldDelete.test(entry))
             deleteEntry(owner, type, name);
     }
 
