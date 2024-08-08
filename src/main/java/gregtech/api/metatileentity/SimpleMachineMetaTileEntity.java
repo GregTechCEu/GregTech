@@ -593,7 +593,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("MachineData", writeConfigToTag());
         dataStick.setTagCompound(tag);
-        dataStick.setTranslatableName("gregtech.machine.import.data_stick.name");
+        dataStick.setStackDisplayName(
+                I18n.format("gregtech.machine.import.data_stick.name", I18n.format(getMetaFullName())));
         player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.import_copy_settings"), true);
         return true;
     }

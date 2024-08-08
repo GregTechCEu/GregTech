@@ -278,7 +278,8 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAE
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("MEInputHatch", writeConfigToTag());
         dataStick.setTagCompound(tag);
-        dataStick.setTranslatableName("gregtech.machine.me.fluid_import.data_stick.name");
+        dataStick.setStackDisplayName(
+                I18n.format("gregtech.machine.import.data_stick.name", I18n.format(getMetaFullName())));
         player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.import_copy_settings"), true);
         return true;
     }
