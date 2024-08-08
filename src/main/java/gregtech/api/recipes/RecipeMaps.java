@@ -160,6 +160,9 @@ public final class RecipeMaps {
 
                             recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2))
                                     .buildAndRegister();
+
+                            recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.HighGradeSolderingAlloy.getFluid((int) (amount * 0.5)))
+                                    .buildAndRegister();
                         }
                     })
                     .onBuild(gregtechId("assembler_recycling"), recipeBuilder -> {
@@ -304,7 +307,7 @@ public final class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> BREWING_RECIPES = new RecipeMapBuilder<>("brewery",
             new SimpleRecipeBuilder().duration(128).EUt(4))
-                    .itemInputs(1)
+                    .itemInputs(2)
                     .fluidInputs(1)
                     .fluidOutputs(1)
                     .itemSlotOverlay(GuiTextures.BREWER_OVERLAY, false)
@@ -495,10 +498,14 @@ public final class RecipeMaps {
                                             (GTValues.L / 2) * recipeBuilder.getSolderMultiplier())))
                                     .buildAndRegister();
 
+                            recipeBuilder.copy().fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L *
+                                    recipeBuilder.getSolderMultiplier()))).buildAndRegister();;
+
                             // Don't call buildAndRegister as we are mutating the original recipe and already in the
                             // middle of a buildAndRegister call.
                             // Adding a second call will result in duplicate recipe generation attempts
-                            recipeBuilder.fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L *
+
+                            recipeBuilder.fluidInputs(Materials.HighGradeSolderingAlloy.getFluid(Math.max(1, (GTValues.L / 4) *
                                     recipeBuilder.getSolderMultiplier())));
                         }
                     })
@@ -629,13 +636,21 @@ public final class RecipeMaps {
                                     .duration((int) (duration * 1.5))
                                     .buildAndRegister();
 
+                            recipeBuilder
+                                    .copy()
+                                    .fluidInputs(Materials.Lubricant.getFluid(GTUtility.safeCastLongToInt(Math.max(1,
+                                            Math.min(250, duration * eut / 1280)))))
+                                    .duration(Math.max(1, duration))
+                                    .buildAndRegister();
+
                             // Don't call buildAndRegister as we are mutating the original recipe and already in the
                             // middle of a buildAndRegister call.
                             // Adding a second call will result in duplicate recipe generation attempts
+
                             recipeBuilder
-                                    .fluidInputs(Materials.Lubricant.getFluid(GTUtility.safeCastLongToInt(Math.max(1,
-                                            Math.min(250, duration * eut / 1280)))))
-                                    .duration(Math.max(1, duration));
+                                    .fluidInputs(Materials.MolybdeniteLubricant.getFluid(GTUtility.safeCastLongToInt(Math.max(1,
+                                            Math.min(125, duration * eut / 2560)))))
+                                    .duration(Math.max(1, (int) (duration * 0.8)));
 
                         }
                     })

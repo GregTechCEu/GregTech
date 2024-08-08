@@ -102,5 +102,11 @@ public class ChemicalBathRecipes {
                 .fluidInputs(DistilledWater.getFluid(100))
                 .output(ingot, Silicon)
                 .duration(125).EUt(VA[MV]).buildAndRegister();
+
+        CHEMICAL_BATH_RECIPES.recipeBuilder()
+                .input(dust, Molybdenite)
+                .fluidInputs(Chrome.getFluid(72))
+                .output(dust, ChromiumDopedMolybdenite)
+                .duration(120).EUt(VA[EV]).buildAndRegister();
     }
 }

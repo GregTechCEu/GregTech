@@ -470,6 +470,7 @@ public class Materials {
     public static Material Pyrochlore;
     public static Material RTMAlloy;
     public static Material IlmeniteSlag;
+    public static Material HighGradeSolderingAlloy;
 
     /**
      * Organic chemistry
@@ -690,6 +691,7 @@ public class Materials {
     public static Material BauxiteSludge;
     public static Material DecalcifiedBauxiteSludge;
     public static Material BauxiteSlag;
+    public static Material MolybdeniteLubricant;
 
     /**
      * Second Degree Compounds
@@ -747,6 +749,7 @@ public class Materials {
     public static Material SaltWater;
     public static Material Clay;
     public static Material Redstone;
+    public static Material ChromiumDopedMolybdenite;
 
     /**
      * Third Degree Materials
