@@ -1407,9 +1407,6 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessRecipe("fueled_jetpack_nbt", ArmorItems.FUELED_JETPACK.getStack(),
                 ArmorItems.FUELED_JETPACK.getStack());
 
-        ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(),
-                SEMIFLUID_JETPACK.getStackForm());
-
         // ClipBoard
         ModHandler.addShapelessNBTClearingRecipe("clipboard_nbt", CLIPBOARD.getStackForm(), CLIPBOARD.getStackForm());
     }

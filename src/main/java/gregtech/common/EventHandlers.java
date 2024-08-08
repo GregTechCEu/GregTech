@@ -8,7 +8,6 @@ import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
@@ -17,8 +16,6 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
