@@ -47,6 +47,7 @@ import gregtech.common.metatileentities.multi.MetaTileEntityMultiblockTank;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.MetaTileEntityPumpHatch;
+import gregtech.common.metatileentities.multi.MetaTileEntitySpentFuelPool;
 import gregtech.common.metatileentities.multi.MetaTileEntityTankValve;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
@@ -57,6 +58,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityDistillatio
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFluidDrill;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityFusionReactor;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityGasCentrifuge;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityImplosionCompressor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeChemicalReactor;
@@ -332,6 +334,9 @@ public class MetaTileEntities {
     public static MetaTileEntityNetworkSwitch NETWORK_SWITCH;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
+    public static MetaTileEntityHeatExchanger HEAT_EXCHANGER;
+    public static MetaTileEntitySpentFuelPool SPENT_FUEL_POOL;
+    public static MetaTileEntityGasCentrifuge GAS_CENTRIFUGE;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -773,6 +778,10 @@ public class MetaTileEntities {
                 new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
+
+        SPENT_FUEL_POOL = registerMetaTileEntity(1044, new MetaTileEntitySpentFuelPool(gregtechId("spent_fuel_pool")));
+        HEAT_EXCHANGER = registerMetaTileEntity(1045, new MetaTileEntityHeatExchanger(gregtechId("heat_exchanger")));
+        GAS_CENTRIFUGE = registerMetaTileEntity(1046, new MetaTileEntityGasCentrifuge(gregtechId("gas_centrifuge")));
 
         // MISC MTE's START: IDs 1150-2000
 
