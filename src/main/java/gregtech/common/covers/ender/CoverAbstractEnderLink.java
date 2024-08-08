@@ -330,60 +330,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
             T entry = VirtualEnderRegistry.getEntry(getOwner(), this.type, name);
             String key = String.format("entry#%s_description", entry.getColorStr());
-            var entryDescriptionSH = new PanelSyncHandler(mainPanel,
-                    (syncManager1, syncHandler) -> GTGuis.createPopupPanel(key, 168, 36 + 6)
-                            .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
-                                    .color(UI_TITLE_COLOR)
-                                    .asWidget()
-                                    .left(4)
-                                    .top(6))
-                            .child(new TextFieldWidget()
-                                    .setTextColor(Color.WHITE.darker(1))
-                                    .widthRel(0.95f)
-                                    .height(18)
-                                    .value(new StringSyncValue(entry::getDescription, string -> {
-                                        entry.setDescription(string);
-                                        if (syncHandler.isPanelOpen()) {
-                                            syncHandler.closePanel();
-                                        }
-                                    }))
-                                    .alignX(0.5f)
-                                    .bottom(6))) {
-
-                @Override
-                public void openPanel() {
-                    opened.add(getKey());
-                    if (getSyncManager().isClient())
-                        EntrySelectorSH.this.syncToServer(3, buffer -> {
-                            buffer.writeBoolean(true);
-                            NetworkUtils.writeStringSafe(buffer, getKey());
-                        });
-                    super.openPanel();
-                }
-
-                @Override
-                public void closePanel() {
-                    opened.remove(getKey());
-                    if (getSyncManager().isClient())
-                        EntrySelectorSH.this.syncToServer(3, buffer -> {
-                            buffer.writeBoolean(false);
-                            NetworkUtils.writeStringSafe(buffer, getKey());
-                        });
-                    super.closePanel();
-                }
-
-                @Override
-                @SuppressWarnings("UnstableApiUsage")
-                public void closePanelInternal() {
-                    opened.remove(getKey());
-                    if (getSyncManager().isClient())
-                        EntrySelectorSH.this.syncToServer(3, buffer -> {
-                            buffer.writeBoolean(false);
-                            NetworkUtils.writeStringSafe(buffer, getKey());
-                        });
-                    super.closePanelInternal();
-                }
-            };
+            var entryDescriptionSH = new EntryDescriptionSH(mainPanel, key, entry);
             syncManager.syncValue(key, isPrivate ? 1 : 0, entryDescriptionSH);
 
             return new Row()
@@ -441,8 +388,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         public void closePanel() {
             var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(panelName);
             for (var key : opened) {
-                var handler = manager.getSyncHandler(key);
-                if (handler instanceof PanelSyncHandler psh) {
+                if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
                     psh.closePanel();
                 }
             }
@@ -454,8 +400,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         public void closePanelInternal() {
             var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(panelName);
             for (var key : opened) {
-                var handler = manager.getSyncHandler(key);
-                if (handler instanceof PanelSyncHandler psh) {
+                if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
                     psh.closePanel();
                 }
             }
@@ -463,18 +408,84 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         @Override
+        public void readOnClient(int i, PacketBuffer packetBuffer) throws IOException {
+            if (i == 3) {
+                handleTracking(packetBuffer);
+            }
+            super.readOnClient(i, packetBuffer);
+        }
+
+        @Override
         public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
             if (i == 3) {
-                boolean add = packetBuffer.readBoolean();
-                String key = NetworkUtils.readStringSafe(packetBuffer);
-                if (key != null) {
-                    if (add) opened.add(key);
-                    else opened.remove(key);
-                }
+                handleTracking(packetBuffer);
             }
             super.readOnServer(i, packetBuffer);
             if (i == 1) {
                 deleteEntry(NetworkUtils.readStringSafe(packetBuffer));
+            }
+        }
+
+        private void handleTracking(PacketBuffer buffer) {
+            boolean add = buffer.readBoolean();
+            String key = NetworkUtils.readStringSafe(buffer);
+            if (key != null) {
+                if (add) opened.add(key);
+                else opened.remove(key);
+            }
+        }
+
+        private class EntryDescriptionSH extends PanelSyncHandler {
+
+            /**
+             * Creates a PanelSyncHandler
+             *
+             * @param mainPanel the main panel of the current GUI
+             */
+            public EntryDescriptionSH(ModularPanel mainPanel, String key, VirtualEntry entry) {
+                super(mainPanel, (syncManager, syncHandler) -> defaultPanel(syncHandler, key, entry));
+            }
+
+            private static ModularPanel defaultPanel(@NotNull PanelSyncHandler syncHandler, String key,
+                                                     VirtualEntry entry) {
+                return GTGuis.createPopupPanel(key, 168, 36 + 6)
+                        .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
+                                .color(UI_TITLE_COLOR)
+                                .asWidget()
+                                .left(4)
+                                .top(6))
+                        .child(new TextFieldWidget()
+                                .setTextColor(Color.WHITE.darker(1))
+                                .widthRel(0.95f)
+                                .height(18)
+                                .value(new StringSyncValue(entry::getDescription, string -> {
+                                    entry.setDescription(string);
+                                    if (syncHandler.isPanelOpen()) {
+                                        syncHandler.closePanel();
+                                    }
+                                }))
+                                .alignX(0.5f)
+                                .bottom(6));
+            }
+
+            @Override
+            public void openPanel() {
+                opened.add(getKey());
+                EntrySelectorSH.this.sync(3, buffer -> {
+                    buffer.writeBoolean(true);
+                    NetworkUtils.writeStringSafe(buffer, getKey());
+                });
+                super.openPanel();
+            }
+
+            @Override
+            public void closePanel() {
+                opened.remove(getKey());
+                EntrySelectorSH.this.sync(3, buffer -> {
+                    buffer.writeBoolean(false);
+                    NetworkUtils.writeStringSafe(buffer, getKey());
+                });
+                super.closePanel();
             }
         }
 
