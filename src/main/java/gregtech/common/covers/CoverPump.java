@@ -405,8 +405,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
         this.bucketMode = BucketMode.VALUES[tagCompound.getInteger("BucketMode")];
-        this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        this.fluidFilterContainer.handleLegacyNBT(tagCompound);
+        var filterTag = tagCompound.getCompoundTag("Filter");
+        if (filterTag.hasKey("IsBlacklist"))
+            this.fluidFilterContainer.handleLegacyNBT(filterTag);
+        else
+            this.fluidFilterContainer.deserializeNBT(filterTag);
     }
 
     @Override
