@@ -640,5 +640,22 @@ public class UnknownCompositionMaterials {
 
         PCBCoolant = new Material.Builder(1650, gregtechId("pcb_coolant"))
                 .fluid().color(0xD5D69C).build();
+
+        BauxiteSlurry = new Material.Builder(1651, gregtechId("bauxite_slurry"))
+                .fluid().color(0x051650).build();
+
+        CrackedBauxiteSlurry = new Material.Builder(1652, gregtechId("cracked_bauxite_slurry"))
+                .liquid(new FluidBuilder().temperature(775)).color(0x052C50).build();
+
+        BauxiteSludge = new Material.Builder(1653, gregtechId("bauxite_sludge"))
+                .fluid().color(0x563D2D).build();
+
+        DecalcifiedBauxiteSludge = new Material.Builder(1654, gregtechId("decalcified_bauxite_sludge"))
+                .fluid().color(0x6F2DA8).build();
+
+        BauxiteSlag = new Material.Builder(1655, gregtechId("bauxite_slag"))
+                .dust(1)
+                .color(0x0C0550).iconSet(SAND)
+                .build();
     }
 }

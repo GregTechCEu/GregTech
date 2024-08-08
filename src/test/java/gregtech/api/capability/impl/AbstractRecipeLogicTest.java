@@ -85,7 +85,7 @@ public class AbstractRecipeLogicTest {
         arl.setSpeedBonus(0.2);  // 20% faster than normal
 
         queryTestRecipe(arl);
-        MatcherAssert.assertThat(arl.recipeEUt, is((int) Math.round(initialEUt * 0.75)));
+        MatcherAssert.assertThat(arl.recipeEUt, is(Math.round(initialEUt * 0.75)));
         MatcherAssert.assertThat(arl.maxProgressTime, is((int) Math.round(initialDuration * 0.2)));
     }
 
@@ -105,7 +105,7 @@ public class AbstractRecipeLogicTest {
         // be able to parallel 2 times.
         MatcherAssert.assertThat(arl.parallelRecipesPerformed, is(2));
         // Because of the parallel, now the paralleled recipe EU/t should be back to 30 EU/t.
-        MatcherAssert.assertThat(arl.recipeEUt, is(30));
+        MatcherAssert.assertThat(arl.recipeEUt, is(30L));
         // Duration should be static regardless of parallels.
         MatcherAssert.assertThat(arl.maxProgressTime, is((int) Math.round(initialDuration * 0.2)));
     }
@@ -158,7 +158,7 @@ public class AbstractRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 

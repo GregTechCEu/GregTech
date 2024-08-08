@@ -88,7 +88,7 @@ public class Recipe {
     /**
      * if > 0 means EU/t consumed, if < 0 - produced
      */
-    private final int EUt;
+    private final long EUt;
 
     /**
      * If this Recipe is hidden from JEI
@@ -113,7 +113,7 @@ public class Recipe {
                   List<FluidStack> fluidOutputs,
                   @NotNull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
                   int duration,
-                  int EUt,
+                  long EUt,
                   boolean hidden,
                   boolean isCTRecipe,
                   IRecipePropertyStorage recipePropertyStorage,
@@ -702,7 +702,7 @@ public class Recipe {
         return duration;
     }
 
-    public int getEUt() {
+    public long getEUt() {
         return EUt;
     }
 

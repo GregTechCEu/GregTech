@@ -212,6 +212,7 @@ public class Materials {
     public static Material Phosphorus;
     public static Material Polonium;
     public static Material Platinum;
+    public static Material Plutonium;
     public static Material Plutonium239;
     public static Material Plutonium241;
     public static Material Potassium;
@@ -247,6 +248,7 @@ public class Materials {
     public static Material Titanium;
     public static Material Tritium;
     public static Material Tungsten;
+    public static Material Uranium;
     public static Material Uranium238;
     public static Material Uranium235;
     public static Material Vanadium;
@@ -467,6 +469,7 @@ public class Materials {
     public static Material NaquadriaSulfate;
     public static Material Pyrochlore;
     public static Material RTMAlloy;
+    public static Material IlmeniteSlag;
 
     /**
      * Organic chemistry
@@ -682,6 +685,11 @@ public class Materials {
     public static Material Lapotron;
     public static Material UUMatter;
     public static Material PCBCoolant;
+    public static Material BauxiteSlurry;
+    public static Material CrackedBauxiteSlurry;
+    public static Material BauxiteSludge;
+    public static Material DecalcifiedBauxiteSludge;
+    public static Material BauxiteSlag;
 
     /**
      * Second Degree Compounds
