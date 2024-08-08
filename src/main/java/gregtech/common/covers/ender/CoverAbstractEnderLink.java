@@ -49,8 +49,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -294,6 +296,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         private final EntryTypes<T> type;
         private final ModularPanel mainPanel;
+        private static final String panelName = "entry_selector";
+        private final Set<String> opened = new HashSet<>();
 
         protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
             super(mainPanel, EntrySelectorSH::defaultPanel);
@@ -302,7 +306,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         private static ModularPanel defaultPanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
-            return GTGuis.createPopupPanel("entry_selector", 168, 112);
+            return GTGuis.createPopupPanel(panelName, 168, 112);
         }
 
         @Override
@@ -325,9 +329,9 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
             T entry = VirtualEnderRegistry.getEntry(getOwner(), this.type, name);
-            String key = String.format("entry#%s_description:%d", entry.getColorStr(), isPrivate ? 1 : 0);
-            PanelSyncHandler entryDescriptionSH = syncManager.panel(key, mainPanel,
-                    (syncManager1, syncHandler) -> GTGuis.createPopupPanel("entry_description", 168, 36 + 6)
+            String key = String.format("entry#%s_description", entry.getColorStr());
+            var entryDescriptionSH = new PanelSyncHandler(mainPanel,
+                    (syncManager1, syncHandler) -> GTGuis.createPopupPanel(key, 168, 36 + 6)
                             .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
                                     .color(UI_TITLE_COLOR)
                                     .asWidget()
@@ -339,10 +343,48 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                     .height(18)
                                     .value(new StringSyncValue(entry::getDescription, string -> {
                                         entry.setDescription(string);
-                                        syncHandler.closePanel();
+                                        if (syncHandler.isPanelOpen()) {
+                                            syncHandler.closePanel();
+                                        }
                                     }))
                                     .alignX(0.5f)
-                                    .bottom(6)));
+                                    .bottom(6))) {
+
+                @Override
+                public void openPanel() {
+                    opened.add(getKey());
+                    if (getSyncManager().isClient())
+                        EntrySelectorSH.this.syncToServer(3, buffer -> {
+                            buffer.writeBoolean(true);
+                            NetworkUtils.writeStringSafe(buffer, getKey());
+                        });
+                    super.openPanel();
+                }
+
+                @Override
+                public void closePanel() {
+                    opened.remove(getKey());
+                    if (getSyncManager().isClient())
+                        EntrySelectorSH.this.syncToServer(3, buffer -> {
+                            buffer.writeBoolean(false);
+                            NetworkUtils.writeStringSafe(buffer, getKey());
+                        });
+                    super.closePanel();
+                }
+
+                @Override
+                @SuppressWarnings("UnstableApiUsage")
+                public void closePanelInternal() {
+                    opened.remove(getKey());
+                    if (getSyncManager().isClient())
+                        EntrySelectorSH.this.syncToServer(3, buffer -> {
+                            buffer.writeBoolean(false);
+                            NetworkUtils.writeStringSafe(buffer, getKey());
+                        });
+                    super.closePanelInternal();
+                }
+            };
+            syncManager.syncValue(key, isPrivate ? 1 : 0, entryDescriptionSH);
 
             return new Row()
                     .left(4)
@@ -396,7 +438,40 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         @Override
+        public void closePanel() {
+            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(panelName);
+            for (var key : opened) {
+                var handler = manager.getSyncHandler(key);
+                if (handler instanceof PanelSyncHandler psh) {
+                    psh.closePanel();
+                }
+            }
+            super.closePanel();
+        }
+
+        @Override
+        @SuppressWarnings("UnstableApiUsage")
+        public void closePanelInternal() {
+            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(panelName);
+            for (var key : opened) {
+                var handler = manager.getSyncHandler(key);
+                if (handler instanceof PanelSyncHandler psh) {
+                    psh.closePanel();
+                }
+            }
+            super.closePanelInternal();
+        }
+
+        @Override
         public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
+            if (i == 3) {
+                boolean add = packetBuffer.readBoolean();
+                String key = NetworkUtils.readStringSafe(packetBuffer);
+                if (key != null) {
+                    if (add) opened.add(key);
+                    else opened.remove(key);
+                }
+            }
             super.readOnServer(i, packetBuffer);
             if (i == 1) {
                 deleteEntry(NetworkUtils.readStringSafe(packetBuffer));

@@ -1,7 +1,6 @@
 package gregtech.api.util.virtualregistry;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
