@@ -4497,7 +4497,7 @@ gregtech.machine.muffle.off=Sound Muffling: Disabled
 gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 gregtech.machine.parallel_limit=Can run up to §b%d§r§7 Recipes at once.
 
-gregtech.machine.copy_paste.tooltip=Shift Left-click with Data Stick to copy settings, right-click to apply
+gregtech.machine.copy_paste.tooltip=Shift right-click with Data Stick to copy settings, right-click to apply
 gregtech.machine.import_copy_settings=Saved settings to Data Stick
 gregtech.machine.import_paste_settings=Applied settings from Data Stick
 gregtech.machine.import.data_stick.name=§oMachine Configuration Data
