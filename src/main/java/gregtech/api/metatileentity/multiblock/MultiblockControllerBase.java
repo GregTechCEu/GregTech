@@ -39,6 +39,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -82,6 +83,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
     private boolean structureFormed;
+    private int structureTier = 0;
 
     protected EnumFacing upwardsFacing = EnumFacing.NORTH;
     protected boolean isFlipped;
@@ -403,6 +405,33 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return Collections.unmodifiableList(multiblockParts);
     }
 
+    /**
+     * Grabs the current tier of the multi(whether in DummyWorld or Server) useful for whatever you want
+     */
+    public int getStructureTier() {
+        return this.structureTier;
+    }
+
+    /**
+     * sets the tier of the multi clamped between 1 and maxTier()
+     */
+    public void setStructureTier(int structureTier) {
+        if (this.structureTier != structureTier) {
+            this.structureTier = MathHelper.clamp(structureTier, 0, getMaxStructureTier());
+            if (getWorld() != null && !getWorld().isRemote) {
+                reinitializeStructurePattern();
+            }
+        }
+    }
+
+    /**
+     * Override if you are using the multiblock tiered system
+     * max tier of 0 means tiering is disabled
+     */
+    public int getMaxStructureTier() {
+        return 0;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
@@ -412,6 +441,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (data.hasKey("IsFlipped")) {
             this.isFlipped = data.getBoolean("IsFlipped");
         }
+
+        structureTier = data.getInteger("structureTier");
         this.reinitializeStructurePattern();
     }
 
@@ -420,6 +451,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         super.writeToNBT(data);
         data.setByte("UpwardsFacing", (byte) upwardsFacing.getIndex());
         data.setBoolean("IsFlipped", isFlipped);
+        data.setInteger("structureTier", structureTier);
         return data;
     }
 
@@ -429,6 +461,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         buf.writeBoolean(structureFormed);
         buf.writeByte(upwardsFacing.getIndex());
         buf.writeBoolean(isFlipped);
+        buf.writeInt(structureTier);
     }
 
     @Override
@@ -437,6 +470,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         this.structureFormed = buf.readBoolean();
         this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
         this.isFlipped = buf.readBoolean();
+        this.structureTier = buf.readInt();
     }
 
     @Override
