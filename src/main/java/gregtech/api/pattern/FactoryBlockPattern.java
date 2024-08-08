@@ -30,7 +30,7 @@ public class FactoryBlockPattern {
         structureDir[1] = stringDir;
         structureDir[2] = aisleDir;
         int flags = 0;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < this.structureDir.length; i++) {
             switch (structureDir[i]) {
                 case UP:
                 case DOWN:
