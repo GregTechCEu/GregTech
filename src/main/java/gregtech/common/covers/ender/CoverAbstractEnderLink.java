@@ -89,7 +89,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     protected final String createName() {
-        ;
         return identifier() + this.color;
     }
 
