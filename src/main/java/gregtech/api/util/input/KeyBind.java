@@ -1,6 +1,5 @@
 package gregtech.api.util.input;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.GTLog;
 import gregtech.core.network.packets.PacketKeyPressed;
