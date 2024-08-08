@@ -155,8 +155,10 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     }
 
     @Override
-    public void registerAbilities(@NotNull List<IPassthroughHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IPassthroughHatch> multiblockAbility,
+                                  @NotNull List<IPassthroughHatch> abilities) {
+        abilities.add(this);
     }
 
     @NotNull

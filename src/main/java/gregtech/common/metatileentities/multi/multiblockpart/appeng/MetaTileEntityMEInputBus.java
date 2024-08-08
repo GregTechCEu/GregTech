@@ -329,8 +329,10 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> list) {
-        list.add(this.actualImportItems);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IItemHandlerModifiable> multiblockAbility,
+                                  @NotNull List<IItemHandlerModifiable> abilities) {
+        abilities.add(this.actualImportItems);
     }
 
     @Override

@@ -74,8 +74,10 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void registerAbilities(List<IHPCAComponentHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IHPCAComponentHatch> multiblockAbility,
+                                  @NotNull List<IHPCAComponentHatch> abilities) {
+        abilities.add(this);
     }
 
     @Override

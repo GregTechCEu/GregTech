@@ -147,8 +147,10 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void registerAbilities(@NotNull List<IRotorHolder> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IRotorHolder> multiblockAbility,
+                                  @NotNull List<IRotorHolder> abilities) {
+        abilities.add(this);
     }
 
     @Override

@@ -85,8 +85,10 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public void registerAbilities(List<IObjectHolder> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IObjectHolder> multiblockAbility,
+                                  @NotNull List<IObjectHolder> abilities) {
+        abilities.add(this);
     }
 
     @Override

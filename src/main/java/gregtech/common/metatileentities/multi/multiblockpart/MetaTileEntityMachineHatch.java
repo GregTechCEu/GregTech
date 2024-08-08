@@ -52,8 +52,10 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(machineHandler);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IItemHandlerModifiable> multiblockAbility,
+                                  @NotNull List<IItemHandlerModifiable> abilities) {
+        abilities.add(machineHandler);
     }
 
     @Override

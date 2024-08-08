@@ -158,8 +158,10 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(List<IOpticalComputationHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IOpticalComputationHatch> multiblockAbility,
+                                  @NotNull List<IOpticalComputationHatch> abilities) {
+        abilities.add(this);
     }
 
     @Override

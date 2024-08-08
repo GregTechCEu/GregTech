@@ -112,8 +112,10 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.add(fluidTank);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IFluidTank> multiblockAbility,
+                                  @NotNull List<IFluidTank> abilities) {
+        abilities.add(fluidTank);
     }
 
     @Override

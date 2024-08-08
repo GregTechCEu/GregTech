@@ -498,8 +498,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(List<IMaintenanceHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IMaintenanceHatch> multiblockAbility,
+                                  @NotNull List<IMaintenanceHatch> abilities) {
+        abilities.add(this);
     }
 
     @Override

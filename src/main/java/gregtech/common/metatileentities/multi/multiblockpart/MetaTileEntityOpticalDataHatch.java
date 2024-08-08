@@ -135,8 +135,10 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public void registerAbilities(@NotNull List<IOpticalDataAccessHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IOpticalDataAccessHatch> multiblockAbility,
+                                  @NotNull List<IOpticalDataAccessHatch> abilities) {
+        abilities.add(this);
     }
 
     @Override

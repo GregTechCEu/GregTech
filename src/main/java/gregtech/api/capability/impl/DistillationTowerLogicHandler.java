@@ -94,7 +94,8 @@ public class DistillationTowerLogicHandler {
             if (part.getPos().getY() == y) {
                 List<IFluidTank> hatchTanks = new ObjectArrayList<>();
                 // noinspection unchecked
-                ((IMultiblockAbilityPart<IFluidTank>) part).registerAbilities(hatchTanks);
+                ((IMultiblockAbilityPart<IFluidTank>) part)
+                        .registerAbilities(MultiblockAbility.EXPORT_FLUIDS, hatchTanks);
                 orderedHandlerList.add(new FluidTankList(false, hatchTanks));
                 tankList.addAll(hatchTanks);
                 exportIndex++;

@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -111,8 +112,10 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     }
 
     @Override
-    public void registerAbilities(List<IMaintenanceHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IMaintenanceHatch> multiblockAbility,
+                                  @NotNull List<IMaintenanceHatch> abilities) {
+        abilities.add(this);
     }
 
     @Override

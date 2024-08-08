@@ -35,6 +35,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -153,8 +154,10 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
     }
 
     @Override
-    public void registerAbilities(List<IMufflerHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IMufflerHatch> multiblockAbility,
+                                  @NotNull List<IMufflerHatch> abilities) {
+        abilities.add(this);
     }
 
     @Override

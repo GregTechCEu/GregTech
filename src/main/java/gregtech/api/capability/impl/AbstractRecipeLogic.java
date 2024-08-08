@@ -36,6 +36,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -407,7 +408,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected boolean checkPreviousRecipe() {
         if (this.previousRecipe == null) return false;
         if (this.previousRecipe.getEUt() > this.getMaxVoltage()) return false;
-        return this.previousRecipe.matches(false, getInputInventory(), getInputTank());
+        return recipeMatch(this.previousRecipe, false);
     }
 
     /**
@@ -700,7 +701,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         if (checkOutputSpaceItems(recipe, getOutputInventory()) && checkOutputSpaceFluids(recipe, getOutputTank())) {
             this.isOutputsFull = false;
-            if (recipe.matches(true, importInventory, importFluids)) {
+            if (recipeMatch(recipe, true)) {
                 this.metaTileEntity.addNotifiedInput(importInventory);
                 return recipe;
             }
@@ -738,6 +739,44 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return false;
         }
         return true;
+    }
+
+    protected boolean recipeMatch(Recipe recipe, boolean shouldConsume) {
+        return recipe.matches(shouldConsume, getInputInventory(), getInputTank());
+    }
+
+    protected IItemHandlerModifiable gatherItems(IItemHandler inputInventory,
+                                                 IMultipleTankHandler inputFluids) {
+        List<IItemHandler> items = new ArrayList<>();
+
+        if (inputInventory instanceof ItemHandlerList list) {
+            items.addAll(list.getBackingHandlers());
+        } else {
+            items.add(inputInventory);
+        }
+
+        for (var tank : inputFluids.getFluidTanks()) {
+            if (tank.getDelegate() instanceof IItemHandler handler)
+                items.add(handler);
+        }
+
+        return new ItemHandlerList(items);
+    }
+
+    protected IMultipleTankHandler gatherFluids(IItemHandler inputInventory,
+                                                IMultipleTankHandler inputFluids) {
+        List<IFluidTank> fluids = new ArrayList<>(inputFluids.getFluidTanks());
+
+        if (inputInventory instanceof IMultipleTankHandler tankHandler) {
+            fluids.addAll(tankHandler.getFluidTanks());
+        } else if (inputInventory instanceof ItemHandlerList handlerList) {
+            for (IItemHandler handler : handlerList.getBackingHandlers()) {
+                if (handler instanceof IMultipleTankHandler tankHandler)
+                    fluids.addAll(tankHandler.getFluidTanks());
+            }
+        }
+
+        return new FluidTankList(inputFluids.allowSameFluidFill(), fluids);
     }
 
     /**

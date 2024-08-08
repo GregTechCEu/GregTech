@@ -195,8 +195,10 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IItemHandlerModifiable> multiblockAbility,
+                                  @NotNull List<IItemHandlerModifiable> abilities) {
+        abilities.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
     }
 
     @Override

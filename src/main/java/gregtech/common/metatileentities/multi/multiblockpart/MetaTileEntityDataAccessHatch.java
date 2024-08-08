@@ -213,8 +213,10 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public void registerAbilities(List<IDataAccessHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(
+                                  @NotNull MultiblockAbility<IDataAccessHatch> multiblockAbility,
+                                  @NotNull List<IDataAccessHatch> abilities) {
+        abilities.add(this);
     }
 
     @Override
