@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.items.armoritem.IGTArmor;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -32,6 +33,7 @@ import gregtech.common.blocks.MaterialItemBlock;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.OreItemBlock;
 import gregtech.common.blocks.StoneVariantBlock;
+import gregtech.common.items.ArmorItems;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.cable.BlockCable;
@@ -232,6 +234,9 @@ public class CommonProxy {
         for (IGTTool tool : ToolItems.getAllTools()) {
             registry.register(tool.get());
         }
+        for (IGTArmor armor : ArmorItems.getAllArmors()) {
+            registry.register(armor.get());
+        }
 
         GTRecipeManager.preLoad();
 
@@ -333,6 +338,7 @@ public class CommonProxy {
         MetaBlocks.registerOreDict();
         OreDictionaryLoader.init();
         MaterialInfoLoader.init();
+        ArmorItems.registerLegacyConversionRecipes();
 
         // post an event for addons to modify unification data before base GT registers recycling recipes
         MinecraftForge.EVENT_BUS.post(new GregTechAPI.RegisterEvent<>(null, ItemMaterialInfo.class));
