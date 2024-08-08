@@ -358,7 +358,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.copy_paste.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip.2"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
