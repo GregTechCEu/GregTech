@@ -24,8 +24,11 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.QuantumFluidRendererWidget;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 
@@ -59,6 +62,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -325,6 +334,33 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_covers"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        var autoOutput = new BooleanSyncValue(this::isAutoOutputFluids, this::setAutoOutputFluids);
+        var isLocked = new BooleanSyncValue(this::isLocked, this::setLocked);
+        var isVoiding = new BooleanSyncValue(this::isVoiding, this::setVoiding);
+
+        return GTGuis.createQuantumPanel(this)
+                .child(GTGuis.createQuantumDisplay("gregtech.gui.fluid_amount",
+                        () -> {
+                            var f = fluidTank.getFluid();
+                            if (f == null) return "";
+                            return IKey.lang(f.getUnlocalizedName()).get();
+                        },
+                        textWidget -> fluidTank.getFluid() != null,
+                        () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
+                .child(GTGuis.createQuantumIO(importItems, exportItems))
+                .child(new QuantumFluidRendererWidget(fluidTank)
+                        .pos(148, 41))
+                .child(GTGuis.createQuantumButtonRow(true, autoOutput, isLocked, isVoiding))
+                .child(SlotGroupWidget.playerInventory().left(7));
     }
 
     @Override
