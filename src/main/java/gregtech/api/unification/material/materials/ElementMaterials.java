@@ -306,8 +306,11 @@ public class ElementMaterials {
                 .build();
 
         Hafnium = new Material.Builder(42, gregtechId("hafnium"))
+                .ingot()
                 .color(0x99999A).iconSet(SHINY)
                 .element(Elements.Hf)
+                .blast(b -> b.temp(2227, GasTier.HIGH)
+                        .blastStats(GTValues.VA[GTValues.EV], 2000))
                 .build();
 
         Hassium = new Material.Builder(43, gregtechId("hassium"))
@@ -911,8 +914,11 @@ public class ElementMaterials {
                 .build();
 
         Zirconium = new Material.Builder(123, gregtechId("zirconium"))
+                .ingot()
                 .color(0xC8FFFF).iconSet(METALLIC)
                 .element(Elements.Zr)
+                .blast(b -> b.temp(2125, GasTier.MID)
+                        .blastStats(GTValues.VA[GTValues.EV], 1200))
                 .build();
 
         Naquadah = new Material.Builder(124, gregtechId("naquadah"))

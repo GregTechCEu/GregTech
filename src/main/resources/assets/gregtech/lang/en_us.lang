@@ -1831,6 +1831,13 @@ gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
 gregtech.material.ilmenite_slag=Ilmenite Slag
+gregtech.material.zircon=Zircon
+gregtech.material.zirconia=Zirconia
+gregtech.material.zirconium_tetrachloride=Zirconium Tetrachloride
+gregtech.material.hafnia=Hafnia
+gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
+gregtech.material.zircaloy_4=Zircaloy-4
+gregtech.material.inconel_718=Inconel-718
 
 
 # Organic Chemistry Materials
