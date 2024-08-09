@@ -4,6 +4,8 @@ import gregtech.api.worldgen.config.WorldGenRegistry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -26,6 +28,7 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
         DimensionPropertyList list = castValue(value);
 
