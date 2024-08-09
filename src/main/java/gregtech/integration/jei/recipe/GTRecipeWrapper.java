@@ -365,6 +365,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                                 } else if (mouseButton == 1) {
                                     // decrement tier if right click
                                     if (--state < minTier) state = maxTier;
+                                } else if (mouseButton == 2) {
+                                    // reset tier if middle click
+                                    state = minTier;
                                 } else return false;
                                 text.setCurrentText(GTValues.VNF[state]);
                                 text.setState(state);
