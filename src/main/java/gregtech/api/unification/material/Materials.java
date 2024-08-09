@@ -475,8 +475,6 @@ public class Materials {
     public static Material ZirconiumTetrachloride;
     public static Material Hafnia;
     public static Material HafniumTetrachloride;
-    public static Material ImpureHafnium;
-    public static Material HafniumTetraiodide;
     public static Material Zircaloy4;
     public static Material Inconel718;
 

@@ -358,8 +358,6 @@ public class ElementMaterials {
                 .build();
 
         Iodine = new Material.Builder(49, gregtechId("iodine"))
-                .dust()
-                .gas(new FluidBuilder().temperature(457))
                 .color(0x2C344F).iconSet(SHINY)
                 .element(Elements.I)
                 .build();

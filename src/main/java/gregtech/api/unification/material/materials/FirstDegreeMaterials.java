@@ -1089,20 +1089,7 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
                 .build();
 
-        ImpureHafnium = new Material.Builder(389, gregtechId("impure_hafnium"))
-                .dust()
-                .color(0x60606B).iconSet(METALLIC)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Hafnium, 1)
-                .build()
-                .setFormula("Hf?", true);
-
-        HafniumTetraiodide = new Material.Builder(390, gregtechId("hafnium_tetraiodide"))
-                .dust()
-                .color(0xB3694F).iconSet(ROUGH)
-                .flags(DISABLE_DECOMPOSITION)
-                .components(Hafnium, 1, Iodine, 4)
-                .build();
+        /* Free IDs: 389-390 */
 
         Zircaloy4 = new Material.Builder(391, gregtechId("zircaloy_4"))
                 .ingot()

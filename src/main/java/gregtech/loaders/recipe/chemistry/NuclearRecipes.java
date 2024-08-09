@@ -1,7 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.common.items.MetaItems;
-
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -83,29 +81,8 @@ public class NuclearRecipes {
         BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[EV]).blastFurnaceTemp(1773)
                 .input(dust, HafniumTetrachloride, 5)
                 .input(dust, Magnesium, 2)
-                .output(dust, ImpureHafnium)
+                .output(dust, Hafnium)
                 .output(dust, MagnesiumChloride, 6)
-                .buildAndRegister();
-
-        // Hf + 4I -> HfI4
-        CHEMICAL_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
-                .input(dust, ImpureHafnium)
-                .input(dust, Iodine, 4)
-                .output(dust, HafniumTetraiodide, 5)
-                .buildAndRegister();
-
-        // HfI4 -> Hf + 4I
-        BLAST_RECIPES.recipeBuilder().duration(2000).EUt(VA[EV]).blastFurnaceTemp(2227)
-                .input(dust, HafniumTetraiodide, 5)
-                .fluidInputs(Argon.getFluid(50))
-                .output(ingotHot, Hafnium)
-                .fluidOutputs(Iodine.getFluid(L * 4))
-                .buildAndRegister();
-
-        VACUUM_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL)
-                .fluidInputs(Iodine.getFluid(L))
-                .output(dust, Iodine)
                 .buildAndRegister();
     }
 }
