@@ -78,10 +78,10 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         // HfCl4 + 2Mg -> Hf + 2MgCl2
-        BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[EV]).blastFurnaceTemp(1773)
+        BLAST_RECIPES.recipeBuilder().duration(2000).EUt(VA[EV]).blastFurnaceTemp(2227)
                 .input(dust, HafniumTetrachloride, 5)
                 .input(dust, Magnesium, 2)
-                .output(dust, Hafnium)
+                .output(ingotHot, Hafnium)
                 .output(dust, MagnesiumChloride, 6)
                 .buildAndRegister();
     }
