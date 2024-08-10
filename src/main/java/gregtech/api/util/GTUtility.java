@@ -54,7 +54,6 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
@@ -64,6 +63,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -446,18 +446,20 @@ public class GTUtility {
         return compound;
     }
 
-    public static NonNullList<ItemStack> copyStackList(List<ItemStack> itemStacks) {
-        ItemStack[] stacks = new ItemStack[itemStacks.size()];
-        for (int i = 0; i < itemStacks.size(); i++) {
-            stacks[i] = copy(itemStacks.get(i));
+    public static @NotNull List<@NotNull ItemStack> copyStackList(@NotNull List<@NotNull ItemStack> itemStacks) {
+        List<ItemStack> list = new ArrayList<>(itemStacks.size());
+        for (ItemStack itemStack : itemStacks) {
+            list.add(copy(itemStack));
         }
-        return NonNullList.from(ItemStack.EMPTY, stacks);
+        return list;
     }
 
-    public static List<FluidStack> copyFluidList(List<FluidStack> fluidStacks) {
-        FluidStack[] stacks = new FluidStack[fluidStacks.size()];
-        for (int i = 0; i < fluidStacks.size(); i++) stacks[i] = fluidStacks.get(i).copy();
-        return Lists.newArrayList(stacks);
+    public static @NotNull List<@NotNull FluidStack> copyFluidList(@NotNull List<@NotNull FluidStack> fluidStacks) {
+        List<FluidStack> list = new ArrayList<>(fluidStacks.size());
+        for (FluidStack stack : fluidStacks) {
+            list.add(stack.copy());
+        }
+        return list;
     }
 
     /**
@@ -466,8 +468,7 @@ public class GTUtility {
      * @param stack item stack for copying
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
      */
-    @NotNull
-    public static ItemStack copy(@NotNull ItemStack stack) {
+    public static @NotNull ItemStack copy(@NotNull ItemStack stack) {
         return stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
     }
 
@@ -820,9 +821,7 @@ public class GTUtility {
             if (tab == null || tab == CreativeTabs.SEARCH) continue;
             item.getSubItems(tab, subItems);
         }
-        Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
-        set.addAll(subItems);
-        return set;
+        return new ObjectOpenCustomHashSet<>(subItems, ItemStackHashStrategy.comparingItemDamageCount());
     }
 
     /**

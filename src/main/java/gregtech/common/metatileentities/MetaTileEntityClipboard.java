@@ -219,7 +219,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
+    public void getDrops(@NotNull List<@NotNull ItemStack> dropsList, @Nullable EntityPlayer harvester) {
         dropsList.clear();
         dropsList.add(this.getClipboard());
     }
@@ -258,7 +258,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
             World world = this.getWorld(); // Same here
 
-            NonNullList<ItemStack> drops = NonNullList.create();
+            List<ItemStack> drops = new ArrayList<>();
             getDrops(drops, player);
 
             Block.spawnAsEntity(getWorld(), pos, drops.get(0));

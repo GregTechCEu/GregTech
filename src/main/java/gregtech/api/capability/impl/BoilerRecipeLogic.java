@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -30,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.BOILER_HEAT;
 import static gregtech.api.capability.GregtechDataCodes.BOILER_LAST_TICK_STEAM;
@@ -51,7 +49,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     public BoilerRecipeLogic(MetaTileEntityLargeBoiler tileEntity) {
         super(tileEntity, null);
         this.fluidOutputs = Collections.emptyList();
-        this.itemOutputs = NonNullList.create();
+        this.itemOutputs = Collections.emptyList();
     }
 
     @Override
@@ -80,7 +78,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
         // can optimize with an override of checkPreviousRecipe() and a check here
 
         IMultipleTankHandler importFluids = boiler.getImportFluids();
-        List<ItemStack> dummyList = NonNullList.create();
         boolean didStartRecipe = false;
 
         for (IFluidTank fluidTank : importFluids.getFluidTanks()) {
@@ -88,7 +85,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
             if (fuelStack == null || CommonFluidFilters.BOILER_FLUID.test(fuelStack)) continue;
 
             Recipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(
-                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
+                    GTValues.V[GTValues.MAX], Collections.emptyList(), Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (dieselRecipe != null &&
                     fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
@@ -102,7 +99,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
             }
 
             Recipe denseFuelRecipe = RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.findRecipe(
-                    GTValues.V[GTValues.MAX], dummyList, Collections.singletonList(fuelStack));
+                    GTValues.V[GTValues.MAX], Collections.emptyList(), Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (denseFuelRecipe != null &&
                     fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
