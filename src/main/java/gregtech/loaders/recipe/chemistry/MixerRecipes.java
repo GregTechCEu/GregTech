@@ -594,5 +594,23 @@ public class MixerRecipes {
                 .circuitMeta(1)
                 .output(dust, RTMAlloy, 7)
                 .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[EV])
+                .input(dust, Zirconium, 16)
+                .input(dust, Tin, 2)
+                .input(dust, Chrome, 1)
+                .circuitMeta(1)
+                .output(dust, Zircaloy4, 19)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[EV])
+                .input(dust, Nickel, 5)
+                .input(dust, Chrome, 2)
+                .input(dust, Iron, 2)
+                .input(dust, Niobium)
+                .input(dust, Molybdenum)
+                .circuitMeta(4)
+                .output(dust, Inconel718, 11)
+                .buildAndRegister();
     }
 }

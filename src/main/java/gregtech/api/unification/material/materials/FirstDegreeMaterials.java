@@ -166,7 +166,12 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        // FREE ID 270
+        Zircon = new Material.Builder(270, gregtechId("zircon"))
+                .gem().ore()
+                .color(0xC31313)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
+                .build();
 
         Coal = new Material.Builder(271, gregtechId("coal"))
                 .gem(1, 1600).ore(2, 1) // default coal burn time in vanilla
@@ -626,7 +631,12 @@ public class FirstDegreeMaterials {
                 .components(Antimony, 2, Sulfur, 3)
                 .build();
 
-        // Free ID 326
+        Zirconia = new Material.Builder(326, gregtechId("zirconia"))
+                .dust()
+                .color(0x689F9F).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Oxygen, 2)
+                .build();
 
         Tetrahedrite = new Material.Builder(327, gregtechId("tetrahedrite"))
                 .dust().ore()
@@ -821,9 +831,19 @@ public class FirstDegreeMaterials {
                 .components(Copper, 2, Sulfur, 1)
                 .build();
 
-        // Free ID 349
+        ZirconiumTetrachloride = new Material.Builder(349, gregtechId("zirconium_tetrachloride"))
+                .dust()
+                .color(0x689FBF).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Chlorine, 4)
+                .build();
 
-        // Free ID 350
+        Hafnia = new Material.Builder(350, gregtechId("hafnia"))
+                .dust()
+                .color(0x39393A).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1, Oxygen, 2)
+                .build();
 
         GalliumArsenide = new Material.Builder(351, gregtechId("gallium_arsenide"))
                 .ingot(1)
@@ -872,6 +892,7 @@ public class FirstDegreeMaterials {
         MagnesiumChloride = new Material.Builder(357, gregtechId("magnesium_chloride"))
                 .dust(1)
                 .color(0xD40D5C)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Magnesium, 1, Chlorine, 2)
                 .build();
 
@@ -1031,7 +1052,12 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10)
                 .build();
 
-        // Free ID 383
+        HafniumTetrachloride = new Material.Builder(383, gregtechId("hafnium_tetrachloride"))
+                .dust()
+                .color(0x69699A).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1, Chlorine, 4)
+                .build();
 
         GlauconiteSand = new Material.Builder(384, gregtechId("glauconite_sand"))
                 .dust().ore(3, 1)
@@ -1063,11 +1089,15 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
                 .build();
 
-        // Free ID 389
+        /* Free IDs: 389-390 */
 
-        // Free ID 390
-
-        // Free ID 391
+        Zircaloy4 = new Material.Builder(391, gregtechId("zircaloy_4"))
+                .ingot()
+                .color(0x8A6E68).iconSet(METALLIC)
+                .components(Zirconium, 16, Tin, 2, Chrome, 1)
+                .blast(b -> b.temp(2123, GasTier.MID)
+                        .blastStats(GTValues.VA[EV]))
+                .build();
 
         Talc = new Material.Builder(392, gregtechId("talc"))
                 .dust().ore(2, 1)
@@ -1537,7 +1567,13 @@ public class FirstDegreeMaterials {
                 .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
 
-        // FREE ID 450
+        Inconel718 = new Material.Builder(450, gregtechId("inconel_718"))
+                .ingot()
+                .color(0x566570).iconSet(SHINY)
+                .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
+                .blast(b -> b.temp(2622, GasTier.LOW)
+                        .blastStats(GTValues.VA[HV]))
+                .build();
 
         RTMAlloy = new Material.Builder(451, gregtechId("rtm_alloy"))
                 .ingot().fluid()
