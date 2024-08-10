@@ -18,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
@@ -29,6 +28,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -147,7 +147,7 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, itemStackHandler);
     }
 }

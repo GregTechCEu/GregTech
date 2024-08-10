@@ -18,7 +18,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -99,8 +98,8 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
             }
             if (waterCount == WATER_CHECK_SIZE) {
                 LootTable table = world.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING);
-                NonNullList<ItemStack> itemStacks = NonNullList.create();
-                itemStacks.addAll(table.generateLootForPools(world.rand, new LootContext.Builder(world).build()));
+                List<ItemStack> itemStacks = table.generateLootForPools(world.rand,
+                        new LootContext.Builder(world).build());
                 if (GTTransferUtils.addItemsToItemHandler(exportItems, true, itemStacks)) {
                     GTTransferUtils.addItemsToItemHandler(exportItems, false, itemStacks);
                     energyContainer.removeEnergy(energyAmountPerFish);

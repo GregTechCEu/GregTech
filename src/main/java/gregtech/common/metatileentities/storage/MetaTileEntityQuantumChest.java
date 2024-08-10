@@ -31,7 +31,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
@@ -513,7 +512,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);
     }
 
