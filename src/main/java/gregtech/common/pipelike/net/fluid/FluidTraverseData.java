@@ -13,6 +13,7 @@ import gregtech.api.graphnet.pipenet.NodeLossCache;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
@@ -89,7 +90,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                         l * TEMPERATURE_EFFECT, temperatureSafe));
                 if (temperatureLogic.isUnderMinimum(fluidTemp)) {
                     result = NodeLossResult.combine(result, new NodeLossResult(pipe -> {
-                        PipeTileEntity tile = pipe.getTileEntityNoLoading();
+                        IWorldPipeNetTile tile = pipe.getTileEntityNoLoading();
                         if (tile != null) {
                             tile.playLossSound();
                             tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
@@ -100,7 +101,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                     }, MultLossOperator.EIGHTHS[2]));
                 } else if (temperatureLogic.isOverMaximum(fluidTemp)) {
                     result = NodeLossResult.combine(result, new NodeLossResult(GTValues.RNG.nextInt(4) == 0 ? pipe -> {
-                        PipeTileEntity tile = pipe.getTileEntityNoLoading();
+                        IWorldPipeNetTile tile = pipe.getTileEntityNoLoading();
                         if (tile != null) {
                             tile.playLossSound();
                             tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
@@ -110,7 +111,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                             tile.setNeighborsToFire();
                         }
                     } : pipe -> {
-                        PipeTileEntity tile = pipe.getTileEntityNoLoading();
+                        IWorldPipeNetTile tile = pipe.getTileEntityNoLoading();
                         if (tile != null) {
                             tile.playLossSound();
                             tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));

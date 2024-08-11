@@ -5,6 +5,7 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
+import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.traverse.util.MultLossOperator;
 import gregtech.api.util.EntityDamageUtil;
@@ -56,7 +57,7 @@ public interface ContainmentFailure {
         registerFailure(FluidState.GAS, stack -> {
             if (GTValues.RNG.nextInt(8) == 0) {
                 return new NodeLossResult(node -> {
-                    PipeTileEntity tile = node.getTileEntityNoLoading();
+                    IWorldPipeNetTile tile = node.getTileEntityNoLoading();
                     if (tile != null) {
                         tile.playLossSound();
                         tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.SMOKE_NORMAL, 7 + GTValues.RNG.nextInt(2));
@@ -67,7 +68,7 @@ public interface ContainmentFailure {
             } else {
                 return new NodeLossResult(node -> {
                     node.getNet().getWorld().setBlockToAir(node.getEquivalencyData());
-                    PipeTileEntity tile = node.getTileEntityNoLoading();
+                    IWorldPipeNetTile tile = node.getTileEntityNoLoading();
                     if (tile != null) {
                         tile.playLossSound();
                         tile.visuallyExplode();
@@ -79,7 +80,7 @@ public interface ContainmentFailure {
             }
         });
         registerFailure(FluidState.LIQUID, stack -> new NodeLossResult(node -> {
-            PipeTileEntity tile = node.getTileEntityNoLoading();
+            IWorldPipeNetTile tile = node.getTileEntityNoLoading();
             if (tile != null) {
                 tile.playLossSound();
                 for (EnumFacing facing : EnumFacing.HORIZONTALS) {
@@ -95,7 +96,7 @@ public interface ContainmentFailure {
         registerFailure(FluidState.PLASMA, stack -> {
             if (GTValues.RNG.nextInt(4) == 0) {
                 return new NodeLossResult(node -> {
-                    PipeTileEntity tile = node.getTileEntityNoLoading();
+                    IWorldPipeNetTile tile = node.getTileEntityNoLoading();
                     if (tile != null) {
                         tile.playLossSound();
                         tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.SMOKE_NORMAL, 1 + GTValues.RNG.nextInt(2));
@@ -106,7 +107,7 @@ public interface ContainmentFailure {
             } else {
                 return new NodeLossResult(node -> {
                     node.getNet().getWorld().setBlockToAir(node.getEquivalencyData());
-                    PipeTileEntity tile = node.getTileEntityNoLoading();
+                    IWorldPipeNetTile tile = node.getTileEntityNoLoading();
                     if (tile != null) {
                         tile.playLossSound();
                         tile.visuallyExplode();
@@ -120,7 +121,7 @@ public interface ContainmentFailure {
         registerFailure(FluidAttributes.ACID, stack -> {
             if (GTValues.RNG.nextInt(10) == 0) {
                 return new NodeLossResult(node -> {
-                    PipeTileEntity tile = node.getTileEntityNoLoading();
+                    IWorldPipeNetTile tile = node.getTileEntityNoLoading();
                     if (tile != null) {
                         tile.playLossSound();
                         boolean gaseous = stack.getFluid().isGaseous(stack);
@@ -133,7 +134,7 @@ public interface ContainmentFailure {
             } else {
                 return new NodeLossResult(node -> {
                     node.getNet().getWorld().setBlockToAir(node.getEquivalencyData());
-                    PipeTileEntity tile = node.getTileEntityNoLoading();
+                    IWorldPipeNetTile tile = node.getTileEntityNoLoading();
                     if (tile != null) {
                         tile.playLossSound();
                         boolean gaseous = stack.getFluid().isGaseous(stack);

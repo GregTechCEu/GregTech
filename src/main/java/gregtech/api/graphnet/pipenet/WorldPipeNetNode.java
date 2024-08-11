@@ -1,6 +1,7 @@
 package gregtech.api.graphnet.pipenet;
 
 import gregtech.api.graphnet.MultiNodeHelper;
+import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.worldnet.WorldNetNode;
 
@@ -20,14 +21,14 @@ public final class WorldPipeNetNode extends WorldNetNode {
     @Nullable
     MultiNodeHelper overlapHelper;
 
-    private WeakReference<PipeTileEntity> tileReference;
+    private WeakReference<IWorldPipeNetTile> tileReference;
 
     public WorldPipeNetNode(WorldPipeNet net) {
         super(net);
     }
 
-    public @NotNull PipeTileEntity getTileEntity() {
-        PipeTileEntity tile = getTileEntity(true);
+    public @NotNull IWorldPipeNetTile getTileEntity() {
+        IWorldPipeNetTile tile = getTileEntity(true);
         if (tile == null) {
             // something went very wrong, return the fallback to prevent NPEs and remove us from the net.
             getNet().removeNode(this);
@@ -37,19 +38,19 @@ public final class WorldPipeNetNode extends WorldNetNode {
     }
 
     @Nullable
-    public PipeTileEntity getTileEntityNoLoading() {
+    public IWorldPipeNetTile getTileEntityNoLoading() {
         return getTileEntity(false);
     }
 
-    private PipeTileEntity getTileEntity(boolean allowLoading) {
+    private IWorldPipeNetTile getTileEntity(boolean allowLoading) {
         if (tileReference != null) {
-            PipeTileEntity tile = tileReference.get();
+            IWorldPipeNetTile tile = tileReference.get();
             if (tile != null) return tile;
         }
         World world = getNet().getWorld();
         if (!allowLoading && !world.isBlockLoaded(getEquivalencyData())) return null;
         TileEntity tile = world.getTileEntity(getEquivalencyData());
-        if (tile instanceof PipeTileEntity pipe) {
+        if (tile instanceof IWorldPipeNetTile pipe) {
             this.tileReference = new WeakReference<>(pipe);
             return pipe;
         } else return null;

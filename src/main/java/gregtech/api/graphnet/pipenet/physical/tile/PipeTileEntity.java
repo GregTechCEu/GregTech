@@ -62,7 +62,7 @@ import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITickable {
+public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITickable, IWorldPipeNetTile {
 
     public static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
@@ -637,6 +637,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return overheatParticle != null && overheatParticle.isAlive();
     }
 
+    @Override
     public void spawnParticles(EnumFacing direction, EnumParticleTypes particleType, int particleCount) {
         if (getWorld() instanceof WorldServer server) {
             server.spawnParticle(particleType,
@@ -728,6 +729,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         }
     }
 
+    @Override
     public void dealAreaDamage(int size, Consumer<EntityLivingBase> damageFunction) {
         long timer = getOffsetTimer();
         if (timer >= this.nextDamageTime) {
