@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.pipenetold.longdist;
+package gregtech.api.longdist;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;

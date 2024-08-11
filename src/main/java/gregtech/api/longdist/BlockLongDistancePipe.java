@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.pipenetold.longdist;
+package gregtech.api.longdist;
 
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.creativetab.GTCreativeTabs;

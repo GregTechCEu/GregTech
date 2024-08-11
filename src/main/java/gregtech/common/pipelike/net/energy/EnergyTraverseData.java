@@ -15,7 +15,6 @@ import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 import gregtech.api.util.GTUtility;
-import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;

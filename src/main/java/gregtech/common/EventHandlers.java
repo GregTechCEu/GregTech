@@ -3,7 +3,7 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.block.IWalkingSpeedBonus;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.pipenetold.longdist.LongDistanceNetwork;
+import gregtech.api.longdist.LongDistanceNetwork;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;

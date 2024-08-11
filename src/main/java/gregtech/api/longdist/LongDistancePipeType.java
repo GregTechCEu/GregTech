@@ -1,7 +1,7 @@
-package gregtech.api.graphnet.pipenetold.longdist;
+package gregtech.api.longdist;
 
-import gregtech.common.pipelikeold.fluidpipe.longdistance.LDFluidPipeType;
-import gregtech.common.pipelikeold.itempipe.longdistance.LDItemPipeType;
+import gregtech.common.pipelike.longdistance.fluid.LDFluidPipeType;
+import gregtech.common.pipelike.longdistance.item.LDItemPipeType;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

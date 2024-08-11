@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.pipenetold.longdist;
+package gregtech.api.longdist;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.INeighborCache;

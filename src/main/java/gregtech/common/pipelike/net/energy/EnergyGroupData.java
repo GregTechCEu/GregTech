@@ -1,4 +1,4 @@
-package gregtech.common.pipelikeold.cable.net;
+package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.graphnet.AbstractGroupData;
 

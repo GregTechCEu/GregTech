@@ -1,6 +1,6 @@
-package gregtech.common.pipelikeold.fluidpipe.longdistance;
+package gregtech.common.pipelike.longdistance.fluid;
 
-import gregtech.api.graphnet.pipenetold.longdist.LongDistancePipeType;
+import gregtech.api.longdist.LongDistancePipeType;
 import gregtech.common.ConfigHolder;
 
 public class LDFluidPipeType extends LongDistancePipeType {

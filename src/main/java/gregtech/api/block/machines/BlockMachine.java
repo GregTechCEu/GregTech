@@ -6,7 +6,7 @@ import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
-import gregtech.api.graphnet.pipenetold.IBlockAppearance;
+import gregtech.client.utils.IBlockAppearance;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
