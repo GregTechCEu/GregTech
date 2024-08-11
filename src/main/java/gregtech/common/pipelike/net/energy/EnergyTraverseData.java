@@ -46,7 +46,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     }
 
     @Override
-    public boolean prepareForPathWalk(FlowWorldPipeNetPath path, long flow) {
+    public boolean prepareForPathWalk(@NotNull FlowWorldPipeNetPath path, long flow) {
         if (flow <= 0) return true;
         this.pathVoltage = startVoltage;
         this.overVoltageInformation.clear();
@@ -55,7 +55,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     }
 
     @Override
-    public ReversibleLossOperator traverseToNode(WorldPipeNetNode node, long flowReachingNode) {
+    public ReversibleLossOperator traverseToNode(@NotNull WorldPipeNetNode node, long flowReachingNode) {
         VoltageLimitLogic limitLogic = node.getData().getLogicEntryNullable(VoltageLimitLogic.INSTANCE);
         if (limitLogic != null) {
             long voltage = limitLogic.getValue();
@@ -92,7 +92,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     }
 
     @Override
-    public long finalizeAtDestination(WorldPipeNetNode destination, long flowReachingDestination) {
+    public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
         this.pathVoltage = (long) GTUtility.geometricMean(pathVoltage,
                 overVoltageInformation.values().stream().filter(o -> o.voltageCap < this.pathVoltage)
                         .mapToDouble(o -> (double) o.voltageCap).toArray());

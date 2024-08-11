@@ -1,8 +1,8 @@
 package gregtech.common.pipelike.net.laser;
 
 import gregtech.api.capability.ILaserRelay;
-import gregtech.api.graphnet.pipenet.insertion.TransferControl;
-import gregtech.api.graphnet.pipenet.insertion.TransferControlProvider;
+import gregtech.api.graphnet.pipenet.transfer.TransferControl;
+import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

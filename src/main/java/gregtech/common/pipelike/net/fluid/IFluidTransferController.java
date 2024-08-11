@@ -1,8 +1,8 @@
 package gregtech.common.pipelike.net.fluid;
 
-import gregtech.api.graphnet.pipenet.insertion.TransferControl;
+import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 
-import gregtech.api.graphnet.pipenet.insertion.TransferControlProvider;
+import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 
 import net.minecraftforge.fluids.FluidStack;

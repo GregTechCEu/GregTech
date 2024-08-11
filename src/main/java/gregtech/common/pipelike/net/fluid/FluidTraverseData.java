@@ -41,10 +41,10 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
         ContainmentFailure.init();
     }
 
-    private final BlockPos sourcePos;
-    private final EnumFacing inputFacing;
+    protected final BlockPos sourcePos;
+    protected final EnumFacing inputFacing;
 
-    private final Object2ObjectOpenHashMap<NetNode, LongConsumer> temperatureUpdates = new Object2ObjectOpenHashMap<>();
+    protected final Object2ObjectOpenHashMap<NetNode, LongConsumer> temperatureUpdates = new Object2ObjectOpenHashMap<>();
 
     public FluidTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
                              BlockPos sourcePos, EnumFacing inputFacing) {
@@ -59,7 +59,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     }
 
     @Override
-    public boolean prepareForPathWalk(FlowWorldPipeNetPath path, long flow) {
+    public boolean prepareForPathWalk(@NotNull FlowWorldPipeNetPath path, long flow) {
         if (flow <= 0) return true;
         temperatureUpdates.clear();
         temperatureUpdates.trim(16);
@@ -67,7 +67,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     }
 
     @Override
-    public ReversibleLossOperator traverseToNode(WorldPipeNetNode node, long flowReachingNode) {
+    public ReversibleLossOperator traverseToNode(@NotNull WorldPipeNetNode node, long flowReachingNode) {
         NodeLossCache.Key key = NodeLossCache.key(node, this);
         NodeLossResult result = NodeLossCache.getLossResult(key);
         if (result != null) {
@@ -142,7 +142,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     }
 
     @Override
-    public long finalizeAtDestination(WorldPipeNetNode destination, long flowReachingDestination) {
+    public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
         long availableFlow = flowReachingDestination;
         for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
             if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&

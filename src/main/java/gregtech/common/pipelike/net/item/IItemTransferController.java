@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.net.item;
 
-import gregtech.api.graphnet.pipenet.insertion.TransferControlProvider;
-import gregtech.api.graphnet.pipenet.insertion.TransferControl;
+import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
+import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 
@@ -51,11 +51,12 @@ public interface IItemTransferController {
      */
     default int insertToHandler(@NotNull ItemTestObject testObject, int amount,
                                @NotNull IItemHandler destHandler, boolean simulate) {
+        int available = amount;
         for (int i = 0; i < destHandler.getSlots(); i++) {
-            int allowed = Math.min(amount, Math.min(destHandler.getSlotLimit(i), testObject.getStackLimit()));
-            amount = destHandler.insertItem(i, testObject.recombine(allowed), simulate).getCount();
+            int allowed = Math.min(available, Math.min(destHandler.getSlotLimit(i), testObject.getStackLimit()));
+            available -= allowed - destHandler.insertItem(i, testObject.recombine(allowed), simulate).getCount();
         }
-        return amount;
+        return available;
     }
 
     /**

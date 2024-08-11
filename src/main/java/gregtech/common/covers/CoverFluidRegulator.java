@@ -1,24 +1,30 @@
 package gregtech.common.covers;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.edge.SimulatorKey;
+import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.api.util.GTTransferUtils;
-import gregtech.client.renderer.texture.Textures;
-import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
+import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.SimpleFluidFilter;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import gregtech.common.pipelike.net.fluid.FluidEQTraverseData;
+import gregtech.common.pipelike.net.fluid.FluidRRTraverseData;
+import gregtech.common.pipelike.net.fluid.FluidTraverseData;
+import gregtech.common.pipelike.net.fluid.IFluidTransferController;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
@@ -29,206 +35,112 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.apache.logging.log4j.message.FormattedMessage;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Predicate;
+import java.util.ArrayDeque;
+import java.util.function.IntUnaryOperator;
 
 public class CoverFluidRegulator extends CoverPump {
 
     protected TransferMode transferMode = TransferMode.TRANSFER_ANY;
+    protected boolean noTransferDueToMinimum = false;
 
     public CoverFluidRegulator(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                                @NotNull EnumFacing attachedSide, int tier, int mbPerTick) {
         super(definition, coverableView, attachedSide, tier, mbPerTick);
         this.fluidFilterContainer = new FluidFilterContainer(this);
+        this.fluidFilterContainer.setMaxTransferSize(1);
     }
 
     @Override
-    protected int doTransferFluidsInternal(IFluidHandler myFluidHandler, IFluidHandler fluidHandler,
-                                           int transferLimit) {
-        IFluidHandler sourceHandler;
-        IFluidHandler destHandler;
-
-        if (pumpMode == PumpMode.IMPORT) {
-            sourceHandler = fluidHandler;
-            destHandler = myFluidHandler;
-        } else if (pumpMode == PumpMode.EXPORT) {
-            sourceHandler = myFluidHandler;
-            destHandler = fluidHandler;
-        } else {
-            return 0;
-        }
-        return switch (transferMode) {
-            case TRANSFER_ANY -> GTTransferUtils.transferFluids(sourceHandler, destHandler, transferLimit,
-                    fluidFilterContainer::test);
-            case KEEP_EXACT -> doKeepExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::test,
-                    this.fluidFilterContainer.getTransferSize());
-            case TRANSFER_EXACT -> doTransferExact(transferLimit, sourceHandler, destHandler,
-                    fluidFilterContainer::test, this.fluidFilterContainer.getTransferSize());
-        };
-    }
-
-    protected int doTransferExact(int transferLimit, IFluidHandler sourceHandler, IFluidHandler destHandler,
-                                  Predicate<FluidStack> fluidFilter, int supplyAmount) {
-        int fluidLeftToTransfer = transferLimit;
-        for (IFluidTankProperties tankProperties : sourceHandler.getTankProperties()) {
-            FluidStack sourceFluid = tankProperties.getContents();
-            if (this.fluidFilterContainer.hasFilter()) {
-                supplyAmount = this.fluidFilterContainer.getFilter().getTransferLimit(sourceFluid, supplyAmount);
-            }
-            if (fluidLeftToTransfer < supplyAmount)
-                break;
-            if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
-            sourceFluid.amount = supplyAmount;
-            if (GTTransferUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
-                fluidLeftToTransfer -= sourceFluid.amount;
-            }
-            if (fluidLeftToTransfer == 0) break;
-        }
-        return transferLimit - fluidLeftToTransfer;
-    }
-
-    /**
-     * Performs one tick worth of Keep Exact behavior.
-     *
-     * @param transferLimit the maximum amount in milliBuckets that may be transferred in one tick
-     * @param sourceHandler source(s) to move fluids from
-     * @param destHandler   destination(s) to move fluids to
-     * @param fluidFilter   a predicate which determines what fluids may be moved
-     * @param keepAmount    the desired amount in milliBuckets of a particular fluid in the destination
-     * @return the total amount in milliBuckets of all fluids transferred from source to dest by this method
-     */
-    protected int doKeepExact(final int transferLimit,
-                              final IFluidHandler sourceHandler,
-                              final IFluidHandler destHandler,
-                              final Predicate<FluidStack> fluidFilter,
-                              int keepAmount) {
-        if (sourceHandler == null || destHandler == null || fluidFilter == null)
-            return 0;
-
-        final Map<FluidStack, Integer> sourceFluids = collectDistinctFluids(sourceHandler,
-                IFluidTankProperties::canDrain, fluidFilter);
-        final Map<FluidStack, Integer> destFluids = collectDistinctFluids(destHandler, IFluidTankProperties::canFill,
-                fluidFilter);
-
-        int transferred = 0;
-        for (FluidStack fluidStack : sourceFluids.keySet()) {
-            if (transferred >= transferLimit)
-                break;
-
-            if (this.fluidFilterContainer.hasFilter()) {
-                keepAmount = this.fluidFilterContainer.getFilter().getTransferLimit(fluidStack, keepAmount);
-            }
-
-            // if fluid needs to be moved to meet the Keep Exact value
-            int amountInDest;
-            if ((amountInDest = destFluids.getOrDefault(fluidStack, 0)) < keepAmount) {
-
-                // move the lesser of the remaining transfer limit and the difference in actual vs keep exact amount
-                int amountToMove = Math.min(transferLimit - transferred,
-                        keepAmount - amountInDest);
-
-                // Nothing to do here, try the next fluid.
-                if (amountToMove <= 0)
-                    continue;
-
-                // Simulate a drain of this fluid from the source tanks
-                FluidStack drainedResult = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, amountToMove),
-                        false);
-
-                // Can't drain this fluid. Try the next one.
-                if (drainedResult == null || drainedResult.amount <= 0 || !fluidStack.equals(drainedResult))
-                    continue;
-
-                // account for the possibility that the drain might give us less than requested
-                final int drainable = Math.min(amountToMove, drainedResult.amount);
-
-                // Simulate a fill of the drained amount
-                int fillResult = destHandler.fill(copyFluidStackWithAmount(fluidStack, drainable), false);
-
-                // Can't fill, try the next fluid.
-                if (fillResult <= 0)
-                    continue;
-
-                // This Fluid can be drained and filled, so let's move the most that will actually work.
-                int fluidToMove = Math.min(drainable, fillResult);
-                FluidStack drainedActual = sourceHandler.drain(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
-
-                // Account for potential error states from the drain
-                if (drainedActual == null)
-                    throw new RuntimeException(
-                            "Misbehaving fluid container: drain produced null after simulation succeeded");
-
-                if (!fluidStack.equals(drainedActual))
-                    throw new RuntimeException(
-                            "Misbehaving fluid container: drain produced a different fluid than the simulation");
-
-                if (drainedActual.amount != fluidToMove)
-                    throw new RuntimeException(new FormattedMessage(
-                            "Misbehaving fluid container: drain expected: {}, actual: {}",
-                            fluidToMove,
-                            drainedActual.amount).getFormattedMessage());
-
-                // Perform Fill
-                int filledActual = destHandler.fill(copyFluidStackWithAmount(fluidStack, fluidToMove), true);
-
-                // Account for potential error states from the fill
-                if (filledActual != fluidToMove)
-                    throw new RuntimeException(new FormattedMessage(
-                            "Misbehaving fluid container: fill expected: {}, actual: {}",
-                            fluidToMove,
-                            filledActual).getFormattedMessage());
-
-                // update the transferred amount
-                transferred += fluidToMove;
+    protected void refreshBuffer(int transferRate) {
+        if (this.transferMode == TransferMode.TRANSFER_EXACT && noTransferDueToMinimum) {
+            FluidFilterContainer filter = this.getFluidFilter();
+            if (filter != null) {
+                this.noTransferDueToMinimum = false;
+                this.fluidLeftToTransferLastSecond += transferRate;
+                int max = filter.getTransferSize();
+                if (this.fluidLeftToTransferLastSecond > max) {
+                    this.fluidLeftToTransferLastSecond = max;
+                }
+                return;
             }
         }
-
-        return transferred;
+        super.refreshBuffer(transferRate);
     }
 
-    /**
-     * Copies a FluidStack and sets its amount to the specified value.
-     *
-     * @param fs     the original fluid stack to copy
-     * @param amount the amount to set the copied FluidStack to
-     * @return the copied FluidStack with the specified amount
-     */
-    private static FluidStack copyFluidStackWithAmount(FluidStack fs, int amount) {
-        FluidStack fs2 = fs.copy();
-        fs2.amount = amount;
-        return fs2;
+    @Override
+    protected void performTransferOnUpdate(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler) {
+        if (transferMode == TransferMode.TRANSFER_ANY) {
+            super.performTransferOnUpdate(sourceHandler, destHandler);
+            return;
+        }
+        FluidFilterContainer filter = this.getFluidFilter();
+        if (filter == null) return;
+        if (transferMode == TransferMode.KEEP_EXACT) {
+            IntUnaryOperator maxflow = s -> Math.min(filter.getTransferLimit(s), getFluidsLeftToTransfer());
+            reportFluidsTransfer(performTransfer(sourceHandler, destHandler, true, s -> 0, maxflow, null));
+        } else if (transferMode == TransferMode.TRANSFER_EXACT) {
+            IntUnaryOperator maxflow = s -> {
+                int limit = filter.getTransferLimit(s);
+                if (getFluidsLeftToTransfer() < limit) {
+                    noTransferDueToMinimum = true;
+                    return 0;
+                }
+                else return limit;
+            };
+            performTransfer(sourceHandler, destHandler, true, maxflow, maxflow, (a, b) -> reportFluidsTransfer(b));
+        }
     }
 
-    private static Map<FluidStack, Integer> collectDistinctFluids(IFluidHandler handler,
-                                                                  Predicate<IFluidTankProperties> tankTypeFilter,
-                                                                  Predicate<FluidStack> fluidTypeFilter) {
-        final Map<FluidStack, Integer> summedFluids = new Object2IntOpenHashMap<>();
-        Arrays.stream(handler.getTankProperties())
-                .filter(tankTypeFilter)
-                .map(IFluidTankProperties::getContents)
-                .filter(Objects::nonNull)
-                .filter(fluidTypeFilter)
-                .forEach(fs -> {
-                    summedFluids.putIfAbsent(fs, 0);
-                    summedFluids.computeIfPresent(fs, (k, v) -> v + fs.amount);
-                });
+    @Override
+    protected @NotNull FluidTraverseData getTD(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
+                                               long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
+        if (transferMode == TransferMode.KEEP_EXACT) {
+            return new KeepFluidTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing);
+        }
+        return super.getTD(net, testObject, simulator, queryTick, sourcePos, inputFacing);
+    }
 
-        return summedFluids;
+    @Override
+    protected @NotNull FluidEQTraverseData getEQTD(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
+                                                   long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
+        if (transferMode == TransferMode.KEEP_EXACT) {
+            return new KeepFluidEQTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing);
+        }
+        return super.getEQTD(net, testObject, simulator, queryTick, sourcePos, inputFacing);
+    }
+
+    @Override
+    protected @NotNull FluidRRTraverseData getRRTD(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
+                                                   long queryTick, BlockPos sourcePos, EnumFacing inputFacing,
+                                                   boolean simulate) {
+        if (transferMode == TransferMode.KEEP_EXACT) {
+            return new KeepFluidRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing, getRoundRobinCache(simulate));
+        }
+        return super.getRRTD(net, testObject, simulator, queryTick, sourcePos, inputFacing, simulate);
+    }
+
+    @Override
+    protected int simpleInsert(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count,
+                               boolean simulate) {
+        if (transferMode == TransferMode.KEEP_EXACT) {
+            assert getFluidFilter() != null;
+            int kept = getFluidFilter().getTransferLimit(testObject.recombine());
+            count = Math.min(count, kept - computeContained(destHandler, testObject));
+        }
+        return super.simpleInsert(destHandler, testObject, count, simulate);
     }
 
     public void setTransferMode(TransferMode transferMode) {
         if (this.transferMode != transferMode) {
             this.transferMode = transferMode;
+            this.getCoverableView().markDirty();
             this.fluidFilterContainer.setMaxTransferSize(getMaxTransferRate());
-            this.markDirty();
+            writeCustomData(GregtechDataCodes.UPDATE_TRANSFER_MODE,
+                    buffer -> buffer.writeByte(this.transferMode.ordinal()));
         }
     }
 
@@ -245,7 +157,7 @@ public class CoverFluidRegulator extends CoverPump {
 
     @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192 + 36);
+        return super.buildUI(guiData, guiSyncManager).height(192 + 36 + 18 + 2);
     }
 
     @Override
@@ -281,24 +193,42 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
                                boolean doFill) {
-        // TODO
+        if (pumpMode == PumpMode.EXPORT) {
+            if (transferMode == TransferMode.KEEP_EXACT) {
+                int contained = computeContained(destHandler, testObject);
+                assert getFluidFilter() != null;
+                int keep = getFluidFilter().getTransferLimit(testObject.recombine());
+                if (contained >= keep) return 0;
+                return super.insertToHandler(testObject, Math.min(keep - contained, amount), destHandler, doFill);
+            } else if (transferMode == TransferMode.TRANSFER_EXACT) {
+                assert getFluidFilter() != null;
+                int required = getFluidFilter().getTransferLimit(testObject.recombine());
+                if (amount < required) return 0;
+                return super.insertToHandler(testObject, required, destHandler, doFill);
+            }
+        }
         return super.insertToHandler(testObject, amount, destHandler, doFill);
     }
 
     @Override
     public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
                                                    IFluidHandler sourceHandler, boolean doDrain) {
-        // TODO
+        if (pumpMode == PumpMode.IMPORT) {
+            // TODO should extraction instead be ignored for transfer exact?
+            if (transferMode == TransferMode.TRANSFER_EXACT) {
+                assert getFluidFilter() != null;
+                int required = testObject == null ? getFluidFilter().getTransferSize() :
+                        getFluidFilter().getTransferLimit(testObject.recombine());
+                if (amount < required) return null;
+                else amount = required;
+            }
+        }
         return super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
     }
 
     @Override
     public int getMaxTransferRate() {
-        return switch (this.transferMode) {
-            case TRANSFER_ANY -> 1;
-            case TRANSFER_EXACT -> maxFluidTransferRate;
-            case KEEP_EXACT -> Integer.MAX_VALUE;
-        };
+        return this.transferMode.maxFluidStackSize;
     }
 
     @Override
@@ -311,6 +241,16 @@ public class CoverFluidRegulator extends CoverPump {
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
         this.transferMode = TransferMode.VALUES[packetBuffer.readByte()];
+        this.fluidFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+    }
+
+    @Override
+    public void readCustomData(int discriminator, @NotNull PacketBuffer buf) {
+        super.readCustomData(discriminator, buf);
+        if (discriminator == GregtechDataCodes.UPDATE_TRANSFER_MODE) {
+            this.transferMode = TransferMode.VALUES[buf.readByte()];
+            this.fluidFilterContainer.setMaxTransferSize(this.transferMode.maxStackSize);
+        }
     }
 
     @Override
@@ -331,6 +271,136 @@ public class CoverFluidRegulator extends CoverPump {
                 simpleFluidFilter
                         .configureFilterTanks(tagCompound.getInteger("TransferAmount"));
             }
+        }
+    }
+
+    protected int computeContained(@NotNull IFluidHandler handler, @NotNull FluidTestObject testObject) {
+        int found = 0;
+        for (IFluidTankProperties tank : handler.getTankProperties()) {
+            FluidStack contained = tank.getContents();
+            if (testObject.test(contained)) {
+                found += contained.amount;
+            }
+        }
+        return found;
+    }
+
+    protected class KeepFluidTraverseData extends FluidTraverseData {
+
+        public KeepFluidTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
+                                    BlockPos sourcePos, EnumFacing inputFacing) {
+            super(net, testObject, simulator, queryTick, sourcePos, inputFacing);
+        }
+
+        @Override
+        public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
+            long availableFlow = flowReachingDestination;
+            for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
+                if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
+                        capability.getKey() == inputFacing)
+                    continue; // anti insert-to-our-source logic
+
+                IFluidHandler container = capability.getValue()
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                if (container != null) {
+                    int contained = computeContained(container, getTestObject());
+                    assert getFluidFilter() != null;
+                    int kept = getFluidFilter().getTransferLimit(getTestObject().recombine());
+                    if (contained >= kept) continue;
+                    availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                            .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
+                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() == null);
+                }
+            }
+            return flowReachingDestination - availableFlow;
+        }
+    }
+
+    protected class KeepFluidEQTraverseData extends FluidEQTraverseData {
+
+        public KeepFluidEQTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
+                                       BlockPos sourcePos, EnumFacing inputFacing) {
+            super(net, testObject, simulator, queryTick, sourcePos, inputFacing);
+        }
+
+        @Override
+        protected void compute(@NotNull WorldPipeNetNode destination) {
+            this.destCount = 0;
+            this.maxMinFlow = 0;
+            for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
+                if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
+                        capability.getKey() == inputFacing)
+                    continue; // anti insert-to-our-source logic
+
+                IFluidHandler container = capability.getValue()
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                if (container != null) {
+                    int contained = computeContained(container, getTestObject());
+                    assert getFluidFilter() != null;
+                    int kept = getFluidFilter().getTransferLimit(getTestObject().recombine());
+                    if (contained >= kept) continue;
+                    if (destCount == 0) maxMinFlow = Integer.MAX_VALUE;
+                    destCount += 1;
+                    maxMinFlow = Math.min(maxMinFlow,
+                            IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                                    .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(), kept - contained,
+                                    container, false));
+                }
+            }
+        }
+
+        @Override
+        public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
+            long availableFlow = flowReachingDestination;
+            for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
+                if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
+                        capability.getKey() == inputFacing)
+                    continue; // anti insert-to-our-source logic
+
+                IFluidHandler container = capability.getValue()
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                if (container != null) {
+                    int contained = computeContained(container, getTestObject());
+                    assert getFluidFilter() != null;
+                    int kept = getFluidFilter().getTransferLimit(getTestObject().recombine());
+                    if (contained >= kept) continue;
+                    availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                            .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
+                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() == null);
+                }
+            }
+            return flowReachingDestination - availableFlow;
+        }
+    }
+
+    protected class KeepFluidRRTraverseData extends FluidRRTraverseData {
+
+        public KeepFluidRRTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
+                                       BlockPos sourcePos, EnumFacing inputFacing, ArrayDeque<Object> cache) {
+            super(net, testObject, simulator, queryTick, sourcePos, inputFacing, cache);
+        }
+
+        @Override
+        public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
+            long availableFlow = flowReachingDestination;
+            for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
+                if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
+                        capability.getKey() == inputFacing)
+                    continue; // anti insert-to-our-source logic
+
+                IFluidHandler container = capability.getValue()
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                if (container != null) {
+                    int contained = computeContained(container, getTestObject());
+                    assert getFluidFilter() != null;
+                    int kept = getFluidFilter().getTransferLimit(getTestObject().recombine());
+                    if (contained >= kept) continue;
+                    availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                            .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
+                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() == null);
+                }
+            }
+            return flowReachingDestination - availableFlow;
         }
     }
 }

@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 public enum DistributionMode implements IStringSerializable {
 
-    ROUND_ROBIN_GLOBAL("cover.conveyor.distribution.round_robin_enhanced"),
-    ROUND_ROBIN_PRIO("cover.conveyor.distribution.round_robin"),
-    INSERT_FIRST("cover.conveyor.distribution.first_insert");
+    EQUALIZED("cover.generic.distribution.equalized"),
+    ROUND_ROBIN("cover.generic.distribution.round_robin"),
+    FLOOD("cover.generic.distribution.flood");
 
     public static final DistributionMode[] VALUES = values();
     public final String localeName;

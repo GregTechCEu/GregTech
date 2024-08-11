@@ -320,7 +320,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
      * @param node the node for this tile entity. Used to identify the capabilities to match.
      * @return a map of facings to tile entities.
      */
-    public EnumMap<EnumFacing, TileEntity> getTargetsWithCapabilities(WorldPipeNetNode node) {
+    public @NotNull EnumMap<EnumFacing, TileEntity> getTargetsWithCapabilities(WorldPipeNetNode node) {
         PipeCapabilityWrapper wrapper = netCapabilities.get(node);
         EnumMap<EnumFacing, TileEntity> caps = new EnumMap<>(EnumFacing.class);
         if (wrapper == null) return caps;

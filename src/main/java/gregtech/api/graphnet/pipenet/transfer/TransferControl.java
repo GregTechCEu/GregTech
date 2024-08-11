@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.pipenet.insertion;
+package gregtech.api.graphnet.pipenet.transfer;
 
 import net.minecraft.util.IStringSerializable;
 

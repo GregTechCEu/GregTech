@@ -112,6 +112,11 @@ public class CoverFluidVoiding extends CoverPump {
     }
 
     @Override
+    protected boolean createDistributionModeRow() {
+        return false;
+    }
+
+    @Override
     protected boolean createThroughputRow() {
         return false;
     }

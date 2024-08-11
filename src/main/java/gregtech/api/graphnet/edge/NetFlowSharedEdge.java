@@ -15,6 +15,8 @@ import java.util.Set;
 public class NetFlowSharedEdge extends AbstractNetFlowEdge {
 
     private final int flowBufferTicks;
+    private final int regenerationTime;
+
 
     /**
      * NetEdge that provides flow behavior where the capacity along an edge is shared by all channels.
@@ -25,6 +27,21 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
      */
     public NetFlowSharedEdge(int flowBufferTicks) {
         this.flowBufferTicks = Math.max(flowBufferTicks, 1);
+        this.regenerationTime = 1;
+    }
+
+
+    /**
+     * NetEdge that provides flow behavior where the capacity along an edge is shared by all channels.
+     *
+     * @param flowBufferTicks Determines how many ticks of 'buffer' flow capacity can be built up along edges. Allows
+     *                        for once-an-interval push/pull operations instead of needing them every tick for maximum
+     *                        throughput.
+     * @param regenerationTime Ticks required for flow to regenerate once. Allows slowing down the rate of regeneration.
+     */
+    public NetFlowSharedEdge(int flowBufferTicks, int regenerationTime) {
+        this.flowBufferTicks = Math.max(flowBufferTicks, 1);
+        this.regenerationTime = Math.max(regenerationTime, 1);
     }
 
     @Override
@@ -121,12 +138,12 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
                 this.maxCapacity = getThroughput() * flowBufferTicks;
                 this.init = true;
             }
-            int time = (int) (queryTick - this.lastQueryTick);
-            if (time < 0) {
+            int regenerationUnits = (int) (queryTick - this.lastQueryTick) / regenerationTime;
+            if (regenerationUnits < 0) {
                 this.map.clear();
             } else {
                 List<Object> toRemove = new ObjectArrayList<>();
-                long regenerationPer = MathHelper.ceil((double) time * getThroughput() / map.size());
+                long regenerationPer = MathHelper.ceil((double) regenerationUnits * getThroughput() / map.size());
                 map.replaceAll((k, v) -> {
                     v -= regenerationPer;
                     if (v <= 0) toRemove.add(k);
@@ -135,8 +152,8 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
                 sharedCapacity += regenerationPer * map.size();
                 boundCapacity();
                 toRemove.forEach(map::removeLong);
+                this.lastQueryTick += (long) regenerationUnits * regenerationTime;
             }
-            this.lastQueryTick = queryTick;
         }
 
         private void boundCapacity() {

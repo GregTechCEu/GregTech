@@ -1,9 +1,11 @@
 package gregtech.api.graphnet.pipenet;
 
 import gregtech.api.graphnet.MultiNodeHelper;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.worldnet.WorldNetNode;
 
+import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -15,6 +17,8 @@ import java.lang.ref.WeakReference;
 
 public final class WorldPipeNetNode extends WorldNetNode {
 
+    private static final PipeTileEntity FALLBACK = new PipeTileEntity();
+
     @Nullable
     MultiNodeHelper overlapHelper;
 
@@ -24,8 +28,14 @@ public final class WorldPipeNetNode extends WorldNetNode {
         super(net);
     }
 
-    public PipeTileEntity getTileEntity() {
-        return getTileEntity(true);
+    public @NotNull PipeTileEntity getTileEntity() {
+        PipeTileEntity tile = getTileEntity(true);
+        if (tile == null) {
+            // something went very wrong, return the fallback to prevent NPEs and remove us from the net.
+            getNet().removeNode(this);
+            tile = FALLBACK;
+        }
+        return tile;
     }
 
     @Nullable

@@ -12,11 +12,14 @@ public interface IRoundRobinTraverseData<N extends NetNode, P extends INetPath<N
     /**
      * The traversal cache must be cached and persistent between traversals,
      * but not modified by anything external to {@link TraverseHelpers}.
-     * 
+     * The traversal cache is (hopefully) modified deterministically between simulated and nonsimulated transfers, but
+     * remember that <b>modification during simulation must not be reflected on the cache used for nonsimulation.</b>
+     * The easiest way to accomplish this is to provide a cloned {@link ArrayDeque} during simulated transfers.
+     *
      * @return the traversal cache.
      */
     @NotNull
-    ArrayDeque<N> getTraversalCache();
+    ArrayDeque<Object> getTraversalCache();
 
     /**
      * Whether a path should be skipped before checking it against the round robin cache.

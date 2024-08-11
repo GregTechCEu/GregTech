@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class TraverseHelpers {
@@ -233,6 +235,7 @@ public final class TraverseHelpers {
                 });
             }
         }
+        if (totalDesired == 0) return 0;
         maxMult = Math.min(maxMult, flowIn / totalDesired);
         // scaling
         long mult = GTUtility.binarySearch(0, maxMult, l -> {
@@ -342,27 +345,51 @@ public final class TraverseHelpers {
                                                                                                    long flowIn,
                                                                                                    boolean strict) {
         long availableFlow = flowIn;
-        ArrayDeque<N> cache = data.getTraversalCache();
+        ArrayDeque<Object> cache = data.getTraversalCache();
+        Predicate<Object> invalidityCheck = null;
 
-        Map<N, P> skippedPaths = new Object2ObjectOpenHashMap<>();
+        Map<Object, P> skippedPaths = new Object2ObjectOpenHashMap<>();
         while (paths.hasNext()) {
             P path = paths.next();
-            N destinationNode = path.getTargetNode();
             if (data.shouldSkipPath(path)) continue;
-
-            N nextUp = cache.peekFirst();
-            if (destinationNode.equals(nextUp)) {
+            N destinationNode = path.getTargetNode();
+            if (invalidityCheck == null) {
+                invalidityCheck = d -> {
+                    if (d == null) return false;
+                    NetNode node = destinationNode.getNet().getNode(d);
+                    return node == null || !node.isActive();
+                };
+            }
+            Object destIdentifier = destinationNode.getEquivalencyData();
+            Object nextUp = cache.peekFirst();
+            // filter out invalid equivalency data
+            while (invalidityCheck.test(nextUp)) {
+                cache.removeFirst();
+                nextUp = cache.peekFirst();
+            }
+            if (destIdentifier.equals(nextUp)) {
+                // keep iterating over paths in order to collect destinations into the cache
+                if (availableFlow <= 0) continue;
                 // path is next up in the ordering, we can traverse.
                 cache.removeFirst();
-                cache.addLast(destinationNode);
+                cache.addLast(destIdentifier);
                 long accepted = rrTraverse(data, path, availableFlow, strict);
                 if (accepted == -1) return flowIn - availableFlow;
                 else availableFlow -= accepted;
             } else {
                 // this path isn't the next one up, skip it unless it's a completely new destination.
-                if (cache.contains(destinationNode)) skippedPaths.put(destinationNode, path);
+                if (cache.contains(destIdentifier)) {
+                    // keep iterating over paths in order to collect destinations into the cache
+                    if (availableFlow <= 0) continue;
+                    skippedPaths.put(destIdentifier, path);
+                }
                 else {
-                    cache.addLast(destinationNode);
+                    // keep iterating over paths in order to collect destinations into the cache
+                    if (availableFlow <= 0) {
+                        cache.addFirst(destIdentifier);
+                        continue;
+                    }
+                    cache.addLast(destIdentifier);
                     long accepted = rrTraverse(data, path, availableFlow, strict);
                     if (accepted == -1) return flowIn - availableFlow;
                     else availableFlow -= accepted;
@@ -370,12 +397,18 @@ public final class TraverseHelpers {
             }
         }
         // finally, try and work through skipped paths
-        while (true) {
-            P path = skippedPaths.get(cache.peekFirst());
+        while (availableFlow > 0) {
+            Object nextUp = cache.peekFirst();
+            if (nextUp == null) break;
+            P path = skippedPaths.get(nextUp);
             if (path == null) break;
-            N dest = cache.removeFirst();
-            skippedPaths.remove(dest);
-            cache.addLast(dest);
+            assert invalidityCheck != null; // skipped paths would be empty if invalidity check is null
+            if (invalidityCheck.test(nextUp)) {
+                cache.removeFirst();
+                continue;
+            }
+            cache.removeFirst();
+            cache.addLast(nextUp);
             long accepted = rrTraverse(data, path, availableFlow, strict);
             if (accepted == -1) return flowIn - availableFlow;
             else availableFlow -= accepted;

@@ -6,8 +6,8 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.graphnet.pipenet.insertion.TransferControl;
-import gregtech.api.graphnet.pipenet.insertion.TransferControlProvider;
+import gregtech.api.graphnet.pipenet.transfer.TransferControl;
+import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
@@ -21,8 +21,6 @@ import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import gregtech.common.pipelike.net.fluid.IFluidTransferController;
-
-import gregtech.common.pipelike.net.item.IItemTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

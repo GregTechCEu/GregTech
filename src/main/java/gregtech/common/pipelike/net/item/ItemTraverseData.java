@@ -14,10 +14,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ItemTraverseData extends AbstractTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
 
-    private final BlockPos sourcePos;
-    private final EnumFacing inputFacing;
+    protected final BlockPos sourcePos;
+    protected final EnumFacing inputFacing;
 
     public ItemTraverseData(IGraphNet net, ItemTestObject testObject, SimulatorKey simulator, long queryTick,
                             BlockPos sourcePos, EnumFacing inputFacing) {
@@ -32,17 +34,17 @@ public class ItemTraverseData extends AbstractTraverseData<WorldPipeNetNode, Flo
     }
 
     @Override
-    public boolean prepareForPathWalk(FlowWorldPipeNetPath path, long flow) {
+    public boolean prepareForPathWalk(@NotNull FlowWorldPipeNetPath path, long flow) {
         return flow <= 0;
     }
 
     @Override
-    public ReversibleLossOperator traverseToNode(WorldPipeNetNode node, long flowReachingNode) {
+    public ReversibleLossOperator traverseToNode(@NotNull WorldPipeNetNode node, long flowReachingNode) {
         return ReversibleLossOperator.IDENTITY;
     }
 
     @Override
-    public long finalizeAtDestination(WorldPipeNetNode destination, long flowReachingDestination) {
+    public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
         long availableFlow = flowReachingDestination;
         for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
             if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&

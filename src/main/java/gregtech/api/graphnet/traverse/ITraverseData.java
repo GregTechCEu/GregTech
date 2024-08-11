@@ -30,7 +30,7 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      * @param flow how much flow can be provided to the path.
      * @return whether the path should be skipped
      */
-    boolean prepareForPathWalk(P path, long flow);
+    boolean prepareForPathWalk(@NotNull P path, long flow);
 
     /**
      * Reports that the traverse is traversing to a node, for additional logic to be run.
@@ -39,7 +39,7 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      * @param flowReachingNode the flow that has reached this node.
      * @return the loss operator for the node.
      */
-    ReversibleLossOperator traverseToNode(N node, long flowReachingNode);
+    ReversibleLossOperator traverseToNode(@NotNull N node, long flowReachingNode);
 
     /**
      * Reports that the traverse has finished a path walk, for finalization.
@@ -48,7 +48,7 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
      * @param flowReachingDestination the flow that reached the destination
      * @return the amount of flow that should be consumed, before walking the next path.
      */
-    long finalizeAtDestination(N destination, long flowReachingDestination);
+    long finalizeAtDestination(@NotNull N destination, long flowReachingDestination);
 
     /**
      * Allows for reporting a smaller capacity along an edge than it actually has. Do not report a larger capacity

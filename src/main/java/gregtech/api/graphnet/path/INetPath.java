@@ -4,11 +4,15 @@ import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jgrapht.alg.util.ToleranceDoubleComparator;
 
 import java.util.List;
 
 public interface INetPath<N extends NetNode, T extends NetEdge> {
+
+    ToleranceDoubleComparator WEIGHT_COMPARATOR = new ToleranceDoubleComparator();
 
     List<N> getOrderedNodes();
 
@@ -25,8 +29,8 @@ public interface INetPath<N extends NetNode, T extends NetEdge> {
 
     double getWeight();
 
-    default boolean matches(INetPath<?, ?> other) {
-        return getWeight() == other.getWeight() &&
+    default boolean matches(@NotNull INetPath<?, ?> other) {
+        return WEIGHT_COMPARATOR.compare(getWeight(), other.getWeight()) == 0 &&
                 getOrderedNodes().equals(other.getOrderedNodes()) && getOrderedEdges().equals(other.getOrderedEdges());
     }
 

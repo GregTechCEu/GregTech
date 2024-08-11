@@ -68,6 +68,13 @@ public final class GraphNetBacker {
 
     public boolean removeNode(@Nullable NetNode node) {
         if (node != null) {
+            if (!this.getGraph().containsVertex(node.wrapper)) {
+                // edge case -- the node's group most likely still has this node registered,
+                // but the node doesn't actually exist in the graph.
+                // no idea what causes this, but it happens.
+                NetGroup group = node.getGroupUnsafe();
+                if (group != null) group.removeNode(node);
+            }
             if (this.getGraph().edgesOf(node.wrapper).size() != 0) this.invalidateAlgs();
             NetGroup group = node.getGroupUnsafe();
             if (group != null) {
