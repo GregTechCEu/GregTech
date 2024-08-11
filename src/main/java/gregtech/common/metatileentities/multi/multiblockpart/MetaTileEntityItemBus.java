@@ -7,6 +7,7 @@ import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -251,13 +252,11 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void registerAbilities(
-                                  @NotNull MultiblockAbility<IItemHandlerModifiable> key,
-                                  @NotNull List<IItemHandlerModifiable> abilities) {
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
         if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
-            abilities.add(isExportHatch ? this.exportItems : this.actualImportItems);
+            abilityInstances.add(isExportHatch ? this.exportItems : this.actualImportItems);
         } else {
-            abilities.add(isExportHatch ? this.exportItems : this.importItems);
+            abilityInstances.add(isExportHatch ? this.exportItems : this.importItems);
         }
     }
 
