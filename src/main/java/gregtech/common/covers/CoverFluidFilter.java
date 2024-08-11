@@ -3,9 +3,9 @@ package gregtech.common.covers;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
-import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
@@ -19,7 +19,6 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
-
 import gregtech.common.pipelike.net.fluid.IFluidTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,7 +54,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWithFluidFilter, TransferControlProvider,
-                                                           IFluidTransferController {
+                              IFluidTransferController {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;

@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractDoubleLogicData<T extends AbstractDoubleLogicData<T>>
-        extends NetLogicEntry<T, NBTTagDouble> {
+                                             extends NetLogicEntry<T, NBTTagDouble> {
 
     private double value;
 

@@ -4,16 +4,10 @@ import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import net.minecraft.item.ItemStack;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jgrapht.alg.util.Pair;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +17,7 @@ public final class MergabilityInfo<T extends IPredicateTestObject> {
     private final Object2ObjectOpenHashMap<T, Merge> mergeMap = new Object2ObjectOpenHashMap<>();
 
     public void add(int handlerSlot, T testObject, int count) {
-        mergeMap.compute(testObject, (k , v) -> {
+        mergeMap.compute(testObject, (k, v) -> {
             if (v == null) v = new Merge(k);
             v.count += count;
             v.handlerSlots.add(handlerSlot);
@@ -42,6 +36,7 @@ public final class MergabilityInfo<T extends IPredicateTestObject> {
     }
 
     public final class Merge {
+
         private final T testObject;
 
         private int count = 0;

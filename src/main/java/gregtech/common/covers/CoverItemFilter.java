@@ -19,7 +19,6 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-
 import gregtech.common.pipelike.net.item.IItemTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public class CoverItemFilter extends CoverBase implements CoverWithUI, CoverWithItemFilter, TransferControlProvider,
-                                                          IItemTransferController {
+                             IItemTransferController {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;

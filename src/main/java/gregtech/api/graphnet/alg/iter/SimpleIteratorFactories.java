@@ -1,18 +1,11 @@
 package gregtech.api.graphnet.alg.iter;
 
-import com.cleanroommc.modularui.utils.math.functions.trig.Sin;
-
-import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Iterator;
 
 public final class SimpleIteratorFactories {
 
     public static <T> IteratorFactory<T> emptyFactory() {
-        return (graph, testObject, simulator, queryTick) ->  new SingletonIterator<>(null);
+        return (graph, testObject, simulator, queryTick) -> new SingletonIterator<>(null);
     }
 
     public static <T> IteratorFactory<T> fromIterable(Iterable<T> prototype) {

@@ -8,5 +8,6 @@ import java.util.function.Supplier;
 public interface NullableSupplier<T> extends Supplier<T> {
 
     @Override
-    @Nullable T get();
+    @Nullable
+    T get();
 }

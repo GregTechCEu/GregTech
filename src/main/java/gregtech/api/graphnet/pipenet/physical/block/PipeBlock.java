@@ -1,7 +1,5 @@
 package gregtech.api.graphnet.pipenet.physical.block;
 
-import codechicken.lib.raytracer.IndexedCuboid6;
-
 import gregtech.api.block.BuiltInRenderBlock;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverRayTracer;
@@ -19,16 +17,12 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
-import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFrame;
-
 import gregtech.common.blocks.MetaBlocks;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -76,7 +70,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
     // do not touch these two unless you know what you are doing
     protected final ThreadLocal<BlockPos> lastTilePos = ThreadLocal.withInitial(() -> new BlockPos(0, 0, 0));
-    protected final ThreadLocal<WeakReference<PipeTileEntity>> lastTile = ThreadLocal.withInitial(() -> new WeakReference<>(null));
+    protected final ThreadLocal<WeakReference<PipeTileEntity>> lastTile = ThreadLocal
+            .withInitial(() -> new WeakReference<>(null));
 
     private final IPipeStructure structure;
 
@@ -144,7 +139,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
             }
 
             RayTraceAABB trace = collisionRayTrace(playerIn, worldIn, pos);
-            if (trace == null) return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+            if (trace == null)
+                return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 
             EnumFacing actualSide = CoverRayTracer.determineGridSideHit(trace);
             if (actualSide != null) facing = actualSide;
@@ -211,8 +207,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                         ToolHelper.damageItem(item, playerIn);
                         ToolHelper.playToolSound(item, playerIn);
                         disconnectTile(tile, other, facing);
-                    }
-                    else if (coverCheck(tile, other, facing)) {
+                    } else if (coverCheck(tile, other, facing)) {
                         ToolHelper.damageItem(item, playerIn);
                         ToolHelper.playToolSound(item, playerIn);
                         connectTile(tile, other, facing);
@@ -250,15 +245,20 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     /**
      * Should be called to verify if a connection can be formed before
      * {@link #connectTile(PipeTileEntity, PipeTileEntity, EnumFacing)} is called.
+     * 
      * @return whether the connection is allowed.
      */
-    public static boolean coverCheck(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross, EnumFacing facing) {
+    public static boolean coverCheck(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross,
+                                     EnumFacing facing) {
         Cover tileCover = tile.getCoverHolder().getCoverAtSide(facing);
-        Cover acrossCover = tileAcross != null ? tileAcross.getCoverHolder().getCoverAtSide(facing.getOpposite()) : null;
-        return (tileCover == null || tileCover.canPipePassThrough()) && (acrossCover == null || acrossCover.canPipePassThrough());
+        Cover acrossCover = tileAcross != null ? tileAcross.getCoverHolder().getCoverAtSide(facing.getOpposite()) :
+                null;
+        return (tileCover == null || tileCover.canPipePassThrough()) &&
+                (acrossCover == null || acrossCover.canPipePassThrough());
     }
 
-    public static void connectTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross, EnumFacing facing) {
+    public static void connectTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross,
+                                   EnumFacing facing) {
         // abort connection if either tile refuses it.
         if (!tile.canConnectTo(facing) || tileAcross != null && !tileAcross.canConnectTo(facing.getOpposite())) return;
 
@@ -291,7 +291,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         }
     }
 
-    public static void disconnectTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross, EnumFacing facing) {
+    public static void disconnectTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross,
+                                      EnumFacing facing) {
         tile.setDisconnected(facing);
         if (tileAcross == null) return;
         tileAcross.setDisconnected(facing.getOpposite());
@@ -327,7 +328,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         }
     }
 
-    public static void unblockTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross, EnumFacing facing) {
+    public static void unblockTile(@NotNull PipeTileEntity tile, @Nullable PipeTileEntity tileAcross,
+                                   EnumFacing facing) {
         tile.setUnblocked(facing);
         if (tileAcross == null || tile.getWorld().isRemote) return;
 
@@ -357,7 +359,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     @Override
     public void onBlockAdded(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
-//        if (!worldIn.isRemote) getHandler(worldIn, pos).getOrCreateFromNets(worldIn, pos, getStructure());
+        // if (!worldIn.isRemote) getHandler(worldIn, pos).getOrCreateFromNets(worldIn, pos, getStructure());
     }
 
     @Override
@@ -377,7 +379,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     // misc stuff //
 
     @Override
-    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                               @NotNull ITooltipFlag flagIn) {
         if (getStructure() instanceof IPipeChanneledStructure channeledStructure) {
             if (channeledStructure.getChannelCount() > 1)
                 tooltip.add(I18n.format("gregtech.pipe.channels", channeledStructure.getChannelCount()));
@@ -495,13 +498,13 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     }
 
     public @Nullable RayTraceAABB collisionRayTrace(@NotNull EntityPlayer player,
-                                                   @NotNull World world, @NotNull BlockPos pos) {
+                                                    @NotNull World world, @NotNull BlockPos pos) {
         return collisionRayTrace(player, world, pos, RayTracer.getStartVec(player), RayTracer.getEndVec(player));
     }
 
     public @Nullable RayTraceAABB collisionRayTrace(@Nullable EntityPlayer player,
-                                                   @NotNull World worldIn, @NotNull BlockPos pos,
-                                                   @NotNull Vec3d start, @NotNull Vec3d end) {
+                                                    @NotNull World worldIn, @NotNull BlockPos pos,
+                                                    @NotNull Vec3d start, @NotNull Vec3d end) {
         if (hasPipeCollisionChangingItem(worldIn, pos, player)) {
             return RayTraceAABB.of(rayTrace(pos, start, end, FULL_BLOCK_AABB), FULL_BLOCK_AABB);
         }
@@ -634,7 +637,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     @Override
     public final PipeTileEntity createTileEntity(@NotNull World world, @NotNull IBlockState state) {
         try {
-            //noinspection deprecation
+            // noinspection deprecation
             return getTileClass(world, state).newInstance();
         } catch (Throwable ignored) {
             return null;
@@ -663,7 +666,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         PipeTileEntity tile = getTileEntity(world, pos);
         if (tile != null) {
             TemperatureLogic temperatureLogic = tile.getTemperatureLogic();
-            int temp = temperatureLogic == null ? 0 : temperatureLogic.getTemperature(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
+            int temp = temperatureLogic == null ? 0 : temperatureLogic
+                    .getTemperature(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
             // max light at 5000 K
             // min light at 500 K
             if (temp >= 5000) {

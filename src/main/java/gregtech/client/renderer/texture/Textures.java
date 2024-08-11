@@ -626,7 +626,6 @@ public class Textures {
         PIPE_LARGE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood")), 0);
         PIPE_SIDE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood")), 0);
 
-
         OPTICAL_PIPE_IN.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_in")), -1);
         OPTICAL_PIPE_SIDE.accept(textureMap

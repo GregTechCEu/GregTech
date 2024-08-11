@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.net.fluid;
 
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
-
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 
@@ -48,7 +47,8 @@ public interface IFluidTransferController {
     /**
      * @return the amount filled.
      */
-    default int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler, boolean doFill) {
+    default int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
+                                boolean doFill) {
         return destHandler.fill(testObject.recombine(amount), doFill);
     }
 
@@ -57,7 +57,7 @@ public interface IFluidTransferController {
      */
     @Nullable
     default FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount, IFluidHandler sourceHandler,
-                                         boolean doDrain) {
+                                          boolean doDrain) {
         if (testObject == null) return sourceHandler.drain(amount, doDrain);
         else {
             FluidStack recombined = testObject.recombine();

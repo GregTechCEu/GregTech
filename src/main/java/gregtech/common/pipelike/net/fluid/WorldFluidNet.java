@@ -11,8 +11,8 @@ import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
-import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
 import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
+import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.common.covers.FluidFilterMode;
 import gregtech.common.covers.ManualImportExportMode;
@@ -66,9 +66,9 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
                 return;
             } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
                     filter.getFilterMode() != FluidFilterMode.FILTER_FILL) {
-                predicate = FilterPredicate.INSTANCE.getNew();
-                predicate.setSourceFilter(filter.getFluidFilter());
-            }
+                        predicate = FilterPredicate.INSTANCE.getNew();
+                        predicate.setSourceFilter(filter.getFluidFilter());
+                    }
         }
         if (b instanceof CoverWithFluidFilter filter) {
             if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
@@ -77,9 +77,9 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
                 return;
             } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
                     filter.getFilterMode() != FluidFilterMode.FILTER_DRAIN) {
-                if (predicate == null) predicate = FilterPredicate.INSTANCE.getNew();
-                predicate.setTargetFilter(filter.getFluidFilter());
-            }
+                        if (predicate == null) predicate = FilterPredicate.INSTANCE.getNew();
+                        predicate.setTargetFilter(filter.getFluidFilter());
+                    }
         }
         if (predicate != null) edge.getPredicateHandler().setPredicate(predicate);
     }

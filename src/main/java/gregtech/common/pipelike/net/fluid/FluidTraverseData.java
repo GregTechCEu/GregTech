@@ -154,7 +154,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
             if (container != null) {
                 availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                         .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                        (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() == null);
+                                (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() == null);
             }
         }
         return flowReachingDestination - availableFlow;

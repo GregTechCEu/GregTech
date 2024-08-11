@@ -6,7 +6,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * {@link #union(EdgePredicate)} behavior.
  */
 public abstract class EdgePredicate<T extends EdgePredicate<T, N>, N extends NBTBase>
-        implements INBTSerializable<N>, IStringSerializable {
+                                   implements INBTSerializable<N>, IStringSerializable {
 
     private final @NotNull String name;
 

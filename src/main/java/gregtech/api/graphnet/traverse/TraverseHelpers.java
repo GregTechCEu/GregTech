@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -382,8 +381,7 @@ public final class TraverseHelpers {
                     // keep iterating over paths in order to collect destinations into the cache
                     if (availableFlow <= 0) continue;
                     skippedPaths.put(destIdentifier, path);
-                }
-                else {
+                } else {
                     // keep iterating over paths in order to collect destinations into the cache
                     if (availableFlow <= 0) {
                         cache.addFirst(destIdentifier);

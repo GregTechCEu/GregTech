@@ -38,7 +38,8 @@ public class StructureQuadCache {
         this.helper = helper;
         this.endTex = endTex;
         this.sideTex = sideTex;
-        if (helper.getLayerCount() < 1) throw new IllegalStateException("Cannot create an SQC without at least one layer present on the helper!");
+        if (helper.getLayerCount() < 1)
+            throw new IllegalStateException("Cannot create an SQC without at least one layer present on the helper!");
     }
 
     public static @NotNull StructureQuadCache create(PipeQuadHelper helper, SpriteInformation endTex,
@@ -115,5 +116,4 @@ public class StructureQuadCache {
             }
         }
     }
-
 }

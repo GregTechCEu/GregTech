@@ -980,8 +980,10 @@ public class GTUtility {
     /**
      * Forces the initialization of a class; this includes things like loading its static fields.
      * This can be useful because a statement like {@code AClass.class} does not initialize a class.
-     * <br> <br>
+     * <br>
+     * <br>
      * Does nothing if the class is already initialized.
+     * 
      * @param clazz the class object to initialize.
      */
     public static void forceInitialization(Class<?> clazz) {

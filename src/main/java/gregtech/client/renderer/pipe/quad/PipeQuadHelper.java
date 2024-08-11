@@ -32,7 +32,7 @@ public final class PipeQuadHelper {
         float yL = (y + large) * 16;
         float zS = (z + small) * 16;
         float zL = (z + large) * 16;
-        definition = new float[] {xS, xL, yS, yL, zS, zL};
+        definition = new float[] { xS, xL, yS, yL, zS, zL };
     }
 
     @Contract("_ -> this")
@@ -45,8 +45,8 @@ public final class PipeQuadHelper {
             float zS = definition[4];
             float zL = definition[5];
             definition = null;
-            generateBox(xS, xL, yS, yL, zS, zL, (facing, x1, y1, z1, x2, y2, z2) ->
-                    QuadHelper.toPair(x1, y1, z1, x2, y2, z2));
+            generateBox(xS, xL, yS, yL, zS, zL,
+                    (facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.toPair(x1, y1, z1, x2, y2, z2));
             for (OverlayLayerDefinition definition : overlayLayers) {
                 generateBox(xS, xL, yS, yL, zS, zL, definition);
             }
@@ -58,7 +58,8 @@ public final class PipeQuadHelper {
         return coreBoxList.size();
     }
 
-    private void generateBox(float xS, float xL, float yS, float yL, float zS, float zL, OverlayLayerDefinition definition) {
+    private void generateBox(float xS, float xL, float yS, float yL, float zS, float zL,
+                             OverlayLayerDefinition definition) {
         coreBoxList.add(definition.computeBox(null, xS, yS, zS, xL, yL, zL));
         EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> sideBoxes = new EnumMap<>(EnumFacing.class);
         sideBoxes.put(EnumFacing.DOWN, definition.computeBox(EnumFacing.DOWN, xS, 0, zS, xL, yS, zL));
@@ -145,5 +146,4 @@ public final class PipeQuadHelper {
         }
         return list;
     }
-
 }

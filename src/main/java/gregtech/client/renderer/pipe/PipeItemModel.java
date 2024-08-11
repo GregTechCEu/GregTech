@@ -10,29 +10,32 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
 import java.util.EnumMap;
 import java.util.List;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
+
 public class PipeItemModel<K extends CacheKey> implements IBakedModel {
 
-    private static final EnumMap<ItemCameraTransforms.TransformType, Matrix4f> CAMERA_TRANSFORMS =
-            new EnumMap<>(ItemCameraTransforms.TransformType.class);
+    private static final EnumMap<ItemCameraTransforms.TransformType, Matrix4f> CAMERA_TRANSFORMS = new EnumMap<>(
+            ItemCameraTransforms.TransformType.class);
 
     static {
         CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.NONE, TRSRTransformation.mul(null, null, null, null));
-        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GUI, TRSRTransformation.mul(null, rotDegrees(30, -45, 0), scale(0.625f), null));
-        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GROUND, TRSRTransformation.mul(null, null, scale(0.25f), null));
-        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.FIXED, TRSRTransformation.mul(null, rotDegrees(0, 90, 0), scale(0.5f), null));
+        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GUI,
+                TRSRTransformation.mul(null, rotDegrees(30, -45, 0), scale(0.625f), null));
+        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.GROUND,
+                TRSRTransformation.mul(null, null, scale(0.25f), null));
+        CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.FIXED,
+                TRSRTransformation.mul(null, rotDegrees(0, 90, 0), scale(0.5f), null));
         Matrix4f matrix4f = TRSRTransformation.mul(null, rotDegrees(75, 45, 0), scale(0.375f), null);
         CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, matrix4f);
         CAMERA_TRANSFORMS.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, matrix4f);
@@ -82,7 +85,7 @@ public class PipeItemModel<K extends CacheKey> implements IBakedModel {
 
     @Override
     public @NotNull Pair<? extends IBakedModel, Matrix4f> handlePerspective(
-            ItemCameraTransforms.@NotNull TransformType cameraTransformType) {
+                                                                            ItemCameraTransforms.@NotNull TransformType cameraTransformType) {
         return ImmutablePair.of(this, CAMERA_TRANSFORMS.get(cameraTransformType));
     }
 

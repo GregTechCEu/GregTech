@@ -23,9 +23,9 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
-import gregtech.common.pipelike.net.energy.VoltageLossLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
+import gregtech.common.pipelike.net.energy.VoltageLossLogic;
 import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 
 import net.minecraft.client.resources.I18n;
@@ -45,7 +45,8 @@ import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATIO
 
 public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNetMaterialProperty {
 
-    public static final MaterialPropertyKey<MaterialEnergyProperties> KEY = new MaterialPropertyKey<>("EnergyProperties");
+    public static final MaterialPropertyKey<MaterialEnergyProperties> KEY = new MaterialPropertyKey<>(
+            "EnergyProperties");
 
     private final long voltageLimit;
     private final long amperageLimit;
@@ -116,7 +117,6 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     @Override
     public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
-
         int tier = GTUtility.getTierByVoltage(voltageLimit);
         if (isSuperconductor())
             tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));

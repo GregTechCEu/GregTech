@@ -10,7 +10,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * {@link #union(NetLogicEntry)} behavior.
  */
 public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBTBase>
-        implements INBTSerializable<N>, IStringSerializable, IPacket {
+                                   implements INBTSerializable<N>, IStringSerializable, IPacket {
 
     private final @NotNull String name;
 

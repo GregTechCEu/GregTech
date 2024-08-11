@@ -28,12 +28,14 @@ public class ExtraCappedSQC extends StructureQuadCache {
                              SpriteInformation extraEndTex) {
         super(helper, endTex, sideTex);
         this.extraEndTex = extraEndTex;
-        if (helper.getLayerCount() < 2) throw new IllegalStateException("Cannot create an ExtraCappedSQC without 2 or more layers present on the helper!");
+        if (helper.getLayerCount() < 2) throw new IllegalStateException(
+                "Cannot create an ExtraCappedSQC without 2 or more layers present on the helper!");
     }
 
     public static @NotNull ExtraCappedSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                  SpriteInformation sideTex, SpriteInformation extraEndTex) {
-        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.capOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.capOverlay(facing, x1, y1, z1, x2, y2, z2,
+                OVERLAY_DIST_1));
         ExtraCappedSQC cache = new ExtraCappedSQC(helper, endTex, sideTex, extraEndTex);
         cache.buildPrototype();
         return cache;
@@ -56,7 +58,8 @@ public class ExtraCappedSQC extends StructureQuadCache {
     }
 
     @Override
-    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data, byte coverMask) {
+    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data,
+                          byte coverMask) {
         List<BakedQuad> quads = cache.getQuads(data);
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (GTUtility.evalMask(facing, connectionMask)) {

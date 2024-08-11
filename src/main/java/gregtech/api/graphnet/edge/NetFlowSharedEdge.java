@@ -17,7 +17,6 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
     private final int flowBufferTicks;
     private final int regenerationTime;
 
-
     /**
      * NetEdge that provides flow behavior where the capacity along an edge is shared by all channels.
      *
@@ -30,13 +29,12 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
         this.regenerationTime = 1;
     }
 
-
     /**
      * NetEdge that provides flow behavior where the capacity along an edge is shared by all channels.
      *
-     * @param flowBufferTicks Determines how many ticks of 'buffer' flow capacity can be built up along edges. Allows
-     *                        for once-an-interval push/pull operations instead of needing them every tick for maximum
-     *                        throughput.
+     * @param flowBufferTicks  Determines how many ticks of 'buffer' flow capacity can be built up along edges. Allows
+     *                         for once-an-interval push/pull operations instead of needing them every tick for maximum
+     *                         throughput.
      * @param regenerationTime Ticks required for flow to regenerate once. Allows slowing down the rate of regeneration.
      */
     public NetFlowSharedEdge(int flowBufferTicks, int regenerationTime) {

@@ -1,7 +1,6 @@
 package gregtech.api.graphnet;
 
 import gregtech.api.graphnet.alg.AlgorithmBuilder;
-import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.alg.NetAlgorithmWrapper;
 import gregtech.api.graphnet.alg.NetPathMapper;
 import gregtech.api.graphnet.alg.iter.IteratorFactory;
@@ -24,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.function.Function;
 
 /**
  * The bridge between JGraphT graphs and graphnet abstractions.
@@ -39,12 +37,13 @@ public final class GraphNetBacker {
     private final NetAlgorithmWrapper[] netAlgorithms;
 
     public GraphNetBacker(IGraphNet backedNet, INetGraph graph,
-                          AlgorithmBuilder @NotNull ... algorithmBuilders) {
+                          AlgorithmBuilder @NotNull... algorithmBuilders) {
         this.backedNet = backedNet;
         this.pipeGraph = graph;
         this.netAlgorithms = new NetAlgorithmWrapper[algorithmBuilders.length];
         for (int i = 0; i < algorithmBuilders.length; i++) {
-            this.netAlgorithms[i] = new NetAlgorithmWrapper(backedNet, algorithmBuilders[i], backedNet.supportsPredication());
+            this.netAlgorithms[i] = new NetAlgorithmWrapper(backedNet, algorithmBuilders[i],
+                    backedNet.supportsPredication());
         }
         this.vertexMap = new Object2ObjectOpenHashMap<>();
     }

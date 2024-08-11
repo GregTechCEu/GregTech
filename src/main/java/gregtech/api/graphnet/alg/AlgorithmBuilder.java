@@ -7,5 +7,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface AlgorithmBuilder {
 
-    @NotNull INetAlgorithm build(@NotNull IGraphNet net, boolean recomputeEveryCall);
+    @NotNull
+    INetAlgorithm build(@NotNull IGraphNet net, boolean recomputeEveryCall);
 }

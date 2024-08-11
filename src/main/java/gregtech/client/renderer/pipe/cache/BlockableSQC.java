@@ -28,12 +28,14 @@ public class BlockableSQC extends StructureQuadCache {
                            SpriteInformation blockedTex) {
         super(helper, endTex, sideTex);
         this.blockedTex = blockedTex;
-        if (helper.getLayerCount() < 2) throw new IllegalStateException("Cannot create a BlockableSQC without 2 or more layers present on the helper!");
+        if (helper.getLayerCount() < 2) throw new IllegalStateException(
+                "Cannot create a BlockableSQC without 2 or more layers present on the helper!");
     }
 
     public static @NotNull BlockableSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                SpriteInformation sideTex, SpriteInformation blockedTex) {
-        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.tubeOverlay(facing, x1, y1, z1, x2, y2, z2,
+                OVERLAY_DIST_1));
         BlockableSQC cache = new BlockableSQC(helper, endTex, sideTex, blockedTex);
         cache.buildPrototype();
         return cache;
@@ -56,7 +58,8 @@ public class BlockableSQC extends StructureQuadCache {
     }
 
     @Override
-    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data, byte coverMask) {
+    public void addToList(List<BakedQuad> list, byte connectionMask, byte closedMask, byte blockedMask, ColorData data,
+                          byte coverMask) {
         List<BakedQuad> quads = cache.getQuads(data);
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (GTUtility.evalMask(facing, connectionMask)) {

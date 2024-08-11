@@ -14,9 +14,6 @@ import gregtech.api.graphnet.traverse.ITraverseData;
 import gregtech.api.graphnet.traverse.TraverseDataProvider;
 import gregtech.api.graphnet.traverse.TraverseGuide;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
-import gregtech.common.pipelike.net.energy.WorldEnergyNet;
-
-import gregtech.common.pipelike.net.item.ItemCapabilityObject;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -34,7 +31,8 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.function.LongConsumer;
 
-public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandler, IFluidTankProperties, IFluidTraverseGuideProvider {
+public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandler, IFluidTankProperties,
+                                   IFluidTraverseGuideProvider {
 
     private final WorldPipeNet net;
     private @Nullable PipeTileEntity tile;
@@ -47,7 +45,8 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> FluidCapabilityObject(@NotNull N net,
                                                                                           WorldPipeNetNode node) {
         this.net = net;
-        properties = new IFluidTankProperties[node.getData().getLogicEntryDefaultable(ChannelCountLogic.INSTANCE).getValue()];
+        properties = new IFluidTankProperties[node.getData().getLogicEntryDefaultable(ChannelCountLogic.INSTANCE)
+                .getValue()];
         Arrays.fill(properties, this);
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
@@ -108,15 +107,22 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     }
 
     @Override
-    public @Nullable <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-            TraverseDataProvider<D, FluidTestObject> provider, FluidTestObject testObject, long flow,
-            boolean simulate) {
+    public @Nullable <
+            D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
+                                                                                                                                               TraverseDataProvider<D, FluidTestObject> provider,
+                                                                                                                                               FluidTestObject testObject,
+                                                                                                                                               long flow,
+                                                                                                                                               boolean simulate) {
         return getGuide(provider, testObject, flow, simulate, null);
     }
 
-    public @Nullable <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-            TraverseDataProvider<D, FluidTestObject> provider, FluidTestObject testObject, long flow,
-            boolean simulate, EnumFacing side) {
+    public @Nullable <
+            D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
+                                                                                                                                               TraverseDataProvider<D, FluidTestObject> provider,
+                                                                                                                                               FluidTestObject testObject,
+                                                                                                                                               long flow,
+                                                                                                                                               boolean simulate,
+                                                                                                                                               EnumFacing side) {
         if (tile == null || inputDisallowed(side)) return null;
         SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
@@ -198,9 +204,12 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         }
 
         @Override
-        public @Nullable <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                TraverseDataProvider<D, FluidTestObject> provider, FluidTestObject testObject, long flow,
-                boolean simulate) {
+        public @Nullable <
+                D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
+                                                                                                                                                   TraverseDataProvider<D, FluidTestObject> provider,
+                                                                                                                                                   FluidTestObject testObject,
+                                                                                                                                                   long flow,
+                                                                                                                                                   boolean simulate) {
             return FluidCapabilityObject.this.getGuide(provider, testObject, flow, simulate, facing);
         }
 

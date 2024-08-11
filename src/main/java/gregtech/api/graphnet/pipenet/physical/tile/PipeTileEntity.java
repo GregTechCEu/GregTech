@@ -4,8 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
-import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicData;
+import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicRegistry;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
@@ -16,14 +16,11 @@ import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.common.blocks.MetaBlocks;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -50,6 +47,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -85,7 +83,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     protected final PipeCoverHolder covers = new PipeCoverHolder(this);
     private final Object2ObjectOpenHashMap<Capability<?>, IPipeCapabilityObject> capabilities = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectOpenCustomHashMap<WorldPipeNetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet.getSensitiveHashMap();
+    private final Object2ObjectOpenCustomHashMap<WorldPipeNetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet
+            .getSensitiveHashMap();
 
     @Nullable
     private TemperatureLogic temperatureLogic;
@@ -696,7 +695,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     /**
-     * Note - the block corresponding to this tile entity must register any new unlisted properties to the default state.
+     * Note - the block corresponding to this tile entity must register any new unlisted properties to the default
+     * state.
      */
     @MustBeInvokedByOverriders
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {

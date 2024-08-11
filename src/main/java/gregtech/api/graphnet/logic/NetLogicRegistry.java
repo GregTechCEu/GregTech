@@ -24,7 +24,7 @@ public final class NetLogicRegistry {
     }
 
     public static @NotNull Supplier<@NotNull NetLogicEntry<?, ?>> getSupplierErroring(String name) {
-        Supplier<NetLogicEntry<? ,?>> supplier = REGISTRY.get(name);
+        Supplier<NetLogicEntry<?, ?>> supplier = REGISTRY.get(name);
         if (supplier == null) throwNonexistenceError();
         return supplier;
     }

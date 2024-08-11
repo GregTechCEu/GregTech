@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 
-public class FluidRRTraverseData extends FluidTraverseData implements IRoundRobinTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
+public class FluidRRTraverseData extends FluidTraverseData
+                                 implements IRoundRobinTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
 
     private final ArrayDeque<Object> cache;
 

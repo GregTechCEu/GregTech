@@ -12,9 +12,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-
 import gregtech.common.pipelike.net.item.IItemTransferController;
 import gregtech.common.pipelike.net.item.ItemEQTraverseData;
 import gregtech.common.pipelike.net.item.ItemRRTraverseData;
@@ -114,8 +112,7 @@ public class CoverRoboticArm extends CoverConveyor {
                 if (getItemsLeftToTransfer() < limit) {
                     noTransferDueToMinimum = true;
                     return 0;
-                }
-                else return limit;
+                } else return limit;
             };
             performTransfer(sourceHandler, destHandler, true, maxflow, maxflow, (a, b) -> reportItemsTransfer(b));
         }
@@ -141,9 +138,11 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected @NotNull ItemRRTraverseData getRRTD(IGraphNet net, ItemTestObject testObject, SimulatorKey simulator,
-                                                  long queryTick, BlockPos sourcePos, EnumFacing inputFacing, boolean simulate) {
+                                                  long queryTick, BlockPos sourcePos, EnumFacing inputFacing,
+                                                  boolean simulate) {
         if (transferMode == TransferMode.KEEP_EXACT) {
-            return new KeepItemRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing, getRoundRobinCache(simulate));
+            return new KeepItemRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing,
+                    getRoundRobinCache(simulate));
         }
         return super.getRRTD(net, testObject, simulator, queryTick, sourcePos, inputFacing, simulate);
     }
@@ -313,7 +312,8 @@ public class CoverRoboticArm extends CoverConveyor {
                     continue; // anti insert-to-our-source logic
 
                 IItemHandler container = capability.getValue()
-                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getItemFilter() != null;
@@ -321,7 +321,8 @@ public class CoverRoboticArm extends CoverConveyor {
                     if (contained >= kept) continue;
                     availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() != null);
+                                    (int) Math.min(kept - contained, availableFlow), container,
+                                    getSimulatorKey() != null);
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -345,7 +346,8 @@ public class CoverRoboticArm extends CoverConveyor {
                     continue; // anti insert-to-our-source logic
 
                 IItemHandler container = capability.getValue()
-                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getItemFilter() != null;
@@ -357,7 +359,7 @@ public class CoverRoboticArm extends CoverConveyor {
                     maxMinFlow = Math.min(maxMinFlow, test -
                             IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                                     .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(), test,
-                                    container, true));
+                                            container, true));
                 }
             }
         }
@@ -371,7 +373,8 @@ public class CoverRoboticArm extends CoverConveyor {
                     continue; // anti insert-to-our-source logic
 
                 IItemHandler container = capability.getValue()
-                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getItemFilter() != null;
@@ -379,7 +382,8 @@ public class CoverRoboticArm extends CoverConveyor {
                     if (contained >= kept) continue;
                     availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() != null);
+                                    (int) Math.min(kept - contained, availableFlow), container,
+                                    getSimulatorKey() != null);
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -402,7 +406,8 @@ public class CoverRoboticArm extends CoverConveyor {
                     continue; // anti insert-to-our-source logic
 
                 IItemHandler container = capability.getValue()
-                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getItemFilter() != null;
@@ -410,7 +415,8 @@ public class CoverRoboticArm extends CoverConveyor {
                     if (contained >= kept) continue;
                     availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() != null);
+                                    (int) Math.min(kept - contained, availableFlow), container,
+                                    getSimulatorKey() != null);
                 }
             }
             return flowReachingDestination - availableFlow;

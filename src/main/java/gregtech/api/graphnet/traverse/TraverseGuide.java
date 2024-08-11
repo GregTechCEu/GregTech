@@ -16,7 +16,8 @@ public class TraverseGuide<N extends NetNode, P extends INetPath<N, ?>, T extend
     private final long flow;
     private final LongConsumer consumptionReport;
 
-    public TraverseGuide(T data, Supplier<Iterator<P>> pathsSupplier, long flow, @Nullable LongConsumer consumptionReport) {
+    public TraverseGuide(T data, Supplier<Iterator<P>> pathsSupplier, long flow,
+                         @Nullable LongConsumer consumptionReport) {
         this.data = data;
         this.pathsSupplier = pathsSupplier;
         this.flow = flow;
@@ -42,5 +43,4 @@ public class TraverseGuide<N extends NetNode, P extends INetPath<N, ?>, T extend
     public long getFlow() {
         return flow;
     }
-
 }

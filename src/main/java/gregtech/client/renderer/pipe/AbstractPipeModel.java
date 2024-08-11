@@ -13,7 +13,6 @@ import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
-
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
 import net.minecraft.block.state.IBlockState;
@@ -76,7 +75,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
             CoverRendererPackage rendererPackage = ext.getValue(CoverRendererPackage.PROPERTY);
             byte coverMask = rendererPackage == null ? 0 : rendererPackage.getMask();
             if (canRenderInLayer(getCurrentRenderLayer())) {
-                 quads = getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
+                quads = getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
                         safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
                         data, ext.getValue(FRAME_MATERIAL_PROPERTY),
                         safeByte(ext.getValue(FRAME_MASK_PROPERTY)), coverMask);
@@ -115,7 +114,8 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
         return integer == null ? 0 : integer;
     }
 
-    public @NotNull List<BakedQuad> getQuads(K key, byte connectionMask, byte closedMask, byte blockedMask, ColorData data,
+    public @NotNull List<BakedQuad> getQuads(K key, byte connectionMask, byte closedMask, byte blockedMask,
+                                             ColorData data,
                                              @Nullable Material frameMaterial, byte frameMask, byte coverMask) {
         List<BakedQuad> quads = new ObjectArrayList<>();
 
@@ -135,7 +135,8 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
                         .createFrame(Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(rl.toString())));
                 frameCache.put(rl, frame);
             }
-            List<BakedQuad> frameQuads = frame.getQuads(new ColorData(GTUtility.convertRGBtoARGB(frameMaterial.getMaterialRGB())));
+            List<BakedQuad> frameQuads = frame
+                    .getQuads(new ColorData(GTUtility.convertRGBtoARGB(frameMaterial.getMaterialRGB())));
             for (int i = 0; i < 6; i++) {
                 if ((frameMask & (1 << i)) > 0) {
                     quads.add(frameQuads.get(i));

@@ -11,16 +11,12 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithItemFilter;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.TraverseGuide;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.function.BiIntConsumer;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
@@ -28,20 +24,13 @@ import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-
 import gregtech.common.covers.filter.MatchResult;
 import gregtech.common.covers.filter.MergabilityInfo;
 import gregtech.common.pipelike.net.item.IItemTransferController;
-
 import gregtech.common.pipelike.net.item.IItemTraverseGuideProvider;
-
 import gregtech.common.pipelike.net.item.ItemEQTraverseData;
 import gregtech.common.pipelike.net.item.ItemRRTraverseData;
 import gregtech.common.pipelike.net.item.ItemTraverseData;
-
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,6 +72,8 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -92,12 +83,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.IntUnaryOperator;
 
 public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithItemFilter,
-                                                        TransferControlProvider, IItemTransferController {
+                           TransferControlProvider, IItemTransferController {
 
     public final int tier;
     public final int maxItemTransferRate;
@@ -237,13 +226,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     /**
      * Performs transfer
      *
-     * @param sourceHandler the handler to pull from
-     * @param destHandler the handler to push to
-     * @param byFilterSlot whether to perform the transfer by filter slot.
-     * @param minTransfer the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                    transferring by slot, a filter slot of -1 will be passed in.
-     * @param maxTransfer the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                    transferring by slot, a filter slot of -1 will be passed in.
+     * @param sourceHandler  the handler to pull from
+     * @param destHandler    the handler to push to
+     * @param byFilterSlot   whether to perform the transfer by filter slot.
+     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
+     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
      * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
      *                       Each filter slot will report its transfer before the next slot is calculated.
      * @return how much was transferred in total.
@@ -301,11 +290,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     int remaining = max - transfer + toExtract;
                     slotTransfer += transfer;
                     if (remaining <= 0) continue;
-                    for (MergabilityInfo<ItemTestObject>.Merge otherMerge : mergabilityInfo.getNonLargestMerges(merge)) {
+                    for (MergabilityInfo<ItemTestObject>.Merge otherMerge : mergabilityInfo
+                            .getNonLargestMerges(merge)) {
                         transfer = Math.min(otherMerge.getCount(), remaining);
                         transfer = insertToHandler(destHandler, merge.getTestObject(), transfer, true);
                         toExtract = transfer;
-                        for (int handlerSlot :otherMerge.getHandlerSlots()) {
+                        for (int handlerSlot : otherMerge.getHandlerSlots()) {
                             toExtract -= sourceHandler.extractItem(handlerSlot, toExtract, false).getCount();
                             if (toExtract == 0) break;
                         }
@@ -338,15 +328,20 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             case EQUALIZED -> {
                 var guide = provider.getGuide(this::getEQTD, testObject, count, simulate);
                 if (guide == null) return 0;
-                int consumed = (int) TraverseHelpers.traverseEqualDistribution(guide.getData(), guide.getPathsSupplier(), guide.getFlow(), true);
+                int consumed = (int) TraverseHelpers.traverseEqualDistribution(guide.getData(),
+                        guide.getPathsSupplier(), guide.getFlow(), true);
                 guide.reportConsumedFlow(consumed);
                 return consumed;
             }
             case ROUND_ROBIN -> {
-                var guide = provider.getGuide((net, testObject1, simulator, queryTick, sourcePos, inputFacing) ->
-                        getRRTD(net, testObject1, simulator, queryTick, sourcePos, inputFacing, simulate), testObject, count, simulate);
+                var guide = provider
+                        .getGuide(
+                                (net, testObject1, simulator, queryTick, sourcePos, inputFacing) -> getRRTD(net,
+                                        testObject1, simulator, queryTick, sourcePos, inputFacing, simulate),
+                                testObject, count, simulate);
                 if (guide == null) return 0;
-                int consumed = (int) TraverseHelpers.traverseRoundRobin(guide.getData(), guide.getPaths(), guide.getFlow(), true);
+                int consumed = (int) TraverseHelpers.traverseRoundRobin(guide.getData(), guide.getPaths(),
+                        guide.getFlow(), true);
                 guide.reportConsumedFlow(consumed);
                 return consumed;
             }
@@ -356,27 +351,30 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Contract("_, _, _, _, _, _ -> new")
     protected @NotNull ItemTraverseData getTD(IGraphNet net, ItemTestObject testObject, SimulatorKey simulator,
-                                                long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
+                                              long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
         return new ItemTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing);
     }
 
     @Contract("_, _, _, _, _, _ -> new")
     protected @NotNull ItemEQTraverseData getEQTD(IGraphNet net, ItemTestObject testObject, SimulatorKey simulator,
-                                            long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
+                                                  long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
         return new ItemEQTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing);
     }
 
     @Contract("_, _, _, _, _, _, _ -> new")
     protected @NotNull ItemRRTraverseData getRRTD(IGraphNet net, ItemTestObject testObject, SimulatorKey simulator,
-                                                long queryTick, BlockPos sourcePos, EnumFacing inputFacing, boolean simulate) {
-        return new ItemRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing, getRoundRobinCache(simulate));
+                                                  long queryTick, BlockPos sourcePos, EnumFacing inputFacing,
+                                                  boolean simulate) {
+        return new ItemRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing,
+                getRoundRobinCache(simulate));
     }
 
     protected ArrayDeque<Object> getRoundRobinCache(boolean simulate) {
         return simulate ? roundRobinCache.clone() : roundRobinCache;
     }
 
-    protected int simpleInsert(@NotNull IItemHandler destHandler, ItemTestObject testObject, int count, boolean simulate) {
+    protected int simpleInsert(@NotNull IItemHandler destHandler, ItemTestObject testObject, int count,
+                               boolean simulate) {
         int available = count;
         for (int i = 0; i < destHandler.getSlots(); i++) {
             ItemStack toInsert = testObject.recombine(Math.min(available, destHandler.getSlotLimit(i)));
@@ -712,6 +710,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     protected CoverRenderer buildRenderer() {
         return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY).build();
     }
+
     protected CoverRenderer buildRendererInverted() {
         return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY_INVERTED).build();
     }

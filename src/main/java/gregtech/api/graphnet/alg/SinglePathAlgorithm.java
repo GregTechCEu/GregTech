@@ -1,7 +1,5 @@
 package gregtech.api.graphnet.alg;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.alg.iter.IteratorFactory;
 import gregtech.api.graphnet.alg.iter.SimpleIteratorFactories;
@@ -9,6 +7,7 @@ import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.path.INetPath;
 
+import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.Iterator;
@@ -48,7 +47,7 @@ public final class SinglePathAlgorithm implements INetAlgorithm {
     }
 
     private Results compute(GraphVertex source,
-                           List<GraphVertex> nodes, List<GraphEdge> graphEdges) {
+                            List<GraphVertex> nodes, List<GraphEdge> graphEdges) {
         nodes.add(source);
         GraphVertex lastNode = null;
         GraphVertex node = source;
@@ -69,8 +68,7 @@ public final class SinglePathAlgorithm implements INetAlgorithm {
                     graphEdge = i.next();
                     reversedEdge = !this.net.getGraph().isDirected() && graphEdge.getTarget() == node;
                     // we know that the new edge cannot point to the previous node
-                }
-                else break; // we've reached the end, exit the loop while still valid
+                } else break; // we've reached the end, exit the loop while still valid
             } else if (i.hasNext()) i.next();
             if (i.hasNext()) valid = false; // third graphEdge detected - that's an invalid group
             lastNode = node;

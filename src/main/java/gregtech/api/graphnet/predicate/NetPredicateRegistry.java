@@ -1,7 +1,5 @@
 package gregtech.api.graphnet.predicate;
 
-import gregtech.api.graphnet.logic.NetLogicEntry;
-
 import gregtech.api.util.function.NullableSupplier;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -28,7 +26,7 @@ public final class NetPredicateRegistry {
     }
 
     public static @NotNull Supplier<EdgePredicate<?, ?>> getSupplierErroring(String name) {
-        Supplier<EdgePredicate<? ,?>> supplier = REGISTRY.get(name);
+        Supplier<EdgePredicate<?, ?>> supplier = REGISTRY.get(name);
         if (supplier == null) throwNonexistenceError();
         return supplier;
     }

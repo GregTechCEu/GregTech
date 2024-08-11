@@ -4,12 +4,10 @@ import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.alg.AlgorithmBuilder;
-import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.graph.NetDirectedGraph;
 import gregtech.api.graphnet.graph.NetUndirectedGraph;
-import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.util.DimensionPos;
 

@@ -10,9 +10,7 @@ import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
-
 import gregtech.client.renderer.pipe.AbstractPipeModel;
-
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.state.BlockStateContainer;

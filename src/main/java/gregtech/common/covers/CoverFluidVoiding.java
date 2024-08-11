@@ -1,7 +1,6 @@
 package gregtech.common.covers;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTTransferUtils;

@@ -6,7 +6,6 @@ import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.graphnet.traverse.IEqualizableTraverseData;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.EnumFacing;
@@ -16,7 +15,8 @@ import net.minecraftforge.items.IItemHandler;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ItemEQTraverseData extends ItemTraverseData implements IEqualizableTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
+public class ItemEQTraverseData extends ItemTraverseData
+                                implements IEqualizableTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
 
     protected int destCount;
     protected int maxMinFlow;
@@ -43,7 +43,7 @@ public class ItemEQTraverseData extends ItemTraverseData implements IEqualizable
                 maxMinFlow = Math.min(maxMinFlow, test -
                         IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                                 .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(), test,
-                                container, true));
+                                        container, true));
             }
         }
     }

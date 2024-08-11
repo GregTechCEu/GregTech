@@ -16,7 +16,8 @@ import java.util.function.Consumer;
 @Desugar
 public record LaserStructure(String name, float renderThickness, ActivablePipeModel model) implements IPipeStructure {
 
-    public static final LaserStructure INSTANCE = new LaserStructure("laser_pipe_normal", 0.375f, ActivablePipeModel.LASER);
+    public static final LaserStructure INSTANCE = new LaserStructure("laser_pipe_normal", 0.375f,
+            ActivablePipeModel.LASER);
 
     public LaserStructure(String name, float renderThickness, ActivablePipeModel model) {
         this.name = name;

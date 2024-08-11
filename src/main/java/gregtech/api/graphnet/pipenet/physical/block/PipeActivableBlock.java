@@ -1,14 +1,12 @@
 package gregtech.api.graphnet.pipenet.physical.block;
 
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.ActivablePipeModel;
 
 import net.minecraft.block.state.BlockStateContainer;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

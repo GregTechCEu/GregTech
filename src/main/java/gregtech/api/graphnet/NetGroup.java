@@ -1,6 +1,5 @@
 package gregtech.api.graphnet;
 
-import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -8,7 +7,6 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 

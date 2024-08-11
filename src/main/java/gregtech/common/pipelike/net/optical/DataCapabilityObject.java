@@ -59,8 +59,10 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
                                 capability.getKey().getOpposite());
                 if (access != null) {
                     queryObject.setShouldTriggerWalker(false);
-                    boolean cancelled = IOpticalTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
-                            .getCoverAtSide(capability.getKey())).queryHandler(queryObject, access);
+                    boolean cancelled = IOpticalTransferController.CONTROL
+                            .get(destination.getTileEntity().getCoverHolder()
+                                    .getCoverAtSide(capability.getKey()))
+                            .queryHandler(queryObject, access);
                     if (queryObject.shouldTriggerWalker()) {
                         SlowActiveWalker.dispatch(tile.getWorld(), path, 1);
                     }

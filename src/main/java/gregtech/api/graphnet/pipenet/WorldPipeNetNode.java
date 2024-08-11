@@ -1,11 +1,9 @@
 package gregtech.api.graphnet.pipenet;
 
 import gregtech.api.graphnet.MultiNodeHelper;
-import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.worldnet.WorldNetNode;
 
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

@@ -197,7 +197,8 @@ public class MetaBlocks {
             }
             CABLES.put(modid, cables);
 
-            Set<MaterialPipeStructure> structuresPipe = PipeStructureRegistry.getStructures(MaterialPipeStructure.class);
+            Set<MaterialPipeStructure> structuresPipe = PipeStructureRegistry
+                    .getStructures(MaterialPipeStructure.class);
             MaterialPipeBlock[] pipes = new MaterialPipeBlock[structuresPipe.size()];
             i = 0;
             for (MaterialPipeStructure struct : structuresPipe) {

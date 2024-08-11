@@ -41,7 +41,7 @@ public interface IEnergyTransferController {
      * @return inserted amperes
      */
     default long insertToHandler(long voltage, long amperage, @NotNull IEnergyContainer destHandler, EnumFacing side,
-                                boolean simulate) {
+                                 boolean simulate) {
         return destHandler.acceptEnergyFromNetwork(side, voltage, amperage, simulate);
     }
 }

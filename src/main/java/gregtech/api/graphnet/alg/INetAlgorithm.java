@@ -6,5 +6,6 @@ import gregtech.api.graphnet.path.INetPath;
 
 public interface INetAlgorithm {
 
-    <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source, NetPathMapper<Path> remapper);
+    <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
+                                                                                NetPathMapper<Path> remapper);
 }

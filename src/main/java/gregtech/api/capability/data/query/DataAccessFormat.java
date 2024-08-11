@@ -1,9 +1,8 @@
 package gregtech.api.capability.data.query;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.util.IStringSerializable;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,10 +10,13 @@ import java.util.Set;
 
 public final class DataAccessFormat implements IStringSerializable {
 
-    public static final DataAccessFormat STANDARD = create("gregtech.data_format.access.standard", DataQueryFormat.RECIPE);
-    public static final DataAccessFormat COMPUTATION = create("gregtech.data_format.access.computation", DataQueryFormat.COMPUTATION);
+    public static final DataAccessFormat STANDARD = create("gregtech.data_format.access.standard",
+            DataQueryFormat.RECIPE);
+    public static final DataAccessFormat COMPUTATION = create("gregtech.data_format.access.computation",
+            DataQueryFormat.COMPUTATION);
 
-    public static final DataAccessFormat UNIVERSAL = new DataAccessFormat("gregtech.data_format.access.universal", null);
+    public static final DataAccessFormat UNIVERSAL = new DataAccessFormat("gregtech.data_format.access.universal",
+            null);
 
     private final Set<DataQueryFormat> supportedFormats;
 

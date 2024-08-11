@@ -3,16 +3,14 @@ package gregtech.api.graphnet.pipenet.physical;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface IPipeStructure extends IStringSerializable {

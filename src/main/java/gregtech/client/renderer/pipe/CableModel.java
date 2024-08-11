@@ -1,7 +1,7 @@
 package gregtech.client.renderer.pipe;
 
-import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;

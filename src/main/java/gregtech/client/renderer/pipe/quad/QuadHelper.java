@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraft.util.math.AxisAlignedBB;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -27,7 +26,8 @@ public final class QuadHelper {
     public static RecolorableBakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
                                                  UVMapper uv, SpriteInformation targetSprite) {
         BlockPartFace face = new BlockPartFace(null, -1, targetSprite.sprite().getIconName(), uv.map(normal, box));
-        BakedQuad quad = BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite.sprite(), normal, ModelRotation.X0_Y0, null, false, true);
+        BakedQuad quad = BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite.sprite(), normal,
+                ModelRotation.X0_Y0, null, false, true);
         RecolorableBakedQuad.Builder builder = new RecolorableBakedQuad.Builder(quad.getFormat());
         builder.setTexture(targetSprite);
         quad.pipe(builder);
@@ -37,7 +37,8 @@ public final class QuadHelper {
     public static BakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
                                       UVMapper uv, TextureAtlasSprite targetSprite) {
         BlockPartFace face = new BlockPartFace(null, -1, targetSprite.getIconName(), uv.map(normal, box));
-        return BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite, normal, ModelRotation.X0_Y0, null, false, true);
+        return BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite, normal, ModelRotation.X0_Y0,
+                null, false, true);
     }
 
     @Contract("_ -> new")
@@ -47,18 +48,23 @@ public final class QuadHelper {
     }
 
     @Contract("_, _, _, _, _, _ -> new")
-    public static @NotNull ImmutablePair<Vector3f, Vector3f> toPair(float x1, float y1, float z1, float x2, float y2, float z2) {
+    public static @NotNull ImmutablePair<Vector3f, Vector3f> toPair(float x1, float y1, float z1, float x2, float y2,
+                                                                    float z2) {
         return ImmutablePair.of(new Vector3f(x1, y1, z1), new Vector3f(x2, y2, z2));
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull ImmutablePair<Vector3f, Vector3f> capOverlay(@Nullable EnumFacing facing, @NotNull AxisAlignedBB bb, float g) {
-        return capOverlay(facing, (float) bb.minX * 16, (float) bb.minY * 16, (float) bb.minZ * 16, (float) bb.maxX * 16, (float) bb.maxY * 16,
+    public static @NotNull ImmutablePair<Vector3f, Vector3f> capOverlay(@Nullable EnumFacing facing,
+                                                                        @NotNull AxisAlignedBB bb, float g) {
+        return capOverlay(facing, (float) bb.minX * 16, (float) bb.minY * 16, (float) bb.minZ * 16,
+                (float) bb.maxX * 16, (float) bb.maxY * 16,
                 (float) bb.maxZ * 16, g);
     }
 
     @Contract("_, _, _, _, _, _, _, _ -> new")
-    public static @NotNull ImmutablePair<Vector3f, Vector3f> capOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
+    public static @NotNull ImmutablePair<Vector3f, Vector3f> capOverlay(@Nullable EnumFacing facing, float x1, float y1,
+                                                                        float z1, float x2, float y2, float z2,
+                                                                        float g) {
         if (facing == null) return toPair(x1 - g, y1 - g, z1 - g, x2 + g, y2 + g, z2 + g);
         return switch (facing.getAxis()) {
             case X -> toPair(x1 - g, y1, z1, x2 + g, y2, z2);
@@ -68,13 +74,17 @@ public final class QuadHelper {
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull ImmutablePair<Vector3f, Vector3f> tubeOverlay(@Nullable EnumFacing facing, @NotNull AxisAlignedBB bb, float g) {
-        return tubeOverlay(facing, (float) bb.minX * 16, (float) bb.minY * 16, (float) bb.minZ * 16, (float) bb.maxX * 16, (float) bb.maxY * 16,
+    public static @NotNull ImmutablePair<Vector3f, Vector3f> tubeOverlay(@Nullable EnumFacing facing,
+                                                                         @NotNull AxisAlignedBB bb, float g) {
+        return tubeOverlay(facing, (float) bb.minX * 16, (float) bb.minY * 16, (float) bb.minZ * 16,
+                (float) bb.maxX * 16, (float) bb.maxY * 16,
                 (float) bb.maxZ * 16, g);
     }
 
     @Contract("_, _, _, _, _, _, _, _ -> new")
-    public static @NotNull ImmutablePair<Vector3f, Vector3f> tubeOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
+    public static @NotNull ImmutablePair<Vector3f, Vector3f> tubeOverlay(@Nullable EnumFacing facing, float x1,
+                                                                         float y1, float z1, float x2, float y2,
+                                                                         float z2, float g) {
         if (facing == null) return toPair(x1, y1, z1, x2, y2, z2);
         return switch (facing.getAxis()) {
             case X -> toPair(x1, y1 - g, z1 - g, x2, y2 + g, z2 + g);
@@ -84,13 +94,17 @@ public final class QuadHelper {
     }
 
     @Contract("_, _, _ -> new")
-    public static @NotNull ImmutablePair<Vector3f, Vector3f> fullOverlay(@Nullable EnumFacing facing, @NotNull AxisAlignedBB bb, float g) {
-        return fullOverlay(facing, (float) bb.minX * 16, (float) bb.minY * 16, (float) bb.minZ * 16, (float) bb.maxX * 16, (float) bb.maxY * 16,
+    public static @NotNull ImmutablePair<Vector3f, Vector3f> fullOverlay(@Nullable EnumFacing facing,
+                                                                         @NotNull AxisAlignedBB bb, float g) {
+        return fullOverlay(facing, (float) bb.minX * 16, (float) bb.minY * 16, (float) bb.minZ * 16,
+                (float) bb.maxX * 16, (float) bb.maxY * 16,
                 (float) bb.maxZ * 16, g);
     }
 
     @Contract("_, _, _, _, _, _, _, _ -> new")
-    public static @NotNull ImmutablePair<Vector3f, Vector3f> fullOverlay(@Nullable EnumFacing facing, float x1, float y1, float z1, float x2, float y2, float z2, float g) {
+    public static @NotNull ImmutablePair<Vector3f, Vector3f> fullOverlay(@Nullable EnumFacing facing, float x1,
+                                                                         float y1, float z1, float x2, float y2,
+                                                                         float z2, float g) {
         return toPair(x1 - g, y1 - g, z1 - g, x2 + g, y2 + g, z2 + g);
     }
 }

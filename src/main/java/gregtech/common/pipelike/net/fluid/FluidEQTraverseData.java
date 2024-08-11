@@ -6,18 +6,17 @@ import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.traverse.IEqualizableTraverseData;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import org.jetbrains.annotations.NotNull;
 
-public class FluidEQTraverseData extends FluidTraverseData implements IEqualizableTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
+public class FluidEQTraverseData extends FluidTraverseData
+                                 implements IEqualizableTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
 
     protected int destCount;
     protected int maxMinFlow;
@@ -42,8 +41,9 @@ public class FluidEQTraverseData extends FluidTraverseData implements IEqualizab
                 destCount += 1;
                 maxMinFlow = Math.min(maxMinFlow,
                         IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
-                                .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(), Integer.MAX_VALUE,
-                                container, false));
+                                .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
+                                        Integer.MAX_VALUE,
+                                        container, false));
             }
         }
     }

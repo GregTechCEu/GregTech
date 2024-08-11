@@ -12,6 +12,6 @@ import java.util.List;
 @FunctionalInterface
 public interface CoverRenderer {
 
-     void addQuads(List<BakedQuad> quads, EnumFacing facing, EnumSet<EnumFacing> renderPlate, boolean renderBackside,
-                   BlockRenderLayer renderLayer, ColorData data);
+    void addQuads(List<BakedQuad> quads, EnumFacing facing, EnumSet<EnumFacing> renderPlate, boolean renderBackside,
+                  BlockRenderLayer renderLayer, ColorData data);
 }

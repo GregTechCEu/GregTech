@@ -22,6 +22,7 @@ public interface IPipeNetNodeHandler {
 
     void removeFromNets(World world, BlockPos pos, IPipeStructure structure);
 
-    void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip, @NotNull ITooltipFlag flagIn,
+    void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
+                        @NotNull ITooltipFlag flagIn,
                         IPipeStructure structure);
 }

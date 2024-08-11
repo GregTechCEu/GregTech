@@ -6,14 +6,13 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
-import gregtech.api.graphnet.edge.NetFlowSharedEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
-import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
 import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
+import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.covers.ManualImportExportMode;
@@ -67,9 +66,9 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
                 return;
             } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
                     filter.getFilterMode() != ItemFilterMode.FILTER_INSERT) {
-                predicate = FilterPredicate.INSTANCE.getNew();
-                predicate.setSourceFilter(filter.getItemFilter());
-            }
+                        predicate = FilterPredicate.INSTANCE.getNew();
+                        predicate.setSourceFilter(filter.getItemFilter());
+                    }
         }
         if (b instanceof CoverWithItemFilter filter) {
             if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
@@ -78,9 +77,9 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
                 return;
             } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
                     filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT) {
-                if (predicate == null) predicate = FilterPredicate.INSTANCE.getNew();
-                predicate.setTargetFilter(filter.getItemFilter());
-            }
+                        if (predicate == null) predicate = FilterPredicate.INSTANCE.getNew();
+                        predicate.setTargetFilter(filter.getItemFilter());
+                    }
         }
         if (predicate != null) edge.getPredicateHandler().setPredicate(predicate);
     }

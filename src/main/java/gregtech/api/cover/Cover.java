@@ -250,7 +250,8 @@ public interface Cover {
                           @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer);
 
     @SideOnly(Side.CLIENT)
-    @NotNull CoverRenderer getRenderer();
+    @NotNull
+    CoverRenderer getRenderer();
 
     default boolean canRenderBackside() {
         return true;

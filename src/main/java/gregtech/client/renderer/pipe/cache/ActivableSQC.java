@@ -28,13 +28,15 @@ public class ActivableSQC extends StructureQuadCache {
         super(helper, endTex, sideTex);
         this.overlayTex = overlayTex;
         this.overlayActiveTex = overlayActiveTex;
-        if (helper.getLayerCount() < 2) throw new IllegalStateException("Cannot create an ActivableSQC without 2 or more layers present on the helper!");
+        if (helper.getLayerCount() < 2) throw new IllegalStateException(
+                "Cannot create an ActivableSQC without 2 or more layers present on the helper!");
     }
 
     public static @NotNull ActivableSQC create(PipeQuadHelper helper, SpriteInformation endTex,
                                                SpriteInformation sideTex, SpriteInformation overlayTex,
                                                SpriteInformation overlayActiveTex) {
-        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.tubeOverlay(facing, x1, y1, z1, x2, y2, z2, OVERLAY_DIST_1));
+        helper.initialize((facing, x1, y1, z1, x2, y2, z2) -> QuadHelper.tubeOverlay(facing, x1, y1, z1, x2, y2, z2,
+                OVERLAY_DIST_1));
         ActivableSQC cache = new ActivableSQC(helper, endTex, sideTex, overlayTex, overlayActiveTex);
         cache.buildPrototype();
         return cache;

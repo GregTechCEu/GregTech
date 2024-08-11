@@ -4,7 +4,6 @@ import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagString;
 
 import org.jetbrains.annotations.NotNull;
 

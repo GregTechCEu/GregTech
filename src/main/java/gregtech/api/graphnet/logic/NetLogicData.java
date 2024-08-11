@@ -114,7 +114,8 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
     }
 
     @Contract("null, null -> null; !null, _ -> new; _, !null -> new")
-    public static @Nullable NetLogicData unionNullable(@Nullable NetLogicData sourceData, @Nullable NetLogicData targetData) {
+    public static @Nullable NetLogicData unionNullable(@Nullable NetLogicData sourceData,
+                                                       @Nullable NetLogicData targetData) {
         if (sourceData == null && targetData == null) return null;
         return union(sourceData == null ? targetData : sourceData, sourceData == null ? null : targetData);
     }

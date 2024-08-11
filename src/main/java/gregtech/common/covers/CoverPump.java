@@ -14,40 +14,25 @@ import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.function.BiIntConsumer;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
-
-import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.covers.filter.MatchResult;
 import gregtech.common.pipelike.net.fluid.FluidEQTraverseData;
 import gregtech.common.pipelike.net.fluid.FluidRRTraverseData;
 import gregtech.common.pipelike.net.fluid.FluidTraverseData;
 import gregtech.common.pipelike.net.fluid.IFluidTransferController;
-
 import gregtech.common.pipelike.net.fluid.IFluidTraverseGuideProvider;
-import gregtech.common.pipelike.net.item.IItemTraverseGuideProvider;
-import gregtech.common.pipelike.net.item.ItemEQTraverseData;
-import gregtech.common.pipelike.net.item.ItemRRTraverseData;
-import gregtech.common.pipelike.net.item.ItemTraverseData;
-
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -86,19 +71,16 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-
-import net.minecraftforge.items.IItemHandler;
-
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
-import java.util.Set;
 import java.util.function.IntUnaryOperator;
 
 public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter,
-                                                    TransferControlProvider, IFluidTransferController {
+                       TransferControlProvider, IFluidTransferController {
 
     public final int tier;
     public final int maxFluidTransferRate;
@@ -218,7 +200,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             TileEntity tileEntity = getNeighbor(getAttachedSide());
             IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide().getOpposite());
-            IFluidHandler myFluidHandler = getCoverableView().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+            IFluidHandler myFluidHandler = getCoverableView().getCapability(
+                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
                     getAttachedSide());
             if (myFluidHandler != null && fluidHandler != null) {
                 if (pumpMode == PumpMode.EXPORT) {
@@ -253,13 +236,13 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     /**
      * Performs transfer
      *
-     * @param sourceHandler the handler to pull from
-     * @param destHandler the handler to push to
-     * @param byFilterSlot whether to perform the transfer by filter slot.
-     * @param minTransfer the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                    transferring by slot, a filter slot of -1 will be passed in.
-     * @param maxTransfer the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                    transferring by slot, a filter slot of -1 will be passed in.
+     * @param sourceHandler  the handler to pull from
+     * @param destHandler    the handler to push to
+     * @param byFilterSlot   whether to perform the transfer by filter slot.
+     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
+     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
      * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
      *                       Each filter slot will report its transfer before the next slot is calculated.
      * @return how much was transferred in total.
@@ -323,15 +306,20 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             case EQUALIZED -> {
                 var guide = provider.getGuide(this::getEQTD, testObject, count, simulate);
                 if (guide == null) return 0;
-                int consumed = (int) TraverseHelpers.traverseEqualDistribution(guide.getData(), guide.getPathsSupplier(), guide.getFlow(), true);
+                int consumed = (int) TraverseHelpers.traverseEqualDistribution(guide.getData(),
+                        guide.getPathsSupplier(), guide.getFlow(), true);
                 guide.reportConsumedFlow(consumed);
                 return consumed;
             }
             case ROUND_ROBIN -> {
-                var guide = provider.getGuide((net, testObject1, simulator, queryTick, sourcePos, inputFacing) ->
-                        getRRTD(net, testObject1, simulator, queryTick, sourcePos, inputFacing, simulate), testObject, count, simulate);
+                var guide = provider
+                        .getGuide(
+                                (net, testObject1, simulator, queryTick, sourcePos, inputFacing) -> getRRTD(net,
+                                        testObject1, simulator, queryTick, sourcePos, inputFacing, simulate),
+                                testObject, count, simulate);
                 if (guide == null) return 0;
-                int consumed = (int) TraverseHelpers.traverseRoundRobin(guide.getData(), guide.getPaths(), guide.getFlow(), true);
+                int consumed = (int) TraverseHelpers.traverseRoundRobin(guide.getData(), guide.getPaths(),
+                        guide.getFlow(), true);
                 guide.reportConsumedFlow(consumed);
                 return consumed;
             }
@@ -353,15 +341,18 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     @Contract("_, _, _, _, _, _, _ -> new")
     protected @NotNull FluidRRTraverseData getRRTD(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
-                                                   long queryTick, BlockPos sourcePos, EnumFacing inputFacing, boolean simulate) {
-        return new FluidRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing, getRoundRobinCache(simulate));
+                                                   long queryTick, BlockPos sourcePos, EnumFacing inputFacing,
+                                                   boolean simulate) {
+        return new FluidRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing,
+                getRoundRobinCache(simulate));
     }
 
     protected ArrayDeque<Object> getRoundRobinCache(boolean simulate) {
         return simulate ? roundRobinCache.clone() : roundRobinCache;
     }
 
-    protected int simpleInsert(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count, boolean simulate) {
+    protected int simpleInsert(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count,
+                               boolean simulate) {
         return count - destHandler.fill(testObject.recombine(count), !simulate);
     }
 
@@ -564,6 +555,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected CoverRenderer buildRenderer() {
         return new CoverRendererBuilder(Textures.PUMP_OVERLAY).build();
     }
+
     protected CoverRenderer buildRendererInverted() {
         return new CoverRendererBuilder(Textures.PUMP_OVERLAY_INVERTED).build();
     }

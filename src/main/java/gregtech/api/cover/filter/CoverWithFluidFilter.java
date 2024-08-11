@@ -5,12 +5,12 @@ import gregtech.common.covers.FluidFilterMode;
 import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface CoverWithFluidFilter extends Cover {
 
-    @Nullable FluidFilterContainer getFluidFilter();
+    @Nullable
+    FluidFilterContainer getFluidFilter();
 
     FluidFilterMode getFilterMode();
 

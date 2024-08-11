@@ -97,13 +97,21 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
     @Nullable
     @Override
     public <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-            TraverseDataProvider<D, ItemTestObject> provider, ItemTestObject testObject, long flow, boolean simulate) {
+                                                                                                                                               TraverseDataProvider<D, ItemTestObject> provider,
+                                                                                                                                               ItemTestObject testObject,
+                                                                                                                                               long flow,
+                                                                                                                                               boolean simulate) {
         return getGuide(provider, testObject, flow, simulate, null);
     }
 
     @Nullable
-    protected <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-            TraverseDataProvider<D, ItemTestObject> provider, ItemTestObject testObject, long flow, boolean simulate, EnumFacing side) {
+    protected <
+            D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
+                                                                                                                                               TraverseDataProvider<D, ItemTestObject> provider,
+                                                                                                                                               ItemTestObject testObject,
+                                                                                                                                               long flow,
+                                                                                                                                               boolean simulate,
+                                                                                                                                               EnumFacing side) {
         if (tile == null || inputDisallowed(side)) return null;
 
         SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
@@ -165,8 +173,10 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         @Nullable
         @Override
         public <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                TraverseDataProvider<D, ItemTestObject> provider, ItemTestObject testObject, long flow,
-                boolean simulate) {
+                                                                                                                                                   TraverseDataProvider<D, ItemTestObject> provider,
+                                                                                                                                                   ItemTestObject testObject,
+                                                                                                                                                   long flow,
+                                                                                                                                                   boolean simulate) {
             return ItemCapabilityObject.this.getGuide(provider, testObject, flow, simulate, facing);
         }
 

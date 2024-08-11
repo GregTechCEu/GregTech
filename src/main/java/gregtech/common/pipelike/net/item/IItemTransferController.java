@@ -1,12 +1,10 @@
 package gregtech.common.pipelike.net.item;
 
-import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
-
+import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.items.IItemHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +48,7 @@ public interface IItemTransferController {
      * @return the amount left uninserted; aka the remainder
      */
     default int insertToHandler(@NotNull ItemTestObject testObject, int amount,
-                               @NotNull IItemHandler destHandler, boolean simulate) {
+                                @NotNull IItemHandler destHandler, boolean simulate) {
         int available = amount;
         for (int i = 0; i < destHandler.getSlots(); i++) {
             int allowed = Math.min(available, Math.min(destHandler.getSlotLimit(i), testObject.getStackLimit()));
@@ -63,7 +61,7 @@ public interface IItemTransferController {
      * @return the amount extracted
      */
     default int extractFromHandler(@NotNull ItemTestObject testObject, int amount,
-                                  @NotNull IItemHandler sourceHandler, boolean simulate) {
+                                   @NotNull IItemHandler sourceHandler, boolean simulate) {
         int extracted = 0;
         for (int i = 0; i < sourceHandler.getSlots(); i++) {
             ItemStack stack = sourceHandler.extractItem(i, amount - extracted, true);

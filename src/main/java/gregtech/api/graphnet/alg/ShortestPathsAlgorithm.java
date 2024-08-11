@@ -8,7 +8,6 @@ import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.path.INetPath;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
 
 import java.util.Collections;

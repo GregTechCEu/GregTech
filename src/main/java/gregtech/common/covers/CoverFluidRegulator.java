@@ -11,7 +11,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.SimpleFluidFilter;
-
 import gregtech.common.pipelike.net.fluid.FluidEQTraverseData;
 import gregtech.common.pipelike.net.fluid.FluidRRTraverseData;
 import gregtech.common.pipelike.net.fluid.FluidTraverseData;
@@ -35,7 +34,6 @@ import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,8 +86,7 @@ public class CoverFluidRegulator extends CoverPump {
                 if (getFluidsLeftToTransfer() < limit) {
                     noTransferDueToMinimum = true;
                     return 0;
-                }
-                else return limit;
+                } else return limit;
             };
             performTransfer(sourceHandler, destHandler, true, maxflow, maxflow, (a, b) -> reportFluidsTransfer(b));
         }
@@ -118,7 +115,8 @@ public class CoverFluidRegulator extends CoverPump {
                                                    long queryTick, BlockPos sourcePos, EnumFacing inputFacing,
                                                    boolean simulate) {
         if (transferMode == TransferMode.KEEP_EXACT) {
-            return new KeepFluidRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing, getRoundRobinCache(simulate));
+            return new KeepFluidRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing,
+                    getRoundRobinCache(simulate));
         }
         return super.getRRTD(net, testObject, simulator, queryTick, sourcePos, inputFacing, simulate);
     }
@@ -288,7 +286,7 @@ public class CoverFluidRegulator extends CoverPump {
     protected class KeepFluidTraverseData extends FluidTraverseData {
 
         public KeepFluidTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
-                                    BlockPos sourcePos, EnumFacing inputFacing) {
+                                     BlockPos sourcePos, EnumFacing inputFacing) {
             super(net, testObject, simulator, queryTick, sourcePos, inputFacing);
         }
 
@@ -301,7 +299,8 @@ public class CoverFluidRegulator extends CoverPump {
                     continue; // anti insert-to-our-source logic
 
                 IFluidHandler container = capability.getValue()
-                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getFluidFilter() != null;
@@ -309,7 +308,8 @@ public class CoverFluidRegulator extends CoverPump {
                     if (contained >= kept) continue;
                     availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() == null);
+                                    (int) Math.min(kept - contained, availableFlow), container,
+                                    getSimulatorKey() == null);
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -318,7 +318,8 @@ public class CoverFluidRegulator extends CoverPump {
 
     protected class KeepFluidEQTraverseData extends FluidEQTraverseData {
 
-        public KeepFluidEQTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
+        public KeepFluidEQTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
+                                       long queryTick,
                                        BlockPos sourcePos, EnumFacing inputFacing) {
             super(net, testObject, simulator, queryTick, sourcePos, inputFacing);
         }
@@ -333,7 +334,8 @@ public class CoverFluidRegulator extends CoverPump {
                     continue; // anti insert-to-our-source logic
 
                 IFluidHandler container = capability.getValue()
-                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getFluidFilter() != null;
@@ -343,8 +345,9 @@ public class CoverFluidRegulator extends CoverPump {
                     destCount += 1;
                     maxMinFlow = Math.min(maxMinFlow,
                             IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
-                                    .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(), kept - contained,
-                                    container, false));
+                                    .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
+                                            kept - contained,
+                                            container, false));
                 }
             }
         }
@@ -358,7 +361,8 @@ public class CoverFluidRegulator extends CoverPump {
                     continue; // anti insert-to-our-source logic
 
                 IFluidHandler container = capability.getValue()
-                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getFluidFilter() != null;
@@ -366,7 +370,8 @@ public class CoverFluidRegulator extends CoverPump {
                     if (contained >= kept) continue;
                     availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() == null);
+                                    (int) Math.min(kept - contained, availableFlow), container,
+                                    getSimulatorKey() == null);
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -375,7 +380,8 @@ public class CoverFluidRegulator extends CoverPump {
 
     protected class KeepFluidRRTraverseData extends FluidRRTraverseData {
 
-        public KeepFluidRRTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
+        public KeepFluidRRTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
+                                       long queryTick,
                                        BlockPos sourcePos, EnumFacing inputFacing, ArrayDeque<Object> cache) {
             super(net, testObject, simulator, queryTick, sourcePos, inputFacing, cache);
         }
@@ -389,7 +395,8 @@ public class CoverFluidRegulator extends CoverPump {
                     continue; // anti insert-to-our-source logic
 
                 IFluidHandler container = capability.getValue()
-                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                                capability.getKey().getOpposite());
                 if (container != null) {
                     int contained = computeContained(container, getTestObject());
                     assert getFluidFilter() != null;
@@ -397,7 +404,8 @@ public class CoverFluidRegulator extends CoverPump {
                     if (contained >= kept) continue;
                     availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                            (int) Math.min(kept - contained, availableFlow), container, getSimulatorKey() == null);
+                                    (int) Math.min(kept - contained, availableFlow), container,
+                                    getSimulatorKey() == null);
                 }
             }
             return flowReachingDestination - availableFlow;

@@ -1,48 +1,31 @@
 package gregtech.common.pipelike.block.cable;
 
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.graphnet.AbstractGroupData;
-import gregtech.api.graphnet.NetGroup;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
-import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
-import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.registry.MaterialRegistry;
-
-import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.common.creativetab.GTCreativeTabs;
-
 import gregtech.common.pipelike.net.energy.EnergyFlowData;
 import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.WorldEnergyNet;
-
-import gregtech.common.pipelikeold.cable.net.EnergyGroupData;
-
 import gregtech.core.advancement.AdvancementTriggers;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
 import java.util.Map;
 
 public class CableBlock extends PipeMaterialBlock implements IBurnable {

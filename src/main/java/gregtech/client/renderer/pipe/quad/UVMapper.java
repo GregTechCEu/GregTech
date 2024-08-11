@@ -14,9 +14,9 @@ public interface UVMapper {
             Vector3f small = box.getLeft();
             Vector3f large = box.getRight();
             return switch (normal.getAxis()) {
-                case X -> new BlockFaceUV(new float[] {small.y, large.z, large.y, small.z}, rot);
-                case Y -> new BlockFaceUV(new float[] {small.x, large.z, large.x, small.z}, rot);
-                case Z -> new BlockFaceUV(new float[] {small.x, large.y, large.x, small.y}, rot);
+                case X -> new BlockFaceUV(new float[] { small.y, large.z, large.y, small.z }, rot);
+                case Y -> new BlockFaceUV(new float[] { small.x, large.z, large.x, small.z }, rot);
+                case Z -> new BlockFaceUV(new float[] { small.x, large.y, large.x, small.y }, rot);
             };
         };
     }

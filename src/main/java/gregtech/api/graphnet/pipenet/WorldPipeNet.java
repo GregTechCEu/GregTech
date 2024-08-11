@@ -5,7 +5,6 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.alg.AlgorithmBuilder;
-import gregtech.api.graphnet.alg.INetAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
@@ -15,14 +14,13 @@ import gregtech.api.graphnet.worldnet.WorldNet;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.IDirtyNotifiable;
 
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +62,6 @@ public abstract class WorldPipeNet extends WorldNet {
         if (supportsPredication()) updatePredicationInternal(node, tile);
     }
 
-
     /**
      * Called when a PipeTileEntity is marked dirty through {@link IDirtyNotifiable#markAsDirty()}, which is generally
      * when the state of its covers is changed.
@@ -97,10 +94,11 @@ public abstract class WorldPipeNet extends WorldNet {
      * @param coverTarget the cover on the target facing the source.
      * @return whether the predication state has changed and this net needs to be marked dirty.
      */
-    protected boolean predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source, @Nullable Cover coverSource,
-                              @NotNull WorldPipeNetNode target, @Nullable Cover coverTarget) {
-        Map<String, EdgePredicate<? ,?>> prevValue =
-                new Object2ObjectOpenHashMap<>(edge.getPredicateHandler().getPredicateSet());
+    protected boolean predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source,
+                                    @Nullable Cover coverSource,
+                                    @NotNull WorldPipeNetNode target, @Nullable Cover coverTarget) {
+        Map<String, EdgePredicate<?, ?>> prevValue = new Object2ObjectOpenHashMap<>(
+                edge.getPredicateHandler().getPredicateSet());
         edge.getPredicateHandler().clearPredicates();
         coverPredication(edge, coverSource, coverTarget);
         boolean edgeSame = !prevValue.equals(edge.getPredicateHandler().getPredicateSet());
@@ -122,11 +120,12 @@ public abstract class WorldPipeNet extends WorldNet {
 
     /**
      * Preferred method to override if your net has custom predication rules that only depend on covers.
-     * If the net is directed, this method <b>will</b> be called twice, so no special handling for directedness is needed.
+     * If the net is directed, this method <b>will</b> be called twice, so no special handling for directedness is
+     * needed.
      *
      * @param edge the edge to predicate
-     * @param a the cover on the source of the edge
-     * @param b the cover on the sink of the edge
+     * @param a    the cover on the source of the edge
+     * @param b    the cover on the sink of the edge
      */
     protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {}
 
@@ -145,7 +144,8 @@ public abstract class WorldPipeNet extends WorldNet {
     }
 
     protected Stream<@NotNull WorldPipeNet> sameDimensionNetsStream() {
-        return dimensionNets.getOrDefault(this.getDimension(), Collections.emptySet()).stream().filter(Objects::nonNull);
+        return dimensionNets.getOrDefault(this.getDimension(), Collections.emptySet()).stream()
+                .filter(Objects::nonNull);
     }
 
     public void synchronizeNode(WorldPipeNetNode node) {

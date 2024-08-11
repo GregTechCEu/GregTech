@@ -4,7 +4,6 @@ import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.IFreezable;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.unification.material.registry.MaterialRegistry;
-
 import gregtech.common.creativetab.GTCreativeTabs;
 
 public class MaterialPipeBlock extends PipeMaterialBlock implements IBurnable, IFreezable {

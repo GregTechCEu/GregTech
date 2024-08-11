@@ -1,16 +1,11 @@
 package gregtech.api.graphnet.pipenet.predicate;
 
 import gregtech.api.graphnet.predicate.EdgePredicate;
-
-import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
 import gregtech.common.covers.filter.BaseFilterContainer;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

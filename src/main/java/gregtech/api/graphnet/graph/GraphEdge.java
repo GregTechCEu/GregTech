@@ -33,6 +33,7 @@ public final class GraphEdge extends DefaultWeightedEdge {
     /**
      * Use this very sparingly. It's significantly better to go through {@link org.jgrapht.Graph#getEdgeWeight(Object)}
      * instead, unless you are doing nbt serialization for example.
+     * 
      * @return the edge weight.
      */
     @Override

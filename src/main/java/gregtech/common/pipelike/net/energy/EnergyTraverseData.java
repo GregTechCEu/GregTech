@@ -11,7 +11,6 @@ import gregtech.api.graphnet.pipenet.NodeLossCache;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
@@ -108,7 +107,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
             if (container != null) {
                 availableFlow -= IEnergyTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                         .getCoverAtSide(capability.getKey())).insertToHandler(pathVoltage, availableFlow, container,
-                        capability.getKey(), getSimulatorKey() != null);
+                                capability.getKey(), getSimulatorKey() != null);
             }
         }
         long accepted = flowReachingDestination - availableFlow;

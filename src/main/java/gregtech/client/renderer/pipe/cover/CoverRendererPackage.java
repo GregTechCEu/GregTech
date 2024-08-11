@@ -5,7 +5,6 @@ import gregtech.client.renderer.pipe.quad.ColorData;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 import org.jetbrains.annotations.NotNull;

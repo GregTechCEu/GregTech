@@ -5,7 +5,6 @@ import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.path.INetPath;
-
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagCompound;

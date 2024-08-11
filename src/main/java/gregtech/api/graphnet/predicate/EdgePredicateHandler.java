@@ -82,7 +82,8 @@ public final class EdgePredicateHandler implements INBTSerializable<NBTTagList>,
         if (shouldIgnore()) return true;
         boolean result = false;
         for (EdgePredicate<?, ?> predicate : predicateSet.values()) {
-            // TODO predicate 'categories' or 'affinities' that determine order of operations with and-y and or-y behavior?
+            // TODO predicate 'categories' or 'affinities' that determine order of operations with and-y and or-y
+            // behavior?
             boolean test = predicate.test(iPredicateTestObject);
             if (predicate.andy() && !test) return false;
             else result |= test;
