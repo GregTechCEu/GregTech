@@ -74,7 +74,7 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
     }
 
     @Override
-    public DataAccessFormat getFormat() {
+    public @NotNull DataAccessFormat getFormat() {
         return DataAccessFormat.UNIVERSAL;
     }
 

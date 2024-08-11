@@ -1,6 +1,6 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.data.IComputationConsumer;
+import gregtech.api.capability.data.IComputationUser;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.recipeproperties.ComputationProperty;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Recipe Logic for multiblocks that require computation.
  * Used with RecipeMaps that contain recipes using the {@link ComputationProperty}.
- * The Multiblock holding this logic must implement {@link IComputationConsumer}.
+ * The Multiblock holding this logic must implement {@link IComputationUser}.
  */
 public class ComputationRecipeLogic extends MultiblockRecipeLogic {
 
@@ -29,15 +29,15 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     private boolean hasNotEnoughComputation;
     private int currentDrawnCWUt;
 
-    public <T extends RecipeMapMultiblockController & IComputationConsumer> ComputationRecipeLogic(T metaTileEntity,
-                                                                                                   ComputationType type) {
+    public <T extends RecipeMapMultiblockController & IComputationUser> ComputationRecipeLogic(T metaTileEntity,
+                                                                                               ComputationType type) {
         super(metaTileEntity);
         this.type = type;
     }
 
     @NotNull
-    public IComputationConsumer getComputationProvider() {
-        return (IComputationConsumer) getMetaTileEntity();
+    public IComputationUser getComputationProvider() {
+        return (IComputationUser) getMetaTileEntity();
     }
 
     @Override
@@ -48,9 +48,9 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         if (!recipe.hasProperty(ComputationProperty.getInstance())) {
             return true;
         }
-        IComputationConsumer provider = getComputationProvider();
+        IComputationUser provider = getComputationProvider();
         int recipeCWUt = recipe.getProperty(ComputationProperty.getInstance(), 0);
-        return provider.supplyCWU(recipeCWUt, true) >= recipeCWUt;
+        return provider.requestCWU(recipeCWUt, true) >= recipeCWUt;
     }
 
     @Override
@@ -70,18 +70,18 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
             drawEnergy(recipeEUt, false);
 
-            IComputationConsumer provider = getComputationProvider();
-            int availableCWUt = (int) provider.supplyCWU(Integer.MAX_VALUE, true);
+            IComputationUser provider = getComputationProvider();
+            int availableCWUt = (int) provider.requestCWU(Integer.MAX_VALUE, true);
             if (availableCWUt >= recipeCWUt) {
                 // carry on as normal
                 this.hasNotEnoughComputation = false;
                 if (isDurationTotalCWU) {
                     // draw as much CWU as possible, and increase progress by this amount
-                    currentDrawnCWUt = (int) provider.supplyCWU(availableCWUt, false);
+                    currentDrawnCWUt = (int) provider.requestCWU(availableCWUt, false);
                     progressTime += currentDrawnCWUt;
                 } else {
                     // draw only the recipe CWU/t, and increase progress by 1
-                    provider.supplyCWU(recipeCWUt, false);
+                    provider.requestCWU(recipeCWUt, false);
                     progressTime++;
                 }
                 if (progressTime > maxProgressTime) {

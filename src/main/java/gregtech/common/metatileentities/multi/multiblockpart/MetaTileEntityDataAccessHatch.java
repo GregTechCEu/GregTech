@@ -162,7 +162,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public DataAccessFormat getFormat() {
+    public @NotNull DataAccessFormat getFormat() {
         return DataAccessFormat.STANDARD;
     }
 

@@ -19,6 +19,7 @@ public interface IDataAccess {
     /**
      * @return the {@link DataAccessFormat} this {@link IDataAccess} uses.
      */
+    @NotNull
     DataAccessFormat getFormat();
 
     /**
@@ -36,8 +37,8 @@ public interface IDataAccess {
      * @param query    the object representing the query.
      * @return if the query has been cancelled
      */
-    static boolean accessDatas(@NotNull Iterable<? extends IDataAccess> accesses,
-                               @NotNull DataQueryObject query) {
+    static boolean accessData(@NotNull Iterable<? extends IDataAccess> accesses,
+                              @NotNull DataQueryObject query) {
         boolean walk = false;
         boolean cancelled = false;
         for (IDataAccess access : accesses) {

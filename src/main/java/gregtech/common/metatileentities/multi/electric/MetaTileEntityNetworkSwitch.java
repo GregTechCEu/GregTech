@@ -140,7 +140,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank {
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         if (tick >= nextQueryTick) {
             this.query = new ComputationQuery();
-            IDataAccess.accessDatas(getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION), query);
+            IDataAccess.accessData(getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION), query);
             this.nextQueryTick = tick + 10;
         }
         return this.query;

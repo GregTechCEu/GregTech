@@ -14,10 +14,6 @@ public interface IEnergyContainer {
      */
     long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate);
 
-    default long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        return acceptEnergyFromNetwork(side, voltage, amperage, false);
-    }
-
     /**
      * @return if this container accepts energy from the given side
      */
@@ -33,7 +29,7 @@ public interface IEnergyContainer {
     /**
      * This changes the amount stored.
      * <b>This should only be used internally</b> (f.e. draining while working or filling while generating).
-     * For transfer between blocks use {@link #acceptEnergyFromNetwork(EnumFacing, long, long)}!!!
+     * For transfer between blocks use {@link #acceptEnergyFromNetwork(EnumFacing, long, long, boolean)}!!!
      *
      * @param differenceAmount amount of energy to add (>0) or remove (<0)
      * @return amount of energy added or removed

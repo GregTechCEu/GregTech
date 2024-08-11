@@ -2,7 +2,7 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IObjectHolder;
-import gregtech.api.capability.data.IComputationConsumer;
+import gregtech.api.capability.data.IComputationUser;
 import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.data.query.ComputationQuery;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityResearchStation extends RecipeMapMultiblockController implements IComputationConsumer {
+public class MetaTileEntityResearchStation extends RecipeMapMultiblockController implements IComputationUser {
 
     private IObjectHolder objectHolder;
 
@@ -96,13 +96,13 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    public long supplyCWU(long requested, boolean simulate) {
+    public long requestCWU(long requested, boolean simulate) {
         return queryConnected().requestCWU(requested, simulate);
     }
 
     private ComputationQuery queryConnected() {
         ComputationQuery query = new ComputationQuery();
-        IDataAccess.accessDatas(getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION), query);
+        IDataAccess.accessData(getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION), query);
         return query;
     }
 

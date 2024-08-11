@@ -3,14 +3,14 @@ package gregtech.api.capability.data;
 /**
  * Used for {@link gregtech.api.capability.impl.ComputationRecipeLogic}
  */
-public interface IComputationConsumer {
+public interface IComputationUser {
 
     /**
-     * Called to supply CWU.
+     * Called to request CWU for recipe logic.
      * 
      * @param requested the requested CWU
      * @param simulate  whether to simulate the request
      * @return the amount of CWU supplied.
      */
-    long supplyCWU(long requested, boolean simulate);
+    long requestCWU(long requested, boolean simulate);
 }

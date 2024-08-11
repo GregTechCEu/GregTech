@@ -70,14 +70,14 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
                 MultiblockControllerBase controller = getController();
                 if (!controller.isActive()) return false;
 
-                if (IDataAccess.accessDatas(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), queryObject))
+                if (IDataAccess.accessData(controller.getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), queryObject))
                     return true;
 
                 List<IStandardDataAccess> reception = controller.getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION);
                 if (queryObject instanceof IBridgeable bridgeable && reception.size() > 1) {
                     bridgeable.setBridged();
                 }
-                return IDataAccess.accessDatas(reception, queryObject);
+                return IDataAccess.accessData(reception, queryObject);
             } else {
                 TileEntity tileEntity = getNeighbor(getFrontFacing());
                 if (tileEntity == null) return false;

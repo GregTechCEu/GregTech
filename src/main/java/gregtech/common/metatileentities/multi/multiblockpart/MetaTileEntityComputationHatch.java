@@ -73,7 +73,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
                 if (queryObject instanceof IBridgeable bridgeable && reception.size() > 1) {
                     bridgeable.setBridged();
                 }
-                return IDataAccess.accessDatas(reception, queryObject);
+                return IDataAccess.accessData(reception, queryObject);
             } else {
                 TileEntity tileEntity = getNeighbor(getFrontFacing());
                 if (tileEntity == null) return false;

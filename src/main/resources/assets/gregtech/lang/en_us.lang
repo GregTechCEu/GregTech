@@ -1299,8 +1299,8 @@ cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
 cover.generic.distribution.name=Distribution Mode
 cover.generic.distribution.equalized=§bEqual Distribution§r\n§7Fills all destinations by the same amount per operation.
-cover.generic.distribution.round_robin=§bRound Robin§r\n§7Fills destinations in a fixed order, but performs no further equalization.
-cover.generic.distribution.flood=§bFlood Insert§r\n§7Fills destinations based on their priorities, performing no further equalization.
+cover.generic.distribution.round_robin=§bRound Robin§r\n§7Fills destinations in a fixed order, but does not equalize.
+cover.generic.distribution.flood=§bFlood Insert§r\n§7Fills destinations based on their priorities and does not equalize.
 cover.pump.mode=Pump Mode
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
@@ -2415,7 +2415,7 @@ tile.laser_pipe_normal.name=Laser Transmitting Cable
 tile.laser_pipe_normal.tooltip1=Transmitting power with §fno loss§7 in straight lines
 
 tile.laser_pipe_mirror.name=Laser Mirror Cable
-tile.laser_pipe_mirror.tooltip1=Transmitting power with §fno loss§7 around the bend
+tile.laser_pipe_mirror.tooltip1=Transmitting power with §fno loss§7 around a bend
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
