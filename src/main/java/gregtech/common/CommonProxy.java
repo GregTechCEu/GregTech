@@ -8,6 +8,7 @@ import gregtech.api.graphnet.pipenet.physical.block.ItemMaterialPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
@@ -23,13 +24,23 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
-import gregtech.common.blocks.*;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.BlockLamp;
+import gregtech.common.blocks.BlockOre;
+import gregtech.common.blocks.BlockSurfaceRock;
+import gregtech.common.blocks.LampItemBlock;
+import gregtech.common.blocks.MaterialItemBlock;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.OreItemBlock;
+import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.block.cable.CableBlock;
 import gregtech.common.pipelike.block.laser.LaserPipeBlock;
 import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
 import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
+import gregtech.datafix.GTDataFixers;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -73,7 +84,9 @@ public class CommonProxy {
         GTLog.logger.info("Registering Blocks...");
         IForgeRegistry<Block> registry = event.getRegistry();
 
-        registry.register(MACHINE);
+        for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {
+            registry.register(r.getBlock());
+        }
 
         StoneType.init();
 
@@ -195,7 +208,9 @@ public class CommonProxy {
 
         GTRecipeManager.preLoad();
 
-        registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
+        for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {
+            registry.register(createItemBlock(r.getBlock(), MachineItemBlock::new));
+        }
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (CableBlock cable : CABLES.get(materialRegistry.getModid()))
@@ -361,7 +376,9 @@ public class CommonProxy {
 
     public void onPreLoad() {}
 
-    public void onLoad() {}
+    public void onLoad() {
+        GTDataFixers.init();
+    }
 
     public void onPostLoad() {
         TerminalRegistry.init();

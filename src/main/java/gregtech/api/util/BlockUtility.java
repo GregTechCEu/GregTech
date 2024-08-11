@@ -47,9 +47,8 @@ public class BlockUtility {
             super(Material.AIR);
         }
 
-        @NotNull
         @Override
-        public NonNullList<ItemStack> captureDrops(boolean start) {
+        public @NotNull NonNullList<ItemStack> captureDrops(boolean start) {
             return super.captureDrops(start);
         }
     }
@@ -58,7 +57,7 @@ public class BlockUtility {
         WRAPPER.captureDrops(true);
     }
 
-    public static NonNullList<ItemStack> stopCaptureDrops() {
+    public static @NotNull NonNullList<ItemStack> stopCaptureDrops() {
         return WRAPPER.captureDrops(false);
     }
 

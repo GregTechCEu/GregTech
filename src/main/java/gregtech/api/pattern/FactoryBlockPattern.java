@@ -127,6 +127,14 @@ public class FactoryBlockPattern {
         return this;
     }
 
+    public FactoryBlockPattern where(String symbol, TraceabilityPredicate blockMatcher) {
+        if (symbol.length() == 1) {
+            return where(symbol.charAt(0), blockMatcher);
+        }
+        throw new IllegalArgumentException(
+                String.format("Symbol \"%s\" is invalid! It must be exactly one character!", symbol));
+    }
+
     public BlockPattern build() {
         return new BlockPattern(makePredicateArray(), structureDir,
                 aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));

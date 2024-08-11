@@ -1,8 +1,11 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -140,8 +143,9 @@ public class TricorderBehavior implements IItemBehaviour {
                     new TextComponentTranslation(LocalizationUtils.format(metaTileEntity.getMetaFullName()))
                             .setStyle(new Style().setColor(TextFormatting.BLUE)),
                     new TextComponentTranslation(TextFormattingUtil
-                            .formatNumbers(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId)))
-                                    .setStyle(new Style().setColor(TextFormatting.BLUE))));
+                            .formatNumbers(
+                                    metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId)))
+                                            .setStyle(new Style().setColor(TextFormatting.BLUE))));
 
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 

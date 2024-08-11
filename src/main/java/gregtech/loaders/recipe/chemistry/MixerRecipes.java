@@ -102,6 +102,13 @@ public class MixerRecipes {
                 .fluidOutputs(DrillingFluid.getFluid(5000))
                 .duration(64).EUt(16).buildAndRegister();
 
+        MIXER_RECIPES.recipeBuilder()
+                .input(dust, Stone)
+                .fluidInputs(Lubricant.getFluid(20))
+                .fluidInputs(DistilledWater.getFluid(4980))
+                .fluidOutputs(DrillingFluid.getFluid(5000))
+                .duration(48).EUt(16).buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
                 .input(dust, Beryllium)
                 .input(dust, Potassium, 4)
@@ -527,7 +534,7 @@ public class MixerRecipes {
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
-                .input(dust, Uranium238)
+                .input(dust, Uranium)
                 .input(dust, Platinum, 3)
                 .circuitMeta(4)
                 .output(dust, UraniumTriplatinum, 4)
@@ -554,7 +561,7 @@ public class MixerRecipes {
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(150).EUt(VA[ZPM])
-                .input(dust, Uranium238)
+                .input(dust, Uranium)
                 .input(dust, Rhodium)
                 .input(dust, Naquadah, 2)
                 .circuitMeta(4)
@@ -586,6 +593,24 @@ public class MixerRecipes {
                 .input(dust, Molybdenum)
                 .circuitMeta(1)
                 .output(dust, RTMAlloy, 7)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(600).EUt(VA[EV])
+                .input(dust, Zirconium, 16)
+                .input(dust, Tin, 2)
+                .input(dust, Chrome, 1)
+                .circuitMeta(1)
+                .output(dust, Zircaloy4, 19)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(VA[EV])
+                .input(dust, Nickel, 5)
+                .input(dust, Chrome, 2)
+                .input(dust, Iron, 2)
+                .input(dust, Niobium)
+                .input(dust, Molybdenum)
+                .circuitMeta(4)
+                .output(dust, Inconel718, 11)
                 .buildAndRegister();
     }
 }

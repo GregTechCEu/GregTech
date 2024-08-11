@@ -157,8 +157,10 @@ public class MinerLogic {
         // drill a hole beneath the miner and extend the pipe downwards by one
         WorldServer world = (WorldServer) metaTileEntity.getWorld();
         if (mineY.get() < pipeY.get()) {
-            world.destroyBlock(
-                    new BlockPos(metaTileEntity.getPos().getX(), pipeY.get(), metaTileEntity.getPos().getZ()), false);
+            var pipePos = new BlockPos(metaTileEntity.getPos().getX(), pipeY.get(), metaTileEntity.getPos().getZ());
+            if (world.getTileEntity(pipePos) == null &&
+                    world.getBlockState(pipePos).getBlockHardness(world, pipePos) >= 0)
+                world.destroyBlock(pipePos, false);
             pipeY.decrementAndGet();
             incrementPipeLength();
         }
@@ -178,7 +180,7 @@ public class MinerLogic {
                 blockState = metaTileEntity.getWorld().getBlockState(blocksToMine.getFirst());
             }
             // When we are here we have an ore to mine! I'm glad we aren't threaded
-            if (!blocksToMine.isEmpty() & GTUtility.isOre(GTUtility.toItem(blockState))) {
+            if (!blocksToMine.isEmpty() && GTUtility.isOre(GTUtility.toItem(blockState))) {
                 // get the small ore drops, if a small ore
                 getSmallOreBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
                 // get the block's drops.
@@ -278,7 +280,7 @@ public class MinerLogic {
      * @param blockDrops the List of items to insert
      * @param world      the {@link WorldServer} the miner is in
      */
-    private void mineAndInsertItems(NonNullList<ItemStack> blockDrops, WorldServer world) {
+    private void mineAndInsertItems(List<ItemStack> blockDrops, WorldServer world) {
         // If the block's drops can fit in the inventory, move the previously mined position to the block
         // replace the ore block with cobblestone instead of breaking it to prevent mob spawning
         // remove the ore block's position from the mining queue

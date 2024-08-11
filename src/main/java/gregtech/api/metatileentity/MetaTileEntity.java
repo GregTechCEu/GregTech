@@ -24,6 +24,7 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
@@ -92,7 +93,7 @@ import com.cleanroommc.modularui.api.IGuiHolder;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -119,6 +120,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_MUFFLED = "Muffled";
+
+    private final MTERegistry registry;
 
     public final ResourceLocation metaTileEntityId;
     IGregTechTileEntity holder;
@@ -157,8 +160,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
 
-    public MetaTileEntity(ResourceLocation metaTileEntityId) {
+    protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
+        this.registry = GregTechAPI.mteManager.getRegistry(metaTileEntityId.getNamespace());
         initializeInventory();
     }
 
@@ -470,7 +474,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         return null;
     }
 
@@ -884,14 +888,22 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    public final ItemStack getStackForm(int amount) {
-        int metaTileEntityIntId = GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntityId);
-        return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
+    public final @NotNull ItemStack getStackForm(int amount) {
+        int metaTileEntityIntId = registry.getIdByObjectName(metaTileEntityId);
+        return new ItemStack(registry.getBlock(), amount, metaTileEntityIntId);
     }
 
     @Override
     public final @NotNull ItemStack getStackForm() {
         return getStackForm(1);
+    }
+
+    public final @NotNull MTERegistry getRegistry() {
+        return registry;
+    }
+
+    public final @NotNull BlockMachine getBlock() {
+        return registry.getBlock();
     }
 
     /**
@@ -903,7 +915,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param dropsList list of meta tile entity drops
      * @param harvester harvester of this meta tile entity, or null
      */
-    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {}
+    public void getDrops(@NotNull List<@NotNull ItemStack> dropsList, @Nullable EntityPlayer harvester) {}
 
     public final ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
@@ -1313,12 +1325,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return getHolder() != null && getHolder().isValid();
     }
 
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);
         clearInventory(itemBuffer, exportItems);
     }
 
-    public static void clearInventory(NonNullList<ItemStack> itemBuffer, IItemHandlerModifiable inventory) {
+    public static void clearInventory(@NotNull List<@NotNull ItemStack> itemBuffer,
+                                      @NotNull IItemHandlerModifiable inventory) {
         for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack stackInSlot = inventory.getStackInSlot(i);
             if (!stackInSlot.isEmpty()) {

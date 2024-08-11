@@ -63,6 +63,15 @@ public class GroovyExpansions {
         return Elements.add(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope);
     }
 
+    public static Element addElement(MaterialEvent event, long protons, long neutrons, String name, String symbol,
+                                     boolean isIsotope) {
+        return Elements.add(protons, neutrons, name, symbol, isIsotope);
+    }
+
+    public static Element addElement(MaterialEvent event, long protons, long neutrons, String name, String symbol) {
+        return Elements.add(protons, neutrons, name, symbol);
+    }
+
     public static FluidBuilder acidic(FluidBuilder builder) {
         return builder.attributes(FluidAttributes.ACID);
     }

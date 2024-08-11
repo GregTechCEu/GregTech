@@ -16,7 +16,6 @@ import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.integration.groovy.GroovyScriptModule;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -59,8 +58,6 @@ import java.util.Set;
  */
 public class Recipe {
 
-    private static final NonNullList<ItemStack> EMPTY = NonNullList.create();
-
     /**
      * This method was deprecated in 2.8 and will be removed in 2.9
      *
@@ -73,7 +70,7 @@ public class Recipe {
     }
 
     private final List<GTRecipeInput> inputs;
-    private final NonNullList<ItemStack> outputs;
+    private final List<ItemStack> outputs;
 
     /**
      * A chance of 10000 equals 100%
@@ -88,7 +85,7 @@ public class Recipe {
     /**
      * if > 0 means EU/t consumed, if < 0 - produced
      */
-    private final int EUt;
+    private final long EUt;
 
     /**
      * If this Recipe is hidden from JEI
@@ -113,7 +110,7 @@ public class Recipe {
                   List<FluidStack> fluidOutputs,
                   @NotNull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
                   int duration,
-                  int EUt,
+                  long EUt,
                   boolean hidden,
                   boolean isCTRecipe,
                   IRecipePropertyStorage recipePropertyStorage,
@@ -122,10 +119,9 @@ public class Recipe {
                 recipePropertyStorage;
         this.inputs = GTRecipeInputCache.deduplicateInputs(inputs);
         if (outputs.isEmpty()) {
-            this.outputs = EMPTY;
+            this.outputs = Collections.emptyList();
         } else {
-            this.outputs = NonNullList.create();
-            this.outputs.addAll(outputs);
+            this.outputs = new ArrayList<>(outputs);
         }
         this.chancedOutputs = chancedOutputs;
         this.chancedFluidOutputs = chancedFluidOutputs;
@@ -457,7 +453,7 @@ public class Recipe {
         return inputs;
     }
 
-    public NonNullList<ItemStack> getOutputs() {
+    public List<ItemStack> getOutputs() {
         return outputs;
     }
 
@@ -475,7 +471,7 @@ public class Recipe {
      * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
      */
     public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
-        List<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
+        List<ItemStack> outputs = new ArrayList<>(getOutputs());
         ChanceBoostFunction function = recipeMap.getChanceFunction();
         List<ChancedItemOutput> chancedOutputsList = getChancedOutputs().roll(function, recipeTier, machineTier);
 
@@ -702,7 +698,7 @@ public class Recipe {
         return duration;
     }
 
-    public int getEUt() {
+    public long getEUt() {
         return EUt;
     }
 

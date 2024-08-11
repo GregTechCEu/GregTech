@@ -37,7 +37,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -475,7 +474,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, chargerInventory);
     }
@@ -524,8 +523,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
             ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,
-                    GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
-                            .setIgnoreColor(true);
+                    GTValues.XMAS.get() ? getXmasLogo() : getLogo()).setIgnoreColor(true);
 
             if (this.circuitInventory != null) {
                 SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62 + yOffset)
@@ -534,6 +532,14 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
             }
         }
         return builder;
+    }
+
+    protected @NotNull TextureArea getLogo() {
+        return GuiTextures.GREGTECH_LOGO;
+    }
+
+    protected @NotNull TextureArea getXmasLogo() {
+        return GuiTextures.GREGTECH_LOGO_XMAS;
     }
 
     @Override

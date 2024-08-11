@@ -24,7 +24,7 @@ import com.cleanroommc.modularui.screen.Tooltip;
 import com.cleanroommc.modularui.utils.BooleanConsumer;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
@@ -75,7 +75,7 @@ public class OreDictionaryItemFilter extends BaseFilter {
     public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
     @Override
-    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
         return GTGuis.createPopupPanel("ore_dict_filter", 188, 76)
                 .padding(7)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
@@ -83,12 +83,12 @@ public class OreDictionaryItemFilter extends BaseFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
         return GTGuis.createPanel("ore_dict_filter", 100, 100);
     }
 
     @Override
-    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
         List<OreFilterTestSlot> oreSlots = new ArrayList<>();
         var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
 

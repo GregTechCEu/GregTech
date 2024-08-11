@@ -5,9 +5,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
-import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -382,12 +382,12 @@ public class BlockPattern {
                             blocks.put(pos, state);
                             world.setBlockState(pos, state);
                             TileEntity holder = world.getTileEntity(pos);
-                            if (holder instanceof IGregTechTileEntity) {
-                                MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY
-                                        .getObjectById(found.getItemDamage());
+                            if (holder instanceof IGregTechTileEntity igtte) {
+                                MTERegistry registry = GregTechAPI.mteManager
+                                        .getRegistry(found.getItem().getRegistryName().getNamespace());
+                                MetaTileEntity sampleMetaTileEntity = registry.getObjectById(found.getItemDamage());
                                 if (sampleMetaTileEntity != null) {
-                                    MetaTileEntity metaTileEntity = ((IGregTechTileEntity) holder)
-                                            .setMetaTileEntity(sampleMetaTileEntity);
+                                    MetaTileEntity metaTileEntity = igtte.setMetaTileEntity(sampleMetaTileEntity);
                                     metaTileEntity.onPlacement();
                                     blocks.put(pos, metaTileEntity);
                                     if (found.getTagCompound() != null) {
@@ -577,7 +577,7 @@ public class BlockPattern {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());
                             holder.getMetaTileEntity().onPlacement();
-                            info = new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
+                            info = new BlockInfo(holder.getMetaTileEntity().getBlock().getDefaultState(), holder);
                         }
                         blocks.put(pos, info);
                         minX = Math.min(pos.getX(), minX);

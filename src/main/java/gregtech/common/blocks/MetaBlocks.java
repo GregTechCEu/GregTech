@@ -9,6 +9,7 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.longdist.BlockLongDistancePipe;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -107,7 +108,6 @@ public class MetaBlocks {
 
     private MetaBlocks() {}
 
-    public static BlockMachine MACHINE;
     public static final Map<String, CableBlock[]> CABLES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, MaterialPipeBlock[]> MATERIAL_PIPES = new Object2ObjectOpenHashMap<>();
     public static OpticalPipeBlock[] OPTICAL_PIPES;
@@ -180,8 +180,11 @@ public class MetaBlocks {
     public static final List<BlockFluidBase> FLUID_BLOCKS = new ArrayList<>();
 
     public static void init() {
-        GregTechAPI.MACHINE = MACHINE = new BlockMachine();
-        MACHINE.setRegistryName("machine");
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            BlockMachine machine = new BlockMachine();
+            machine.setRegistryName(registry.getModid(), "mte");
+            registry.setBlock(machine);
+        }
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
@@ -437,8 +440,10 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE),
-                stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(registry.getBlock()),
+                    stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        }
 
         // prevent the loader from trying to locate the model files as only the IBakedModels exist, and
         // they are created during runtime.
@@ -551,7 +556,10 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
-        ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            ModelLoader.setCustomStateMapper(registry.getBlock(),
+                    new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        }
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             for (CableBlock cable : CABLES.get(registry.getModid())) {

@@ -159,7 +159,7 @@ public class MaterialPropertyExpansion {
             property = new FluidProperty();
             m.setProperty(PropertyKey.FLUID, property);
         }
-        property.getStorage().enqueueRegistration(key, builder);
+        property.enqueueRegistration(key, builder);
     }
 
     public static void addLiquid(Material m, FluidBuilder builder) {

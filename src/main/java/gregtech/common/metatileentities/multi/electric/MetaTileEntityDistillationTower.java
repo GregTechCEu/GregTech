@@ -1,5 +1,9 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.capability.IDistillationTower;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.DistillationTowerLogicHandler;
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -7,7 +11,10 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
@@ -15,8 +22,6 @@ import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.state.IBlockState;
@@ -36,22 +41,46 @@ import java.util.function.Function;
 
 import static gregtech.api.util.RelativeDirection.*;
 
-public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController {
+public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController implements IDistillationTower {
 
+    protected DistillationTowerLogicHandler handler;
+
+    @SuppressWarnings("unused") // backwards compatibility
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId) {
+        this(metaTileEntityId, false);
+    }
+
+    public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId, boolean useAdvHatchLogic) {
         super(metaTileEntityId, RecipeMaps.DISTILLATION_RECIPES);
+        if (useAdvHatchLogic) {
+            this.recipeMapWorkable = new DistillationTowerRecipeLogic(this);
+            this.handler = new DistillationTowerLogicHandler(this);
+        } else this.handler = null;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDistillationTower(metaTileEntityId);
+        return new MetaTileEntityDistillationTower(metaTileEntityId, this.handler != null);
     }
 
+    /**
+     * Used if MultiblockPart Abilities need to be sorted a certain way, like
+     * Distillation Tower and Assembly Line. <br>
+     * <br>
+     * There will be <i>consequences</i> if this is changed. Make sure to set the logic handler to one with
+     * a properly overriden {@link DistillationTowerLogicHandler#determineOrderedFluidOutputs()}
+     */
     @Override
     protected Function<BlockPos, Integer> multiblockPartSorter() {
         return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }
 
+    /**
+     * Whether this multi can be rotated or face upwards. <br>
+     * <br>
+     * There will be <i>consequences</i> if this returns true. Make sure to set the logic handler to one with
+     * a properly overriden {@link DistillationTowerLogicHandler#determineOrderedFluidOutputs()}
+     */
     @Override
     public boolean allowsExtendedFacing() {
         return false;
@@ -74,7 +103,21 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     }
 
     @Override
-    protected BlockPattern createStructurePattern() {
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        if (this.handler == null || this.structurePattern == null) return;
+        handler.determineLayerCount(this.structurePattern);
+        handler.determineOrderedFluidOutputs();
+    }
+
+    @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        if (this.handler != null) handler.invalidate();
+    }
+
+    @Override
+    protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start(RIGHT, FRONT, UP)
                 .aisle("YSY", "YYY", "YYY")
                 .aisle("XXX", "X#X", "XXX").setRepeatable(1, 11)
@@ -85,18 +128,14 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))
                         .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setExactLimit(1)))
                 .where('X', states(getCasingState())
-                        .or(metaTileEntities(MultiblockAbility.REGISTRY.get(MultiblockAbility.EXPORT_FLUIDS).stream()
-                                .filter(mte -> !(mte instanceof MetaTileEntityMultiFluidHatch) &&
-                                        !(mte instanceof MetaTileEntityMEOutputHatch))
-                                .toArray(MetaTileEntity[]::new))
-                                        .setMinLayerLimited(1).setMaxLayerLimited(1))
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMaxLayerLimited(1, 1))
                         .or(autoAbilities(true, false)))
                 .where('#', air())
                 .build();
     }
 
     @Override
-    protected boolean allowSameFluidFillForOutputs() {
+    public boolean allowSameFluidFillForOutputs() {
         return false;
     }
 
@@ -124,6 +163,36 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     public int getFluidOutputLimit() {
-        return getOutputFluidInventory().getTanks();
+        if (this.handler != null) return this.handler.getLayerCount();
+        else return super.getFluidOutputLimit();
+    }
+
+    protected class DistillationTowerRecipeLogic extends MultiblockRecipeLogic {
+
+        public DistillationTowerRecipeLogic(MetaTileEntityDistillationTower tileEntity) {
+            super(tileEntity);
+        }
+
+        @Override
+        protected void outputRecipeOutputs() {
+            GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
+            handler.applyFluidToOutputs(fluidOutputs, true);
+        }
+
+        @Override
+        protected boolean checkOutputSpaceFluids(@NotNull Recipe recipe, @NotNull IMultipleTankHandler exportFluids) {
+            // We have already trimmed fluid outputs at this time
+            if (!metaTileEntity.canVoidRecipeFluidOutputs() &&
+                    !handler.applyFluidToOutputs(recipe.getAllFluidOutputs(), false)) {
+                this.isOutputsFull = true;
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected IMultipleTankHandler getOutputTank() {
+            return handler.getFluidTanks();
+        }
     }
 }

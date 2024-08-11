@@ -1568,7 +1568,8 @@ gregtech.material.palladium=Palladium
 gregtech.material.phosphorus=Phosphorus
 gregtech.material.polonium=Polonium
 gregtech.material.platinum=Platinum
-gregtech.material.plutonium=Plutonium 239
+gregtech.material.plutonium=Plutonium
+gregtech.material.plutonium_239=Plutonium 239
 gregtech.material.plutonium_241=Plutonium 241
 gregtech.material.potassium=Potassium
 gregtech.material.praseodymium=Praseodymium
@@ -1603,8 +1604,9 @@ gregtech.material.tin=Tin
 gregtech.material.titanium=Titanium
 gregtech.material.tritium=Tritium
 gregtech.material.tungsten=Tungsten
-gregtech.material.uranium=Uranium 238
+gregtech.material.uranium=Uranium
 gregtech.material.uranium_235=Uranium 235
+gregtech.material.uranium_238=Uranium 238
 gregtech.material.vanadium=Vanadium
 gregtech.material.xenon=Xenon
 gregtech.material.ytterbium=Ytterbium
@@ -1824,6 +1826,14 @@ gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
+gregtech.material.ilmenite_slag=Ilmenite Slag
+gregtech.material.zircon=Zircon
+gregtech.material.zirconia=Zirconia
+gregtech.material.zirconium_tetrachloride=Zirconium Tetrachloride
+gregtech.material.hafnia=Hafnia
+gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
+gregtech.material.zircaloy_4=Zircaloy-4
+gregtech.material.inconel_718=Inconel-718
 
 
 # Organic Chemistry Materials
@@ -2037,6 +2047,11 @@ gregtech.material.acidic_naquadria_solution=Acidic Naquadria Solution
 gregtech.material.naquadria_waste=Naquadria Waste
 gregtech.material.lapotron=Lapotron
 gregtech.material.uu_matter=UU-Matter
+gregtech.material.bauxite_slurry=Bauxite Slurry
+gregtech.material.cracked_bauxite_slurry=Cracked Bauxite Slurry
+gregtech.material.bauxite_sludge=Bauxite Sludge
+gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
+gregtech.material.bauxite_slag=Bauxite Slag
 
 
 # Second Degree Materials
@@ -4830,6 +4845,7 @@ gregtech.multiblock.cleanroom.clean_status=Status: %s
 gregtech.multiblock.cleanroom.clean_state=Clean (%s%%)
 gregtech.multiblock.cleanroom.dirty_state=Contaminated (%s%%)
 gregtech.multiblock.cleanroom.warning_contaminated=Contaminated!
+gregtech.multiblock.cleanroom.low_tier=Energy tier too low, minimum of %s!
 
 gregtech.machine.charcoal_pile.name=Charcoal Pile Igniter
 gregtech.machine.charcoal_pile.tooltip.1=Turns Logs into §aCharcoal§7 when §cignited§7.
@@ -5430,6 +5446,8 @@ gregtech.gui.overclock.off=X
 gregtech.gui.sort=Sort
 gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
+gregtech.gui.item_auto_input.tooltip.enabled=Item Auto-Input Enabled
+gregtech.gui.item_auto_input.tooltip.disabled=Item Auto-Input Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
 gregtech.gui.item_auto_collapse.tooltip.enabled=Item Auto-Collapse Enabled
@@ -5750,7 +5768,7 @@ gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
-gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
@@ -5777,6 +5795,12 @@ gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
 gregtech.command.copy.click_to_copy=Click to copy
 gregtech.command.copy.copied_start=Copied [
 gregtech.command.copy.copied_end=] to the clipboard
+gregtech.command.datafix.usage=Usage: /gregtech datafix <bqu>
+gregtech.command.datafix.bqu.usage=Usage: /gregtech datafix bqu [confirm]
+gregtech.command.datafix.bqu.backup=Backup your save and BQu config dir, then rerun with the 'confirm' arg
+gregtech.command.datafix.bqu.start=Started Migrating BQu Quest Database...
+gregtech.command.datafix.bqu.complete=Finished Migrating BQu Quest Database
+gregtech.command.datafix.bqu.failed=Failed Migrating BQu Quest Database. Restore your backups!
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 
@@ -6286,3 +6310,8 @@ gregtech.scanner.forestry.larvae=§oScanned Larvae
 gregtech.scanner.forestry.serum=§oScanned Serum
 gregtech.scanner.forestry.caterpillar=§oScanned Caterpillar
 gregtech.scanner.forestry.pollen=§oScanned Pollen
+
+# Mutation
+gregtech.mutation.block_of=Block of %s
+
+record.sus=Leonz - Among Us Drip

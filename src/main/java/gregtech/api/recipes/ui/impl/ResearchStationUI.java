@@ -22,7 +22,7 @@ import java.util.function.DoubleSupplier;
 public class ResearchStationUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     public ResearchStationUI(@NotNull R recipeMap) {
-        super(recipeMap, true, true, true, true);
+        super(recipeMap, true, true, true, true, false);
         setItemSlotOverlay(GuiTextures.SCANNER_OVERLAY, false);
         setItemSlotOverlay(GuiTextures.RESEARCH_STATION_OVERLAY, true);
         setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressWidget.MoveType.HORIZONTAL);

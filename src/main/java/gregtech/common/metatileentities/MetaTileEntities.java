@@ -132,6 +132,8 @@ import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 
 import net.minecraft.util.ResourceLocation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -599,7 +601,7 @@ public class MetaTileEntities {
 
         // Circuit Assembler, IDs 650-664
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES,
-                Textures.ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
+                Textures.CIRCUIT_ASSEMBLER_OVERLAY, true, GTUtility.hvCappedTankSizeFunction);
 
         // Rock Breaker, IDs 665-679
         registerMetaTileEntities(ROCK_BREAKER, 665, "rock_breaker",
@@ -683,7 +685,7 @@ public class MetaTileEntities {
                 new MetaTileEntityImplosionCompressor(gregtechId("implosion_compressor")));
         PYROLYSE_OVEN = registerMetaTileEntity(1004, new MetaTileEntityPyrolyseOven(gregtechId("pyrolyse_oven")));
         DISTILLATION_TOWER = registerMetaTileEntity(1005,
-                new MetaTileEntityDistillationTower(gregtechId("distillation_tower")));
+                new MetaTileEntityDistillationTower(gregtechId("distillation_tower"), true));
         MULTI_FURNACE = registerMetaTileEntity(1006, new MetaTileEntityMultiSmelter(gregtechId("multi_furnace")));
         LARGE_COMBUSTION_ENGINE = registerMetaTileEntity(1007,
                 new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine"), GTValues.EV));
@@ -1253,17 +1255,26 @@ public class MetaTileEntities {
         }
     }
 
-    public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart<?>abilityPart) {
-            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
+    /**
+     * Register a MetaTileEntity
+     *
+     * @param id  the numeric ID to use as item metadata
+     * @param mte the MTE to register
+     * @return the MTE
+     * @param <T> the MTE class
+     */
+    public static <T extends MetaTileEntity> @NotNull T registerMetaTileEntity(int id, @NotNull T mte) {
+        if (mte instanceof IMultiblockAbilityPart<?>abilityPart) {
+            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), mte);
         }
-        if (sampleMetaTileEntity instanceof MultiblockControllerBase && Mods.JustEnoughItems.isModLoaded()) {
-            if (((MultiblockControllerBase) sampleMetaTileEntity).shouldShowInJei()) {
-                MultiblockInfoCategory.registerMultiblock((MultiblockControllerBase) sampleMetaTileEntity);
-            }
+
+        if (Mods.JustEnoughItems.isModLoaded() && mte instanceof MultiblockControllerBase controller &&
+                controller.shouldShowInJei()) {
+            MultiblockInfoCategory.registerMultiblock(controller);
         }
-        GregTechAPI.MTE_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
-        return sampleMetaTileEntity;
+
+        mte.getRegistry().register(id, mte.metaTileEntityId, mte);
+        return mte;
     }
 
     @SuppressWarnings("unused")

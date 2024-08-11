@@ -133,9 +133,11 @@ public class LighterBehaviour implements IItemBehaviour, IItemDurabilityManager,
             }
 
             BlockPos offset = pos.offset(side);
-            world.setBlockState(offset, Blocks.FIRE.getDefaultState(), 11);
-            if (!world.isRemote) {
-                CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, offset, stack);
+            if (world.isAirBlock(offset)) {
+                world.setBlockState(offset, Blocks.FIRE.getDefaultState(), 11);
+                if (!world.isRemote) {
+                    CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, offset, stack);
+                }
             }
             return EnumActionResult.SUCCESS;
         }

@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.high_voltage.44_distillation_tower.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1005
     },
     "frame": "challenge"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1005
           }
         ]

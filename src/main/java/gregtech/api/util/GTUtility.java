@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
@@ -57,7 +58,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
@@ -67,12 +67,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -453,18 +455,20 @@ public class GTUtility {
         return compound;
     }
 
-    public static NonNullList<ItemStack> copyStackList(List<ItemStack> itemStacks) {
-        ItemStack[] stacks = new ItemStack[itemStacks.size()];
-        for (int i = 0; i < itemStacks.size(); i++) {
-            stacks[i] = copy(itemStacks.get(i));
+    public static @NotNull List<@NotNull ItemStack> copyStackList(@NotNull List<@NotNull ItemStack> itemStacks) {
+        List<ItemStack> list = new ArrayList<>(itemStacks.size());
+        for (ItemStack itemStack : itemStacks) {
+            list.add(copy(itemStack));
         }
-        return NonNullList.from(ItemStack.EMPTY, stacks);
+        return list;
     }
 
-    public static List<FluidStack> copyFluidList(List<FluidStack> fluidStacks) {
-        FluidStack[] stacks = new FluidStack[fluidStacks.size()];
-        for (int i = 0; i < fluidStacks.size(); i++) stacks[i] = fluidStacks.get(i).copy();
-        return Lists.newArrayList(stacks);
+    public static @NotNull List<@NotNull FluidStack> copyFluidList(@NotNull List<@NotNull FluidStack> fluidStacks) {
+        List<FluidStack> list = new ArrayList<>(fluidStacks.size());
+        for (FluidStack stack : fluidStacks) {
+            list.add(stack.copy());
+        }
+        return list;
     }
 
     /**
@@ -473,8 +477,7 @@ public class GTUtility {
      * @param stack item stack for copying
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
      */
-    @NotNull
-    public static ItemStack copy(@NotNull ItemStack stack) {
+    public static @NotNull ItemStack copy(@NotNull ItemStack stack) {
         return stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
     }
 
@@ -713,7 +716,9 @@ public class GTUtility {
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
         if (!(stack.getItem() instanceof MachineItemBlock)) return null;
-        return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(
+                Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
+        return registry.getObjectById(stack.getItemDamage());
     }
 
     /**
@@ -825,9 +830,7 @@ public class GTUtility {
             if (tab == null || tab == CreativeTabs.SEARCH) continue;
             item.getSubItems(tab, subItems);
         }
-        Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
-        set.addAll(subItems);
-        return set;
+        return new ObjectOpenCustomHashSet<>(subItems, ItemStackHashStrategy.comparingItemDamageCount());
     }
 
     /**
@@ -895,6 +898,16 @@ public class GTUtility {
         DoubleSupplier supplier2 = () -> tracker.get() >= splitPoint ?
                 (1.0 / (1 - splitPoint)) * (tracker.get() - splitPoint) : 0;
         return Pair.of(supplier1, supplier2);
+    }
+
+    /**
+     * Safely cast a Long to an Int without overflow.
+     *
+     * @param v The Long value to cast to an Int.
+     * @return v, cast to Int, or Integer.MAX_VALUE if it would overflow.
+     */
+    public static int safeCastLongToInt(long v) {
+        return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
     }
 
     public static double geometricMean(double first, double... numbers) {
@@ -983,7 +996,7 @@ public class GTUtility {
      * <br>
      * <br>
      * Does nothing if the class is already initialized.
-     * 
+     *
      * @param clazz the class object to initialize.
      */
     public static void forceInitialization(Class<?> clazz) {
