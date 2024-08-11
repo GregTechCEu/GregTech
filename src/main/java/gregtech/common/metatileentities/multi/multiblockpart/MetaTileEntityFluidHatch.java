@@ -57,6 +57,8 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -69,7 +71,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     // only holding this for convenience
     private final HatchFluidTank fluidTank;
     private GhostCircuitItemStackHandler circuitInventory;
-    private DualHandler dualHandler;
     private boolean workingEnabled;
 
     // export hatch-only fields
@@ -85,7 +86,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         if (this.hasGhostCircuitInventory()) {
             this.circuitInventory = new GhostCircuitItemStackHandler(this);
             this.circuitInventory.addNotifiableMetaTileEntity(this);
-            this.dualHandler = new DualHandler(this.circuitInventory, this.importFluids, isExportHatch);
         }
     }
 
@@ -251,11 +251,19 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
+    public @NotNull List<MultiblockAbility<?>> getAbilities() {
+        return isExportHatch ?
+                Collections.singletonList(MultiblockAbility.EXPORT_FLUIDS) :
+                Arrays.asList(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS);
+    }
+
+    @Override
     public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        if (abilityInstances.isKey(MultiblockAbility.EXPORT_FLUIDS)) {
+        if (abilityInstances.isKey(MultiblockAbility.EXPORT_FLUIDS) ||
+                abilityInstances.isKey(MultiblockAbility.IMPORT_FLUIDS)) {
             abilityInstances.add(this.fluidTank);
-        } else if (abilityInstances.isKey(MultiblockAbility.IMPORT_FLUIDS)) {
-            abilityInstances.addAll(this.dualHandler.unwrap());
+        } else if (abilityInstances.isKey(MultiblockAbility.IMPORT_ITEMS)) {
+            abilityInstances.add(this.circuitInventory);
         }
     }
 
