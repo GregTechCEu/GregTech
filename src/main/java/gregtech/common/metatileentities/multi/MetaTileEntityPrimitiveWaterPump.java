@@ -132,9 +132,9 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXXX", "**F*", "**F*")
-                .aisle("XXHX", "F**F", "FFFF")
-                .aisle("SXXX", "**F*", "**F*")
+                .aisle("XXXS", "*F**", "*F**")
+                .aisle("XHXX", "F**F", "FFFF")
+                .aisle("XXXX", "*F**", "*F**")
                 .where('S', selfPredicate())
                 .where('X', states(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
                 .where('F', frames(Materials.TreatedWood))

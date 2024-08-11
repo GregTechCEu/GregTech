@@ -54,9 +54,9 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("HCHCH", "HCHCH", "HCHCH")
-                .aisle("HCHCH", "H###H", "HCHCH")
                 .aisle("HCHCH", "HCOCH", "HCHCH")
+                .aisle("HCHCH", "H###H", "HCHCH")
+                .aisle("HCHCH", "HCHCH", "HCHCH")
                 .where('O', selfPredicate())
                 .where('H', states(getCasingState()).setMinGlobalLimited(12).or(autoAbilities()))
                 .where('#', air())

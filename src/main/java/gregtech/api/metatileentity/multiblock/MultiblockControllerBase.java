@@ -73,6 +73,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -138,6 +139,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
+    // todo fix central monitor, charcoal pile igniter, and cleanroom(and vacuum freezer)
     @NotNull
     protected abstract IBlockPattern createStructurePattern();
 
@@ -419,7 +421,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                         if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
                             invalidateStructure(name);
                             return false;
-                        } ;
+                        }
                         if (multiblockParts.add(part)) {
                             part.addToMultiBlock(this, name);
                         }
@@ -434,14 +436,24 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 return;
             }
 
-            // normal rebuild parts
+            AtomicBoolean valid = new AtomicBoolean(true);
+
             forEachMultiblockPart(name, part -> {
-                // structure is already invalidated at this point so don't bother
                 if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
+                    valid.set(false);
                     return false;
                 }
+                return true;
+            });
+
+            // since the structure isn't formed, don't invalidate, instead just don't form it
+            if (!valid.get()) return;
+
+            // normal rebuild parts
+            forEachMultiblockPart(name, part -> {
                 // parts *should* not have this controller added
                 multiblockParts.add(part);
+                part.addToMultiBlock(this, name);
                 if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
                     // noinspection unchecked
                     registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
@@ -470,7 +482,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         Long2ObjectMap<BlockInfo> cache = getSubstructure(name).getCache();
         for (BlockInfo info : cache.values()) {
             TileEntity te = info.getTileEntity();
-            if (!(te instanceof IGregTechTileEntity gtte)) return;
+            if (!(te instanceof IGregTechTileEntity gtte)) continue;
             MetaTileEntity mte = gtte.getMetaTileEntity();
             if (mte instanceof IMultiblockPart part) {
                 if (!action.test(part)) return;
@@ -493,14 +505,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         part.registerAbilities(abilityList);
     }
 
+    // todo do
     protected void forEachFormed(GreggyBlockPos pos) {
         IBlockState state = getWorld().getBlockState(pos.immutable());
     }
 
     protected void formStructure(String name) {
-        // form the main structure
-        if ("MAIN".equals(name)) formStructure();
-
+        getSubstructure(name).getPatternState().setFormed(true);
         setFlipped(getSubstructure(name).getPatternState().isFlipped(), name);
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(true));
     }
@@ -648,7 +659,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public boolean isStructureFormed(String name) {
         if (getWorld() == null) return false;
 
-        return getSubstructure(name).getPatternState().isFlipped();
+        return getSubstructure(name).getPatternState().isFormed();
     }
 
     @Override

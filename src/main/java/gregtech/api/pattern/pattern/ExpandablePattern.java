@@ -3,6 +3,7 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
@@ -26,6 +27,7 @@ public class ExpandablePattern implements IBlockPattern {
 
     protected final QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> boundsFunction;
     protected final BiFunction<GreggyBlockPos, int[], TraceabilityPredicate> predicateFunction;
+    protected final OriginOffset offset = new OriginOffset();
 
     /**
      * In the form of [ aisleDir, stringDir, charDir ]
@@ -184,5 +186,10 @@ public class ExpandablePattern implements IBlockPattern {
     @Override
     public void clearCache() {
         cache.clear();
+    }
+
+    @Override
+    public OriginOffset getOffset() {
+        return offset;
     }
 }

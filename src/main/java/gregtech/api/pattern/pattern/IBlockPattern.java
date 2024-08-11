@@ -1,7 +1,9 @@
 package gregtech.api.pattern.pattern;
 
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.pattern.OriginOffset;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -78,5 +80,15 @@ public interface IBlockPattern {
      */
     default boolean legacyBuilderError() {
         return false;
+    }
+
+    OriginOffset getOffset();
+
+    default void moveOffset(RelativeDirection dir, int amount) {
+        getOffset().move(dir, amount);
+    }
+
+    default void moveOffset(RelativeDirection dir) {
+        getOffset().move(dir);
     }
 }

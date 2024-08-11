@@ -3,6 +3,7 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
@@ -32,14 +33,7 @@ public class BlockPattern implements IBlockPattern {
      * In the form of [ num aisles, num string per aisle, num char per string ]
      */
     protected final int[] dimensions;
-
-    /**
-     * In the form of { pair 1 -> amount, pair 2 -> amount, pair 3 -> amount }.
-     * Each pair is relative directions, such as FRONT, BACK, or RIGHT, LEFT.
-     * The amount is the offset in the first of each pair, can be negative.
-     * {@link RelativeDirection} of structure directions, stored as ordinals
-     */
-    protected final int[] startOffset;
+    protected final OriginOffset offset;
 
     /**
      * True if startOffset was passed in, false if it was null and automatically detected
@@ -61,19 +55,19 @@ public class BlockPattern implements IBlockPattern {
     // how many not nulls to keep someone from not passing in null?
     public BlockPattern(@NotNull PatternAisle @NotNull [] aisles, int @NotNull [] dimensions,
                         @NotNull RelativeDirection @NotNull [] directions,
-                        int @Nullable [] startOffset, @NotNull Char2ObjectMap<TraceabilityPredicate> predicates,
+                        @Nullable OriginOffset offset, @NotNull Char2ObjectMap<TraceabilityPredicate> predicates,
                         char centerChar) {
         this.aisles = aisles;
         this.dimensions = dimensions;
         this.directions = directions;
         this.predicates = predicates;
-        hasStartOffset = startOffset != null;
+        hasStartOffset = offset != null;
 
-        if (startOffset == null) {
-            this.startOffset = new int[3];
+        if (offset == null) {
+            this.offset = new OriginOffset();
             legacyStartOffset(centerChar);
         } else {
-            this.startOffset = startOffset;
+            this.offset = offset;
         }
 
         this.worldState = new BlockWorldState();
@@ -94,9 +88,9 @@ public class BlockPattern implements IBlockPattern {
             if (result != null) {
                 // structure starts at aisle 0, string 0, char 0, think about it
                 // so relative to the controller we need to offset by this to get to the start
-                moveStartOffset(directions[0], -aisleI);
-                moveStartOffset(directions[1], -result[0]);
-                moveStartOffset(directions[2], -result[1]);
+                moveOffset(directions[0], -aisleI);
+                moveOffset(directions[1], -result[0]);
+                moveOffset(directions[2], -result[1]);
                 return;
             }
         }
@@ -198,6 +192,7 @@ public class BlockPattern implements IBlockPattern {
                     }
                     // otherwise this is the max repeats
                     actualRepeats = repeats - 1;
+                    break;
                 }
             }
 
@@ -282,6 +277,7 @@ public class BlockPattern implements IBlockPattern {
     }
 
     @Override
+    // todo get real
     public PreviewBlockPattern getDefaultShape() {
         char[][][] pattern = new char[dimensions[2]][dimensions[1]][dimensions[0]];
 
@@ -308,36 +304,15 @@ public class BlockPattern implements IBlockPattern {
         return !hasStartOffset;
     }
 
+    @Override
+    public OriginOffset getOffset() {
+        return offset;
+    }
+
     private GreggyBlockPos startPos(GreggyBlockPos controllerPos, EnumFacing frontFacing, EnumFacing upFacing,
                                     boolean flip) {
         GreggyBlockPos start = controllerPos.copy();
-        for (int i = 0; i < 3; i++) {
-            start.offset(RelativeDirection.VALUES[2 * i].getRelativeFacing(frontFacing, upFacing, flip),
-                    startOffset[i]);
-        }
+        offset.apply(start, frontFacing, upFacing, flip);
         return start;
-    }
-
-    /**
-     * Moves the start offset in the given direction and amount, use {@link BlockPattern#clearCache()} after to prevent
-     * the cache from being stuck in the old offset.
-     * 
-     * @param dir    The direction, relative to controller.
-     * @param amount The amount to offset.
-     */
-    public void moveStartOffset(RelativeDirection dir, int amount) {
-        // reverse amount if its in the opposite direction
-        amount *= (dir.ordinal() % 2 == 0) ? 1 : -1;
-        startOffset[dir.ordinal() / 2] += amount;
-    }
-
-    /**
-     * Get the start offset in the given direction.
-     * 
-     * @param dir The direction, relative to controller.
-     * @return The amount, can be negative.
-     */
-    public int getStartOffset(RelativeDirection dir) {
-        return startOffset[dir.ordinal() / 2] * (dir.ordinal() % 2 == 0 ? 1 : -1);
     }
 }

@@ -111,9 +111,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
-                .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
+                .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(3)
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3))

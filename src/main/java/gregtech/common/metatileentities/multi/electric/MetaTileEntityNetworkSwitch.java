@@ -100,9 +100,9 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XXX", "XXX")
-                .aisle("XXX", "XAX", "XXX")
                 .aisle("XXX", "XSX", "XXX")
+                .aisle("XXX", "XAX", "XXX")
+                .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
                 .where('A', states(getAdvancedState()))
                 .where('X', states(getCasingState()).setMinGlobalLimited(7)

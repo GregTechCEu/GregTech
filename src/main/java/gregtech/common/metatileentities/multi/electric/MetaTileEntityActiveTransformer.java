@@ -115,9 +115,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XXX", "XXX")
-                .aisle("XXX", "XCX", "XXX")
                 .aisle("XXX", "XSX", "XXX")
+                .aisle("XXX", "XCX", "XXX")
+                .aisle("XXX", "XXX", "XXX")
                 .where('X', states(getCasingState()).setMinGlobalLimited(12).or(getHatchPredicates()))
                 .where('S', selfPredicate())
                 .where('C', states(MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL)))

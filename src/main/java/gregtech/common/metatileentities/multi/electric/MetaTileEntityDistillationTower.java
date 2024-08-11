@@ -117,8 +117,8 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start(RIGHT, FRONT, UP)
-                .aisle("YSY", "YYY", "YYY")
+        return FactoryBlockPattern.start(UP, FRONT, RIGHT)
+                .aisle("YYY", "YYY", "YSY")
                 .aisle("XXX", "X#X", "XXX").setRepeatable(1, 11)
                 .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())

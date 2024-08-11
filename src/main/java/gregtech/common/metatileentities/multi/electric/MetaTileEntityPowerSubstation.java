@@ -231,8 +231,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     @NotNull
     @Override
     protected BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start(RIGHT, FRONT, UP)
-                .aisle("XXSXX", "XXXXX", "XXXXX", "XXXXX", "XXXXX")
+        return FactoryBlockPattern.start(UP, FRONT, RIGHT)
+                .aisle("XXXXX", "XXXXX", "XXXXX", "XXXXX", "XXSXX")
                 .aisle("XXXXX", "XCCCX", "XCCCX", "XCCCX", "XXXXX")
                 .aisle("GGGGG", "GBBBG", "GBBBG", "GBBBG", "GGGGG").setRepeatable(1, MAX_BATTERY_LAYERS)
                 .aisle("GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG")

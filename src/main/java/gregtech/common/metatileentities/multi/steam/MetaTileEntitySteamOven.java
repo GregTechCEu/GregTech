@@ -51,9 +51,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "CCC", "#C#")
-                .aisle("XXX", "C#C", "#C#")
                 .aisle("XXX", "CSC", "#C#")
+                .aisle("XXX", "C#C", "#C#")
+                .aisle("XXX", "CCC", "#C#")
                 .where('S', selfPredicate())
                 .where('X', states(getFireboxState())
                         .or(autoAbilities(true, false, false, false, false).setMinGlobalLimited(1)

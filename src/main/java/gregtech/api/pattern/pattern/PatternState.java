@@ -17,12 +17,7 @@ public class PatternState {
      * For use by the multiblock to update its flipped state.
      */
     protected boolean actualFlipped = false;
-    protected boolean shouldUpdate = false;
-    /**
-     * For if the multiblock manually invalidates its state(like coil mismatch). This means wait until the cache is
-     * no longer valid and the raw check passes to reform the structure.
-     */
-    protected boolean isWaiting = false;
+    protected boolean shouldUpdate = true;
     protected PatternError error;
     protected EnumCheckState state;
 

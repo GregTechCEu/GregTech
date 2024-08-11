@@ -56,9 +56,9 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(10);
         TraceabilityPredicate abilities = autoAbilities();
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XCX", "XXX")
-                .aisle("XCX", "CPC", "XCX")
                 .aisle("XXX", "XSX", "XXX")
+                .aisle("XCX", "CPC", "XCX")
+                .aisle("XXX", "XCX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', casing.or(abilities))
                 .where('P', states(getPipeCasingState()))

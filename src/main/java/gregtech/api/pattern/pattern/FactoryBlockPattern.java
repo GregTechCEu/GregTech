@@ -1,5 +1,6 @@
 package gregtech.api.pattern.pattern;
 
+import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
@@ -13,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -22,9 +22,9 @@ import static gregtech.api.util.RelativeDirection.*;
  * When the multiblock is placed, its facings are concrete. Then, the {@link RelativeDirection}s passed into
  * {@link FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)} are ways in which the
  * pattern progresses. It can be thought like this, where startPos() is either defined via
- * {@link FactoryBlockPattern#startOffset(RelativeDirection, int)}
+ * {@link FactoryBlockPattern#startOffset(OriginOffset)}
  * , or automatically detected(for legacy compat only, you should use
- * {@link FactoryBlockPattern#startOffset(RelativeDirection, int)} always for new code):
+ * {@link FactoryBlockPattern#startOffset(OriginOffset)} always for new code):
  * 
  * <pre>
  * {@code
@@ -50,9 +50,8 @@ public class FactoryBlockPattern {
     /**
      * Look at the field with the same name in {@link BlockPattern} for docs
      */
-    private int[] startOffset;
+    private OriginOffset offset;
     private char centerChar;
-    private boolean reverse = true;
 
     private final List<PatternAisle> aisles = new ArrayList<>();
 
@@ -168,14 +167,9 @@ public class FactoryBlockPattern {
 
     /**
      * Sets a part of the start offset in the given direction.
-     * 
-     * @param dir    The direction to offset, relative to controller.
-     * @param amount The amount to offset.
      */
-    public FactoryBlockPattern startOffset(RelativeDirection dir, int amount) {
-        if (startOffset == null) startOffset = new int[3];
-
-        startOffset[dir.ordinal() / 2] = amount * (dir.ordinal() % 2 == 0 ? 1 : -1);
+    public FactoryBlockPattern startOffset(OriginOffset offset) {
+        this.offset = offset;
         return this;
     }
 
@@ -198,8 +192,8 @@ public class FactoryBlockPattern {
      * @param aisleDir  The direction aisles progress in, each successive {@link FactoryBlockPattern#aisle(String...)}
      *                  progresses in this direction
      */
-    public static FactoryBlockPattern start(RelativeDirection charDir, RelativeDirection stringDir,
-                                            RelativeDirection aisleDir) {
+    public static FactoryBlockPattern start(RelativeDirection aisleDir, RelativeDirection stringDir,
+                                            RelativeDirection charDir) {
         return new FactoryBlockPattern(aisleDir, stringDir, charDir);
     }
 
@@ -215,34 +209,24 @@ public class FactoryBlockPattern {
         return this;
     }
 
-    /**
-     * Calling this stops the reversal of aisles, you should call this on all new patterns
-     */
-    // todo remove this stuff
-    public FactoryBlockPattern modern() {
-        reverse = false;
-        return this;
-    }
-
     public BlockPattern build() {
         checkMissingPredicates();
         this.dimensions[0] = aisles.size();
-        PatternAisle[] aisleArray = aisles.toArray(new PatternAisle[0]);
-        if (reverse) {
-            ArrayUtils.reverse(aisleArray);
-        } else {
-            if (startOffset == null) GTLog.logger.warn(
-                    "You used .modern() on the builder without using .startOffset()! This will have unintended behavior!");
-        }
-        return new BlockPattern(aisleArray, dimensions, structureDir, startOffset, symbolMap, centerChar);
+        // the reason this exists is before this rewrite, MultiblockControllerBase would
+        // pass the opposite front facing into the pattern check, but now this is fixed.
+        //
+        if (offset == null) GTLog.logger.warn(
+                "You didn't use .startOffset() on the builder! Start offset will now be auto detected, which may product unintended results!");
+        return new BlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, structureDir, offset, symbolMap,
+                centerChar);
     }
 
     private void checkMissingPredicates() {
         List<Character> list = new ArrayList<>();
 
-        for (Entry<Character, TraceabilityPredicate> entry : this.symbolMap.entrySet()) {
+        for (Char2ObjectMap.Entry<TraceabilityPredicate> entry : this.symbolMap.char2ObjectEntrySet()) {
             if (entry.getValue() == null) {
-                list.add(entry.getKey());
+                list.add(entry.getCharKey());
             }
         }
 

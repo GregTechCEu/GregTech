@@ -54,10 +54,10 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XXX", "XXX")
-                .aisle("CCC", "C#C", "CCC")
-                .aisle("CCC", "C#C", "CCC")
                 .aisle("XXX", "XSX", "XXX")
+                .aisle("CCC", "C#C", "CCC")
+                .aisle("CCC", "C#C", "CCC")
+                .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(6).or(autoAbilities()))
                 .where('C', heatingCoils())

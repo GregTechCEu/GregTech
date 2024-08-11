@@ -125,7 +125,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("###############", "######OGO######", "###############")
+                .aisle("###############", "######OSO######", "###############")
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
                 .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
                 .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
@@ -139,7 +139,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
                 .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
-                .aisle("###############", "######OSO######", "###############")
+                .aisle("###############", "######OGO######", "###############")
                 .where('S', selfPredicate())
                 .where('G', states(getCasingState(), getGlassState()))
                 .where('E',

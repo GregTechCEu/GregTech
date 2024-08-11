@@ -127,10 +127,10 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XDX", "XXX")
-                .aisle("XCX", "CGC", "XCX")
-                .aisle("XCX", "CGC", "XCX")
                 .aisle("AAA", "AYA", "AAA")
+                .aisle("XCX", "CGC", "XCX")
+                .aisle("XCX", "CGC", "XCX")
+                .aisle("XXX", "XDX", "XXX")
                 .where('X', states(getCasingState()))
                 .where('G', states(getGearboxState()))
                 .where('C',

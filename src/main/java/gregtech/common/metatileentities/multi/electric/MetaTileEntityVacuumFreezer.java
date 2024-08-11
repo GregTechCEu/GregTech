@@ -5,6 +5,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -44,9 +45,9 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XXX", "XXX")
-                .aisle("XXX", "X#X", "XXX")
                 .aisle("XXX", "XSX", "XXX")
+                .aisle("XXX", "X#X", "XXX")
+                .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(14).or(autoAbilities()))
                 .where('#', air())
@@ -59,7 +60,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
         structures.put("SECOND", FactoryBlockPattern.start()
                 .aisle("X")
                 .where('X', states(getCasingState()))
-                .startOffset(RelativeDirection.FRONT, 5)
+                .startOffset(new OriginOffset().move(RelativeDirection.FRONT, 5))
                 .build());
     }
 
@@ -68,7 +69,7 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
         super.addDisplayText(textList);
 
         ITextComponent button = new TextComponentString("Second structure offset: " +
-                ((BlockPattern) getSubstructure("SECOND")).getStartOffset(RelativeDirection.FRONT));
+                getSubstructure("SECOND").getOffset().get(RelativeDirection.FRONT));
         button.appendText(" ");
         button.appendSibling(withButton(new TextComponentString("[-]"), "sub"));
         button.appendText(" ");
@@ -83,8 +84,8 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
         int mod = componentData.equals("add") ? 1 : -1;
-        // ((BlockPattern) getSubstructure("SECOND").moveStartOffset(RelativeDirection.FRONT, mod);
-        // getSubstructure("SECOND").clearCache();
+        getSubstructure("SECOND").getOffset().move(RelativeDirection.FRONT, mod);
+        getSubstructure("SECOND").clearCache();
     }
 
     @SideOnly(Side.CLIENT)

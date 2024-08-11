@@ -118,9 +118,9 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "CCC", "CCC", "XXX")
-                .aisle("XXX", "C#C", "C#C", "XMX")
                 .aisle("XSX", "CCC", "CCC", "XXX")
+                .aisle("XXX", "C#C", "C#C", "XMX")
+                .aisle("XXX", "CCC", "CCC", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(9)
                         .or(autoAbilities(true, true, true, true, true, true, false)))

@@ -126,9 +126,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "CCC", "XXX")
-                .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
+                .aisle("XXX", "C#C", "XMX")
+                .aisle("XXX", "CCC", "XXX")
                 .where('S', selfPredicate())
                 .where('X',
                         states(getCasingState()).setMinGlobalLimited(9)

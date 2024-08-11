@@ -157,9 +157,9 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XDDDX", "XDDDX", "XDDDX")
-                .aisle("XDDDX", "XAAAX", "XDDDX")
                 .aisle("XCCCX", "XCSCX", "XCCCX")
+                .aisle("XDDDX", "XAAAX", "XDDDX")
+                .aisle("XDDDX", "XDDDX", "XDDDX")
                 .where('S', selfPredicate())
                 .where('X', states(getOuterState()))
                 .where('D', states(getInnerState()).setMinGlobalLimited(3)

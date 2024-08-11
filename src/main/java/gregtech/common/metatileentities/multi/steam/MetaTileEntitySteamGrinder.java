@@ -51,9 +51,9 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XXX", "XXX")
-                .aisle("XXX", "X#X", "XXX")
                 .aisle("XXX", "XSX", "XXX")
+                .aisle("XXX", "X#X", "XXX")
+                .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(14).or(autoAbilities()))
                 .where('#', air())

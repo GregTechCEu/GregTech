@@ -186,9 +186,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
-                .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("XSX", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("XXX", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
+                .aisle("XXX", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState())
                         .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMaxGlobalLimited(1).setPreviewCount(1))

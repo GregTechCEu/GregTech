@@ -198,11 +198,11 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
+                .aisle("AS", "CC", "CC", "CC", "AA")
+                .aisle("AV", "VX", "VX", "VX", "AV")
+                .aisle("AV", "VX", "VX", "VX", "AV")
+                .aisle("AV", "VX", "VX", "VX", "AV")
                 .aisle("AA", "CC", "CC", "CC", "AA")
-                .aisle("VA", "XV", "XV", "XV", "VA")
-                .aisle("VA", "XV", "XV", "XV", "VA")
-                .aisle("VA", "XV", "XV", "XV", "VA")
-                .aisle("SA", "CC", "CC", "CC", "AA")
                 .where('S', selfPredicate())
                 .where('A', states(getAdvancedState()))
                 .where('V', states(getVentState()))

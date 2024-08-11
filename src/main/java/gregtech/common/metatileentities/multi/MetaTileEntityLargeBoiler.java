@@ -188,9 +188,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "CCC", "CCC", "CCC")
-                .aisle("XXX", "CPC", "CPC", "CCC")
                 .aisle("XXX", "CSC", "CCC", "CCC")
+                .aisle("XXX", "CPC", "CPC", "CCC")
+                .aisle("XXX", "CCC", "CCC", "CCC")
                 .where('S', selfPredicate())
                 .where('P', states(boilerType.pipeState))
                 .where('X', states(boilerType.fireboxState).setMinGlobalLimited(4)

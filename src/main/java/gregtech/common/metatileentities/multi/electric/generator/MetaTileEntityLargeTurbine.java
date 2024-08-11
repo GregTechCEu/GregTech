@@ -185,9 +185,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("CCCC", "CHHC", "CCCC")
+                .aisle("CCCC", "CHSC", "CCCC")
                 .aisle("CHHC", "RGGR", "CHHC")
-                .aisle("CCCC", "CSHC", "CCCC")
+                .aisle("CCCC", "CHHC", "CCCC")
                 .where('S', selfPredicate())
                 .where('G', states(getGearBoxState()))
                 .where('C', states(getCasingState()))

@@ -79,9 +79,9 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @NotNull
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "XXX", "XXX")
-                .aisle("XXX", "X X", "XXX")
                 .aisle("XXX", "XSX", "XXX")
+                .aisle("XXX", "X X", "XXX")
+                .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(23)
                         .or(metaTileEntities(getValve()).setMaxGlobalLimited(2)))
