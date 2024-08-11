@@ -212,7 +212,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
                             .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide);
                     if (energyContainer == null || !energyContainer.inputsEnergy(oppositeSide)) continue;
                     amperesUsed += energyContainer.acceptEnergyFromNetwork(oppositeSide, outputVoltage,
-                            outputAmperes - amperesUsed);
+                            outputAmperes - amperesUsed, false);
                     if (amperesUsed == outputAmperes) break;
                 }
             }

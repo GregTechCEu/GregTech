@@ -4,23 +4,30 @@ import gregtech.api.graphnet.AbstractGroupData;
 
 public class EnergyGroupData extends AbstractGroupData {
 
-    private final long[] lastEnergyFluxPerSec = new long[2];
-    private final long[] energyFluxPerSec = new long[2];
+    private long lastEnergyInPerSec;
+    private long lastEnergyOutPerSec;
+    private long energyInPerSec;
+    private long energyOutPerSec;
     private long updateTime;
 
-    public long[] getEnergyFluxPerSec(long queryTick) {
+    public long getEnergyInPerSec(long queryTick) {
         updateCache(queryTick);
-        return lastEnergyFluxPerSec;
+        return lastEnergyInPerSec;
+    }
+
+    public long getEnergyOutPerSec(long queryTick) {
+        updateCache(queryTick);
+        return lastEnergyOutPerSec;
     }
 
     public void addEnergyInPerSec(long energy, long queryTick) {
         updateCache(queryTick);
-        energyFluxPerSec[0] += energy;
+        energyInPerSec += energy;
     }
 
     public void addEnergyOutPerSec(long energy, long queryTick) {
         updateCache(queryTick);
-        energyFluxPerSec[1] += energy;
+        energyOutPerSec += energy;
     }
 
     private void updateCache(long queryTick) {
@@ -31,9 +38,9 @@ public class EnergyGroupData extends AbstractGroupData {
     }
 
     public void clearCache() {
-        lastEnergyFluxPerSec[0] = energyFluxPerSec[0];
-        lastEnergyFluxPerSec[1] = energyFluxPerSec[1];
-        energyFluxPerSec[0] = 0;
-        energyFluxPerSec[1] = 0;
+        lastEnergyInPerSec = energyInPerSec;
+        lastEnergyOutPerSec = energyOutPerSec;
+        energyInPerSec = 0;
+        energyOutPerSec = 0;
     }
 }

@@ -124,7 +124,7 @@ public class ConverterTrait extends MTETrait {
 
             // send out energy
             energyInserted = container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), voltage,
-                    ampsToInsert) * voltage;
+                    ampsToInsert, false) * voltage;
         } else { // push out FE
             // Get the FE capability in front of us
             IEnergyStorage storage = getCapabilityAtFront(CapabilityEnergy.ENERGY);

@@ -60,7 +60,7 @@ public class CoverSolarPanel extends CoverBase implements ITickable {
             IEnergyContainer energyContainer = coverable.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
                     getAttachedSide());
             if (energyContainer != null) {
-                energyContainer.acceptEnergyFromNetwork(null, EUt, 1);
+                energyContainer.acceptEnergyFromNetwork(null, EUt, 1, false);
             }
         }
     }

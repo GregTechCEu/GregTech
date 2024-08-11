@@ -208,7 +208,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                     }
                 } else {
                     if (!container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0) continue;
-                    ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed);
+                    ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed, false);
                 }
                 if (ampsUsed >= amps)
                     break;
@@ -242,7 +242,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
 
     @Override
     public long receiveLaser(long laserVoltage, long laserAmperage) {
-        return acceptEnergyFromNetwork(null, laserVoltage, laserAmperage);
+        return acceptEnergyFromNetwork(null, laserVoltage, laserAmperage, false);
     }
 
     @Override

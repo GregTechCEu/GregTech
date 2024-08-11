@@ -153,7 +153,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         EnergyGroupData data = getEnergyData();
         if (data == null) return 0;
         else return data
-                .getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[0];
+                .getEnergyInPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
     }
 
     @Override
@@ -161,7 +161,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         EnergyGroupData data = getEnergyData();
         if (data == null) return 0;
         else return data
-                .getEnergyFluxPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter())[1];
+                .getEnergyOutPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
     }
 
     @Override
@@ -179,7 +179,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         GTLog.logger.fatal("Do not use changeEnergy() for cables! Use acceptEnergyFromNetwork()");
         return acceptEnergyFromNetwork(null,
                 differenceAmount / getInputAmperage(),
-                differenceAmount / getInputVoltage()) * getInputVoltage();
+                differenceAmount / getInputVoltage(), false) * getInputVoltage();
     }
 
     @Override
