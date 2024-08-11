@@ -52,6 +52,10 @@ public final class LaserNetHandler implements IPipeNetNodeHandler {
     @Override
     public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flagIn, IPipeStructure structure) {
+        if (structure instanceof LaserStructure laser && laser.mirror()) {
+            tooltip.add(I18n.format("tile.laser_pipe_mirror.tooltip1"));
+            return;
+        }
         tooltip.add(I18n.format("tile.laser_pipe_normal.tooltip1"));
     }
 }

@@ -14,24 +14,39 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @Desugar
-public record LaserStructure(String name, float renderThickness, ActivablePipeModel model) implements IPipeStructure {
+public record LaserStructure(String name, float renderThickness, boolean mirror, ActivablePipeModel model) implements IPipeStructure {
 
-    public static final LaserStructure INSTANCE = new LaserStructure("laser_pipe_normal", 0.375f,
-            ActivablePipeModel.LASER);
+    public static final LaserStructure NORMAL = new LaserStructure("laser_pipe_normal", 0.375f,
+            false, ActivablePipeModel.LASER);
+    public static final LaserStructure MIRROR = new LaserStructure("laser_pipe_mirror", 0.5f,
+            true, ActivablePipeModel.LASER);
 
-    public LaserStructure(String name, float renderThickness, ActivablePipeModel model) {
+    public LaserStructure(String name, float renderThickness, boolean mirror, ActivablePipeModel model) {
         this.name = name;
         this.renderThickness = renderThickness;
+        this.mirror = mirror;
         this.model = model;
         PipeStructureRegistry.register(this);
     }
 
     @Override
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            if (facing == side) continue;
-            if (GTUtility.evalMask(facing, connectionMask)) {
-                return facing.getOpposite() == side;
+        if (mirror) {
+            byte connectionCount = 0;
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (facing == side) continue;
+                if (GTUtility.evalMask(facing, connectionMask)) {
+                    if (facing.getOpposite() == side) return false; // must be a bent connection
+                    connectionCount++;
+                }
+                if (connectionCount > 1) return false;
+            }
+        } else {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (facing == side) continue;
+                if (GTUtility.evalMask(facing, connectionMask)) {
+                    return facing.getOpposite() == side;
+                }
             }
         }
         return true;
@@ -58,6 +73,6 @@ public record LaserStructure(String name, float renderThickness, ActivablePipeMo
     }
 
     public static void registerDefaultStructures(Consumer<LaserStructure> register) {
-        register.accept(INSTANCE);
+        register.accept(NORMAL);
     }
 }

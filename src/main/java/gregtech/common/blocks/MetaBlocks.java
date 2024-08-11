@@ -220,7 +220,7 @@ public class MetaBlocks {
             i++;
         }
         Set<LaserStructure> structuresLaser = PipeStructureRegistry.getStructures(LaserStructure.class);
-        LASER_PIPES = new LaserPipeBlock[structuresOptical.size()];
+        LASER_PIPES = new LaserPipeBlock[structuresLaser.size()];
         i = 0;
         for (LaserStructure struct : structuresLaser) {
             LaserPipeBlock block = new LaserPipeBlock(struct);

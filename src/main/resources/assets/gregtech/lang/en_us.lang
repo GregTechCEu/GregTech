@@ -2399,6 +2399,9 @@ tile.optical_pipe_normal.tooltip1=Transmitting §fComputation§7 or §fResearch 
 tile.laser_pipe_normal.name=Laser Transmitting Cable
 tile.laser_pipe_normal.tooltip1=Transmitting power with §fno loss§7 in straight lines
 
+tile.laser_pipe_mirror.name=Laser Mirror Cable
+tile.laser_pipe_mirror.tooltip1=Transmitting power with §fno loss§7 around the bend
+
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)
