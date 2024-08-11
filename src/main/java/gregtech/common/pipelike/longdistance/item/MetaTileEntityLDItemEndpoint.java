@@ -2,8 +2,8 @@ package gregtech.common.pipelike.longdistance.item;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
-import gregtech.api.longdist.ILDEndpoint;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.longdist.ILDEndpoint;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;

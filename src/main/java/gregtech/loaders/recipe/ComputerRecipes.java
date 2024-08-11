@@ -8,9 +8,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 
-import gregtech.common.items.MetaItems;
-
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
@@ -316,13 +313,13 @@ public class ComputerRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(100).EUt(VA[IV]).buildAndRegister();
 
-//        ASSEMBLER_RECIPES.recipeBuilder()
-//                .input(LASER_PIPES[0], 2)
-//                .input(foil, Silver, 2)
-//                .input(NEUTRON_REFLECTOR)
-//                .fluidInputs(Polytetrafluoroethylene.getFluid(L))
-//                .output(LASER_PIPES[1])
-//                .cleanroom(CleanroomType.CLEANROOM)
-//                .duration(150).EUt(VA[IV]).buildAndRegister();
+        // ASSEMBLER_RECIPES.recipeBuilder()
+        // .input(LASER_PIPES[0], 2)
+        // .input(foil, Silver, 2)
+        // .input(NEUTRON_REFLECTOR)
+        // .fluidInputs(Polytetrafluoroethylene.getFluid(L))
+        // .output(LASER_PIPES[1])
+        // .cleanroom(CleanroomType.CLEANROOM)
+        // .duration(150).EUt(VA[IV]).buildAndRegister();
     }
 }

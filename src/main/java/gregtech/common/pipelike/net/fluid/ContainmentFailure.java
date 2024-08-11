@@ -6,7 +6,6 @@ import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.traverse.util.MultLossOperator;
 import gregtech.api.util.EntityDamageUtil;
 

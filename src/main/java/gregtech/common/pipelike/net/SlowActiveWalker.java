@@ -1,25 +1,17 @@
 package gregtech.common.pipelike.net;
 
-import gregtech.api.graphnet.path.AbstractNetPath;
 import gregtech.api.graphnet.path.INetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.function.Task;
 
-import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-
 import net.minecraft.world.World;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 

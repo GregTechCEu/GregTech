@@ -9,7 +9,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 
 import java.util.EnumMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public interface IWorldPipeNetTile {

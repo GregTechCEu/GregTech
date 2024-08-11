@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @Desugar
-public record LaserStructure(String name, float renderThickness, boolean mirror, ActivablePipeModel model) implements IPipeStructure {
+public record LaserStructure(String name, float renderThickness, boolean mirror, ActivablePipeModel model)
+        implements IPipeStructure {
 
     public static final LaserStructure NORMAL = new LaserStructure("laser_pipe_normal", 0.375f,
             false, ActivablePipeModel.LASER);
