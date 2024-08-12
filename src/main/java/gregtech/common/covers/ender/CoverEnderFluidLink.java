@@ -36,6 +36,8 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                                  implements CoverWithUI, ITickable, IControllable {
 
@@ -134,8 +136,8 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
             }
 
             @Override
-            protected void deleteEntry(String name) {
-                VirtualEnderRegistry.deleteEntry(getOwner(), getType(), name, tank -> tank.getFluidAmount() == 0);
+            protected void deleteEntry(UUID uuid, String name) {
+                VirtualEnderRegistry.deleteEntry(uuid, getType(), name, tank -> tank.getFluidAmount() == 0);
             }
         };
     }

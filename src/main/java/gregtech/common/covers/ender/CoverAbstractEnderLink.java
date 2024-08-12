@@ -293,10 +293,13 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected abstract class EntrySelectorSH extends PanelSyncHandler {
 
+        private static final int TRACK_SUBPANELS = 3;
+        private static final int DELETE_ENTRY = 1;
         private final EntryTypes<T> type;
         private final ModularPanel mainPanel;
         private static final String PANEL_NAME = "entry_selector";
         private final Set<String> opened = new HashSet<>();
+        protected UUID playerUUID;
 
         protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
             super(mainPanel, EntrySelectorSH::defaultPanel);
@@ -304,13 +307,23 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             this.mainPanel = mainPanel;
         }
 
+        @Override
+        public void init(String key, PanelSyncManager syncManager) {
+            super.init(key, syncManager);
+            this.playerUUID = syncManager.getPlayer().getUniqueID();
+        }
+
         private static ModularPanel defaultPanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
             return GTGuis.createPopupPanel(PANEL_NAME, 168, 112);
         }
 
+        public UUID getPlayerUUID() {
+            return isPrivate ? playerUUID : null;
+        }
+
         @Override
         public ModularPanel createUI(PanelSyncManager syncManager) {
-            List<String> names = new ArrayList<>(VirtualEnderRegistry.getEntryNames(getOwner(), type));
+            List<String> names = new ArrayList<>(VirtualEnderRegistry.getEntryNames(getPlayerUUID(), type));
             return super.createUI(syncManager)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR).asWidget()
@@ -327,7 +340,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
-            T entry = VirtualEnderRegistry.getEntry(getOwner(), this.type, name);
+            T entry = VirtualEnderRegistry.getEntry(getPlayerUUID(), this.type, name);
             String key = String.format("entry#%s_description", entry.getColorStr());
             var entryDescriptionSH = new EntryDescriptionSH(mainPanel, key, entry);
             syncManager.syncValue(key, isPrivate ? 1 : 0, entryDescriptionSH);
@@ -376,8 +389,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .addTooltipLine(IKey.lang("cover.generic.ender.delete_entry"))
                             .onMousePressed(i -> {
                                 // todo option to force delete, maybe as a popup?
-                                deleteEntry(name);
-                                syncToServer(1, buffer -> NetworkUtils.writeStringSafe(buffer, name));
+                                deleteEntry(getPlayerUUID(), name);
+                                syncToServer(1, buffer -> {
+                                    NetworkUtils.writeStringSafe(buffer, getPlayerUUID().toString());
+                                    NetworkUtils.writeStringSafe(buffer, name);
+                                });
                                 Interactable.playButtonClickSound();
                                 return true;
                             }));
@@ -408,7 +424,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         @Override
         public void readOnClient(int i, PacketBuffer packetBuffer) throws IOException {
-            if (i == 3) {
+            if (i == TRACK_SUBPANELS) {
                 handleTracking(packetBuffer);
             }
             super.readOnClient(i, packetBuffer);
@@ -416,12 +432,14 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         @Override
         public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
-            if (i == 3) {
+            if (i == TRACK_SUBPANELS) {
                 handleTracking(packetBuffer);
             }
             super.readOnServer(i, packetBuffer);
-            if (i == 1) {
-                deleteEntry(NetworkUtils.readStringSafe(packetBuffer));
+            if (i == DELETE_ENTRY) {
+                UUID uuid = UUID.fromString(NetworkUtils.readStringSafe(packetBuffer));
+                String name = NetworkUtils.readStringSafe(packetBuffer);
+                deleteEntry(uuid, name);
             }
         }
 
@@ -490,6 +508,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         protected abstract IWidget createSlotWidget(T entry);
 
-        protected abstract void deleteEntry(String name);
+        protected abstract void deleteEntry(UUID player, String name);
     }
 }
