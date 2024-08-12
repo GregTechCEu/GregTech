@@ -44,7 +44,8 @@ public class VirtualEnderRegistry extends WorldSavedData {
         return getRegistry(owner).contains(type, name);
     }
 
-    public static <T extends VirtualEntry> T getOrCreateEntry(@Nullable UUID owner, EntryTypes<T> type, String name) {
+    public static @NotNull <T extends VirtualEntry> T getOrCreateEntry(@Nullable UUID owner, EntryTypes<T> type,
+                                                                       String name) {
         if (!hasEntry(owner, type, name))
             addEntry(owner, name, type.createInstance());
 

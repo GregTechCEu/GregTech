@@ -344,7 +344,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             }
             EntityPlayer player = getSyncManager().getPlayer();
             player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
-                    soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
         }
     }
 }

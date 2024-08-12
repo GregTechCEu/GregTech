@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,16 +21,19 @@ public class VirtualRegistryMap implements INBTSerializable<NBTTagCompound> {
     public VirtualRegistryMap() {}
 
     @SuppressWarnings("unchecked")
-    public <T extends VirtualEntry> T getEntry(EntryTypes<T> type, String name) {
+    public @Nullable <T extends VirtualEntry> T getEntry(EntryTypes<T> type, String name) {
+        if (!contains(type, name))
+            return null;
+
         return (T) registryMap.get(type).get(name);
     }
 
-    public <T extends VirtualEntry> void addEntry(String name, T entry) {
+    public void addEntry(String name, VirtualEntry entry) {
         registryMap.computeIfAbsent(entry.getType(), k -> new HashMap<>())
                 .put(name, entry);
     }
 
-    public <T extends VirtualEntry> boolean contains(EntryTypes<T> type, String name) {
+    public boolean contains(EntryTypes<?> type, String name) {
         if (!registryMap.containsKey(type))
             return false;
 

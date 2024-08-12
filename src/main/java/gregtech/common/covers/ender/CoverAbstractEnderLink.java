@@ -295,7 +295,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         private final EntryTypes<T> type;
         private final ModularPanel mainPanel;
-        private static final String panelName = "entry_selector";
+        private static final String PANEL_NAME = "entry_selector";
         private final Set<String> opened = new HashSet<>();
 
         protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
@@ -305,7 +305,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         }
 
         private static ModularPanel defaultPanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
-            return GTGuis.createPopupPanel(panelName, 168, 112);
+            return GTGuis.createPopupPanel(PANEL_NAME, 168, 112);
         }
 
         @Override
@@ -385,7 +385,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
         @Override
         public void closePanel() {
-            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(panelName);
+            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
             for (var key : opened) {
                 if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
                     psh.closePanel();
@@ -397,7 +397,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         @Override
         @SuppressWarnings("UnstableApiUsage")
         public void closePanelInternal() {
-            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(panelName);
+            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
             for (var key : opened) {
                 if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
                     psh.closePanel();

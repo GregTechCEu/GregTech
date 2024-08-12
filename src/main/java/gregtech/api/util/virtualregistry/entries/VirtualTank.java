@@ -109,14 +109,11 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
         int fillAmt = Math.min(fluidStack.amount, getCapacity() - this.getFluidAmount());
 
         if (doFill) {
-            var fluid = this.fluidStack == null ? null : this.fluidStack.copy();
-
-            if (fluid == null) {
-                fluid = new FluidStack(fluidStack, fillAmt);
+            if (this.fluidStack == null) {
+                this.fluidStack = new FluidStack(fluidStack, fillAmt);
             } else {
-                fluid.amount += fillAmt;
+                this.fluidStack.amount += fillAmt;
             }
-            setFluid(fluid);
         }
         return fillAmt;
     }
@@ -133,16 +130,13 @@ public class VirtualTank extends VirtualEntry implements IFluidTank, IFluidHandl
         if (this.fluidStack == null || amount <= 0)
             return null;
 
-        var fluid = this.fluidStack.copy();
-
         int drainAmt = Math.min(this.getFluidAmount(), amount);
-        FluidStack drainedFluid = new FluidStack(fluid, drainAmt);
+        FluidStack drainedFluid = new FluidStack(this.fluidStack, drainAmt);
         if (doDrain) {
-            fluid.amount -= drainAmt;
-            if (fluid.amount <= 0) {
-                fluid = null;
+            this.fluidStack.amount -= drainAmt;
+            if (this.fluidStack.amount <= 0) {
+                this.fluidStack = null;
             }
-            setFluid(fluid);
         }
         return drainedFluid;
     }
