@@ -163,7 +163,8 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     }
 
     @Override
-    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode, long consumption) {
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode,
+                                 long consumption) {
         super.consumeFlowLimit(edge, sourceNode, targetNode, consumption);
         temperatureUpdates.getOrDefault(sourceNode, l -> {}).accept(consumption);
     }

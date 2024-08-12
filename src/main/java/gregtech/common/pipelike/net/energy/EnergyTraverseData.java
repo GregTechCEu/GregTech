@@ -119,7 +119,8 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     }
 
     @Override
-    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode, long consumption) {
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode,
+                                 long consumption) {
         super.consumeFlowLimit(edge, sourceNode, targetNode, consumption);
         if (consumption > 0) recordFlow(sourceNode, consumption);
     }
@@ -132,8 +133,6 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
         }
         logic.recordFlow(getQueryTick(), new EnergyFlowData(amperes, pathVoltage));
     }
-
-
 
     private static int calculateHeatV(long amperage, long voltage, long maxVoltage) {
         return (int) (amperage * (Math.log1p(Math.log((double) voltage / maxVoltage)) * 45 + 36.5));
