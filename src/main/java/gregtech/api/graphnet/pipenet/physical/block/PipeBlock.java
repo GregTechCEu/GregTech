@@ -95,8 +95,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
     public void doPlacementLogic(PipeTileEntity tile, EnumFacing placedBlockSearchSide) {
         for (EnumFacing facing : EnumFacing.VALUES) {
-            TileEntity otherr = tile.getNeighbor(facing);
-            if (otherr instanceof PipeTileEntity other) {
+            TileEntity neighbor = tile.getNeighbor(facing);
+            if (neighbor instanceof PipeTileEntity other) {
                 // first check -- does the other tile have a cover that would prevent connection
                 Cover cover = other.getCoverHolder().getCoverAtSide(facing.getOpposite());
                 if (cover != null && !cover.canPipePassThrough()) continue;
@@ -354,12 +354,6 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         assert !tile.getWorld().isRemote;
         return tile.getBlockType().getHandler(tile.getWorld(), tile.getPos())
                 .getOrCreateFromNets(tile.getWorld(), tile.getPos(), tile.getStructure());
-    }
-
-    @Override
-    public void onBlockAdded(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
-        super.onBlockAdded(worldIn, pos, state);
-        // if (!worldIn.isRemote) getHandler(worldIn, pos).getOrCreateFromNets(worldIn, pos, getStructure());
     }
 
     @Override

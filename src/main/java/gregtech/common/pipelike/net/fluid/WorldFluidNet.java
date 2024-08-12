@@ -114,4 +114,9 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
     public @NotNull NetFlowEdge getNewEdge() {
         return new NetFlowEdge(10);
     }
+
+    @Override
+    public int getNetworkID() {
+        return 1;
+    }
 }

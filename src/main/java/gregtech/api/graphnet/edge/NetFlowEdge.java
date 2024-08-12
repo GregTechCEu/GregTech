@@ -49,7 +49,8 @@ public class NetFlowEdge extends AbstractNetFlowEdge {
 
     @Nullable
     private NetFlowEdge getInverse(IGraphNet graph) {
-        NetEdge edge = graph.getEdgeNullSafe(getTarget(), getSource());
+        if (getTarget() == null || getSource() == null) return null;
+        NetEdge edge = graph.getEdge(getTarget(), getSource());
         if (edge instanceof NetFlowEdge i && i != this) {
             return i;
         }

@@ -50,7 +50,7 @@ public abstract class AbstractNetPath<N extends NetNode, E extends NetEdge> impl
                 unifiedNodeData = NetLogicData.union(nodes.get(0).getData(), nodes.get(1).getData());
             } else {
                 unifiedNodeData = NetLogicData.union(nodes.get(0).getData(),
-                        nodes.subList(1, nodes.size()).stream().map(NetNode::getData).toArray(NetLogicData[]::new));
+                        nodes.stream().skip(1).map(NetNode::getData).toArray(NetLogicData[]::new));
             }
         }
         return unifiedNodeData;
@@ -68,7 +68,7 @@ public abstract class AbstractNetPath<N extends NetNode, E extends NetEdge> impl
                 unifiedEdgeData = NetLogicData.union(edges.get(0).getData(), edges.get(1).getData());
             } else {
                 unifiedEdgeData = NetLogicData.union(edges.get(0).getData(),
-                        edges.subList(1, edges.size()).stream().map(NetEdge::getData).toArray(NetLogicData[]::new));
+                        edges.stream().skip(1).map(NetEdge::getData).toArray(NetLogicData[]::new));
             }
         }
         return unifiedEdgeData;

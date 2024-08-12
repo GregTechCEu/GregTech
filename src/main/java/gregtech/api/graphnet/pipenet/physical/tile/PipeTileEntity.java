@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
+import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicRegistry;
@@ -47,6 +48,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -56,7 +58,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -66,7 +67,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
-    private final Object2ObjectOpenHashMap<String, NetLogicData> netLogicDatas = new Object2ObjectOpenHashMap<>();
+    private final Int2ObjectOpenHashMap<NetLogicData> netLogicDatas = new Int2ObjectOpenHashMap<>();
     private final ObjectOpenHashSet<NetLogicData.LogicDataListener> listeners = new ObjectOpenHashSet<>();
 
     // information that is only required for determining graph topology should be stored on the tile entity level,
@@ -430,8 +431,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     // data sync management //
 
-    public NetLogicData getNetLogicData(String netName) {
-        return netLogicDatas.get(netName);
+    public NetLogicData getNetLogicData(IGraphNet net) {
+        return netLogicDatas.get(net.getNetworkID());
     }
 
     @Override
@@ -456,11 +457,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             for (WorldPipeNetNode node : PipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(this, node));
-                String netName = node.getNet().mapName;
-                netLogicDatas.put(netName, node.getData());
+                int networkID = node.getNet().getNetworkID();
+                netLogicDatas.put(networkID, node.getData());
                 var listener = node.getData().createListener(
                         (e, r, f) -> writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
-                            buf.writeString(netName);
+                            buf.writeVarInt(networkID);
                             buf.writeString(e.getName());
                             buf.writeBoolean(r);
                             buf.writeBoolean(f);
@@ -512,6 +513,15 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         this.getCoverHolder().deserializeNBT(compound.getCompoundTag("Covers"));
     }
 
+    protected void encodeMaterialToBuffer(@NotNull Material material, @NotNull PacketBuffer buf) {
+        buf.writeVarInt(material.getRegistry().getNetworkId());
+        buf.writeInt(material.getId());
+    }
+
+    protected Material decodeMaterialFromBuffer(@NotNull PacketBuffer buf) {
+        return GregTechAPI.materialManager.getRegistry(buf.readVarInt()).getObjectById(buf.readInt());
+    }
+
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeByte(connectionMask);
@@ -519,10 +529,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         buf.writeByte(blockedMask);
         buf.writeInt(paintingColor);
         buf.writeBoolean(frameMaterial != null);
-        if (frameMaterial != null) buf.writeString(frameMaterial.getRegistryName());
+        if (frameMaterial != null) encodeMaterialToBuffer(frameMaterial, buf);
         buf.writeVarInt(netLogicDatas.size());
-        for (Map.Entry<String, NetLogicData> entry : netLogicDatas.entrySet()) {
-            buf.writeString(entry.getKey());
+        for (var entry : netLogicDatas.entrySet()) {
+            buf.writeVarInt(entry.getKey());
             entry.getValue().encode(buf);
         }
         this.getCoverHolder().writeInitialSyncData(buf);
@@ -535,15 +545,15 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             renderMask = buf.readByte();
             blockedMask = buf.readByte();
             paintingColor = buf.readInt();
-            if (buf.readBoolean()) frameMaterial = GregTechAPI.materialManager.getMaterial(buf.readString(255));
+            if (buf.readBoolean()) frameMaterial = decodeMaterialFromBuffer(buf);
             else frameMaterial = null;
             netLogicDatas.clear();
             int count = buf.readVarInt();
             for (int i = 0; i < count; i++) {
-                String key = buf.readString(255);
+                int networkID = buf.readVarInt();
                 NetLogicData data = new NetLogicData();
                 data.decode(buf);
-                netLogicDatas.put(key, data);
+                netLogicDatas.put(networkID, data);
             }
             this.getCoverHolder().readInitialSyncData(buf);
         }
@@ -555,30 +565,30 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         if (discriminator == UPDATE_PIPE_LOGIC) {
             // extra check just to make sure we don't affect actual net data with our writes
             if (world.isRemote) {
-                String netName = buf.readString(255);
+                int networkID = buf.readVarInt();
                 String identifier = buf.readString(255);
                 boolean removed = buf.readBoolean();
                 boolean fullChange = buf.readBoolean();
                 if (removed) {
-                    this.netLogicDatas.computeIfPresent(netName, (k, v) -> v.removeLogicEntry(identifier));
+                    this.netLogicDatas.computeIfPresent(networkID, (k, v) -> v.removeLogicEntry(identifier));
                 } else {
                     if (fullChange) {
                         NetLogicEntry<?, ?> logic = NetLogicRegistry.getSupplierErroring(identifier).get();
                         logic.decode(buf, fullChange);
-                        this.netLogicDatas.compute(netName, (k, v) -> {
+                        this.netLogicDatas.compute(networkID, (k, v) -> {
                             if (v == null) v = new NetLogicData();
                             v.setLogicEntry(logic);
                             return v;
                         });
                     } else {
-                        NetLogicData data = this.netLogicDatas.get(netName);
+                        NetLogicData data = this.netLogicDatas.get(networkID);
                         if (data != null) {
                             NetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
                             if (entry != null) entry.decode(buf);
                         } else return;
                     }
                     if (identifier.equals(TemperatureLogic.INSTANCE.getName())) {
-                        TemperatureLogic tempLogic = this.netLogicDatas.get(netName)
+                        TemperatureLogic tempLogic = this.netLogicDatas.get(networkID)
                                 .getLogicEntryNullable(TemperatureLogic.INSTANCE);
                         if (tempLogic != null) updateTemperatureLogic(tempLogic);
                     }
@@ -699,6 +709,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
      * Note - the block corresponding to this tile entity must register any new unlisted properties to the default
      * state.
      */
+    @SideOnly(Side.CLIENT)
     @MustBeInvokedByOverriders
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
         byte frameMask = 0;

@@ -1,12 +1,15 @@
 package gregtech.client.renderer.pipe.util;
 
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@SideOnly(Side.CLIENT)
 public class CacheKey implements IStringSerializable {
 
     protected final float thickness;

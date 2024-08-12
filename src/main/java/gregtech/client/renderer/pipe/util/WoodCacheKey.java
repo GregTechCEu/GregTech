@@ -3,11 +3,15 @@ package gregtech.client.renderer.pipe.util;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@SideOnly(Side.CLIENT)
 public class WoodCacheKey extends CacheKey {
 
     private final boolean wood;

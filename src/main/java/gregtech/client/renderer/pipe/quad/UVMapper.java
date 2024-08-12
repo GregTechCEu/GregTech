@@ -2,11 +2,14 @@ package gregtech.client.renderer.pipe.quad;
 
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
 
 @FunctionalInterface
+@SideOnly(Side.CLIENT)
 public interface UVMapper {
 
     static UVMapper standard(int rot) {

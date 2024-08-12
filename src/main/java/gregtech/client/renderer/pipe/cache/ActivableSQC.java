@@ -9,12 +9,15 @@ import gregtech.client.renderer.pipe.util.SpriteInformation;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class ActivableSQC extends StructureQuadCache {
 
     protected final EnumMap<EnumFacing, SubListAddress> overlayCoords = new EnumMap<>(EnumFacing.class);

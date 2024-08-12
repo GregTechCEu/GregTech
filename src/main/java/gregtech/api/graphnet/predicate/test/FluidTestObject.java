@@ -16,9 +16,12 @@ public final class FluidTestObject implements IPredicateTestObject, Predicate<Fl
     public final Fluid fluid;
     public final NBTTagCompound tag;
 
+    private final int hash;
+
     public FluidTestObject(@NotNull FluidStack stack) {
         this.fluid = stack.getFluid();
         this.tag = stack.tag;
+        this.hash = Objects.hash(fluid, tag);
     }
 
     @Override
@@ -47,6 +50,6 @@ public final class FluidTestObject implements IPredicateTestObject, Predicate<Fl
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluid, tag);
+        return hash;
     }
 }

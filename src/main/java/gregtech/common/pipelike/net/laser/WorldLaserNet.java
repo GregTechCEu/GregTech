@@ -53,4 +53,9 @@ public class WorldLaserNet extends WorldPipeNet implements BasicWorldPipeNetPath
     public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
         return new IPipeCapabilityObject[] { new LaserCapabilityObject(this) };
     }
+
+    @Override
+    public int getNetworkID() {
+        return 3;
+    }
 }

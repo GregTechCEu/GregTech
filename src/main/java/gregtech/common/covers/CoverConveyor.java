@@ -138,11 +138,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.transferRate = MathHelper.clamp(transferRate, 1, maxItemTransferRate);
         CoverableView coverable = getCoverableView();
         coverable.markDirty();
-
-        if (getWorld() != null && getWorld().isRemote) {
-            // tile at cover holder pos
-            TileEntity te = getTileEntityHere();
-        }
     }
 
     public int getTransferRate() {

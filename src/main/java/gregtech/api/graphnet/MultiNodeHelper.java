@@ -4,6 +4,7 @@ import gregtech.api.graphnet.logic.INetLogicEntryListener;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ public class MultiNodeHelper implements INetLogicEntryListener {
 
     protected final Object2ObjectOpenHashMap<IGraphNet, LogicDataHandler> handledDatas = new Object2ObjectOpenHashMap<>();
 
-    protected final Object2ObjectOpenHashMap<IGraphNet, @NotNull Long> recentTransferNets = new Object2ObjectOpenHashMap<>();
+    protected final Object2LongOpenHashMap<IGraphNet> recentTransferNets = new Object2LongOpenHashMap<>();
     protected final int transferTimeout;
 
     protected final NetLogicData mergedData = new NetLogicData();
@@ -36,12 +37,12 @@ public class MultiNodeHelper implements INetLogicEntryListener {
     }
 
     public boolean traverse(IGraphNet net, long queryTick, boolean simulate) {
-        var iter = recentTransferNets.object2ObjectEntrySet().fastIterator();
+        var iter = recentTransferNets.object2LongEntrySet().fastIterator();
         boolean allowed = true;
         while (iter.hasNext()) {
             var next = iter.next();
             if (net.clashesWith(next.getKey())) {
-                if (next.getValue() <= queryTick) {
+                if (next.getLongValue() <= queryTick) {
                     iter.remove();
                 } else {
                     allowed = false;
@@ -81,7 +82,7 @@ public class MultiNodeHelper implements INetLogicEntryListener {
         }
     }
 
-    public void removeNode(NetNode node) {
+    public void removeNode(@NotNull NetNode node) {
         LogicDataHandler removed = handledDatas.remove(node.getNet());
         if (removed != null) {
             removed.invalidate();

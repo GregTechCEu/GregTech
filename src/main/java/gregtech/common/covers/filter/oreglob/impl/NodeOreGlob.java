@@ -8,7 +8,7 @@ import com.google.common.annotations.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * WorldPipeNetNode-based implementation of oreglob.
+ * Node-based implementation of oreglob.
  */
 public final class NodeOreGlob extends OreGlob {
 

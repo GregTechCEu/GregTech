@@ -1,5 +1,7 @@
 package gregtech.api.capability.data.query;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class DataQueryObject {
 
     private static int ID = 0;
@@ -20,6 +22,7 @@ public abstract class DataQueryObject {
         return shouldTriggerWalker;
     }
 
+    @NotNull
     public abstract DataQueryFormat getFormat();
 
     @Override

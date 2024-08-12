@@ -3,6 +3,7 @@ package gregtech.api.capability.data.query;
 import gregtech.api.capability.data.IComputationProvider;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -18,6 +19,7 @@ public class ComputationQuery extends DataQueryObject implements IComputationQue
     }
 
     @Override
+    @NotNull
     public DataQueryFormat getFormat() {
         return DataQueryFormat.COMPUTATION;
     }
@@ -40,6 +42,7 @@ public class ComputationQuery extends DataQueryObject implements IComputationQue
         providers.add(provider);
     }
 
+    @NotNull
     public Set<IComputationProvider> getProviders() {
         return providers;
     }
@@ -48,7 +51,8 @@ public class ComputationQuery extends DataQueryObject implements IComputationQue
         long remaining = amount;
         for (IComputationProvider provider : getProviders()) {
             remaining -= provider.supplyCWU(remaining, simulate);
-            if (remaining <= 0) return amount;
+            assert remaining >= 0;
+            if (remaining == 0) return amount;
         }
         return amount - remaining;
     }

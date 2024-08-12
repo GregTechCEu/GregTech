@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.alg.util.Pair;
 
-import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -344,7 +344,7 @@ public final class TraverseHelpers {
                                                                                                    long flowIn,
                                                                                                    boolean strict) {
         long availableFlow = flowIn;
-        ArrayDeque<Object> cache = data.getTraversalCache();
+        Deque<Object> cache = data.getTraversalCache();
         Predicate<Object> invalidityCheck = null;
 
         Map<Object, P> skippedPaths = new Object2ObjectOpenHashMap<>();

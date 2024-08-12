@@ -1,7 +1,11 @@
 package gregtech.client.renderer.pipe.util;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import org.jetbrains.annotations.Nullable;
 
+@SideOnly(Side.CLIENT)
 public class ActivableCacheKey extends CacheKey {
 
     private final boolean active;

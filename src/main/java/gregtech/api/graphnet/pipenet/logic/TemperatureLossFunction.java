@@ -8,12 +8,10 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.floats.Float2ObjectArrayMap;
 
-import java.util.Map;
-
 public class TemperatureLossFunction implements INBTSerializable<NBTTagCompound>, IPacket {
 
-    private static final Map<Float, TemperatureLossFunction> CABLE_LOSS_CACHE = new Float2ObjectArrayMap<>();
-    private static final Map<Float, TemperatureLossFunction> PIPE_LOSS_CACHE = new Float2ObjectArrayMap<>();
+    private static final Float2ObjectArrayMap<TemperatureLossFunction> CABLE_LOSS_CACHE = new Float2ObjectArrayMap<>();
+    private static final Float2ObjectArrayMap<TemperatureLossFunction> PIPE_LOSS_CACHE = new Float2ObjectArrayMap<>();
 
     private EnumLossFunction function;
     private float factorX;

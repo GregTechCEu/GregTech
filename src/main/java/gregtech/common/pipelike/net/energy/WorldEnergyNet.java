@@ -65,4 +65,9 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
     public @NotNull NetFlowEdge getNewEdge() {
         return new NetFlowEdge(1);
     }
+
+    @Override
+    public int getNetworkID() {
+        return 0;
+    }
 }

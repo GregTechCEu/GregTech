@@ -54,4 +54,9 @@ public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPa
     public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
         return new IPipeCapabilityObject[] { new DataCapabilityObject(this) };
     }
+
+    @Override
+    public int getNetworkID() {
+        return 4;
+    }
 }

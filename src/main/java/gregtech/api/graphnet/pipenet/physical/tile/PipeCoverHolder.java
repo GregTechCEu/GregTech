@@ -18,6 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -293,6 +295,7 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
         return holder.getCapabilityCoverQuery(capability, side);
     }
 
+    @SideOnly(Side.CLIENT)
     public CoverRendererPackage createPackage() {
         if (covers.isEmpty()) return CoverRendererPackage.EMPTY;
         CoverRendererPackage rendererPackage = new CoverRendererPackage(shouldRenderCoverBackSides());

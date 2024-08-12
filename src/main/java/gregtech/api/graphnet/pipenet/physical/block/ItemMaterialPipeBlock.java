@@ -27,6 +27,6 @@ public class ItemMaterialPipeBlock extends ItemPipeBlock {
     @Override
     public String getItemStackDisplayName(@NotNull ItemStack stack) {
         Material material = getBlock().getMaterialForStack(stack);
-        return material == null ? " " : getBlock().getStructure().getOrePrefix().getLocalNameForItem(material);
+        return material == null ? "unnamed" : getBlock().getStructure().getOrePrefix().getLocalNameForItem(material);
     }
 }

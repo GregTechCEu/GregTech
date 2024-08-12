@@ -120,13 +120,13 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     @Override
     public long getInputAmperage() {
         if (tile == null) return 0;
-        return tile.getNetLogicData(net.mapName).getLogicEntryDefaultable(ThroughputLogic.INSTANCE).getValue();
+        return tile.getNetLogicData(net).getLogicEntryDefaultable(ThroughputLogic.INSTANCE).getValue();
     }
 
     @Override
     public long getInputVoltage() {
         if (tile == null) return 0;
-        return tile.getNetLogicData(net.mapName).getLogicEntryDefaultable(VoltageLimitLogic.INSTANCE).getValue();
+        return tile.getNetLogicData(net).getLogicEntryDefaultable(VoltageLimitLogic.INSTANCE).getValue();
     }
 
     @Override

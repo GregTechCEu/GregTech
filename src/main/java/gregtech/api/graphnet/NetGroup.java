@@ -2,11 +2,11 @@ package gregtech.api.graphnet;
 
 import gregtech.api.graphnet.graph.GraphVertex;
 
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,17 +98,18 @@ public class NetGroup {
     public void splitNode(NetNode source) {
         if (!this.net.containsNode(source)) return;
         this.clearPathCaches();
-        List<NetNode> targets = this.net.getGraph().outgoingEdgesOf(source.wrapper).stream().map(a -> {
-            GraphVertex target = a.getTarget();
-            // handling so undirected graphs don't throw an error
-            if (!net.getGraph().isDirected() && target == source.wrapper)
-                return a.getSource().wrapped;
-            return target.wrapped;
-        }).collect(Collectors.toList());
+        ObjectLinkedOpenHashSet<NetNode> targets = this.net.getGraph().outgoingEdgesOf(source.wrapper).stream()
+                .map(a -> {
+                    GraphVertex target = a.getTarget();
+                    // handling so undirected graphs don't throw an error
+                    if (!net.getGraph().isDirected() && target == source.wrapper)
+                        return a.getSource().wrapped;
+                    return target.wrapped;
+                }).collect(Collectors.toCollection(ObjectLinkedOpenHashSet::new));
         this.net.getBacker().removeVertex(source.wrapper);
         this.removeNode(source);
         while (!targets.isEmpty()) {
-            NetNode target = targets.remove(targets.size() - 1);
+            NetNode target = targets.removeLast();
 
             Set<NetNode> targetGroup = new ObjectOpenHashSet<>();
             Iterator<NetNode> i = this.net.breadthIterator(target);
@@ -120,7 +121,7 @@ public class NetGroup {
                 targets.remove(temp);
             }
             this.removeNodes(targetGroup);
-            if (targetGroup.size() != 0) {
+            if (!targetGroup.isEmpty()) {
                 new NetGroup(this.net, targetGroup);
             }
         }

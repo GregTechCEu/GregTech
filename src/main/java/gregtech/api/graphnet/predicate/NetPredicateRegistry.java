@@ -1,7 +1,5 @@
 package gregtech.api.graphnet.predicate;
 
-import gregtech.api.util.function.NullableSupplier;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,17 +9,17 @@ import java.util.function.Supplier;
 
 public final class NetPredicateRegistry {
 
-    private static final Map<String, NullableSupplier<EdgePredicate<?, ?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
+    private static final Map<String, Supplier<EdgePredicate<?, ?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
 
-    static void register(EdgePredicate<?, ?> predicate) {
+    static void register(@NotNull EdgePredicate<?, ?> predicate) {
         REGISTRY.putIfAbsent(predicate.getName(), predicate::getNew);
     }
 
-    public static @Nullable Supplier<EdgePredicate<?, ?>> getSupplierNullable(String name) {
+    public static @Nullable Supplier<@NotNull EdgePredicate<?, ?>> getSupplierNullable(String name) {
         return REGISTRY.get(name);
     }
 
-    public static @NotNull NullableSupplier<EdgePredicate<?, ?>> getSupplierNotNull(String name) {
+    public static @NotNull Supplier<@Nullable EdgePredicate<?, ?>> getSupplierNotNull(String name) {
         return REGISTRY.getOrDefault(name, () -> null);
     }
 

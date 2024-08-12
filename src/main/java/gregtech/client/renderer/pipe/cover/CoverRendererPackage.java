@@ -6,6 +6,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +15,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public final class CoverRendererPackage {
 
     public static final UnlistedCRPProperty PROPERTY = new UnlistedCRPProperty("CRP");

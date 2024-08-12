@@ -13,6 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -60,6 +62,7 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
         return super.getRenderInformation(state).withProperty(AbstractPipeModel.MATERIAL_PROPERTY, getMaterial());
     }
@@ -82,13 +85,14 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeBoolean(material != null);
-        if (material != null) buf.writeString(material.getRegistryName());
+        if (material != null) encodeMaterialToBuffer(material, buf);
         super.writeInitialSyncData(buf);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
-        if (buf.readBoolean()) material = GregTechAPI.materialManager.getMaterial(buf.readString(255));
+        if (buf.readBoolean()) material = decodeMaterialFromBuffer(buf);
+        else material = null;
         super.receiveInitialSyncData(buf);
     }
 }

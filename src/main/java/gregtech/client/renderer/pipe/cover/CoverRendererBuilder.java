@@ -19,6 +19,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -31,6 +33,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class CoverRendererBuilder {
 
     private static final float OVERLAY_DIST_1 = 0.003f;

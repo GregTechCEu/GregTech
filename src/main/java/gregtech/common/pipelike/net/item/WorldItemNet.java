@@ -114,4 +114,9 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
     public @NotNull NetFlowEdge getNewEdge() {
         return new NetFlowEdge(2, 5);
     }
+
+    @Override
+    public int getNetworkID() {
+        return 2;
+    }
 }

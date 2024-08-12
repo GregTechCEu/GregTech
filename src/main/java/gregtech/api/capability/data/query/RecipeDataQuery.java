@@ -2,6 +2,8 @@ package gregtech.api.capability.data.query;
 
 import gregtech.api.recipes.Recipe;
 
+import org.jetbrains.annotations.NotNull;
+
 public class RecipeDataQuery extends DataQueryObject {
 
     private final Recipe recipe;
@@ -13,7 +15,7 @@ public class RecipeDataQuery extends DataQueryObject {
     }
 
     @Override
-    public DataQueryFormat getFormat() {
+    public @NotNull DataQueryFormat getFormat() {
         return DataQueryFormat.RECIPE;
     }
 

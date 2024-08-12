@@ -1,11 +1,14 @@
 package gregtech.client.renderer.pipe.util;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@SideOnly(Side.CLIENT)
 public class SpriteInformationWrapper implements Supplier<SpriteInformation>, Consumer<SpriteInformation>,
                                       BiConsumer<TextureAtlasSprite, Integer> {
 

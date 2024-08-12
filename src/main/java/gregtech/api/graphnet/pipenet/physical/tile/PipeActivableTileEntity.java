@@ -5,6 +5,8 @@ import gregtech.client.renderer.pipe.ActivablePipeModel;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +29,7 @@ public class PipeActivableTileEntity extends PipeTileEntity implements IActivabl
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
         return super.getRenderInformation(state).withProperty(ActivablePipeModel.ACTIVE_PROPERTY, isActive());
     }
