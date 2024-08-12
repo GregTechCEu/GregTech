@@ -7,6 +7,8 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.graphnet.logic.NetLogicData;
+import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -18,6 +20,9 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
+import gregtech.common.pipelike.net.energy.EnergyFlowData;
+import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
+import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;
@@ -41,6 +46,7 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -276,6 +282,39 @@ public class TricorderBehavior implements IItemBehaviour {
                         new TextComponentTranslation(
                                 TextFormattingUtil.formatNumbers(block.getMetaFromState(world.getBlockState(pos))))
                                         .setStyle(new Style().setColor(TextFormatting.BLUE))));
+            }
+            NetLogicData data = pipeTile.getNetLogicData(WorldEnergyNet.getWorldNet(world).getNetworkID());
+            if (data != null) {
+                int cumulativeCount = 0;
+                long cumulativeVoltage = 0;
+                long cumulativeAmperage = 0;
+                for (var memory : data.getLogicEntryDefaultable(EnergyFlowLogic.INSTANCE).getMemory().entrySet()) {
+                    cumulativeCount++;
+                    int count = 0;
+                    double voltage = 0;
+                    long amperage = 0;
+                    for (EnergyFlowData flow : memory.getValue()) {
+                        count++;
+                        long prev = amperage;
+                        amperage += flow.amperage();
+                        // weighted average
+                        voltage = voltage * prev / amperage + (double) (flow.voltage() * flow.amperage()) / amperage;
+                    }
+                    if (count != 0) {
+                        cumulativeVoltage += voltage / count;
+                        cumulativeAmperage += amperage / count;
+                    }
+                }
+                if (cumulativeCount != 0) {
+                    cumulativeVoltage /= cumulativeCount;
+                    cumulativeAmperage /= cumulativeCount;
+                }
+                list.add(new TextComponentTranslation("behavior.tricorder.eut_per_sec",
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(cumulativeVoltage))
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
+                list.add(new TextComponentTranslation("behavior.tricorder.amp_per_sec",
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(cumulativeAmperage))
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
             }
 
             // pipe-specific info

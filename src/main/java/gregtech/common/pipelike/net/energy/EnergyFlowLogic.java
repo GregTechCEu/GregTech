@@ -25,6 +25,10 @@ public class EnergyFlowLogic extends NetLogicEntry<EnergyFlowLogic, NBTTagByte> 
         super("EnergyFlow");
     }
 
+    public @NotNull Long2ObjectOpenHashMap<List<EnergyFlowData>> getMemory() {
+        return memory;
+    }
+
     public @NotNull List<EnergyFlowData> getFlow(long tick) {
         return memory.getOrDefault(tick, Collections.emptyList());
     }

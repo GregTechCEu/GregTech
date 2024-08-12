@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
-import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicRegistry;
@@ -431,8 +430,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     // data sync management //
 
-    public NetLogicData getNetLogicData(IGraphNet net) {
-        return netLogicDatas.get(net.getNetworkID());
+    public NetLogicData getNetLogicData(int networkID) {
+        return netLogicDatas.get(networkID);
     }
 
     @Override

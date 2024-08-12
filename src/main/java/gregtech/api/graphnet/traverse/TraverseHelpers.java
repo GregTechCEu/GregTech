@@ -60,6 +60,7 @@ public final class TraverseHelpers {
 
             for (int i = 0; i < edges.size(); i++) {
                 E edge = edges.get(i);
+                N sourceNode = nodes.get(i);
                 N targetNode = nodes.get(i + 1);
 
                 if (targetNode.traverse(data.getQueryTick(), true)) {
@@ -69,7 +70,7 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow),
+                stack.add(flow -> data.consumeFlowLimit(edge, sourceNode, targetNode, flow),
                         data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
@@ -126,6 +127,7 @@ public final class TraverseHelpers {
 
             for (int i = 0; i < edges.size(); i++) {
                 E edge = edges.get(i);
+                N sourceNode = nodes.get(i);
                 N targetNode = nodes.get(i + 1);
 
                 if (targetNode.traverse(data.getQueryTick(), true)) {
@@ -145,7 +147,7 @@ public final class TraverseHelpers {
                             if (finalOverflow > 0) overflowListener.accept(targetNode, finalOverflow);
                         });
                     }
-                    stack.add(flow -> data.consumeFlowLimit(flowEdge, targetNode, flow),
+                    stack.add(flow -> data.consumeFlowLimit(flowEdge, sourceNode, targetNode, flow),
                             data.traverseToNode(targetNode, pathFlow));
                     pathFlow = stack.applyLatestLossFunction(pathFlow);
                 }
@@ -265,6 +267,7 @@ public final class TraverseHelpers {
 
             for (int i = 0; i < edges.size(); i++) {
                 E edge = edges.get(i);
+                N sourceNode = nodes.get(i);
                 N targetNode = nodes.get(i + 1);
 
                 if (targetNode.traverse(data.getQueryTick(), true)) {
@@ -274,7 +277,7 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow),
+                stack.add(flow -> data.consumeFlowLimit(edge, sourceNode, targetNode, flow),
                         data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
@@ -436,6 +439,7 @@ public final class TraverseHelpers {
 
         for (int i = 0; i < edges.size(); i++) {
             E edge = edges.get(i);
+            N sourceNode = nodes.get(i);
             N targetNode = nodes.get(i + 1);
 
             if (targetNode.traverse(data.getQueryTick(), true)) {
@@ -445,7 +449,8 @@ public final class TraverseHelpers {
             } else return strict ? -1 : 0;
 
             pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-            stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow), data.traverseToNode(targetNode, pathFlow));
+            stack.add(flow -> data.consumeFlowLimit(edge, sourceNode, targetNode, flow),
+                    data.traverseToNode(targetNode, pathFlow));
             pathFlow = stack.applyLatestLossFunction(pathFlow);
 
             if (pathFlow <= 0) return 0;

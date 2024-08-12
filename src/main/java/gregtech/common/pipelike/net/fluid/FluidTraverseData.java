@@ -157,12 +157,14 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                                 (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() == null);
             }
         }
-        return flowReachingDestination - availableFlow;
+        long accepted = flowReachingDestination - availableFlow;
+        temperatureUpdates.getOrDefault(destination, l -> {}).accept(accepted);
+        return accepted;
     }
 
     @Override
-    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
-        super.consumeFlowLimit(edge, targetNode, consumption);
-        temperatureUpdates.getOrDefault(targetNode, l -> {}).accept(consumption);
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode, long consumption) {
+        super.consumeFlowLimit(edge, sourceNode, targetNode, consumption);
+        temperatureUpdates.getOrDefault(sourceNode, l -> {}).accept(consumption);
     }
 }

@@ -114,19 +114,26 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                 destination.getGroupSafe().getData() instanceof EnergyGroupData data) {
             data.addEnergyOutPerSec(accepted * pathVoltage, getQueryTick());
         }
+        if (accepted > 0) recordFlow(destination, accepted);
         return accepted;
     }
 
     @Override
-    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
-        super.consumeFlowLimit(edge, targetNode, consumption);
-        EnergyFlowLogic logic = targetNode.getData().getLogicEntryNullable(EnergyFlowLogic.INSTANCE);
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode, long consumption) {
+        super.consumeFlowLimit(edge, sourceNode, targetNode, consumption);
+        if (consumption > 0) recordFlow(sourceNode, consumption);
+    }
+
+    private void recordFlow(@NotNull NetNode node, long amperes) {
+        EnergyFlowLogic logic = node.getData().getLogicEntryNullable(EnergyFlowLogic.INSTANCE);
         if (logic == null) {
             logic = EnergyFlowLogic.INSTANCE.getNew();
-            targetNode.getData().setLogicEntry(logic);
+            node.getData().setLogicEntry(logic);
         }
-        logic.recordFlow(getQueryTick(), new EnergyFlowData(consumption, pathVoltage));
+        logic.recordFlow(getQueryTick(), new EnergyFlowData(amperes, pathVoltage));
     }
+
+
 
     private static int calculateHeatV(long amperage, long voltage, long maxVoltage) {
         return (int) (amperage * (Math.log1p(Math.log((double) voltage / maxVoltage)) * 45 + 36.5));

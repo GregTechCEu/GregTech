@@ -466,11 +466,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                                       @Nullable Entity entityIn, boolean isActualState) {
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile != null) {
-            if (hasPipeCollisionChangingItem(worldIn, pos, entityIn)) {
-                addCollisionBoxToList(pos, entityBox, collidingBoxes, FULL_BLOCK_AABB);
-            } else {
-                tile.getCoverBoxes(bb -> addCollisionBoxToList(pos, entityBox, collidingBoxes, bb));
-            }
+            tile.getCoverBoxes(bb -> addCollisionBoxToList(pos, entityBox, collidingBoxes, bb));
             if (tile.getFrameMaterial() != null) {
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, BlockFrame.COLLISION_BOX);
             }
