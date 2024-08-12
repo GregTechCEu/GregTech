@@ -178,6 +178,15 @@ public class BlockPattern implements IBlockPattern {
 
         for (int aisleI = 0; aisleI < aisles.length; aisleI++) {
             PatternAisle aisle = aisles[aisleI];
+
+            // check everything below min repeats to ensure its valid
+            // don't check aisle.minRepeats itself since its checked below
+            for (int repeats = 1; repeats < aisle.minRepeats; repeats++) {
+                boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
+                        aisleOffset + repeats, isFlipped);
+                if (!aisleResult) return false;
+            }
+
             // if this doesn't get set in the inner loop, then it means all repeats passed
             int actualRepeats = aisle.maxRepeats;
 
@@ -246,6 +255,7 @@ public class BlockPattern implements IBlockPattern {
         for (int stringI = 0; stringI < dimensions[1]; stringI++) {
             for (int charI = 0; charI < dimensions[2]; charI++) {
                 worldState.setPos(charPos);
+                if (flip) GTLog.logger.info("checked with flip true at " + charPos);
                 TraceabilityPredicate predicate = predicates.get(aisle.charAt(stringI, charI));
 
                 if (predicate != TraceabilityPredicate.ANY) {

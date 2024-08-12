@@ -28,7 +28,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.api.util.RelativeDirection;
@@ -97,7 +96,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     public static final int MIN_RADIUS = 2;
     public static final int MIN_DEPTH = 4;
-    private final int[] bounds = { 0, 4, 2, 2, 2, 2 };
+    public static final int MAX_RADIUS = 7;
+    public static final int MAX_DEPTH = 14;
+    private final int[] bounds = { 0, MIN_DEPTH, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
     private CleanroomType cleanroomType = null;
     private int cleanAmount;
 
@@ -115,7 +116,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.cleanroomLogic = new CleanroomLogic(this, GTValues.LV);
-        updateFacingMap();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         return new MetaTileEntityCleanroom(metaTileEntityId);
     }
 
-    protected void initializeAbilities() {
+    private void initializeAbilities() {
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
     }
 
@@ -190,9 +190,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     public void checkStructurePattern() {
-        if (!this.isStructureFormed()) {
-            reinitializeStructurePattern();
-        }
         super.checkStructurePattern();
     }
 
@@ -243,7 +240,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     // char dir is front, so its bounds[4] and bounds[5]
                     if (c.get(2) == b[4] || c.get(2) == -b[5]) intersects++;
 
-//                    GTLog.logger.info(intersects + " intersects at " + c);
+                    // GTLog.logger.info(intersects + " intersects at " + c);
 
                     // more than or equal to 2 intersects means it is an edge
                     if (intersects >= 2) {
@@ -253,10 +250,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
                     // 1 intersect means it is a face
                     if (intersects == 1) {
-                        if (topAisle) {
-                            return filterPredicate;
-                        }
-
+                        if (topAisle) return filterPredicate;
                         return facePredicate;
                     }
 
@@ -389,33 +383,52 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .addWorkingStatusLine()
                 .addProgressLine(getProgressPercent() / 100.0);
 
-        ITextComponent button = new TextComponentString("height: " + bounds[1]);
-        button.appendText(" ");
-        button.appendSibling(withButton(new TextComponentString("[-]"), "subh"));
-        button.appendText(" ");
-        button.appendSibling(withButton(new TextComponentString("[+]"), "addh"));
-        textList.add(button);
+        textList.add(getWithButton("North: ", EnumFacing.NORTH));
+        textList.add(getWithButton("West: ", EnumFacing.WEST));
+        textList.add(getWithButton("South: ", EnumFacing.SOUTH));
+        textList.add(getWithButton("East: ", EnumFacing.EAST));
+        textList.add(getWithButton("Height: ", EnumFacing.DOWN));
+    }
 
-        ITextComponent button2 = new TextComponentString("left: " + bounds[2]);
-        button2.appendText(" ");
-        button2.appendSibling(withButton(new TextComponentString("[-]"), "subl"));
-        button2.appendText(" ");
-        button2.appendSibling(withButton(new TextComponentString("[+]"), "addl"));
-        textList.add(button2);
+    protected ITextComponent getWithButton(String text, EnumFacing facing) {
+        RelativeDirection relative = facing == EnumFacing.DOWN ? RelativeDirection.DOWN : facingMap.get(facing);
+        if (relative == null)
+            return new TextComponentString("null value at facingMap.get(EnumFacing." + facing.getName() + ")");
+
+        String name = relative.name();
+
+        ITextComponent button = new TextComponentString(text + bounds[relative.ordinal()]);
+        button.appendText(" ");
+        button.appendSibling(withButton(new TextComponentString("[-]"), name + ":-"));
+        button.appendText(" ");
+        button.appendSibling(withButton(new TextComponentString("[+]"), name + ":+"));
+        return button;
     }
 
     @Override
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
 
-        switch (componentData) {
-            case "subh" -> bounds[1] = Math.max(bounds[1], 1);
-            case "addh" -> bounds[1] += 1;
-            case "subl" -> bounds[2] = Math.max(bounds[2], 1);
-            case "addl" -> bounds[2] += 1;
+        String[] data = componentData.split(":");
+
+        switch (data[0]) {
+            case "LEFT" -> bounds[2] = MathHelper.clamp(bounds[2] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "RIGHT" -> bounds[3] = MathHelper.clamp(bounds[3] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "FRONT" -> bounds[4] = MathHelper.clamp(bounds[4] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "BACK" -> bounds[5] = MathHelper.clamp(bounds[5] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "DOWN" -> bounds[1] = MathHelper.clamp(bounds[1] + getFactor(data[1]), MIN_DEPTH, MAX_DEPTH);
+            default -> {
+                return;
+            }
         }
 
+        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> buf.writeVarIntArray(bounds));
+
         getSubstructure("MAIN").clearCache();
+    }
+
+    protected static int getFactor(String str) {
+        return "+".equals(str) ? 1 : -1;
     }
 
     @Override
@@ -544,7 +557,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     public boolean drainEnergy(boolean simulate) {
-        if (true) return true;
+        if (energyContainer == null) return false;
 
         long energyToDrain = isClean() ? 4 :
                 GTValues.VA[getEnergyTier()];
@@ -569,7 +582,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
+            System.arraycopy(buf.readVarIntArray(), 0, bounds, 0, 6);
+        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.cleanroomLogic.setActive(buf.readBoolean());
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
@@ -588,9 +603,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        reinitializeStructurePattern();
         this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
+        updateFacingMap();
     }
 
     @Override

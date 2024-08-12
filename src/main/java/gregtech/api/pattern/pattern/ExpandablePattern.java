@@ -128,25 +128,18 @@ public class ExpandablePattern implements IBlockPattern {
 
             absolutes[i] = selected.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
 
-            int ordinal = selected.ordinal(), oppositeOrdinal = selected.oppositeOrdinal();
-
-            boolean axisPositive = absolutes[i].getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
-
-            if (axisPositive) {
-                positiveCorner.set(i, bounds[ordinal]);
-                negativeCorner.set(i, -bounds[oppositeOrdinal]);
-            } else {
-                negativeCorner.set(i, -bounds[ordinal]);
-                positiveCorner.set(i, bounds[oppositeOrdinal]);
-            }
+            negativeCorner.set(i, -bounds[selected.oppositeOrdinal()]);
+            positiveCorner.set(i, bounds[selected.ordinal()]);
         }
 
         worldState.setWorld(world);
         // this translates from the relative coordinates to world coordinates
         GreggyBlockPos translation = new GreggyBlockPos(centerPos);
 
-        // SOUTH, UP, EAST means point is +z, line is +y, plane is +x. this basically means the x val of the iter is aisle count, y is str count, and z is char count.
-        for (GreggyBlockPos pos : GreggyBlockPos.allInBox(negativeCorner, positiveCorner, EnumFacing.SOUTH, EnumFacing.UP, EnumFacing.EAST)) {
+        // SOUTH, UP, EAST means point is +z, line is +y, plane is +x. this basically means the x val of the iter is
+        // aisle count, y is str count, and z is char count.
+        for (GreggyBlockPos pos : GreggyBlockPos.allInBox(negativeCorner, positiveCorner, EnumFacing.SOUTH,
+                EnumFacing.UP, EnumFacing.EAST)) {
 
             // test first before using .add() which mutates the pos
             TraceabilityPredicate predicate = predicateFunction.apply(pos, bounds);

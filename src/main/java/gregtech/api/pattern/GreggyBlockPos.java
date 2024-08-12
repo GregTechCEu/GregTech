@@ -72,6 +72,7 @@ public class GreggyBlockPos {
 
     /**
      * Sets a coordinate in the index to the value.
+     * 
      * @param index The index, X = 0, Y = 1, Z = 2.
      * @param value The value to set it to.
      */

@@ -342,7 +342,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
 
     @Override
     public int getDefaultPaintingColor() {
-        return !isAttachedToMultiBlock() && hatchTexture == null ? super.getDefaultPaintingColor() : 0xFFFFFF;
+        return getController() == null && hatchTexture == null ? super.getDefaultPaintingColor() : 0xFFFFFF;
     }
 
     @Override
