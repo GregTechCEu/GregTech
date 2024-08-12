@@ -5,54 +5,287 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A class for holding all the various Overclocking logics
  */
-public class OverclockingLogic {
+public final class OverclockingLogic {
 
-    public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
-    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = 2.0;
-    public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
+    public static final double STD_VOLTAGE_FACTOR = 4.0;
+    public static final double PERFECT_HALF_VOLTAGE_FACTOR = 2.0;
+
+    public static final double STD_DURATION_FACTOR = 0.5;
+    public static final double STD_DURATION_FACTOR_INV = 2.0;
+    public static final double PERFECT_DURATION_FACTOR = 0.25;
+    public static final double PERFECT_DURATION_FACTOR_INV = 4.0;
+    public static final double PERFECT_HALF_DURATION_FACTOR = 0.5;
+    public static final double PERFECT_HALF_DURATION_FACTOR_INV = 2.0;
 
     public static final int COIL_EUT_DISCOUNT_TEMPERATURE = 900;
 
+    private OverclockingLogic() {}
+
     /**
-     * applies standard logic for overclocking, where each overclock modifies energy and duration
+     * Standard overclocking algorithm with no sub-tick behavior.
+     * <p>
+     * While there are overclocks remaining:
+     * <ol>
+     * <li>Multiplies {@code EUt} by {@code voltageFactor}
+     * <li>Multiplies {@code duration} by {@code durationFactor}
+     * <li>Limit {@code duration} to {@code 1} tick, and stop overclocking early if needed
      *
-     * @param recipeEUt         the EU/t of the recipe to overclock
-     * @param maxVoltage        the maximum voltage the recipe is allowed to be run at
-     * @param recipeDuration    the duration of the recipe to overclock
-     * @param durationDivisor   the value to divide the duration by for each overclock
-     * @param voltageMultiplier the value to multiply the voltage by for each overclock
-     * @param numberOfOCs       the maximum amount of overclocks allowed
-     * @return an int array of {OverclockedEUt, OverclockedDuration}
+     * @param params         the overclocking parameters
+     * @param result         the result of the overclock
+     * @param maxVoltage     the maximum voltage allowed to be overclocked to
+     * @param durationFactor the factor to multiply duration by
+     * @param voltageFactor  the factor to multiply voltage by
      */
-    public static int @NotNull [] standardOverclockingLogic(int recipeEUt, long maxVoltage, int recipeDuration,
-                                                            int numberOfOCs,
-                                                            double durationDivisor, double voltageMultiplier) {
-        double resultDuration = recipeDuration;
-        double resultVoltage = recipeEUt;
+    public static void standardOC(@NotNull OCParams params, @NotNull OCResult result, long maxVoltage,
+                                  double durationFactor, double voltageFactor) {
+        double duration = params.duration();
+        double eut = params.eut();
+        int ocAmount = params.ocAmount();
 
-        for (; numberOfOCs > 0; numberOfOCs--) {
-            // make sure that duration is not already as low as it can do
-            if (resultDuration == 1) break;
+        while (ocAmount-- > 0) {
+            double potentialEUt = eut * voltageFactor;
+            if (potentialEUt > maxVoltage) {
+                break;
+            }
 
-            // it is important to do voltage first,
-            // so overclocking voltage does not go above the limit before changing duration
+            double potentialDuration = duration * durationFactor;
+            if (potentialDuration < 1) {
+                break;
+            }
 
-            double potentialVoltage = resultVoltage * voltageMultiplier;
-            // do not allow voltage to go above maximum
-            if (potentialVoltage > maxVoltage) break;
-
-            double potentialDuration = resultDuration / durationDivisor;
-            // do not allow duration to go below one tick
-            if (potentialDuration < 1) potentialDuration = 1;
-            // update the duration for the next iteration
-            resultDuration = potentialDuration;
-
-            // update the voltage for the next iteration after everything else
-            // in case duration overclocking would waste energy
-            resultVoltage = potentialVoltage;
+            // only update EUt if duration is also valid
+            eut = potentialEUt;
+            duration = potentialDuration;
         }
 
-        return new int[] { (int) resultVoltage, (int) resultDuration };
+        result.init((long) eut, (int) duration);
+    }
+
+    /**
+     * Overclocking algorithm with sub-tick logic, which improves energy efficiency without parallelization.
+     * <p>
+     * While there are overclocks remaining:
+     * <ol>
+     * <li>Multiplies {@code EUt} by {@code voltageFactor}
+     * <li>Multiplies {@code duration} by {@code durationFactor}
+     * <li>Limit {@code duration} to {@code 1} tick
+     * <li>Multiply {@code EUt} by {@code durationFactor} and maintain {@code duration} at {@code 1} tick for
+     * overclocks that would have {@code duration < 1}
+     *
+     * @param params         the overclocking parameters
+     * @param result         the result of the overclock
+     * @param maxVoltage     the maximum voltage allowed to be overclocked to
+     * @param durationFactor the factor to multiply duration by
+     * @param voltageFactor  the factor to multiply voltage by
+     */
+    public static void subTickNonParallelOC(@NotNull OCParams params, @NotNull OCResult result, long maxVoltage,
+                                            double durationFactor, double voltageFactor) {
+        double duration = params.duration();
+        double eut = params.eut();
+        int ocAmount = params.ocAmount();
+
+        while (ocAmount-- > 0) {
+            double potentialEUt = eut * voltageFactor;
+            if (potentialEUt > maxVoltage || potentialEUt < 1) {
+                break;
+            }
+
+            double potentialDuration = duration * durationFactor;
+            if (potentialDuration < 1) {
+                potentialEUt = eut * durationFactor;
+                if (potentialEUt > maxVoltage || potentialEUt < 1) {
+                    break;
+                }
+            } else {
+                duration = potentialDuration;
+            }
+
+            eut = potentialEUt;
+        }
+
+        result.init((long) eut, (int) duration);
+    }
+
+    /**
+     * Overclocking algorithm with sub-tick parallelization.
+     * <p>
+     * While there are overclocks remaining:
+     * <ol>
+     * <li>Multiplies {@code EUt} by {@code voltageFactor}
+     * <li>Multiplies {@code duration} by {@code durationFactor}
+     * <li>Limit {@code duration} to {@code 1} tick
+     * <li>Parallelize {@code EUt} with {@code voltageFactor} and maintain {@code duration} at {@code 1} tick for
+     * overclocks that would have {@code duration < 1}
+     * <li>Parallel amount per overclock is {@code 1 / durationFactor}
+     *
+     * @param params         the overclocking parameters
+     * @param result         the result of the overclock
+     * @param maxVoltage     the maximum voltage allowed to be overclocked to
+     * @param durationFactor the factor to multiply duration by
+     * @param voltageFactor  the factor to multiply voltage by
+     */
+    public static void subTickParallelOC(@NotNull OCParams params, @NotNull OCResult result, long maxVoltage,
+                                         double durationFactor, double voltageFactor) {
+        double duration = params.duration();
+        double eut = params.eut();
+        int ocAmount = params.ocAmount();
+        double parallel = 1;
+        int parallelIterAmount = 0;
+        boolean shouldParallel = false;
+
+        while (ocAmount-- > 0) {
+            double potentialEUt = eut * voltageFactor;
+            if (potentialEUt > maxVoltage) {
+                break;
+            }
+            eut = potentialEUt;
+
+            if (shouldParallel) {
+                parallel /= durationFactor;
+                parallelIterAmount++;
+            } else {
+                double potentialDuration = duration * durationFactor;
+                if (potentialDuration < 1) {
+                    parallel /= durationFactor;
+                    parallelIterAmount++;
+                    shouldParallel = true;
+                } else {
+                    duration = potentialDuration;
+                }
+            }
+        }
+
+        result.init((long) (eut / Math.pow(voltageFactor, parallelIterAmount)), (int) duration, (int) parallel,
+                (long) eut);
+    }
+
+    /**
+     * Heating Coil overclocking algorithm with sub-tick parallelization.
+     * <p>
+     * While there are overclocks remaining:
+     * <ol>
+     * <li>Multiplies {@code EUt} by {@link #STD_VOLTAGE_FACTOR}
+     * <li>Multiplies {@code duration} by {@link #PERFECT_DURATION_FACTOR} if there are perfect OCs remaining,
+     * otherwise multiplies by {@link #STD_DURATION_FACTOR}
+     * <li>Limit {@code duration} to {@code 1} tick
+     * <li>Parallelize {@code EUt} with {@link #STD_VOLTAGE_FACTOR} and maintain {@code duration} at {@code 1} tick for
+     * overclocks that would have {@code duration < 1}
+     * <li>Parallelization amount per overclock is {@link #PERFECT_DURATION_FACTOR_INV} if there are perfect OCs
+     * remaining, otherwise uses {@link #STD_DURATION_FACTOR_INV}
+     * <li>The maximum amount of perfect OCs is determined by {@link #calculateAmountCoilEUtDiscount(int, int)}, divided
+     * by 2.
+     *
+     * @param params       the overclocking parameters
+     * @param result       the result of the overclock
+     * @param maxVoltage   the maximum voltage allowed to be overclocked to
+     * @param providedTemp the provided temperature
+     * @param requiredTemp the temperature required by the recipe
+     */
+    public static void heatingCoilOC(@NotNull OCParams params, @NotNull OCResult result, long maxVoltage,
+                                     int providedTemp, int requiredTemp) {
+        int perfectOCAmount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp) / 2;
+        double duration = params.duration();
+        double eut = params.eut();
+        int ocAmount = params.ocAmount();
+        double parallel = 1;
+        int parallelIterAmount = 0;
+        boolean shouldParallel = false;
+
+        while (ocAmount-- > 0) {
+            boolean perfect = perfectOCAmount-- > 0;
+
+            double potentialEUt = eut * STD_VOLTAGE_FACTOR;
+            if (potentialEUt > maxVoltage) {
+                break;
+            }
+            eut = potentialEUt;
+
+            if (shouldParallel) {
+                if (perfect) {
+                    parallel *= PERFECT_DURATION_FACTOR_INV;
+                } else {
+                    parallel *= STD_DURATION_FACTOR_INV;
+                }
+                parallelIterAmount++;
+            } else {
+                double potentialDuration;
+                if (perfect) {
+                    potentialDuration = duration * PERFECT_DURATION_FACTOR;
+                } else {
+                    potentialDuration = duration * STD_DURATION_FACTOR;
+                }
+
+                if (potentialDuration < 1) {
+                    if (perfect) {
+                        parallel *= PERFECT_DURATION_FACTOR_INV;
+                    } else {
+                        parallel *= STD_DURATION_FACTOR_INV;
+                    }
+
+                    parallelIterAmount++;
+                    shouldParallel = true;
+                } else {
+                    duration = potentialDuration;
+                }
+            }
+        }
+
+        result.init((long) (eut / Math.pow(STD_VOLTAGE_FACTOR, parallelIterAmount)), (int) duration, (int) parallel,
+                (long) eut);
+    }
+
+    /**
+     * Heating Coil overclocking algorithm with sub-tick parallelization.
+     * <p>
+     * While there are overclocks remaining:
+     * <ol>
+     * <li>Multiplies {@code EUt} by {@link #STD_VOLTAGE_FACTOR}
+     * <li>Multiplies {@code duration} by {@link #PERFECT_DURATION_FACTOR} if there are perfect OCs remaining,
+     * otherwise multiplies by {@link #STD_DURATION_FACTOR}
+     * <li>Limit {@code duration} to {@code 1} tick
+     * <li>Parallelize {@code EUt} with {@link #STD_VOLTAGE_FACTOR} and maintain {@code duration} at {@code 1} tick for
+     * overclocks that would have {@code duration < 1}
+     * <li>Parallelization amount per overclock is {@link #PERFECT_DURATION_FACTOR_INV} if there are perfect OCs
+     * remaining, otherwise uses {@link #STD_DURATION_FACTOR_INV}
+     * <li>The maximum amount of perfect OCs is determined by {@link #calculateAmountCoilEUtDiscount(int, int)}, divided
+     * by 2.
+     *
+     * @param params       the overclocking parameters
+     * @param result       the result of the overclock
+     * @param maxVoltage   the maximum voltage allowed to be overclocked to
+     * @param providedTemp the provided temperature
+     * @param requiredTemp the temperature required by the recipe
+     */
+    public static void heatingCoilNonSubTickOC(@NotNull OCParams params, @NotNull OCResult result, long maxVoltage,
+                                               int providedTemp, int requiredTemp) {
+        int perfectOCAmount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp) / 2;
+        double duration = params.duration();
+        double eut = params.eut();
+        int ocAmount = params.ocAmount();
+
+        while (ocAmount-- > 0) {
+            boolean perfect = perfectOCAmount-- > 0;
+
+            double potentialEUt = eut * STD_VOLTAGE_FACTOR;
+            if (potentialEUt > maxVoltage) {
+                break;
+            }
+            eut = potentialEUt;
+
+            double potentialDuration;
+            if (perfect) {
+                potentialDuration = duration * PERFECT_DURATION_FACTOR;
+            } else {
+                potentialDuration = duration * STD_DURATION_FACTOR;
+            }
+
+            if (potentialDuration < 1) {
+                break;
+            }
+            duration = potentialDuration;
+        }
+
+        result.init((long) eut, (int) duration);
     }
 
     /**
@@ -72,32 +305,10 @@ public class OverclockingLogic {
      * @param requiredTemp the required temperature of the recipe
      * @return the discounted EU/t
      */
-    public static int applyCoilEUtDiscount(int recipeEUt, int providedTemp, int requiredTemp) {
+    public static long applyCoilEUtDiscount(long recipeEUt, int providedTemp, int requiredTemp) {
         if (requiredTemp < COIL_EUT_DISCOUNT_TEMPERATURE) return recipeEUt;
         int amountEUtDiscount = calculateAmountCoilEUtDiscount(providedTemp, requiredTemp);
         if (amountEUtDiscount < 1) return recipeEUt;
-        return (int) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
-    }
-
-    public static int @NotNull [] heatingCoilOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration,
-                                                               int maxOverclocks, int currentTemp,
-                                                               int recipeRequiredTemp) {
-        int amountPerfectOC = calculateAmountCoilEUtDiscount(currentTemp, recipeRequiredTemp) / 2;
-
-        // perfect overclock for every 1800k over recipe temperature
-        if (amountPerfectOC > 0) {
-            // use the normal overclock logic to do perfect OCs up to as many times as calculated
-            int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, amountPerfectOC,
-                    PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
-
-            // overclock normally as much as possible after perfects are exhausted
-            return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1],
-                    maxOverclocks - amountPerfectOC, STANDARD_OVERCLOCK_DURATION_DIVISOR,
-                    STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
-        }
-
-        // no perfects are performed, do normal overclocking
-        return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, maxOverclocks,
-                STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER);
+        return (long) (recipeEUt * Math.min(1, Math.pow(0.95, amountEUtDiscount)));
     }
 }

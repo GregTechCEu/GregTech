@@ -29,6 +29,7 @@ public class ChemistryRecipes {
         PlatGroupMetalsRecipes.init();
         NaquadahRecipes.init();
         AcidRecipes.init();
+        TitaniumRecipes.init();
 
         // A Few Random Recipes
         FLUID_HEATER_RECIPES.recipeBuilder()
@@ -107,23 +108,5 @@ public class ChemistryRecipes {
                 .fluidOutputs(EnderAir.getFluid(10000))
                 .dimension(1)
                 .duration(200).EUt(256).buildAndRegister();
-
-        // CaCO3 + 2NaCl -> Na2CO3 + CaCl2
-        BLAST_RECIPES.recipeBuilder()
-                .input(dust, Calcite, 5)
-                .input(dust, Salt, 4)
-                .output(dust, SodaAsh, 6)
-                .output(dust, CalciumChloride, 3)
-                .duration(120).EUt(VA[MV]).blastFurnaceTemp(1500)
-                .buildAndRegister();
-
-        // 2NaOH + CO2 -> Na2CO3 + H20
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 6)
-                .fluidInputs(CarbonDioxide.getFluid(1000))
-                .output(dust, SodaAsh, 6)
-                .fluidOutputs(Water.getFluid(1000))
-                .duration(80).EUt(VA[HV])
-                .buildAndRegister();
     }
 }

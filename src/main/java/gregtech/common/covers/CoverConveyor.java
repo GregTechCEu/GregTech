@@ -50,8 +50,8 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -504,7 +504,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176, 192 + 18);
 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
@@ -514,7 +514,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
         var column = new Column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 
@@ -682,8 +682,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
-        this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        this.itemFilterContainer.handleLegacyNBT(tagCompound.getCompoundTag("Filter"));
+        var filterTag = tagCompound.getCompoundTag("Filter");
+        if (filterTag.hasKey("IsBlacklist")) {
+            this.itemFilterContainer.handleLegacyNBT(filterTag);
+        } else {
+            this.itemFilterContainer.deserializeNBT(filterTag);
+        }
     }
 
     @Override

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class DistillationTowerUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     public DistillationTowerUI(@NotNull R recipeMap) {
-        super(recipeMap, true, true, true, false);
+        super(recipeMap, true, true, true, false, false);
     }
 
     @Override

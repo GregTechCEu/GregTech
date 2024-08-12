@@ -37,7 +37,7 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +138,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var filteringMode = new EnumSyncValue<>(FluidFilterMode.class, this::getFilterMode, this::setFilterMode);
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
@@ -191,14 +191,13 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
-        var filterTag = tagCompound.getCompoundTag("Filter");
-        if (!filterTag.hasKey("FilterInventory")) {
+        if (tagCompound.hasKey("IsBlacklist")) {
             this.fluidFilterContainer.setFilterStack(getDefinition().getDropItemStack());
+            this.fluidFilterContainer.handleLegacyNBT(tagCompound);
+            this.fluidFilterContainer.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         } else {
-            this.fluidFilterContainer.deserializeNBT(filterTag);
+            this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         }
-
-        this.fluidFilterContainer.handleLegacyNBT(tagCompound);
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

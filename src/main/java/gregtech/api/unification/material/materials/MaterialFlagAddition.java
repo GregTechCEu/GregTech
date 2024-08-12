@@ -59,9 +59,6 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(Nickel, Nickel, Cobalt, Palladium);
         oreProp.setWashedIn(Mercury);
 
-        oreProp = Plutonium239.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Uraninite, Lead, Uraninite);
-
         // oreProp = Silicon.getProperty(PropertyKey.ORE);
         // oreProp.setOreByProducts(SiliconDioxide);
 
@@ -164,8 +161,9 @@ public class MaterialFlagAddition {
         oreProp.setOreByProducts(GarnetYellow, Calcium);
 
         oreProp = Ilmenite.getProperty(PropertyKey.ORE);
-        oreProp.setOreByProducts(Iron, Rutile);
+        oreProp.setOreByProducts(Iron, Rutile, Rutile, IlmeniteSlag);
         oreProp.setSeparatedInto(Iron);
+        oreProp.setWashedIn(SodiumPersulfate);
 
         oreProp = Bauxite.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Grossular, Rutile, Gallium);
@@ -404,5 +402,8 @@ public class MaterialFlagAddition {
 
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
+
+        oreProp = Zircon.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Zircon, Ilmenite, Rutile);
     }
 }
