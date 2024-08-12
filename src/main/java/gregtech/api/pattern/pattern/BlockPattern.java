@@ -6,6 +6,7 @@ import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
@@ -249,8 +250,13 @@ public class BlockPattern implements IBlockPattern {
 
                 if (predicate != TraceabilityPredicate.ANY) {
                     TileEntity te = worldState.getTileEntity();
-                    cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(),
-                            !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
+                    try {
+                        cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(),
+                                !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
+                    } catch (IllegalArgumentException e) {
+                        GTLog.logger.error("bruh");
+                        throw e;
+                    }
                 }
 
                 // GTLog.logger.info("Checked pos at " + charPos + " with flip " + flip);

@@ -113,38 +113,49 @@ public class ExpandablePattern implements IBlockPattern {
         int[] bounds = boundsFunction.apply(world, new GreggyBlockPos(centerPos), frontFacing, upwardsFacing);
         if (bounds == null) return false;
 
+        globalCount.clear();
+
         // where the iteration starts, in octant 7
         GreggyBlockPos negativeCorner = new GreggyBlockPos();
         // where the iteration ends, in octant 1
         GreggyBlockPos positiveCorner = new GreggyBlockPos();
 
+        // [ absolute aisle, absolute string, absolute dir ]
+        EnumFacing[] absolutes = new EnumFacing[3];
+
         for (int i = 0; i < 3; i++) {
             RelativeDirection selected = directions[i];
 
-            EnumFacing absoluteSelected = selected.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
-            boolean axisPositive = absoluteSelected.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
+            absolutes[i] = selected.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
 
-            // negativeCorner always goes in the negative direction, while positiveCorner always goes in the positive
-            // direction
-            (axisPositive ? negativeCorner : positiveCorner).offset(absoluteSelected.getOpposite(),
-                    bounds[selected.oppositeOrdinal()]);
-            (axisPositive ? positiveCorner : negativeCorner).offset(absoluteSelected, bounds[selected.ordinal()]);
-        }
+            int ordinal = selected.ordinal(), oppositeOrdinal = selected.oppositeOrdinal();
 
-        // which way each direction progresses absolutely, in [ char, string, aisle ]
-        EnumFacing[] facings = new EnumFacing[3];
-        for (int i = 0; i < 3; i++) {
-            facings[i] = directions[2 - i].getRelativeFacing(frontFacing, upwardsFacing, false);
+            boolean axisPositive = absolutes[i].getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
+
+            if (axisPositive) {
+                positiveCorner.set(i, bounds[ordinal]);
+                negativeCorner.set(i, -bounds[oppositeOrdinal]);
+            } else {
+                negativeCorner.set(i, -bounds[ordinal]);
+                positiveCorner.set(i, bounds[oppositeOrdinal]);
+            }
         }
 
         worldState.setWorld(world);
         // this translates from the relative coordinates to world coordinates
         GreggyBlockPos translation = new GreggyBlockPos(centerPos);
 
-        for (GreggyBlockPos pos : GreggyBlockPos.allInBox(negativeCorner, positiveCorner, facings)) {
+        // SOUTH, UP, EAST means point is +z, line is +y, plane is +x. this basically means the x val of the iter is aisle count, y is str count, and z is char count.
+        for (GreggyBlockPos pos : GreggyBlockPos.allInBox(negativeCorner, positiveCorner, EnumFacing.SOUTH, EnumFacing.UP, EnumFacing.EAST)) {
 
             // test first before using .add() which mutates the pos
             TraceabilityPredicate predicate = predicateFunction.apply(pos, bounds);
+
+            // cache the pos here so that the offsets don't mess it up
+            int[] arr = pos.getAll();
+            // this basically reshuffles the coordinates into absolute form from relative form
+            pos.zero().offset(absolutes[0], arr[0]).offset(absolutes[1], arr[1]).offset(absolutes[2], arr[2]);
+            // translate from the origin to the center
             // set the pos with world coordinates
             worldState.setPos(pos.add(translation));
 

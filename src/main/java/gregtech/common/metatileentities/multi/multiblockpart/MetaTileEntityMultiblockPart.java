@@ -166,6 +166,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         return controllers;
     }
 
+    // todo either remove the cache or fix it, currently doesn't render update properly(see large boiler active)
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {
@@ -280,8 +281,9 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         super.onRemoval();
         if (getWorld().isRemote) return;
 
-        for (MultiblockControllerBase controller : getControllers()) {
-            controller.invalidateStructure("MAIN");
+        List<MultiblockControllerBase> controllers = getControllers();
+        for (int i = 0; i < controllers.size(); i++) {
+            controllers.get(controllers.size() - 1).invalidateStructure("MAIN");
         }
     }
 

@@ -20,6 +20,10 @@ public enum RelativeDirection {
     BACK(EnumFacing::getOpposite);
 
     final Function<EnumFacing, EnumFacing> actualFacing;
+
+    /**
+     * do not mutate this unless you want your house to explode
+     */
     public static final RelativeDirection[] VALUES = values();
 
     RelativeDirection(Function<EnumFacing, EnumFacing> actualFacing) {

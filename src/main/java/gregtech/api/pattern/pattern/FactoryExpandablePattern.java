@@ -61,8 +61,7 @@ public class FactoryExpandablePattern {
      * This supplies the bounds function. The inputs are: World, controller pos, front facing, up facing. The returned
      * array
      * is an int array of length 6, with how much to extend the multiblock in each direction. The order of the
-     * directions is the same
-     * as the ordinal of the enum.
+     * directions is the same as the ordinal of the RelativeDirection enum.
      */
     public FactoryExpandablePattern boundsFunction(QuadFunction<World, GreggyBlockPos, EnumFacing, EnumFacing, int[]> function) {
         this.boundsFunction = function;

@@ -75,6 +75,7 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -318,7 +319,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     /**
      * Ensures that all the blockstates that are in the map are the same type. Returns the type if all match, or null if
-     * they don't.
+     * they don't(or none match).
      * Example: {@code allSameType(GregTechAPI.HEATING_COILS, getSubstructure("MAIN").getCache())}
      * 
      * @param info  The info, such as GregTechAPI.HEATING_COILS
@@ -407,7 +408,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         long time = System.nanoTime();
         PatternState result = pattern.checkPatternFastAt(getWorld(), getPos(),
                 getFrontFacing(), getUpwardsFacing(), allowsFlip());
-        System.out.println(
+        GTLog.logger.info(
                 "structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
 
         if (result.getState().isValid()) { // structure check succeeds
@@ -418,13 +419,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     // add any new parts, because removal of parts is impossible
                     // it is possible for old parts to persist, so check that
                     forEachMultiblockPart(name, part -> {
+                        // this part is already added, so igore it
+                        if (multiblockParts.contains(part)) return true;
+
+                        // todo maybe move below into separate check?
                         if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
                             invalidateStructure(name);
                             return false;
                         }
-                        if (multiblockParts.add(part)) {
-                            part.addToMultiBlock(this, name);
-                        }
+                        part.addToMultiBlock(this, name);
                         if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
                             // noinspection unchecked
                             registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
@@ -506,8 +509,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     // todo do
-    protected void forEachFormed(GreggyBlockPos pos) {
-        IBlockState state = getWorld().getBlockState(pos.immutable());
+    protected void forEachFormed(String name, Consumer<BlockInfo> action) {
+        Long2ObjectMap<BlockInfo> cache = getSubstructure(name).getCache();
+        for (BlockInfo info : cache.values()) {
+            action.accept(info);
+        }
     }
 
     protected void formStructure(String name) {

@@ -28,6 +28,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.api.util.RelativeDirection;
@@ -81,8 +82,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 
@@ -94,7 +97,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     public static final int MIN_RADIUS = 2;
     public static final int MIN_DEPTH = 4;
-    private final int[] bounds = { 0, 1, 1, 1, 1, 1 };
+    private final int[] bounds = { 0, 4, 2, 2, 2, 2 };
     private CleanroomType cleanroomType = null;
     private int cleanAmount;
 
@@ -104,9 +107,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     private final CleanroomLogic cleanroomLogic;
     private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
 
+    /**
+     * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
+     */
+    private final Map<EnumFacing, RelativeDirection> facingMap = new HashMap<>();
+
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.cleanroomLogic = new CleanroomLogic(this, GTValues.LV);
+        updateFacingMap();
     }
 
     @Override
@@ -129,10 +138,25 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure(name).getCache());
         if (type == null) {
             invalidateStructure(name);
-        } else {
-            this.cleanroomFilter = type;
-            this.cleanroomType = type.getCleanroomType();
+            return;
         }
+
+        this.cleanroomFilter = type;
+        this.cleanroomType = type.getCleanroomType();
+
+        forEachFormed(name, info -> {
+            TileEntity te = info.getTileEntity();
+            if (!(te instanceof IGregTechTileEntity gtte)) return;
+
+            MetaTileEntity mte = gtte.getMetaTileEntity();
+
+            if (!(mte instanceof ICleanroomReceiver receiver)) return;
+
+            if (receiver.getCleanroom() != this) {
+                receiver.setCleanroom(this);
+                cleanroomReceivers.add(receiver);
+            }
+        });
 
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
@@ -186,16 +210,58 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     protected IBlockPattern createStructurePattern() {
         TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
-        TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
+        TraceabilityPredicate energyPredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
                 .setMinGlobalLimited(1).setMaxGlobalLimited(3));
+
+        TraceabilityPredicate edgePredicate = states(getCasingState())
+                .or(energyPredicate);
+        TraceabilityPredicate facePredicate = wallPredicate
+                .or(energyPredicate)
+                .or(doorPredicate().setMaxGlobalLimited(8))
+                .or(abilities(MultiblockAbility.PASSTHROUGH_HATCH).setMaxGlobalLimited(30));
+        TraceabilityPredicate filterPredicate = filterPredicate();
+        TraceabilityPredicate innerPredicate = innerPredicate();
+        TraceabilityPredicate verticalEdgePredicate = edgePredicate
+                .or(states(getGlassState()));
 
         return FactoryExpandablePattern.start(RelativeDirection.UP, RelativeDirection.RIGHT, RelativeDirection.FRONT)
                 .boundsFunction((w, c, f, u) -> bounds)
                 .predicateFunction((c, b) -> {
-
+                    // controller always at origin
                     if (c.origin()) return selfPredicate();
 
-                    return wallPredicate;
+                    int intersects = 0;
+
+                    // aisle dir is up, so its bounds[0] and bounds[1]
+                    boolean topAisle = c.get(0) == b[0];
+                    boolean botAisle = c.get(0) == -b[1];
+
+                    if (topAisle || botAisle) intersects++;
+                    // negative signs for the LEFT and BACK ordinals
+                    // string dir is right, so its bounds[2] and bounds[3]
+                    if (c.get(1) == -b[2] || c.get(1) == b[3]) intersects++;
+                    // char dir is front, so its bounds[4] and bounds[5]
+                    if (c.get(2) == b[4] || c.get(2) == -b[5]) intersects++;
+
+//                    GTLog.logger.info(intersects + " intersects at " + c);
+
+                    // more than or equal to 2 intersects means it is an edge
+                    if (intersects >= 2) {
+                        if (topAisle || botAisle) return edgePredicate;
+                        return verticalEdgePredicate;
+                    }
+
+                    // 1 intersect means it is a face
+                    if (intersects == 1) {
+                        if (topAisle) {
+                            return filterPredicate;
+                        }
+
+                        return facePredicate;
+                    }
+
+                    // intersects == 0, so its not a face
+                    return innerPredicate;
                 })
                 .build();
     }
@@ -232,35 +298,37 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @NotNull
     protected static TraceabilityPredicate doorPredicate() {
         return new TraceabilityPredicate(
-                blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
+                (worldState, patternState) -> worldState.getBlockState().getBlock() instanceof BlockDoor);
     }
 
     @NotNull
     protected TraceabilityPredicate innerPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> {
+        return new TraceabilityPredicate((worldState, patternState) -> {
             // all non-MetaTileEntities are allowed inside by default
-            TileEntity tileEntity = blockWorldState.getTileEntity();
+            TileEntity tileEntity = worldState.getTileEntity();
             if (!(tileEntity instanceof IGregTechTileEntity)) return true;
 
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
 
             // always ban other cleanrooms, can cause problems otherwise
-            if (metaTileEntity instanceof ICleanroomProvider)
-                return false;
+            if (metaTileEntity instanceof ICleanroomProvider) return false;
 
-            if (isMachineBanned(metaTileEntity))
-                return false;
-
-            // the machine does not need a cleanroom, so do nothing more
-            if (!(metaTileEntity instanceof ICleanroomReceiver cleanroomReceiver)) return true;
-
-            // give the machine this cleanroom if it doesn't have this one
-            if (cleanroomReceiver.getCleanroom() != this) {
-                cleanroomReceiver.setCleanroom(this);
-                cleanroomReceivers.add(cleanroomReceiver);
-            }
-            return true;
+            return !isMachineBanned(metaTileEntity);
         });
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing facing) {
+        super.setFrontFacing(facing);
+        updateFacingMap();
+    }
+
+    protected void updateFacingMap() {
+        // cache relative front, back, left, right
+        for (int i = 2; i < 6; i++) {
+            EnumFacing abs = RelativeDirection.VALUES[i].getRelativeFacing(frontFacing, upwardsFacing, false);
+            facingMap.put(abs, RelativeDirection.VALUES[i]);
+        }
     }
 
     @Override

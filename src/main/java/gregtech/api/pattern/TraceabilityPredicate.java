@@ -63,6 +63,7 @@ public class TraceabilityPredicate {
         common.add(new SimplePredicate(predicate, candidates));
     }
 
+    @Deprecated
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate) {
         this(predicate, null);
     }

@@ -71,6 +71,16 @@ public class GreggyBlockPos {
     }
 
     /**
+     * Sets a coordinate in the index to the value.
+     * @param index The index, X = 0, Y = 1, Z = 2.
+     * @param value The value to set it to.
+     */
+    public GreggyBlockPos set(int index, int value) {
+        pos[index] = value;
+        return this;
+    }
+
+    /**
      * Sets all 3 coordinates in the given axis order
      * 
      * @param a1 The first axis, p1 will be set from this
@@ -176,6 +186,14 @@ public class GreggyBlockPos {
     }
 
     /**
+     * Sets all 3 coordinates to 0.
+     */
+    public GreggyBlockPos zero() {
+        Arrays.fill(pos, 0);
+        return this;
+    }
+
+    /**
      * @return True if all 3 of the coordinates are 0.
      */
     public boolean origin() {
@@ -201,6 +219,13 @@ public class GreggyBlockPos {
      */
     public int get(EnumFacing.Axis axis) {
         return pos[axis.ordinal()];
+    }
+
+    /**
+     * Gets a copy of the internal array, in xyz.
+     */
+    public int[] getAll() {
+        return Arrays.copyOf(pos, 3);
     }
 
     public GreggyBlockPos copy() {
