@@ -338,7 +338,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         int metaTileEntityId = buf.readVarInt();
         MTERegistry registry = GregTechAPI.mteManager.getRegistry(networkId);
         setMetaTileEntity(registry.getObjectById(metaTileEntityId));
-        this.metaTileEntity.onPlacement(null);
+        this.metaTileEntity.onPlacement();
         this.metaTileEntity.receiveInitialSyncData(buf);
         scheduleRenderUpdate();
         this.needToUpdateLightning = true;

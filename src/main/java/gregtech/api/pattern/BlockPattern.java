@@ -576,7 +576,7 @@ public class BlockPattern {
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());
-                            holder.getMetaTileEntity().onPlacement(null);
+                            holder.getMetaTileEntity().onPlacement();
                             info = new BlockInfo(holder.getMetaTileEntity().getBlock().getDefaultState(), holder);
                         }
                         blocks.put(pos, info);

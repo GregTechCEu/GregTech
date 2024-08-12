@@ -1354,7 +1354,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     /**
-     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner by UUID
      * <p>
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
@@ -1363,6 +1364,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (placer instanceof EntityPlayer player) {
             this.owner = player.getUniqueID();
         }
+    }
+
+    /**
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner of Null
+     * <p>
+     * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
+     * this should be manually called immediately afterwards
+     */
+    public void onPlacement() {
+        this.owner = null;
     }
 
     /**

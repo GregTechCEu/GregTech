@@ -220,7 +220,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             // TODO
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
-            holder.getMetaTileEntity().onPlacement(null);
+            holder.getMetaTileEntity().onPlacement();
             holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
             return new BlockInfo(tile.getBlock().getDefaultState(), holder);
         }).toArray(BlockInfo[]::new);

@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class TricorderBehavior implements IItemBehaviour {
 
@@ -148,14 +149,14 @@ public class TricorderBehavior implements IItemBehaviour {
                                     metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId)))
                                             .setStyle(new Style().setColor(TextFormatting.BLUE))));
 
-            if (metaTileEntity.getOwner() != null) {
-                try {
+            UUID owner = metaTileEntity.getOwner();
+            if (owner != null) {
+                EntityPlayer ownerEntity = metaTileEntity.getWorld().getPlayerEntityByUUID(owner);
+                if (ownerEntity != null) {
                     list.add(new TextComponentTranslation("behavior.tricorder.mte_owner",
-                            new TextComponentTranslation(LocalizationUtils.format(
-                                    metaTileEntity.getWorld().getPlayerEntityByUUID(metaTileEntity.getOwner())
-                                            .getName()))
-                                                    .setStyle(new Style().setColor(TextFormatting.AQUA))));
-                } catch (NullPointerException e) {
+                            new TextComponentTranslation(LocalizationUtils.format(ownerEntity.getName()))
+                                    .setStyle(new Style().setColor(TextFormatting.AQUA))));
+                } else {
                     list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_offline")
                             .setStyle(new Style().setColor(TextFormatting.YELLOW)));
                 }
