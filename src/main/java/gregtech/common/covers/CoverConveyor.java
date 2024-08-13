@@ -13,6 +13,7 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
+import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
 import gregtech.api.mui.GTGuiTextures;
@@ -78,12 +79,12 @@ import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
 
@@ -102,7 +103,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
 
-    protected final ArrayDeque<Object> roundRobinCache = new ArrayDeque<>();
+    protected final Object2ObjectLinkedOpenHashMap<Object, SimpleTileRoundRobinData<IItemHandler>> roundRobinCache = new Object2ObjectLinkedOpenHashMap<>();
 
     protected @Nullable CoverRenderer rendererInverted;
 
@@ -366,7 +367,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 getRoundRobinCache(simulate));
     }
 
-    protected ArrayDeque<Object> getRoundRobinCache(boolean simulate) {
+    protected Object2ObjectLinkedOpenHashMap<Object, SimpleTileRoundRobinData<IItemHandler>> getRoundRobinCache(boolean simulate) {
         return simulate ? roundRobinCache.clone() : roundRobinCache;
     }
 

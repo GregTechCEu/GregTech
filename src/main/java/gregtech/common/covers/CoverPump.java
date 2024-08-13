@@ -13,6 +13,7 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
+import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.traverse.TraverseHelpers;
 import gregtech.api.mui.GTGuiTextures;
@@ -74,11 +75,11 @@ import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayDeque;
 import java.util.function.IntUnaryOperator;
 
 public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter,
@@ -96,7 +97,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected FluidFilterContainer fluidFilterContainer;
     protected BucketMode bucketMode = BucketMode.MILLI_BUCKET;
 
-    protected final ArrayDeque<Object> roundRobinCache = new ArrayDeque<>();
+    protected final Object2ObjectLinkedOpenHashMap<Object, SimpleTileRoundRobinData<IFluidHandler>> roundRobinCache = new Object2ObjectLinkedOpenHashMap<>();
 
     protected @Nullable CoverRenderer rendererInverted;
 
@@ -349,7 +350,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 getRoundRobinCache(simulate));
     }
 
-    protected ArrayDeque<Object> getRoundRobinCache(boolean simulate) {
+    protected Object2ObjectLinkedOpenHashMap<Object, SimpleTileRoundRobinData<IFluidHandler>> getRoundRobinCache(boolean simulate) {
         return simulate ? roundRobinCache.clone() : roundRobinCache;
     }
 

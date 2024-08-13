@@ -8,6 +8,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
@@ -15,8 +18,15 @@ public interface IWorldPipeNetTile {
 
     // universal (mostly for active nodes)
 
+    @NotNull
     EnumMap<EnumFacing, TileEntity> getTargetsWithCapabilities(WorldPipeNetNode destination);
 
+    @Nullable
+    TileEntity getTargetWithCapabilities(WorldPipeNetNode destination, EnumFacing facing);
+
+    PipeCapabilityWrapper getWrapperForNode(WorldPipeNetNode node);
+
+    @NotNull
     CoverableView getCoverHolder();
 
     // fluid piping

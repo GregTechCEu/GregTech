@@ -5,7 +5,7 @@ import gregtech.api.graphnet.path.INetPath;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IEqualizableTraverseData<N extends NetNode, P extends INetPath<N, ?>> {
+public interface IEqualizableTraverseData<N extends NetNode, P extends INetPath<N, ?>> extends ITraverseData<N, P> {
 
     int getDestinationsAtNode(@NotNull N node);
 

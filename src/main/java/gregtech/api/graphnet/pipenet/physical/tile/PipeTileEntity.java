@@ -334,6 +334,18 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return caps;
     }
 
+    @Override
+    public @Nullable TileEntity getTargetWithCapabilities(WorldPipeNetNode node, EnumFacing facing) {
+        PipeCapabilityWrapper wrapper = netCapabilities.get(node);
+        if (wrapper == null || !wrapper.isActive(facing)) return null;
+        else return getNeighbor(facing);
+    }
+
+    @Override
+    public PipeCapabilityWrapper getWrapperForNode(WorldPipeNetNode node) {
+        return netCapabilities.get(node);
+    }
+
     /**
      * Updates the pipe's active status based on the tile entity connected to the side.
      * 

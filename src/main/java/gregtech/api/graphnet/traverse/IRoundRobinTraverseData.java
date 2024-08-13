@@ -3,12 +3,13 @@ package gregtech.api.graphnet.traverse;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.path.INetPath;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
-import java.util.Deque;
 
-public interface IRoundRobinTraverseData<N extends NetNode, P extends INetPath<N, ?>> {
+public interface IRoundRobinTraverseData<T extends IRoundRobinData<N>, N extends NetNode, P extends INetPath<N, ?>>
+                                        extends ITraverseData<N, P> {
 
     /**
      * The traversal cache must be cached and persistent between traversals,
@@ -20,11 +21,32 @@ public interface IRoundRobinTraverseData<N extends NetNode, P extends INetPath<N
      * @return the traversal cache.
      */
     @NotNull
-    Deque<Object> getTraversalCache();
+    Object2ObjectLinkedOpenHashMap<Object, T> getTraversalCache();
 
     /**
      * Whether a path should be skipped before checking it against the round robin cache.
      * The return of {@link ITraverseData#prepareForPathWalk(INetPath, long)} will be ignored during traversal.
      */
-    boolean shouldSkipPath(P path);
+    boolean shouldSkipPath(@NotNull P path);
+
+    /**
+     * @return The {@link IRoundRobinData} for the particular destination. Will be mutated; should then be referenced
+     *         in {@link ITraverseData#finalizeAtDestination(NetNode, long)} to do proper round robin within the
+     *         destination.
+     */
+    @NotNull
+    T createRRData(@NotNull N destination);
+
+    /**
+     * Called in preference to {@link ITraverseData#finalizeAtDestination(NetNode, long)} to provide the round robin
+     * data for the destination.
+     */
+    long finalizeAtDestination(@NotNull T data, @NotNull N destination, long flowReachingDestination);
+
+    /**
+     * @deprecated use {@link #finalizeAtDestination(IRoundRobinData, NetNode, long)} instead.
+     */
+    @Override
+    @Deprecated
+    long finalizeAtDestination(@NotNull N destination, long flowReachingDestination);
 }

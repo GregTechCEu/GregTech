@@ -8,13 +8,13 @@ import gregtech.api.graphnet.traverse.util.FlowConsumptionStack;
 import gregtech.api.util.GTUtility;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.alg.util.Pair;
 
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -192,11 +192,11 @@ public final class TraverseHelpers {
      * @return the consumed flow.
      */
     public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
-            D extends ITraverseData<N, P> & IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
-                                                                                                           @NotNull D data,
-                                                                                                           @NotNull Iterator<P> paths,
-                                                                                                           long flowIn,
-                                                                                                           boolean strict) {
+            D extends IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
+                                                                                     @NotNull D data,
+                                                                                     @NotNull Iterator<P> paths,
+                                                                                     long flowIn,
+                                                                                     boolean strict) {
         // collection
         Map<Pair<E, N>, DistributorHelper> distributorHelperMap = new Object2ObjectOpenHashMap<>();
         Object2IntOpenHashMap<P> desiredMap = new Object2IntOpenHashMap<>();
@@ -296,9 +296,11 @@ public final class TraverseHelpers {
 
     /**
      * Provides logic for traversing a flow net in an equal distribution manner within a dynamic weights context.
-     * Calls {@link #traverseEqualDistribution(ITraverseData, Iterator, long, boolean)} repeatedly, using a fresh
+     * Calls {@link #traverseEqualDistribution(IEqualizableTraverseData, Iterator, long, boolean)} repeatedly, using a
+     * fresh
      * collection of paths from the {@code pathsSupplier} until
-     * {@link #traverseEqualDistribution(ITraverseData, Iterator, long, boolean)} returns 0 or 100 iterations are
+     * {@link #traverseEqualDistribution(IEqualizableTraverseData, Iterator, long, boolean)} returns 0 or 100 iterations
+     * are
      * performed.
      *
      * @param data          the traversal data.
@@ -310,11 +312,11 @@ public final class TraverseHelpers {
      * @return the consumed flow.
      */
     public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
-            D extends ITraverseData<N, P> & IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
-                                                                                                           @NotNull D data,
-                                                                                                           @NotNull Supplier<Iterator<P>> pathsSupplier,
-                                                                                                           long flowIn,
-                                                                                                           boolean strict) {
+            D extends IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
+                                                                                     @NotNull D data,
+                                                                                     @NotNull Supplier<Iterator<P>> pathsSupplier,
+                                                                                     long flowIn,
+                                                                                     boolean strict) {
         long availableFlow = flowIn;
         byte iterationCount = 0;
         while (iterationCount <= 100) {
@@ -340,14 +342,14 @@ public final class TraverseHelpers {
      *               not edge restrictions.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
-            D extends ITraverseData<N, P> & IRoundRobinTraverseData<N, P>> long traverseRoundRobin(
-                                                                                                   @NotNull D data,
-                                                                                                   @NotNull Iterator<P> paths,
-                                                                                                   long flowIn,
-                                                                                                   boolean strict) {
+    public static <T extends IRoundRobinData<N>, N extends NetNode, E extends AbstractNetFlowEdge,
+            P extends INetPath<N, E>, D extends IRoundRobinTraverseData<T, N, P>> long traverseRoundRobin(
+                                                                                                          @NotNull D data,
+                                                                                                          @NotNull Iterator<P> paths,
+                                                                                                          long flowIn,
+                                                                                                          boolean strict) {
         long availableFlow = flowIn;
-        Deque<Object> cache = data.getTraversalCache();
+        Object2ObjectLinkedOpenHashMap<Object, T> cache = data.getTraversalCache();
         Predicate<Object> invalidityCheck = null;
 
         Map<Object, P> skippedPaths = new Object2ObjectOpenHashMap<>();
@@ -363,35 +365,42 @@ public final class TraverseHelpers {
                 };
             }
             Object destIdentifier = destinationNode.getEquivalencyData();
-            Object nextUp = cache.peekFirst();
+            Object nextUp = cache.isEmpty() ? null : cache.firstKey();
             // filter out invalid equivalency data
             while (invalidityCheck.test(nextUp)) {
                 cache.removeFirst();
-                nextUp = cache.peekFirst();
+                nextUp = cache.isEmpty() ? null : cache.firstKey();
             }
             if (destIdentifier.equals(nextUp)) {
                 // keep iterating over paths in order to collect destinations into the cache
                 if (availableFlow <= 0) continue;
                 // path is next up in the ordering, we can traverse.
-                cache.removeFirst();
-                cache.addLast(destIdentifier);
-                long accepted = rrTraverse(data, path, availableFlow, strict);
+                T rr = cache.get(destIdentifier);
+                long accepted = rrTraverse(data, path, rr, availableFlow, strict);
+                if (!rr.hasNextInternalDestination(destinationNode, data.getSimulatorKey())) {
+                    cache.getAndMoveToLast(destIdentifier);
+                }
                 if (accepted == -1) return flowIn - availableFlow;
                 else availableFlow -= accepted;
             } else {
                 // this path isn't the next one up, skip it unless it's a completely new destination.
-                if (cache.contains(destIdentifier)) {
+                if (cache.containsKey(destIdentifier)) {
                     // keep iterating over paths in order to collect destinations into the cache
                     if (availableFlow <= 0) continue;
                     skippedPaths.put(destIdentifier, path);
                 } else {
                     // keep iterating over paths in order to collect destinations into the cache
                     if (availableFlow <= 0) {
-                        cache.addFirst(destIdentifier);
+                        cache.putAndMoveToFirst(destIdentifier, data.createRRData(destinationNode));
                         continue;
                     }
-                    cache.addLast(destIdentifier);
-                    long accepted = rrTraverse(data, path, availableFlow, strict);
+                    T rr = data.createRRData(destinationNode);
+                    long accepted = rrTraverse(data, path, rr, availableFlow, strict);
+                    if (rr.hasNextInternalDestination(destinationNode, data.getSimulatorKey())) {
+                        cache.putAndMoveToFirst(destIdentifier, rr);
+                    } else {
+                        cache.putAndMoveToLast(destIdentifier, rr);
+                    }
                     if (accepted == -1) return flowIn - availableFlow;
                     else availableFlow -= accepted;
                 }
@@ -399,7 +408,7 @@ public final class TraverseHelpers {
         }
         // finally, try and work through skipped paths
         while (availableFlow > 0) {
-            Object nextUp = cache.peekFirst();
+            Object nextUp = cache.isEmpty() ? null : cache.firstKey();
             if (nextUp == null) break;
             P path = skippedPaths.get(nextUp);
             if (path == null) break;
@@ -408,9 +417,11 @@ public final class TraverseHelpers {
                 cache.removeFirst();
                 continue;
             }
-            cache.removeFirst();
-            cache.addLast(nextUp);
-            long accepted = rrTraverse(data, path, availableFlow, strict);
+            T rr = data.createRRData(path.getTargetNode());
+            long accepted = rrTraverse(data, path, rr, availableFlow, strict);
+            if (!rr.hasNextInternalDestination(path.getTargetNode(), data.getSimulatorKey())) {
+                cache.getAndMoveToLast(nextUp);
+            }
             if (accepted == -1) return flowIn - availableFlow;
             else availableFlow -= accepted;
         }
@@ -418,12 +429,13 @@ public final class TraverseHelpers {
         return flowIn - availableFlow;
     }
 
-    private static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
-            D extends ITraverseData<N, P> & IRoundRobinTraverseData<N, P>> long rrTraverse(
-                                                                                           @NotNull D data,
-                                                                                           @NotNull P path,
-                                                                                           long flowIn,
-                                                                                           boolean strict) {
+    private static <T extends IRoundRobinData<N>, N extends NetNode, E extends AbstractNetFlowEdge,
+            P extends INetPath<N, E>, D extends ITraverseData<N, P> & IRoundRobinTraverseData<T, N, P>> long rrTraverse(
+                                                                                                                        @NotNull D data,
+                                                                                                                        @NotNull P path,
+                                                                                                                        @NotNull T rr,
+                                                                                                                        long flowIn,
+                                                                                                                        boolean strict) {
         boolean simulate = data.getSimulatorKey() != null;
         List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
         long pathFlow = flowIn;
@@ -455,8 +467,14 @@ public final class TraverseHelpers {
 
             if (pathFlow <= 0) return 0;
         }
-
-        long accepted = data.finalizeAtDestination(nodes.get(nodes.size() - 1), pathFlow);
+        N dest = nodes.get(nodes.size() - 1);
+        rr.resetIfFinished(dest, data.getSimulatorKey());
+        long accepted = 0;
+        while (rr.hasNextInternalDestination(dest, data.getSimulatorKey())) {
+            rr.progressToNextInternalDestination(dest, data.getSimulatorKey());
+            accepted += data.finalizeAtDestination(rr, dest, pathFlow - accepted);
+            if (accepted == pathFlow) break;
+        }
         if (!simulate) pathTraverseCalls.forEach(Runnable::run);
 
         return stack.consumeWithEndValue(accepted);

@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTUtility;
@@ -41,9 +42,9 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
 import java.util.function.IntUnaryOperator;
 
 public class CoverRoboticArm extends CoverConveyor {
@@ -393,31 +394,30 @@ public class CoverRoboticArm extends CoverConveyor {
     protected class KeepItemRRTraverseData extends ItemRRTraverseData {
 
         public KeepItemRRTraverseData(IGraphNet net, ItemTestObject testObject, SimulatorKey simulator, long queryTick,
-                                      BlockPos sourcePos, EnumFacing inputFacing, ArrayDeque<Object> cache) {
+                                      BlockPos sourcePos, EnumFacing inputFacing,
+                                      @NotNull Object2ObjectLinkedOpenHashMap<Object, SimpleTileRoundRobinData<IItemHandler>> cache) {
             super(net, testObject, simulator, queryTick, sourcePos, inputFacing, cache);
         }
 
         @Override
-        public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
+        public long finalizeAtDestination(@NotNull SimpleTileRoundRobinData<IItemHandler> data,
+                                          @NotNull WorldPipeNetNode destination,
+                                          long flowReachingDestination) {
             long availableFlow = flowReachingDestination;
-            for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
-                if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
-                        capability.getKey() == inputFacing)
-                    continue; // anti insert-to-our-source logic
+            EnumFacing pointerFacing = data.getPointerFacing(getSimulatorKey());
+            if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) && pointerFacing == inputFacing)
+                return 0; // anti insert-to-our-source logic
 
-                IItemHandler container = capability.getValue()
-                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
-                                capability.getKey().getOpposite());
-                if (container != null) {
-                    int contained = computeContained(container, getTestObject());
-                    assert getItemFilter() != null;
-                    int kept = getItemFilter().getTransferLimit(getTestObject().recombine());
-                    if (contained >= kept) continue;
-                    availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
-                            .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                    (int) Math.min(kept - contained, availableFlow), container,
-                                    getSimulatorKey() != null);
-                }
+            IItemHandler container = data.getAtPointer(destination, getSimulatorKey());
+            if (container != null) {
+                int contained = computeContained(container, getTestObject());
+                assert getItemFilter() != null;
+                int kept = getItemFilter().getTransferLimit(getTestObject().recombine());
+                if (contained >= kept) return 0;
+                availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                        .getCoverAtSide(pointerFacing)).insertToHandler(getTestObject(),
+                                (int) Math.min(kept - contained, availableFlow), container,
+                                getSimulatorKey() != null);
             }
             return flowReachingDestination - availableFlow;
         }

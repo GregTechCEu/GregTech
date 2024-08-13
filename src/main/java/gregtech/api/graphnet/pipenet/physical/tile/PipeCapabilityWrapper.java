@@ -7,6 +7,8 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class PipeCapabilityWrapper {
 
     private byte activeMask;
@@ -14,10 +16,17 @@ public class PipeCapabilityWrapper {
     private final WorldPipeNetNode node;
     public final Capability<?>[] capabilities;
 
-    public PipeCapabilityWrapper(PipeTileEntity owner, WorldPipeNetNode node) {
+    public PipeCapabilityWrapper(PipeTileEntity owner, @NotNull WorldPipeNetNode node) {
         this.owner = owner;
         this.node = node;
         this.capabilities = node.getNet().getTargetCapabilities();
+    }
+
+    public boolean supports(Capability<?> capability) {
+        for (Capability<?> cap : capabilities) {
+            if (Objects.equals(cap, capability)) return true;
+        }
+        return false;
     }
 
     public void setActive(@NotNull EnumFacing facing) {
