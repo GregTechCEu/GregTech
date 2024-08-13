@@ -338,7 +338,7 @@ public class BloomEffectUtil {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void init() {
-        bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[] { String.class }, "Bloom");
+        bloom = BlockRenderLayer.valueOf("BLOOM");
         BLOOM = bloom;
         if (Mods.Nothirium.isModLoaded()) {
             try {
