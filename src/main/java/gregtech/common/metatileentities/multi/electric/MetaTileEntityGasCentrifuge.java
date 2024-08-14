@@ -12,7 +12,6 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockBoilerCasing;
-import gregtech.common.blocks.BlockGasCentrifugeCasing;
 import gregtech.common.blocks.BlockNuclearCasing;
 import gregtech.common.blocks.MetaBlocks;
 
@@ -87,8 +86,8 @@ public class MetaTileEntityGasCentrifuge extends RecipeMapMultiblockController {
     }
 
     private IBlockState getCentrifugeState() {
-        return MetaBlocks.GAS_CENTRIFUGE_CASING
-                .getState(BlockGasCentrifugeCasing.GasCentrifugeCasingType.GAS_CENTRIFUGE_COLUMN);
+        return MetaBlocks.NUCLEAR_CASING
+                .getState(BlockNuclearCasing.NuclearCasingType.GAS_CENTRIFUGE_COLUMN);
     }
 
     protected ICubeRenderer getFrontOverlay() {

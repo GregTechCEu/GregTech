@@ -137,7 +137,6 @@ public class CommonProxy {
         registry.register(COMPUTER_CASING);
         registry.register(BATTERY_BLOCK);
         registry.register(NUCLEAR_CASING);
-        registry.register(GAS_CENTRIFUGE_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
         registry.register(PETRIFIED_FOAM);
@@ -282,7 +281,6 @@ public class CommonProxy {
         }
         registry.register(createItemBlock(ASPHALT, VariantItemBlock::new));
         registry.register(createItemBlock(NUCLEAR_CASING, VariantItemBlock::new));
-        registry.register(createItemBlock(GAS_CENTRIFUGE_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(PANELLING, VariantItemBlock::new));
         for (StoneVariantBlock block : STONE_BLOCKS.values()) {
             registry.register(createItemBlock(block, VariantItemBlock::new));

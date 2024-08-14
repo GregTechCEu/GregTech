@@ -36,6 +36,22 @@
         "top_bottom" : "gregtech:blocks/casings/nuclear/gas_centrifuge_heater_top_bloom",
         "top_top" : "gregtech:blocks/casings/nuclear/gas_centrifuge_heater_top_bloom"
       }
+    },
+    "active=false,variant=gas_centrifuge_column" : {
+      "model" : "gregtech:gas_centrifuge",
+      "textures" : {
+        "0" : "gregtech:blocks/casings/nuclear/gas_centrifuge_side",
+        "1" : "gregtech:blocks/casings/nuclear/gas_centrifuge_end",
+        "particle" : "gregtech:blocks/casings/nuclear/gas_centrifuge_side"
+      }
+    },
+    "active=true,variant=gas_centrifuge_column" : {
+      "model" : "gregtech:gas_centrifuge",
+      "textures" : {
+        "0" : "gregtech:blocks/casings/nuclear/gas_centrifuge_side",
+        "1" : "gregtech:blocks/casings/nuclear/gas_centrifuge_end",
+        "particle" : "gregtech:blocks/casings/nuclear/gas_centrifuge_side"
+      }
     }
   }
 }

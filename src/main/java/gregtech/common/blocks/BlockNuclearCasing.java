@@ -21,10 +21,17 @@ public class BlockNuclearCasing extends VariantActiveBlock<BlockNuclearCasing.Nu
         setDefaultState(getState(NuclearCasingType.SPENT_FUEL_CASING));
     }
 
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return state != getState(NuclearCasingType.GAS_CENTRIFUGE_COLUMN);
+    }
+
     public enum NuclearCasingType implements IStringSerializable, IStateHarvestLevel {
 
         SPENT_FUEL_CASING("spent_fuel_casing", 2),
-        GAS_CENTRIFUGE_HEATER("gas_centrifuge_heater", 1);
+        GAS_CENTRIFUGE_HEATER("gas_centrifuge_heater", 1),
+        GAS_CENTRIFUGE_COLUMN("gas_centrifuge_column", 2);
+
 
         NuclearCasingType(String name, int harvestLevel) {
             this.name = name;

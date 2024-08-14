@@ -2770,7 +2770,7 @@ tile.long_distance_fluid_pipeline.name=Long Distance Fluid Pipe
 # Nuclear Blocks
 tile.nuclear_casing.spent_fuel_casing.name=Spent Fuel Casing
 tile.nuclear_casing.gas_centrifuge_heater.name=Gas Centrifuge Heater
-tile.gas_centrifuge_casing.gas_centrifuge_column.name=Gas Centrifuge Column
+tile.nuclear_casing.gas_centrifuge_column.name=Gas Centrifuge Column
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
