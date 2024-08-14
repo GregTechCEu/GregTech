@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -65,9 +66,9 @@ public class MultiblockShapeInfo {
         @Deprecated
         public Builder(@NotNull RelativeDirection one, @NotNull RelativeDirection two,
                        @NotNull RelativeDirection three) {
-            this.structureDir[0] = one;
-            this.structureDir[1] = two;
-            this.structureDir[2] = three;
+            this.structureDir[0] = Objects.requireNonNull(one);
+            this.structureDir[1] = Objects.requireNonNull(two);
+            this.structureDir[2] = Objects.requireNonNull(three);
             int flags = 0;
             for (int i = 0; i < this.structureDir.length; i++) {
                 switch (structureDir[i]) {
