@@ -47,7 +47,6 @@ import gregtech.common.metatileentities.multi.MetaTileEntityMultiblockTank;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.MetaTileEntityPumpHatch;
-import gregtech.common.metatileentities.multi.MetaTileEntitySpentFuelPool;
 import gregtech.common.metatileentities.multi.MetaTileEntityTankValve;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityAssemblyLine;
@@ -69,6 +68,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubsta
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityProcessingArray;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPyrolyseOven;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityResearchStation;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntitySpentFuelPool;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityVacuumFreezer;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;

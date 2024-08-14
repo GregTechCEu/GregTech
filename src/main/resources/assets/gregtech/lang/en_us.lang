@@ -5404,6 +5404,10 @@ gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
+# Nuclear supporting multiblock special tooltips
+gregtech.spent_fuel_pool.tooltip.parallel=32 per block of pool length
+gregtech.gas_centrifuge.tooltip.parallel=1 + number of added columns
+
 gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
 
 gregtech.recipe.total=Total: %,d EU

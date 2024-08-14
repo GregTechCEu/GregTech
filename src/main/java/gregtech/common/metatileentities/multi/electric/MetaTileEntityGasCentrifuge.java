@@ -56,12 +56,15 @@ public class MetaTileEntityGasCentrifuge extends RecipeMapMultiblockController {
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        this.recipeMapWorkable.setParallelLimit(structurePattern.formedRepetitionCount[0]);
+        if (structurePattern != null) {
+            this.recipeMapWorkable.setParallelLimit(structurePattern.formedRepetitionCount[0]);
+        }
     }
 
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", "1 + number of added columns"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel",
+                I18n.format("gregtech.gas_centrifuge.tooltip.parallel")));
     }
 
     @Override

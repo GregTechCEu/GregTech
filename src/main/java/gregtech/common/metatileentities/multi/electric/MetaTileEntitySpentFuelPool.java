@@ -1,4 +1,4 @@
-package gregtech.common.metatileentities.multi;
+package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -94,6 +94,7 @@ public class MetaTileEntitySpentFuelPool extends RecipeMapMultiblockController {
 
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel", "32 per block of pool length"));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.parallel",
+                I18n.format("gregtech.spent_fuel_pool.tooltip.parallel")));
     }
 }
