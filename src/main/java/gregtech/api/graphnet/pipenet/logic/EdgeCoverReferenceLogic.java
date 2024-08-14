@@ -133,15 +133,15 @@ public final class EdgeCoverReferenceLogic extends NetLogicEntry<EdgeCoverRefere
         return new EdgeCoverReferenceLogic();
     }
 
-    // this logic never needs to be sent to the client, it is purely for graph calculations
+    @Override
+    public boolean shouldEncode() {
+        return false;
+    }
+
     @Override
     public void encode(PacketBuffer buf, boolean fullChange) {}
 
     @Override
     public void decode(PacketBuffer buf, boolean fullChange) {}
 
-    public interface IThroughputLimiterCover extends Cover {
-
-        long getLimit();
-    }
 }

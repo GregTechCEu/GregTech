@@ -2,6 +2,7 @@ package gregtech.api.graphnet.logic;
 
 import gregtech.api.network.IPacket;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
@@ -89,6 +90,14 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         this.listeners.forEach(l -> l.markChanged(entry, false, fullChange));
     }
 
+    public boolean hasLogicEntry(@NotNull String key) {
+        return logicEntrySet.containsKey(key);
+    }
+
+    public boolean hasLogicEntry(@NotNull NetLogicEntry<?, ?> key) {
+        return logicEntrySet.containsKey(key.getName());
+    }
+
     @Nullable
     public NetLogicEntry<?, ?> getLogicEntryNullable(@NotNull String key) {
         return logicEntrySet.get(key);
@@ -155,8 +164,9 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         NBTTagList list = new NBTTagList();
         for (NetLogicEntry<?, ?> entry : getEntries()) {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setTag("Tag", entry.serializeNBT());
             tag.setString("Name", entry.getName());
+            NBTBase nbt = entry.serializeNBT();
+            if (nbt != null) tag.setTag("Tag", nbt);
             list.appendTag(tag);
         }
         return list;
@@ -178,8 +188,10 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
     public void encode(PacketBuffer buf) {
         buf.writeVarInt(getEntries().size());
         for (NetLogicEntry<?, ?> entry : getEntries()) {
-            buf.writeString(entry.getName());
-            entry.encode(buf, true);
+            if (entry.shouldEncode()) {
+                buf.writeString(entry.getName());
+                entry.encode(buf, true);
+            }
         }
     }
 

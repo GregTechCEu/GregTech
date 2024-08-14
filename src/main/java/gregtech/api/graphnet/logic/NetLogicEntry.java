@@ -32,9 +32,13 @@ public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBT
         return name;
     }
 
-    public void deserializeNBTNaive(NBTBase nbt) {
-        deserializeNBT((N) nbt);
+    public void deserializeNBTNaive(@Nullable NBTBase nbt) {
+        if (nbt != null) deserializeNBT((N) nbt);
     }
+
+    @Override
+    @Nullable
+    public abstract N serializeNBT();
 
     /**
      * Returns null if the operation is not supported.
@@ -93,7 +97,15 @@ public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBT
         return (T) entry;
     }
 
-    public void encode(PacketBuffer buf) {
+    /**
+     * Controls whether this {@link NetLogicEntry} will be synced to the client or not.
+     * @return
+     */
+    public boolean shouldEncode() {
+        return true;
+    }
+
+    public final void encode(PacketBuffer buf) {
         encode(buf, true);
     }
 
@@ -103,7 +115,7 @@ public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBT
      */
     public abstract void encode(PacketBuffer buf, boolean fullChange);
 
-    public void decode(PacketBuffer buf) {
+    public final void decode(PacketBuffer buf) {
         decode(buf, true);
     }
 

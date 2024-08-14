@@ -66,6 +66,11 @@ public class EnergyFlowLogic extends NetLogicEntry<EnergyFlowLogic, NBTTagByte> 
     }
 
     @Override
+    public boolean shouldEncode() {
+        return false;
+    }
+
+    @Override
     public void encode(PacketBuffer buf, boolean fullChange) {}
 
     @Override
