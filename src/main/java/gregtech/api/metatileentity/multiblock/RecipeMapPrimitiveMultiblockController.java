@@ -90,7 +90,7 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
 
     @Override
     protected boolean openGUIOnRightClick() {
-        return isStructureFormed();
+        return isStructureFormed("MAIN");
     }
 
     @Override

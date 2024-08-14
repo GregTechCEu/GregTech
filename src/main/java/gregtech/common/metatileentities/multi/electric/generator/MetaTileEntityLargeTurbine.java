@@ -90,7 +90,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     public boolean isRotorFaceFree() {
         IRotorHolder rotorHolder = getRotorHolder();
         if (rotorHolder != null)
-            return isStructureFormed() && getRotorHolder().isFrontFaceFree();
+            return isStructureFormed("MAIN") && getRotorHolder().isFrontFaceFree();
         return false;
     }
 
@@ -116,11 +116,11 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
 
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
                 .addCustom(tl -> {
-                    if (isStructureFormed()) {
+                    if (isStructureFormed("MAIN")) {
                         IRotorHolder rotorHolder = getRotorHolder();
                         if (rotorHolder.getRotorEfficiency() > 0) {
                             ITextComponent efficiencyInfo = TextComponentUtil.stringWithColor(
@@ -139,9 +139,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
                 .addCustom(tl -> {
-                    if (isStructureFormed()) {
+                    if (isStructureFormed("MAIN")) {
                         IRotorHolder rotorHolder = getRotorHolder();
                         if (rotorHolder.getRotorEfficiency() > 0) {
                             if (rotorHolder.getRotorDurabilityPercent() <= MIN_DURABILITY_TO_WARN) {
@@ -159,7 +159,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (isStructureFormed()) {
+        if (isStructureFormed("MAIN")) {
             if (!isRotorFaceFree()) {
                 textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
                         "gregtech.multiblock.turbine.obstructed"));

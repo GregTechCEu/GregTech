@@ -296,7 +296,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     public void update() {
         super.update();
         if (getWorld() != null) {
-            if (!getWorld().isRemote && !this.isStructureFormed() && getOffsetTimer() % 20 == 0) {
+            if (!getWorld().isRemote && !this.isStructureFormed("MAIN") && getOffsetTimer() % 20 == 0) {
                 this.reinitializeStructurePattern();
             } else if (isActive) {
                 BlockPos pos = getPos();
@@ -490,7 +490,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         if (tileEntity instanceof IGregTechTileEntity) {
             mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
         }
-        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((IMultiblockController) mte).isStructureFormed()) {
+        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((IMultiblockController) mte).isStructureFormed("MAIN")) {
             if (event.getSide().isClient()) {
                 event.setCanceled(true);
                 event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);

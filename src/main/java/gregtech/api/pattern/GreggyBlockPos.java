@@ -82,6 +82,21 @@ public class GreggyBlockPos {
     }
 
     /**
+     * Sets the x value.
+     */
+    public GreggyBlockPos x(int val) { return set(0, val); }
+
+    /**
+     * Sets the y value.
+     */
+    public GreggyBlockPos y(int val) { return set(1, val); }
+
+    /**
+     * Sets the z value.
+     */
+    public GreggyBlockPos z(int val) { return set(2, val); }
+
+    /**
      * Sets all 3 coordinates in the given axis order
      * 
      * @param a1 The first axis, p1 will be set from this
@@ -116,6 +131,16 @@ public class GreggyBlockPos {
      */
     public GreggyBlockPos from(GreggyBlockPos other) {
         System.arraycopy(other.pos, 0, this.pos, 0, 3);
+        return this;
+    }
+
+    /**
+     * BlockPos verion of {@link GreggyBlockPos#from(GreggyBlockPos)}
+     */
+    public GreggyBlockPos from(BlockPos other) {
+        pos[0] = other.getX();
+        pos[1] = other.getY();
+        pos[2] = other.getZ();
         return this;
     }
 
@@ -223,6 +248,21 @@ public class GreggyBlockPos {
     }
 
     /**
+     * Gets the x value.
+     */
+    public int x() { return get(0); }
+
+    /**
+     * Gets the y value.
+     */
+    public int y() { return get(1); }
+
+    /**
+     * Gets the z value.
+     */
+    public int z() { return get(2); }
+
+    /**
      * Gets a copy of the internal array, in xyz.
      */
     public int[] getAll() {
@@ -234,8 +274,13 @@ public class GreggyBlockPos {
     }
 
     @Override
+    public int hashCode() {
+        return Arrays.hashCode(pos);
+    }
+
+    @Override
     public String toString() {
-        return super.toString() + "[x=" + pos[0] + ", y=" + pos[1] + ", z=" + pos[2] + "]";
+        return super.toString() + "{x=" + pos[0] + ", y=" + pos[1] + ", z=" + pos[2] + "}";
     }
 
     /**

@@ -79,7 +79,7 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     public void update() {
         // Fixes an annoying GTCE bug in AbstractRecipeLogic
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
-        if (isActive && !controller.isStructureFormed()) {
+        if (isActive && !controller.isStructureFormed("MAIN")) {
             progressTime = 0;
             wasActiveAndNeedsUpdate = true;
         }

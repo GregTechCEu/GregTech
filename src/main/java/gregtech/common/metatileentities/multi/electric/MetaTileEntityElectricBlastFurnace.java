@@ -68,13 +68,13 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addCustom(tl -> {
                     // Coil heat capacity line
-                    if (isStructureFormed()) {
+                    if (isStructureFormed("MAIN")) {
                         ITextComponent heatString = TextComponentUtil.stringWithColor(
                                 TextFormatting.RED,
                                 TextFormattingUtil.formatNumbers(blastFurnaceTemperature) + "K");

@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity.multiblock;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IMultiblockPart {
 
@@ -24,8 +25,9 @@ public interface IMultiblockPart {
     int getWallshareCount();
 
     /**
-     * Gets the name of the substructure the part is attached to.
+     * Gets the name of the substructure the part is attached to, or null if it is not attached.
      */
+    @Nullable
     String getSubstructureName();
 
     boolean canPartShare(MultiblockControllerBase target, String substructureName);

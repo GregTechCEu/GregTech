@@ -41,14 +41,14 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
         if (player.isSneaking()) {
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
-            if (!multiblock.isStructureFormed()) {
+            if (!multiblock.isStructureFormed("MAIN")) {
                 // multiblock.structurePatterns[0].autoBuild(player, multiblock);
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;
         } else {
             // If not sneaking, try to show structure debug info (if any) in chat.
-            if (!multiblock.isStructureFormed()) {
+            if (!multiblock.isStructureFormed("MAIN")) {
                 // PatternError error = multiblock.structurePatterns[0].getError();
                 // if (error != null) {
                 // player.sendMessage(

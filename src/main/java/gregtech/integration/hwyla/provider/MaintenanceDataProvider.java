@@ -67,7 +67,7 @@ public class MaintenanceDataProvider extends CapabilityDataProvider<IMaintenance
 
             IMultiblockController controller = accessor.getTileEntity()
                     .getCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null);
-            if (controller == null || !controller.isStructureFormed()) {
+            if (controller == null || !controller.isStructureFormed("MAIN")) {
                 return tooltip;
             }
 

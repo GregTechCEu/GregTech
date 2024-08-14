@@ -81,13 +81,13 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addCustom(tl -> {
                     // Coil energy discount line
-                    if (isStructureFormed()) {
+                    if (isStructureFormed("MAIN")) {
                         ITextComponent energyDiscount = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
                                 (100 - 10 * coilTier) + "%");
 

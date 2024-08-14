@@ -159,7 +159,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
                 .setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
@@ -167,7 +167,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                         "gregtech.multiblock.miner.drilling")
                 .addEnergyUsageLine(energyContainer)
                 .addCustom(tl -> {
-                    if (isStructureFormed()) {
+                    if (isStructureFormed("MAIN")) {
                         if (minerLogic.getDrilledFluid() != null) {
                             // Fluid name
                             Fluid drilledFluid = minerLogic.getDrilledFluid();
@@ -204,10 +204,10 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+                .addLowPowerLine(isStructureFormed("MAIN") && !drainEnergy(true))
                 .addCustom(tl -> {
-                    if (isStructureFormed() && minerLogic.isInventoryFull()) {
+                    if (isStructureFormed("MAIN") && minerLogic.isInventoryFull()) {
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.YELLOW,
                                 "gregtech.machine.miner.invfull"));

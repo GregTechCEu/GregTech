@@ -77,7 +77,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     }
 
     private boolean isFireboxPart(IMultiblockPart sourcePart) {
-        return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
+        return isStructureFormed("MAIN") && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
     }
 
     @SideOnly(Side.CLIENT)

@@ -47,7 +47,7 @@ public class MaintenanceInfoProvider extends CapabilityInfoProvider<IMaintenance
             if (tileEntity.hasCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null)) {
                 // noinspection ConstantConditions
                 if (tileEntity.getCapability(GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER, null)
-                        .isStructureFormed()) {
+                        .isStructureFormed("MAIN")) {
                     if (capability.hasMaintenanceProblems()) {
                         if (player.isSneaking()) {
                             int problems = capability.getMaintenanceProblems();

@@ -23,6 +23,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
@@ -33,6 +34,7 @@ import gregtech.api.util.Mods;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.handler.AABBHighlightRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
@@ -98,6 +100,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     public static final int MIN_DEPTH = 4;
     public static final int MAX_RADIUS = 7;
     public static final int MAX_DEPTH = 14;
+    private static final GreggyBlockPos offset = new GreggyBlockPos(1, 1, 1);
     private final int[] bounds = { 0, MIN_DEPTH, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
     private CleanroomType cleanroomType = null;
     private int cleanAmount;
@@ -105,8 +108,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     private IEnergyContainer energyContainer;
 
     private ICleanroomFilter cleanroomFilter;
+    private boolean renderingAABB;
     private final CleanroomLogic cleanroomLogic;
     private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
+    private AABBHighlightRenderer.AABBRender aabb;
 
     /**
      * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
@@ -135,6 +140,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     protected void formStructure(String name) {
         super.formStructure(name);
         initializeAbilities();
+
+        renderingAABB = false;
+        writeCustomData(GregtechDataCodes.RENDER_UPDATE, buf -> buf.writeBoolean(false));
+
         ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure(name).getCache());
         if (type == null) {
             invalidateStructure(name);
@@ -230,15 +239,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     int intersects = 0;
 
                     // aisle dir is up, so its bounds[0] and bounds[1]
-                    boolean topAisle = c.get(0) == b[0];
-                    boolean botAisle = c.get(0) == -b[1];
+                    boolean topAisle = c.x() == b[0];
+                    boolean botAisle = c.x() == -b[1];
 
                     if (topAisle || botAisle) intersects++;
                     // negative signs for the LEFT and BACK ordinals
                     // string dir is right, so its bounds[2] and bounds[3]
-                    if (c.get(1) == -b[2] || c.get(1) == b[3]) intersects++;
+                    if (c.y() == -b[2] || c.y() == b[3]) intersects++;
                     // char dir is front, so its bounds[4] and bounds[5]
-                    if (c.get(2) == b[4] || c.get(2) == -b[5]) intersects++;
+                    if (c.z() == b[4] || c.z() == -b[5]) intersects++;
 
                     // GTLog.logger.info(intersects + " intersects at " + c);
 
@@ -346,12 +355,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
                 .setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
                 .addCustom(tl -> {
                     // Cleanliness status line
-                    if (isStructureFormed()) {
+                    if (isStructureFormed("MAIN")) {
                         ITextComponent cleanState;
                         if (isClean()) {
                             cleanState = TextComponentUtil.translationWithColor(
@@ -379,15 +388,22 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                 "gregtech.multiblock.cleanroom.low_tier", energyNeeded));
                     }
                 })
+                .addCustom(tl -> {
+                    if (isStructureFormed("MAIN")) return;
+
+                    // todo lang translations
+                    tl.add(getWithButton("North: ", EnumFacing.NORTH));
+                    tl.add(getWithButton("West: ", EnumFacing.WEST));
+                    tl.add(getWithButton("South: ", EnumFacing.SOUTH));
+                    tl.add(getWithButton("East: ", EnumFacing.EAST));
+                    tl.add(getWithButton("Height: ", EnumFacing.DOWN));
+
+                    tl.add(withButton(new TextComponentString(renderingAABB ? "[Disable Outline]" : "[Enable Outline]"), "render:" +
+                            renderingAABB));
+                })
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
                 .addWorkingStatusLine()
                 .addProgressLine(getProgressPercent() / 100.0);
-
-        textList.add(getWithButton("North: ", EnumFacing.NORTH));
-        textList.add(getWithButton("West: ", EnumFacing.WEST));
-        textList.add(getWithButton("South: ", EnumFacing.SOUTH));
-        textList.add(getWithButton("East: ", EnumFacing.EAST));
-        textList.add(getWithButton("Height: ", EnumFacing.DOWN));
     }
 
     protected ITextComponent getWithButton(String text, EnumFacing facing) {
@@ -411,6 +427,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
         String[] data = componentData.split(":");
 
+        if ("render".equals(data[0])) {
+            boolean render = !Boolean.parseBoolean(data[1]);
+            renderingAABB = render;
+            writeCustomData(GregtechDataCodes.RENDER_UPDATE, buf -> buf.writeBoolean(render));
+        }
+
         switch (data[0]) {
             case "LEFT" -> bounds[2] = MathHelper.clamp(bounds[2] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
             case "RIGHT" -> bounds[3] = MathHelper.clamp(bounds[3] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
@@ -433,10 +455,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
                 .addLowPowerLine(!drainEnergy(true))
                 .addCustom(tl -> {
-                    if (isStructureFormed() && !isClean()) {
+                    if (isStructureFormed("MAIN") && !isClean()) {
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.YELLOW,
                                 "gregtech.multiblock.cleanroom.warning_contaminated"));
@@ -467,6 +489,38 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             tooltip.add("");
         } else {
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.hold_ctrl"));
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void renderAABB(boolean render) {
+        if (render) {
+            if (aabb == null) aabb = new AABBHighlightRenderer.AABBRender(new GreggyBlockPos(getPos()), new GreggyBlockPos(getPos()), 1, 1, 1, Long.MAX_VALUE);
+
+            // reset coords
+            aabb.from().from(getPos());
+            aabb.to().from(getPos());
+
+            // ordinal 0 is UP, which is always 0
+            for (int i = 1; i < 6; i++) {
+                EnumFacing facing = RelativeDirection.VALUES[i].getRelativeFacing(getFrontFacing(), getUpwardsFacing(), false);
+                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) {
+                    // from is always absolutely positive
+                    aabb.from().offset(facing, bounds[i]);
+                } else {
+                    // to is always absolutely negative
+                    aabb.to().offset(facing, bounds[i]);
+                }
+            }
+
+            // offset by 1 since the renderer doesn't do it
+            aabb.from().add(offset);
+
+            // this is so scuffed im sorry for going back to kila level code :sob:
+            // surely this won't cause the gc to blow up
+            AABBHighlightRenderer.addAABB(aabb, () -> isValid() && getWorld().isBlockLoaded(getPos(), false) && getWorld().getTileEntity(getPos()) == getHolder());
+        } else {
+            AABBHighlightRenderer.removeAABB(aabb);
         }
     }
 
@@ -584,12 +638,16 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
             System.arraycopy(buf.readVarIntArray(), 0, bounds, 0, 6);
+            renderAABB(renderingAABB);
         } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.cleanroomLogic.setActive(buf.readBoolean());
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.cleanroomLogic.setWorkingEnabled(buf.readBoolean());
             scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.RENDER_UPDATE) {
+            this.renderingAABB = buf.readBoolean();
+            renderAABB(this.renderingAABB);
         }
     }
 
