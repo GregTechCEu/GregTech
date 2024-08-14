@@ -32,7 +32,6 @@ public class BlockNuclearCasing extends VariantActiveBlock<BlockNuclearCasing.Nu
         GAS_CENTRIFUGE_HEATER("gas_centrifuge_heater", 1),
         GAS_CENTRIFUGE_COLUMN("gas_centrifuge_column", 2);
 
-
         NuclearCasingType(String name, int harvestLevel) {
             this.name = name;
             this.harvestLevel = harvestLevel;
