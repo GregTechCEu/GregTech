@@ -210,12 +210,4 @@ public interface IGraphNet {
      */
     @ApiStatus.Internal
     void markDirty();
-
-    /**
-     * Get the network ID for this net. Must be unique and deterministic between server and client, but can change
-     * between mod versions.
-     * 
-     * @return the net's network id.
-     */
-    int getNetworkID();
 }

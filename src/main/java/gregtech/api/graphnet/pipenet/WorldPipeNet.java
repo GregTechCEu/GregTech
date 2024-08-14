@@ -22,6 +22,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,6 +180,14 @@ public abstract class WorldPipeNet extends WorldNet {
         return baseID + '.' + dimension;
     }
 
+    /**
+     * Get the network ID for this net. Must be unique and deterministic between server and client, but can change
+     * between mod versions.
+     *
+     * @return the net's network id.
+     */
+    public abstract int getNetworkID();
+
     @Override
     public final Class<? extends NetNode> getNodeClass() {
         return WorldPipeNetNode.class;
@@ -189,7 +198,8 @@ public abstract class WorldPipeNet extends WorldNet {
         return new WorldPipeNetNode(this);
     }
 
-    public static <T> Object2ObjectOpenCustomHashMap<WorldPipeNetNode, T> getSensitiveHashMap() {
+    @Contract(value = " -> new", pure = true)
+    public static <T> @NotNull Object2ObjectOpenCustomHashMap<WorldPipeNetNode, T> getSensitiveHashMap() {
         return new Object2ObjectOpenCustomHashMap<>(SensitiveStrategy.INSTANCE);
     }
 
