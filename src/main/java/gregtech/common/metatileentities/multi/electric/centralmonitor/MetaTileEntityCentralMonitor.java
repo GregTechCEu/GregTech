@@ -397,10 +397,18 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start(RIGHT, BACK, UP)
-                .aisle("A".repeat(height))
-                .aisle("B".repeat(height)).setRepeatable(3, MAX_WIDTH)
-                .aisle("AS" + "A".repeat(height - 2))
+        StringBuilder start = new StringBuilder("AS");
+        StringBuilder slice = new StringBuilder("BB");
+        StringBuilder end = new StringBuilder("AA");
+        for (int i = 0; i < height - 2; i++) {
+            start.append('A');
+            slice.append('B');
+            end.append('A');
+        }
+        return FactoryBlockPattern.start(UP, BACK, RIGHT)
+                .aisle(start.toString())
+                .aisle(slice.toString()).setRepeatable(3, MAX_WIDTH)
+                .aisle(end.toString())
                 .where('S', selfPredicate())
                 .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).setMaxGlobalLimited(3)
