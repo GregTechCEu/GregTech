@@ -4,6 +4,7 @@ import gregtech.api.block.UnlistedByteProperty;
 import gregtech.api.block.UnlistedFloatProperty;
 import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedPropertyMaterial;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
@@ -51,7 +52,6 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     public static UnlistedPropertyMaterial FRAME_MATERIAL_PROPERTY = new UnlistedPropertyMaterial("frame_material");
     public static UnlistedByteProperty FRAME_MASK_PROPERTY = new UnlistedByteProperty("frame_mask");
 
-    public static UnlistedByteProperty CONNECTION_MASK_PROPERTY = new UnlistedByteProperty("connection_mask");
     public static UnlistedByteProperty CLOSED_MASK_PROPERTY = new UnlistedByteProperty("closed_mask");
     public static UnlistedByteProperty BLOCKED_MASK_PROPERTY = new UnlistedByteProperty("blocked_mask");
 
@@ -75,7 +75,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
             CoverRendererPackage rendererPackage = ext.getValue(CoverRendererPackage.PROPERTY);
             byte coverMask = rendererPackage == null ? 0 : rendererPackage.getMask();
             if (canRenderInLayer(getCurrentRenderLayer())) {
-                quads = getQuads(toKey(ext), safeByte(ext.getValue(CONNECTION_MASK_PROPERTY)),
+                quads = getQuads(toKey(ext), PipeBlock.readConnectionMask(ext),
                         safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
                         data, ext.getValue(FRAME_MATERIAL_PROPERTY),
                         safeByte(ext.getValue(FRAME_MASK_PROPERTY)), coverMask);

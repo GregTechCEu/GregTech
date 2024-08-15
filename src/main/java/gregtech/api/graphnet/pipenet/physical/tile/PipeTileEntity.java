@@ -734,7 +734,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         }
         frameMask = (byte) ~frameMask;
         return state.withProperty(AbstractPipeModel.THICKNESS_PROPERTY, this.getStructure().getRenderThickness())
-                .withProperty(AbstractPipeModel.CONNECTION_MASK_PROPERTY, connectionMask)
                 .withProperty(AbstractPipeModel.CLOSED_MASK_PROPERTY, renderMask)
                 .withProperty(AbstractPipeModel.BLOCKED_MASK_PROPERTY, blockedMask)
                 .withProperty(AbstractPipeModel.COLOR_PROPERTY, getPaintingColor())

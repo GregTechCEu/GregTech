@@ -31,7 +31,7 @@ public class ServerNetNode extends NetNode {
     }
 
     @Override
-    public Object getEquivalencyData() {
+    public DimensionPos getEquivalencyData() {
         return pos;
     }
 }

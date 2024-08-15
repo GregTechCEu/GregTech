@@ -96,7 +96,8 @@ public final class GraphNetBacker {
     }
 
     @Nullable
-    public NetEdge addEdge(NetNode source, NetNode target, double weight) {
+    public NetEdge addEdge(@NotNull NetNode source, @NotNull NetNode target, double weight) {
+        if (!NetGroup.isEdgeAllowed(source, target)) return null;
         GraphEdge graphEdge = getGraph().addEdge(source.wrapper, target.wrapper);
         if (graphEdge != null) {
             getGraph().setEdgeWeight(graphEdge, weight);
@@ -107,12 +108,12 @@ public final class GraphNetBacker {
     }
 
     @Nullable
-    public NetEdge getEdge(NetNode source, NetNode target) {
+    public NetEdge getEdge(@NotNull NetNode source, @NotNull NetNode target) {
         GraphEdge graphEdge = getGraph().getEdge(source.wrapper, target.wrapper);
         return graphEdge == null ? null : graphEdge.wrapped;
     }
 
-    public boolean removeEdge(NetNode source, NetNode target) {
+    public boolean removeEdge(@NotNull NetNode source, NetNode target) {
         NetGroup group = source.getGroupUnsafe();
         if (group == null) {
             // weird since there should always be a group for two joined nodes, but whatever

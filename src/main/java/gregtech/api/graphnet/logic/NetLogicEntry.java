@@ -99,6 +99,7 @@ public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBT
 
     /**
      * Controls whether this {@link NetLogicEntry} will be synced to the client or not.
+     * 
      * @return
      */
     public boolean shouldEncode() {

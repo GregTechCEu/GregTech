@@ -57,7 +57,7 @@ public class BlockWorldState {
 
     public IBlockState getBlockState() {
         if (this.state == null) {
-            this.state = this.world.getBlockState(this.pos);
+            this.state = this.world.getBlockState(this.pos).getActualState(this.world, this.pos);
         }
 
         return this.state;

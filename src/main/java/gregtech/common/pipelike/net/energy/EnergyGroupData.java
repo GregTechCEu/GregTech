@@ -2,6 +2,9 @@ package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.graphnet.AbstractGroupData;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class EnergyGroupData extends AbstractGroupData {
 
     private long lastEnergyInPerSec;
@@ -42,5 +45,17 @@ public class EnergyGroupData extends AbstractGroupData {
         lastEnergyOutPerSec = energyOutPerSec;
         energyInPerSec = 0;
         energyOutPerSec = 0;
+    }
+
+    @Override
+    public boolean mergeAllowed(@NotNull AbstractGroupData other) {
+        return true;
+    }
+
+    @Override
+    public @Nullable AbstractGroupData merge(@NotNull AbstractGroupData other) {
+        if (other instanceof EnergyGroupData)
+            return new EnergyGroupData();
+        else return null;
     }
 }

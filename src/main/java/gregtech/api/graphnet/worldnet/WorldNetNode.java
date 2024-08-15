@@ -39,7 +39,7 @@ public class WorldNetNode extends NetNode {
     }
 
     @Override
-    public Object getEquivalencyData() {
+    public BlockPos getEquivalencyData() {
         return pos;
     }
 }

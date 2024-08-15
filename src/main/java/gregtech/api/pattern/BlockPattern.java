@@ -111,7 +111,7 @@ public class BlockPattern {
             boolean pass = true;
             for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
                 BlockPos pos = BlockPos.fromLong(entry.getKey());
-                IBlockState blockState = world.getBlockState(pos);
+                IBlockState blockState = world.getBlockState(pos).getActualState(world, pos);
                 if (blockState != entry.getValue().getBlockState()) {
                     pass = false;
                     break;

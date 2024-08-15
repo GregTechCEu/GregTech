@@ -943,7 +943,7 @@ public class GTUtility {
 
     @Contract(pure = true)
     public static boolean evalMask(@NotNull Enum<?> anEnum, byte mask) {
-        return (mask & (1L << anEnum.ordinal())) > 0;
+        return (mask & (1 << anEnum.ordinal())) > 0;
     }
 
     @Contract(pure = true)

@@ -4,6 +4,7 @@ import gregtech.api.graphnet.graph.GraphVertex;
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,13 +17,13 @@ public class NetGroup {
 
     private final Set<NetNode> nodes;
 
-    private final AbstractGroupData data;
+    private AbstractGroupData data;
 
     public NetGroup(IGraphNet net) {
         this(net, new ObjectOpenHashSet<>());
     }
 
-    public NetGroup(IGraphNet net,
+    public NetGroup(@NotNull IGraphNet net,
                     Set<NetNode> nodes) {
         this.net = net;
         this.data = net.getBlankGroupData();
@@ -53,8 +54,20 @@ public class NetGroup {
         this.nodes.clear();
     }
 
-    protected void onAddedToGroup(NetNode node) {
+    protected void onAddedToGroup(@NotNull NetNode node) {
         node.setGroup(this);
+    }
+
+    public static boolean isEdgeAllowed(@NotNull NetNode source, @NotNull NetNode target) {
+        NetGroup sourceGroup = source.getGroupUnsafe();
+        NetGroup targetGroup = target.getGroupUnsafe();
+
+        if (sourceGroup == null || targetGroup == null) return true;
+        AbstractGroupData sourceData = sourceGroup.getData();
+        AbstractGroupData targetData = targetGroup.getData();
+        if (sourceData == null || targetData == null) return true;
+
+        return sourceData.mergeAllowed(targetData) && targetData.mergeAllowed(sourceData);
     }
 
     /**
@@ -63,7 +76,7 @@ public class NetGroup {
      * @param source the source node of the edge
      * @param target the target node of the edge
      */
-    public static void mergeEdge(NetNode source, NetNode target) {
+    public static void mergeEdge(@NotNull NetNode source, @NotNull NetNode target) {
         NetGroup sourceGroup = source.getGroupUnsafe();
         NetGroup targetGroup = target.getGroupUnsafe();
         if (sourceGroup == targetGroup) {
@@ -81,11 +94,16 @@ public class NetGroup {
         }
     }
 
-    protected void mergeNode(NetNode node) {
+    protected void mergeNode(@NotNull NetNode node) {
         NetGroup group = node.getGroupUnsafe();
         if (group != null) {
             this.addNodes(group.getNodes());
             group.clearNodes();
+            AbstractGroupData data = group.getData();
+            if (data != null) {
+                if (this.data == null) this.data = data;
+                else this.data.merge(data);
+            }
         } else addNode(node);
         this.clearPathCaches();
     }
@@ -134,7 +152,7 @@ public class NetGroup {
      * @param target target of the edge
      * @return Whether the edge existed in the graph
      */
-    public boolean splitEdge(NetNode source, NetNode target) {
+    public boolean splitEdge(@NotNull NetNode source, @NotNull NetNode target) {
         if (this.net.getBacker().removeEdge(source.wrapper, target.wrapper) != null) {
             this.clearPathCaches();
             Set<NetNode> targetGroup = new ObjectOpenHashSet<>();

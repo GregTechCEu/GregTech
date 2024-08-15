@@ -143,5 +143,4 @@ public final class EdgeCoverReferenceLogic extends NetLogicEntry<EdgeCoverRefere
 
     @Override
     public void decode(PacketBuffer buf, boolean fullChange) {}
-
 }

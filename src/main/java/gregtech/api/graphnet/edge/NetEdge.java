@@ -44,6 +44,9 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
         if (this.wrapper == null) this.data = data;
     }
 
+    /**
+     * This data is transient and should not be written to.
+     */
     public @NotNull NetLogicData getData() {
         if (this.data == null) {
             this.data = NetLogicData.unionNullable(getSource() == null ? null : getSource().getData(),

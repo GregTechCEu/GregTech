@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.graphnet.AbstractGroupData;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
@@ -64,6 +65,11 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
     @Override
     public @NotNull NetFlowEdge getNewEdge() {
         return new NetFlowEdge(1);
+    }
+
+    @Override
+    public AbstractGroupData getBlankGroupData() {
+        return new EnergyGroupData();
     }
 
     @Override
