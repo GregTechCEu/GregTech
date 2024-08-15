@@ -84,17 +84,23 @@ public class GreggyBlockPos {
     /**
      * Sets the x value.
      */
-    public GreggyBlockPos x(int val) { return set(0, val); }
+    public GreggyBlockPos x(int val) {
+        return set(0, val);
+    }
 
     /**
      * Sets the y value.
      */
-    public GreggyBlockPos y(int val) { return set(1, val); }
+    public GreggyBlockPos y(int val) {
+        return set(1, val);
+    }
 
     /**
      * Sets the z value.
      */
-    public GreggyBlockPos z(int val) { return set(2, val); }
+    public GreggyBlockPos z(int val) {
+        return set(2, val);
+    }
 
     /**
      * Sets all 3 coordinates in the given axis order
@@ -250,17 +256,23 @@ public class GreggyBlockPos {
     /**
      * Gets the x value.
      */
-    public int x() { return get(0); }
+    public int x() {
+        return get(0);
+    }
 
     /**
      * Gets the y value.
      */
-    public int y() { return get(1); }
+    public int y() {
+        return get(1);
+    }
 
     /**
      * Gets the z value.
      */
-    public int z() { return get(2); }
+    public int z() {
+        return get(2);
+    }
 
     /**
      * Gets a copy of the internal array, in xyz.

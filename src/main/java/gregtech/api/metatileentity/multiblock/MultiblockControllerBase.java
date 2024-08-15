@@ -83,10 +83,11 @@ import java.util.stream.Collectors;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
+
     protected final Comparator<IMultiblockPart> partComparator = Comparator.comparingLong(part -> {
-                MetaTileEntity mte = (MetaTileEntity) part;
-                return ((long) multiblockPartSorter().apply(mte.getPos()) << 32) | mte.getPos().hashCode();
-            });
+        MetaTileEntity mte = (MetaTileEntity) part;
+        return ((long) multiblockPartSorter().apply(mte.getPos()) << 32) | mte.getPos().hashCode();
+    });
     /**
      * Null until the first time {@link MultiblockControllerBase#getMatchingShapes()} is called, if it is not overriden
      */
@@ -429,7 +430,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                             return false;
                         }
                         part.addToMultiBlock(this, name);
-                        if (part instanceof IMultiblockAbilityPart<?> abilityPart) {
+                        if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
                             // noinspection unchecked
                             addedParts.add((IMultiblockAbilityPart<Object>) abilityPart);
                         }
@@ -466,16 +467,17 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 // parts *should* not have this controller added
                 multiblockParts.add(part);
                 part.addToMultiBlock(this, name);
-//                if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
-//                    // noinspection unchecked
-//                    registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
-//                }
+                // if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
+                // // noinspection unchecked
+                // registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
+                // }
                 return true;
             });
 
-            // todo this is maybe a bandaid fix, maybe use NavigableSet<Object> instead of using List<Object> and relying on the NavigableSet<T> of multiblockParts?
+            // todo this is maybe a bandaid fix, maybe use NavigableSet<Object> instead of using List<Object> and
+            // relying on the NavigableSet<T> of multiblockParts?
             for (IMultiblockPart part : multiblockParts) {
-                if (name.equals(part.getSubstructureName()) && part instanceof IMultiblockAbilityPart<?> abilityPart) {
+                if (name.equals(part.getSubstructureName()) && part instanceof IMultiblockAbilityPart<?>abilityPart) {
                     // noinspection unchecked
                     registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
                 }
@@ -587,7 +589,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }
     }
 
-    protected IBlockPattern getSubstructure(String name) {
+    public IBlockPattern getSubstructure(String name) {
         return structures.get(name);
     }
 

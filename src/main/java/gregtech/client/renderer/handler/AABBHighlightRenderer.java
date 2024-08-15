@@ -1,7 +1,5 @@
 package gregtech.client.renderer.handler;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.client.utils.RenderBufferHelper;
 
@@ -15,19 +13,18 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.github.bsideup.jabel.Desugar;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 
 @SideOnly(Side.CLIENT)
 // maybe refactor as subclass of GTParticle? idk
 public class AABBHighlightRenderer {
+
     private static final Map<AABBRender, BooleanSupplier> rendering = new HashMap<>();
 
     public static void renderWorldLastEvent(RenderWorldLastEvent event) {
@@ -38,7 +35,8 @@ public class AABBHighlightRenderer {
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
-        // maybe not necessary? idk what it even does, but one time the outline was gray despite it being white and i can't reproduce it
+        // maybe not necessary? idk what it even does, but one time the outline was gray despite it being white and i
+        // can't reproduce it
         GlStateManager.color(1, 1, 1);
 
         GlStateManager.disableDepth();
@@ -58,7 +56,8 @@ public class AABBHighlightRenderer {
             AABBRender aabb = entry.getKey();
             if (time > aabb.end() || !entry.getValue().getAsBoolean()) iter.remove();
 
-            // todo maybe use GL_QUADS and draw 12 prisms instead of drawing 12 lines? this prevents incorrect scaling, and fix or javadoc the +1 issue
+            // todo maybe use GL_QUADS and draw 12 prisms instead of drawing 12 lines? this prevents incorrect scaling,
+            // and fix or javadoc the +1 issue
             RenderBufferHelper.renderCubeFrame(buffer, aabb.from.x(), aabb.from.y(), aabb.from.z(),
                     aabb.to.x(), aabb.to.y(), aabb.to.z(),
                     aabb.r, aabb.g, aabb.b, 1);

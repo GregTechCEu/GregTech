@@ -398,8 +398,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     tl.add(getWithButton("East: ", EnumFacing.EAST));
                     tl.add(getWithButton("Height: ", EnumFacing.DOWN));
 
-                    tl.add(withButton(new TextComponentString(renderingAABB ? "[Disable Outline]" : "[Enable Outline]"), "render:" +
-                            renderingAABB));
+                    tl.add(withButton(new TextComponentString(renderingAABB ? "[Disable Outline]" : "[Enable Outline]"),
+                            "render:" +
+                                    renderingAABB));
                 })
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
                 .addWorkingStatusLine()
@@ -495,7 +496,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @SideOnly(Side.CLIENT)
     protected void renderAABB(boolean render) {
         if (render) {
-            if (aabb == null) aabb = new AABBHighlightRenderer.AABBRender(new GreggyBlockPos(getPos()), new GreggyBlockPos(getPos()), 1, 1, 1, Long.MAX_VALUE);
+            if (aabb == null) aabb = new AABBHighlightRenderer.AABBRender(new GreggyBlockPos(getPos()),
+                    new GreggyBlockPos(getPos()), 1, 1, 1, Long.MAX_VALUE);
 
             // reset coords
             aabb.from().from(getPos());
@@ -503,7 +505,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
             // ordinal 0 is UP, which is always 0
             for (int i = 1; i < 6; i++) {
-                EnumFacing facing = RelativeDirection.VALUES[i].getRelativeFacing(getFrontFacing(), getUpwardsFacing(), false);
+                EnumFacing facing = RelativeDirection.VALUES[i].getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
+                        false);
                 if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) {
                     // from is always absolutely positive
                     aabb.from().offset(facing, bounds[i]);
@@ -518,7 +521,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
             // this is so scuffed im sorry for going back to kila level code :sob:
             // surely this won't cause the gc to blow up
-            AABBHighlightRenderer.addAABB(aabb, () -> isValid() && getWorld().isBlockLoaded(getPos(), false) && getWorld().getTileEntity(getPos()) == getHolder());
+            AABBHighlightRenderer.addAABB(aabb, () -> isValid() && getWorld().isBlockLoaded(getPos(), false) &&
+                    getWorld().getTileEntity(getPos()) == getHolder());
         } else {
             AABBHighlightRenderer.removeAABB(aabb);
         }
