@@ -7,19 +7,14 @@ import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
-import gregtech.api.nuclear.fission.CoolantRegistry;
-import gregtech.api.nuclear.fission.FissionFuelRegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
-import gregtech.api.unification.material.properties.CoolantProperty;
 import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.FissionFuelProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
@@ -419,18 +414,6 @@ public class CommonProxy {
 
         if (ConfigHolder.compat.removeSmeltingForEBFMetals) {
             ModHandler.removeSmeltingEBFMetals();
-        }
-
-        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
-            if (material.hasProperty(PropertyKey.FISSION_FUEL)) {
-                FissionFuelProperty prop = material.getProperty(PropertyKey.FISSION_FUEL);
-                FissionFuelRegistry.registerFuel(OreDictUnifier.get(OrePrefix.fuelRod, material), prop,
-                        OreDictUnifier.get(OrePrefix.fuelRodHotDepleted, material));
-            }
-            if (material.hasProperty(PropertyKey.COOLANT)) {
-                CoolantProperty prop = material.getProperty(PropertyKey.COOLANT);
-                CoolantRegistry.registerCoolant(material.getFluid(prop.getCoolantKey()), prop);
-            }
         }
     }
 
