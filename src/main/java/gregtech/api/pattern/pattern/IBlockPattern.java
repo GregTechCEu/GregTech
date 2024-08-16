@@ -1,6 +1,7 @@
 package gregtech.api.pattern.pattern;
 
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
@@ -11,6 +12,7 @@ import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IBlockPattern {
 
@@ -46,9 +48,11 @@ public interface IBlockPattern {
                            boolean isFlipped);
 
     /**
-     * Gets the default shape, if the multiblock does not specify one.
+     * Gets the default shape, if the multiblock does not specify one. Return null to represent the default shape does
+     * not exist.
      */
-    PreviewBlockPattern getDefaultShape();
+    @Nullable
+    MultiblockShapeInfo getDefaultShape();
 
     /**
      * Gets the internal pattern state, you should use the one returned from
@@ -65,9 +69,7 @@ public interface IBlockPattern {
     }
 
     /**
-     * Gets the cache, if you modify literally anything in the cache except clearing it(in which case you should use
-     * clearCache())
-     * then GTCEu is now licensed under ARR just for you, so close your IDE or else.
+     * Gets the cache, do not modify. Note that the cache stores everything in the AABB of the substructure, except for any() TraceabilityPredicates.
      * 
      * @return The cache for rapid pattern checking.
      */

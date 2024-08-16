@@ -9,11 +9,11 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pattern.pattern.PatternState;
-import gregtech.api.pattern.pattern.PreviewBlockPattern;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
@@ -73,12 +73,12 @@ import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -88,10 +88,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         MetaTileEntity mte = (MetaTileEntity) part;
         return ((long) multiblockPartSorter().apply(mte.getPos()) << 32) | mte.getPos().hashCode();
     });
-    /**
-     * Null until the first time {@link MultiblockControllerBase#getMatchingShapes()} is called, if it is not overriden
-     */
-    protected PreviewBlockPattern defaultPattern;
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
 
@@ -140,7 +136,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
-    // todo fix central monitor, charcoal pile igniter, (and vacuum freezer)
+    // todo fix central monitor, and vacuum freezer
     @NotNull
     protected abstract IBlockPattern createStructurePattern();
 
@@ -528,10 +524,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         part.registerAbilities(abilityList);
     }
 
-    protected void forEachFormed(String name, Consumer<BlockInfo> action) {
+    protected void forEachFormed(String name, BiConsumer<BlockInfo, GreggyBlockPos> action) {
         Long2ObjectMap<BlockInfo> cache = getSubstructure(name).getCache();
-        for (BlockInfo info : cache.values()) {
-            action.accept(info);
+        GreggyBlockPos pos = new GreggyBlockPos();
+        for (Long2ObjectMap.Entry<BlockInfo> entry : cache.long2ObjectEntrySet()) {
+            action.accept(entry.getValue(), pos.fromLong(entry.getLongKey()));
         }
     }
 
@@ -777,30 +774,23 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * The new(and better) way of getting shapes for in world, jei, and autobuild. Default impl just converts
      * {@link MultiblockControllerBase#getMatchingShapes()}, if not empty, to this. If getMatchingShapes is empty, uses
      * a default generated structure pattern, it's not very good which is why you should override this.
-     * 
-     * @param keyMap  A map for autobuild, or null if it is an in world or jei preview.
+     *
+     * @param keyMap  A map for autobuild, or null if it is an in world or jei preview. Note that for in world and jei
+     *                previews you can return a singleton list(only the first element will be used anyway).
      * @param hatches This is whether you should put hatches, JEI previews need hatches, but autobuild and in world
-     *                previews shouldn't(unless the hatch is necessary and only has one valid spot, such as EBF)
+     *                previews shouldn't(unless the hatch is necessary and only has one valid spot, such as EBF muffler)
      */
     // todo add use for the keyMap with the multiblock builder
-    public List<PreviewBlockPattern> getBuildableShapes(@Nullable Object2IntMap<String> keyMap, boolean hatches) {
+    // todo maybe add name arg for building substructures
+    public List<MultiblockShapeInfo> getBuildableShapes(@Nullable Object2IntMap<String> keyMap, boolean hatches) {
         List<MultiblockShapeInfo> infos = getMatchingShapes();
 
         // if there is no overriden getMatchingShapes() just return the default one
         if (infos.isEmpty()) {
-            if (defaultPattern == null) {
-
-                // only generate for the first pattern, if you have more than 1 pattern you better override this
-                defaultPattern = getSubstructure("MAIN").getDefaultShape();
-
-                if (defaultPattern == null) return Collections.emptyList();
-            }
-
-            return Collections.singletonList(defaultPattern);
+            return Collections.singletonList(getSubstructure("MAIN").getDefaultShape());
         }
 
-        // otherwise just convert them all the preview block pattern and return
-        return getMatchingShapes().stream().map(PreviewBlockPattern::new).collect(Collectors.toList());
+        return infos;
     }
 
     @SideOnly(Side.CLIENT)

@@ -153,7 +153,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         this.cleanroomFilter = type;
         this.cleanroomType = type.getCleanroomType();
 
-        forEachFormed(name, info -> {
+        forEachFormed(name, (info, pos) -> {
             TileEntity te = info.getTileEntity();
             if (!(te instanceof IGregTechTileEntity gtte)) return;
 

@@ -3,6 +3,7 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
@@ -172,7 +173,7 @@ public class ExpandablePattern implements IBlockPattern {
     }
 
     @Override
-    public PreviewBlockPattern getDefaultShape() {
+    public MultiblockShapeInfo getDefaultShape() {
         // todo undo
         return null;
     }

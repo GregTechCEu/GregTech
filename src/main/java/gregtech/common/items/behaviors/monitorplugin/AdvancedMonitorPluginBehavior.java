@@ -250,7 +250,8 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     if (entity.isStructureFormed("MAIN")) {
                         if (!isValid) {
                             if (entity.getSubstructure("MAIN").getPatternState().getState().isValid()) {
-                                validPos = entity.getSubstructure("MAIN").getCache().keySet().stream().map(BlockPos::fromLong)
+                                validPos = entity.getSubstructure("MAIN").getCache().keySet().stream()
+                                        .map(BlockPos::fromLong)
                                         .collect(Collectors.toSet());
                                 writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {
                                     buf.writeVarInt(validPos.size());

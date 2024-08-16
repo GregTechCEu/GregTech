@@ -3,7 +3,6 @@ package gregtech.api.pattern;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.pattern.PatternAisle;
-import gregtech.api.pattern.pattern.PreviewBlockPattern;
 import gregtech.api.util.BlockInfo;
 
 import net.minecraft.block.state.IBlockState;
@@ -12,18 +11,12 @@ import net.minecraft.util.EnumFacing;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-@Deprecated
 public class MultiblockShapeInfo {
-
-    /**
-     * Array of aisles, you should use {@link PreviewBlockPattern} instead
-     */
     protected final PatternAisle[] aisles;
     protected final Char2ObjectMap<BlockInfo> symbols;
 
@@ -34,16 +27,6 @@ public class MultiblockShapeInfo {
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    @ApiStatus.Internal
-    public PatternAisle[] getAisles() {
-        return aisles;
-    }
-
-    @ApiStatus.Internal
-    public Char2ObjectMap<BlockInfo> getSymbols() {
-        return symbols;
     }
 
     public static class Builder {

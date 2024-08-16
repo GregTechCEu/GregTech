@@ -3,6 +3,7 @@ package gregtech.api.pattern.pattern;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
@@ -296,7 +297,7 @@ public class BlockPattern implements IBlockPattern {
 
     @Override
     // todo get real
-    public PreviewBlockPattern getDefaultShape() {
+    public MultiblockShapeInfo getDefaultShape() {
         char[][][] pattern = new char[dimensions[2]][dimensions[1]][dimensions[0]];
 
         for (PatternAisle aisle : aisles) {
