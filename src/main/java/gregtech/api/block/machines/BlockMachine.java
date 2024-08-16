@@ -271,74 +271,72 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
 
         MetaTileEntity sampleMetaTileEntity = registry.getObjectById(stack.getItemDamage());
-        boolean skipFacing = false;
-        if (holder != null && sampleMetaTileEntity != null) {
-            // TODO Fix this
-            if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
-                ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
-            }
-            var stackTag = stack.getTagCompound();
-            if (stackTag != null && !stackTag.isEmpty()) {
-                if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
-                    var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
-                    String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
-                    if (!customName.isEmpty())
-                        ((MetaTileEntityHolder) holder).setCustomName(customName);
+        if (holder == null || sampleMetaTileEntity == null)
+            return;
 
-                    var mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
-                    List<String> removed = new ArrayList<>();
-                    for (var key : mteTag.getKeySet()) {
-                        var trait = sampleMetaTileEntity.getMTETrait(key);
-                        if (trait == null) continue;
-
-                        removed.add(key);
-                    }
-                    removed.forEach(mteTag::removeTag);
-                    stackTag = mteTag;
-                    skipFacing = true;
-                } else {
-                    sampleMetaTileEntity.initFromItemStackData(stackTag);
-                    stackTag = null;
-                }
-            }
-            MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity, stackTag);
-            if (!skipFacing) {
-                if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
-                    metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
-                } else {
-                    metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
-                }
-                if (metaTileEntity instanceof MultiblockControllerBase multi) {
-                    if (multi.allowsExtendedFacing()) {
-                        EnumFacing frontFacing = multi.getFrontFacing();
-                        if (frontFacing == EnumFacing.UP) {
-                            multi.setUpwardsFacing(placer.getHorizontalFacing());
-                        } else if (frontFacing == EnumFacing.DOWN) {
-                            multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
-                        }
-                    }
-                }
-            }
-            if (Mods.AppliedEnergistics2.isModLoaded()) {
-                if (metaTileEntity.getProxy() != null) {
-                    metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
-                }
-            }
-
-            // Color machines on place if holding spray can in off-hand
-            if (placer instanceof EntityPlayer) {
-                ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i = 0; i < EnumDyeColor.values().length; i++) {
-                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
-                                pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
-                        break;
-                    }
-                }
-            }
-
-            metaTileEntity.onPlacement(placer);
+        // TODO Fix this
+        if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
+            ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
         }
+        var stackTag = stack.getTagCompound();
+        NBTTagCompound mteTag = null;
+        if (stackTag != null && !stackTag.isEmpty()) {
+            if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
+                var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
+                String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
+                if (!customName.isEmpty())
+                    ((MetaTileEntityHolder) holder).setCustomName(customName);
+
+                mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
+                List<String> removed = new ArrayList<>();
+                for (var key : mteTag.getKeySet()) {
+                    var trait = sampleMetaTileEntity.getMTETrait(key);
+                    if (trait == null) continue;
+
+                    removed.add(key);
+                }
+                removed.forEach(mteTag::removeTag);
+            } else {
+                sampleMetaTileEntity.initFromItemStackData(stackTag);
+            }
+        }
+        MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity, mteTag);
+        if (mteTag == null) {
+            if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
+                metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
+            } else {
+                metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+            }
+            if (metaTileEntity instanceof MultiblockControllerBase multi) {
+                if (multi.allowsExtendedFacing()) {
+                    EnumFacing frontFacing = multi.getFrontFacing();
+                    if (frontFacing == EnumFacing.UP) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing());
+                    } else if (frontFacing == EnumFacing.DOWN) {
+                        multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
+                    }
+                }
+            }
+        }
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
+            if (metaTileEntity.getProxy() != null) {
+                metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
+            }
+        }
+
+        // Color machines on place if holding spray can in off-hand
+        if (placer instanceof EntityPlayer) {
+            ItemStack offhand = placer.getHeldItemOffhand();
+            for (int i = 0; i < EnumDyeColor.values().length; i++) {
+                if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                    MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
+                            pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
+                    break;
+                }
+            }
+        }
+
+        metaTileEntity.onPlacement(placer);
     }
 
     @Override
