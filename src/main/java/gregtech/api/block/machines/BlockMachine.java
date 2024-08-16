@@ -271,12 +271,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
 
         MetaTileEntity sampleMetaTileEntity = registry.getObjectById(stack.getItemDamage());
+        boolean skipFacing = false;
         if (holder != null && sampleMetaTileEntity != null) {
             // TODO Fix this
             if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
                 ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
             }
-            MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             var stackTag = stack.getTagCompound();
             if (stackTag != null && !stackTag.isEmpty()) {
                 if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
@@ -288,29 +288,34 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     var mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
                     List<String> removed = new ArrayList<>();
                     for (var key : mteTag.getKeySet()) {
-                        var trait = metaTileEntity.getMTETrait(key);
+                        var trait = sampleMetaTileEntity.getMTETrait(key);
                         if (trait == null) continue;
 
                         removed.add(key);
                     }
                     removed.forEach(mteTag::removeTag);
-                    metaTileEntity.readFromNBT(mteTag);
+                    stackTag = mteTag;
+                    skipFacing = true;
                 } else {
-                    metaTileEntity.initFromItemStackData(stackTag);
+                    sampleMetaTileEntity.initFromItemStackData(stackTag);
+                    stackTag = null;
                 }
             }
-            if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
-                metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
-            } else {
-                metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
-            }
-            if (metaTileEntity instanceof MultiblockControllerBase multi) {
-                if (multi.allowsExtendedFacing()) {
-                    EnumFacing frontFacing = multi.getFrontFacing();
-                    if (frontFacing == EnumFacing.UP) {
-                        multi.setUpwardsFacing(placer.getHorizontalFacing());
-                    } else if (frontFacing == EnumFacing.DOWN) {
-                        multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
+            MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity, stackTag);
+            if (!skipFacing) {
+                if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
+                    metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
+                } else {
+                    metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
+                }
+                if (metaTileEntity instanceof MultiblockControllerBase multi) {
+                    if (multi.allowsExtendedFacing()) {
+                        EnumFacing frontFacing = multi.getFrontFacing();
+                        if (frontFacing == EnumFacing.UP) {
+                            multi.setUpwardsFacing(placer.getHorizontalFacing());
+                        } else if (frontFacing == EnumFacing.DOWN) {
+                            multi.setUpwardsFacing(placer.getHorizontalFacing().getOpposite());
+                        }
                     }
                 }
             }
