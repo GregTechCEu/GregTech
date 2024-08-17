@@ -209,6 +209,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * Gets the inactive texture for this part, used for when the multiblock is unformed and you want the part to keep
      * its overlay. Return null to ignore and make hatches go back to their default textures on unform.
+     * This is currently pretty buggy but this is like minimum priority stuff so i cant really be
+     * bothered to fix especially about rendering.
      */
     public @Nullable ICubeRenderer getInactiveTexture(IMultiblockPart part) {
         return null;

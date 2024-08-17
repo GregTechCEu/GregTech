@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.primitive;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -12,14 +10,11 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.*;
-import gregtech.api.pattern.pattern.BlockPattern;
-import gregtech.api.pattern.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
 import gregtech.api.pattern.pattern.IBlockPattern;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.Mods;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
@@ -39,7 +34,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -51,6 +51,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -64,7 +65,6 @@ import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -250,7 +250,10 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!getWorld().isRemote && !playerIn.isSneaking()) {
+        // todo add general direction lang(applies for cleanroom as well)
+        if (!playerIn.isSneaking()) {
+            if (getWorld().isRemote) return true;
+
             RelativeDirection dir = facingMap.getOrDefault(facing, RelativeDirection.DOWN);
             bounds[dir.ordinal()] += 1;
             if (bounds[dir.ordinal()] > (dir == RelativeDirection.DOWN ? MAX_DEPTH : MAX_RADIUS)) {
@@ -321,6 +324,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         data.setInteger("progressTime", this.progressTime);
         data.setInteger("maxProgress", this.maxProgress);
         data.setBoolean("isActive", this.isActive);
+        data.setIntArray("bounds", this.bounds);
         return data;
     }
 
@@ -330,6 +334,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         this.progressTime = data.getInteger("progressTime");
         this.maxProgress = data.getInteger("maxProgress");
         this.isActive = data.getBoolean("isActive");
+        if (data.hasKey("bounds")) System.arraycopy(data.getIntArray("bounds"), 0, bounds, 0, 6);
         updateFacingMap();
     }
 

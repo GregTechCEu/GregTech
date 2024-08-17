@@ -659,6 +659,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger("cleanAmount", this.cleanAmount);
+        data.setIntArray("bounds", bounds);
         return this.cleanroomLogic.writeToNBT(data);
     }
 
@@ -667,6 +668,15 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         super.readFromNBT(data);
         this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
+        if (data.hasKey("bounds")) {
+            System.arraycopy(data.getIntArray("bounds"), 0, bounds, 0, 6);
+        } else if (data.hasKey("lDist")) {
+            bounds[1] = data.getInteger("hDist");
+            bounds[2] = data.getInteger("lDist");
+            bounds[3] = data.getInteger("rDist");
+            bounds[4] = data.getInteger("fDist");
+            bounds[5] = data.getInteger("bDist");
+        }
         updateFacingMap();
     }
 

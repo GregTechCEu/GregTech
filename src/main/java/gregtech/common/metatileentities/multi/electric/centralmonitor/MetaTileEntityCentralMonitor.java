@@ -405,7 +405,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             slice.append('B');
             end.append('A');
         }
-        return FactoryBlockPattern.start(UP, BACK, RIGHT)
+        return FactoryBlockPattern.start(LEFT, BACK, UP)
                 .aisle(start.toString())
                 .aisle(slice.toString()).setRepeatable(3, MAX_WIDTH)
                 .aisle(end.toString())
