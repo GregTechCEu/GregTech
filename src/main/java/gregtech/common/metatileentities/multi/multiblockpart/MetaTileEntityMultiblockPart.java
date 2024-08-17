@@ -253,7 +253,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         controllers.remove(index);
 
         // if the last controller changed, sync it
-        if (index == (controllers.size() - 1)) {
+        if (index == controllers.size()) {
             syncLastController();
         }
 

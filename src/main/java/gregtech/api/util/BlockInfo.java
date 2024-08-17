@@ -1,5 +1,7 @@
 package gregtech.api.util;
 
+import gregtech.api.pattern.TraceabilityPredicate;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -20,7 +22,7 @@ public class BlockInfo {
 
     private final IBlockState blockState;
     private final TileEntity tileEntity;
-    private final Object info;
+    private final TraceabilityPredicate predicate;
 
     public BlockInfo(Block block) {
         this(block.getDefaultState());
@@ -34,10 +36,12 @@ public class BlockInfo {
         this(blockState, tileEntity, null);
     }
 
-    public BlockInfo(IBlockState blockState, TileEntity tileEntity, Object info) {
+    public BlockInfo(IBlockState blockState, TileEntity tileEntity, TraceabilityPredicate predicate) {
+        // the predicate is an extremely scuffed way of displaying candidates during preview
+        // ideally you would bind the predicate to the char in the code but uh yeah
         this.blockState = blockState;
         this.tileEntity = tileEntity;
-        this.info = info;
+        this.predicate = predicate;
         Preconditions.checkArgument(tileEntity == null || blockState.getBlock().hasTileEntity(blockState),
                 "Cannot create block info with tile entity for block not having it");
     }
@@ -50,8 +54,8 @@ public class BlockInfo {
         return tileEntity;
     }
 
-    public Object getInfo() {
-        return info;
+    public TraceabilityPredicate getPredicate() {
+        return predicate;
     }
 
     public void apply(World world, BlockPos pos) {

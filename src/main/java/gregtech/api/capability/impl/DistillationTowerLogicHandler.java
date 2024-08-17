@@ -63,7 +63,7 @@ public class DistillationTowerLogicHandler {
      * @param structurePattern the structure pattern
      */
     public void determineLayerCount(@NotNull BlockPattern structurePattern) {
-        this.setLayerCount(structurePattern.formedRepetitionCount[1] + 1);
+        this.setLayerCount(structurePattern.getRepetitionCount(1) + 1);
     }
 
     /**

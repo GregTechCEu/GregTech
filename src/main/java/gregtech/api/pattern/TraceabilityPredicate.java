@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 public class TraceabilityPredicate {
 
     // Allow any block.
-    public static final TraceabilityPredicate ANY = new TraceabilityPredicate((state) -> true);
+    public static final TraceabilityPredicate ANY = new TraceabilityPredicate((worldState, patternState) -> true);
     // Allow the air block.
     public static final TraceabilityPredicate AIR = new TraceabilityPredicate(
-            blockWorldState -> blockWorldState.getBlockState().getBlock().isAir(blockWorldState.getBlockState(),
-                    blockWorldState.getWorld(), blockWorldState.getPos()));
+            (worldState, patternState) -> worldState.getBlockState().getBlock().isAir(worldState.getBlockState(),
+                    worldState.getWorld(), worldState.getPos()));
     // Allow all heating coils, and require them to have the same type.
     public static Supplier<TraceabilityPredicate> HEATING_COILS = () -> new TraceabilityPredicate(
             (worldState, patternState) -> GregTechAPI.HEATING_COILS.containsKey(worldState.getBlockState()),
@@ -43,7 +43,6 @@ public class TraceabilityPredicate {
                             .addTooltips("gregtech.multiblock.pattern.error.coils");
 
     public final List<SimplePredicate> common = new ArrayList<>();
-    public final List<SimplePredicate> limited = new ArrayList<>();
     protected boolean isCenter;
     protected boolean hasAir = false;
     protected boolean isSingle = true;
@@ -52,7 +51,6 @@ public class TraceabilityPredicate {
 
     public TraceabilityPredicate(TraceabilityPredicate predicate) {
         common.addAll(predicate.common);
-        limited.addAll(predicate.limited);
         isCenter = predicate.isCenter;
         hasAir = predicate.hasAir;
         isSingle = predicate.isSingle;
@@ -77,10 +75,6 @@ public class TraceabilityPredicate {
         this(predicate, null);
     }
 
-    public boolean isSingle() {
-        return isSingle;
-    }
-
     /**
      * Mark it as the controller of this multi. Normally you won't call it yourself. Use
      * {@link MultiblockControllerBase#selfPredicate()} plz.
@@ -95,7 +89,8 @@ public class TraceabilityPredicate {
     }
 
     public TraceabilityPredicate sort() {
-        limited.sort(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount)));
+        // reverse so that all min layer and global counts are at the front
+        common.sort(Collections.reverseOrder(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount))));
         return this;
     }
 
@@ -108,13 +103,6 @@ public class TraceabilityPredicate {
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT && tips.length > 0) {
             List<String> tooltips = Arrays.stream(tips).collect(Collectors.toList());
             common.forEach(predicate -> {
-                if (predicate.candidates == null) return;
-                if (predicate.toolTips == null) {
-                    predicate.toolTips = new ArrayList<>();
-                }
-                predicate.toolTips.addAll(tooltips);
-            });
-            limited.forEach(predicate -> {
                 if (predicate.candidates == null) return;
                 if (predicate.toolTips == null) {
                     predicate.toolTips = new ArrayList<>();
@@ -135,9 +123,6 @@ public class TraceabilityPredicate {
         for (TraceabilityPredicate.SimplePredicate common : common) {
             candidates.add(common.getCandidates());
         }
-        for (TraceabilityPredicate.SimplePredicate limited : limited) {
-            candidates.add(limited.getCandidates());
-        }
         return candidates;
     }
 
@@ -155,11 +140,7 @@ public class TraceabilityPredicate {
      * Set the minimum number of candidate blocks.
      */
     public TraceabilityPredicate setMinGlobalLimited(int min) {
-        limited.addAll(common);
-        common.clear();
-        for (SimplePredicate predicate : limited) {
-            predicate.minGlobalCount = min;
-        }
+        common.forEach(p -> p.minGlobalCount = min);
         return this;
     }
 
@@ -171,11 +152,7 @@ public class TraceabilityPredicate {
      * Set the maximum number of candidate blocks.
      */
     public TraceabilityPredicate setMaxGlobalLimited(int max) {
-        limited.addAll(common);
-        common.clear();
-        for (SimplePredicate predicate : limited) {
-            predicate.maxGlobalCount = max;
-        }
+        common.forEach(p -> p.maxGlobalCount = max);
         return this;
     }
 
@@ -187,11 +164,7 @@ public class TraceabilityPredicate {
      * Set the minimum number of candidate blocks for each aisle layer.
      */
     public TraceabilityPredicate setMinLayerLimited(int min) {
-        limited.addAll(common);
-        common.clear();
-        for (SimplePredicate predicate : limited) {
-            predicate.minLayerCount = min;
-        }
+        common.forEach(p -> p.minLayerCount = min);
         return this;
     }
 
@@ -203,11 +176,7 @@ public class TraceabilityPredicate {
      * Set the maximum number of candidate blocks for each aisle layer.
      */
     public TraceabilityPredicate setMaxLayerLimited(int max) {
-        limited.addAll(common);
-        common.clear();
-        for (SimplePredicate predicate : limited) {
-            predicate.maxLayerCount = max;
-        }
+        common.forEach(p -> p.maxLayerCount = max);
         return this;
     }
 
@@ -228,19 +197,13 @@ public class TraceabilityPredicate {
      * Set the number of it appears in JEI pages. It only affects JEI preview. (The specific number)
      */
     public TraceabilityPredicate setPreviewCount(int count) {
-        common.forEach(predicate -> predicate.previewCount = count);
-        limited.forEach(predicate -> predicate.previewCount = count);
+        common.forEach(p -> p.previewCount = count);
         return this;
     }
 
-    public boolean test(BlockWorldState blockWorldState, PatternState info, Object2IntMap<SimplePredicate> globalCache,
+    public boolean test(BlockWorldState worldState, PatternState patternState, Object2IntMap<SimplePredicate> globalCache,
                         Object2IntMap<SimplePredicate> layerCache) {
-        for (SimplePredicate predicate : limited) {
-            if (predicate.testLimited(blockWorldState, info, globalCache, layerCache)) {
-                return true;
-            }
-        }
-        return common.stream().anyMatch(predicate -> predicate.test(blockWorldState, info));
+        return common.stream().anyMatch(predicate -> predicate.testLimited(worldState, patternState, globalCache, layerCache));
     }
 
     public TraceabilityPredicate or(TraceabilityPredicate other) {
@@ -253,7 +216,6 @@ public class TraceabilityPredicate {
             }
             newPredicate.hasAir = newPredicate.hasAir || this == AIR || other == AIR;
             newPredicate.common.addAll(other.common);
-            newPredicate.limited.addAll(other.limited);
             return newPredicate;
         }
         return this;
@@ -323,10 +285,6 @@ public class TraceabilityPredicate {
             return result;
         }
 
-        public boolean test(BlockWorldState state, PatternState info) {
-            return predicate.test(state, info);
-        }
-
         public boolean testLimited(BlockWorldState worldState, PatternState patternState,
                                    Object2IntMap<SimplePredicate> globalCache,
                                    Object2IntMap<SimplePredicate> layerCache) {
@@ -335,7 +293,7 @@ public class TraceabilityPredicate {
 
         public boolean testGlobal(BlockWorldState worldState, PatternState patternState,
                                   Object2IntMap<SimplePredicate> cache) {
-            if (minGlobalCount == -1 && maxGlobalCount == -1 || cache == null) return true;
+            if (minGlobalCount == -1 && maxGlobalCount == -1 || cache == null) return predicate.test(worldState, patternState);
 
             boolean base = predicate.test(worldState, patternState);
             int count = cache.getInt(this);
@@ -348,7 +306,7 @@ public class TraceabilityPredicate {
 
         public boolean testLayer(BlockWorldState worldState, PatternState patternState,
                                  Object2IntMap<SimplePredicate> cache) {
-            if (minLayerCount == -1 && maxLayerCount == -1 || cache == null) return true;
+            if (minLayerCount == -1 && maxLayerCount == -1 || cache == null) return predicate.test(worldState, patternState);
 
             boolean base = predicate.test(worldState, patternState);
             int count = cache.getInt(this);

@@ -429,7 +429,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 TraceabilityPredicate predicate = patterns[currentRendererPage].predicateMap.get(this.selected);
                 if (predicate != null) {
                     predicates.addAll(predicate.common);
-                    predicates.addAll(predicate.limited);
                     predicates.removeIf(p -> p.candidates == null);
                     this.father = predicate;
                     setItemStackGroup();
