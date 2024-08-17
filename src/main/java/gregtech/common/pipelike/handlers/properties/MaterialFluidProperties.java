@@ -1,11 +1,9 @@
 package gregtech.common.pipelike.handlers.properties;
 
 import gregtech.api.capability.IPropertyFluidFilter;
-import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
-import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.ThroughputLogic;
@@ -15,7 +13,6 @@ import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -29,7 +26,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +44,9 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     private final Set<FluidAttribute> containableAttributes = new ObjectOpenHashSet<>();
     private final EnumSet<FluidState> containableStates = EnumSet.of(FluidState.LIQUID);
 
-    private int maxFluidTemperature;
+    private final int maxFluidTemperature;
     private final int minFluidTemperature;
+    private int materialMeltTemperature;
 
     private final long baseThroughput;
     private final float priority;
@@ -164,20 +161,7 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
         if (!properties.hasProperty(PropertyKey.WOOD)) {
             properties.ensureSet(PropertyKey.INGOT, true);
         }
-
-        if (this.maxFluidTemperature == 0 && properties.hasProperty(PropertyKey.FLUID)) {
-            // autodetermine melt temperature from registered fluid
-            FluidProperty prop = properties.getProperty(PropertyKey.FLUID);
-            Fluid fluid = prop.getStorage().get(FluidStorageKeys.LIQUID);
-            if (fluid == null) {
-                FluidBuilder builder = prop.getStorage().getQueuedBuilder(FluidStorageKeys.LIQUID);
-                if (builder != null) {
-                    this.maxFluidTemperature = builder.currentTemp();
-                }
-            } else {
-                this.maxFluidTemperature = fluid.getTemperature();
-            }
-        }
+        this.materialMeltTemperature = MaterialEnergyProperties.computeMaterialMeltTemperature(properties);
     }
 
     @Override
@@ -198,9 +182,10 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
             data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput))
-                    .setLogicEntry(FluidContainmentLogic.INSTANCE.getWith(containableStates, containableAttributes))
+                    .setLogicEntry(FluidContainmentLogic.INSTANCE.getWith(containableStates, containableAttributes,
+                            maxFluidTemperature))
                     .setLogicEntry(TemperatureLogic.INSTANCE
-                            .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), maxFluidTemperature,
+                            .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature,
                                     minFluidTemperature, 50 * pipe.material(), null));
         }
     }

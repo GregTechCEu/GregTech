@@ -38,6 +38,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     private @Nullable PipeTileEntity tile;
 
     private final EnumMap<EnumFacing, Wrapper> wrappers = new EnumMap<>(EnumFacing.class);
+    private final WorldPipeNetNode node;
     private final IFluidTankProperties[] properties;
 
     private boolean transferring = false;
@@ -45,6 +46,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> FluidCapabilityObject(@NotNull N net,
                                                                                           WorldPipeNetNode node) {
         this.net = net;
+        this.node = node;
         properties = new IFluidTankProperties[node.getData().getLogicEntryDefaultable(ChannelCountLogic.INSTANCE)
                 .getValue()];
         Arrays.fill(properties, this);
@@ -101,6 +103,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         var guide = getGuide(FluidTraverseData::new, new FluidTestObject(resource), resource.amount, !doFill, side);
         if (guide == null) return 0;
         int accepted = (int) TraverseHelpers.traverseFlood(guide.getData(), guide.getPaths(), guide.getFlow());
+        guide.reportConsumedFlow(accepted);
 
         this.transferring = false;
         return accepted;
@@ -126,6 +129,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         if (tile == null || inputDisallowed(side)) return null;
         SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        D data = provider.of(net, testObject, simulator, tick, tile.getPos(), side);
 
         LongConsumer flowReport = null;
         Wrapper wrapper = this.wrappers.get(side);
@@ -138,10 +142,9 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                     return null;
                 }
                 flow = Math.min(limit, flow);
-                flowReport = l -> internalBuffer.consumeFlowLimit(testObject, net, l, tick, simulator);
+                flowReport = l -> data.consumeFlowLimit(internalBuffer, node, l);
             }
         }
-        D data = provider.of(net, testObject, simulator, tick, tile.getPos(), side);
         return new TraverseGuide<>(data, () -> getPaths(data), flow, flowReport);
     }
 

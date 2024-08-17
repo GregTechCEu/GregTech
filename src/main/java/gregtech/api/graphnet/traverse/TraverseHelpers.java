@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.function.LongUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -70,7 +70,7 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> data.consumeFlowLimit(edge, sourceNode, targetNode, flow),
+                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow),
                         data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
@@ -118,7 +118,7 @@ public final class TraverseHelpers {
             List<N> nodes = path.getOrderedNodes();
             List<E> edges = path.getOrderedEdges();
 
-            List<Consumer<Long>> overflowReporters = isFlow ? new ObjectArrayList<>() : null;
+            List<LongUnaryOperator> overflowReporters = isFlow ? new ObjectArrayList<>() : null;
             assert nodes.size() == edges.size() + 1;
 
             FlowConsumptionStack stack = isFlow ?
@@ -139,26 +139,28 @@ public final class TraverseHelpers {
                 if (isFlow) {
                     AbstractNetFlowEdge flowEdge = (AbstractNetFlowEdge) edge;
                     long limit = data.getFlowLimit(flowEdge);
-                    if (pathFlow > limit) {
-                        long overflow = pathFlow - limit;
+                    long overflow = pathFlow - limit;
+                    if (overflow > 0) {
                         pathFlow = limit;
                         overflowReporters.add(reduction -> {
                             long finalOverflow = overflow - reduction;
-                            if (finalOverflow > 0) overflowListener.accept(targetNode, finalOverflow);
+                            if (finalOverflow > 0) {
+                                overflowListener.accept(targetNode, finalOverflow);
+                                return finalOverflow;
+                            }
+                            return 0;
                         });
                     }
-                    stack.add(flow -> data.consumeFlowLimit(flowEdge, sourceNode, targetNode, flow),
+                    stack.add(flow -> data.consumeFlowLimit(flowEdge, targetNode, flow),
                             data.traverseToNode(targetNode, pathFlow));
                     pathFlow = stack.applyLatestLossFunction(pathFlow);
                 }
-
-                if (pathFlow <= 0) continue pathloop;
             }
             long accepted = data.finalizeAtDestination(nodes.get(edges.size()), pathFlow);
             long unaccepted = pathFlow - accepted;
             if (isFlow) {
-                availableFlow -= stack.consumeWithEndValue(accepted);
-                overflowReporters.forEach((c) -> c.accept(unaccepted));
+                availableFlow -= stack.consumeWithEndValue(accepted) +
+                        overflowReporters.stream().mapToLong(u -> u.applyAsLong(unaccepted)).sum();
             }
             if (!simulate) pathTraverseCalls.forEach(Runnable::run);
 
@@ -277,7 +279,7 @@ public final class TraverseHelpers {
                 } else continue pathloop;
 
                 pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-                stack.add(flow -> data.consumeFlowLimit(edge, sourceNode, targetNode, flow),
+                stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow),
                         data.traverseToNode(targetNode, pathFlow));
                 pathFlow = stack.applyLatestLossFunction(pathFlow);
 
@@ -461,7 +463,7 @@ public final class TraverseHelpers {
             } else return strict ? -1 : 0;
 
             pathFlow = Math.min(data.getFlowLimit(edge), pathFlow);
-            stack.add(flow -> data.consumeFlowLimit(edge, sourceNode, targetNode, flow),
+            stack.add(flow -> data.consumeFlowLimit(edge, targetNode, flow),
                     data.traverseToNode(targetNode, pathFlow));
             pathFlow = stack.applyLatestLossFunction(pathFlow);
 

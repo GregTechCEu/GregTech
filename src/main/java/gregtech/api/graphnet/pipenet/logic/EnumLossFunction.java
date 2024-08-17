@@ -94,9 +94,10 @@ public enum EnumLossFunction {
         @Override
         public float applyLoss(float value, float factorX, float factorY, int timePassed) {
             for (int i = 0; i < timePassed; i++) {
-                value -= factorX * Math.pow(value, factorY);
+                if (value < 0) value += factorX * Math.pow(-value, factorY);
+                else if (value > 0) value -= factorX * Math.pow(value, factorY);
             }
-            return 0;
+            return tolerate(value);
         }
     };
 

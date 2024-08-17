@@ -17,6 +17,7 @@ import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.unification.material.Material;
 import gregtech.client.particle.GTOverheatParticle;
+import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
@@ -477,7 +478,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                             buf.writeBoolean(r);
                             buf.writeBoolean(f);
                             if (!r) {
-                                e.encode(buf);
+                                e.encode(buf, f);
                             }
                         }));
                 this.listeners.add(listener);
@@ -585,7 +586,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 } else {
                     if (fullChange) {
                         NetLogicEntry<?, ?> logic = NetLogicRegistry.getSupplierErroring(identifier).get();
-                        logic.decode(buf, fullChange);
+                        logic.decode(buf, true);
                         this.netLogicDatas.compute(networkID, (k, v) -> {
                             if (v == null) v = new NetLogicData();
                             v.setLogicEntry(logic);
@@ -595,7 +596,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                         NetLogicData data = this.netLogicDatas.get(networkID);
                         if (data != null) {
                             NetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
-                            if (entry != null) entry.decode(buf);
+                            if (entry != null) entry.decode(buf, false);
+                            data.markLogicEntryAsUpdated(entry, false);
                         } else return;
                     }
                     if (identifier.equals(TemperatureLogic.INSTANCE.getName())) {
@@ -635,6 +637,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 IPipeStructure structure = this.getStructure();
                 overheatParticle = new GTOverheatParticle(this, logic, structure.getPipeBoxes(this),
                         structure instanceof IInsulatable i && i.isInsulated());
+                GTParticleManager.INSTANCE.addEffect(overheatParticle);
             }
         } else {
             overheatParticle.setTemperatureLogic(logic);

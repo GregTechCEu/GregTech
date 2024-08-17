@@ -418,7 +418,20 @@ public class FluidBuilder {
     }
 
     private void determineTemperature(@Nullable Material material) {
-        if (temperature != INFER_TEMPERATURE) return;
+        this.temperature = getDeterminedTemperature(material, null);
+    }
+
+    public int getDeterminedTemperature(@Nullable Material material, @Nullable FluidStorageKey key) {
+        FluidState state = this.state;
+        if (state == null) {
+            if (key != null && key.getDefaultFluidState() != null) {
+                state = key.getDefaultFluidState();
+            } else {
+                state = FluidState.LIQUID; // default fallback
+            }
+        }
+        int temperature = this.temperature;
+        if (temperature != INFER_TEMPERATURE) return temperature;
         if (material == null) {
             temperature = ROOM_TEMPERATURE;
         } else {
@@ -447,6 +460,7 @@ public class FluidBuilder {
                 };
             }
         }
+        return temperature;
     }
 
     private void determineColor(@Nullable Material material) {

@@ -64,13 +64,13 @@ public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
     /**
      * Allows for consuming more than just the edge flow limits on a consumption event. Must always consume the correct
      * amount of edge flow or things will break.
-     * 
+     *
      * @param edge        the edge to consume along.
      * @param targetNode  the target node of the edge.
      * @param consumption the amount to consume from the edge's flow limit.
      */
     @MustBeInvokedByOverriders
-    default void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode,
+    default void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode,
                                   long consumption) {
         edge.consumeFlowLimit(this.getTestObject(), this.getGraphNet(), consumption, this.getQueryTick(),
                 this.getSimulatorKey());

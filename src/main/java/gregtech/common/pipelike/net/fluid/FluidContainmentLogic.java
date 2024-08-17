@@ -12,6 +12,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +25,8 @@ public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentL
 
     public static final FluidContainmentLogic INSTANCE = new FluidContainmentLogic().contain(FluidState.LIQUID);
 
+    private int maximumTemperature;
+
     private final Set<ResourceLocation> containableAttributes = new ObjectOpenHashSet<>();
     private @NotNull EnumSet<FluidState> containableStates = EnumSet.noneOf(FluidState.class);
 
@@ -31,31 +34,38 @@ public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentL
         super("FluidContainment");
     }
 
-    public FluidContainmentLogic getWith(Collection<FluidState> states, Collection<FluidAttribute> attributes) {
+    public @NotNull FluidContainmentLogic getWith(Collection<FluidState> states,
+                                                  @NotNull Collection<FluidAttribute> attributes,
+                                                  int maximumTemperature) {
         FluidContainmentLogic logic = getNew();
         logic.containableStates.addAll(states);
         for (FluidAttribute attribute : attributes) {
             logic.contain(attribute);
         }
+        logic.maximumTemperature = maximumTemperature;
         return logic;
     }
 
+    @Contract("_ -> this")
     public FluidContainmentLogic contain(FluidState state) {
         this.containableStates.add(state);
         return this;
     }
 
-    public FluidContainmentLogic contain(FluidAttribute attribute) {
+    @Contract("_ -> this")
+    public FluidContainmentLogic contain(@NotNull FluidAttribute attribute) {
         this.containableAttributes.add(attribute.getResourceLocation());
         return this;
     }
 
+    @Contract("_ -> this")
     public FluidContainmentLogic notContain(FluidState state) {
         this.containableStates.remove(state);
         return this;
     }
 
-    public FluidContainmentLogic notContain(FluidAttribute attribute) {
+    @Contract("_ -> this")
+    public FluidContainmentLogic notContain(@NotNull FluidAttribute attribute) {
         this.containableAttributes.remove(attribute.getResourceLocation());
         return this;
     }
@@ -64,8 +74,16 @@ public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentL
         return this.containableStates.contains(state);
     }
 
-    public boolean contains(FluidAttribute attribute) {
+    public boolean contains(@NotNull FluidAttribute attribute) {
         return this.containableAttributes.contains(attribute.getResourceLocation());
+    }
+
+    public void setMaximumTemperature(int maximumTemperature) {
+        this.maximumTemperature = maximumTemperature;
+    }
+
+    public int getMaximumTemperature() {
+        return maximumTemperature;
     }
 
     @Override

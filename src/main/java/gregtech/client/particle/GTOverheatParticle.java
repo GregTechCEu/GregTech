@@ -175,9 +175,7 @@ public class GTOverheatParticle extends GTBloomParticle {
 
     public void updatePipeBoxes(@NotNull List<AxisAlignedBB> pipeBoxes) {
         this.pipeBoxes = pipeBoxes;
-        for (AxisAlignedBB cuboid : this.pipeBoxes) {
-            cuboid.expand(0.001, 0.001, 0.001);
-        }
+        pipeBoxes.replaceAll(axisAlignedBB -> axisAlignedBB.expand(0.001, 0.001, 0.001));
     }
 
     public void setTemperatureLogic(@NotNull TemperatureLogic logic) {
@@ -263,7 +261,8 @@ public class GTOverheatParticle extends GTBloomParticle {
     public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
         if (this.insulated) return false;
         for (AxisAlignedBB cuboid : pipeBoxes) {
-            if (!context.camera().isBoundingBoxInFrustum(cuboid)) {
+            if (!context.camera().isBoxInFrustum(cuboid.minX + posX, cuboid.minY + posY, cuboid.minZ + posZ,
+                    cuboid.maxX + posX, cuboid.maxY + posY, cuboid.maxZ + posZ)) {
                 return false;
             }
         }

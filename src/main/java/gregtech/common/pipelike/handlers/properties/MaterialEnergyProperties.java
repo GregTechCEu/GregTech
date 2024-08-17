@@ -50,7 +50,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     private final long voltageLimit;
     private final long amperageLimit;
-    private int temperatureLimit;
+    private int materialMeltTemperature;
     private final long lossPerAmp;
     private final int superconductorCriticalTemperature;
 
@@ -60,18 +60,15 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
      * @param voltageLimit                      the voltage limit for the cable
      * @param amperageLimit                     the base amperage for the cable.
      * @param lossPerAmp                        the base loss per amp per block traveled.
-     * @param temperatureLimit                  the melt temperature of the cable. If zero, autogeneration will be
-     *                                          attempted.
      * @param superconductorCriticalTemperature the superconductor temperature. When the temperature is at or below
      *                                          superconductor temperature, loss will be treated as zero. A
      *                                          superconductor
      *                                          temperature of 0 or less will be treated as not a superconductor.
      */
-    public MaterialEnergyProperties(long voltageLimit, long amperageLimit, long lossPerAmp, int temperatureLimit,
+    public MaterialEnergyProperties(long voltageLimit, long amperageLimit, long lossPerAmp,
                                     int superconductorCriticalTemperature) {
         this.voltageLimit = voltageLimit;
         this.amperageLimit = amperageLimit;
-        this.temperatureLimit = temperatureLimit;
         this.lossPerAmp = lossPerAmp;
         this.superconductorCriticalTemperature = superconductorCriticalTemperature;
     }
@@ -80,19 +77,14 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
         return voltageLimit;
     }
 
-    public static MaterialEnergyProperties createT(long voltageLimit, long amperageLimit, long lossPerAmp,
-                                                   int temperatureLimit) {
-        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, temperatureLimit, 0);
-    }
-
-    public static MaterialEnergyProperties createS(long voltageLimit, long amperageLimit, long lossPerAmp,
-                                                   int superconductorCriticalTemperature) {
-        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, 0,
+    public static MaterialEnergyProperties create(long voltageLimit, long amperageLimit, long lossPerAmp,
+                                                  int superconductorCriticalTemperature) {
+        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp,
                 superconductorCriticalTemperature);
     }
 
     public static MaterialEnergyProperties create(long voltageLimit, long amperageLimit, long lossPerAmp) {
-        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, 0, 0);
+        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, 0);
     }
 
     public static IOreRegistrationHandler registrationHandler(TriConsumer<OrePrefix, Material, MaterialEnergyProperties> handler) {
@@ -138,19 +130,24 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                 thisMaterial.addFlags(GENERATE_FOIL);
             }
         }
-        if (this.temperatureLimit == 0 && properties.hasProperty(PropertyKey.FLUID)) {
+        this.materialMeltTemperature = computeMaterialMeltTemperature(properties);
+    }
+
+    public static int computeMaterialMeltTemperature(@NotNull MaterialProperties properties) {
+        if (properties.hasProperty(PropertyKey.FLUID)) {
             // autodetermine melt temperature from registered fluid
             FluidProperty prop = properties.getProperty(PropertyKey.FLUID);
-            Fluid fluid = prop.getStorage().get(FluidStorageKeys.LIQUID);
+            Fluid fluid = prop.get(FluidStorageKeys.LIQUID);
             if (fluid == null) {
-                FluidBuilder builder = prop.getStorage().getQueuedBuilder(FluidStorageKeys.LIQUID);
+                FluidBuilder builder = prop.getQueuedBuilder(FluidStorageKeys.LIQUID);
                 if (builder != null) {
-                    this.temperatureLimit = builder.currentTemp();
+                    return builder.getDeterminedTemperature(properties.getMaterial(), FluidStorageKeys.LIQUID);
                 }
             } else {
-                this.temperatureLimit = fluid.getTemperature();
+                return fluid.getTemperature();
             }
         }
+        return 3000;
     }
 
     @Override
@@ -183,7 +180,8 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
                     .setLogicEntry(TemperatureLogic.INSTANCE
-                            .getWith(TemperatureLossFunction.getOrCreateCable(coolingFactor), temperatureLimit, 1,
+                            .getWith(TemperatureLossFunction.getOrCreateCable(coolingFactor), materialMeltTemperature,
+                                    1,
                                     100 * cable.material(), cable.partialBurnThreshold()));
             if (superconductorCriticalTemperature > 0) {
                 data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
@@ -198,7 +196,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
                     .setLogicEntry(TemperatureLogic.INSTANCE
-                            .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), temperatureLimit, 1,
+                            .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature, 1,
                                     50 * pipe.material(), null));
             if (superconductorCriticalTemperature > 0) {
                 data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));

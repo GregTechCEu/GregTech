@@ -45,7 +45,7 @@ public final class GraphNetBacker {
         this.netAlgorithms = new NetAlgorithmWrapper[algorithmBuilders.length];
         for (int i = 0; i < algorithmBuilders.length; i++) {
             this.netAlgorithms[i] = new NetAlgorithmWrapper(backedNet, algorithmBuilders[i],
-                    backedNet.supportsPredication());
+                    backedNet.supportsPredication() || backedNet.usesDynamicWeights(i));
         }
         this.vertexMap = new Object2ObjectOpenHashMap<>();
     }

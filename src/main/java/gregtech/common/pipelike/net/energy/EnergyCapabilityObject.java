@@ -34,12 +34,14 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     private @Nullable PipeTileEntity tile;
 
     private final EnumMap<EnumFacing, AbstractNetFlowEdge> internalBuffers = new EnumMap<>(EnumFacing.class);
+    private final WorldPipeNetNode node;
 
     private boolean transferring = false;
 
     public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> EnergyCapabilityObject(@NotNull N net,
                                                                                            WorldPipeNetNode node) {
         this.net = net;
+        this.node = node;
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
             edge.setData(NetLogicData.union(node.getData(), (NetLogicData) null));
@@ -67,28 +69,27 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
 
         AbstractNetFlowEdge internalBuffer = this.internalBuffers.get(side);
-        long availableAmperage = amperage;
         if (internalBuffer != null) {
             long limit = internalBuffer.getFlowLimit(IPredicateTestObject.INSTANCE, net, tick, simulator);
             if (limit <= 0) {
                 this.transferring = false;
                 return 0;
+            } else if (amperage > limit) {
+                amperage = limit;
             }
-
-            availableAmperage = Math.min(amperage, limit);
         }
+        long availableAmperage = amperage;
 
         EnergyTraverseData data = new EnergyTraverseData(net, IPredicateTestObject.INSTANCE, simulator, tick, voltage,
                 tile.getPos(), side);
-        availableAmperage -= TraverseHelpers.traverseFlood(data, getPaths(data), amperage);
+        availableAmperage -= TraverseHelpers.traverseFlood(data, getPaths(data), availableAmperage);
         if (availableAmperage > 0) {
             availableAmperage -= TraverseHelpers.traverseDumb(data, getPaths(data), data::handleOverflow,
                     availableAmperage);
         }
         long accepted = amperage - availableAmperage;
 
-        if (internalBuffer != null)
-            internalBuffer.consumeFlowLimit(IPredicateTestObject.INSTANCE, net, accepted, tick, simulator);
+        if (internalBuffer != null) data.consumeFlowLimit(internalBuffer, node, accepted);
         if (!simulate) {
             EnergyGroupData group = getEnergyData();
             if (group != null) {
@@ -190,5 +191,10 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     @Override
     public long getEnergyCapacity() {
         return getInputAmperage() * getInputVoltage();
+    }
+
+    @Override
+    public boolean isOneProbeHidden() {
+        return true;
     }
 }

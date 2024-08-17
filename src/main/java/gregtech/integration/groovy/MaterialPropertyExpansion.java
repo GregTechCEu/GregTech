@@ -334,11 +334,7 @@ public class MaterialPropertyExpansion {
         addWires(m, voltage, baseAmperage, lossPerBlock, 0);
     }
 
-    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock, int meltTemperature) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, meltTemperature, 0);
-    }
-
-    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock, int meltTemperature,
+    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock,
                                 int superconductorTemp) {
         if (checkFrozen("add Wires to a material")) return;
         PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
@@ -346,7 +342,7 @@ public class MaterialPropertyExpansion {
             properties = new PipeNetProperties();
             m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
         }
-        properties.setProperty(new MaterialEnergyProperties(voltage, baseAmperage, lossPerBlock, meltTemperature,
+        properties.setProperty(MaterialEnergyProperties.create(voltage, baseAmperage, lossPerBlock,
                 superconductorTemp));
     }
 
@@ -354,12 +350,8 @@ public class MaterialPropertyExpansion {
         addWires(m, voltage, baseAmperage, lossPerBlock);
     }
 
-    public static void addCables(Material m, long voltage, long baseAmperage, long lossPerBlock, int meltTemperature) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, meltTemperature);
-    }
-
-    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock, int meltTemperature,
+    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock,
                                  int superconductorTemp) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, meltTemperature, superconductorTemp);
+        addWires(m, voltage, baseAmperage, lossPerBlock, superconductorTemp);
     }
 }

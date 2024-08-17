@@ -58,8 +58,6 @@ public class FluidRRTraverseData extends FluidTraverseData implements
                                 (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() == null);
             }
         }
-        long accepted = flowReachingDestination - availableFlow;
-        temperatureUpdates.getOrDefault(destination, l -> {}).accept(accepted);
-        return accepted;
+        return flowReachingDestination - availableFlow;
     }
 }

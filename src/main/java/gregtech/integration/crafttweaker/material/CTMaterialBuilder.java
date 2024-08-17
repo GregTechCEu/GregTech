@@ -239,9 +239,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss, @Optional int meltTemperature,
+    public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss,
                                              @Optional int superConTemperature) {
-        backingBuilder.cableProperties(voltage, amperage, loss, meltTemperature, superConTemperature);
+        backingBuilder.cableProperties(voltage, amperage, loss, superConTemperature);
         return this;
     }
 

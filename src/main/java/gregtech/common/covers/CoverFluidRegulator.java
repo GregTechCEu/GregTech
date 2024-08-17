@@ -410,9 +410,7 @@ public class CoverFluidRegulator extends CoverPump {
                     }
                 }
             }
-            long accepted = flowReachingDestination - availableFlow;
-            temperatureUpdates.getOrDefault(destination, l -> {}).accept(accepted);
-            return accepted;
+            return flowReachingDestination - availableFlow;
         }
     }
 }

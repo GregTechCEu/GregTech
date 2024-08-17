@@ -10,12 +10,12 @@ import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.IFreezable;
 import gregtech.api.graphnet.traverse.util.CompleteLossOperator;
 import gregtech.api.graphnet.traverse.util.MultLossOperator;
+import gregtech.client.particle.GTOverheatParticle;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -28,7 +28,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
 
     public static final TemperatureLogic INSTANCE = new TemperatureLogic();
 
-    public static final int DEFAULT_TEMPERATURE = 293;
+    public static final int DEFAULT_TEMPERATURE = 298;
 
     private WeakReference<INetLogicEntryListener> netListener;
     private boolean isMultiNodeHelper = false;
@@ -43,7 +43,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
     private int functionPriority;
     private long lastRestorationTick;
 
-    public TemperatureLogic() {
+    private TemperatureLogic() {
         super("Temperature");
     }
 
@@ -154,20 +154,24 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
 
     public void applyThermalEnergy(float energy, long tick) {
         restoreTemperature(tick);
+        this.energy += energy;
         // since the decay logic is synced and deterministic,
         // the only time client and server will desync is on external changes.
         INetLogicEntryListener listener = this.netListener.get();
         if (listener != null) listener.markLogicEntryAsUpdated(this, false);
-
-        this.energy += energy;
     }
 
-    public void moveTowardsTemperature(int temperature, long tick, float mult, boolean safe) {
-        if (safe) {
-            temperature = MathHelper.clamp(temperature, getTemperatureMinimum() + 1, getTemperatureMaximum() - 1);
-        }
+    public void moveTowardsTemperature(int temperature, long tick, float mult, boolean noParticle) {
         int temp = getTemperature(tick);
-        applyThermalEnergy(mult * (temperature - temp), tick);
+        float thermalEnergy = mult * (temperature - temp);
+        if (noParticle) {
+            float thermalMax = this.thermalMass * (GTOverheatParticle.TEMPERATURE_CUTOFF - DEFAULT_TEMPERATURE);
+            if (thermalMax > this.energy) return;
+            if (thermalEnergy + this.energy > thermalMax) {
+                thermalEnergy = thermalMax - this.energy;
+            }
+        }
+        if (thermalEnergy > 0) applyThermalEnergy(thermalEnergy, tick);
     }
 
     public int getTemperature(long tick) {
@@ -176,7 +180,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
     }
 
     private void restoreTemperature(long tick) {
-        long timePassed = lastRestorationTick - tick;
+        long timePassed = tick - lastRestorationTick;
         this.lastRestorationTick = tick;
         float energy = this.energy;
         if (timePassed != 0) {
@@ -249,9 +253,9 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
     @Override
     public void merge(NetNode otherOwner, NetLogicEntry<?, ?> unknown) {
         if (!(unknown instanceof TemperatureLogic other)) return;
-        if (other.getTemperatureMinimum() < this.getTemperatureMinimum())
+        if (other.getTemperatureMinimum() > this.getTemperatureMinimum())
             this.setTemperatureMinimum(other.getTemperatureMinimum());
-        if (other.getTemperatureMaximum() > this.getTemperatureMaximum())
+        if (other.getTemperatureMaximum() < this.getTemperatureMaximum())
             this.setTemperatureMaximum(other.getTemperatureMaximum());
         // since merge also occurs during nbt load, ignore the other's thermal energy.
         if (other.getThermalMass() < this.getThermalMass()) this.setThermalMass(other.getThermalMass());

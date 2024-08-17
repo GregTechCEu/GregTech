@@ -28,14 +28,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.function.LongConsumer;
+import java.util.Collection;
 
 public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
 
-    public static final float TEMPERATURE_EFFECT = 0.005f;
+    public static final float TEMPERATURE_EFFECT = 0.05f;
 
     static {
         ContainmentFailure.init();
@@ -44,13 +44,24 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     protected final BlockPos sourcePos;
     protected final EnumFacing inputFacing;
 
-    protected final Object2ObjectOpenHashMap<NetNode, LongConsumer> temperatureUpdates = new Object2ObjectOpenHashMap<>();
+    protected final FluidStack stack;
+    protected final FluidState state;
+    protected final int fluidTemp;
+    protected final boolean gaseous;
+    protected final @Nullable Collection<FluidAttribute> attributes;
 
     public FluidTraverseData(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator, long queryTick,
                              BlockPos sourcePos, EnumFacing inputFacing) {
         super(net, testObject, simulator, queryTick);
         this.sourcePos = sourcePos;
         this.inputFacing = inputFacing;
+        this.stack = testObject.recombine();
+        this.state = FluidState.inferState(stack);
+        this.fluidTemp = stack.getFluid().getTemperature(stack);
+        this.gaseous = stack.getFluid().isGaseous(stack);
+        if (stack.getFluid() instanceof AttributedFluid at) {
+            attributes = at.getAttributes();
+        } else attributes = null;
     }
 
     @Override
@@ -60,10 +71,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
 
     @Override
     public boolean prepareForPathWalk(@NotNull FlowWorldPipeNetPath path, long flow) {
-        if (flow <= 0) return true;
-        temperatureUpdates.clear();
-        temperatureUpdates.trim(16);
-        return false;
+        return flow <= 0;
     }
 
     @Override
@@ -73,32 +81,15 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
         if (result != null) {
             return result.getLossFunction();
         } else {
-            FluidStack stack = getTestObject().recombine();
             FluidContainmentLogic containmentLogic = node.getData()
                     .getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
-            FluidState state = FluidState.inferState(stack);
 
             TemperatureLogic temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
             if (temperatureLogic != null) {
                 result = temperatureLogic.getLossResult(getQueryTick());
-                int fluidTemp = stack.getFluid().getTemperature(stack);
-                boolean gaseous = stack.getFluid().isGaseous(stack);
-                // prevent plasmas from melting valid pipes due to raw temperature
-                boolean temperatureSafe = state == FluidState.PLASMA && containmentLogic.contains(FluidState.PLASMA);
-                temperatureUpdates.put(node, l -> temperatureLogic.moveTowardsTemperature(fluidTemp, getQueryTick(),
-                        l * TEMPERATURE_EFFECT, temperatureSafe));
-                if (temperatureLogic.isUnderMinimum(fluidTemp)) {
-                    result = NodeLossResult.combine(result, new NodeLossResult(pipe -> {
-                        IWorldPipeNetTile tile = pipe.getTileEntityNoLoading();
-                        if (tile != null) {
-                            tile.playLossSound();
-                            tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
-                            tile.dealAreaDamage(gaseous ? 2 : 1,
-                                    entity -> EntityDamageUtil.applyTemperatureDamage(entity,
-                                            fluidTemp, 2.0F, 10));
-                        }
-                    }, MultLossOperator.EIGHTHS[2]));
-                } else if (temperatureLogic.isOverMaximum(fluidTemp)) {
+                boolean overMax = fluidTemp > containmentLogic.getMaximumTemperature() &&
+                        !(state == FluidState.PLASMA && containmentLogic.contains(FluidState.PLASMA));
+                if (overMax) {
                     result = NodeLossResult.combine(result, new NodeLossResult(GTValues.RNG.nextInt(4) == 0 ? pipe -> {
                         IWorldPipeNetTile tile = pipe.getTileEntityNoLoading();
                         if (tile != null) {
@@ -119,6 +110,17 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                                             fluidTemp, 2.0F, 10));
                         }
                     }, MultLossOperator.EIGHTHS[2]));
+                } else if (temperatureLogic.isUnderMinimum(fluidTemp)) {
+                    result = NodeLossResult.combine(result, new NodeLossResult(pipe -> {
+                        IWorldPipeNetTile tile = pipe.getTileEntityNoLoading();
+                        if (tile != null) {
+                            tile.playLossSound();
+                            tile.spawnParticles(EnumFacing.UP, EnumParticleTypes.CLOUD, 3 + GTValues.RNG.nextInt(2));
+                            tile.dealAreaDamage(gaseous ? 2 : 1,
+                                    entity -> EntityDamageUtil.applyTemperatureDamage(entity,
+                                            fluidTemp, 2.0F, 10));
+                        }
+                    }, MultLossOperator.EIGHTHS[2]));
                 }
             }
 
@@ -126,8 +128,8 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                 result = NodeLossResult.combine(result, ContainmentFailure.getFailure(state).computeLossResult(stack));
             }
 
-            if (stack instanceof AttributedFluid fluid) {
-                for (FluidAttribute attribute : fluid.getAttributes()) {
+            if (attributes != null) {
+                for (FluidAttribute attribute : attributes) {
                     if (!containmentLogic.contains(attribute)) {
                         result = NodeLossResult.combine(result,
                                 ContainmentFailure.getFailure(attribute).computeLossResult(stack));
@@ -157,15 +159,21 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
                                 (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() == null);
             }
         }
-        long accepted = flowReachingDestination - availableFlow;
-        temperatureUpdates.getOrDefault(destination, l -> {}).accept(accepted);
-        return accepted;
+        return flowReachingDestination - availableFlow;
     }
 
     @Override
-    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode,
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode,
                                  long consumption) {
-        super.consumeFlowLimit(edge, sourceNode, targetNode, consumption);
-        temperatureUpdates.getOrDefault(sourceNode, l -> {}).accept(consumption);
+        super.consumeFlowLimit(edge, targetNode, consumption);
+        TemperatureLogic temperatureLogic = targetNode.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+        if (temperatureLogic != null) {
+            FluidContainmentLogic containmentLogic = targetNode.getData()
+                    .getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
+            boolean overMax = fluidTemp > containmentLogic.getMaximumTemperature() &&
+                    !(state == FluidState.PLASMA && containmentLogic.contains(FluidState.PLASMA));
+            temperatureLogic.moveTowardsTemperature(fluidTemp,
+                    getQueryTick(), consumption * TEMPERATURE_EFFECT, !overMax);
+        }
     }
 }

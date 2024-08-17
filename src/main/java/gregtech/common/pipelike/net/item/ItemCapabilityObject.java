@@ -34,12 +34,14 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
     private @Nullable PipeTileEntity tile;
 
     private final EnumMap<EnumFacing, Wrapper> wrappers = new EnumMap<>(EnumFacing.class);
+    private final WorldPipeNetNode node;
 
     private boolean transferring = false;
 
     public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> ItemCapabilityObject(@NotNull N net,
                                                                                          WorldPipeNetNode node) {
         this.net = net;
+        this.node = node;
         for (EnumFacing facing : EnumFacing.VALUES) {
             AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
             edge.setData(NetLogicData.union(node.getData(), (NetLogicData) null));
@@ -116,6 +118,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
         SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        D data = provider.of(net, testObject, simulator, tick, tile.getPos(), side);
 
         LongConsumer flowReport = null;
         Wrapper wrapper = this.wrappers.get(side);
@@ -128,10 +131,9 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     return null;
                 }
                 flow = Math.min(limit, flow);
-                flowReport = l -> internalBuffer.consumeFlowLimit(testObject, net, l, tick, simulator);
+                flowReport = l -> data.consumeFlowLimit(internalBuffer, node, l);
             }
         }
-        D data = provider.of(net, testObject, simulator, tick, tile.getPos(), side);
         return new TraverseGuide<>(data, () -> getPaths(data), flow, flowReport);
     }
 

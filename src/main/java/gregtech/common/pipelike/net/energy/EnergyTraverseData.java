@@ -81,7 +81,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
         }
     }
 
-    public void handleOverflow(WorldPipeNetNode node, long overflow) {
+    public void handleOverflow(@NotNull WorldPipeNetNode node, long overflow) {
         TemperatureLogic logic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
         if (logic != null) {
             // this occurs after finalization but before path reset.
@@ -114,15 +114,14 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
                 destination.getGroupSafe().getData() instanceof EnergyGroupData data) {
             data.addEnergyOutPerSec(accepted * pathVoltage, getQueryTick());
         }
-        if (accepted > 0) recordFlow(destination, accepted);
         return accepted;
     }
 
     @Override
-    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode sourceNode, NetNode targetNode,
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode,
                                  long consumption) {
-        super.consumeFlowLimit(edge, sourceNode, targetNode, consumption);
-        if (consumption > 0) recordFlow(sourceNode, consumption);
+        super.consumeFlowLimit(edge, targetNode, consumption);
+        if (consumption > 0) recordFlow(targetNode, consumption);
     }
 
     private void recordFlow(@NotNull NetNode node, long amperes) {

@@ -29,6 +29,7 @@ public class LaserContainerHandler extends EnergyContainerHandler implements ILa
 
     @Override
     public long receiveLaser(long laserVoltage, long laserAmperage) {
+        if (getInputVoltage() == 0) return 0;
         long allowedAmps = getEnergyCanBeInserted() / laserVoltage;
         addEnergy(laserVoltage * allowedAmps);
         // over voltage explosion

@@ -191,6 +191,8 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
             if (entry.shouldEncode()) {
                 buf.writeString(entry.getName());
                 entry.encode(buf, true);
+            } else {
+                buf.writeString("");
             }
         }
     }
@@ -201,10 +203,8 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         int entryCount = buf.readVarInt();
         for (int i = 0; i < entryCount; i++) {
             String name = buf.readString(255);
+            if (name.equals("")) continue;
             NetLogicEntry<?, ?> existing = NetLogicRegistry.getSupplierErroring(name).get();
-            if (existing == null)
-                throw new RuntimeException("Could not find a matching supplier for an encoded NetLogicEntry. " +
-                        "This suggests that the server and client have different GT versions or modifications.");
             existing.registerToNetLogicData(this);
             existing.decode(buf);
             this.logicEntrySet.put(name, existing);
