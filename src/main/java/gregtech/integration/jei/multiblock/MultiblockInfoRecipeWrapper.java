@@ -2,6 +2,7 @@ package gregtech.integration.jei.multiblock;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockWorldState;
@@ -559,7 +560,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @NotNull
     private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        MultiblockControllerBase controller = shapeInfo.getMap(this.controller.getClass(), blockMap);
+        BlockPos controllerPos = shapeInfo.getMap(this.controller, new BlockPos(0, 128, 0), EnumFacing.SOUTH, EnumFacing.NORTH, blockMap);
+        MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap.get(controllerPos).getTileEntity()).getMetaTileEntity();
 
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);

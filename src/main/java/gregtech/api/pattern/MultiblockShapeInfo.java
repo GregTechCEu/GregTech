@@ -41,16 +41,16 @@ public class MultiblockShapeInfo {
      * of being relative to the controller.
      * The passed in map is populated.
      *
-     * @return A block in the pattern that has the same class as the argument class.
+     * @return A pos that can be looked up in the given map to find the controller that has the same class as the argument.
      */
     // this is currently here so that multiblocks can have other multiblocks in their structure without messing
     // everything up
-    public MultiblockControllerBase getMap(Class<? extends MultiblockControllerBase> controllerClass,
+    public BlockPos getMap(MultiblockControllerBase src, BlockPos start, EnumFacing frontFacing, EnumFacing upFacing,
                                            Map<BlockPos, BlockInfo> map) {
         // seems like MultiblockInfoRecipeWrapper wants the controller to be facing south
-        EnumFacing absoluteAisle = directions[0].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
-        EnumFacing absoluteString = directions[1].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
-        EnumFacing absoluteChar = directions[2].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
+        EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, false);
+        EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, false);
+        EnumFacing absoluteChar = directions[2].getRelativeFacing(frontFacing, upFacing, false);
 
         int aisleCount = aisles.length;
         int stringCount = aisles[0].getStringCount();
@@ -58,13 +58,13 @@ public class MultiblockShapeInfo {
 
         GreggyBlockPos pos = new GreggyBlockPos();
 
-        MultiblockControllerBase controller = null;
+        BlockPos controller = null;
 
         for (int aisleI = 0; aisleI < aisleCount; aisleI++) {
             for (int stringI = 0; stringI < stringCount; stringI++) {
                 for (int charI = 0; charI < charCount; charI++) {
                     char c = aisles[aisleI].charAt(stringI, charI);
-                    pos.zero().offset(absoluteAisle, aisleI).offset(absoluteString, stringI).offset(absoluteChar,
+                    pos.from(start).offset(absoluteAisle, aisleI).offset(absoluteString, stringI).offset(absoluteChar,
                             charI);
                     if (symbols.get(c).getTileEntity() instanceof MetaTileEntityHolder holder) {
                         MetaTileEntityHolder mteHolder = new MetaTileEntityHolder();
@@ -72,8 +72,8 @@ public class MultiblockShapeInfo {
                         mteHolder.getMetaTileEntity().onPlacement();
                         mteHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
 
-                        if (mteHolder.getMetaTileEntity().getClass() == controllerClass) {
-                            controller = (MultiblockControllerBase) mteHolder.getMetaTileEntity();
+                        if (mteHolder.getMetaTileEntity().getClass() == src.getClass()) {
+                            controller = pos.immutable();
                         }
 
                         map.put(pos.immutable(),
@@ -108,6 +108,25 @@ public class MultiblockShapeInfo {
         }
 
         return controller;
+    }
+
+    public int getUpCount(EnumFacing frontFacing, EnumFacing upFacing) {
+
+        int index = 0;
+        for (int i = 0; i < 3; i++) {
+            EnumFacing facing = directions[i].getRelativeFacing(frontFacing, upFacing, false);
+            if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
+                index = i;
+                break;
+            }
+        }
+
+        return switch (index) {
+            case 0 -> aisles.length;
+            case 1 -> aisles[0].getStringCount();
+            case 2 -> aisles[0].getCharCount();
+            default -> throw new IllegalStateException();
+        };
     }
 
     public static Builder builder(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
