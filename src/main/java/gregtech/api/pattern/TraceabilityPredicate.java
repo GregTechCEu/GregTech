@@ -288,6 +288,10 @@ public class TraceabilityPredicate {
             return result;
         }
 
+        public boolean testRaw(BlockWorldState worldState, PatternState patternState) {
+            return predicate.test(worldState, patternState);
+        }
+
         public boolean testLimited(BlockWorldState worldState, PatternState patternState,
                                    Object2IntMap<SimplePredicate> globalCache,
                                    Object2IntMap<SimplePredicate> layerCache) {

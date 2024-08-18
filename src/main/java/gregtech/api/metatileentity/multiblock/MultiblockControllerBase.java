@@ -154,6 +154,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
         }
 
+        // todo remove this
         if (!failures.isEmpty()) {
             throw new IllegalStateException("Structure patterns " + Arrays.toString(failures.toArray()) +
                     " needs some legacy updating");

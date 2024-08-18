@@ -2,6 +2,7 @@ package gregtech.api.pattern;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.pattern.PatternAisle;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
@@ -15,7 +16,6 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -39,8 +39,14 @@ public class MultiblockShapeInfo {
      * NORTH).
      * Unlike BlockPattern, the first char in the first string in the first aisle always starts at the origin, instead
      * of being relative to the controller.
+     * The passed in map is populated.
+     *
+     * @return A block in the pattern that has the same class as the argument class.
      */
-    public Map<BlockPos, BlockInfo> getMap() {
+    // this is currently here so that multiblocks can have other multiblocks in their structure without messing
+    // everything up
+    public MultiblockControllerBase getMap(Class<? extends MultiblockControllerBase> controllerClass,
+                                           Map<BlockPos, BlockInfo> map) {
         // seems like MultiblockInfoRecipeWrapper wants the controller to be facing south
         EnumFacing absoluteAisle = directions[0].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
         EnumFacing absoluteString = directions[1].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
@@ -51,7 +57,8 @@ public class MultiblockShapeInfo {
         int charCount = aisles[0].getCharCount();
 
         GreggyBlockPos pos = new GreggyBlockPos();
-        Map<BlockPos, BlockInfo> map = new HashMap<>();
+
+        MultiblockControllerBase controller = null;
 
         for (int aisleI = 0; aisleI < aisleCount; aisleI++) {
             for (int stringI = 0; stringI < stringCount; stringI++) {
@@ -64,6 +71,11 @@ public class MultiblockShapeInfo {
                         mteHolder.setMetaTileEntity(holder.getMetaTileEntity());
                         mteHolder.getMetaTileEntity().onPlacement();
                         mteHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
+
+                        if (mteHolder.getMetaTileEntity().getClass() == controllerClass) {
+                            controller = (MultiblockControllerBase) mteHolder.getMetaTileEntity();
+                        }
+
                         map.put(pos.immutable(),
                                 new BlockInfo(mteHolder.getMetaTileEntity().getBlock().getDefaultState(), mteHolder));
                     } else {
@@ -73,7 +85,8 @@ public class MultiblockShapeInfo {
             }
         }
 
-        if (true) return map;
+        // todo figure out how to fix the below code without returning here
+        if (true) return controller;
 
         // scuffed but tries to make hatches face out the structure
         for (Map.Entry<BlockPos, BlockInfo> entry : map.entrySet()) {
@@ -94,7 +107,7 @@ public class MultiblockShapeInfo {
             }
         }
 
-        return map;
+        return controller;
     }
 
     public static Builder builder(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {

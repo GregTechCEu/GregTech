@@ -4,8 +4,10 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.pattern.PatternState;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
@@ -350,27 +352,18 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             TraceabilityPredicate predicates = patterns[currentRendererPage].predicateMap
                     .get(rayTraceResult.getBlockPos());
             if (predicates != null) {
-                //
-                // StructureInfo info = new StructureInfo(new PatternMatchContext(), null);
-                // BlockWorldState worldState = new BlockWorldState(info);
-                //
-                // worldState.setWorld(renderer.world);
-                // worldState.setPos(rayTraceResult.getBlockPos());
-                //
-                // for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
-                // if (common.test(worldState, info)) {
-                // predicateTips = common.getToolTips(predicates);
-                // break;
-                // }
-                // }
-                // if (predicateTips == null) {
-                // for (TraceabilityPredicate.SimplePredicate limit : predicates.limited) {
-                // if (limit.test(worldState, info)) {
-                // predicateTips = limit.getToolTips(predicates);
-                // break;
-                // }
-                // }
-                // }
+                BlockWorldState worldState = new BlockWorldState();
+                PatternState patternState = new PatternState();
+
+                worldState.setWorld(renderer.world);
+                worldState.setPos(rayTraceResult.getBlockPos());
+
+                for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
+                    if (common.testRaw(worldState, patternState)) {
+                        predicateTips = common.getToolTips(predicates);
+                        break;
+                    }
+                }
             }
             if (!itemStack.isEmpty()) {
                 tooltipBlockStack = itemStack;
@@ -563,19 +556,15 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         return partsMap.values();
     }
 
-    @SuppressWarnings("NewExpressionSideOnly")
     @NotNull
     private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
-        Map<BlockPos, BlockInfo> blockMap = shapeInfo.getMap();
+        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
+        MultiblockControllerBase controller = shapeInfo.getMap(this.controller.getClass(), blockMap);
 
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
-        try {
-            world.addBlocks(blockMap);
-        } catch (Exception e) {
-            throw e;
-        }
+        world.addBlocks(blockMap);
 
         Vector3f size = world.getSize();
         Vector3f minPos = world.getMinPos();
@@ -599,14 +588,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 pos -> worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c -> c.contains(pos)));
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
-        if (false) {
-            // if (controllerBase.structurePattern == null) {
-            // controllerBase.reinitializeStructurePattern();
-            // }
-            // if (controllerBase.structurePattern != null) {
-            // controllerBase.structurePattern.cache.forEach((pos, blockInfo) -> predicateMap
-            // .put(BlockPos.fromLong(pos), (TraceabilityPredicate) blockInfo.getInfo()));
-            // }
+
+        if (controller.isStructureFormed("MAIN")) {
+            controller.getSubstructure("MAIN").getCache().forEach((pos, blockInfo) -> predicateMap
+                    .put(BlockPos.fromLong(pos), blockInfo.getPredicate()));
         }
 
         List<ItemStack> sortedParts = gatherStructureBlocks(worldSceneRenderer.world, blockMap, parts).stream()
