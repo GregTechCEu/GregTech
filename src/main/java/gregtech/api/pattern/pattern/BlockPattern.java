@@ -400,7 +400,8 @@ public class BlockPattern implements IBlockPattern {
                             // if the current predicate is used, move until the next free one
                             int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
                             if (newIndex >= predicate.common.size())
-                                GTLog.logger.warn("Failed to generate default structure pattern.", new IllegalStateException());
+                                GTLog.logger.warn("Failed to generate default structure pattern.",
+                                        new IllegalStateException());
                             next = predicate.common.get(newIndex);
                             globalCount = globalCache.getInt(next);
                             layerCount = layerCache.getInt(next);
@@ -427,7 +428,8 @@ public class BlockPattern implements IBlockPattern {
             }
         }
 
-        return new MultiblockShapeInfo(pattern.stream().map(a -> new PatternAisle(1, a)).toArray(PatternAisle[]::new), candidates, directions);
+        return new MultiblockShapeInfo(pattern.stream().map(a -> new PatternAisle(1, a)).toArray(PatternAisle[]::new),
+                candidates, directions);
     }
 
     @Override

@@ -69,7 +69,8 @@ public interface IBlockPattern {
     }
 
     /**
-     * Gets the cache, do not modify. Note that the cache stores everything in the AABB of the substructure, except for any() TraceabilityPredicates.
+     * Gets the cache, do not modify. Note that the cache stores everything in the AABB of the substructure, except for
+     * any() TraceabilityPredicates.
      * 
      * @return The cache for rapid pattern checking.
      */

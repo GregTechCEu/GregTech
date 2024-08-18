@@ -6,10 +6,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTUtility;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -24,9 +20,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MultiblockBuilderBehavior implements IItemBehaviour {
@@ -47,7 +43,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed("MAIN")) {
-                 multiblock.getBuildableShapes(new Object2IntOpenHashMap<>(), false);
+                multiblock.getBuildableShapes(new Object2IntOpenHashMap<>(), false);
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;

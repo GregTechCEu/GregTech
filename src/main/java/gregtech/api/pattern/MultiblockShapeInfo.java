@@ -4,17 +4,15 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pattern.pattern.PatternAisle;
 import gregtech.api.util.BlockInfo;
-
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-
-import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +21,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public class MultiblockShapeInfo {
+
     protected final PatternAisle[] aisles;
     protected final Char2ObjectMap<BlockInfo> symbols;
     protected final RelativeDirection[] directions;
 
-    public MultiblockShapeInfo(PatternAisle[] aisles, Char2ObjectMap<BlockInfo> symbols, RelativeDirection[] directions) {
+    public MultiblockShapeInfo(PatternAisle[] aisles, Char2ObjectMap<BlockInfo> symbols,
+                               RelativeDirection[] directions) {
         this.aisles = aisles;
         this.symbols = symbols;
         this.directions = directions;
@@ -35,15 +35,16 @@ public class MultiblockShapeInfo {
     }
 
     /**
-     * Gets a map of where blocks should be placed, note that the controller is always facing south(and up facing NORTH).
+     * Gets a map of where blocks should be placed, note that the controller is always facing south(and up facing
+     * NORTH).
      * Unlike BlockPattern, the first char in the first string in the first aisle always starts at the origin, instead
      * of being relative to the controller.
      */
     public Map<BlockPos, BlockInfo> getMap() {
         // seems like MultiblockInfoRecipeWrapper wants the controller to be facing south
-        EnumFacing absoluteAisle =  directions[0].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
-        EnumFacing absoluteString =  directions[1].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
-        EnumFacing absoluteChar =  directions[2].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
+        EnumFacing absoluteAisle = directions[0].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
+        EnumFacing absoluteString = directions[1].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
+        EnumFacing absoluteChar = directions[2].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
 
         int aisleCount = aisles.length;
         int stringCount = aisles[0].getStringCount();
@@ -56,13 +57,15 @@ public class MultiblockShapeInfo {
             for (int stringI = 0; stringI < stringCount; stringI++) {
                 for (int charI = 0; charI < charCount; charI++) {
                     char c = aisles[aisleI].charAt(stringI, charI);
-                    pos.zero().offset(absoluteAisle, aisleI).offset(absoluteString, stringI).offset(absoluteChar, charI);
+                    pos.zero().offset(absoluteAisle, aisleI).offset(absoluteString, stringI).offset(absoluteChar,
+                            charI);
                     if (symbols.get(c).getTileEntity() instanceof MetaTileEntityHolder holder) {
                         MetaTileEntityHolder mteHolder = new MetaTileEntityHolder();
                         mteHolder.setMetaTileEntity(holder.getMetaTileEntity());
                         mteHolder.getMetaTileEntity().onPlacement();
                         mteHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
-                        map.put(pos.immutable(), new BlockInfo(mteHolder.getMetaTileEntity().getBlock().getDefaultState(), mteHolder));
+                        map.put(pos.immutable(),
+                                new BlockInfo(mteHolder.getMetaTileEntity().getBlock().getDefaultState(), mteHolder));
                     } else {
                         map.put(pos.immutable(), symbols.get(c));
                     }

@@ -75,7 +75,6 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -468,7 +467,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
             // maybe bandaid fix
             for (IMultiblockPart part : multiblockParts) {
-                if (name.equals(part.getSubstructureName()) && part instanceof IMultiblockAbilityPart<?> abilityPart) {
+                if (name.equals(part.getSubstructureName()) && part instanceof IMultiblockAbilityPart<?>abilityPart) {
                     // noinspection unchecked
                     registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
                 }
@@ -677,7 +676,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isStructureFormed(String name) {
-        return getWorld() != null && getSubstructure(name) != null && getSubstructure(name).getPatternState().isFormed();
+        return getWorld() != null && getSubstructure(name) != null &&
+                getSubstructure(name).getPatternState().isFormed();
     }
 
     @Override

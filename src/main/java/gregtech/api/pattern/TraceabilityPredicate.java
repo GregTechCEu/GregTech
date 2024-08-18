@@ -90,7 +90,8 @@ public class TraceabilityPredicate {
 
     public TraceabilityPredicate sort() {
         // reverse so that all min layer and global counts are at the front
-        common.sort(Collections.reverseOrder(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount))));
+        common.sort(Collections
+                .reverseOrder(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount))));
         return this;
     }
 
@@ -201,9 +202,11 @@ public class TraceabilityPredicate {
         return this;
     }
 
-    public boolean test(BlockWorldState worldState, PatternState patternState, Object2IntMap<SimplePredicate> globalCache,
+    public boolean test(BlockWorldState worldState, PatternState patternState,
+                        Object2IntMap<SimplePredicate> globalCache,
                         Object2IntMap<SimplePredicate> layerCache) {
-        return common.stream().anyMatch(predicate -> predicate.testLimited(worldState, patternState, globalCache, layerCache));
+        return common.stream()
+                .anyMatch(predicate -> predicate.testLimited(worldState, patternState, globalCache, layerCache));
     }
 
     public TraceabilityPredicate or(TraceabilityPredicate other) {
@@ -293,7 +296,8 @@ public class TraceabilityPredicate {
 
         public boolean testGlobal(BlockWorldState worldState, PatternState patternState,
                                   Object2IntMap<SimplePredicate> cache) {
-            if (minGlobalCount == -1 && maxGlobalCount == -1 || cache == null) return predicate.test(worldState, patternState);
+            if (minGlobalCount == -1 && maxGlobalCount == -1 || cache == null)
+                return predicate.test(worldState, patternState);
 
             boolean base = predicate.test(worldState, patternState);
             int count = cache.getInt(this);
@@ -306,7 +310,8 @@ public class TraceabilityPredicate {
 
         public boolean testLayer(BlockWorldState worldState, PatternState patternState,
                                  Object2IntMap<SimplePredicate> cache) {
-            if (minLayerCount == -1 && maxLayerCount == -1 || cache == null) return predicate.test(worldState, patternState);
+            if (minLayerCount == -1 && maxLayerCount == -1 || cache == null)
+                return predicate.test(worldState, patternState);
 
             boolean base = predicate.test(worldState, patternState);
             int count = cache.getInt(this);
