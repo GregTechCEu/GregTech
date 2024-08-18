@@ -463,17 +463,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 // parts *should* not have this controller added
                 multiblockParts.add(part);
                 part.addToMultiBlock(this, name);
-                // if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
-                // // noinspection unchecked
-                // registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
-                // }
                 return true;
             });
 
-            // todo this is maybe a bandaid fix, maybe use NavigableSet<Object> instead of using List<Object> and
-            // relying on the NavigableSet<T> of multiblockParts?
+            // maybe bandaid fix
             for (IMultiblockPart part : multiblockParts) {
-                if (name.equals(part.getSubstructureName()) && part instanceof IMultiblockAbilityPart<?>abilityPart) {
+                if (name.equals(part.getSubstructureName()) && part instanceof IMultiblockAbilityPart<?> abilityPart) {
                     // noinspection unchecked
                     registerMultiblockAbility((IMultiblockAbilityPart<Object>) abilityPart);
                 }
@@ -682,9 +677,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isStructureFormed(String name) {
-        if (getWorld() == null) return false;
-
-        return getSubstructure(name).getPatternState().isFormed();
+        return getWorld() != null && getSubstructure(name) != null && getSubstructure(name).getPatternState().isFormed();
     }
 
     @Override
@@ -787,6 +780,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
         // if there is no overriden getMatchingShapes() just return the default one
         if (infos.isEmpty()) {
+            // for jei and stuff
+            if (getSubstructure("MAIN") == null) structures.put("MAIN", createStructurePattern());
+
             MultiblockShapeInfo info = getSubstructure("MAIN").getDefaultShape();
             if (info == null) return Collections.emptyList();
             return Collections.singletonList(info);

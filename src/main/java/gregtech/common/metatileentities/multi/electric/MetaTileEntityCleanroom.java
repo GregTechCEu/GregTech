@@ -732,7 +732,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
                 .filter(entry -> entry.getValue().getCleanroomType() != null)
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-                .forEach(entry -> shapeInfo.add(builder.where('F', entry.getKey()).build()));
+                .forEach(entry -> shapeInfo.add(builder.shallowCopy().where('F', entry.getKey()).build()));
 
         return shapeInfo;
     }

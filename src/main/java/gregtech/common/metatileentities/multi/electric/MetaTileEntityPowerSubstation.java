@@ -275,7 +275,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 // allowed in the predicate (so you can see them on right-click)
                 .filter(entry -> entry.getValue().getCapacity() > 0)
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-                .forEach(entry -> shapeInfo.add(builder.where('B', entry.getKey()).build()));
+                .forEach(entry -> shapeInfo.add(builder.shallowCopy().where('B', entry.getKey()).build()));
 
         return shapeInfo;
     }

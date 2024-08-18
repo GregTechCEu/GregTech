@@ -14,8 +14,12 @@ import net.minecraft.util.EnumFacing;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 
+import net.minecraft.util.math.BlockPos;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class MultiblockShapeInfo {
@@ -27,6 +31,67 @@ public class MultiblockShapeInfo {
         this.aisles = aisles;
         this.symbols = symbols;
         this.directions = directions;
+        symbols.defaultReturnValue(BlockInfo.EMPTY);
+    }
+
+    /**
+     * Gets a map of where blocks should be placed, note that the controller is always facing south(and up facing NORTH).
+     * Unlike BlockPattern, the first char in the first string in the first aisle always starts at the origin, instead
+     * of being relative to the controller.
+     */
+    public Map<BlockPos, BlockInfo> getMap() {
+        // seems like MultiblockInfoRecipeWrapper wants the controller to be facing south
+        EnumFacing absoluteAisle =  directions[0].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
+        EnumFacing absoluteString =  directions[1].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
+        EnumFacing absoluteChar =  directions[2].getRelativeFacing(EnumFacing.SOUTH, EnumFacing.NORTH, false);
+
+        int aisleCount = aisles.length;
+        int stringCount = aisles[0].getStringCount();
+        int charCount = aisles[0].getCharCount();
+
+        GreggyBlockPos pos = new GreggyBlockPos();
+        Map<BlockPos, BlockInfo> map = new HashMap<>();
+
+        for (int aisleI = 0; aisleI < aisleCount; aisleI++) {
+            for (int stringI = 0; stringI < stringCount; stringI++) {
+                for (int charI = 0; charI < charCount; charI++) {
+                    char c = aisles[aisleI].charAt(stringI, charI);
+                    pos.zero().offset(absoluteAisle, aisleI).offset(absoluteString, stringI).offset(absoluteChar, charI);
+                    if (symbols.get(c).getTileEntity() instanceof MetaTileEntityHolder holder) {
+                        MetaTileEntityHolder mteHolder = new MetaTileEntityHolder();
+                        mteHolder.setMetaTileEntity(holder.getMetaTileEntity());
+                        mteHolder.getMetaTileEntity().onPlacement();
+                        mteHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
+                        map.put(pos.immutable(), new BlockInfo(mteHolder.getMetaTileEntity().getBlock().getDefaultState(), mteHolder));
+                    } else {
+                        map.put(pos.immutable(), symbols.get(c));
+                    }
+                }
+            }
+        }
+
+        if (true) return map;
+
+        // scuffed but tries to make hatches face out the structure
+        for (Map.Entry<BlockPos, BlockInfo> entry : map.entrySet()) {
+            BlockInfo info = entry.getValue();
+            if (info.getTileEntity() != null && info.getTileEntity() instanceof MetaTileEntityHolder holder) {
+                MetaTileEntity mte = holder.getMetaTileEntity();
+                for (EnumFacing facing : EnumFacing.VALUES) {
+                    BlockPos offset = entry.getKey().offset(facing);
+                    boolean isOutside = !map.containsKey(offset);
+                    if (isOutside && mte.isValidFrontFacing(facing)) {
+                        MetaTileEntityHolder mteHolder = new MetaTileEntityHolder();
+                        mteHolder.setMetaTileEntity(mte);
+                        mteHolder.getMetaTileEntity().onPlacement();
+                        mteHolder.getMetaTileEntity().setFrontFacing(facing);
+                        entry.setValue(new BlockInfo(mte.getBlock().getDefaultState(), mteHolder));
+                    }
+                }
+            }
+        }
+
+        return map;
     }
 
     public static Builder builder(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
@@ -34,7 +99,8 @@ public class MultiblockShapeInfo {
     }
 
     public static Builder builder() {
-        return builder(RelativeDirection.BACK, RelativeDirection.UP, RelativeDirection.RIGHT);
+        // this is front now because idk the old code somehow reversed it and im not about to look into it
+        return builder(RelativeDirection.FRONT, RelativeDirection.UP, RelativeDirection.RIGHT);
     }
 
     public static class Builder {

@@ -7,6 +7,14 @@ public class PatternAisle {
     protected int minRepeats, maxRepeats, actualRepeats;
     protected final String[] pattern;
 
+    public PatternAisle(int repeats, char[][] pattern) {
+        this.pattern = new String[pattern.length];
+        for (int i = 0; i < pattern.length; i++) {
+            this.pattern[i] = new String(pattern[i]);
+        }
+        this.minRepeats = this.maxRepeats = repeats;
+    }
+
     public PatternAisle(int minRepeats, int maxRepeats, String[] pattern) {
         this.minRepeats = minRepeats;
         this.maxRepeats = maxRepeats;
@@ -14,8 +22,7 @@ public class PatternAisle {
     }
 
     public PatternAisle(int repeats, String[] pattern) {
-        this.minRepeats = this.maxRepeats = repeats;
-        this.pattern = pattern;
+        this(repeats, repeats, pattern);
     }
 
     public void setRepeats(int minRepeats, int maxRepeats) {

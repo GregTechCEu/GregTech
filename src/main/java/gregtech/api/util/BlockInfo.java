@@ -23,6 +23,7 @@ public class BlockInfo {
     private final IBlockState blockState;
     private final TileEntity tileEntity;
     private final TraceabilityPredicate predicate;
+    private boolean manualFacing;
 
     public BlockInfo(Block block) {
         this(block.getDefaultState());
@@ -44,6 +45,11 @@ public class BlockInfo {
         this.predicate = predicate;
         Preconditions.checkArgument(tileEntity == null || blockState.getBlock().hasTileEntity(blockState),
                 "Cannot create block info with tile entity for block not having it");
+    }
+
+    public BlockInfo manualFacing() {
+        this.manualFacing = true;
+        return this;
     }
 
     public IBlockState getBlockState() {

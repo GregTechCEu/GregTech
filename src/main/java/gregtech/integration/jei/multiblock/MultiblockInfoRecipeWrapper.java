@@ -123,7 +123,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
         Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
-        this.patterns = controller.getMatchingShapes().stream()
+        this.patterns = controller.getBuildableShapes(null, false).stream()
                 .map(it -> initializePattern(it, drops))
                 .toArray(MBPattern[]::new);
         allItemStackInputs.addAll(drops);
@@ -566,30 +566,16 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @SuppressWarnings("NewExpressionSideOnly")
     @NotNull
     private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
-        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        MultiblockControllerBase controllerBase = null;
-        BlockInfo[][][] blocks = null;
-        // todo fix
-        for (int x = 0; x < blocks.length; x++) {
-            BlockInfo[][] aisle = blocks[x];
-            for (int y = 0; y < aisle.length; y++) {
-                BlockInfo[] column = aisle[y];
-                for (int z = 0; z < column.length; z++) {
-                    if (column[z].getTileEntity() instanceof IGregTechTileEntity &&
-                            ((IGregTechTileEntity) column[z].getTileEntity())
-                                    .getMetaTileEntity() instanceof MultiblockControllerBase) {
-                        controllerBase = (MultiblockControllerBase) ((IGregTechTileEntity) column[z].getTileEntity())
-                                .getMetaTileEntity();
-                    }
-                    blockMap.put(new BlockPos(x, y, z), column[z]);
-                }
-            }
-        }
+        Map<BlockPos, BlockInfo> blockMap = shapeInfo.getMap();
 
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
-        world.addBlocks(blockMap);
+        try {
+            world.addBlocks(blockMap);
+        } catch (Exception e) {
+            throw e;
+        }
 
         Vector3f size = world.getSize();
         Vector3f minPos = world.getMinPos();
@@ -613,7 +599,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 pos -> worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c -> c.contains(pos)));
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
-        if (controllerBase != null) {
+        if (false) {
             // if (controllerBase.structurePattern == null) {
             // controllerBase.reinitializeStructurePattern();
             // }

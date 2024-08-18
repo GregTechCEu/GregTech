@@ -441,8 +441,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         width = width / height;
         screens = new MetaTileEntityMonitorScreen[width][height];
         for (IMultiblockPart part : this.getMultiblockParts()) {
-            if (part instanceof MetaTileEntityMonitorScreen) {
-                MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) part;
+            if (part instanceof MetaTileEntityMonitorScreen screen) {
                 screens[screen.getX()][screen.getY()] = screen;
             }
         }

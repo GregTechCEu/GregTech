@@ -196,7 +196,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                         MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF), EnumFacing.NORTH);
         GregTechAPI.HEATING_COILS.entrySet().stream()
                 .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-                .forEach(entry -> shapeInfo.add(builder.where('C', entry.getKey()).build()));
+                .forEach(entry -> shapeInfo.add(builder.shallowCopy().where('C', entry.getKey()).build()));
         return shapeInfo;
     }
 

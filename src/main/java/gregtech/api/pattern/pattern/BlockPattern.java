@@ -1,7 +1,5 @@
 package gregtech.api.pattern.pattern;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
@@ -12,32 +10,28 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
-import it.unimi.dsi.fastutil.chars.Char2IntMap;
-import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
-import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.chars.CharIterator;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import it.unimi.dsi.fastutil.chars.Char2IntMap;
+import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2CharMap;
+import it.unimi.dsi.fastutil.objects.Object2CharOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 public class BlockPattern implements IBlockPattern {
 
@@ -267,7 +261,6 @@ public class BlockPattern implements IBlockPattern {
         for (int stringI = 0; stringI < dimensions[1]; stringI++) {
             for (int charI = 0; charI < dimensions[2]; charI++) {
                 worldState.setPos(charPos);
-                if (flip) GTLog.logger.info("checked with flip true at " + charPos);
                 TraceabilityPredicate predicate = predicates.get(aisle.charAt(stringI, charI));
 
                 if (predicate != TraceabilityPredicate.ANY) {
@@ -318,7 +311,7 @@ public class BlockPattern implements IBlockPattern {
         // candidates to be passed into MultiblockShapeInfo
         Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
         // cache for candidates
-        Map<TraceabilityPredicate.SimplePredicate, BlockInfoChar> infos = new HashMap<>();
+        Object2CharMap<TraceabilityPredicate.SimplePredicate> infos = new Object2CharOpenHashMap<>();
         Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCache = new Object2IntOpenHashMap<>();
         Object2IntMap<TraceabilityPredicate.SimplePredicate> layerCache = new Object2IntOpenHashMap<>();
 
@@ -326,7 +319,9 @@ public class BlockPattern implements IBlockPattern {
 
         // 0 is reserved as a null for char
         char currentChar = 1;
+        int aisleOffset = 0;
 
+        // first pass fills in all the minimum counts
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             for (int repeats = 1; repeats <= aisles[aisleI].minRepeats; repeats++) {
                 pattern.add(new char[dimensions[1]][dimensions[2]]);
@@ -335,6 +330,8 @@ public class BlockPattern implements IBlockPattern {
                     for (int charI = 0; charI < dimensions[2]; charI++) {
                         char c = aisles[aisleI].charAt(stringI, charI);
                         TraceabilityPredicate predicate = predicates.get(c);
+                        // we used up all the simple predicates, just let the second pass fill them in
+                        if (predicateIndex.get(c) >= predicate.common.size()) continue;
                         TraceabilityPredicate.SimplePredicate simple = predicate.common.get(predicateIndex.get(c));
 
                         if (simple.candidates == null) continue;
@@ -342,41 +339,95 @@ public class BlockPattern implements IBlockPattern {
                         // cache all the BlockInfo, so that we only need to get it once per simple predicate
                         if (!infos.containsKey(simple)) {
                             BlockInfo info = simple.candidates.get()[0];
-                            infos.put(simple, new BlockInfoChar(info, currentChar));
+                            infos.put(simple, currentChar);
                             candidates.put(currentChar, info);
                             currentChar++;
                         }
 
-                        BlockInfoChar info = infos.get(simple);
-                        int layerCount = layerCache.getInt(simple) + 1;
-                        int globalCount = globalCache.getInt(simple) + 1;
+                        char info = infos.getChar(simple);
+                        int layerCount = layerCache.put(simple, layerCache.getInt(simple) + 1) + 1;
+                        int globalCount = globalCache.put(simple, globalCache.getInt(simple) + 1) + 1;
 
-                        pattern.get(aisleI + repeats - 1)[stringI][charI] = info.c;
-                        layerCache.put(simple, layerCount);
-                        globalCache.put(simple, globalCount);
+                        // replace all air with 0 instead of whatever char
+                        pattern.get(aisleOffset)[stringI][charI] = candidates.get(info).getBlockState() ==
+                                Blocks.AIR.getDefaultState() ? 0 : info;
 
                         TraceabilityPredicate.SimplePredicate next = simple;
 
                         // don't need inequalities since everything is incremented once at a time
-                        // min layer reached OR min global reached OR preview reached OR max layer reached OR max global reached
-                        while ((next.minLayerCount != -1 && layerCount == next.minLayerCount) ||
-                                (next.minGlobalCount != -1 && globalCount == next.minGlobalCount) ||
-                                (next.previewCount != -1 && globalCount == next.previewCount) ||
+                        // only put the minimum amount of parts possible
+                        // missing parts will be filled in the second pass
+                        while ((next.previewCount == -1 || globalCount == next.previewCount) &&
+                                (next.minLayerCount == -1 || layerCount == next.minLayerCount) &&
+                                (next.minGlobalCount == -1 || globalCount == next.minGlobalCount)) {
+                            // if the current predicate is used, move until the next free one
+                            int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
+                            if (newIndex >= predicate.common.size()) break;
+                            next = predicate.common.get(newIndex);
+                            globalCount = globalCache.getInt(next);
+                            layerCount = layerCache.getInt(next);
+                        }
+                    }
+                }
+                aisleOffset++;
+            }
+        }
+
+        predicateIndex.clear();
+        aisleOffset = 0;
+
+        // second pass fills everything else
+        for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
+            for (int repeats = 1; repeats <= aisles[aisleI].minRepeats; repeats++) {
+                layerCache.clear();
+                for (int stringI = 0; stringI < dimensions[1]; stringI++) {
+                    for (int charI = 0; charI < dimensions[2]; charI++) {
+                        // skip if populated by first pass
+                        if (pattern.get(aisleOffset)[stringI][charI] != 0) continue;
+
+                        char c = aisles[aisleI].charAt(stringI, charI);
+                        TraceabilityPredicate predicate = predicates.get(c);
+                        TraceabilityPredicate.SimplePredicate next = predicate.common.get(predicateIndex.get(c));
+
+                        int layerCount = layerCache.getInt(next);
+                        int globalCount = globalCache.getInt(next);
+
+                        // don't need inequalities since everything is incremented once at a time
+                        // do this first because the first pass could have left some predicates already used
+                        while ((next.previewCount != -1 && globalCount == next.previewCount) ||
                                 (next.maxLayerCount != -1 && layerCount == next.maxLayerCount) ||
                                 (next.maxGlobalCount != -1 && globalCount == next.maxGlobalCount)) {
                             // if the current predicate is used, move until the next free one
                             int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
-                            if (newIndex >= predicate.common.size()) {
-                                GTLog.logger.warn("Failed to geneoirate default pattern, next simple predicate would have been out of bounds.", new IllegalStateException());
-                            }
+                            if (newIndex >= predicate.common.size())
+                                GTLog.logger.warn("Failed to generate default structure pattern.", new IllegalStateException());
                             next = predicate.common.get(newIndex);
+                            globalCount = globalCache.getInt(next);
+                            layerCount = layerCache.getInt(next);
                         }
+
+                        if (next.candidates == null) continue;
+
+                        if (!infos.containsKey(next)) {
+                            BlockInfo info = next.candidates.get()[0];
+                            infos.put(next, currentChar);
+                            candidates.put(currentChar, info);
+                            currentChar++;
+                        }
+
+                        char info = infos.getChar(next);
+                        layerCache.put(next, layerCount + 1);
+                        globalCache.put(next, globalCount + 1);
+
+                        pattern.get(aisleOffset)[stringI][charI] = candidates.get(info).getBlockState() ==
+                                Blocks.AIR.getDefaultState() ? 0 : info;
                     }
                 }
+                aisleOffset++;
             }
         }
 
-        return null;
+        return new MultiblockShapeInfo(pattern.stream().map(a -> new PatternAisle(1, a)).toArray(PatternAisle[]::new), candidates, directions);
     }
 
     @Override
@@ -400,7 +451,4 @@ public class BlockPattern implements IBlockPattern {
         offset.apply(start, frontFacing, upFacing, flip);
         return start;
     }
-
-    @Desugar
-    public record BlockInfoChar(BlockInfo info, char c) {}
 }
