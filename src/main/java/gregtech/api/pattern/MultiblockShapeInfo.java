@@ -16,15 +16,41 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class MultiblockShapeInfo {
 
+    /**
+     * Default front facing for jei preview(and what patterns are most likely made for).
+     */
+    public static final EnumFacing DEFAULT_FRONT = EnumFacing.SOUTH;
+
+    /**
+     * Default up facing for jei preview(and what patterns are most likely made for).
+     */
+    public static final EnumFacing DEFAULT_UP = EnumFacing.NORTH;
+
+    /**
+     * Unmodifiable reverse map from facing to relative direction, using DEFAULT_FRONT and DEFAULT_UP.
+     * For example, EnumFacing.NORTH -> RelativeDirection.BACK, since with the defaults the relative back of the controller is north.
+     */
+    public static final Map<EnumFacing, RelativeDirection> FACING_MAP;
     protected final PatternAisle[] aisles;
     protected final Char2ObjectMap<BlockInfo> symbols;
     protected final RelativeDirection[] directions;
+
+    static {
+        EnumMap<EnumFacing, RelativeDirection> facingMap = new EnumMap<>(EnumFacing.class);
+        for (RelativeDirection dir : RelativeDirection.VALUES) {
+            facingMap.put(dir.getRelativeFacing(DEFAULT_FRONT, DEFAULT_UP, false), dir);
+        }
+
+        FACING_MAP = Collections.unmodifiableMap(facingMap);
+    }
 
     public MultiblockShapeInfo(PatternAisle[] aisles, Char2ObjectMap<BlockInfo> symbols,
                                RelativeDirection[] directions) {
@@ -47,6 +73,7 @@ public class MultiblockShapeInfo {
     // everything up
     public BlockPos getMap(MultiblockControllerBase src, BlockPos start, EnumFacing frontFacing, EnumFacing upFacing,
                                            Map<BlockPos, BlockInfo> map) {
+        // todo update cleanroom and charcoal pile igniter with enummap instead of hashmap
         // seems like MultiblockInfoRecipeWrapper wants the controller to be facing south
         EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, false);
         EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, false);
@@ -70,10 +97,21 @@ public class MultiblockShapeInfo {
                         MetaTileEntityHolder mteHolder = new MetaTileEntityHolder();
                         mteHolder.setMetaTileEntity(holder.getMetaTileEntity());
                         mteHolder.getMetaTileEntity().onPlacement();
-                        mteHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
 
-                        if (mteHolder.getMetaTileEntity().getClass() == src.getClass()) {
-                            controller = pos.immutable();
+                        // get the relative direction from the part facing, then use that to get the real enum facing
+                        EnumFacing newFacing = FACING_MAP.get(holder.getMetaTileEntity().getFrontFacing()).getRelativeFacing(frontFacing, upFacing, false);
+                        mteHolder.getMetaTileEntity().setFrontFacing(newFacing);
+
+
+                        if (mteHolder.getMetaTileEntity() instanceof MultiblockControllerBase base) {
+                            // there is no way to determine upwards facing with only a front facing
+                            // so if you want to have a multiblock with an upward facings that isn't UP
+                            // use the (IBlockState, TileEntity) ctor for BlockInfo and set upwardsFacing there
+                            // currently this just sets the controller's upwards facing
+                            if (base.getClass() == src.getClass()) {
+                                controller = pos.immutable();
+                                base.setUpwardsFacing(upFacing);
+                            }
                         }
 
                         map.put(pos.immutable(),

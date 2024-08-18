@@ -560,6 +560,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @NotNull
     private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
+        // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can work
         BlockPos controllerPos = shapeInfo.getMap(this.controller, new BlockPos(0, 128, 0), EnumFacing.SOUTH, EnumFacing.NORTH, blockMap);
         MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap.get(controllerPos).getTileEntity()).getMetaTileEntity();
 

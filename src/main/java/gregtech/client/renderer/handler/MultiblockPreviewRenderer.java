@@ -83,6 +83,7 @@ public class MultiblockPreviewRenderer {
             layer++;
         }
         resetMultiblockRender();
+        mbpPos = controller.getPos();
         mbpEndTime = System.currentTimeMillis() + durTimeMillis;
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
@@ -119,10 +120,7 @@ public class MultiblockPreviewRenderer {
         Tessellator tes = Tessellator.getInstance();
         BufferBuilder buff = tes.getBuffer();
 
-        // don't check structure when only a layer is displayed to prevent controller from unforming
-        if (controller != null && finalMaxY == 0) {
-            controller.checkStructurePattern();
-        }
+        if (controller != null) controller.checkStructurePattern();
 
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
@@ -151,8 +149,6 @@ public class MultiblockPreviewRenderer {
             GlStateManager.popMatrix();
         }
         ForgeHooksClient.setRenderLayer(oldLayer);
-
-        GlStateManager.popMatrix();
     }
 
     // todo maybe remove??? who knows what this does but it looks like nothing useful
