@@ -301,7 +301,7 @@ metaitem.fluid_cell.empty=空
 metaitem.fluid_cell.name=%s单元
 metaitem.fluid_cell.universal.empty=空
 metaitem.fluid_cell.universal.name=%s通用单元
-metaitem.fluid_cell.glass_vial.name=%s玻璃单元
+metaitem.fluid_cell.glass_vial.name=%s玻璃试管
 metaitem.large_fluid_cell.steel.name=%s钢单元
 metaitem.large_fluid_cell.aluminium.name=%s铝单元
 metaitem.large_fluid_cell.stainless_steel.name=%s不锈钢单元
@@ -2397,7 +2397,7 @@ entity.ITNT.name=工业TNT
 
 tile.brittle_charcoal.name=脆木炭块
 tile.brittle_charcoal.tooltip.1=产自木炭堆点火器。
-tile.brittle_charcoal.tooltip.2=采掘可掉落木炭。
+tile.brittle_charcoal.tooltip.2=挖掘可掉落木炭。
 
 tile.optical_pipe_normal.name=光缆
 tile.optical_pipe_normal.tooltip1=传递§f算力§7或§f研究数据§7
@@ -2545,7 +2545,7 @@ tile.warning_sign_1.high_pressure_hazard.name=高压力危害警示方块
 
 # Decorative Metal Sheets
 tile.metal_sheet.white.name=白色金属板方块
-tile.metal_sheet.orange.name=橘色金属板方块
+tile.metal_sheet.orange.name=橙色金属板方块
 tile.metal_sheet.magenta.name=品红色金属板方块
 tile.metal_sheet.light_blue.name=淡蓝色金属板方块
 tile.metal_sheet.yellow.name=黄色金属板方块
@@ -2562,7 +2562,7 @@ tile.metal_sheet.red.name=红色金属板方块
 tile.metal_sheet.black.name=黑色金属板方块
 
 tile.large_metal_sheet.white.name=白色粗纹金属板方块
-tile.large_metal_sheet.orange.name=橘色粗纹金属板方块
+tile.large_metal_sheet.orange.name=橙色粗纹金属板方块
 tile.large_metal_sheet.magenta.name=品红色粗纹金属板方块
 tile.large_metal_sheet.light_blue.name=淡蓝色粗纹金属板方块
 tile.large_metal_sheet.yellow.name=黄色粗纹金属板方块
@@ -2579,7 +2579,7 @@ tile.large_metal_sheet.red.name=红色粗纹金属板方块
 tile.large_metal_sheet.black.name=黑色粗纹金属板方块
 
 tile.studs.white.name=白色橡胶混凝土
-tile.studs.orange.name=橘色橡胶混凝土
+tile.studs.orange.name=橙色橡胶混凝土
 tile.studs.magenta.name=品红色橡胶混凝土
 tile.studs.light_blue.name=淡蓝色橡胶混凝土
 tile.studs.yellow.name=黄色橡胶混凝土
@@ -2790,7 +2790,7 @@ gregtech.machine.tank_valve.steel.name=钢制储罐阀门
 gregtech.machine.tank.steel.name=钢制多方块储罐
 
 gregtech.multiblock.tank.tooltip=通过控制器或储罐阀门进行吞吐。
-gregtech.tank_valve.tooltip=用以吞吐多方块储罐中的流体。正面向下时可自动输出。
+gregtech.tank_valve.tooltip=用于吞吐多方块储罐中的流体。正面向下时可自动输出。
 
 gregtech.machine.clipboard.name=写字板
 
@@ -2972,7 +2972,7 @@ gregtech.machine.steam_rock_breaker_bronze.tooltip=需紧贴侧面放置§b水§
 gregtech.machine.steam_rock_breaker_steel.name=高压蒸汽碎岩机
 gregtech.machine.steam_rock_breaker_steel.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.steam_miner.name=蒸汽采矿机
-gregtech.machine.steam_miner.tooltip=采掘机器下方的矿石！
+gregtech.machine.steam_miner.tooltip=挖掘机器下方的矿石！
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=需要可燃液体
@@ -3004,7 +3004,7 @@ gregtech.machine.block_breaker.lv.name=基础方块破坏器
 gregtech.machine.block_breaker.mv.name=进阶方块破坏器
 gregtech.machine.block_breaker.hv.name=进阶方块破坏器 II
 gregtech.machine.block_breaker.ev.name=进阶方块破坏器 III
-gregtech.machine.block_breaker.tooltip=采掘面前的方块并收集掉落物
+gregtech.machine.block_breaker.tooltip=挖掘面前的方块并收集掉落物
 gregtech.machine.block_breaker.speed_bonus=§e速度加成：§f%,d%%
 
 # Electric Furnace
@@ -4354,7 +4354,7 @@ gregtech.machine.quantum_tank.uv.name=量子缸 IV
 gregtech.machine.quantum_tank.uhv.name=量子缸 V
 
 #Buffers
-gregtech.machine.buffer.tooltip=用于存储物品和流体的小小缓冲器
+gregtech.machine.buffer.tooltip=存储物品和流体的小小缓冲器
 gregtech.machine.buffer.lv.name=基础缓存器
 gregtech.machine.buffer.mv.name=进阶缓存器
 gregtech.machine.buffer.hv.name=进阶缓存器 II
@@ -4785,7 +4785,7 @@ gregtech.machine.fusion_reactor.overclocking=超频将使能耗翻倍，处理�
 gregtech.machine.miner.lv.name=基础采矿机
 gregtech.machine.miner.mv.name=进阶采矿机
 gregtech.machine.miner.hv.name=进阶采矿机 II
-gregtech.machine.miner.tooltip=只采掘机器下方的矿石！工作范围默认为§f%sx%s§7。
+gregtech.machine.miner.tooltip=只挖掘机器下方的矿石！工作范围默认为§f%sx%s§7。
 gregtech.machine.miner.per_block=§7每个方块需要§f%d§7秒。
 
 gregtech.machine.large_miner.ev.name=基础采矿场
@@ -4833,6 +4833,7 @@ gregtech.multiblock.cleanroom.clean_status=状态：%s
 gregtech.multiblock.cleanroom.clean_state=洁净（%s%%）
 gregtech.multiblock.cleanroom.dirty_state=污染（%s%%）
 gregtech.multiblock.cleanroom.warning_contaminated=被污染！
+gregtech.multiblock.cleanroom.low_tier=能源仓等级过低，最低等级为%s！
 
 gregtech.machine.charcoal_pile.name=木炭堆点火器
 gregtech.machine.charcoal_pile.tooltip.1=§c点火后§7将原木烧制成§a木炭§7。
@@ -4863,7 +4864,7 @@ gregtech.machine.active_transformer.name=有源变压器
 gregtech.machine.active_transformer.tooltip1=变形金刚：伪装的激光
 gregtech.machine.active_transformer.tooltip2=可以将任意数量的能量§f输入§7整合为任意数量的能量§f输出§7。
 gregtech.machine.active_transformer.tooltip3=当你使用§d激光§7进行能量传输时，拥有惊人的传输距离。
-gregtech.machine.active_transformer.tooltip3.5=
+gregtech.machine.active_transformer.tooltip3.5= 
 gregtech.multiblock.active_transformer.description=有源变压器是个多方块变压器，它可以接受任意数量，任意能量等级的能源仓输入，并以任意数量，任意能量等级的动力仓输出。有源变压器允许使用激光仓进行能量传输，这种长距离能量传输没有任何线损，但激光传导线缆必须位于一条直线上，否则不能传递能量。
 gregtech.machine.active_transformer.routing=路由模式
 
@@ -5122,8 +5123,8 @@ gregtech.machine.substation_hatch.output_64a.zpm.name=64安§cZPM§r变电动力
 gregtech.machine.substation_hatch.output_64a.uv.name=64安§3UV§r变电动力仓
 gregtech.machine.substation_hatch.output_64a.uhv.name=64安§4UHV§r变电动力仓
 
-gregtech.machine.rotor_holder.tooltip1=为多方块结构的转子
-gregtech.machine.rotor_holder.tooltip2=提供支撑，固定转子使其不能飞走
+gregtech.machine.rotor_holder.tooltip1=为多方块结构固定转子，
+gregtech.machine.rotor_holder.tooltip2=使其不能飞走
 
 gregtech.machine.rotor_holder.hv.name=§6HV§r转子支架
 gregtech.machine.rotor_holder.ev.name=§5EV§r转子支架
@@ -5133,15 +5134,15 @@ gregtech.machine.rotor_holder.zpm.name=§cZPM§r转子支架
 gregtech.machine.rotor_holder.uv.name=§3UV§r转子支架
 
 gregtech.machine.maintenance_hatch.name=维护仓
-gregtech.machine.maintenance_hatch.tooltip=用以对多方块结构进行维护
+gregtech.machine.maintenance_hatch.tooltip=用于维护多方块结构
 gregtech.machine.maintenance_hatch_configurable.name=可配置维护仓
-gregtech.machine.maintenance_hatch_configurable.tooltip=更精细的维修多方块结构/n起手无需维护！
+gregtech.machine.maintenance_hatch_configurable.tooltip=更精细的维护多方块结构/n起手无需维护！
 gregtech.machine.maintenance_hatch_full_auto.name=自动维护仓
-gregtech.machine.maintenance_hatch_full_auto.tooltip=可以自动维修多方块结构
+gregtech.machine.maintenance_hatch_full_auto.tooltip=可以自动维护多方块结构
 gregtech.machine.maintenance_hatch_cleanroom_auto.name=自动过滤维护仓
-gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=可以自动维修多方块结构，附带清洁功能！
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=可以自动维护多方块结构，附带清洁功能！
 gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=清洁方式：
-gregtech.machine.maintenance_hatch_tool_slot.tooltip=所需工具处于物品栏时空手点击该槽位来进行维护
+gregtech.machine.maintenance_hatch_tool_slot.tooltip=所需工具处于物品栏时空手点击该槽位来维护
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=放入胶带以防止发生故障
 
 gregtech.maintenance.configurable_duration=处理耗时：%fx
@@ -5433,6 +5434,8 @@ gregtech.gui.overclock.off=X
 gregtech.gui.sort=分类
 gregtech.gui.fluid_auto_output.tooltip.enabled=流体自动输出已启用
 gregtech.gui.fluid_auto_output.tooltip.disabled=流体自动输出已禁用
+gregtech.gui.item_auto_input.tooltip.enabled=物品自动输入已启用
+gregtech.gui.item_auto_input.tooltip.disabled=物品自动输入已禁用
 gregtech.gui.item_auto_output.tooltip.enabled=物品自动输出已启用
 gregtech.gui.item_auto_output.tooltip.disabled=物品自动输出已禁用
 gregtech.gui.item_auto_collapse.tooltip.enabled=物品堆叠自动合并已启用
@@ -6050,31 +6053,31 @@ gregtech.key.armor_charging=启用/禁用盔甲向物品栏充能
 gregtech.key.tool_aoe_change=切换工具范围性效用模式
 
 gregtech.subtitle.tick.forge_hammer=锻造锤：DUANG
-gregtech.subtitle.tick.macerator=研磨机：运行中
+gregtech.subtitle.tick.macerator=研磨机：破碎
 gregtech.subtitle.tick.chemical_reactor=化学反应釜：运行中
 gregtech.subtitle.tick.assembler=组装机：运行中
-gregtech.subtitle.tick.centrifuge=离心机：运行中
-gregtech.subtitle.tick.compressor=压缩机：运行中
-gregtech.subtitle.tick.electrolyzer=电解机：电流滋滋响
-gregtech.subtitle.tick.mixer=搅拌机：运行中
+gregtech.subtitle.tick.centrifuge=离心机：旋转
+gregtech.subtitle.tick.compressor=压缩机：挤压
+gregtech.subtitle.tick.electrolyzer=电解机：爆出火花
+gregtech.subtitle.tick.mixer=搅拌机：搅动
 gregtech.subtitle.tick.replicator=复制机：运行中
-gregtech.subtitle.tick.arc=电弧炉：运行中
+gregtech.subtitle.tick.arc=电弧炉：嗡——
 gregtech.subtitle.tick.boiler=锅炉：液体沸腾
 gregtech.subtitle.tick.furnace=电炉：冶炼
-gregtech.subtitle.tick.cooling=热锭：冷却
-gregtech.subtitle.tick.fire=火：燃烧
-gregtech.subtitle.tick.bath=化学浸洗机：运行中
+gregtech.subtitle.tick.cooling=真空冷冻机：运行中
+gregtech.subtitle.tick.fire=火：爆裂
+gregtech.subtitle.tick.bath=化学浸洗机：嘶嘶
 gregtech.subtitle.tick.motor=马达：转啊转
 gregtech.subtitle.tick.cut=切割机：运行中
-gregtech.subtitle.tick.turbine=涡轮：转子旋转
+gregtech.subtitle.tick.turbine=涡轮：呼啸
 gregtech.subtitle.tick.combustion=燃烧发电机：燃料燃烧
 gregtech.subtitle.tick.miner=采矿机：开采
-gregtech.subtitle.tick.computation=计算机：处理
-gregtech.subtitle.use.wrench=扳手：拧动
+gregtech.subtitle.tick.computation=计算机：哔哔
+gregtech.subtitle.use.wrench=扳手：嘎啦
 gregtech.subtitle.use.soft_hammer=软锤：轻敲
 gregtech.subtitle.use.drill=电钻：嗡嗡
-gregtech.subtitle.use.plunger=搋子：流体被清理
-gregtech.subtitle.use.file=锉：摩擦
+gregtech.subtitle.use.plunger=搋子：清理流体
+gregtech.subtitle.use.file=锉：磨削
 gregtech.subtitle.use.saw=锯：切割
 gregtech.subtitle.use.screwdriver=螺丝刀：拧螺丝
 gregtech.subtitle.use.chainsaw=链锯：拉动油门
@@ -6288,3 +6291,8 @@ gregtech.scanner.forestry.larvae=§o幼体（已扫描）
 gregtech.scanner.forestry.serum=§o血清（已扫描）
 gregtech.scanner.forestry.caterpillar=§o幼虫（已扫描）
 gregtech.scanner.forestry.pollen=§o花粉（已扫描）
+
+# Mutation
+gregtech.mutation.block_of=%s块
+
+record.sus=Leonz - Among Us Drip

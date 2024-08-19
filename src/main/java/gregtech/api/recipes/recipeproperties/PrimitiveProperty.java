@@ -1,6 +1,8 @@
 package gregtech.api.recipes.recipeproperties;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Simple Marker Property to tell JEI to not display Total EU and EU/t.
@@ -22,6 +24,7 @@ public class PrimitiveProperty extends RecipeProperty<Boolean> {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {}
 
     @Override

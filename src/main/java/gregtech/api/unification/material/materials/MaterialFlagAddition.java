@@ -402,5 +402,8 @@ public class MaterialFlagAddition {
 
         oreProp = Pyrochlore.getProperty(PropertyKey.ORE);
         oreProp.setOreByProducts(Apatite, Calcium, Niobium);
+
+        oreProp = Zircon.getProperty(PropertyKey.ORE);
+        oreProp.setOreByProducts(Zircon, Ilmenite, Rutile);
     }
 }

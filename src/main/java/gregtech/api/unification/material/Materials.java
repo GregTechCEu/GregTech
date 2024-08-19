@@ -470,6 +470,13 @@ public class Materials {
     public static Material Pyrochlore;
     public static Material RTMAlloy;
     public static Material IlmeniteSlag;
+    public static Material Zircon;
+    public static Material Zirconia;
+    public static Material ZirconiumTetrachloride;
+    public static Material Hafnia;
+    public static Material HafniumTetrachloride;
+    public static Material Zircaloy4;
+    public static Material Inconel718;
 
     /**
      * Organic chemistry

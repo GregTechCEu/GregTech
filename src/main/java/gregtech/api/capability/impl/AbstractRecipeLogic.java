@@ -30,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -71,7 +70,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int maxProgressTime;
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
-    protected NonNullList<ItemStack> itemOutputs;
+    protected List<ItemStack> itemOutputs;
 
     protected boolean isActive;
     protected boolean workingEnabled = true;
@@ -1227,7 +1226,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.maxProgressTime = compound.getInteger("MaxProgress");
             this.recipeEUt = compound.getLong("RecipeEUt");
             NBTTagList itemOutputsList = compound.getTagList("ItemOutputs", Constants.NBT.TAG_COMPOUND);
-            this.itemOutputs = NonNullList.create();
+            this.itemOutputs = new ArrayList<>(itemOutputsList.tagCount());
             for (int i = 0; i < itemOutputsList.tagCount(); i++) {
                 this.itemOutputs.add(new ItemStack(itemOutputsList.getCompoundTagAt(i)));
             }
