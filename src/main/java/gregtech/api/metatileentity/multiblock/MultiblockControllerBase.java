@@ -771,12 +771,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      *
      * @param keyMap  A map for autobuild, or null if it is an in world or jei preview. Note that for in world and jei
      *                previews you can return a singleton list(only the first element will be used anyway).
-     * @param hatches This is whether you should put hatches, JEI previews need hatches, but autobuild and in world
-     *                previews shouldn't(unless the hatch is necessary and only has one valid spot, such as EBF muffler)
      */
     // todo add use for the keyMap with the multiblock builder
     // todo maybe add name arg for building substructures
-    public List<MultiblockShapeInfo> getBuildableShapes(@Nullable Object2IntMap<String> keyMap, boolean hatches) {
+    public List<MultiblockShapeInfo> getBuildableShapes(@Nullable Object2IntMap<String> keyMap) {
         List<MultiblockShapeInfo> infos = getMatchingShapes();
 
         // if there is no overriden getMatchingShapes() just return the default one

@@ -126,7 +126,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
         Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
-        this.patterns = controller.getBuildableShapes(null, false).stream()
+        this.patterns = controller.getBuildableShapes(null).stream()
                 .map(it -> initializePattern(it, drops))
                 .toArray(MBPattern[]::new);
         allItemStackInputs.addAll(drops);

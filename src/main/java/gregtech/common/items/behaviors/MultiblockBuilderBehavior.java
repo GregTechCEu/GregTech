@@ -43,7 +43,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour {
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed("MAIN")) {
-                multiblock.getBuildableShapes(new Object2IntOpenHashMap<>(), false);
+                multiblock.getBuildableShapes(new Object2IntOpenHashMap<>());
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;

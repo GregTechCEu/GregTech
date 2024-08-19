@@ -431,14 +431,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         netCovers = new HashSet<>();
         remoteCovers = new HashSet<>();
         inputEnergy = new EnergyContainerList(this.getAbilities(MultiblockAbility.INPUT_ENERGY));
-        width = 0;
-        checkCovers();
-        for (IMultiblockPart part : this.getMultiblockParts()) {
-            if (part instanceof MetaTileEntityMonitorScreen) {
-                width++;
-            }
-        }
-        width = width / height;
+        width = ((BlockPattern) getSubstructure("MAIN")).getRepetitionCount(1);
         screens = new MetaTileEntityMonitorScreen[width][height];
         for (IMultiblockPart part : this.getMultiblockParts()) {
             if (part instanceof MetaTileEntityMonitorScreen screen) {
