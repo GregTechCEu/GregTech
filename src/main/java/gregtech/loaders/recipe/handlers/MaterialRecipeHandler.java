@@ -481,6 +481,9 @@ public class MaterialRecipeHandler {
         ItemStack blockStack = OreDictUnifier.get(blockPrefix, material);
         long materialAmount = blockPrefix.getMaterialAmount(material);
         if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
+            if (!material.hasProperty(PropertyKey.GEM)) return;
+            if (!ConfigHolder.recipes.disableManualCompression) return;
+
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(
