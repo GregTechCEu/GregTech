@@ -47,8 +47,7 @@ public class ActiveTransformerInfoProvider extends CapabilityInfoProvider<IMulti
                     "gregtech.multiblock.active_transformer.average_io",
                     TextComponentUtil.stringWithColor(TextFormatting.WHITE,
                             player.isSneaking() || averageIO < 10_000 ?
-                                    TextFormattingUtil.formatNumbers(
-                                            activeTransformer.getAverageIOLastSec()) + " EU/t" :
+                                    TextFormattingUtil.formatNumbers(averageIO) + " EU/t" :
                                     ElementProgress.format(averageIO, NumberFormat.COMPACT, "EU/t")));
             probeInfo.text(text.getFormattedText());
         }
