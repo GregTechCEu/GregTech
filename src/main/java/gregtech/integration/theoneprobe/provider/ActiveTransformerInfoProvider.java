@@ -15,6 +15,8 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.NumberFormat;
+import mcjty.theoneprobe.apiimpl.elements.ElementProgress;
 import org.jetbrains.annotations.NotNull;
 
 public class ActiveTransformerInfoProvider extends CapabilityInfoProvider<IMultiblockController> {
@@ -37,12 +39,17 @@ public class ActiveTransformerInfoProvider extends CapabilityInfoProvider<IMulti
     @Override
     protected void addProbeInfo(IMultiblockController capability, IProbeInfo probeInfo, EntityPlayer player,
                                 TileEntity tileEntity, IProbeHitData data) {
-        if (capability.isStructureFormed() && capability instanceof MetaTileEntityActiveTransformer activeTransformer) {
+        if (capability.isStructureFormed() && capability instanceof MetaTileEntityActiveTransformer activeTransformer &&
+                activeTransformer.isActive()) {
+            long averageIO = activeTransformer.getAverageIOLastSec();
             ITextComponent text = TextComponentUtil.translationWithColor(
                     TextFormatting.AQUA,
                     "gregtech.multiblock.active_transformer.average_io",
                     TextComponentUtil.stringWithColor(TextFormatting.WHITE,
-                            TextFormattingUtil.formatNumbers(activeTransformer.getAverageIOLastSec()) + " EU/t"));
+                            player.isSneaking() || averageIO < 10_000 ?
+                                    TextFormattingUtil.formatNumbers(
+                                            activeTransformer.getAverageIOLastSec()) + " EU/t" :
+                                    ElementProgress.format(averageIO, NumberFormat.COMPACT, "EU/t")));
             probeInfo.text(text.getFormattedText());
         }
     }
