@@ -5748,7 +5748,7 @@ gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until 
 
 gregtech.multiblock.active_transformer.max_in=Max Input: %s
 gregtech.multiblock.active_transformer.max_out=Max Output: %s
-gregtech.multiblock.active_transformer.average_io=Avg. EU I/O: %s
+gregtech.multiblock.active_transformer.average_io=Average I/O: %s
 
 gregtech.multiblock.data_bank.providing=Providing data.
 

@@ -178,8 +178,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         // Max input line
                         ITextComponent maxInputFormatted = TextComponentUtil.stringWithColor(
                                 TextFormatting.WHITE,
-                                TextFormattingUtil.formatNumbers(powerInput.getInputVoltage() * powerInput.getInputAmperage()) + " EU/t"
-                        );
+                                TextFormattingUtil.formatNumbers(
+                                        powerInput.getInputVoltage() * powerInput.getInputAmperage()) + " EU/t");
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.GREEN,
                                 "gregtech.multiblock.active_transformer.max_in",
@@ -188,8 +188,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         // Max output line
                         ITextComponent maxOutputFormatted = TextComponentUtil.stringWithColor(
                                 TextFormatting.WHITE,
-                                TextFormattingUtil.formatNumbers(powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage()) + " EU/t"
-                        );
+                                TextFormattingUtil.formatNumbers(
+                                        powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage()) + " EU/t");
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.RED,
                                 "gregtech.multiblock.active_transformer.max_out",
@@ -198,8 +198,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         // Average I/O line
                         ITextComponent avgInputFormatted = TextComponentUtil.stringWithColor(
                                 TextFormatting.WHITE,
-                                TextFormattingUtil.formatNumbers(averageIOLastSec) + " EU/t"
-                        );
+                                TextFormattingUtil.formatNumbers(averageIOLastSec) + " EU/t");
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.AQUA,
                                 "gregtech.multiblock.active_transformer.average_io",
@@ -300,5 +299,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip2"));
         tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip3") + TooltipHelper.RAINBOW_SLOW +
                 I18n.format("gregtech.machine.active_transformer.tooltip3.5"));
+    }
+
+    public long getAverageIOLastSec() {
+        return this.averageIOLastSec;
     }
 }
