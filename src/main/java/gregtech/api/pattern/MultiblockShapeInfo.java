@@ -32,7 +32,7 @@ public class MultiblockShapeInfo {
     /**
      * Default up facing for jei preview(and what patterns are most likely made for).
      */
-    public static final EnumFacing DEFAULT_UP = EnumFacing.NORTH;
+    public static final EnumFacing DEFAULT_UP = EnumFacing.UP;
 
     /**
      * Unmodifiable reverse map from facing to relative direction, using DEFAULT_FRONT and DEFAULT_UP.

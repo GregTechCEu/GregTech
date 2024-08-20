@@ -3,8 +3,8 @@ package gregtech.api.util;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 /**
@@ -12,34 +12,22 @@ import java.util.function.Function;
  */
 public enum RelativeDirection {
 
-    UP(f -> EnumFacing.UP),
-    DOWN(f -> EnumFacing.DOWN),
-    LEFT(EnumFacing::rotateYCCW),
-    RIGHT(EnumFacing::rotateY),
-    FRONT(Function.identity()),
-    BACK(EnumFacing::getOpposite);
+    UP((f, u) -> u),
+    DOWN((f, u) -> u.getOpposite()),
+    LEFT((f, u) -> GTUtility.cross(f, u).getOpposite()),
+    RIGHT(GTUtility::cross),
+    FRONT((f, u) -> f),
+    BACK((f, u) -> f.getOpposite());
 
-    final Function<EnumFacing, EnumFacing> actualFacing;
+    final BinaryOperator<EnumFacing> facingFunction;
 
     /**
      * do not mutate this unless you want your house to explode
      */
     public static final RelativeDirection[] VALUES = values();
 
-    RelativeDirection(Function<EnumFacing, EnumFacing> actualFacing) {
-        this.actualFacing = actualFacing;
-    }
-
-    public EnumFacing getActualFacing(EnumFacing facing) {
-        return actualFacing.apply(facing);
-    }
-
-    public EnumFacing apply(EnumFacing facing) {
-        return actualFacing.apply(facing);
-    }
-
-    public Vec3i applyVec3i(EnumFacing facing) {
-        return apply(facing).getDirectionVec();
+    RelativeDirection(BinaryOperator<EnumFacing> facingFunction) {
+        this.facingFunction = facingFunction;
     }
 
     /**
@@ -57,71 +45,15 @@ public enum RelativeDirection {
         return (ordinal() / 2) * 2 + (1 - ordinal() % 2);
     }
 
+    public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upFacing) {
+        if (frontFacing.getAxis() == upFacing.getAxis()) {
+            throw new IllegalArgumentException("Front facing and up facing must be on different axes!");
+        }
+        return facingFunction.apply(frontFacing, upFacing);
+    }
+
     public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
-        EnumFacing.Axis frontAxis = frontFacing.getAxis();
-        return switch (this) {
-            case UP -> {
-                if (frontAxis == Axis.Y) {
-                    // same direction as upwards facing
-                    yield upwardsFacing;
-                } else {
-                    // transform the upwards facing into a real facing
-                    yield switch (upwardsFacing) {
-                        case NORTH -> EnumFacing.UP;
-                        case SOUTH -> EnumFacing.DOWN;
-                        case EAST -> frontFacing.rotateYCCW();
-                        default -> frontFacing.rotateY(); // WEST
-                    };
-                }
-            }
-            case DOWN -> {
-                if (frontAxis == Axis.Y) {
-                    // opposite direction as upwards facing
-                    yield upwardsFacing.getOpposite();
-                } else {
-                    // transform the upwards facing into a real facing
-                    yield switch (upwardsFacing) {
-                        case NORTH -> EnumFacing.DOWN;
-                        case SOUTH -> EnumFacing.UP;
-                        case EAST -> frontFacing.rotateY();
-                        default -> frontFacing.rotateYCCW(); // WEST
-                    };
-                }
-            }
-            case LEFT -> {
-                EnumFacing facing;
-                if (frontAxis == Axis.Y) {
-                    facing = upwardsFacing.rotateY();
-                } else {
-                    facing = switch (upwardsFacing) {
-                        case NORTH -> frontFacing.rotateYCCW();
-                        case SOUTH -> frontFacing.rotateY();
-                        case EAST -> EnumFacing.DOWN;
-                        default -> EnumFacing.UP; // WEST
-                    };
-                }
-                yield isFlipped ? facing.getOpposite() : facing;
-            }
-            case RIGHT -> {
-                EnumFacing facing;
-                if (frontAxis == Axis.Y) {
-                    facing = upwardsFacing.rotateYCCW();
-                } else {
-                    facing = switch (upwardsFacing) {
-                        case NORTH -> frontFacing.rotateY();
-                        case SOUTH -> frontFacing.rotateYCCW();
-                        case EAST -> EnumFacing.UP;
-                        default -> EnumFacing.DOWN; // WEST
-                    };
-                }
-                // invert if flipped
-                yield isFlipped ? facing.getOpposite() : facing;
-            }
-            // same direction as front facing, upwards facing doesn't matter
-            case FRONT -> frontFacing;
-            // opposite direction as front facing, upwards facing doesn't matter
-            case BACK -> frontFacing.getOpposite();
-        };
+        return (isFlipped && (this == LEFT || this == RIGHT)) ? getRelativeFacing(frontFacing, upwardsFacing).getOpposite() : getRelativeFacing(frontFacing, upwardsFacing);
     }
 
     public Function<BlockPos, Integer> getSorter(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
@@ -146,48 +78,22 @@ public enum RelativeDirection {
      */
     public static EnumFacing simulateAxisRotation(EnumFacing newFrontFacing, EnumFacing oldFrontFacing,
                                                   EnumFacing upwardsFacing) {
-        if (newFrontFacing == oldFrontFacing) return upwardsFacing;
+        // 180 degree flip
+        if (newFrontFacing.getAxis() == oldFrontFacing.getAxis()) return upwardsFacing;
 
-        EnumFacing.Axis newAxis = newFrontFacing.getAxis();
-        EnumFacing.Axis oldAxis = oldFrontFacing.getAxis();
+        // axis of rotation
+        Axis rotAxis = GTUtility.cross(newFrontFacing, oldFrontFacing).getAxis();
 
-        if (newAxis != Axis.Y && oldAxis != Axis.Y) {
-            // no change needed
-            return upwardsFacing;
-        } else if (newAxis == Axis.Y && oldAxis != Axis.Y) {
-            // going from horizontal to vertical axis
-            EnumFacing newUpwardsFacing = switch (upwardsFacing) {
-                case NORTH -> oldFrontFacing.getOpposite();
-                case SOUTH -> oldFrontFacing;
-                case EAST -> oldFrontFacing.rotateYCCW();
-                default -> oldFrontFacing.rotateY(); // WEST
-            };
-            return newFrontFacing == EnumFacing.DOWN && upwardsFacing.getAxis() == Axis.Z ?
-                    newUpwardsFacing.getOpposite() : newUpwardsFacing;
-        } else if (newAxis != Axis.Y) {
-            // going from vertical to horizontal axis
-            EnumFacing newUpwardsFacing;
-            if (upwardsFacing == newFrontFacing.getOpposite()) {
-                newUpwardsFacing = EnumFacing.NORTH;
-            } else if (upwardsFacing == newFrontFacing) {
-                newUpwardsFacing = EnumFacing.SOUTH;
-            } else if (upwardsFacing == newFrontFacing.rotateY()) {
-                newUpwardsFacing = EnumFacing.WEST;
-            } else { // rotateYCCW
-                newUpwardsFacing = EnumFacing.EAST;
-            }
-            return oldFrontFacing == EnumFacing.DOWN && newUpwardsFacing.getAxis() == Axis.Z ?
-                    newUpwardsFacing.getOpposite() : newUpwardsFacing;
-        } else {
-            // was on vertical axis and still is. Must have flipped from up to down or vice versa
-            return upwardsFacing.getOpposite();
-        }
+        if (rotAxis == upwardsFacing.getAxis()) return upwardsFacing;
+
+        return oldFrontFacing.getOpposite();
     }
 
     /**
      * Offset a BlockPos relatively in any direction by any amount. Pass negative values to offset down, right or
      * backwards.
      */
+    // todo rework/remove this also
     public static BlockPos offsetPos(BlockPos pos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped,
                                      int upOffset, int leftOffset, int forwardOffset) {
         if (upOffset == 0 && leftOffset == 0 && forwardOffset == 0) {

@@ -912,6 +912,20 @@ public class GTUtility {
     }
 
     /**
+     * Gets the cross product of 2 facings. Null is returned if the result is a zero vector(facings are on the same axis).
+     */
+    @Nullable
+    public static EnumFacing cross(EnumFacing a, EnumFacing b) {
+        if (a.getAxis() == b.getAxis()) return null;
+
+        return EnumFacing.getFacingFromVector(
+                a.getYOffset() * b.getZOffset() - a.getZOffset() * b.getYOffset(),
+                a.getZOffset() * b.getXOffset() - a.getXOffset() * b.getZOffset(),
+                a.getXOffset() * b.getYOffset() - a.getYOffset() * b.getXOffset()
+        );
+    }
+
+    /**
      * Safely cast a Long to an Int without overflow.
      *
      * @param v The Long value to cast to an Int.

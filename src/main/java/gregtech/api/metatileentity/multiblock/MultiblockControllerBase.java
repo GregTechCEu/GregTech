@@ -1,5 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
@@ -94,7 +95,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     // prioritize the manually specified sorter first, defaulting to the hashcode for tiebreakers
     private final NavigableSet<IMultiblockPart> multiblockParts = new TreeSet<>(partComparator);
 
-    protected EnumFacing upwardsFacing = EnumFacing.NORTH;
+    protected EnumFacing upwardsFacing = EnumFacing.UP;
     protected final Object2ObjectMap<String, IBlockPattern> structures = new Object2ObjectOpenHashMap<>();
 
     public MultiblockControllerBase(ResourceLocation metaTileEntityId) {
@@ -167,7 +168,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void setUpwardsFacing(EnumFacing upwardsFacing) {
         if (!allowsExtendedFacing()) return;
-        if (upwardsFacing == null || upwardsFacing == EnumFacing.UP || upwardsFacing == EnumFacing.DOWN) {
+        if (upwardsFacing == null || upwardsFacing.getAxis() == frontFacing.getAxis()) {
             GTLog.logger.error("Tried to set upwards facing to invalid facing {}! Skipping", upwardsFacing);
             return;
         }
@@ -351,17 +352,22 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             baseTexture.render(renderState, translation, pipeline);
         }
 
+        // todo fix
         if (allowsExtendedFacing()) {
-            double degree = Math.PI / 2 * (upwardsFacing == EnumFacing.EAST ? -1 :
-                    upwardsFacing == EnumFacing.SOUTH ? 2 : upwardsFacing == EnumFacing.WEST ? 1 : 0);
-            Rotation rotation = new Rotation(degree, frontFacing.getXOffset(), frontFacing.getYOffset(),
-                    frontFacing.getZOffset());
-            translation.translate(0.5, 0.5, 0.5);
-            if (frontFacing == EnumFacing.DOWN && upwardsFacing.getAxis() == EnumFacing.Axis.Z) {
-                translation.apply(new Rotation(Math.PI, 0, 1, 0));
+            double rad = 0;
+            if (frontFacing.getAxis() == EnumFacing.Axis.Y) {
+                rad = -Math.PI / 2 * (upwardsFacing.getHorizontalIndex() - 2);
+                if (frontFacing == EnumFacing.DOWN) rad += Math.PI;
+            } else {
+                EnumFacing rotated = EnumFacing.UP.rotateAround(frontFacing.getAxis());
+
+                if (upwardsFacing == EnumFacing.DOWN) rad = Math.PI;
+                else if (upwardsFacing == rotated) rad = Math.PI / 2;
+                else if (upwardsFacing == rotated.getOpposite()) rad = -Math.PI / 2;
             }
-            translation.apply(rotation);
-            translation.scale(1.0000f);
+
+            translation.translate(0.5, 0.5, 0.5);
+            translation.rotate(new Rotation(rad, frontFacing.getXOffset(), frontFacing.getYOffset(), frontFacing.getZOffset()));
             translation.translate(-0.5, -0.5, -0.5);
         }
     }
@@ -433,7 +439,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                         return true;
                     });
 
-                    // another bandaid fix, see below todo
+                    // another bandaid fix
                     addedParts.sort(partComparator);
 
                     for (IMultiblockAbilityPart<Object> part : addedParts) {
@@ -607,7 +613,18 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (data.hasKey("UpwardsFacing")) {
-            this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
+             this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
+             // old up facing is absolute when front facing is up/down
+             if (frontFacing.getAxis() != EnumFacing.Axis.Y) {
+                 this.upwardsFacing = switch (upwardsFacing) {
+                     case NORTH -> EnumFacing.UP;
+                     case SOUTH -> EnumFacing.DOWN;
+                     case EAST -> frontFacing.rotateYCCW();
+                     default -> frontFacing.rotateY();
+                 };
+             }
+        } else if (data.hasKey("UpFacing")) {
+            this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpFacing")];
         }
         this.reinitializeStructurePattern();
     }
@@ -615,7 +632,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setByte("UpwardsFacing", (byte) upwardsFacing.getIndex());
+        data.setByte("UpFacing", (byte) upwardsFacing.getIndex());
         return data;
     }
 
@@ -737,7 +754,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                                  CuboidRayTraceResult hitResult) {
         if (wrenchSide == getFrontFacing() && allowsExtendedFacing()) {
             if (!getWorld().isRemote) {
-                setUpwardsFacing(playerIn.isSneaking() ? upwardsFacing.rotateYCCW() : upwardsFacing.rotateY());
+                EnumFacing.Axis axis = getFrontFacing().getAxis();
+                setUpwardsFacing(playerIn.isSneaking() ? upwardsFacing.rotateAround(axis).getOpposite() : upwardsFacing.rotateAround(axis));
             }
             return true;
         }
