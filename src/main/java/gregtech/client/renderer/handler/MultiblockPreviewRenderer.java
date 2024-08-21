@@ -104,7 +104,7 @@ public class MultiblockPreviewRenderer {
     public static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo,
                                               int layer) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        BlockPos controllerPos = shapeInfo.getMap(controllerBase, BlockPos.ORIGIN, controllerBase.getFrontFacing(), controllerBase.getUpwardsFacing(), blockMap);
+        BlockPos controllerPos = shapeInfo.getMap(controllerBase, new BlockPos(0, 128, 0), controllerBase.getFrontFacing(), controllerBase.getUpwardsFacing(), blockMap);
         MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap.get(controllerPos).getTileEntity()).getMetaTileEntity();
 
         EnumFacing facing = controllerBase.getFrontFacing();
@@ -113,7 +113,7 @@ public class MultiblockPreviewRenderer {
         TrackedDummyWorld world = new TrackedDummyWorld();
         world.addBlocks(blockMap);
         int finalMaxY = layer % (shapeInfo.getUpCount(facing, upwardsFacing) + 1);
-        world.setRenderFilter(pos -> pos.getY() + 1 == finalMaxY || finalMaxY == 0);
+        world.setRenderFilter(pos -> pos.getY() - 127 == finalMaxY || finalMaxY == 0);
 
         Minecraft mc = Minecraft.getMinecraft();
         BlockRendererDispatcher brd = mc.getBlockRendererDispatcher();

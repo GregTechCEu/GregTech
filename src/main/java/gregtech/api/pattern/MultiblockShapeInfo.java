@@ -103,15 +103,14 @@ public class MultiblockShapeInfo {
                         mteHolder.getMetaTileEntity().setFrontFacing(newFacing);
 
 
-                        if (mteHolder.getMetaTileEntity() instanceof MultiblockControllerBase base) {
-                            // there is no way to determine upwards facing with only a front facing
-                            // so if you want to have a multiblock with an upward facings that isn't UP
-                            // use the (IBlockState, TileEntity) ctor for BlockInfo and set upwardsFacing there
-                            // currently this just sets the controller's upwards facing
-                            if (base.getClass() == src.getClass()) {
+                        if (holder.getMetaTileEntity() instanceof MultiblockControllerBase holderBase) {
+                            MultiblockControllerBase mteBase = (MultiblockControllerBase) mteHolder.getMetaTileEntity();
+
+                            EnumFacing newUpFacing = FACING_MAP.get(holderBase.getUpwardsFacing()).getRelativeFacing(frontFacing, upFacing, false);
+                            if (holderBase.getClass() == src.getClass()) {
                                 controller = pos.immutable();
-                                base.setUpwardsFacing(upFacing);
                             }
+                            mteBase.setUpwardsFacing(newUpFacing);
                         }
 
                         map.put(pos.immutable(),

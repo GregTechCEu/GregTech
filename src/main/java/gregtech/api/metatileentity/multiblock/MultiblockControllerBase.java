@@ -16,6 +16,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pattern.pattern.PatternState;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
@@ -360,10 +361,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 if (frontFacing == EnumFacing.DOWN) rad += Math.PI;
             } else {
                 EnumFacing rotated = EnumFacing.UP.rotateAround(frontFacing.getAxis());
+                if (frontFacing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE) rotated = rotated.getOpposite();
 
                 if (upwardsFacing == EnumFacing.DOWN) rad = Math.PI;
-                else if (upwardsFacing == rotated) rad = Math.PI / 2;
-                else if (upwardsFacing == rotated.getOpposite()) rad = -Math.PI / 2;
+                else if (upwardsFacing == rotated) rad = -Math.PI / 2;
+                else if (upwardsFacing == rotated.getOpposite()) rad = Math.PI / 2;
             }
 
             translation.translate(0.5, 0.5, 0.5);
@@ -405,7 +407,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void checkStructurePattern(String name) {
         IBlockPattern pattern = getSubstructure(name);
-        if (!pattern.getPatternState().shouldUpdate()) return;
+        if (!pattern.getPatternState().shouldUpdate() || getWorld() == null) return;
 
         long time = System.nanoTime();
         PatternState result = pattern.checkPatternFastAt(getWorld(), getPos(),
@@ -754,8 +756,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                                  CuboidRayTraceResult hitResult) {
         if (wrenchSide == getFrontFacing() && allowsExtendedFacing()) {
             if (!getWorld().isRemote) {
-                EnumFacing.Axis axis = getFrontFacing().getAxis();
-                setUpwardsFacing(playerIn.isSneaking() ? upwardsFacing.rotateAround(axis).getOpposite() : upwardsFacing.rotateAround(axis));
+                EnumFacing rot = upwardsFacing.rotateAround(getFrontFacing().getAxis());
+                if (frontFacing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE ^ playerIn.isSneaking()) {
+                    rot = rot.getOpposite();
+                }
+
+                setUpwardsFacing(rot);
             }
             return true;
         }

@@ -16,11 +16,14 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.FacingPos;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
@@ -521,9 +524,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                     for (BlockPos pos : parts) {
                         TileEntity tileEntity = getWorld().getTileEntity(pos);
                         if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity)
-                                .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                            MetaTileEntityMonitorScreen screen = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity)
-                                    .getMetaTileEntity();
+                                .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen screen) {
                             screen.addToMultiBlock(this, "MAIN");
                             int sx = screen.getX(), sy = screen.getY();
                             if (sx < 0 || sx >= width || sy < 0 || sy >= height) {
@@ -591,22 +592,16 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             }
             if (!this.getWorld().isRemote) {
                 this.getMultiblockParts().forEach(part -> {
-                    if (part instanceof MetaTileEntityMonitorScreen) {
-                        int x = ((MetaTileEntityMonitorScreen) part).getX();
-                        int y = ((MetaTileEntityMonitorScreen) part).getY();
-                        screenGrids[x][y].setScreen((MetaTileEntityMonitorScreen) part);
+                    if (part instanceof MetaTileEntityMonitorScreen screen) {
+                        screenGrids[screen.getX()][screen.getY()].setScreen(screen);
                     }
                 });
             } else {
                 parts.forEach(partPos -> {
                     TileEntity tileEntity = this.getWorld().getTileEntity(partPos);
                     if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity)
-                            .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
-                        MetaTileEntityMonitorScreen part = (MetaTileEntityMonitorScreen) ((IGregTechTileEntity) tileEntity)
-                                .getMetaTileEntity();
-                        int x = part.getX();
-                        int y = part.getY();
-                        screenGrids[x][y].setScreen(part);
+                            .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen screen) {
+                        screenGrids[screen.getX()][screen.getY()].setScreen(screen);
                     }
                 });
             }

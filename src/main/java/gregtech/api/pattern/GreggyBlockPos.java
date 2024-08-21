@@ -421,4 +421,16 @@ public class GreggyBlockPos {
             }
         };
     }
+
+    /**
+     * BlockPos version of {@link GreggyBlockPos#get(EnumFacing.Axis)}, for if the operation is small enough
+     * allocating more BlockPos is acceptable.
+     */
+    public static int getAxis(BlockPos pos, EnumFacing.Axis axis) {
+        return switch (axis) {
+            case X -> pos.getX();
+            case Y -> pos.getY();
+            case Z -> pos.getZ();
+        };
+    }
 }

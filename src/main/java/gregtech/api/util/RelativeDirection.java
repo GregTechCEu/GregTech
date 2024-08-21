@@ -81,12 +81,16 @@ public enum RelativeDirection {
         // 180 degree flip
         if (newFrontFacing.getAxis() == oldFrontFacing.getAxis()) return upwardsFacing;
 
-        // axis of rotation
-        Axis rotAxis = GTUtility.cross(newFrontFacing, oldFrontFacing).getAxis();
+        EnumFacing cross = GTUtility.cross(newFrontFacing, oldFrontFacing);
 
-        if (rotAxis == upwardsFacing.getAxis()) return upwardsFacing;
+        if (cross.getAxis() == upwardsFacing.getAxis()) return upwardsFacing;
 
-        return oldFrontFacing.getOpposite();
+        // clockwise rotation
+        if (oldFrontFacing.rotateAround(cross.getAxis()) == newFrontFacing) {
+            return oldFrontFacing.getOpposite();
+        }
+
+        return oldFrontFacing;
     }
 
     /**
