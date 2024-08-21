@@ -46,7 +46,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -148,18 +147,10 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         ItemStack item = playerIn.getHeldItem(hand);
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile != null) {
-            if (tile.getFrameMaterial() == null) {
-                BlockFrame frame = BlockFrame.getFrameBlockFromItem(item);
-                if (frame != null) {
-                    tile.setFrameMaterial(frame.getGtMaterial(item));
-                    SoundType type = frame.getSoundType(item);
-                    worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
-                            (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
-                    if (!playerIn.capabilities.isCreativeMode) {
-                        item.shrink(1);
-                    }
-                    return true;
-                }
+            BlockFrame frame = BlockFrame.getFrameBlockFromItem(item);
+            if (frame != null) {
+                if (playerIn.isSneaking()) return false;
+                return BlockFrame.runPlacementLogic(frame, pos, worldIn, item, playerIn);
             }
 
             RayTraceAABB trace = collisionRayTrace(playerIn, worldIn, pos);
@@ -209,10 +200,10 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                 if (result == EnumActionResult.FAIL) return false;
             }
             // frame removal
-            Material frame = tile.getFrameMaterial();
-            if (frame != null && ToolHelper.isTool(item, ToolClasses.CROWBAR)) {
+            Material frameMaterial = tile.getFrameMaterial();
+            if (frameMaterial != null && ToolHelper.isTool(item, ToolClasses.CROWBAR)) {
                 tile.setFrameMaterial(null);
-                spawnAsEntity(worldIn, pos, MetaBlocks.FRAMES.get(frame).getItem(frame));
+                spawnAsEntity(worldIn, pos, MetaBlocks.FRAMES.get(frameMaterial).getItem(frameMaterial));
                 ToolHelper.damageItem(item, playerIn);
                 ToolHelper.playToolSound(item, playerIn);
                 return true;
@@ -433,9 +424,19 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     @Override
     public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                   @NotNull Entity entityIn) {
-        if (worldIn.isRemote || !(entityIn instanceof EntityLivingBase living)) return;
         PipeTileEntity tile = getTileEntity(worldIn, pos);
-        if (tile != null && tile.getFrameMaterial() == null && tile.getOffsetTimer() % 10 == 0) {
+        if (tile == null) return;
+        if (tile.getFrameMaterial() != null) {
+            BlockFrame frame = MetaBlocks.FRAMES.get(tile.getFrameMaterial());
+            if (frame == null) {
+                tile.setFrameMaterial(null);
+                return;
+            }
+            frame.onEntityCollision(worldIn, pos, state, entityIn);
+            return;
+        }
+        if (worldIn.isRemote || !(entityIn instanceof EntityLivingBase living)) return;
+        if (tile.getOffsetTimer() % 10 == 0) {
             TemperatureLogic logic = tile.getTemperatureLogic();
             if (logic != null) {
                 long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();

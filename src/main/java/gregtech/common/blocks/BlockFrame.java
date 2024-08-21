@@ -177,6 +177,11 @@ public abstract class BlockFrame extends BlockMaterialBase {
         BlockFrame frameBlock = getFrameBlockFromItem(stack);
         if (frameBlock == null) return false;
 
+        return runPlacementLogic(frameBlock, pos, world, stack, player);
+    }
+
+    public static boolean runPlacementLogic(@NotNull BlockFrame frameBlock, @NotNull BlockPos pos, @NotNull World world,
+                                            @NotNull ItemStack stack, @NotNull EntityPlayer player) {
         BlockPos.PooledMutableBlockPos blockPos = BlockPos.PooledMutableBlockPos.retain();
         blockPos.setPos(pos);
         for (int i = 0; i < 32; i++) {
@@ -187,13 +192,12 @@ public abstract class BlockFrame extends BlockMaterialBase {
             TileEntity te = world.getTileEntity(blockPos);
             if (te instanceof PipeTileEntity tile && tile.getFrameMaterial() != null) {
                 blockPos.move(EnumFacing.UP);
-                te = world.getTileEntity(blockPos);
                 continue;
             }
-            if (canPlaceBlockAt(world, blockPos)) {
+            if (frameBlock.canPlaceBlockAt(world, blockPos)) {
                 world.setBlockState(blockPos,
                         frameBlock.getStateFromMeta(stack.getItem().getMetadata(stack.getItemDamage())));
-                SoundType type = getSoundType(stack);
+                SoundType type = frameBlock.getSoundType(stack);
                 world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F,
                         type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
@@ -203,7 +207,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 return true;
             } else if (te instanceof PipeTileEntity tile && tile.getFrameMaterial() == null) {
                 tile.setFrameMaterial(frameBlock.getGtMaterial(stack));
-                SoundType type = getSoundType(stack);
+                SoundType type = frameBlock.getSoundType(stack);
                 world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
                         (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
