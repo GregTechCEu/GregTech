@@ -39,7 +39,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends VariantBlock<T> {
+public class VariantActiveBlock<T extends IStringSerializable> extends VariantBlock<T> {
 
     private static final Int2ObjectMap<ObjectSet<BlockPos>> ACTIVE_BLOCKS = new Int2ObjectOpenHashMap<>();
     private static final ReadWriteLock ACTIVE_BLOCKS_LOCK = new ReentrantReadWriteLock();

@@ -1,5 +1,6 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.block.VariantItemBlock;
@@ -58,12 +59,12 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         IBlockState stackState = itemBlock.getBlockState(itemStack);
         CoilType coilType = getState(stackState);
 
-        lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.coilTemperature));
+        lines.add(I18n.format("tile.wire_coil.tooltip_heat", coilType.getCoilTemperature()));
 
         if (TooltipHelper.isShiftDown()) {
-            int coilTier = coilType.ordinal();
+            int coilTier = coilType.getTier();
             lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
-            lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", coilType.level * 32));
+            lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", coilType.getLevel() * 32));
             int EUt = MetaTileEntityMultiSmelter.getEUtForParallel(
                     MetaTileEntityMultiSmelter.getMaxParallel(coilType.getLevel()), coilType.getEnergyDiscount());
             lines.add(I18n.format("tile.wire_coil.tooltip_energy_smelter", EUt));
@@ -87,69 +88,139 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
         return ConfigHolder.client.coilsActiveEmissiveTextures;
     }
 
-    public enum CoilType implements IStringSerializable, IHeatingCoilBlockStats {
+    public static abstract class CoilType implements IStringSerializable, IHeatingCoilBlockStats {
 
-        CUPRONICKEL("cupronickel", 1800, 1, 1, Materials.Cupronickel),
-        KANTHAL("kanthal", 2700, 2, 1, Materials.Kanthal),
-        NICHROME("nichrome", 3600, 2, 2, Materials.Nichrome),
-        RTM_ALLOY("rtm_alloy", 4500, 4, 2, Materials.RTMAlloy),
-        HSS_G("hss_g", 5400, 4, 4, Materials.HSSG),
-        NAQUADAH("naquadah", 7200, 8, 4, Materials.Naquadah),
-        TRINIUM("trinium", 9001, 8, 8, Materials.Trinium),
-        TRITANIUM("tritanium", 10800, 16, 8, Materials.Tritanium);
+        public static final CoilType CUPRONICKEL = coilType(Materials.Cupronickel)
+                .tier(GTValues.LV)
+                .coilTemp(1800)
+                .multiSmelter(1, 1)
+                .build();
+        
+        public static final CoilType KANTHAL = coilType(Materials.Kanthal)
+                .tier(GTValues.MV)
+                .coilTemp(2700)
+                .multiSmelter(2, 1)
+                .build();
 
+        public static final CoilType NICHROME = coilType(Materials.Nichrome)
+                .tier(GTValues.HV)
+                .coilTemp(3600)
+                .multiSmelter(2, 2)
+                .build();
+
+        public static final CoilType RTM_ALLOY = coilType(Materials.RTMAlloy)
+                .tier(GTValues.EV)
+                .coilTemp(4500)
+                .multiSmelter(4, 2)
+                .build();
+
+        public static final CoilType HSS_G = coilType(Materials.HSSG)
+                .tier(GTValues.IV)
+                .coilTemp(5400)
+                .multiSmelter(4, 4)
+                .build();
+
+        public static final CoilType NAQUADAH = coilType(Materials.Naquadah)
+                .tier(GTValues.LuV)
+                .coilTemp(7200)
+                .multiSmelter(8, 8)
+                .build();
+
+        public static final CoilType TRINIUM = coilType(Materials.Trinium)
+                .tier(GTValues.ZPM)
+                .coilTemp(9001)
+                .multiSmelter(8, 8)
+                .build();
+
+        public static final CoilType TRITANIUM = coilType(Materials.Tritanium)
+                .tier(GTValues.UV)
+                .coilTemp(10800)
+                .multiSmelter(16, 8)
+                .build();
+
+        public static Builder coilType(Material material) {
+            return new Builder(material);
+        }
+
+        public static Builder coilType(String name) {
+            return new Builder(name);
+        }
+    }
+
+    public static class Builder {
         private final String name;
         // electric blast furnace properties
-        private final int coilTemperature;
+        private int coilTemperature;
         // multi smelter properties
-        private final int level;
-        private final int energyDiscount;
+        private int level;
+        private int energyDiscount;
+        private int tier;
         private final Material material;
 
-        CoilType(String name, int coilTemperature, int level, int energyDiscount, Material material) {
+        private Builder(Material material) {
+            this.material = material;
+            this.name = material.getResourceLocation().getPath();
+        }
+
+        private Builder(String name) {
             this.name = name;
+            this.material = null;
+        }
+
+        public Builder coilTemp(int coilTemperature) {
             this.coilTemperature = coilTemperature;
+            return this;
+        }
+
+        public Builder tier(int tier) {
+            this.tier = Math.max(0, 1 - tier);
+            return this;
+        }
+
+        public Builder multiSmelter(int level, int energyDiscount) {
             this.level = level;
             this.energyDiscount = energyDiscount;
-            this.material = material;
+            return this;
         }
 
-        @NotNull
-        @Override
-        public String getName() {
-            return this.name;
-        }
+        public CoilType build() {
+            return new CoilType() {
 
-        @Override
-        public int getCoilTemperature() {
-            return coilTemperature;
-        }
+                @Override
+                public @NotNull String getName() {
+                    return name;
+                }
 
-        @Override
-        public int getLevel() {
-            return level;
-        }
+                @Override
+                public int getCoilTemperature() {
+                    return coilTemperature;
+                }
 
-        @Override
-        public int getEnergyDiscount() {
-            return energyDiscount;
-        }
+                @Override
+                public int getLevel() {
+                    return level;
+                }
 
-        @Override
-        public int getTier() {
-            return this.ordinal();
-        }
+                @Override
+                public int getEnergyDiscount() {
+                    return energyDiscount;
+                }
 
-        @Nullable
-        @Override
-        public Material getMaterial() {
-            return material;
-        }
+                @Override
+                public int getTier() {
+                    return tier;
+                }
 
-        @NotNull
-        @Override
-        public String toString() {
-            return getName();
+                @Override
+                public @Nullable Material getMaterial() {
+                    return material;
+                }
+
+                @Override
+                public String toString() {
+                    return getName();
+                }
+            };
         }
     }
 }
