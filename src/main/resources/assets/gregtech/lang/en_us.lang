@@ -4150,6 +4150,8 @@ gregtech.machine.battery_buffer.max.16.name=Maximum Voltage 16x Battery Buffer
 
 gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
+gregtech.battery_buffer.average_input.top=Input: %s
+gregtech.battery_buffer.average_output.top=Output: %s
 
 # Transformers
 gregtech.machine.transformer.description=Transforms Energy between voltage tiers
