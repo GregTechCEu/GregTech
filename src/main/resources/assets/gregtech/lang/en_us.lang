@@ -4880,6 +4880,9 @@ gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible di
 gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
 gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
 gregtech.machine.active_transformer.routing=Routing.
+gregtech.multiblock.active_transformer.max_in=Max Input: %s
+gregtech.multiblock.active_transformer.max_out=Max Output: %s
+gregtech.multiblock.active_transformer.average_io=Average I/O: %s
 
 gregtech.machine.research_station.name=Research Station
 gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
@@ -5745,10 +5748,6 @@ gregtech.multiblock.power_substation.time_days=%s Days
 gregtech.multiblock.power_substation.time_years=%s Years
 gregtech.multiblock.power_substation.time_forever=Forever
 gregtech.multiblock.power_substation.under_one_hour_left=Less than 1 hour until fully drained!
-
-gregtech.multiblock.active_transformer.max_in=Max Input: %s
-gregtech.multiblock.active_transformer.max_out=Max Output: %s
-gregtech.multiblock.active_transformer.average_io=Average I/O: %s
 
 gregtech.multiblock.data_bank.providing=Providing data.
 
