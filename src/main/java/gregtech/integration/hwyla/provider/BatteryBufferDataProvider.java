@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.electric.MetaTileEntityBatteryBuffer;
 
 import net.minecraft.client.resources.I18n;
@@ -61,11 +62,13 @@ public class BatteryBufferDataProvider extends CapabilityDataProvider<IEnergyCon
 
                 if (metaTileEntity instanceof MetaTileEntityBatteryBuffer) {
                     long averageIn = batteryTag.getLong("InputPerSec") / 20;
-                    String averageInFormatted = I18n.format("gregtech.waila.energy_input", averageIn);
+                    String averageInFormatted = I18n.format("gregtech.waila.energy_input",
+                            TextFormattingUtil.formatNumbers(averageIn));
                     tooltip.add(averageInFormatted);
 
                     long averageOut = batteryTag.getLong("OutputPerSec") / 20;
-                    String averageOutFormatted = I18n.format("gregtech.waila.energy_output", averageOut);
+                    String averageOutFormatted = I18n.format("gregtech.waila.energy_output",
+                            TextFormattingUtil.formatNumbers(averageOut));
                     tooltip.add(averageOutFormatted);
                 }
             }
