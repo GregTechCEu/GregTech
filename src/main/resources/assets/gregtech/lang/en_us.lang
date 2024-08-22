@@ -120,6 +120,8 @@ option.gregtech.transformer=Transformers
 option.gregtech.workable=Workable Machines
 
 gregtech.waila.energy_stored=Energy: %d EU / %d EU
+gregtech.waila.energy_input=Input: %,d EU/t
+gregtech.waila.energy_output=Output: %,d EU/t
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
