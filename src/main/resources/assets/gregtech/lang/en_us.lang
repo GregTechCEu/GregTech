@@ -124,6 +124,7 @@ gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
 gregtech.waila.progress_computation=Computation: %s / %s
+gregtech.waila.active_transformer.average_io=Average I/O: %,d EU/t
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
