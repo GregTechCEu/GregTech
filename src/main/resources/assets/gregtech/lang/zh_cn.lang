@@ -119,7 +119,7 @@ option.gregtech.steam_boiler=蒸汽锅炉
 option.gregtech.transformer=变压器
 option.gregtech.workable=机器工作状态
 
-gregtech.waila.energy_stored=能量：%d EU / %d EU
+gregtech.waila.energy_stored=能量：%s EU / %s EU
 gregtech.waila.progress_idle=闲置
 gregtech.waila.progress_tick=进度：%d t / %d t
 gregtech.waila.progress_sec=进度：%d s / %d s
