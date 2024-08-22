@@ -40,8 +40,11 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
         long stored = capability.getEnergyStored();
         if (maxStorage == 0) return; // do not add empty max storage progress bar
         probeInfo.progress(capability.getEnergyStored(), maxStorage, probeInfo.defaultProgressStyle()
-                .numberFormat(player.isSneaking() || stored < 10000 ? NumberFormat.FULL : NumberFormat.COMPACT)
-                .suffix(" / " + (player.isSneaking() || maxStorage < 10000 ? maxStorage + " EU" :
+                .numberFormat(player.isSneaking() || stored < 10000 ?
+                        NumberFormat.COMMAS :
+                        NumberFormat.COMPACT)
+                .suffix(" / " + (player.isSneaking() || maxStorage < 10000 ?
+                        ElementProgress.format(maxStorage, NumberFormat.COMMAS, "EU") :
                         ElementProgress.format(maxStorage, NumberFormat.COMPACT, "EU")))
                 .filledColor(0xFFEEE600)
                 .alternateFilledColor(0xFFEEE600)
