@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityActiveTransformer;
 
 import net.minecraft.client.resources.I18n;
@@ -60,7 +61,7 @@ public class ActiveTransformerDataProvider extends CapabilityDataProvider<IMulti
             NBTTagCompound tag = accessor.getNBTData()
                     .getCompoundTag("gregtech.IMultiblockController.ActiveTransformer");
 
-            tooltip.add(I18n.format("gregtech.waila.active_transformer.average_io", tag.getLong("AverageIO")));
+            tooltip.add(I18n.format("gregtech.waila.active_transformer.average_io", TextFormattingUtil.formatNumbers(tag.getLong("AverageIO"))));
         }
 
         return tooltip;
