@@ -44,7 +44,7 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
                         NumberFormat.COMMAS :
                         NumberFormat.COMPACT)
                 .suffix(" / " + (player.isSneaking() || maxStorage < 10000 ?
-                        ElementProgress.format(maxStorage, NumberFormat.COMMAS, "EU") :
+                        ElementProgress.format(maxStorage, NumberFormat.COMMAS, " EU") :
                         ElementProgress.format(maxStorage, NumberFormat.COMPACT, "EU")))
                 .filledColor(0xFFEEE600)
                 .alternateFilledColor(0xFFEEE600)
