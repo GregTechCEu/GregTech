@@ -61,7 +61,8 @@ public class ActiveTransformerDataProvider extends CapabilityDataProvider<IMulti
             NBTTagCompound tag = accessor.getNBTData()
                     .getCompoundTag("gregtech.IMultiblockController.ActiveTransformer");
 
-            tooltip.add(I18n.format("gregtech.waila.active_transformer.average_io", TextFormattingUtil.formatNumbers(tag.getLong("AverageIO"))));
+            tooltip.add(I18n.format("gregtech.waila.active_transformer.average_io",
+                    TextFormattingUtil.formatNumbers(tag.getLong("AverageIO"))));
         }
 
         return tooltip;
