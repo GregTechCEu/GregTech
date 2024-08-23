@@ -3,26 +3,25 @@ package gregtech.common.pipelike.block.laser;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.pipe.AbstractPipeModel;
-import gregtech.client.renderer.pipe.ActivablePipeModel;
+import gregtech.client.renderer.pipe.PipeModelRedirector;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
 
 import net.minecraft.util.EnumFacing;
 
 import com.github.bsideup.jabel.Desugar;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
-
+@SuppressWarnings("unused")
 @Desugar
-public record LaserStructure(String name, float renderThickness, boolean mirror, ActivablePipeModel model)
+public record LaserStructure(String name, float renderThickness, boolean mirror, PipeModelRedirector model)
         implements IPipeStructure {
 
     public static final LaserStructure NORMAL = new LaserStructure("laser_pipe_normal", 0.375f,
-            false, ActivablePipeModel.LASER);
+            false, PipeModelRegistry.getLaserModel());
     public static final LaserStructure MIRROR = new LaserStructure("laser_pipe_mirror", 0.5f,
-            true, ActivablePipeModel.LASER);
+            true, PipeModelRegistry.getLaserModel());
 
-    public LaserStructure(String name, float renderThickness, boolean mirror, ActivablePipeModel model) {
+    public LaserStructure(String name, float renderThickness, boolean mirror, PipeModelRedirector model) {
         this.name = name;
         this.renderThickness = renderThickness;
         this.mirror = mirror;
@@ -69,11 +68,7 @@ public record LaserStructure(String name, float renderThickness, boolean mirror,
     }
 
     @Override
-    public AbstractPipeModel<?> getModel() {
+    public PipeModelRedirector getModel() {
         return model;
-    }
-
-    public static void registerDefaultStructures(Consumer<LaserStructure> register) {
-        register.accept(NORMAL);
     }
 }

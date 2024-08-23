@@ -3,23 +3,22 @@ package gregtech.common.pipelike.block.optical;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.pipe.AbstractPipeModel;
-import gregtech.client.renderer.pipe.ActivablePipeModel;
+import gregtech.client.renderer.pipe.PipeModelRedirector;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
 
 import net.minecraft.util.EnumFacing;
 
 import com.github.bsideup.jabel.Desugar;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
-
 @Desugar
-public record OpticalStructure(String name, float renderThickness, ActivablePipeModel model) implements IPipeStructure {
+public record OpticalStructure(String name, float renderThickness, PipeModelRedirector model)
+        implements IPipeStructure {
 
     public static final OpticalStructure INSTANCE = new OpticalStructure("optical_pipe_normal", 0.375f,
-            ActivablePipeModel.OPTICAL);
+            PipeModelRegistry.getOpticalModel());
 
-    public OpticalStructure(String name, float renderThickness, ActivablePipeModel model) {
+    public OpticalStructure(String name, float renderThickness, PipeModelRedirector model) {
         this.name = name;
         this.renderThickness = renderThickness;
         this.model = model;
@@ -55,11 +54,7 @@ public record OpticalStructure(String name, float renderThickness, ActivablePipe
     }
 
     @Override
-    public AbstractPipeModel<?> getModel() {
+    public PipeModelRedirector getModel() {
         return model;
-    }
-
-    public static void registerDefaultStructures(Consumer<OpticalStructure> register) {
-        register.accept(INSTANCE);
     }
 }

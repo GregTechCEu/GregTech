@@ -13,13 +13,8 @@ import gregtech.client.renderer.pipe.util.CacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 import gregtech.client.renderer.texture.Textures;
 
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,14 +30,12 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
 
     public static final int DEFAULT_INSULATION_COLOR = 0xFF404040;
 
-    private static final ResourceLocation loc = GTUtility.gregtechId("block/cable");
-
-    public static final CableModel INSTANCE = new CableModel("wire");
+    public static final CableModel INSTANCE = new CableModel();
     public static final CableModel[] INSULATED_INSTANCES = new CableModel[Textures.INSULATION.length];
 
     static {
         for (int i = 0; i < INSULATED_INSTANCES.length; i++) {
-            INSULATED_INSTANCES[i] = new CableModel(Textures.INSULATION[i], Textures.INSULATION_FULL, "insulated_" + i);
+            INSULATED_INSTANCES[i] = new CableModel(Textures.INSULATION[i], Textures.INSULATION_FULL);
         }
     }
 
@@ -51,20 +44,19 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     private final Supplier<SpriteInformation> fullInsulationTex;
 
     public CableModel(@NotNull Supplier<SpriteInformation> wireTex, @Nullable Supplier<SpriteInformation> insulationTex,
-                      @Nullable Supplier<SpriteInformation> fullInsulationTex, String variant) {
-        super(new ModelResourceLocation(loc, variant));
+                      @Nullable Supplier<SpriteInformation> fullInsulationTex) {
         this.wireTex = wireTex;
         this.insulationTex = insulationTex;
         this.fullInsulationTex = fullInsulationTex;
     }
 
     public CableModel(@Nullable Supplier<SpriteInformation> insulationTex,
-                      @Nullable Supplier<SpriteInformation> fullInsulationTex, String variant) {
-        this(Textures.WIRE, insulationTex, fullInsulationTex, variant);
+                      @Nullable Supplier<SpriteInformation> fullInsulationTex) {
+        this(Textures.WIRE, insulationTex, fullInsulationTex);
     }
 
-    public CableModel(String variant) {
-        this(null, null, variant);
+    public CableModel() {
+        this(null, null);
     }
 
     @Override
@@ -89,11 +81,6 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     }
 
     @Override
-    public @NotNull TextureAtlasSprite getParticleTexture() {
-        return getParticleSprite(null).sprite();
-    }
-
-    @Override
     protected @NotNull CacheKey toKey(@NotNull IExtendedBlockState state) {
         return defaultKey(state);
     }
@@ -110,20 +97,13 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     }
 
     @Override
-    protected @Nullable PipeItemModel<CacheKey> getItemModel(@NotNull ItemStack stack, World world,
-                                                             EntityLivingBase entity) {
+    protected @Nullable PipeItemModel<CacheKey> getItemModel(PipeModelRedirector redirector, @NotNull ItemStack stack,
+                                                             World world, EntityLivingBase entity) {
         PipeBlock block = PipeBlock.getBlockFromItem(stack);
         if (block == null) return null;
         Material mater = block instanceof PipeMaterialBlock mat ? mat.getMaterialForStack(stack) : null;
-        return new PipeItemModel<>(this, new CacheKey(block.getStructure().getRenderThickness()),
+        return new PipeItemModel<>(redirector, this, new CacheKey(block.getStructure().getRenderThickness()),
                 new ColorData(mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) :
                         PipeTileEntity.DEFAULT_COLOR, DEFAULT_INSULATION_COLOR));
-    }
-
-    public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {
-        registry.putObject(INSTANCE.getLoc(), INSTANCE);
-        for (CableModel model : INSULATED_INSTANCES) {
-            registry.putObject(model.getLoc(), model);
-        }
     }
 }

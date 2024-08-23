@@ -55,11 +55,13 @@ public class PipeItemModel<K extends CacheKey> implements IBakedModel {
         return TRSRTransformation.quatFromXYZDegrees(new Vector3f(x, y, z));
     }
 
+    private final PipeModelRedirector redirector;
     private final AbstractPipeModel<K> basis;
     private final K key;
     private final ColorData data;
 
-    public PipeItemModel(AbstractPipeModel<K> basis, K key, ColorData data) {
+    public PipeItemModel(PipeModelRedirector redirector, AbstractPipeModel<K> basis, K key, ColorData data) {
+        this.redirector = redirector;
         this.basis = basis;
         this.key = key;
         this.data = data;
@@ -73,12 +75,12 @@ public class PipeItemModel<K extends CacheKey> implements IBakedModel {
 
     @Override
     public boolean isAmbientOcclusion() {
-        return basis.isAmbientOcclusion();
+        return redirector.isAmbientOcclusion();
     }
 
     @Override
     public boolean isGui3d() {
-        return basis.isGui3d();
+        return redirector.isGui3d();
     }
 
     @Override
@@ -87,14 +89,13 @@ public class PipeItemModel<K extends CacheKey> implements IBakedModel {
     }
 
     @Override
-    public @NotNull Pair<? extends IBakedModel, Matrix4f> handlePerspective(
-                                                                            ItemCameraTransforms.@NotNull TransformType cameraTransformType) {
+    public @NotNull Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.@NotNull TransformType cameraTransformType) {
         return ImmutablePair.of(this, CAMERA_TRANSFORMS.get(cameraTransformType));
     }
 
     @Override
     public @NotNull TextureAtlasSprite getParticleTexture() {
-        return basis.getParticleTexture();
+        return redirector.getParticleTexture();
     }
 
     @Override

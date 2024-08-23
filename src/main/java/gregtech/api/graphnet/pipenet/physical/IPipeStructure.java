@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.pipenet.physical;
 
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.PipeModelRedirector;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
@@ -24,7 +24,7 @@ public interface IPipeStructure extends IStringSerializable {
 
     boolean isPaintable();
 
-    AbstractPipeModel<?> getModel();
+    PipeModelRedirector getModel();
 
     /**
      * Allows for controlling what sides can be connected to based on current connections,

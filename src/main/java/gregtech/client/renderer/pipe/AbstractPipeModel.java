@@ -16,12 +16,8 @@ import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -45,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedModel {
+public abstract class AbstractPipeModel<K extends CacheKey> {
 
     public static UnlistedFloatProperty THICKNESS_PROPERTY = new UnlistedFloatProperty("thickness");
 
@@ -61,26 +57,19 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
     protected final Object2ObjectOpenHashMap<ResourceLocation, ColorQuadCache> frameCache = new Object2ObjectOpenHashMap<>();
     protected final Object2ObjectOpenHashMap<K, StructureQuadCache> pipeCache = new Object2ObjectOpenHashMap<>();
 
-    private final ModelResourceLocation loc;
-
-    public AbstractPipeModel(ModelResourceLocation loc) {
-        this.loc = loc;
-    }
-
-    @Override
-    public @NotNull List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        if (side == null && state instanceof IExtendedBlockState ext) {
+    public @NotNull List<BakedQuad> getQuads(IExtendedBlockState state, EnumFacing side, long rand) {
+        if (side == null) {
             List<BakedQuad> quads;
-            ColorData data = computeColorData(ext);
-            CoverRendererPackage rendererPackage = ext.getValue(CoverRendererPackage.PROPERTY);
+            ColorData data = computeColorData(state);
+            CoverRendererPackage rendererPackage = state.getValue(CoverRendererPackage.PROPERTY);
             byte coverMask = rendererPackage == null ? 0 : rendererPackage.getMask();
-            if (canRenderInLayer(getCurrentRenderLayer())) {
-                quads = getQuads(toKey(ext), PipeBlock.readConnectionMask(ext),
-                        safeByte(ext.getValue(CLOSED_MASK_PROPERTY)), safeByte(ext.getValue(BLOCKED_MASK_PROPERTY)),
-                        data, ext.getValue(FRAME_MATERIAL_PROPERTY),
-                        safeByte(ext.getValue(FRAME_MASK_PROPERTY)), coverMask);
+            if (shouldRenderInLayer(getCurrentRenderLayer())) {
+                quads = getQuads(toKey(state), PipeBlock.readConnectionMask(state),
+                        safeByte(state.getValue(CLOSED_MASK_PROPERTY)), safeByte(state.getValue(BLOCKED_MASK_PROPERTY)),
+                        data, state.getValue(FRAME_MATERIAL_PROPERTY),
+                        safeByte(state.getValue(FRAME_MASK_PROPERTY)), coverMask);
             } else quads = new ObjectArrayList<>();
-            if (rendererPackage != null) renderCovers(quads, rendererPackage, ext);
+            if (rendererPackage != null) renderCovers(quads, rendererPackage, state);
             return quads;
         }
         return Collections.emptyList();
@@ -161,54 +150,15 @@ public abstract class AbstractPipeModel<K extends CacheKey> implements IBakedMod
 
     public abstract SpriteInformation getParticleSprite(@Nullable Material material);
 
-    @Override
-    public boolean isAmbientOcclusion() {
-        return true;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return true;
-    }
-
-    @Override
-    public boolean isBuiltInRenderer() {
-        return false;
-    }
-
-    public ModelResourceLocation getLoc() {
-        return loc;
-    }
-
     @Nullable
-    protected abstract PipeItemModel<K> getItemModel(@NotNull ItemStack stack, World world, EntityLivingBase entity);
+    protected abstract PipeItemModel<K> getItemModel(PipeModelRedirector redirector, @NotNull ItemStack stack,
+                                                     World world, EntityLivingBase entity);
 
-    @Override
-    public @NotNull ItemOverrideList getOverrides() {
-        return FakeItemOverrideList.INSTANCE;
-    }
-
-    public boolean canRenderInLayer(BlockRenderLayer layer) {
+    protected boolean shouldRenderInLayer(BlockRenderLayer layer) {
         return layer == BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     protected static BlockRenderLayer getCurrentRenderLayer() {
         return MinecraftForgeClient.getRenderLayer();
-    }
-
-    protected static class FakeItemOverrideList extends ItemOverrideList {
-
-        public static final FakeItemOverrideList INSTANCE = new FakeItemOverrideList();
-
-        @Override
-        public @NotNull IBakedModel handleItemState(@NotNull IBakedModel originalModel, @NotNull ItemStack stack,
-                                                    World world,
-                                                    EntityLivingBase entity) {
-            if (originalModel instanceof AbstractPipeModel<?>model) {
-                PipeItemModel<?> item = model.getItemModel(stack, world, entity);
-                if (item != null) return item;
-            }
-            return originalModel;
-        }
     }
 }

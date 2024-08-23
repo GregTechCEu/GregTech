@@ -4,8 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.graphnet.pipenet.physical.block.ItemMaterialPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.ItemPipeMaterialBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -214,9 +214,9 @@ public class CommonProxy {
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (CableBlock cable : CABLES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(cable, ItemMaterialPipeBlock::new));
+                registry.register(createItemBlock(cable, ItemPipeMaterialBlock::new));
             for (MaterialPipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(cable, ItemMaterialPipeBlock::new));
+                registry.register(createItemBlock(cable, ItemPipeMaterialBlock::new));
         }
         for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
         for (LaserPipeBlock pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));

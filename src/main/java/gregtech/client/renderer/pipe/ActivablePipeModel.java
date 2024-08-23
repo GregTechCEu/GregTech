@@ -4,27 +4,20 @@ import gregtech.api.block.UnlistedBooleanProperty;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ActivableSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
 import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.ActivableCacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
-import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,16 +34,7 @@ import java.util.stream.Collectors;
 @SideOnly(Side.CLIENT)
 public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
-    private static final ResourceLocation loc = GTUtility.gregtechId("block/pipe_activable");
-
     public static final UnlistedBooleanProperty ACTIVE_PROPERTY = new UnlistedBooleanProperty("active");
-
-    public static final ActivablePipeModel OPTICAL = new ActivablePipeModel(Textures.OPTICAL_PIPE_IN,
-            Textures.OPTICAL_PIPE_SIDE, Textures.OPTICAL_PIPE_SIDE_OVERLAY, Textures.OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE,
-            false, "optical");
-    public static final ActivablePipeModel LASER = new ActivablePipeModel(Textures.LASER_PIPE_IN,
-            Textures.LASER_PIPE_SIDE, Textures.LASER_PIPE_OVERLAY, Textures.LASER_PIPE_OVERLAY_EMISSIVE,
-            true, "laser");
 
     private final Supplier<SpriteInformation> inTex;
     private final Supplier<SpriteInformation> sideTex;
@@ -61,9 +45,7 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
     public ActivablePipeModel(@NotNull Supplier<SpriteInformation> inTex, @NotNull Supplier<SpriteInformation> sideTex,
                               @NotNull Supplier<SpriteInformation> overlayTex,
-                              @NotNull Supplier<SpriteInformation> overlayActiveTex, boolean emissiveActive,
-                              String variant) {
-        super(new ModelResourceLocation(loc, variant));
+                              @NotNull Supplier<SpriteInformation> overlayActiveTex, boolean emissiveActive) {
         this.inTex = inTex;
         this.sideTex = sideTex;
         this.overlayTex = overlayTex;
@@ -100,11 +82,6 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
     }
 
     @Override
-    public @NotNull TextureAtlasSprite getParticleTexture() {
-        return getParticleSprite(null).sprite();
-    }
-
-    @Override
     protected @NotNull ActivableCacheKey toKey(@NotNull IExtendedBlockState state) {
         return ActivableCacheKey.of(state.getValue(THICKNESS_PROPERTY), state.getValue(ACTIVE_PROPERTY));
     }
@@ -116,7 +93,7 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
     }
 
     @Override
-    public boolean canRenderInLayer(BlockRenderLayer layer) {
+    protected boolean shouldRenderInLayer(BlockRenderLayer layer) {
         return layer == BlockRenderLayer.CUTOUT_MIPPED ||
                 (allowActive() && emissiveActive && layer == BloomEffectUtil.getEffectiveBloomLayer());
     }
@@ -126,16 +103,13 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
     }
 
     @Override
-    protected @Nullable PipeItemModel<ActivableCacheKey> getItemModel(@NotNull ItemStack stack, World world,
+    protected @Nullable PipeItemModel<ActivableCacheKey> getItemModel(PipeModelRedirector redirector,
+                                                                      @NotNull ItemStack stack, World world,
                                                                       EntityLivingBase entity) {
         PipeBlock block = PipeBlock.getBlockFromItem(stack);
         if (block == null) return null;
-        return new PipeItemModel<>(this, new ActivableCacheKey(block.getStructure().getRenderThickness(), false),
+        return new PipeItemModel<>(redirector, this,
+                new ActivableCacheKey(block.getStructure().getRenderThickness(), false),
                 new ColorData(PipeTileEntity.DEFAULT_COLOR));
-    }
-
-    public static void registerModels(IRegistry<ModelResourceLocation, IBakedModel> registry) {
-        registry.putObject(OPTICAL.getLoc(), OPTICAL);
-        registry.putObject(LASER.getLoc(), LASER);
     }
 }

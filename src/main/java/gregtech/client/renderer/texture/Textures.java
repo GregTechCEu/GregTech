@@ -7,6 +7,7 @@ import gregtech.api.util.GTLog;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.cclop.UVMirror;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
 import gregtech.client.renderer.pipe.util.SpriteInformationWrapper;
 import gregtech.client.renderer.texture.cube.AlignedOrientedOverlayRenderer;
 import gregtech.client.renderer.texture.cube.LDPipeOverlayRenderer;
@@ -535,7 +536,8 @@ public class Textures {
     @SideOnly(Side.CLIENT)
     public static final SpriteInformationWrapper INSULATION_FULL = new SpriteInformationWrapper();
     @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper[] INSULATION = SpriteInformationWrapper.array(5);
+    public static final SpriteInformationWrapper[] INSULATION = SpriteInformationWrapper
+            .array(PipeModelRegistry.CABLE_MODEL_COUNT - 1);
 
     @SideOnly(Side.CLIENT)
     public static final SpriteInformationWrapper RESTRICTIVE_OVERLAY = new SpriteInformationWrapper();

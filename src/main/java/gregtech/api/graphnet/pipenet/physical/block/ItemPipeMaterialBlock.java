@@ -6,9 +6,9 @@ import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ItemMaterialPipeBlock extends ItemPipeBlock {
+public class ItemPipeMaterialBlock extends ItemPipeBlock {
 
-    public ItemMaterialPipeBlock(PipeMaterialBlock block) {
+    public ItemPipeMaterialBlock(PipeMaterialBlock block) {
         super(block);
         setHasSubtypes(true);
     }

@@ -12,4 +12,9 @@ public class MaterialPipeBlock extends PipeMaterialBlock implements IBurnable, I
         super(structure, registry);
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
     }
+
+    @Override
+    public MaterialPipeStructure getStructure() {
+        return (MaterialPipeStructure) super.getStructure();
+    }
 }

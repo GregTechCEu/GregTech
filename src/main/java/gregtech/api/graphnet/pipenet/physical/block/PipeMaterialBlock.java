@@ -43,6 +43,12 @@ public abstract class PipeMaterialBlock extends PipeBlock {
         this.registry = registry;
     }
 
+    @Nullable
+    public static PipeMaterialBlock getBlockFromItem(@NotNull ItemStack stack) {
+        if (stack.getItem() instanceof ItemPipeMaterialBlock block) return block.getBlock();
+        else return null;
+    }
+
     @Override
     public void getSubBlocks(@NotNull CreativeTabs itemIn, @NotNull NonNullList<ItemStack> items) {
         for (Material material : registry) {

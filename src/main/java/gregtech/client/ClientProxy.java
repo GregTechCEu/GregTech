@@ -15,9 +15,7 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.pipe.ActivablePipeModel;
-import gregtech.client.renderer.pipe.CableModel;
-import gregtech.client.renderer.pipe.PipeModel;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
 import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
@@ -110,9 +108,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerBakedModels(ModelBakeEvent event) {
-        PipeModel.registerModels(event.getModelRegistry());
-        CableModel.registerModels(event.getModelRegistry());
-        ActivablePipeModel.registerModels(event.getModelRegistry());
+        PipeModelRegistry.registerModels(event.getModelRegistry());
     }
 
     @SubscribeEvent

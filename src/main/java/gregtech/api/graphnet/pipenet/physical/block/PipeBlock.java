@@ -460,9 +460,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
     @Override
     public boolean canRenderInLayer(@NotNull IBlockState state, @NotNull BlockRenderLayer layer) {
-        // guaranteed cutout & bloom for covers
-        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getEffectiveBloomLayer() ||
-                getStructure().getModel().canRenderInLayer(layer);
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 
     @Override

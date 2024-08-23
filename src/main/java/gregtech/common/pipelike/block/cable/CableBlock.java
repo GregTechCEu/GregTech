@@ -59,7 +59,7 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
 
     @Override
     public void partialBurn(IBlockState state, World world, BlockPos pos) {
-        CableStructure structure = (CableStructure) getStructure();
+        CableStructure structure = getStructure();
         if (structure.partialBurnStructure() != null) {
             CableBlock newBlock = CACHE.get(registry).get(structure.partialBurnStructure());
             // noinspection deprecation

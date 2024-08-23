@@ -487,16 +487,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                     firstNode = false;
                     this.temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
                 }
-                // TODO
-                // this and updateActiveStatus() theoretically only need to be called when loading old world data;
-                // is there a way to detect that and skip if so?
-                node.getNet().updatePredication(node, this);
             }
             this.netLogicDatas.trim();
             this.listeners.trim();
             this.capabilities.trim();
             this.netCapabilities.trim();
-            updateActiveStatus(null, false);
         }
     }
 
