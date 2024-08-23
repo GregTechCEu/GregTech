@@ -11,8 +11,8 @@ import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.worldnet.WorldNet;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.IDirtyNotifiable;
+import gregtech.api.util.reference.WeakHashSet;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
 import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Contract;
@@ -37,7 +38,7 @@ public abstract class WorldPipeNet extends WorldNet {
 
     public static final int MULTI_NET_TIMEOUT = 10;
 
-    private static final Object2ObjectOpenHashMap<Integer, Set<WorldPipeNet>> dimensionNets = new Object2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<Set<WorldPipeNet>> dimensionNets = new Int2ObjectOpenHashMap<>();
 
     public WorldPipeNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
                         AlgorithmBuilder... algorithmBuilders) {
@@ -53,7 +54,7 @@ public abstract class WorldPipeNet extends WorldNet {
         if (getWorld() == world) return;
         super.setWorld(world);
         dimensionNets.compute(getDimension(), (k, v) -> {
-            if (v == null) v = GTUtility.createWeakHashSet();
+            if (v == null) v = new WeakHashSet<>();
             v.add(this);
             return v;
         });

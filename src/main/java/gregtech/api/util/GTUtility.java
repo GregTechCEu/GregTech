@@ -67,7 +67,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +74,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -979,12 +977,6 @@ public class GTUtility {
             mask.set(anEnum.ordinal());
         }
         return mask;
-    }
-
-    @Contract(pure = true, value = "-> new")
-    @NotNull
-    public static <T> Set<T> createWeakHashSet() {
-        return Collections.newSetFromMap(new WeakHashMap<>());
     }
 
     /**

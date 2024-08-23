@@ -13,7 +13,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.reference.WeakHashSet;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
                                             implements IMultiblockAbilityPart<IComputationDataAccess>,
@@ -39,7 +38,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
 
     private final boolean isTransmitter;
 
-    private final Set<DataQueryObject> recentQueries = GTUtility.createWeakHashSet();
+    private final WeakHashSet<DataQueryObject> recentQueries = new WeakHashSet<>();
 
     public MetaTileEntityComputationHatch(ResourceLocation metaTileEntityId, boolean isTransmitter) {
         super(metaTileEntityId, GTValues.ZPM);
@@ -49,6 +48,12 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityComputationHatch(metaTileEntityId, isTransmitter);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (getOffsetTimer() % 20 == 0) recentQueries.trim();
     }
 
     @Override

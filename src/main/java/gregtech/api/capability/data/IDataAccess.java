@@ -10,8 +10,8 @@ public interface IDataAccess {
     /**
      * Queries this {@link IDataAccess} with the specified query.
      * 
-     * @param queryObject the object representing the query. Can be cached in a weak set created by
-     *                    {@link gregtech.api.util.GTUtility#createWeakHashSet()} in order to prevent endless recursion.
+     * @param queryObject the object representing the query. Can be cached in a
+     *                    {@link gregtech.api.util.reference.WeakHashSet} in order to prevent endless recursion.
      * @return if the query has been cancelled
      */
     boolean accessData(@NotNull DataQueryObject queryObject);
