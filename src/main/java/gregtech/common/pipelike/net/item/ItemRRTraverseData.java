@@ -57,7 +57,7 @@ public class ItemRRTraverseData extends ItemTraverseData implements
         if (container != null) {
             availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                     .getCoverAtSide(pointerFacing)).insertToHandler(getTestObject(),
-                            (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() != null);
+                            (int) Math.min(Integer.MAX_VALUE, availableFlow), container, simulating());
         }
         return flowReachingDestination - availableFlow;
     }

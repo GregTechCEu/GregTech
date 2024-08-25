@@ -56,7 +56,7 @@ public class ItemTraverseData extends AbstractTraverseData<WorldPipeNetNode, Flo
             if (container != null) {
                 availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                         .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() != null);
+                                (int) Math.min(Integer.MAX_VALUE, availableFlow), container, simulating());
             }
         }
         return flowReachingDestination - availableFlow;

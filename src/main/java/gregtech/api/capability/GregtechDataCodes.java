@@ -61,15 +61,12 @@ public class GregtechDataCodes {
     public static final int UPDATE_PAINT = assignId();
     public static final int UPDATE_CONNECTIONS = assignId();
     public static final int SYNC_COVER_IMPLEMENTATION = assignId();
-    public static final int UPDATE_PIPE_TYPE = assignId();
-    public static final int UPDATE_PIPE_MATERIAL = assignId();
     public static final int UPDATE_BLOCKED_CONNECTIONS = assignId();
     public static final int UPDATE_FRAME_MATERIAL = assignId();
     public static final int UPDATE_COVER_DATA_PIPE = assignId();
     public static final int COVER_ATTACHED_PIPE = assignId();
     public static final int COVER_REMOVED_PIPE = assignId();
     public static final int PIPE_ACTIVE = assignId();
-    public static final int CABLE_TEMPERATURE = assignId();
     public static final int UPDATE_PIPE_LOGIC = assignId();
 
     // Multiblock implementation update codes

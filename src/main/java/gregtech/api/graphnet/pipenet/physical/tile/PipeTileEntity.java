@@ -68,6 +68,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
     private final Int2ObjectOpenHashMap<NetLogicData> netLogicDatas = new Int2ObjectOpenHashMap<>();
+    private final ObjectOpenHashSet<NetLogicData.ILogicDataListener> listeners = new ObjectOpenHashSet<>();
 
     // information that is only required for determining graph topology should be stored on the tile entity level,
     // while information interacted with during graph traversal should be stored on the NetLogicData level.
@@ -190,6 +191,17 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     public byte getConnectionMask() {
+        return connectionMask;
+    }
+
+    public byte getCoverAdjustedConnectionMask() {
+        byte connectionMask = this.connectionMask;
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            Cover cover = getCoverHolder().getCoverAtSide(facing);
+            if (cover != null) {
+                if (cover.forcePipeRenderConnection()) connectionMask |= 1 << facing.ordinal();
+            }
+        }
         return connectionMask;
     }
 
@@ -462,22 +474,17 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.netLogicDatas.clear();
             this.capabilities.clear();
             this.netCapabilities.clear();
+            this.listeners.clear();
             boolean firstNode = true;
             for (WorldPipeNetNode node : PipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(this, node));
                 int networkID = node.getNet().getNetworkID();
                 netLogicDatas.put(networkID, node.getData());
-                node.getData().addListener(
-                        (e, r, f) -> writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
-                            buf.writeVarInt(networkID);
-                            buf.writeString(e.getName());
-                            buf.writeBoolean(r);
-                            buf.writeBoolean(f);
-                            if (!r) {
-                                e.encode(buf, f);
-                            }
-                        }));
+                listeners.add(node.getData().addListener((e, r, f) -> writeLogicData(networkID, e, r, f)));
+                for (NetLogicEntry<?, ?> entry : node.getData().getEntries()) {
+                    writeLogicData(networkID, entry, false, true);
+                }
                 if (firstNode) {
                     firstNode = false;
                     this.temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
@@ -486,8 +493,21 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.netLogicDatas.trim();
             this.capabilities.trim();
             this.netCapabilities.trim();
+            this.listeners.trim();
             updateActiveStatus(null, false);
         }
+    }
+
+    private void writeLogicData(int networkID, NetLogicEntry<?, ?> entry, boolean removed, boolean fullChange) {
+        writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
+            buf.writeVarInt(networkID);
+            buf.writeString(entry.getName());
+            buf.writeBoolean(removed);
+            buf.writeBoolean(fullChange);
+            if (!removed) {
+                entry.encode(buf, fullChange);
+            }
+        });
     }
 
     @Override
@@ -577,18 +597,15 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                     if (fullChange) {
                         NetLogicEntry<?, ?> logic = NetLogicRegistry.getSupplierErroring(identifier).get();
                         logic.decode(buf, true);
-                        this.netLogicDatas.compute(networkID, (k, v) -> {
-                            if (v == null) v = new NetLogicData();
-                            v.setLogicEntry(logic);
-                            return v;
-                        });
+                        this.netLogicDatas.computeIfAbsent(networkID, k -> new NetLogicData()).setLogicEntry(logic);
                     } else {
                         NetLogicData data = this.netLogicDatas.get(networkID);
-                        if (data != null) {
-                            NetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
-                            if (entry != null) entry.decode(buf, false);
+                        if (data == null) return;
+                        NetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
+                        if (entry != null) {
+                            entry.decode(buf, false);
                             data.markLogicEntryAsUpdated(entry, false);
-                        } else return;
+                        }
                     }
                     if (identifier.equals(TemperatureLogic.INSTANCE.getName())) {
                         TemperatureLogic tempLogic = this.netLogicDatas.get(networkID)
@@ -717,12 +734,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     @MustBeInvokedByOverriders
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
         byte frameMask = 0;
-        byte connectionMask = this.connectionMask;
         for (EnumFacing facing : EnumFacing.VALUES) {
             Cover cover = getCoverHolder().getCoverAtSide(facing);
             if (cover != null) {
                 frameMask |= 1 << facing.ordinal();
-                if (cover.forcePipeRenderConnection()) connectionMask |= 1 << facing.ordinal();
             }
         }
         frameMask = (byte) ~frameMask;
@@ -733,6 +748,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
                 .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask)
                 .withProperty(CoverRendererPackage.PROPERTY, getCoverHolder().createPackage());
+    }
+
+    @Override
+    public void scheduleRenderUpdate() {
+        super.scheduleRenderUpdate();
+        if (overheatParticle != null) overheatParticle.updatePipeBoxes(getStructure().getPipeBoxes(this));
     }
 
     public void getCoverBoxes(Consumer<AxisAlignedBB> consumer) {

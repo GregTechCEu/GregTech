@@ -184,7 +184,7 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput))
                     .setLogicEntry(FluidContainmentLogic.INSTANCE.getWith(containableStates, containableAttributes,
                             maxFluidTemperature))
-                    .setLogicEntry(TemperatureLogic.INSTANCE
+                    .mergeLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature,
                                     minFluidTemperature, 50 * pipe.material(), null));
         }

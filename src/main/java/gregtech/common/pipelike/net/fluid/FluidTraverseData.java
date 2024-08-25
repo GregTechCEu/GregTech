@@ -77,7 +77,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     @Override
     public ReversibleLossOperator traverseToNode(@NotNull WorldPipeNetNode node, long flowReachingNode) {
         NodeLossCache.Key key = NodeLossCache.key(node, this);
-        NodeLossResult result = NodeLossCache.getLossResult(key);
+        NodeLossResult result = NodeLossCache.getLossResult(key, simulating());
         if (result != null) {
             return result.getLossFunction();
         } else {
@@ -138,7 +138,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
             }
 
             if (result == null) return ReversibleLossOperator.IDENTITY;
-            NodeLossCache.registerLossResult(key, result);
+            NodeLossCache.registerLossResult(key, result, simulating());
             return result.getLossFunction();
         }
     }
@@ -156,7 +156,7 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
             if (container != null) {
                 availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                         .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                (int) Math.min(Integer.MAX_VALUE, availableFlow), container, getSimulatorKey() == null);
+                                (int) Math.min(Integer.MAX_VALUE, availableFlow), container, !simulating());
             }
         }
         return flowReachingDestination - availableFlow;

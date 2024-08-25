@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -168,14 +167,9 @@ public class GTOverheatParticle extends GTBloomParticle {
         this.insulated = insulated;
     }
 
-    private int getTemperature() {
-        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-        return temperatureLogic.getTemperature(tick);
-    }
-
     public void updatePipeBoxes(@NotNull List<AxisAlignedBB> pipeBoxes) {
         this.pipeBoxes = pipeBoxes;
-        pipeBoxes.replaceAll(axisAlignedBB -> axisAlignedBB.expand(0.001, 0.001, 0.001));
+        pipeBoxes.replaceAll(axisAlignedBB -> axisAlignedBB.expand(0.003, 0.003, 0.003));
     }
 
     public void setTemperatureLogic(@NotNull TemperatureLogic logic) {
@@ -189,7 +183,9 @@ public class GTOverheatParticle extends GTBloomParticle {
             tileEntity.killOverheatParticle();
             return;
         }
-        int temperature = getTemperature();
+
+        // onUpdate is called once per tick
+        int temperature = temperatureLogic.getTemperature(temperatureLogic.getLastRestorationTick() + 1);
 
         if (temperature <= TEMPERATURE_CUTOFF || temperature > temperatureLogic.getTemperatureMaximum()) {
             setExpired();

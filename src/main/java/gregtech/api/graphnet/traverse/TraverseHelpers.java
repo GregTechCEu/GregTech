@@ -127,7 +127,6 @@ public final class TraverseHelpers {
 
             for (int i = 0; i < edges.size(); i++) {
                 E edge = edges.get(i);
-                N sourceNode = nodes.get(i);
                 N targetNode = nodes.get(i + 1);
 
                 if (targetNode.traverse(data.getQueryTick(), true)) {
@@ -453,7 +452,6 @@ public final class TraverseHelpers {
 
         for (int i = 0; i < edges.size(); i++) {
             E edge = edges.get(i);
-            N sourceNode = nodes.get(i);
             N targetNode = nodes.get(i + 1);
 
             if (targetNode.traverse(data.getQueryTick(), true)) {

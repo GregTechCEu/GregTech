@@ -1,7 +1,6 @@
 package gregtech.api.graphnet.logic;
 
 import gregtech.api.network.IPacket;
-
 import gregtech.api.util.reference.WeakHashSet;
 
 import net.minecraft.nbt.NBTBase;
@@ -13,12 +12,9 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * Note - since the internal map representation encodes keys using {@link IStringSerializable#getName()} on logics,
@@ -209,8 +205,16 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         }
         this.logicEntrySet.trim();
     }
-    public void addListener(ILogicDataListener listener) {
+
+    /**
+     * Adds a listener to a weak set which is then notified for as long as it is not collected by the garbage collector.
+     * 
+     * @param listener the listener.
+     * @return the listener, for convenience when working with lambdas.
+     */
+    public ILogicDataListener addListener(ILogicDataListener listener) {
         listeners.add(listener);
+        return listener;
     }
 
     @FunctionalInterface

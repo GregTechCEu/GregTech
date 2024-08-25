@@ -17,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -245,6 +244,10 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
         return thermalMass;
     }
 
+    public long getLastRestorationTick() {
+        return lastRestorationTick;
+    }
+
     @Override
     public boolean mergedToMultiNodeHelper() {
         return true;
@@ -312,7 +315,6 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
 
     @Override
     public void decode(PacketBuffer buf, boolean fullChange) {
-        this.lastRestorationTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         this.energy = buf.readFloat();
         if (fullChange) {
             this.temperatureMaximum = buf.readVarInt();

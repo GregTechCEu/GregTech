@@ -15,6 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+@SideOnly(Side.CLIENT)
 public class PipeModelRedirector implements IBakedModel {
 
     private final boolean ambientOcclusion;

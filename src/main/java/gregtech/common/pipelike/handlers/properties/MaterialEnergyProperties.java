@@ -179,7 +179,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                     .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
-                    .setLogicEntry(TemperatureLogic.INSTANCE
+                    .mergeLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreateCable(coolingFactor), materialMeltTemperature,
                                     1,
                                     100 * cable.material(), cable.partialBurnThreshold()));
@@ -195,7 +195,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                     .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
-                    .setLogicEntry(TemperatureLogic.INSTANCE
+                    .mergeLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature, 1,
                                     50 * pipe.material(), null));
             if (superconductorCriticalTemperature > 0) {

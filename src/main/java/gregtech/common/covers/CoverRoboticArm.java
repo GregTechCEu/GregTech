@@ -322,8 +322,7 @@ public class CoverRoboticArm extends CoverConveyor {
                     if (contained >= kept) continue;
                     availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                    (int) Math.min(kept - contained, availableFlow), container,
-                                    getSimulatorKey() != null);
+                                    (int) Math.min(kept - contained, availableFlow), container, simulating());
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -383,8 +382,7 @@ public class CoverRoboticArm extends CoverConveyor {
                     if (contained >= kept) continue;
                     availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                    (int) Math.min(kept - contained, availableFlow), container,
-                                    getSimulatorKey() != null);
+                                    (int) Math.min(kept - contained, availableFlow), container, simulating());
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -416,8 +414,7 @@ public class CoverRoboticArm extends CoverConveyor {
                 if (contained >= kept) return 0;
                 availableFlow = IItemTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                         .getCoverAtSide(pointerFacing)).insertToHandler(getTestObject(),
-                                (int) Math.min(kept - contained, availableFlow), container,
-                                getSimulatorKey() != null);
+                                (int) Math.min(kept - contained, availableFlow), container, simulating());
             }
             return flowReachingDestination - availableFlow;
         }

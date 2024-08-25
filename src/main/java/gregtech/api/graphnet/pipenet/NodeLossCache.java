@@ -1,6 +1,5 @@
 package gregtech.api.graphnet.pipenet;
 
-import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.ITraverseData;
 import gregtech.api.util.TaskScheduler;
@@ -19,22 +18,22 @@ public class NodeLossCache implements Task {
 
     private static final WeakHashMap<WorldPipeNet, NodeLossCache> CACHE = new WeakHashMap<>();
 
-    public static void registerLossResult(Key key, NodeLossResult result) {
+    public static void registerLossResult(Key key, NodeLossResult result, boolean simulating) {
         NodeLossCache existing = CACHE.get(key.node().getNet());
         if (existing == null) {
             existing = new NodeLossCache(key.node().getNet().getWorld());
             CACHE.put(key.node().getNet(), existing);
         }
-        existing.registerResult(key, result);
+        existing.registerResult(key, result, simulating);
     }
 
-    public static @Nullable NodeLossResult getLossResult(Key key) {
+    public static @Nullable NodeLossResult getLossResult(Key key, boolean simulating) {
         NodeLossCache existing = CACHE.get(key.node().getNet());
         if (existing == null) {
             existing = new NodeLossCache(key.node().getNet().getWorld());
             CACHE.put(key.node().getNet(), existing);
         }
-        return existing.getResult(key);
+        return existing.getResult(key, simulating);
     }
 
     private final Map<Key, NodeLossResult> cache = new Object2ObjectOpenHashMap<>();
@@ -43,32 +42,36 @@ public class NodeLossCache implements Task {
         TaskScheduler.scheduleTask(world, TaskScheduler.weakTask(this));
     }
 
-    public void registerResult(Key key, NodeLossResult result) {
+    public void registerResult(Key key, NodeLossResult result, boolean simulating) {
+        result.simulated = simulating;
         cache.put(key, result);
     }
 
-    public @Nullable NodeLossResult getResult(Key key) {
-        return cache.get(key);
+    public @Nullable NodeLossResult getResult(Key key, boolean simulating) {
+        NodeLossResult result = cache.get(key);
+        if (!simulating && result != null && result.simulated) result.simulated = false;
+        return result;
     }
 
     @Override
     public boolean run() {
         if (cache.isEmpty()) return true;
         for (var result : cache.entrySet()) {
+            if (result.getValue().simulated) continue;
             result.getValue().triggerPostAction(result.getKey().node());
         }
         cache.clear();
         return true;
     }
 
-    public static Key key(WorldPipeNetNode node, IPredicateTestObject testObject, SimulatorKey simulator) {
-        return new Key(node, testObject, simulator);
+    public static Key key(WorldPipeNetNode node, IPredicateTestObject testObject) {
+        return new Key(node, testObject);
     }
 
     public static Key key(WorldPipeNetNode node, ITraverseData<?, ?> data) {
-        return new Key(node, data.getTestObject(), data.getSimulatorKey());
+        return new Key(node, data.getTestObject());
     }
 
     @Desugar
-    public record Key(WorldPipeNetNode node, IPredicateTestObject testObject, SimulatorKey simulator) {}
+    public record Key(WorldPipeNetNode node, IPredicateTestObject testObject) {}
 }

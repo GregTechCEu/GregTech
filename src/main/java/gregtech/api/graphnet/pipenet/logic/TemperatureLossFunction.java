@@ -41,7 +41,7 @@ public class TemperatureLossFunction implements INBTSerializable<NBTTagCompound>
     public static TemperatureLossFunction getOrCreateCable(float factor) {
         TemperatureLossFunction function = CABLE_LOSS_CACHE.get(factor);
         if (function == null) {
-            function = new TemperatureLossFunction(EnumLossFunction.WEAK_SCALING, factor, 0.35f);
+            function = new TemperatureLossFunction(EnumLossFunction.WEAK_SCALING, factor * 10, 0.35f);
             CABLE_LOSS_CACHE.put(factor, function);
         }
         return function;
@@ -51,7 +51,7 @@ public class TemperatureLossFunction implements INBTSerializable<NBTTagCompound>
         TemperatureLossFunction function = PIPE_LOSS_CACHE.get(factor);
         if (function == null) {
             // since pipes are hollow the exponent is larger
-            function = new TemperatureLossFunction(EnumLossFunction.WEAK_SCALING, factor, 0.45f);
+            function = new TemperatureLossFunction(EnumLossFunction.WEAK_SCALING, factor * 10, 0.4f);
             PIPE_LOSS_CACHE.put(factor, function);
         }
         return function;

@@ -631,7 +631,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                                                @NotNull BlockPos pos) {
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile == null) return state;
-        state = writeConnectionMask(state, tile.getConnectionMask());
+        state = writeConnectionMask(state, tile.getCoverAdjustedConnectionMask());
         return state.withProperty(FRAMED, tile.getFrameMaterial() != null);
     }
 

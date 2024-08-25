@@ -77,14 +77,14 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
                 return 0;
             } else if (amperage > limit) {
                 bufferOverflowAmperage = amperage - limit;
-                amperage = limit;
             }
         }
         long availableAmperage = amperage;
 
         EnergyTraverseData data = new EnergyTraverseData(net, IPredicateTestObject.INSTANCE, simulator, tick, voltage,
-                tile.getPos(), side);
-        availableAmperage -= TraverseHelpers.traverseFlood(data, getPaths(data), availableAmperage);
+                tile.getPos(), side, bufferOverflowAmperage);
+        availableAmperage -= TraverseHelpers.traverseFlood(data, getPaths(data),
+                availableAmperage - bufferOverflowAmperage);
         if (availableAmperage > 0) {
             availableAmperage -= TraverseHelpers.traverseDumb(data, getPaths(data), data::handleOverflow,
                     availableAmperage);
@@ -92,7 +92,9 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         long accepted = amperage - availableAmperage;
 
         if (internalBuffer != null) {
-            data.consumeFlowLimit(internalBuffer, node, accepted);
+            data.resetPathVoltage();
+            bufferOverflowAmperage = data.calculateActualBufferOverflow(bufferOverflowAmperage);
+            data.consumeFlowLimit(internalBuffer, node, accepted - bufferOverflowAmperage);
             if (bufferOverflowAmperage > 0) {
                 data.handleOverflow(node, bufferOverflowAmperage);
                 accepted += bufferOverflowAmperage;

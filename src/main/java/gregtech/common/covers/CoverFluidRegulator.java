@@ -309,8 +309,7 @@ public class CoverFluidRegulator extends CoverPump {
                     if (contained >= kept) continue;
                     availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                    (int) Math.min(kept - contained, availableFlow), container,
-                                    getSimulatorKey() == null);
+                                    (int) Math.min(kept - contained, availableFlow), container, !simulating());
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -371,8 +370,7 @@ public class CoverFluidRegulator extends CoverPump {
                     if (contained >= kept) continue;
                     availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                    (int) Math.min(kept - contained, availableFlow), container,
-                                    getSimulatorKey() == null);
+                                    (int) Math.min(kept - contained, availableFlow), container, !simulating());
                 }
             }
             return flowReachingDestination - availableFlow;
@@ -405,8 +403,7 @@ public class CoverFluidRegulator extends CoverPump {
                                 destination.getTileEntity().getCoverHolder()
                                         .getCoverAtSide(pointerFacing))
                                 .insertToHandler(getTestObject(),
-                                        (int) Math.min(kept - contained, availableFlow), container,
-                                        getSimulatorKey() == null);
+                                        (int) Math.min(kept - contained, availableFlow), container, !simulating());
                     }
                 }
             }
