@@ -492,6 +492,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.listeners.trim();
             this.capabilities.trim();
             this.netCapabilities.trim();
+            updateActiveStatus(null, false);
         }
     }
 

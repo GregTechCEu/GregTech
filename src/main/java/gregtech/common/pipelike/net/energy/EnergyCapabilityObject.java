@@ -69,12 +69,14 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
 
         AbstractNetFlowEdge internalBuffer = this.internalBuffers.get(side);
+        long bufferOverflowAmperage = 0;
         if (internalBuffer != null) {
             long limit = internalBuffer.getFlowLimit(IPredicateTestObject.INSTANCE, net, tick, simulator);
             if (limit <= 0) {
                 this.transferring = false;
                 return 0;
             } else if (amperage > limit) {
+                bufferOverflowAmperage = amperage - limit;
                 amperage = limit;
             }
         }
@@ -89,7 +91,13 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         }
         long accepted = amperage - availableAmperage;
 
-        if (internalBuffer != null) data.consumeFlowLimit(internalBuffer, node, accepted);
+        if (internalBuffer != null) {
+            data.consumeFlowLimit(internalBuffer, node, accepted);
+            if (bufferOverflowAmperage > 0) {
+                data.handleOverflow(node, bufferOverflowAmperage);
+                accepted += bufferOverflowAmperage;
+            }
+        }
         if (!simulate) {
             EnergyGroupData group = getEnergyData();
             if (group != null) {
