@@ -68,7 +68,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
     private final Int2ObjectOpenHashMap<NetLogicData> netLogicDatas = new Int2ObjectOpenHashMap<>();
-    private final ObjectOpenHashSet<NetLogicData.LogicDataListener> listeners = new ObjectOpenHashSet<>();
 
     // information that is only required for determining graph topology should be stored on the tile entity level,
     // while information interacted with during graph traversal should be stored on the NetLogicData level.
@@ -463,15 +462,13 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.netLogicDatas.clear();
             this.capabilities.clear();
             this.netCapabilities.clear();
-            this.listeners.forEach(NetLogicData.LogicDataListener::invalidate);
-            this.listeners.clear();
             boolean firstNode = true;
             for (WorldPipeNetNode node : PipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(this, node));
                 int networkID = node.getNet().getNetworkID();
                 netLogicDatas.put(networkID, node.getData());
-                var listener = node.getData().createListener(
+                node.getData().addListener(
                         (e, r, f) -> writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
                             buf.writeVarInt(networkID);
                             buf.writeString(e.getName());
@@ -481,15 +478,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                                 e.encode(buf, f);
                             }
                         }));
-                this.listeners.add(listener);
-                node.getData().addListener(listener);
                 if (firstNode) {
                     firstNode = false;
                     this.temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
                 }
             }
             this.netLogicDatas.trim();
-            this.listeners.trim();
             this.capabilities.trim();
             this.netCapabilities.trim();
             updateActiveStatus(null, false);

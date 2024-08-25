@@ -2,6 +2,8 @@ package gregtech.api.graphnet.logic;
 
 import gregtech.api.network.IPacket;
 
+import gregtech.api.util.reference.WeakHashSet;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,7 +29,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
     // TODO caching logic on simple logics to reduce amount of reduntant creation?
     private final Object2ObjectOpenHashMap<String, NetLogicEntry<?, ?>> logicEntrySet;
 
-    private final Set<LogicDataListener> listeners = new ObjectOpenHashSet<>();
+    private final WeakHashSet<ILogicDataListener> listeners = new WeakHashSet<>();
 
     public NetLogicData() {
         logicEntrySet = new Object2ObjectOpenHashMap<>(4);
@@ -155,10 +157,6 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         return new NetLogicData(newLogic);
     }
 
-    public void addListener(LogicDataListener listener) {
-        this.listeners.add(listener);
-    }
-
     @Override
     public NBTTagList serializeNBT() {
         NBTTagList list = new NBTTagList();
@@ -211,27 +209,8 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         }
         this.logicEntrySet.trim();
     }
-
-    public LogicDataListener createListener(ILogicDataListener listener) {
-        return new LogicDataListener(listener);
-    }
-
-    public final class LogicDataListener {
-
-        private final ILogicDataListener listener;
-
-        private LogicDataListener(ILogicDataListener listener) {
-            this.listener = listener;
-        }
-
-        private void markChanged(NetLogicEntry<?, ?> updatedEntry, boolean removed, boolean fullChange) {
-            this.listener.markChanged(updatedEntry, removed, fullChange);
-        }
-
-        // TODO would a weak set be better?
-        public void invalidate() {
-            listeners.remove(this);
-        }
+    public void addListener(ILogicDataListener listener) {
+        listeners.add(listener);
     }
 
     @FunctionalInterface
