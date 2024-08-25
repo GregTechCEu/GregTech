@@ -33,10 +33,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CraftingRecipeLogic extends SyncHandler {
 
@@ -289,35 +286,29 @@ public class CraftingRecipeLogic extends SyncHandler {
      */
     private boolean simulateExtractItem(ItemStack itemStack, int count) {
         if (itemStack.isEmpty()) return true;
-        if (!stackLookupMap.containsKey(itemStack))
-            return handleCacheMiss(itemStack);
-
-        if (stackLookupMap.get(itemStack).isEmpty()) {
-            stackLookupMap.remove(itemStack);
-            return handleCacheMiss(itemStack);
+        if (!stackLookupMap.containsKey(itemStack)) {
+            if (handleCacheMiss(itemStack) == -1)
+                return false;
         }
 
-        int toExtract = count;
-        Set<Integer> slots = stackLookupMap.get(itemStack);
+        int extracted = 0;
 
-        List<Integer> toRemove = new IntArrayList();
-        for (int slot : slots) {
+        Iterator<Integer> slotItr = stackLookupMap.get(itemStack).iterator();
+        while (slotItr.hasNext()) {
+            int slot = slotItr.next();
             var slotStack = availableHandlers.extractItem(slot, count, true);
             // cache is not correct
             if (slotStack.isEmpty() || !this.strategy.equals(slotStack, itemStack)) {
-                toRemove.add(slot);
-            } else {
-                toExtract -= slotStack.getCount();
-                if (toExtract <= 0) break;
+                slotItr.remove();
+                slot = handleCacheMiss(itemStack);
+                if (slot == -1) return false;
+                slotStack = availableHandlers.getStackInSlot(slot);
             }
+            extracted += slotStack.getCount();
+            if (extracted >= count) return true;
         }
 
-        if (!toRemove.isEmpty()) {
-            toRemove.forEach(slots::remove);
-            if (slots.isEmpty()) stackLookupMap.remove(itemStack);
-        }
-
-        return toExtract <= 0 || handleCacheMiss(itemStack);
+        return false;
     }
 
     public void updateCurrentRecipe() {
@@ -389,21 +380,26 @@ public class CraftingRecipeLogic extends SyncHandler {
      * adds the stack and slots the stack lookup map
      * 
      * @param stack stack to check for in available handlers
-     * @return true if a suitable item was found
+     * @return the slot index containing the desired stack, -1 if the stack was not found
      */
-    public boolean handleCacheMiss(ItemStack stack) {
-        if (stack.isEmpty()) return false;
+    public int handleCacheMiss(ItemStack stack) {
+        if (stack.isEmpty()) return -1;
 
         for (int i = 0; i < this.availableHandlers.getSlots(); i++) {
             var curStack = this.availableHandlers.getStackInSlot(i);
             if (curStack.isEmpty()) continue;
 
             if (this.strategy.equals(stack, curStack)) {
-                var slots = this.stackLookupMap.computeIfAbsent(stack.copy(), k -> new IntArraySet());
-                if (slots.add(i)) return true;
+                Set<Integer> slots;
+                if (stackLookupMap.containsKey(stack))
+                    slots = stackLookupMap.get(stack);
+                else {
+                    stackLookupMap.put(stack.copy(), slots = new IntArraySet());
+                }
+                if (slots.add(i)) return i;
             }
         }
-        return false;
+        return -1;
     }
 
     @Override
