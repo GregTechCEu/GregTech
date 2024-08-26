@@ -429,7 +429,7 @@ public class BlockPattern implements IBlockPattern {
         }
 
         return new MultiblockShapeInfo(pattern.stream().map(a -> new PatternAisle(1, a)).toArray(PatternAisle[]::new),
-                candidates, directions);
+                candidates, new Char2ObjectOpenHashMap<>(), directions);
     }
 
     @Override

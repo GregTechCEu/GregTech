@@ -126,7 +126,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
         Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
-        this.patterns = controller.getBuildableShapes(null).stream()
+        this.patterns = controller.getBuildableShapes("MAIN", null).stream()
                 .map(it -> initializePattern(it, drops))
                 .toArray(MBPattern[]::new);
         allItemStackInputs.addAll(drops);
@@ -510,37 +510,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         Map<ItemStack, PartInfo> partsMap = new Object2ObjectOpenCustomHashMap<>(
                 ItemStackHashStrategy.comparingAllButCount());
         for (Entry<BlockPos, BlockInfo> entry : blocks.entrySet()) {
-            BlockPos pos = entry.getKey();
-            IBlockState state = world.getBlockState(pos);
-            Block block = state.getBlock();
-
-            ItemStack stack = ItemStack.EMPTY;
-
-            // first check if the block is a GT machine
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof IGregTechTileEntity) {
-                stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
-            }
-            if (stack.isEmpty()) {
-                // first, see what the block has to say for itself before forcing it to use a particular meta value
-                stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos,
-                        new GregFakePlayer(world));
-            }
-            if (stack.isEmpty()) {
-                // try the default itemstack constructor if we're not a GT machine
-                stack = GTUtility.toItem(state);
-            }
-            if (stack.isEmpty()) {
-                // add the first of the block's drops if the others didn't work
-                NonNullList<ItemStack> list = NonNullList.create();
-                state.getBlock().getDrops(list, world, pos, state, 0);
-                if (!list.isEmpty()) {
-                    ItemStack is = list.get(0);
-                    if (!is.isEmpty()) {
-                        stack = is;
-                    }
-                }
-            }
+            ItemStack stack = GTUtility.toItem(world, entry.getKey());
 
             // if we got a stack, add it to the set and map
             if (!stack.isEmpty()) {
@@ -558,10 +528,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @NotNull
+    // todo substructure support
     private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can work
-        BlockPos controllerPos = shapeInfo.getMap(this.controller, new BlockPos(0, 128, 0), EnumFacing.SOUTH, EnumFacing.UP, blockMap);
+        BlockPos controllerPos = shapeInfo.getMap(this.controller, new BlockPos(0, 128, 0), blockMap);
         MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap.get(controllerPos).getTileEntity()).getMetaTileEntity();
 
         TrackedDummyWorld world = new TrackedDummyWorld();
@@ -573,7 +544,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         Vector3f minPos = world.getMinPos();
         center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
 
-        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);
+        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);;
         worldSceneRenderer.setOnLookingAt(ray -> {});
 
         worldSceneRenderer.setAfterWorldRender(renderer -> {

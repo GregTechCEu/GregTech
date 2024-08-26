@@ -144,7 +144,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         renderingAABB = false;
         writeCustomData(GregtechDataCodes.RENDER_UPDATE, buf -> buf.writeBoolean(false));
 
-        ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure(name).getCache());
+        ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure("MAIN"), "gregtech.multiblock.pattern.error.filters");
         if (type == null) {
             invalidateStructure(name);
             return;
@@ -170,6 +170,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
+        // todo fix
         // this.cleanroomLogic.setMaxProgress(Math.max(100,
         // ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
         this.cleanroomLogic.setMaxProgress(100);

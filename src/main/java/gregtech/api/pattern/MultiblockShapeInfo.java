@@ -1,13 +1,27 @@
 package gregtech.api.pattern;
 
+import com.github.bsideup.jabel.Desugar;
+
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.pattern.PatternAisle;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
+import it.unimi.dsi.fastutil.chars.Char2IntMap;
+
+import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
+
+import it.unimi.dsi.fastutil.chars.Char2ObjectRBTreeMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -15,8 +29,14 @@ import net.minecraft.util.math.BlockPos;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +61,7 @@ public class MultiblockShapeInfo {
     public static final Map<EnumFacing, RelativeDirection> FACING_MAP;
     protected final PatternAisle[] aisles;
     protected final Char2ObjectMap<BlockInfo> symbols;
+    protected final Char2ObjectMap<Dot> dotMap;
     protected final RelativeDirection[] directions;
 
     static {
@@ -52,17 +73,54 @@ public class MultiblockShapeInfo {
         FACING_MAP = Collections.unmodifiableMap(facingMap);
     }
 
-    public MultiblockShapeInfo(PatternAisle[] aisles, Char2ObjectMap<BlockInfo> symbols,
+    public MultiblockShapeInfo(PatternAisle[] aisles, Char2ObjectMap<BlockInfo> symbols, Char2ObjectMap<Dot> dotMap,
                                RelativeDirection[] directions) {
         this.aisles = aisles;
         this.symbols = symbols;
+        this.dotMap = dotMap;
         this.directions = directions;
         symbols.defaultReturnValue(BlockInfo.EMPTY);
     }
 
     /**
-     * Gets a map of where blocks should be placed, note that the controller is always facing south(and up facing
-     * NORTH).
+     * Builds the given multiblock. The world is gotten from the player's world variable.
+     * @param src The multiblock in world to build from.
+     * @param player The player autobuilding and whos inventory will be used.
+     * @param partial If true, if the player does not have enough materials, the multiblock will be built as much as possible until they run out of a block to place.
+     *                If false, the autobuild will only succeed if the player can build the entire multiblock at once.
+     * @return Whether the autobuild was successful. If partial is false, returns true only if the entire multiblock was build. If partial is true, returns false only if no blocks were placed.
+     */
+    public boolean autoBuild(MultiblockControllerBase src, EntityPlayer player, boolean partial) {
+        World world = player.world;
+        GreggyBlockPos pos = whereController(src.getClass());
+
+        EnumFacing frontFacing = src.getFrontFacing();
+        EnumFacing upFacing = src.getUpwardsFacing();
+
+        EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, false);
+        EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, false);
+        EnumFacing absoluteChar = directions[2].getRelativeFacing(frontFacing, upFacing, false);
+
+        GreggyBlockPos start = new GreggyBlockPos(src.getPos())
+                .offset(absoluteAisle, pos.x())
+                .offset(absoluteString, pos.y())
+                .offset(absoluteChar, pos.y());
+
+        Object2IntMap<ItemStack> materials;
+        if (!partial) {
+            Char2IntMap count = getChars();
+            for (Char2IntMap.Entry entry : count.char2IntEntrySet()) {
+                BlockInfo info = symbols.get(entry.getCharKey());
+
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets a map of where blocks should be placed, note that the controller is expected to be front facing SOUTH(and up facing
+     * UP).
      * Unlike BlockPattern, the first char in the first string in the first aisle always starts at the origin, instead
      * of being relative to the controller.
      * The passed in map is populated.
@@ -71,9 +129,11 @@ public class MultiblockShapeInfo {
      */
     // this is currently here so that multiblocks can have other multiblocks in their structure without messing
     // everything up
-    public BlockPos getMap(MultiblockControllerBase src, BlockPos start, EnumFacing frontFacing, EnumFacing upFacing,
-                                           Map<BlockPos, BlockInfo> map) {
+    public BlockPos getMap(MultiblockControllerBase src, BlockPos start, Map<BlockPos, BlockInfo> map) {
+        EnumFacing frontFacing = src.getFrontFacing();
+        EnumFacing upFacing = src.getUpwardsFacing();
         // todo update cleanroom and charcoal pile igniter with enummap instead of hashmap
+        // todo replace the start argument such that now it signifies where the map should be looked up to find the controller, and thus auto detect pattern start
         // seems like MultiblockInfoRecipeWrapper wants the controller to be facing south
         EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, false);
         EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, false);
@@ -93,6 +153,12 @@ public class MultiblockShapeInfo {
                     char c = aisles[aisleI].charAt(stringI, charI);
                     pos.from(start).offset(absoluteAisle, aisleI).offset(absoluteString, stringI).offset(absoluteChar,
                             charI);
+
+                    if (dotMap.containsKey(c)) {
+                        map.put(pos.immutable(), new BlockInfo(Blocks.DIAMOND_BLOCK));
+                        continue;
+                    }
+
                     if (symbols.get(c).getTileEntity() instanceof MetaTileEntityHolder holder) {
                         MetaTileEntityHolder mteHolder = new MetaTileEntityHolder();
                         mteHolder.setMetaTileEntity(holder.getMetaTileEntity());
@@ -147,6 +213,49 @@ public class MultiblockShapeInfo {
         return controller;
     }
 
+    /**
+     * Gets where the controller is in the pattern.
+     * @param clazz The class of the controller.
+     * @return A pos where {@code aisles[pos.x()].getCharAt(pos.y(), pos.z())} would return where the controller char was.
+     */
+    protected GreggyBlockPos whereController(Class<? extends MultiblockControllerBase> clazz) {
+        char c = 'S';
+        for (Char2ObjectMap.Entry<BlockInfo> entry : symbols.char2ObjectEntrySet()) {
+            if (entry.getValue().getTileEntity() instanceof MetaTileEntityHolder holder && holder.getMetaTileEntity() instanceof MultiblockControllerBase controller && controller.getClass() == clazz) {
+                c = entry.getCharKey();
+                break;
+            }
+        }
+
+        for (int aisleI = 0; aisleI < aisles.length; aisleI++) {
+            for (int stringI = 0; stringI < aisles[0].getStringCount(); stringI++) {
+                for (int charI = 0; charI < aisles[0].getCharCount(); charI++) {
+                    if (aisles[aisleI].charAt(stringI, charI) == c) return new GreggyBlockPos(aisleI, stringI, charI);
+                }
+            }
+        }
+
+        // maybe throw instead?
+        return new GreggyBlockPos(0, 0, 0);
+    }
+
+    /**
+     * Gets how many times each char occurs in the aisles.
+     */
+    protected Char2IntMap getChars() {
+        Char2IntMap map = new Char2IntOpenHashMap();
+        for (PatternAisle aisle : aisles) {
+            for (int stringI = 0; stringI < aisles[0].getStringCount(); stringI++) {
+                for (int charI = 0; charI < aisles[0].getCharCount(); charI++) {
+                    char c = aisle.charAt(stringI, charI);
+                    map.put(c, map.get(c) + 1);
+                }
+            }
+        }
+
+        return map;
+    }
+
     public int getUpCount(EnumFacing frontFacing, EnumFacing upFacing) {
 
         int index = 0;
@@ -166,6 +275,16 @@ public class MultiblockShapeInfo {
         };
     }
 
+    public void sendDotMessage(EntityPlayer player) {
+        Dot[] dots = dotMap.values().toArray(new Dot[0]);
+        Arrays.sort(dots, Comparator.comparingInt(Dot::dot));
+
+        for (Dot dot : dots) {
+            player.sendMessage(new TextComponentString("Dot Block " + dot.dot));
+            player.sendMessage(new TextComponentTranslation(dot.lang));
+        }
+    }
+
     public static Builder builder(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
         return new Builder(aisleDir, stringDir, charDir);
     }
@@ -179,6 +298,7 @@ public class MultiblockShapeInfo {
 
         private List<PatternAisle> shape = new ArrayList<>();
         private Char2ObjectMap<BlockInfo> symbolMap = new Char2ObjectOpenHashMap<>();
+        private Char2ObjectMap<Dot> dotMap = new Char2ObjectOpenHashMap<>();
         private final RelativeDirection[] directions = new RelativeDirection[3];
 
         public Builder(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
@@ -211,6 +331,11 @@ public class MultiblockShapeInfo {
         }
 
         public Builder where(char symbol, BlockInfo value) {
+            if (symbolMap.containsKey(symbol)) {
+                GTLog.logger.warn("Tried to put symbol " + symbol + " when it was already registered in the as a dot block! Ignoring the call.");
+                return this;
+            }
+
             this.symbolMap.put(symbol, value);
             return this;
         }
@@ -244,15 +369,35 @@ public class MultiblockShapeInfo {
                     "Supplier must supply either a MetaTileEntity or an IBlockState! Actual: " + part.getClass());
         }
 
+        /**
+         * Adds a dot block to represent the char.
+         * @param symbol The symbol in the pattern to put.
+         * @param dot The amount of dots on the block, 0-15
+         * @param lang The lang to show for the block, pass in the lang key and it will format.
+         */
+        public Builder dot(char symbol, int dot, String lang) {
+            if (symbolMap.containsKey(symbol)) {
+                GTLog.logger.warn("Tried to put symbol " + symbol + " as dot block " + dot + " when it was already registered in the symbol map! Ignoring the call.");
+                return this;
+            }
+
+            dotMap.put(symbol, new Dot(dot, lang));
+            return this;
+        }
+
         public Builder shallowCopy() {
             Builder builder = new Builder(directions[0], directions[1], directions[2]);
             builder.shape = new ArrayList<>(this.shape);
             builder.symbolMap = new Char2ObjectOpenHashMap<>(this.symbolMap);
+            builder.dotMap = new Char2ObjectOpenHashMap<>(this.dotMap);
             return builder;
         }
 
         public MultiblockShapeInfo build() {
-            return new MultiblockShapeInfo(shape.toArray(new PatternAisle[0]), symbolMap, directions);
+            return new MultiblockShapeInfo(shape.toArray(new PatternAisle[0]), symbolMap, dotMap, directions);
         }
     }
+
+    @Desugar
+    public record Dot(int dot, String lang) {}
 }

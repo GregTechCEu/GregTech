@@ -1,6 +1,5 @@
 package gregtech.client.renderer.handler;
 
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -11,15 +10,19 @@ import gregtech.client.utils.TrackedDummyWorld;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
@@ -75,7 +78,7 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-    public static void renderMultiBlockPreview(MultiblockControllerBase controller, long durTimeMillis) {
+    public static void renderMultiBlockPreview(MultiblockControllerBase controller, EntityPlayer player, long durTimeMillis) {
         if (!controller.getPos().equals(mbpPos)) {
             layer = 0;
         } else {
@@ -88,7 +91,10 @@ public class MultiblockPreviewRenderer {
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
         List<MultiblockShapeInfo> shapes = controller.getMatchingShapes();
-        if (!shapes.isEmpty()) renderControllerInList(controller, shapes.get(0), layer);
+        if (!shapes.isEmpty()) {
+            renderControllerInList(controller, shapes.get(0), layer);
+            shapes.get(0).sendDotMessage(player);
+        }
         GlStateManager.glEndList();
     }
 
@@ -104,7 +110,7 @@ public class MultiblockPreviewRenderer {
     public static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo,
                                               int layer) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        BlockPos controllerPos = shapeInfo.getMap(controllerBase, new BlockPos(0, 128, 0), controllerBase.getFrontFacing(), controllerBase.getUpwardsFacing(), blockMap);
+        BlockPos controllerPos = shapeInfo.getMap(controllerBase, new BlockPos(0, 128, 0), blockMap);
         MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap.get(controllerPos).getTileEntity()).getMetaTileEntity();
 
         EnumFacing facing = controllerBase.getFrontFacing();
@@ -124,6 +130,7 @@ public class MultiblockPreviewRenderer {
 
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
+
         GreggyBlockPos greg = new GreggyBlockPos();
         GreggyBlockPos offset = new GreggyBlockPos(controllerPos);
         GreggyBlockPos temp = new GreggyBlockPos();
@@ -151,7 +158,6 @@ public class MultiblockPreviewRenderer {
         ForgeHooksClient.setRenderLayer(oldLayer);
     }
 
-    // todo maybe remove??? who knows what this does but it looks like nothing useful
     @SideOnly(Side.CLIENT)
     private static class TargetBlockAccess implements IBlockAccess {
 

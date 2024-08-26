@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pattern.pattern.PatternState;
@@ -137,7 +138,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
-    // todo fix central monitor, and vacuum freezer
+    // todo fix vacuum freezer
     @NotNull
     protected abstract IBlockPattern createStructurePattern();
 
@@ -317,20 +318,25 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     /**
      * Ensures that all the blockstates that are in the map are the same type. Returns the type if all match, or null if
-     * they don't(or none match).
-     * Example: {@code allSameType(GregTechAPI.HEATING_COILS, getSubstructure("MAIN").getCache())}
+     * they don't(or none match). Because this method sets an error in the structure, the pattern state will be INVALID_CACHED,
+     * so the pattern will not have its cache cleared, and the controller will not attempt to form the pattern again unless the cache is invalidated(either through code or through it failing).
+     * Example: {@code allSameType(GregTechAPI.HEATING_COILS, getSubstructure("MAIN"))}
      * 
      * @param info  The info, such as GregTechAPI.HEATING_COILS
-     * @param cache The cache for the pattern.
+     * @param pattern Pattern, used to get the cache. It will also be used to set the error.
+     * @param error The error, this is only set if the types don't match using {@link gregtech.api.pattern.PatternStringError}.
      */
-    public static <V> V allSameType(Object2ObjectMap<IBlockState, V> info, Long2ObjectMap<BlockInfo> cache) {
+    public static <V> V allSameType(Object2ObjectMap<IBlockState, V> info, IBlockPattern pattern, String error) {
         V type = null;
-        for (BlockInfo blockInfo : cache.values()) {
-            V state = info.get(blockInfo.getBlockState());
+        for (Long2ObjectMap.Entry<BlockInfo> entry : pattern.getCache().long2ObjectEntrySet()) {
+            V state = info.get(entry.getValue().getBlockState());
             if (state != null) {
                 if (type != state) {
                     if (type == null) type = state;
-                    else return null;
+                    else {
+                        pattern.getPatternState().setError(new PatternStringError(BlockPos.fromLong(entry.getLongKey()), error));
+                        return null;
+                    }
                 }
             }
         }
@@ -353,7 +359,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             baseTexture.render(renderState, translation, pipeline);
         }
 
-        // todo fix
         if (allowsExtendedFacing()) {
             double rad = 0;
             if (frontFacing.getAxis() == EnumFacing.Axis.Y) {
@@ -428,7 +433,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                         // this part is already added, so igore it
                         if (multiblockParts.contains(part)) return true;
 
-                        // todo maybe move below into separate check?
+                        // todo move below into separate check
                         if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
                             invalidateStructure(name);
                             return false;
@@ -745,7 +750,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
         if (this.getWorld().isRemote && !this.isStructureFormed("MAIN") && playerIn.isSneaking() &&
                 playerIn.getHeldItem(hand).isEmpty()) {
-            MultiblockPreviewRenderer.renderMultiBlockPreview(this, 60000);
+            MultiblockPreviewRenderer.renderMultiBlockPreview(this, playerIn, 60000);
             return true;
         }
         return false;
@@ -798,15 +803,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      */
     // todo add use for the keyMap with the multiblock builder
     // todo maybe add name arg for building substructures
-    public List<MultiblockShapeInfo> getBuildableShapes(@Nullable Object2IntMap<String> keyMap) {
+    public List<MultiblockShapeInfo> getBuildableShapes(String substructureName, @Nullable Object2IntMap<String> keyMap) {
         List<MultiblockShapeInfo> infos = getMatchingShapes();
 
         // if there is no overriden getMatchingShapes() just return the default one
         if (infos.isEmpty()) {
             // for jei and stuff
-            if (getSubstructure("MAIN") == null) structures.put("MAIN", createStructurePattern());
+            if (getSubstructure(substructureName) == null) createStructurePatterns();
 
-            MultiblockShapeInfo info = getSubstructure("MAIN").getDefaultShape();
+            MultiblockShapeInfo info = getSubstructure(substructureName).getDefaultShape();
             if (info == null) return Collections.emptyList();
             return Collections.singletonList(info);
         }

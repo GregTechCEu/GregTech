@@ -20,6 +20,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 
+import gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -38,6 +41,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -651,6 +656,44 @@ public class GTUtility {
 
     public static ItemStack toItem(IBlockState state, int amount) {
         return new ItemStack(state.getBlock(), amount, state.getBlock().getMetaFromState(state));
+    }
+
+    /**
+     * Converts the block at pos in the world to an item. First uses the MTE method if the block is a mte, then uses pick block, then uses the first of the block drops, then returns EMPTY.
+     */
+    @NotNull
+    public static ItemStack toItem(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+
+        ItemStack stack = ItemStack.EMPTY;
+
+        // first check if the block is a GT machine
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity instanceof IGregTechTileEntity) {
+            stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
+        }
+
+        if (stack.isEmpty()) {
+            // first, see what the block has to say for itself before forcing it to use a particular meta value
+            stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos,
+                    new GregFakePlayer(world));
+        }
+        if (stack.isEmpty()) {
+            // try the default itemstack constructor if we're not a GT machine
+            stack = GTUtility.toItem(state);
+        }
+
+        if (stack.isEmpty()) {
+            // add the first of the block's drops if the others didn't work
+            NonNullList<ItemStack> list = NonNullList.create();
+            state.getBlock().getDrops(list, world, pos, state, 0);
+            if (!list.isEmpty()) {
+                return list.get(0);
+            }
+        }
+
+        return ItemStack.EMPTY;
     }
 
     public static boolean isOre(ItemStack item) {

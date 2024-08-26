@@ -54,6 +54,10 @@ public class PatternState {
         return error != null;
     }
 
+    public PatternError getError() {
+        return error;
+    }
+
     protected void setState(EnumCheckState state) {
         this.state = state;
     }

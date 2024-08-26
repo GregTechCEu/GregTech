@@ -9,8 +9,8 @@ public class PatternStringError extends PatternError {
 
     public final String translateKey;
 
-    public PatternStringError(String translateKey) {
-        super(new BlockPos(0, 0, 0), Collections.emptyList());
+    public PatternStringError(BlockPos pos, String translateKey) {
+        super(pos, Collections.emptyList());
         this.translateKey = translateKey;
     }
 
