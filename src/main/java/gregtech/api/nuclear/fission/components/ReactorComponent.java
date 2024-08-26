@@ -10,17 +10,13 @@ public class ReactorComponent {
     private int x;
     private int y;
 
-    private final boolean isValid;
-
     private int index = -1;
 
-    public ReactorComponent(double moderationFactor, double maxTemperature, double thermalConductivity, double mass,
-                            boolean isValid) {
+    public ReactorComponent(double moderationFactor, double maxTemperature, double thermalConductivity, double mass) {
         this.moderationFactor = moderationFactor;
         this.maxTemperature = maxTemperature;
         this.thermalConductivity = thermalConductivity;
         this.mass = mass;
-        this.isValid = isValid;
     }
 
     public void setPos(int x, int y) {
@@ -42,10 +38,6 @@ public class ReactorComponent {
 
     public double getThermalConductivity() {
         return thermalConductivity;
-    }
-
-    public boolean isValid() {
-        return isValid;
     }
 
     /**

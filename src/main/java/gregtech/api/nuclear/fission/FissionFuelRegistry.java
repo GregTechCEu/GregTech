@@ -32,7 +32,7 @@ public class FissionFuelRegistry {
     }
 
     @NotNull
-    public static Collection<ItemStack> getAllFissionableRods() {
+    public static Collection<ItemStack> getAllFuelStacks() {
         return FUELS.keySet();
     }
 

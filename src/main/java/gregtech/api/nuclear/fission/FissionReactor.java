@@ -1,5 +1,7 @@
 package gregtech.api.nuclear.fission;
 
+import gregtech.api.capability.ICoolantHandler;
+import gregtech.api.fluids.fluidhandlers.LockableFluidTank;
 import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
 import gregtech.api.nuclear.fission.components.FuelRod;
@@ -130,15 +132,13 @@ public class FissionReactor {
     public boolean controlRodRegulationOn = true;
     protected boolean isOn = false;
 
-    protected static double responseFunction(double target, double current, double criticalRate) {
+    public static final double UPDATE_RATE = 0.2;
+
+    protected static double responseFunction(double target, double current) {
         if (current < 0) {
-            if (criticalRate < 1) {
-                return 0;
-            } else {
-                current = 0.1;
-            }
+            current = 0.1;
         }
-        double expDecay = Math.exp(-criticalRate);
+        double expDecay = Math.exp(-UPDATE_RATE);
         return current * expDecay + target * (1 - expDecay);
     }
 
@@ -196,7 +196,7 @@ public class FissionReactor {
                  * is in general not a square
                  */
                 ReactorComponent comp = reactorLayout[i][j];
-                if (comp != null && comp.isValid()) {
+                if (comp != null) {
                     comp.setPos(i, j);
                     maxTemperature = Double.min(maxTemperature, comp.getMaxTemperature());
                     structuralMass += comp.getMass();
@@ -245,8 +245,8 @@ public class FissionReactor {
                  * Geometric factor calculation is done by (rough) numerical integration along a straight path between
                  * the two cells
                  */
-                int prevX = fuelRods.get(i).getX();
-                int prevY = fuelRods.get(i).getY();
+                int prevX = rodOne.getX();
+                int prevY = rodOne.getY();
                 double resolution = ConfigHolder.machines.nuclear.fissionReactorResolution;
                 for (int t = 0; t < resolution; t++) {
                     int x = (int) Math.round((rodTwo.getX() - rodOne.getX()) *
@@ -274,8 +274,8 @@ public class FissionReactor {
                      * For simplicity, we pretend that fuel rods are completely opaque to neutrons, paths that hit fuel
                      * rods are ignored as obstructed
                      */
-                    if (component instanceof FuelRod && !component.samePositionAs(fuelRods.get(i)) &&
-                            !component.samePositionAs(fuelRods.get(j))) {
+                    if (component instanceof FuelRod && !component.samePositionAs(rodOne) &&
+                            !component.samePositionAs(rodTwo)) {
                         pathIsClear = false;
                         break;
                     }
@@ -286,8 +286,6 @@ public class FissionReactor {
                      */
                     if (component instanceof ControlRod rod) {
                         rod.addFuelRodPair();
-                    } else if (component instanceof CoolantChannel channel) {
-                        channel.addFuelRodPair();
                     }
                 }
 
@@ -371,7 +369,6 @@ public class FissionReactor {
          * We give each control rod and coolant channel a weight depending on how many fuel rods they affect
          */
         this.computeControlRodWeights();
-        this.computeCoolantChannelWeights();
 
         controlRodFactor = ControlRod.controlRodFactor(effectiveControlRods, this.controlRodInsertion);
 
@@ -390,20 +387,6 @@ public class FissionReactor {
             }
         }
         ControlRod.normalizeWeights(effectiveControlRods, fuelRods.size());
-    }
-
-    /**
-     * Loops over all the coolant channels, determines which ones actually affect reactivity, and gives them a weight
-     * depending on how many fuel rods they affect
-     */
-    protected void computeCoolantChannelWeights() {
-        for (CoolantChannel channel : coolantChannels) {
-            channel.computeWeightFromFuelRodMap();
-            if (channel.getWeight() > 0) {
-                effectiveCoolantChannels.add(channel);
-            }
-        }
-        CoolantChannel.normalizeWeights(effectiveCoolantChannels);
     }
 
     public boolean isDepleted() {
@@ -469,7 +452,9 @@ public class FissionReactor {
         double heatRemoved = 0;
         coolantMass = 0;
         for (CoolantChannel channel : coolantChannels) {
-            FluidStack tryFluidDrain = channel.getInputHandler().getFluidTank().drain(flowRate, false);
+            LockableFluidTank in = channel.getInputHandler().getFluidTank();
+            LockableFluidTank out = channel.getOutputHandler().getFluidTank();
+            FluidStack tryFluidDrain = in.drain(flowRate, false);
             if (tryFluidDrain != null) {
                 int drained = tryFluidDrain.amount;
 
@@ -499,8 +484,8 @@ public class FissionReactor {
                 double idealFluidUsed = idealHeatFlux / heatRemovedPerLiter;
                 double cappedFluidUsed = Math.min(drained, idealFluidUsed);
 
-                int remainingSpace = channel.getOutputHandler().getFluidTank().getCapacity() -
-                        channel.getOutputHandler().getFluidTank().getFluidAmount();
+                int remainingSpace = out.getCapacity() -
+                        out.getFluidAmount();
                 int actualFlowRate = Math.min(remainingSpace,
                         (int) (cappedFluidUsed + channel.partialCoolant));
                 // Should occasionally decrease when coolant is actually consumed.
@@ -509,8 +494,8 @@ public class FissionReactor {
                 FluidStack HPCoolant = new FluidStack(
                         prop.getHotCoolant(), actualFlowRate);
 
-                channel.getInputHandler().getFluidTank().drain(actualFlowRate, true);
-                channel.getOutputHandler().getFluidTank().fill(HPCoolant, true);
+                in.drain(actualFlowRate, true);
+                out.fill(HPCoolant, true);
                 if (prop.accumulatesHydrogen() &&
                         this.temperature > zircaloyHydrogenReactionTemperature) {
                     double boilingPoint = coolantBoilingPoint(prop);
@@ -565,7 +550,7 @@ public class FissionReactor {
         this.pressure = responseFunction(
                 !(this.temperature <= this.coolantBoilingPoint()) && this.isOn ? 1000. * R * this.temperature :
                         this.exteriorPressure,
-                this.pressure, 0.2);
+                this.pressure);
     }
 
     public void updateNeutronPoisoning() {

@@ -6,15 +6,18 @@ import gregtech.api.metatileentity.MetaTileEntity;
 
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.items.ItemStackHandler;
+
 import org.jetbrains.annotations.NotNull;
 
-public class LockableItemStackHandler extends NotifiableItemStackHandler implements ILockableHandler<ItemStack> {
+public class LockableItemStackHandler extends ItemStackHandler implements ILockableHandler<ItemStack> {
 
     protected boolean locked;
     protected ItemStack lockedItemStack;
 
-    public LockableItemStackHandler(MetaTileEntity entityToNotify, boolean isExport) {
-        super(entityToNotify, 1, entityToNotify, isExport);
+    public LockableItemStackHandler() {
+        super(1);
     }
 
     @Override
@@ -41,5 +44,24 @@ public class LockableItemStackHandler extends NotifiableItemStackHandler impleme
     @Override
     public ItemStack getLockedObject() {
         return lockedItemStack;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+        if (lockedItemStack != null && !lockedItemStack.isEmpty()) {
+            nbt.setTag("LockedItemStack", lockedItemStack.serializeNBT());
+        }
+        nbt.setBoolean("Locked", locked);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        super.deserializeNBT(nbt);
+        if (nbt.hasKey("LockedItemStack")) {
+            lockedItemStack = new ItemStack(nbt.getCompoundTag("LockedItemStack"));
+        }
+        locked = nbt.getBoolean("Locked");
     }
 }

@@ -9,7 +9,7 @@ public class ControlRod extends ReactorComponent {
     private int relatedFuelRodPairs;
 
     public ControlRod(double maxTemperature, boolean tipModeration, double thermalConductivity, double mass) {
-        super(0, maxTemperature, thermalConductivity, mass, true);
+        super(0, maxTemperature, thermalConductivity, mass);
         this.tipModeration = tipModeration;
         this.weight = 0;
     }
@@ -41,7 +41,7 @@ public class ControlRod extends ReactorComponent {
                 if (insertion <= 0.3) {
                     crf -= insertion / 3 * control_rod.weight;
                 } else {
-                    crf -= (-11F / 7 * (insertion - 0.3) + 0.1) * control_rod.weight;
+                    crf += (11F / 7 * (insertion - 0.3) - 0.1) * control_rod.weight;
                 }
             } else {
                 crf += insertion * control_rod.weight;

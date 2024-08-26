@@ -7,7 +7,7 @@ public class FuelRod extends ReactorComponent {
     private IFissionFuelStats fuel;
 
     public FuelRod(double maxTemperature, double thermalConductivity, IFissionFuelStats fuel, double mass) {
-        super(0, maxTemperature, thermalConductivity, mass, true);
+        super(0, maxTemperature, thermalConductivity, mass);
         this.fuel = fuel;
     }
 

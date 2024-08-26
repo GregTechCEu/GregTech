@@ -1,6 +1,7 @@
-package gregtech.api.capability.impl;
+package gregtech.api.fluids.fluidhandlers;
 
 import gregtech.api.capability.ILockableHandler;
+import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.metatileentity.MetaTileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -66,6 +67,7 @@ public class LockableFluidTank extends NotifiableFluidTank implements ILockableH
         } else if (this.fluid != null && this.fluid.amount != 0) {
             this.lockedFluid = this.fluid.getFluid();
         }
+        this.locked = nbt.getBoolean("Locked");
         return this;
     }
 
@@ -75,6 +77,7 @@ public class LockableFluidTank extends NotifiableFluidTank implements ILockableH
         if (lockedFluid != null) {
             nbt.setString("LockedFluid", lockedFluid.getName());
         }
+        nbt.setBoolean("Locked", locked);
         return nbt;
     }
 }
