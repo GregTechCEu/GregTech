@@ -161,7 +161,8 @@ public final class RecipeMaps {
                             recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2))
                                     .buildAndRegister();
 
-                            recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.HighGradeSolderingAlloy.getFluid((int) (amount * 0.5)))
+                            recipeBuilder.copy().clearFluidInputs()
+                                    .fluidInputs(Materials.HighGradeSolderingAlloy.getFluid((int) (amount * 0.5)))
                                     .buildAndRegister();
                         }
                     })
@@ -505,8 +506,9 @@ public final class RecipeMaps {
                             // middle of a buildAndRegister call.
                             // Adding a second call will result in duplicate recipe generation attempts
 
-                            recipeBuilder.fluidInputs(Materials.HighGradeSolderingAlloy.getFluid(Math.max(1, (GTValues.L / 4) *
-                                    recipeBuilder.getSolderMultiplier())));
+                            recipeBuilder.fluidInputs(
+                                    Materials.HighGradeSolderingAlloy.getFluid(Math.max(1, (GTValues.L / 4) *
+                                            recipeBuilder.getSolderMultiplier())));
                         }
                     })
                     .build();
@@ -648,8 +650,9 @@ public final class RecipeMaps {
                             // Adding a second call will result in duplicate recipe generation attempts
 
                             recipeBuilder
-                                    .fluidInputs(Materials.MolybdeniteLubricant.getFluid(GTUtility.safeCastLongToInt(Math.max(1,
-                                            Math.min(125, duration * eut / 2560)))))
+                                    .fluidInputs(Materials.MolybdeniteLubricant
+                                            .getFluid(GTUtility.safeCastLongToInt(Math.max(1,
+                                                    Math.min(125, duration * eut / 2560)))))
                                     .duration(Math.max(1, (int) (duration * 0.8)));
 
                         }
