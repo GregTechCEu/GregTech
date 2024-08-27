@@ -1,11 +1,8 @@
 package gregtech.api.items.itemhandlers;
 
 import gregtech.api.capability.ILockableHandler;
-import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.metatileentity.MetaTileEntity;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.ItemStackHandler;
 

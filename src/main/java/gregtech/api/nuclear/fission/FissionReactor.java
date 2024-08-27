@@ -1,6 +1,5 @@
 package gregtech.api.nuclear.fission;
 
-import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.fluids.fluidhandlers.LockableFluidTank;
 import gregtech.api.nuclear.fission.components.ControlRod;
 import gregtech.api.nuclear.fission.components.CoolantChannel;
@@ -250,9 +249,9 @@ public class FissionReactor {
                 double resolution = ConfigHolder.machines.nuclear.fissionReactorResolution;
                 for (int t = 0; t < resolution; t++) {
                     int x = (int) Math.round((rodTwo.getX() - rodOne.getX()) *
-                            ((float) t / resolution) + fuelRods.get(i).getX());
+                            ((float) t / resolution) + rodOne.getX());
                     int y = (int) Math.round((rodTwo.getY() - rodOne.getY()) *
-                            ((float) t / resolution) + fuelRods.get(i).getY());
+                            ((float) t / resolution) + rodOne.getY());
                     if (x < 0 || x > reactorLayout.length - 1 || y < 0 || y > reactorLayout.length - 1) {
                         continue;
                     }

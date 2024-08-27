@@ -54,9 +54,4 @@ public interface IFissionFuelStats {
             return 3;
         }
     }
-
-    /**
-     * @return A unique ID for this fuel.
-     */
-    String getID();
 }

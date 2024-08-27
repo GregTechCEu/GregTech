@@ -3,8 +3,6 @@ package gregtech.api.nuclear.fission.components;
 import gregtech.api.capability.ICoolantHandler;
 import gregtech.api.nuclear.fission.ICoolantStats;
 
-import java.util.List;
-
 public class CoolantChannel extends ReactorComponent {
 
     private final ICoolantStats coolant;
@@ -23,7 +21,6 @@ public class CoolantChannel extends ReactorComponent {
         this.inputHandler = inputHandler;
         this.outputHandler = outputHandler;
     }
-
 
     public ICoolantStats getCoolant() {
         return coolant;

@@ -167,15 +167,16 @@ public class ConfigHolder {
         public static class NuclearOptions {
 
             @Config.Comment({ "Nuclear Max Power multiplier for balancing purposes", "Default: 0.1" })
-            @Config.RangeDouble(min = 0, max = 10000)
+            @Config.RangeDouble(min = 0, max = 100)
             public double nuclearPowerMultiplier = 0.1;
 
-            @Config.Comment({ "How much the amount of power required to boil a coolant is divided by." })
+            @Config.Comment({ "How much the amount of power required to boil a coolant is divided by.", "Default: 14" })
             @Config.RangeDouble(min = 0.1, max = 1000)
             public double fissionCoolantDivisor = 14;
 
             @Config.Comment({
-                    "The level of detail to which fission reactors are analyzed. May cause more lag at higher values." })
+                    "The level of detail to which fission reactors are analyzed. May cause more lag at higher values.",
+                    "Default: 100" })
             @Config.RangeInt(min = 5, max = 10000)
             public double fissionReactorResolution = 100;
 

@@ -21,7 +21,7 @@ public class FissionFuelRegistry {
 
     public static void registerFuel(@NotNull ItemStack item, @NotNull IFissionFuelStats fuel,
                                     @NotNull ItemStack depletedFuel) {
-        IDENTIFIED_FUELS.put(fuel.getID(), fuel);
+        IDENTIFIED_FUELS.put(item.getTranslationKey(), fuel);
         FUELS.put(item, fuel);
         DEPLETED_FUELS.put(fuel, depletedFuel);
     }
@@ -32,12 +32,12 @@ public class FissionFuelRegistry {
     }
 
     @NotNull
-    public static Collection<ItemStack> getAllFuelStacks() {
+    public static Collection<ItemStack> getAllFissionableRods() {
         return FUELS.keySet();
     }
 
     @Nullable
-    public static IFissionFuelStats getFissionFuel(String name) {
+    public static IFissionFuelStats getFissionFuelFromTranslationKey(String name) {
         return IDENTIFIED_FUELS.get(name);
     }
 

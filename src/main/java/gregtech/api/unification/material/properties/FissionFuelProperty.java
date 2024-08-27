@@ -99,11 +99,6 @@ public class FissionFuelProperty implements IMaterialProperty, IFissionFuelStats
         return neutronGenerationTime;
     }
 
-    @Override
-    public String getID() {
-        return this.id;
-    }
-
     public void setNeutronGenerationTime(double neutronGenerationTime) {
         this.neutronGenerationTime = neutronGenerationTime;
     }
