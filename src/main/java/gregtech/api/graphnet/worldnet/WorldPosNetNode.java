@@ -7,20 +7,20 @@ import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WorldNetNode extends NetNode {
+public class WorldPosNetNode extends NetNode {
 
     private BlockPos pos;
 
-    public WorldNetNode(WorldNet net) {
+    public WorldPosNetNode(WorldPosNet net) {
         super(net);
     }
 
     @Override
-    public @NotNull WorldNet getNet() {
-        return (WorldNet) super.getNet();
+    public @NotNull WorldPosNet getNet() {
+        return (WorldPosNet) super.getNet();
     }
 
-    public WorldNetNode setPos(BlockPos pos) {
+    public WorldPosNetNode setPos(BlockPos pos) {
         this.pos = pos;
         return this;
     }

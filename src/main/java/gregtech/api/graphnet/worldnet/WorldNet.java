@@ -14,7 +14,6 @@ import gregtech.api.graphnet.path.GenericGraphNetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -56,24 +55,10 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
         return backer.getPaths(node, 0, GenericGraphNetPath.MAPPER, testObject, simulator, queryTick);
     }
 
-    @NotNull
-    public WorldNetNode getOrCreateNode(@NotNull BlockPos pos) {
-        WorldNetNode node = getNode(pos);
-        if (node != null) return node;
-        node = getNewNode();
-        node.setPos(pos);
-        addNode(node);
-        return node;
-    }
-
     @Override
     public void addNode(@NotNull NetNode node) {
         nodeClassCheck(node);
         this.backer.addNode(node);
-    }
-
-    public @Nullable WorldNetNode getNode(@NotNull BlockPos equivalencyData) {
-        return (WorldNetNode) getNode((Object) equivalencyData);
     }
 
     @Override
@@ -139,15 +124,5 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet, Gene
     @Override
     public GraphNetBacker getBacker() {
         return backer;
-    }
-
-    @Override
-    public Class<? extends NetNode> getNodeClass() {
-        return WorldNetNode.class;
-    }
-
-    @Override
-    public @NotNull WorldNetNode getNewNode() {
-        return new WorldNetNode(this);
     }
 }

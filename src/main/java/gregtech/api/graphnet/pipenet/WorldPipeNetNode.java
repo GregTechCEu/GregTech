@@ -3,7 +3,7 @@ package gregtech.api.graphnet.pipenet;
 import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.worldnet.WorldNetNode;
+import gregtech.api.graphnet.worldnet.WorldPosNetNode;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
-public final class WorldPipeNetNode extends WorldNetNode {
+public final class WorldPipeNetNode extends WorldPosNetNode {
 
     private static final PipeTileEntity FALLBACK = new PipeTileEntity();
 

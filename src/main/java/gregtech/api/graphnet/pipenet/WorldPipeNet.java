@@ -10,7 +10,7 @@ import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.EdgePredicate;
-import gregtech.api.graphnet.worldnet.WorldNet;
+import gregtech.api.graphnet.worldnet.WorldPosNet;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.reference.WeakHashSet;
 
@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public abstract class WorldPipeNet extends WorldNet {
+public abstract class WorldPipeNet extends WorldPosNet {
 
     public static final int MULTI_NET_TIMEOUT = 10;
 
