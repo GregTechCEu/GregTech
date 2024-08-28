@@ -286,7 +286,7 @@ public class CraftingRecipeLogic extends SyncHandler {
      */
     private boolean simulateExtractItem(ItemStack itemStack, int count) {
         if (itemStack.isEmpty()) return true;
-        if (!stackLookupMap.containsKey(itemStack)) {
+        if (!stackLookupMap.containsKey(itemStack) || stackLookupMap.get(itemStack).isEmpty()) {
             if (handleCacheMiss(itemStack) == -1)
                 return false;
         }
@@ -339,7 +339,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
             // check if existing stack works
             var slotStack = slot.getStack();
-            if (slotStack.isEmpty()) {
+            if (slotStack.isEmpty() && !old) {
                 slot.hasIngredients = true;
                 map.put(slot.getIndex(), slot.hasIngredients);
                 continue;
