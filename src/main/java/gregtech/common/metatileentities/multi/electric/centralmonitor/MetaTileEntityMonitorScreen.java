@@ -209,8 +209,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         MultiblockControllerBase controller = getController();
         if (controller == null) return -1;
 
-        EnumFacing.Axis lrAxis = RIGHT.getRelativeFacing(controller.getFrontFacing(), controller.getUpwardsFacing()).getAxis();
-        return Math.abs(GreggyBlockPos.getAxis(getPos(), lrAxis) - GreggyBlockPos.getAxis(controller.getPos(), lrAxis)) - 1;
+        EnumFacing.Axis lrAxis = RIGHT.getRelativeFacing(controller.getFrontFacing(), controller.getUpwardsFacing())
+                .getAxis();
+        return Math.abs(
+                GreggyBlockPos.getAxis(getPos(), lrAxis) - GreggyBlockPos.getAxis(controller.getPos(), lrAxis)) - 1;
     }
 
     public int getY() {
@@ -220,7 +222,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         EnumFacing.Axis udAxis = controller.getUpwardsFacing().getAxis();
         // top left corner of screen
         GreggyBlockPos pos = new GreggyBlockPos(controller.getPos());
-        pos.offset(controller.getUpwardsFacing(),  ((MetaTileEntityCentralMonitor) controller).height - 2);
+        pos.offset(controller.getUpwardsFacing(), ((MetaTileEntityCentralMonitor) controller).height - 2);
         pos.offset(LEFT.getRelativeFacing(controller.getFrontFacing(), controller.getUpwardsFacing()));
 
         return Math.abs(pos.get(udAxis) - GreggyBlockPos.getAxis(getPos(), udAxis));

@@ -11,7 +11,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.PatternState;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.GregFakePlayer;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
@@ -35,11 +34,9 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -531,9 +528,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     // todo substructure support
     private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can work
+        // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can
+        // work
         BlockPos controllerPos = shapeInfo.getMap(this.controller, new BlockPos(0, 128, 0), blockMap);
-        MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap.get(controllerPos).getTileEntity()).getMetaTileEntity();
+        MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap
+                .get(controllerPos).getTileEntity()).getMetaTileEntity();
 
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);

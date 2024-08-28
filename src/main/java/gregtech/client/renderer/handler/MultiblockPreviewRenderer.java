@@ -78,7 +78,8 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-    public static void renderMultiBlockPreview(MultiblockControllerBase controller, EntityPlayer player, long durTimeMillis) {
+    public static void renderMultiBlockPreview(MultiblockControllerBase controller, EntityPlayer player,
+                                               long durTimeMillis) {
         if (!controller.getPos().equals(mbpPos)) {
             layer = 0;
         } else {
@@ -111,7 +112,8 @@ public class MultiblockPreviewRenderer {
                                               int layer) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         BlockPos controllerPos = shapeInfo.getMap(controllerBase, new BlockPos(0, 128, 0), blockMap);
-        MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap.get(controllerPos).getTileEntity()).getMetaTileEntity();
+        MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap
+                .get(controllerPos).getTileEntity()).getMetaTileEntity();
 
         EnumFacing facing = controllerBase.getFrontFacing();
         EnumFacing upwardsFacing = controllerBase.getUpwardsFacing();

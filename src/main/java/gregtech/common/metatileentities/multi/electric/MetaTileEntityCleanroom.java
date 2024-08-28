@@ -144,7 +144,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         renderingAABB = false;
         writeCustomData(GregtechDataCodes.RENDER_UPDATE, buf -> buf.writeBoolean(false));
 
-        ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure("MAIN"), "gregtech.multiblock.pattern.error.filters");
+        ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure("MAIN"),
+                "gregtech.multiblock.pattern.error.filters");
         if (type == null) {
             invalidateStructure(name);
             return;

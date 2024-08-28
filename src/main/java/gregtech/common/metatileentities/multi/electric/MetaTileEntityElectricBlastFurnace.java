@@ -47,7 +47,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -93,7 +92,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected void formStructure(String name) {
         super.formStructure(name);
-        IHeatingCoilBlockStats type = allSameType(GregTechAPI.HEATING_COILS, getSubstructure(name), "gregtech.multiblock.pattern.error.coils");
+        IHeatingCoilBlockStats type = allSameType(GregTechAPI.HEATING_COILS, getSubstructure(name),
+                "gregtech.multiblock.pattern.error.coils");
         if (type == null) {
             invalidateStructure(name);
         } else {
@@ -196,9 +196,9 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                         MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF), EnumFacing.NORTH)
                 .dot('C', 1, "gregtech.material.tungsten_carbide");
         shapeInfo.add(builder.build());
-//        GregTechAPI.HEATING_COILS.entrySet().stream()
-//                .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-//                .forEach(entry -> shapeInfo.add(builder.shallowCopy().where('C', entry.getKey()).build()));
+        // GregTechAPI.HEATING_COILS.entrySet().stream()
+        // .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
+        // .forEach(entry -> shapeInfo.add(builder.shallowCopy().where('C', entry.getKey()).build()));
         return shapeInfo;
     }
 

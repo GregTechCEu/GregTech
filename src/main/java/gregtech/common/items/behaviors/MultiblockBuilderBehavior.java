@@ -1,15 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.HandGuiData;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widgets.SortableListWidget;
-import com.cleanroommc.modularui.widgets.layout.Row;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -20,8 +10,6 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.util.GTUtility;
-
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,6 +28,16 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.HandGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.SortableListWidget;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +46,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory {
+
     public static final int MAX_KEYS = 16;
+
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
@@ -186,13 +186,13 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
             // todo full substructure debug and autobuild support
             // If not sneaking, try to show structure debug info (if any) in chat.
             if (!multiblock.isStructureFormed("MAIN")) {
-                 PatternError error = multiblock.getSubstructure("MAIN").getPatternState().getError();
-                 if (error != null) {
-                     player.sendMessage(
-                     new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
-                     player.sendMessage(new TextComponentString(error.getErrorInfo()));
-                     return EnumActionResult.SUCCESS;
-                 }
+                PatternError error = multiblock.getSubstructure("MAIN").getPatternState().getError();
+                if (error != null) {
+                    player.sendMessage(
+                            new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
+                    player.sendMessage(new TextComponentString(error.getErrorInfo()));
+                    return EnumActionResult.SUCCESS;
+                }
             }
             player.sendMessage(new TextComponentTranslation("gregtech.multiblock.pattern.no_errors")
                     .setStyle(new Style().setColor(TextFormatting.GREEN)));

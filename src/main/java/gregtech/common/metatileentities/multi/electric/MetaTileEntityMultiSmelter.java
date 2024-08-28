@@ -106,7 +106,8 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     @Override
     protected void formStructure(String name) {
         super.formStructure(name);
-        IHeatingCoilBlockStats type = allSameType(GregTechAPI.HEATING_COILS, getSubstructure(name), "gregtech.multiblock.pattern.error.coils");
+        IHeatingCoilBlockStats type = allSameType(GregTechAPI.HEATING_COILS, getSubstructure(name),
+                "gregtech.multiblock.pattern.error.coils");
         if (type == null) {
             invalidateStructure(name);
         } else {

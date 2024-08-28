@@ -1,7 +1,5 @@
 package gregtech.api.pattern;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -10,28 +8,23 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
-import it.unimi.dsi.fastutil.chars.Char2IntMap;
-
-import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
-
-import it.unimi.dsi.fastutil.chars.Char2ObjectRBTreeMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
-import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+
+import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.chars.Char2IntMap;
+import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +49,8 @@ public class MultiblockShapeInfo {
 
     /**
      * Unmodifiable reverse map from facing to relative direction, using DEFAULT_FRONT and DEFAULT_UP.
-     * For example, EnumFacing.NORTH -> RelativeDirection.BACK, since with the defaults the relative back of the controller is north.
+     * For example, EnumFacing.NORTH -> RelativeDirection.BACK, since with the defaults the relative back of the
+     * controller is north.
      */
     public static final Map<EnumFacing, RelativeDirection> FACING_MAP;
     protected final PatternAisle[] aisles;
@@ -84,11 +78,14 @@ public class MultiblockShapeInfo {
 
     /**
      * Builds the given multiblock. The world is gotten from the player's world variable.
-     * @param src The multiblock in world to build from.
-     * @param player The player autobuilding and whos inventory will be used.
-     * @param partial If true, if the player does not have enough materials, the multiblock will be built as much as possible until they run out of a block to place.
+     * 
+     * @param src     The multiblock in world to build from.
+     * @param player  The player autobuilding and whos inventory will be used.
+     * @param partial If true, if the player does not have enough materials, the multiblock will be built as much as
+     *                possible until they run out of a block to place.
      *                If false, the autobuild will only succeed if the player can build the entire multiblock at once.
-     * @return Whether the autobuild was successful. If partial is false, returns true only if the entire multiblock was build. If partial is true, returns false only if no blocks were placed.
+     * @return Whether the autobuild was successful. If partial is false, returns true only if the entire multiblock was
+     *         build. If partial is true, returns false only if no blocks were placed.
      */
     public boolean autoBuild(MultiblockControllerBase src, EntityPlayer player, boolean partial) {
         World world = player.world;
@@ -119,13 +116,15 @@ public class MultiblockShapeInfo {
     }
 
     /**
-     * Gets a map of where blocks should be placed, note that the controller is expected to be front facing SOUTH(and up facing
+     * Gets a map of where blocks should be placed, note that the controller is expected to be front facing SOUTH(and up
+     * facing
      * UP).
      * Unlike BlockPattern, the first char in the first string in the first aisle always starts at the origin, instead
      * of being relative to the controller.
      * The passed in map is populated.
      *
-     * @return A pos that can be looked up in the given map to find the controller that has the same class as the argument.
+     * @return A pos that can be looked up in the given map to find the controller that has the same class as the
+     *         argument.
      */
     // this is currently here so that multiblocks can have other multiblocks in their structure without messing
     // everything up
@@ -133,7 +132,8 @@ public class MultiblockShapeInfo {
         EnumFacing frontFacing = src.getFrontFacing();
         EnumFacing upFacing = src.getUpwardsFacing();
         // todo update cleanroom and charcoal pile igniter with enummap instead of hashmap
-        // todo replace the start argument such that now it signifies where the map should be looked up to find the controller, and thus auto detect pattern start
+        // todo replace the start argument such that now it signifies where the map should be looked up to find the
+        // controller, and thus auto detect pattern start
         // seems like MultiblockInfoRecipeWrapper wants the controller to be facing south
         EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, false);
         EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, false);
@@ -165,14 +165,15 @@ public class MultiblockShapeInfo {
                         mteHolder.getMetaTileEntity().onPlacement();
 
                         // get the relative direction from the part facing, then use that to get the real enum facing
-                        EnumFacing newFacing = FACING_MAP.get(holder.getMetaTileEntity().getFrontFacing()).getRelativeFacing(frontFacing, upFacing, false);
+                        EnumFacing newFacing = FACING_MAP.get(holder.getMetaTileEntity().getFrontFacing())
+                                .getRelativeFacing(frontFacing, upFacing, false);
                         mteHolder.getMetaTileEntity().setFrontFacing(newFacing);
-
 
                         if (holder.getMetaTileEntity() instanceof MultiblockControllerBase holderBase) {
                             MultiblockControllerBase mteBase = (MultiblockControllerBase) mteHolder.getMetaTileEntity();
 
-                            EnumFacing newUpFacing = FACING_MAP.get(holderBase.getUpwardsFacing()).getRelativeFacing(frontFacing, upFacing, false);
+                            EnumFacing newUpFacing = FACING_MAP.get(holderBase.getUpwardsFacing())
+                                    .getRelativeFacing(frontFacing, upFacing, false);
                             if (holderBase.getClass() == src.getClass()) {
                                 controller = pos.immutable();
                             }
@@ -215,13 +216,17 @@ public class MultiblockShapeInfo {
 
     /**
      * Gets where the controller is in the pattern.
+     * 
      * @param clazz The class of the controller.
-     * @return A pos where {@code aisles[pos.x()].getCharAt(pos.y(), pos.z())} would return where the controller char was.
+     * @return A pos where {@code aisles[pos.x()].getCharAt(pos.y(), pos.z())} would return where the controller char
+     *         was.
      */
     protected GreggyBlockPos whereController(Class<? extends MultiblockControllerBase> clazz) {
         char c = 'S';
         for (Char2ObjectMap.Entry<BlockInfo> entry : symbols.char2ObjectEntrySet()) {
-            if (entry.getValue().getTileEntity() instanceof MetaTileEntityHolder holder && holder.getMetaTileEntity() instanceof MultiblockControllerBase controller && controller.getClass() == clazz) {
+            if (entry.getValue().getTileEntity() instanceof MetaTileEntityHolder holder &&
+                    holder.getMetaTileEntity() instanceof MultiblockControllerBase controller &&
+                    controller.getClass() == clazz) {
                 c = entry.getCharKey();
                 break;
             }
@@ -257,7 +262,6 @@ public class MultiblockShapeInfo {
     }
 
     public int getUpCount(EnumFacing frontFacing, EnumFacing upFacing) {
-
         int index = 0;
         for (int i = 0; i < 3; i++) {
             EnumFacing facing = directions[i].getRelativeFacing(frontFacing, upFacing, false);
@@ -332,7 +336,8 @@ public class MultiblockShapeInfo {
 
         public Builder where(char symbol, BlockInfo value) {
             if (symbolMap.containsKey(symbol)) {
-                GTLog.logger.warn("Tried to put symbol " + symbol + " when it was already registered in the as a dot block! Ignoring the call.");
+                GTLog.logger.warn("Tried to put symbol " + symbol +
+                        " when it was already registered in the as a dot block! Ignoring the call.");
                 return this;
             }
 
@@ -371,13 +376,15 @@ public class MultiblockShapeInfo {
 
         /**
          * Adds a dot block to represent the char.
+         * 
          * @param symbol The symbol in the pattern to put.
-         * @param dot The amount of dots on the block, 0-15
-         * @param lang The lang to show for the block, pass in the lang key and it will format.
+         * @param dot    The amount of dots on the block, 0-15
+         * @param lang   The lang to show for the block, pass in the lang key and it will format.
          */
         public Builder dot(char symbol, int dot, String lang) {
             if (symbolMap.containsKey(symbol)) {
-                GTLog.logger.warn("Tried to put symbol " + symbol + " as dot block " + dot + " when it was already registered in the symbol map! Ignoring the call.");
+                GTLog.logger.warn("Tried to put symbol " + symbol + " as dot block " + dot +
+                        " when it was already registered in the symbol map! Ignoring the call.");
                 return this;
             }
 

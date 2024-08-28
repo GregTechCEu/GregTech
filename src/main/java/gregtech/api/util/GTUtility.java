@@ -20,8 +20,6 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 
-import gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -659,7 +657,8 @@ public class GTUtility {
     }
 
     /**
-     * Converts the block at pos in the world to an item. First uses the MTE method if the block is a mte, then uses pick block, then uses the first of the block drops, then returns EMPTY.
+     * Converts the block at pos in the world to an item. First uses the MTE method if the block is a mte, then uses
+     * pick block, then uses the first of the block drops, then returns EMPTY.
      */
     @NotNull
     public static ItemStack toItem(World world, BlockPos pos) {
@@ -955,7 +954,8 @@ public class GTUtility {
     }
 
     /**
-     * Gets the cross product of 2 facings. Null is returned if the result is a zero vector(facings are on the same axis).
+     * Gets the cross product of 2 facings. Null is returned if the result is a zero vector(facings are on the same
+     * axis).
      */
     @Nullable
     public static EnumFacing cross(EnumFacing a, EnumFacing b) {
@@ -964,8 +964,7 @@ public class GTUtility {
         return EnumFacing.getFacingFromVector(
                 a.getYOffset() * b.getZOffset() - a.getZOffset() * b.getYOffset(),
                 a.getZOffset() * b.getXOffset() - a.getXOffset() * b.getZOffset(),
-                a.getXOffset() * b.getYOffset() - a.getYOffset() * b.getXOffset()
-        );
+                a.getXOffset() * b.getYOffset() - a.getYOffset() * b.getXOffset());
     }
 
     /**

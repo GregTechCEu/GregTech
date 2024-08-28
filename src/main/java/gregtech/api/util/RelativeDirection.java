@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.function.BinaryOperator;
@@ -53,7 +52,9 @@ public enum RelativeDirection {
     }
 
     public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
-        return (isFlipped && (this == LEFT || this == RIGHT)) ? getRelativeFacing(frontFacing, upwardsFacing).getOpposite() : getRelativeFacing(frontFacing, upwardsFacing);
+        return (isFlipped && (this == LEFT || this == RIGHT)) ?
+                getRelativeFacing(frontFacing, upwardsFacing).getOpposite() :
+                getRelativeFacing(frontFacing, upwardsFacing);
     }
 
     public Function<BlockPos, Integer> getSorter(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {

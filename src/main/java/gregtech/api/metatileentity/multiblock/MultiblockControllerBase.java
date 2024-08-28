@@ -1,6 +1,5 @@
 package gregtech.api.metatileentity.multiblock;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
@@ -17,7 +16,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pattern.pattern.PatternState;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
@@ -318,13 +316,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     /**
      * Ensures that all the blockstates that are in the map are the same type. Returns the type if all match, or null if
-     * they don't(or none match). Because this method sets an error in the structure, the pattern state will be INVALID_CACHED,
-     * so the pattern will not have its cache cleared, and the controller will not attempt to form the pattern again unless the cache is invalidated(either through code or through it failing).
+     * they don't(or none match). Because this method sets an error in the structure, the pattern state will be
+     * INVALID_CACHED,
+     * so the pattern will not have its cache cleared, and the controller will not attempt to form the pattern again
+     * unless the cache is invalidated(either through code or through it failing).
      * Example: {@code allSameType(GregTechAPI.HEATING_COILS, getSubstructure("MAIN"))}
      * 
-     * @param info  The info, such as GregTechAPI.HEATING_COILS
+     * @param info    The info, such as GregTechAPI.HEATING_COILS
      * @param pattern Pattern, used to get the cache. It will also be used to set the error.
-     * @param error The error, this is only set if the types don't match using {@link gregtech.api.pattern.PatternStringError}.
+     * @param error   The error, this is only set if the types don't match using
+     *                {@link gregtech.api.pattern.PatternStringError}.
      */
     public static <V> V allSameType(Object2ObjectMap<IBlockState, V> info, IBlockPattern pattern, String error) {
         V type = null;
@@ -334,7 +335,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 if (type != state) {
                     if (type == null) type = state;
                     else {
-                        pattern.getPatternState().setError(new PatternStringError(BlockPos.fromLong(entry.getLongKey()), error));
+                        pattern.getPatternState()
+                                .setError(new PatternStringError(BlockPos.fromLong(entry.getLongKey()), error));
                         return null;
                     }
                 }
@@ -366,7 +368,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 if (frontFacing == EnumFacing.DOWN) rad += Math.PI;
             } else {
                 EnumFacing rotated = EnumFacing.UP.rotateAround(frontFacing.getAxis());
-                if (frontFacing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE) rotated = rotated.getOpposite();
+                if (frontFacing.getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE)
+                    rotated = rotated.getOpposite();
 
                 if (upwardsFacing == EnumFacing.DOWN) rad = Math.PI;
                 else if (upwardsFacing == rotated) rad = -Math.PI / 2;
@@ -374,7 +377,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
 
             translation.translate(0.5, 0.5, 0.5);
-            translation.rotate(new Rotation(rad, frontFacing.getXOffset(), frontFacing.getYOffset(), frontFacing.getZOffset()));
+            translation.rotate(
+                    new Rotation(rad, frontFacing.getXOffset(), frontFacing.getYOffset(), frontFacing.getZOffset()));
             translation.translate(-0.5, -0.5, -0.5);
         }
     }
@@ -620,16 +624,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         if (data.hasKey("UpwardsFacing")) {
-             this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
-             // old up facing is absolute when front facing is up/down
-             if (frontFacing.getAxis() != EnumFacing.Axis.Y) {
-                 this.upwardsFacing = switch (upwardsFacing) {
-                     case NORTH -> EnumFacing.UP;
-                     case SOUTH -> EnumFacing.DOWN;
-                     case EAST -> frontFacing.rotateYCCW();
-                     default -> frontFacing.rotateY();
-                 };
-             }
+            this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpwardsFacing")];
+            // old up facing is absolute when front facing is up/down
+            if (frontFacing.getAxis() != EnumFacing.Axis.Y) {
+                this.upwardsFacing = switch (upwardsFacing) {
+                    case NORTH -> EnumFacing.UP;
+                    case SOUTH -> EnumFacing.DOWN;
+                    case EAST -> frontFacing.rotateYCCW();
+                    default -> frontFacing.rotateY();
+                };
+            }
         } else if (data.hasKey("UpFacing")) {
             this.upwardsFacing = EnumFacing.VALUES[data.getByte("UpFacing")];
         }
@@ -798,12 +802,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * {@link MultiblockControllerBase#getMatchingShapes()}, if not empty, to this. If getMatchingShapes is empty, uses
      * a default generated structure pattern, it's not very good which is why you should override this.
      *
-     * @param keyMap  A map for autobuild, or null if it is an in world or jei preview. Note that for in world and jei
-     *                previews you can return a singleton list(only the first element will be used anyway).
+     * @param keyMap A map for autobuild, or null if it is an in world or jei preview. Note that for in world and jei
+     *               previews you can return a singleton list(only the first element will be used anyway).
      */
     // todo add use for the keyMap with the multiblock builder
     // todo maybe add name arg for building substructures
-    public List<MultiblockShapeInfo> getBuildableShapes(String substructureName, @Nullable Object2IntMap<String> keyMap) {
+    public List<MultiblockShapeInfo> getBuildableShapes(String substructureName,
+                                                        @Nullable Object2IntMap<String> keyMap) {
         List<MultiblockShapeInfo> infos = getMatchingShapes();
 
         // if there is no overriden getMatchingShapes() just return the default one
