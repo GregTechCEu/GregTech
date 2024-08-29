@@ -100,7 +100,7 @@ public class PipeModelRedirector implements IBakedModel {
     }
 
     @FunctionalInterface
-    public interface Supplier {
+    public interface ModelRedirectorSupplier {
 
         PipeModelRedirector create(ModelResourceLocation loc, MaterialModelSupplier supplier,
                                    Function<ItemStack, Material> stackMaterialFunction);

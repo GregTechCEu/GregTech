@@ -51,12 +51,6 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (getOffsetTimer() % 20 == 0) recentQueries.trim();
-    }
-
-    @Override
     public boolean isTransmitter() {
         return this.isTransmitter;
     }

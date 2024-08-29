@@ -49,12 +49,6 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (getOffsetTimer() % 20 == 0) recentQueries.trim();
-    }
-
-    @Override
     protected boolean openGUIOnRightClick() {
         return false;
     }

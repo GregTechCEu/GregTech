@@ -108,7 +108,7 @@ public final class PipeModelRegistry {
 
     public static PipeModelRedirector materialModel(@NotNull ResourceLocation loc, MaterialModelSupplier supplier,
                                                     @NotNull String variant,
-                                                    PipeModelRedirector.@NotNull Supplier redirectorSupplier) {
+                                                    PipeModelRedirector.@NotNull ModelRedirectorSupplier redirectorSupplier) {
         return redirectorSupplier.create(new ModelResourceLocation(loc, variant), supplier,
                 stack -> {
                     PipeMaterialBlock pipe = PipeMaterialBlock.getBlockFromItem(stack);
