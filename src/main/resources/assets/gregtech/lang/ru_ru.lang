@@ -5996,3 +5996,7 @@ gregtech.material.bauxite_slurry=Бокситовая суспензия
 gregtech.material.cracked_bauxite_slurry=Бокситовая суспензия прошедшая крекинг
 gregtech.material.bauxite_slag=Бокситовый шлак
 gregtech.command.datafix.bqu.usage=Применение: /gregtech datafix bqu [confirm]
+gregtech.command.datafix.bqu.backup=Скопируйте ваши сохранения и папку настроек BQu, а после перезапустите с 'confirm' аргументов
+gregtech.command.datafix.bqu.start=Начинается перенос BQu Базы данных Квестов...
+gregtech.command.datafix.bqu.complete=Закончен перенос Базы данных Квестов
+gregtech.command.datafix.bqu.failed=Перенос Базы данных Квестов был произведен с ошибкой. Восстановите ваши сохранения!
