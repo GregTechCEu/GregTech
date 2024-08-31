@@ -142,7 +142,7 @@ public class TricorderBehavior implements IItemBehaviour {
 
             // name of the machine
             list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                    new TextComponentTranslation(LocalizationUtils.format(metaTileEntity.getMetaFullName()))
+                    new TextComponentTranslation(metaTileEntity.getMetaFullName())
                             .setStyle(new Style().setColor(TextFormatting.BLUE)),
                     new TextComponentTranslation(TextFormattingUtil
                             .formatNumbers(
@@ -154,7 +154,7 @@ public class TricorderBehavior implements IItemBehaviour {
                 EntityPlayer ownerEntity = metaTileEntity.getWorld().getPlayerEntityByUUID(owner);
                 if (ownerEntity != null) {
                     list.add(new TextComponentTranslation("behavior.tricorder.mte_owner",
-                            new TextComponentTranslation(LocalizationUtils.format(ownerEntity.getName()))
+                            new TextComponentTranslation(ownerEntity.getName())
                                     .setStyle(new Style().setColor(TextFormatting.AQUA))));
                 } else {
                     list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_offline")

@@ -510,6 +510,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                 } else {
                     MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
                 }
+
+                if (getOwner() == null) {
+                    this.owner = playerIn.getUniqueID();
+                }
             }
             return true;
         } else {
@@ -1361,7 +1365,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement(EntityLivingBase placer) {
+    public void onPlacement(@Nullable EntityLivingBase placer) {
         if (placer instanceof EntityPlayer player) {
             this.owner = player.getUniqueID();
         }
@@ -1476,6 +1480,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
+    @Nullable
     public UUID getOwner() {
         return owner;
     }
