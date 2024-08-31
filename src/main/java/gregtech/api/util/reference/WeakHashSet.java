@@ -17,6 +17,7 @@ import java.util.stream.Stream;
  * Replica of {@link java.util.Collections.SetFromMap} for {@link WeakHashMap} to allow for greater type specificity
  * than the {@link java.util.Set} interface.
  */
+@SuppressWarnings("JavadocReference")
 public class WeakHashSet<E> extends AbstractSet<E> {
 
     private final WeakHashMap<E, Boolean> m = new WeakHashMap<>();
