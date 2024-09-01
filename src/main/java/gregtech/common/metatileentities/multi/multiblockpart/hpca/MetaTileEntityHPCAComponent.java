@@ -25,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -236,7 +235,7 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
+    public void getDrops(@NotNull List<@NotNull ItemStack> dropsList, @Nullable EntityPlayer harvester) {
         if (canBeDamaged() && isDamaged()) {
             if (isAdvanced()) {
                 dropsList.add(MetaBlocks.COMPUTER_CASING

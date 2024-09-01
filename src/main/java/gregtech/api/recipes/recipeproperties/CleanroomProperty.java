@@ -4,6 +4,8 @@ import gregtech.api.metatileentity.multiblock.CleanroomType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +27,7 @@ public class CleanroomProperty extends RecipeProperty<CleanroomType> {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void drawInfo(@NotNull Minecraft minecraft, int x, int y, int color, Object value) {
         CleanroomType type = castValue(value);
         if (type == null) return;

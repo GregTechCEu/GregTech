@@ -751,7 +751,7 @@ public final class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> ELECTROMAGNETIC_SEPARATOR_RECIPES = new RecipeMapBuilder<>(
             "electromagnetic_separator", new SimpleRecipeBuilder())
                     .itemInputs(1)
-                    .itemOutputs(3)
+                    .itemOutputs(4)
                     .itemSlotOverlay(GuiTextures.CRUSHED_ORE_OVERLAY, false)
                     .itemSlotOverlay(GuiTextures.DUST_OVERLAY, true)
                     .progressBar(GuiTextures.PROGRESS_BAR_MAGNET)

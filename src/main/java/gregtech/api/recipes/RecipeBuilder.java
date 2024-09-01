@@ -35,7 +35,6 @@ import gregtech.integration.groovy.GroovyScriptModule;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
@@ -89,8 +88,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean recipePropertyStorageErrored = false;
 
     protected RecipeBuilder() {
-        this.inputs = NonNullList.create();
-        this.outputs = NonNullList.create();
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
         this.chancedOutputs = new ArrayList<>();
         this.fluidInputs = new ArrayList<>();
         this.fluidOutputs = new ArrayList<>();
@@ -99,10 +98,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
-        this.inputs = NonNullList.create();
-        this.inputs.addAll(recipe.getInputs());
-        this.outputs = NonNullList.create();
-        this.outputs.addAll(GTUtility.copyStackList(recipe.getOutputs()));
+        this.inputs = new ArrayList<>(recipe.getInputs());
+        this.outputs = new ArrayList<>(recipe.getOutputs());
         this.chancedOutputs = new ArrayList<>(recipe.getChancedOutputs().getChancedEntries());
         this.fluidInputs = new ArrayList<>(recipe.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
@@ -120,10 +117,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     @SuppressWarnings("CopyConstructorMissesField")
     protected RecipeBuilder(RecipeBuilder<R> recipeBuilder) {
         this.recipeMap = recipeBuilder.recipeMap;
-        this.inputs = NonNullList.create();
-        this.inputs.addAll(recipeBuilder.getInputs());
-        this.outputs = NonNullList.create();
-        this.outputs.addAll(GTUtility.copyStackList(recipeBuilder.getOutputs()));
+        this.inputs = new ArrayList<>(recipeBuilder.getInputs());
+        this.outputs = new ArrayList<>(recipeBuilder.getOutputs());
         this.chancedOutputs = new ArrayList<>(recipeBuilder.chancedOutputs);
         this.fluidInputs = new ArrayList<>(recipeBuilder.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipeBuilder.getFluidOutputs());

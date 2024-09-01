@@ -437,7 +437,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @see GTRecipeHandler#removeAllRecipes(RecipeMap)
      */
     @ApiStatus.Internal
-    void removeAllRecipes() {
+    protected void removeAllRecipes() {
         if (GroovyScriptModule.isCurrentlyRunning()) {
             this.lookup.getRecipes(false).forEach(this.getGroovyScriptRecipeMap()::addBackup);
         }

@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -20,6 +19,9 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class CoverBase implements Cover {
 
@@ -55,7 +57,7 @@ public abstract class CoverBase implements Cover {
      * @param inventory the inventory to clear
      */
     protected void dropInventoryContents(@NotNull IItemHandlerModifiable inventory) {
-        NonNullList<ItemStack> drops = NonNullList.create();
+        List<ItemStack> drops = new ArrayList<>();
         MetaTileEntity.clearInventory(drops, inventory);
         for (ItemStack itemStack : drops) {
             Block.spawnAsEntity(getWorld(), getPos(), itemStack);
