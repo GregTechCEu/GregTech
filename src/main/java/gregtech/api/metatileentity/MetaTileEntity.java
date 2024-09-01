@@ -493,17 +493,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                 CuboidRayTraceResult hitResult) {
         ItemStack heldStack = playerIn.getHeldItem(hand);
-        if (this instanceof IDataStickIntractable dsi && !playerIn.isSneaking()) {
-            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) &&
-                    dsi.onDataStickRightClick(playerIn, heldStack)) {
-                return true;
-            }
-        }
-        if (this instanceof IDataStickIntractable dsi && playerIn.isSneaking()) {
-            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) &&
-                    dsi.onDataStickShiftRightClick(playerIn, heldStack)) {
-                return true;
-            }
+
+        if (this instanceof IDataStickIntractable dataStickIntractable &&
+                MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack)) {
+
+            return playerIn.isSneaking() ?
+                    dataStickIntractable.onDataStickShiftRightClick(playerIn, heldStack) :
+                    dataStickIntractable.onDataStickRightClick(playerIn, heldStack);
         }
 
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
