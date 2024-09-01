@@ -3,7 +3,6 @@ package gregtech.api.metatileentity;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
-import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
@@ -67,7 +66,7 @@ import java.util.function.Function;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
-                                         implements IActiveOutputSide, IGhostSlotConfigurable, IDataStickIntractable {
+                                         implements IActiveOutputSide, IGhostSlotConfigurable {
 
     private final boolean hasFrontFacing;
 
@@ -593,53 +592,5 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
         super.addToolUsages(stack, world, tooltip, advanced);
-    }
-
-    @Override
-    public final boolean onDataStickShiftRightClick(EntityPlayer player, ItemStack dataStick) {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("MachineData", writeConfigToTag());
-        dataStick.setTagCompound(tag);
-        dataStick.setStackDisplayName(
-                I18n.format("gregtech.machine.import.data_stick.name", I18n.format(getMetaFullName())));
-        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.import_copy_settings"), true);
-        return true;
-    }
-
-    protected NBTTagCompound writeConfigToTag() {
-        NBTTagCompound tag = new NBTTagCompound();
-        if (this.circuitInventory != null) {
-            tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
-        }
-        tag.setInteger("OutputFacing", getOutputFacingItems().getIndex());
-        tag.setInteger("OutputFacingF", getOutputFacingFluids().getIndex());
-        tag.setBoolean("AutoOutputItems", autoOutputItems);
-        tag.setBoolean("AutoOutputFluids", autoOutputFluids);
-        tag.setBoolean("AllowInputFromOutputSide", allowInputFromOutputSideItems);
-        tag.setBoolean("AllowInputFromOutputSideF", allowInputFromOutputSideFluids);
-        return tag;
-    }
-
-    @Override
-    public final boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
-        NBTTagCompound tag = dataStick.getTagCompound();
-        if (tag == null || !tag.hasKey("MachineData")) {
-            return false;
-        }
-        readConfigFromTag(tag.getCompoundTag("MachineData"));
-        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.import_paste_settings"), true);
-        return true;
-    }
-
-    protected void readConfigFromTag(NBTTagCompound tag) {
-        if (tag.hasKey("GhostCircuit")) {
-            this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
-        }
-        this.setOutputFacingItems(EnumFacing.VALUES[tag.getInteger("OutputFacing")]);
-        this.setOutputFacingFluids(EnumFacing.VALUES[tag.getInteger("OutputFacingF")]);
-        this.setAutoOutputItems(tag.getBoolean("AutoOutputItems"));
-        this.setAutoOutputFluids(tag.getBoolean("AutoOutputFluids"));
-        this.setAllowInputFromOutputSideItems(tag.getBoolean("AllowInputFromOutputSide"));
-        this.setAllowInputFromOutputSideFluids(tag.getBoolean("AllowInputFromOutputSideF"));
     }
 }
