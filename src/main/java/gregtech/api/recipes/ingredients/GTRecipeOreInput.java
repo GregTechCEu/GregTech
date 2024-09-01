@@ -1,5 +1,6 @@
 package gregtech.api.recipes.ingredients;
 
+import gregtech.api.recipes.tree.RecipeTree;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -180,5 +181,6 @@ public class GTRecipeOreInput extends GTRecipeInput {
     @ApiStatus.Internal
     public static void refreshStackCache() {
         STANDARD++;
+        RecipeTree.rebuildRecipeTrees();
     }
 }

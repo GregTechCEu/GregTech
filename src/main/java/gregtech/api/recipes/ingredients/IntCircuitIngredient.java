@@ -49,6 +49,10 @@ public class IntCircuitIngredient extends GTRecipeInput {
         this.matchingConfigurations = matchingConfigurations;
     }
 
+    public int getMatchingConfigurations() {
+        return matchingConfigurations;
+    }
+
     @Override
     protected IntCircuitIngredient copy() {
         IntCircuitIngredient copy = new IntCircuitIngredient(this.matchingConfigurations);

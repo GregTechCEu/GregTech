@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class GTRecipeItemInput extends GTRecipeInput {
 
+    private final ItemStack[] originalStacks;
     private final ItemStack[] inputStacks;
     private final List<ItemToMetaList> itemList = new ObjectArrayList<>();
 
@@ -43,7 +44,9 @@ public class GTRecipeItemInput extends GTRecipeInput {
         this.amount = amount;
 
         NonNullList<ItemStack> lst = NonNullList.create();
+        ObjectArrayList<ItemStack> originals = new ObjectArrayList<>();
         for (ItemStack is : stack) {
+            originals.add(is);
             if (is.getMetadata() == GTValues.W) {
                 is.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, lst);
             } else {
@@ -79,6 +82,11 @@ public class GTRecipeItemInput extends GTRecipeInput {
             is.setCount(this.amount);
             return is;
         }).toArray(ItemStack[]::new);
+        this.originalStacks = originals.stream().map(ItemStack::copy).toArray(ItemStack[]::new);
+    }
+
+    public ItemStack[] getOriginalStacks() {
+        return originalStacks;
     }
 
     /**

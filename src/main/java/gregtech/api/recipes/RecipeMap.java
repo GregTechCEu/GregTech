@@ -1313,6 +1313,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 .collect(Collectors.toList());
     }
 
+    public Branch getLookup() {
+        return lookup;
+    }
+
     public @Nullable SoundEvent getSound() {
         return sound;
     }

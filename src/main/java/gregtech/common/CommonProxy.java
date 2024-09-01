@@ -11,6 +11,7 @@ import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
+import gregtech.api.recipes.tree.TreeComparisonManager;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
@@ -426,6 +427,7 @@ public class CommonProxy {
         if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI) &&
                 !GroovyScriptModule.isCurrentlyRunning())
             GTRecipeOreInput.refreshStackCache();
+        TreeComparisonManager.run();
     }
 
     public boolean isFancyGraphics() {
