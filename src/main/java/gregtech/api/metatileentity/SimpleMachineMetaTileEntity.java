@@ -578,7 +578,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         if (I18n.hasKey(mainKey)) {
             tooltip.add(1, mainKey);
         }
-        tooltip.add(2, I18n.format("gregtech.machine.copy_paste.tooltip"));
     }
 
     @Override
