@@ -1,5 +1,7 @@
 package gregtech.api.capability.impl;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -15,24 +17,15 @@ import java.util.*;
 /**
  * Efficiently delegates calls into multiple item handlers
  */
-public class ItemHandlerList implements IItemHandlerModifiable {
+public class ItemHandlerList extends AbstractList<IItemHandler> implements IItemHandlerModifiable {
 
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
 
+    private final List<IItemHandler> handlerList = new ArrayList<>();
+
     public ItemHandlerList(List<? extends IItemHandler> itemHandlerList) {
-        int currentSlotIndex = 0;
-        for (IItemHandler itemHandler : itemHandlerList) {
-            if (baseIndexOffset.containsKey(itemHandler)) {
-                throw new IllegalArgumentException("Attempted to add item handler " + itemHandler + " twice");
-            }
-            baseIndexOffset.put(itemHandler, currentSlotIndex);
-            int slotsCount = itemHandler.getSlots();
-            for (int slotIndex = 0; slotIndex < slotsCount; slotIndex++) {
-                handlerBySlotIndex.put(currentSlotIndex + slotIndex, itemHandler);
-            }
-            currentSlotIndex += slotsCount;
-        }
+        addAll(itemHandlerList);
     }
 
     public int getIndexOffset(IItemHandler handler) {
@@ -41,7 +34,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
 
     @Override
     public int getSlots() {
-        return handlerBySlotIndex.size();
+        return size();
     }
 
     @Override
@@ -62,14 +55,14 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     public ItemStack getStackInSlot(int slot) {
         if (invalidSlot(slot)) return ItemStack.EMPTY;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.getStackInSlot(slot - baseIndexOffset.get(itemHandler));
+        return itemHandler.getStackInSlot(slot - baseIndexOffset.getInt(itemHandler));
     }
 
     @Override
     public int getSlotLimit(int slot) {
         if (invalidSlot(slot)) return 0;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.getSlotLimit(slot - baseIndexOffset.get(itemHandler));
+        return itemHandler.getSlotLimit(slot - baseIndexOffset.getInt(itemHandler));
     }
 
     @NotNull
@@ -77,7 +70,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (invalidSlot(slot)) return stack;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.insertItem(slot - baseIndexOffset.get(itemHandler), stack, simulate);
+        return itemHandler.insertItem(slot - baseIndexOffset.getInt(itemHandler), stack, simulate);
     }
 
     @NotNull
@@ -85,15 +78,60 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (invalidSlot(slot)) return ItemStack.EMPTY;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.extractItem(slot - baseIndexOffset.get(itemHandler), amount, simulate);
+        return itemHandler.extractItem(slot - baseIndexOffset.getInt(itemHandler), amount, simulate);
     }
 
     @NotNull
     public Collection<IItemHandler> getBackingHandlers() {
-        return Collections.unmodifiableCollection(baseIndexOffset.keySet());
+        return Collections.unmodifiableCollection(handlerList);
     }
 
-    private boolean invalidSlot(int slot) {
-        return slot < 0 && slot >= this.getSlots();
+    @Override
+    public int size() {
+        return handlerList.size();
+    }
+
+    @Override
+    public boolean add(IItemHandler handler) {
+        int s = size();
+        add(s, handler);
+        return s != size();
+    }
+
+    @Override
+    public void add(int index, IItemHandler element) {
+        if (invalidIndex(index)) return;
+        int currentSlotIndex = handlerBySlotIndex.size();
+        if (baseIndexOffset.containsKey(element)) {
+            throw new IllegalArgumentException("Attempted to add item handler " + element + " twice");
+        }
+        handlerList.add(element);
+        baseIndexOffset.put(element, currentSlotIndex);
+        for (int slotIndex = 0; slotIndex < element.getSlots(); slotIndex++) {
+            handlerBySlotIndex.put(currentSlotIndex + slotIndex, element);
+        }
+    }
+
+    @Override
+    public IItemHandler get(int index) {
+        return handlerList.get(index);
+    }
+
+    @Override
+    public IItemHandler remove(int index) {
+        if (invalidIndex(index)) return null;
+        var handler = get(index);
+        for (int i = index; i < size(); i++) {
+            int offset = baseIndexOffset.getInt(get(i));
+            for (int j = 0; j < get(index).getSlots(); j++) {
+                handlerBySlotIndex.remove(offset + j);
+            }
+            baseIndexOffset.removeInt(handler);
+        }
+        return handler;
+    }
+
+    private boolean invalidIndex(int index) {
+        return index < 0 || index >= handlerList.size();
     }
 }
