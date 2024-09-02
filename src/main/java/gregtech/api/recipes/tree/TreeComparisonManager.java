@@ -4,6 +4,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.tree.property.PropertySet;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -25,7 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,11 +48,14 @@ public final class TreeComparisonManager {
     private static final int WARMUP = 100;
     private static final int RECORDING = 1000;
     private static final int REPETITIONS = WARMUP + RECORDING;
-    private static final ObjectArrayList<String> linesToWrite = new ObjectArrayList<>();
+
+    // this ends up in the run directory
+    private static final Path path = Paths.get("TreeComparisonReport.csv");
 
     public static void run() {
         setup();
         assemblerLookup();
+        ebfLookup();
     }
 
     private static void setup() {
@@ -62,7 +69,7 @@ public final class TreeComparisonManager {
         RecipeMaps.PYROLYSE_RECIPES.getLookup().getRecipes(false).forEach(r -> PYROLYSE.addRecipe(r));
         RecipeTree.rebuildRecipeTrees();
         try {
-            Files.newBufferedWriter(Secret.path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+            Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         } catch (IOException ignored) {}
     }
 
@@ -148,31 +155,72 @@ public final class TreeComparisonManager {
     private static void ebfLookup() {
         String name = "EBF";
 
-//        BLAST_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-//                .input(dust, WroughtIron)
-//                .fluidInputs(Oxygen.getFluid(200))
-//                .output(ingot, Steel)
-//                .chancedOutput(dust, Ash, 1111, 0)
-//                .circuitMeta(2)
-//                .blastFurnaceTemp(1000)
-//                .buildAndRegister();
+        List<LookupHelper> helpers = new ObjectArrayList<>();
+        LookupHelper helper = new LookupHelper("EBF", "insufficient", RecipeMaps.BLAST_RECIPES, EBF, V[MV]);
+        helper.add(dust, WroughtIron);
+        helper.add(2);
+        helper.add(Oxygen.getFluid(100));
+        helpers.add(helper);
 
-//        BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[HV])
-//                .input(dust, Magnesium, 2)
-//                .fluidInputs(TitaniumTetrachloride.getFluid(1000))
-//                .output(ingotHot, Titanium)
-//                .output(dust, MagnesiumChloride, 6)
-//                .blastFurnaceTemp(Titanium.getBlastTemperature() + 200)
-//                .buildAndRegister();
+        helper = helper.newInstance("exact");
+        helper.add(dust, WroughtIron);
+        helper.add(Oxygen.getFluid(200));
+        helper.add(2);
+        helpers.add(helper);
+        
+        helper = helper.newInstance("excessive");
+        helper.add(dust, WroughtIron, 64);
+        helper.add(2);
+        helper.add(Oxygen.getFluid(99999));
+        helpers.add(helper);
 
-//        BLAST_RECIPES.recipeBuilder()
-//                .input(dust, FerriteMixture)
-//                .fluidInputs(Oxygen.getFluid(2000))
-//                .output(ingot, NickelZincFerrite)
-//                .blastFurnaceTemp(1500)
-//                .duration(400).EUt(VA[MV]).buildAndRegister();
+        helper = helper.newInstance("inapplicable", V[HV]);
+        helper.add(dust, Ash, 4);
+        helper.add(ingot, Neutronium, 32);
+        helper.add(new ItemStack(Blocks.WOODEN_BUTTON, 34));
+        helper.add(Water.getFluid(2000));
+        helper.add(Neutronium.getFluid(1));
+        helpers.add(helper);
+
+        helper = helper.newInstance("exact");
+        helper.add(dust, Magnesium, 2);
+        helper.add(TitaniumTetrachloride.getFluid(1000));
+        helpers.add(helper);
+
+        helper = helper.newInstance("overlap");
+        helper.add(dust, Magnesium, 2);
+        helper.add(TitaniumTetrachloride.getFluid(1000));
+        helper.add(dust, WroughtIron);
+        helper.add(Oxygen.getFluid(200));
+        helper.add(2);
+        helpers.add(helper);
+
+        helper = helper.newInstance("missing", V[HV]);
+        helper.add(dust, FerriteMixture);
+        helpers.add(helper);
+
+        helper = helper.newInstance("exact");
+        helper.add(dust, FerriteMixture);
+        helper.add(Oxygen.getFluid(2000));
+        helpers.add(helper);
+
+        helper = helper.newInstance("extra");
+        helper.add(dust, FerriteMixture);
+        helper.add(Oxygen.getFluid(2000));
+        helper.add(dust, Ash, 4);
+        helper.add(ingot, Neutronium, 32);
+        helper.add(new ItemStack(Blocks.WOODEN_BUTTON, 34));
+        helper.add(Water.getFluid(2000));
+        helper.add(Neutronium.getFluid(1));
+        helper.add(Steam.getFluid(100));
+        helpers.add(helper);
 
 
+        for (int i = 0; i < REPETITIONS; i++) {
+            for (LookupHelper helperr : helpers) {
+                helperr.lookup(i);
+            }
+        }
     }
 
     private static void assemblyLineLookup() {
@@ -254,7 +302,7 @@ public final class TreeComparisonManager {
     }
 
     private static void report(String name, String type, int items, int fluids, long[] nsMap, long[] nsTree) {
-        try (var writer = Files.newBufferedWriter(Secret.path, StandardOpenOption.APPEND)) {
+        try (var writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             writer.write(name + " MAP " + type + " w/ " + items + " items & " + fluids + " fluids," + StringUtils.join(nsMap, ',') + "\n");
             writer.write(name + " TREE " + type + " w/ " + items + " items & " + fluids + " fluids," + StringUtils.join(nsTree, ',') + "\n");
         } catch (IOException ignored) {}
@@ -285,6 +333,14 @@ public final class TreeComparisonManager {
             return new LookupHelper(name, type, map, tree, voltage);
         }
 
+        public LookupHelper newInstance(String type, long voltage) {
+            return new LookupHelper(name, type, map, tree, voltage);
+        }
+
+        void add(int circuit) {
+            itemInputs.add(IntCircuitIngredient.getIntegratedCircuit(circuit));
+        }
+
         void add(ItemStack item) {
             itemInputs.add(item);
         }
@@ -302,6 +358,8 @@ public final class TreeComparisonManager {
         }
 
         public void lookup(int i) {
+            Collections.shuffle(itemInputs);
+            Collections.shuffle(fluidInputs);
             long start = System.nanoTime();
             Recipe recipe = map.findRecipe(voltage, itemInputs, fluidInputs);
             // mimic RecipeTree's need to create an iterator.
@@ -309,7 +367,7 @@ public final class TreeComparisonManager {
             long finish = System.nanoTime();
             if (i >= WARMUP) nsMap[i - WARMUP] = GTUtility.safeCastLongToInt(finish - start);
             start = System.nanoTime();
-            iter = tree.findRecipes(itemInputs, fluidInputs, PropertySet.voltage(voltage));
+            iter = tree.findRecipes(itemInputs, fluidInputs, PropertySet.of(voltage, itemInputs));
             finish = System.nanoTime();
             if (i >= WARMUP) nsTree[i - WARMUP] = GTUtility.safeCastLongToInt(finish - start);
             if (i == 0) {

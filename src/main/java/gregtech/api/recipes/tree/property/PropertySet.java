@@ -1,14 +1,25 @@
 package gregtech.api.recipes.tree.property;
 
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.List;
 
 public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeProperty> {
 
-    public static PropertySet voltage(long voltage) {
+    public static PropertySet of(long voltage, List<ItemStack> items) {
         PropertySet set = new PropertySet();
         set.add(new VoltageProperty(voltage));
+        for (ItemStack stack : items) {
+            if (IntCircuitIngredient.isIntegratedCircuit(stack)) {
+                set.add(CircuitProperty.get(IntCircuitIngredient.getCircuitConfiguration(stack)));
+            }
+        }
         return set;
     }
 
