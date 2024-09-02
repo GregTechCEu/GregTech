@@ -100,15 +100,15 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
 
     @Override
     public void add(int index, IItemHandler element) {
-        if (invalidIndex(index)) return;
-        int currentSlotIndex = handlerBySlotIndex.size();
-        if (baseIndexOffset.containsKey(element)) {
+//        Objects.checkIndex(index, size());
+        if (handlerList.contains(element)) {
             throw new IllegalArgumentException("Attempted to add item handler " + element + " twice");
         }
-        handlerList.add(element);
-        baseIndexOffset.put(element, currentSlotIndex);
+        handlerList.add(index, element);
+        int offset = handlerBySlotIndex.size();
+        baseIndexOffset.put(element, offset);
         for (int slotIndex = 0; slotIndex < element.getSlots(); slotIndex++) {
-            handlerBySlotIndex.put(currentSlotIndex + slotIndex, element);
+            handlerBySlotIndex.put(offset + slotIndex, element);
         }
     }
 
@@ -119,19 +119,28 @@ public class ItemHandlerList extends AbstractList<IItemHandler> implements IItem
 
     @Override
     public IItemHandler remove(int index) {
-        if (invalidIndex(index)) return null;
-        var handler = get(index);
+//        Objects.checkIndex(index, size());
+        var handler2 = get(index);
+        int offset2 = baseIndexOffset.getInt(handler2);
+
         for (int i = index; i < size(); i++) {
-            int offset = baseIndexOffset.getInt(get(i));
-            for (int j = 0; j < get(index).getSlots(); j++) {
+            int offset = baseIndexOffset.removeInt(get(i));
+            for (int j = 0; j < get(i).getSlots(); j++) {
                 handlerBySlotIndex.remove(offset + j);
             }
-            baseIndexOffset.removeInt(handler);
         }
-        return handler;
-    }
 
-    private boolean invalidIndex(int index) {
-        return index < 0 || index >= handlerList.size();
+        var removed = handlerList.remove(index);
+        for (var handler : handlerList) {
+            if (baseIndexOffset.containsKey(handler))
+                continue;
+
+            int offset = handlerBySlotIndex.size();
+            baseIndexOffset.put(handler, offset);
+            for (int i = 0; i < handler.getSlots(); i++) {
+                handlerBySlotIndex.put(offset + i, handler);
+            }
+        }
+        return removed;
     }
 }
