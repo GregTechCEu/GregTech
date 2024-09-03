@@ -7,13 +7,17 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.tree.property.PropertySet;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 
+import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
+
+import gregtech.common.items.MetaItems;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -56,6 +60,7 @@ public final class TreeComparisonManager {
         setup();
         assemblerLookup();
         ebfLookup();
+        assemblyLineLookup();
     }
 
     private static void setup() {
@@ -153,8 +158,6 @@ public final class TreeComparisonManager {
     }
 
     private static void ebfLookup() {
-        String name = "EBF";
-
         List<LookupHelper> helpers = new ObjectArrayList<>();
         LookupHelper helper = new LookupHelper("EBF", "insufficient", RecipeMaps.BLAST_RECIPES, EBF, V[MV]);
         helper.add(dust, WroughtIron);
@@ -215,7 +218,6 @@ public final class TreeComparisonManager {
         helper.add(Steam.getFluid(100));
         helpers.add(helper);
 
-
         for (int i = 0; i < REPETITIONS; i++) {
             for (LookupHelper helperr : helpers) {
                 helperr.lookup(i);
@@ -224,55 +226,134 @@ public final class TreeComparisonManager {
     }
 
     private static void assemblyLineLookup() {
-        String name = "Assembly Line";
 
-//        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-//                .input(stickLong, SamariumMagnetic)
-//                .input(stickLong, HSSS, 2)
-//                .input(ring, HSSS, 2)
-//                .input(round, HSSS, 4)
-//                .input(wireFine, Ruridit, 64)
-//                .input(cableGtSingle, NiobiumTitanium, 2)
-//                .fluidInputs(SolderingAlloy.getFluid(L))
-//                .fluidInputs(Lubricant.getFluid(250))
-//                .output(ELECTRIC_MOTOR_LuV)
-//                .scannerResearch(ELECTRIC_MOTOR_IV.getStackForm())
-//                .duration(600).EUt(6000).buildAndRegister();
+        List<LookupHelper> helpers = new ObjectArrayList<>();
+        LookupHelper helper = new LookupHelper("Assembly Line", "insufficient", RecipeMaps.ASSEMBLY_LINE_RECIPES, ASSEMBLY_LINE, 6000);
+        helper.add(stickLong, SamariumMagnetic);
+        helper.add(stickLong, HSSS, 2);
+        helper.add(ring, HSSS, 2);
+        helper.add(round, HSSS, 4);
+        helper.add(wireFine, Ruridit, 32);
+        helper.add(cableGtSingle, NiobiumTitanium, 1);
+        helper.add(SolderingAlloy.getFluid(2));
+        helper.add(Lubricant.getFluid(200));
+        helpers.add(helper);
 
-//        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-//                .inputs(FUSION_CASING.getItemVariant(FUSION_COIL))
-//                .input(circuit, MarkerMaterials.Tier.UHV, 4)
-//                .input(QUANTUM_STAR)
-//                .input(plateDouble, Americium)
-//                .input(FIELD_GENERATOR_ZPM, 2)
-//                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 64)
-//                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 64)
-//                .input(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 32)
-//                .fluidInputs(SolderingAlloy.getFluid(L * 8))
-//                .fluidInputs(YttriumBariumCuprate.getFluid(L * 8))
-//                .outputs(FUSION_REACTOR[2].getStackForm())
-//                .stationResearch(b -> b
-//                        .researchStack(FUSION_REACTOR[1].getStackForm())
-//                        .CWUt(96)
-//                        .EUt(VA[UV]))
-//                .duration(1000).EUt(VA[ZPM]).buildAndRegister();
+        helper = helper.newInstance("exact");
+        helper.add(stickLong, SamariumMagnetic);
+        helper.add(stickLong, HSSS, 2);
+        helper.add(ring, HSSS, 2);
+        helper.add(round, HSSS, 4);
+        helper.add(wireFine, Ruridit, 64);
+        helper.add(cableGtSingle, NiobiumTitanium, 2);
+        helper.add(SolderingAlloy.getFluid(L));
+        helper.add(Lubricant.getFluid(250));
+        helpers.add(helper);
 
-//        ASSEMBLY_LINE_RECIPES.recipeBuilder()
-//                .input(ITEM_IMPORT_BUS[ZPM])
-//                .input(EMITTER_LuV, 8)
-//                .input(circuit, MarkerMaterials.Tier.ZPM)
-//                .input(ROBOT_ARM_ZPM, 2)
-//                .input(ELECTRIC_MOTOR_ZPM, 2)
-//                .input(wireGtDouble, UraniumRhodiumDinaquadide, 16)
-//                .input(OPTICAL_PIPES[0], 2)
-//                .fluidInputs(SolderingAlloy.getFluid(L * 4))
-//                .fluidInputs(Polybenzimidazole.getFluid(L * 2))
-//                .output(OBJECT_HOLDER)
-//                .scannerResearch(b -> b
-//                        .researchStack(ITEM_IMPORT_BUS[ZPM].getStackForm())
-//                        .duration(2400)
-//                        .EUt(VA[IV]))
-//                .duration(1200).EUt(100000).buildAndRegister();
+        helper = helper.newInstance("excessive");
+        helper.add(stickLong, SamariumMagnetic, 50);
+        helper.add(stickLong, HSSS, 20);
+        helper.add(ring, HSSS, 22);
+        helper.add(round, HSSS, 41);
+        helper.add(wireFine, Ruridit, 64);
+        helper.add(cableGtSingle, NiobiumTitanium, 23);
+        helper.add(SolderingAlloy.getFluid(2000));
+        helper.add(Lubricant.getFluid(8000));
+        helpers.add(helper);
+
+        helper = helper.newInstance("inapplicable", V[ZPM]);
+        helper.add(dust, FerriteMixture);
+        helper.add(Oxygen.getFluid(2000));
+        helper.add(dust, Ash, 4);
+        helper.add(ingot, Neutronium, 32);
+        helper.add(new ItemStack(Blocks.WOODEN_BUTTON, 34));
+        helper.add(Water.getFluid(2000));
+        helper.add(Neutronium.getFluid(1));
+        helper.add(Steam.getFluid(100));
+        helpers.add(helper);
+
+
+        helper = helper.newInstance("exact");
+        helper.add(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL));
+        helper.add(circuit, MarkerMaterials.Tier.UHV, 4);
+        helper.add(MetaItems.QUANTUM_STAR.getStackForm());
+        helper.add(plateDouble, Americium);
+        helper.add(MetaItems.FIELD_GENERATOR_ZPM.getStackForm(2));
+        helper.add(MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(64));
+        helper.add(MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(64));
+        helper.add(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 32);
+        helper.add(SolderingAlloy.getFluid(L * 8));
+        helper.add(YttriumBariumCuprate.getFluid(L * 8));
+        helpers.add(helper);
+
+
+        helper = helper.newInstance("overlap");
+        helper.add(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL));
+        helper.add(circuit, MarkerMaterials.Tier.UHV, 4);
+        helper.add(MetaItems.QUANTUM_STAR.getStackForm());
+        helper.add(plateDouble, Americium);
+        helper.add(MetaItems.FIELD_GENERATOR_ZPM.getStackForm(2));
+        helper.add(MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(64));
+        helper.add(MetaItems.ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(64));
+        helper.add(wireGtSingle, EnrichedNaquadahTriniumEuropiumDuranide, 32);
+        helper.add(SolderingAlloy.getFluid(L * 8));
+        helper.add(YttriumBariumCuprate.getFluid(L * 8));
+        helper.add(stickLong, SamariumMagnetic);
+        helper.add(stickLong, HSSS, 2);
+        helper.add(ring, HSSS, 2);
+        helper.add(round, HSSS, 4);
+        helper.add(wireFine, Ruridit, 64);
+        helper.add(cableGtSingle, NiobiumTitanium, 2);
+        helper.add(SolderingAlloy.getFluid(L));
+        helper.add(Lubricant.getFluid(250));
+        helpers.add(helper);
+
+        helper = helper.newInstance("missing", 100000);
+        helper.add(MetaItems.EMITTER_LuV.getStackForm(8));
+        helper.add(MetaItems.ROBOT_ARM_ZPM.getStackForm(2));
+        helper.add(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm(2));
+        helper.add(new ItemStack(MetaBlocks.OPTICAL_PIPES[0], 2));
+        helper.add(SolderingAlloy.getFluid(L * 4));
+        helper.add(Polybenzimidazole.getFluid(L * 2));
+        helpers.add(helper);
+
+        helper = helper.newInstance("exact");
+        helper.add(ITEM_IMPORT_BUS[ZPM].getStackForm());
+        helper.add(MetaItems.EMITTER_LuV.getStackForm(8));
+        helper.add(circuit, MarkerMaterials.Tier.ZPM);
+        helper.add(MetaItems.ROBOT_ARM_ZPM.getStackForm(2));
+        helper.add(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm(2));
+        helper.add(wireGtDouble, UraniumRhodiumDinaquadide, 16);
+        helper.add(new ItemStack(MetaBlocks.OPTICAL_PIPES[0], 2));
+        helper.add(SolderingAlloy.getFluid(L * 4));
+        helper.add(Polybenzimidazole.getFluid(L * 2));
+        helpers.add(helper);
+
+        helper = helper.newInstance("extra");
+        helper.add(ITEM_IMPORT_BUS[ZPM].getStackForm());
+        helper.add(MetaItems.EMITTER_LuV.getStackForm(8));
+        helper.add(circuit, MarkerMaterials.Tier.ZPM);
+        helper.add(MetaItems.ROBOT_ARM_ZPM.getStackForm(2));
+        helper.add(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm(2));
+        helper.add(wireGtDouble, UraniumRhodiumDinaquadide, 16);
+        helper.add(new ItemStack(MetaBlocks.OPTICAL_PIPES[0], 2));
+        helper.add(SolderingAlloy.getFluid(L * 4));
+        helper.add(Polybenzimidazole.getFluid(L * 2));
+        helper.add(dust, FerriteMixture);
+        helper.add(Oxygen.getFluid(2000));
+        helper.add(dust, Ash, 4);
+        helper.add(ingot, Neutronium, 32);
+        helper.add(new ItemStack(Blocks.WOODEN_BUTTON, 34));
+        helper.add(Water.getFluid(2000));
+        helper.add(Neutronium.getFluid(1));
+        helper.add(Steam.getFluid(100));
+        helpers.add(helper);
+
+        for (int i = 0; i < REPETITIONS; i++) {
+            for (LookupHelper helperr : helpers) {
+                helperr.lookup(i);
+            }
+        }
     }
 
     private static void pyrolyseLookup() {
