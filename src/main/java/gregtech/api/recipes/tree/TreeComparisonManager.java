@@ -47,7 +47,7 @@ public final class TreeComparisonManager {
     private static RecipeTree ASSEMBLER;
     private static RecipeTree EBF;
     private static RecipeTree ASSEMBLY_LINE;
-    private static RecipeTree PYROLYSE;
+    private static RecipeTree MACERATOR;
 
     private static final int WARMUP = 100;
     private static final int RECORDING = 1000;
@@ -61,6 +61,7 @@ public final class TreeComparisonManager {
         assemblerLookup();
         ebfLookup();
         assemblyLineLookup();
+        maceratorLookup();
     }
 
     private static void setup() {
@@ -70,8 +71,8 @@ public final class TreeComparisonManager {
         RecipeMaps.BLAST_RECIPES.getLookup().getRecipes(false).forEach(r -> EBF.addRecipe(r));
         ASSEMBLY_LINE = new RecipeTree();
         RecipeMaps.ASSEMBLY_LINE_RECIPES.getLookup().getRecipes(false).forEach(r -> ASSEMBLY_LINE.addRecipe(r));
-        PYROLYSE = new RecipeTree();
-        RecipeMaps.PYROLYSE_RECIPES.getLookup().getRecipes(false).forEach(r -> PYROLYSE.addRecipe(r));
+        MACERATOR = new RecipeTree();
+        RecipeMaps.MACERATOR_RECIPES.getLookup().getRecipes(false).forEach(r -> MACERATOR.addRecipe(r));
         RecipeTree.rebuildRecipeTrees();
         try {
             Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
@@ -356,30 +357,38 @@ public final class TreeComparisonManager {
         }
     }
 
-    private static void pyrolyseLookup() {
-        String name = "Pyrolyse";
+    private static void maceratorLookup() {
+        List<LookupHelper> helpers = new ObjectArrayList<>();
+        LookupHelper helper = new LookupHelper("Macerator", "exact", RecipeMaps.MACERATOR_RECIPES, MACERATOR, V[UV]);
+        helper.add(ARC_FURNACE[5].getStackForm());
+        helpers.add(helper);
 
-//        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(9)
-//                .input(log, Wood, 16)
-//                .outputs(new ItemStack(Items.COAL, 20, 1))
-//                .fluidOutputs(WoodTar.getFluid(1500))
-//                .duration(640).EUt(64)
-//                .buildAndRegister();
+        helper = helper.newInstance("excessive");
+        helper.add(FLUID_SOLIDIFIER[5].getStackForm(64));
+        helpers.add(helper);
 
-//        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(22)
-//                .input(gem, Coal, 16)
-//                .fluidInputs(Steam.getFluid(1000))
-//                .output(gem, Coke, 16)
-//                .fluidOutputs(CoalGas.getFluid(4000))
-//                .duration(320).EUt(96)
-//                .buildAndRegister();
+        helper = helper.newInstance("inapplicable");
+        helper.add(dust, Ash);
+        helpers.add(helper);
 
-//        PYROLYSE_RECIPES.recipeBuilder().EUt(10).duration(200)
-//                .input(BIO_CHAFF)
-//                .circuitMeta(2)
-//                .fluidInputs(Water.getFluid(1500))
-//                .fluidOutputs(FermentedBiomass.getFluid(1500))
-//                .buildAndRegister();
+        helper = helper.newInstance("overlap");
+        helper.add(ARC_FURNACE[5].getStackForm());
+        helper.add(FLUID_SOLIDIFIER[5].getStackForm());
+        helper.add(FORGE_HAMMER[5].getStackForm());
+        helpers.add(helper);
+
+        helper = helper.newInstance("extra");
+        helper.add(LATHE[5].getStackForm());
+        helper.add(dust, Ash ,5);
+        helper.add(dust, DarkAsh, 10);
+        helper.add(dust, SodaAsh, 15);
+        helper.add(dust, Potash, 20);
+
+        for (int i = 0; i < REPETITIONS; i++) {
+            for (LookupHelper helperr : helpers) {
+                helperr.lookup(i);
+            }
+        }
     }
 
     private static void report(String name, String type, int items, int fluids, long[] nsMap, long[] nsTree) {

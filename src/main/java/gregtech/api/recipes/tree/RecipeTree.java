@@ -71,9 +71,9 @@ public class RecipeTree {
         return recipes.size();
     }
 
-    public Iterator<Recipe> findRecipes(List<ItemStack> items, List<FluidStack> fluids, PropertySet properties) {
+    public CompactibleIterator<Recipe> findRecipes(List<ItemStack> items, List<FluidStack> fluids, PropertySet properties) {
         BitSet filter = filters.filter(properties);
-        if (filter.cardinality() == getRecipeCount()) return Collections.emptyIterator();
+        if (filter.cardinality() == getRecipeCount()) return CompactibleIterator.empty();
         FlagMap map = new FlagMap(this, filter);
         for (ItemStack stack : items) {
             if (item != null) item.getApplicator(stack).applyFlags(map, stack);
@@ -148,7 +148,7 @@ public class RecipeTree {
                         if (matcher != NBTMatcher.ANY) {
                             NBTCondition condition = input.getNBTMatchingCondition();
                             final byte finalFlag = flag;
-                            applicator = (c, e) -> e & (matcher.evaluate(c, condition) ? (1L << finalFlag) : 0);
+                            applicator = (c, e) -> e | (matcher.evaluate(c, condition) ? (1L << finalFlag) : 0);
                         }
                         nbtMap = false;
                     } else nbtMap = true;
@@ -180,7 +180,7 @@ public class RecipeTree {
                         if (matcher != NBTMatcher.ANY) {
                             NBTCondition condition = input.getNBTMatchingCondition();
                             final byte finalFlag = flag;
-                            applicator = (c, e) -> e & (matcher.evaluate(c, condition) ? (1L << finalFlag) : 0);
+                            applicator = (c, e) -> e | (matcher.evaluate(c, condition) ? (1L << finalFlag) : 0);
                         }
                         nbtMap = false;
                     } else nbtMap = true;
