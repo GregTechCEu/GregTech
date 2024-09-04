@@ -49,7 +49,7 @@ public class CoverRendererBuilder {
     private static final EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> OVERLAY_BOXES_2 = new EnumMap<>(
             EnumFacing.class);
 
-    private static final UVMapper defaultMapper = UVMapper.standard(180);
+    private static final UVMapper defaultMapper = UVMapper.standard(0);
 
     static {
         for (EnumFacing facing : EnumFacing.VALUES) {

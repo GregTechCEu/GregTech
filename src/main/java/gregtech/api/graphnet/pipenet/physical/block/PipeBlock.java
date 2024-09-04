@@ -164,7 +164,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
             PipeCoverHolder coverable = tile.getCoverHolder();
             Cover cover = coverable.getCoverAtSide(facing);
             if (cover != null) {
-                if (ToolHelper.isTool(item, ToolClasses.SCREWDRIVER)) {
+                if (ToolHelper.isTool(item, ToolClasses.SCREWDRIVER) || (item.isEmpty() && playerIn.isSneaking())) {
                     EnumActionResult result = cover.onScrewdriverClick(playerIn, hand, trace);
                     if (result != EnumActionResult.PASS) {
                         if (result == EnumActionResult.SUCCESS) {

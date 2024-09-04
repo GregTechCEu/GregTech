@@ -105,19 +105,19 @@ public final class PipeQuadHelper {
                 list.add(visitQuad(EnumFacing.UP, box, UVMapper.standard(0)));
                 list.add(visitQuad(EnumFacing.DOWN, box, UVMapper.standard(0)));
                 list.add(visitQuad(EnumFacing.SOUTH, box, UVMapper.standard(0)));
-                list.add(visitQuad(EnumFacing.NORTH, box, UVMapper.standard(0)));
+                list.add(visitQuad(EnumFacing.NORTH, box, UVMapper.flipped(0)));
             }
             case Y -> {
-                list.add(visitQuad(EnumFacing.EAST, box, UVMapper.standard(90)));
-                list.add(visitQuad(EnumFacing.WEST, box, UVMapper.standard(90)));
+                list.add(visitQuad(EnumFacing.EAST, box, UVMapper.standard(0)));
+                list.add(visitQuad(EnumFacing.WEST, box, UVMapper.standard(0)));
                 list.add(visitQuad(EnumFacing.SOUTH, box, UVMapper.standard(0)));
                 list.add(visitQuad(EnumFacing.NORTH, box, UVMapper.standard(0)));
             }
             case Z -> {
-                list.add(visitQuad(EnumFacing.UP, box, UVMapper.standard(0)));
+                list.add(visitQuad(EnumFacing.UP, box, UVMapper.flipped(0)));
                 list.add(visitQuad(EnumFacing.DOWN, box, UVMapper.standard(0)));
-                list.add(visitQuad(EnumFacing.EAST, box, UVMapper.standard(270)));
-                list.add(visitQuad(EnumFacing.WEST, box, UVMapper.standard(270)));
+                list.add(visitQuad(EnumFacing.EAST, box, UVMapper.flipped(0)));
+                list.add(visitQuad(EnumFacing.WEST, box, UVMapper.standard(0)));
             }
         }
         return list;

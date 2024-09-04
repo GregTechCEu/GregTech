@@ -38,7 +38,8 @@ public final class ShortestPathsAlgorithm extends CHManyToManyShortestPaths<Grap
         }
 
         Set<GraphVertex> searchSpace = source.wrapped.getGroupSafe().getNodes().stream().filter(NetNode::isActive)
-                .map(n -> n.wrapper).filter(node -> !source.equals(node) && graph.containsVertex(node)).collect(Collectors.toSet());
+                .map(n -> n.wrapper).filter(node -> !source.equals(node) && graph.containsVertex(node))
+                .collect(Collectors.toSet());
         Set<GraphVertex> singleton = Collections.singleton(source);
         if (recomputeEveryCall) {
             return (graph1, testObject, simulator, queryTick) -> {
