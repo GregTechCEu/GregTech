@@ -1,11 +1,17 @@
-package gregtech.api.recipes.recipeproperties;
+package gregtech.api.recipes.properties;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.hamcrest.MatcherAssert;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +30,7 @@ public class RecipePropertyStorageTest {
 
     @BeforeEach
     public void initTestStub() {
-        this.storage = new RecipePropertyStorage();
+        this.storage = new RecipePropertyStorageImpl();
     }
 
     @Test
@@ -51,23 +57,18 @@ public class RecipePropertyStorageTest {
     }
 
     @Test
-    public void storing_property_without_value_fails() {
-        MatcherAssert.assertThat(storage.store(propInt1, null), is(false));
-    }
-
-    @Test
     public void get_size_returns_correct_value() {
         storage.store(propInt1, 1); // succeeds
 
-        MatcherAssert.assertThat(storage.getSize(), is(1));
+        MatcherAssert.assertThat(storage.size(), is(1));
 
         storage.store(propInt2, 2); // succeeds
 
-        MatcherAssert.assertThat(storage.getSize(), is(2));
+        MatcherAssert.assertThat(storage.size(), is(2));
 
         storage.store(propInt1, 1); // fails
 
-        MatcherAssert.assertThat(storage.getSize(), is(2));
+        MatcherAssert.assertThat(storage.size(), is(2));
     }
 
     @Test
@@ -80,7 +81,7 @@ public class RecipePropertyStorageTest {
         map.put(propInt2, 2);
         Set<Map.Entry<RecipeProperty<?>, Object>> expectedProperties = map.entrySet();
 
-        Set<Map.Entry<RecipeProperty<?>, Object>> actualProperties = storage.getRecipeProperties();
+        Set<Map.Entry<RecipeProperty<?>, Object>> actualProperties = storage.entrySet();
 
         MatcherAssert.assertThat(actualProperties.size(), is(2));
         MatcherAssert.assertThat(
@@ -93,7 +94,7 @@ public class RecipePropertyStorageTest {
         final int expectedValue = 1;
         storage.store(propInt1, expectedValue); // succeeds
 
-        int actual = storage.getRecipePropertyValue(propInt1, 0);
+        int actual = storage.get(propInt1, 0);
 
         MatcherAssert.assertThat(actual, is(expectedValue));
     }
@@ -103,36 +104,29 @@ public class RecipePropertyStorageTest {
         final int expectedValue = 0;
         storage.store(propInt1, 1); // succeeds
 
-        int actual = storage.getRecipePropertyValue(propInt2, expectedValue);
+        int actual = storage.get(propInt2, expectedValue);
 
         MatcherAssert.assertThat(actual, is(expectedValue));
     }
 
-    @Test
-    // CT way
-    public void get_recipe_property_keys() {
-        storage.store(propInt1, 1); // succeeds
-        storage.store(propInt2, 2); // succeeds
+    public static class DefaultProperty<T> extends RecipeProperty<T> {
 
-        Set<String> expectedKeys = new HashSet<>();
-        expectedKeys.add(propInt1.getKey());
-        expectedKeys.add(propInt2.getKey());
+        public DefaultProperty(String key, Class<T> type) {
+            super(key, type);
+        }
 
-        Set<String> actualKeys = storage.getRecipePropertyKeys();
+        @Override
+        public @NotNull NBTBase serialize(@NotNull Object value) {
+            return new NBTTagString(value.toString());
+        }
 
-        MatcherAssert.assertThat(expectedKeys.containsAll(actualKeys) && actualKeys.containsAll(expectedKeys),
-                is(true));
-    }
+        @Override
+        public @NotNull Object deserialize(@NotNull NBTBase nbt) {
+            return ((NBTTagString) nbt).getString();
+        }
 
-    @Test
-    // CT way
-    public void get_raw_recipe_property_value_via_string_key() {
-        final int expectedValue = 1;
-
-        storage.store(propInt1, expectedValue); // succeeds
-
-        Object actualValue = storage.getRawRecipePropertyValue(propInt1.getKey());
-
-        MatcherAssert.assertThat(actualValue, is(expectedValue));
+        @SideOnly(Side.CLIENT)
+        @Override
+        public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {}
     }
 }

@@ -18,9 +18,9 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.recipeproperties.CleanroomProperty;
-import gregtech.api.recipes.recipeproperties.DimensionProperty;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.impl.CleanroomProperty;
+import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -441,9 +441,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected boolean checkDimensionRequirement(@NotNull Recipe recipe) {
-        if (!recipe.hasProperty(DimensionProperty.getInstance())) return true;
-        return recipe.getProperty(DimensionProperty.getInstance(), DimensionProperty.DimensionPropertyList.EMPTY_LIST)
-                .checkDimension(this.getMetaTileEntity().getWorld().provider.getDimension());
+        DimensionProperty.DimensionPropertyList list = recipe.getProperty(DimensionProperty.getInstance(), null);
+        if (list == null) {
+            return true;
+        }
+        return list.checkDimension(this.getMetaTileEntity().getWorld().provider.getDimension());
     }
 
     /**
@@ -682,7 +684,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                                                                  @NotNull IMultipleTankHandler importFluids) {
         calculateOverclock(recipe);
 
-        modifyOverclockPost(ocResult, recipe.getRecipePropertyStorage());
+        modifyOverclockPost(ocResult, recipe.propertyStorage());
 
         if (ocResult.parallel() > 1) {
             recipe = subTickOC(ocResult, recipe, importInventory, importFluids);
@@ -814,7 +816,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param ocResult The overclock result
      * @param storage  the RecipePropertyStorage of the recipe being processed
      */
-    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull IRecipePropertyStorage storage) {}
+    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {}
 
     /**
      * Calculates the overclocked Recipe's final duration and EU/t
@@ -837,13 +839,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param ocResult the result of overclocking
      */
     protected void performOverclocking(@NotNull Recipe recipe, @NotNull OCParams ocParams, @NotNull OCResult ocResult) {
-        modifyOverclockPre(ocParams, recipe.getRecipePropertyStorage());
+        modifyOverclockPre(ocParams, recipe.propertyStorage());
 
         if (ocParams.ocAmount() <= 0) {
             // number of OCs is <= 0, so do not overclock
             ocResult.init(ocParams.eut(), ocParams.duration());
         } else {
-            runOverclockingLogic(ocParams, ocResult, recipe.getRecipePropertyStorage(), getMaximumOverclockVoltage());
+            runOverclockingLogic(ocParams, ocResult, recipe.propertyStorage(), getMaximumOverclockVoltage());
         }
     }
 
@@ -873,7 +875,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param ocParams an array of [recipeEUt, recipeDuration, numberOfOCs]
      * @param storage  the RecipePropertyStorage of the recipe being processed
      */
-    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull IRecipePropertyStorage storage) {}
+    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {}
 
     /**
      * Calls the desired overclocking logic to be run for the recipe. Performs the actual overclocking on the provided
@@ -885,7 +887,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param maxVoltage      the maximum voltage the recipe is allowed to be run at
      */
     protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull IRecipePropertyStorage propertyStorage, long maxVoltage) {
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
         standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(), getOverclockingVoltageFactor());
     }
 

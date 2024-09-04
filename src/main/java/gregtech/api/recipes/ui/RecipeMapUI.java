@@ -283,8 +283,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         int maxPropertyCount = 0;
         if (shouldShiftWidgets()) {
             for (Recipe recipe : recipeMap.getRecipeList()) {
-                if (recipe.getPropertyCount() > maxPropertyCount)
-                    maxPropertyCount = recipe.getPropertyCount();
+                int count = recipe.propertyStorage().size();
+                if (count > maxPropertyCount) {
+                    maxPropertyCount = count;
+                }
             }
         }
         return maxPropertyCount * 10; // GTRecipeWrapper#LINE_HEIGHT

@@ -12,7 +12,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
@@ -281,7 +281,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
         super.modifyOverclockPre(ocParams, storage);
 
         // apply maintenance bonuses
@@ -295,13 +295,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull IRecipePropertyStorage propertyStorage, long maxVoltage) {
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
         subTickParallelOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
                 getOverclockingVoltageFactor());
     }
 
     @Override
-    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
         super.modifyOverclockPost(ocResult, storage);
 
         // apply maintenance penalties
