@@ -32,7 +32,7 @@ public final class ColorQuadCache {
                 existing.add(quad.withColor(data));
             }
             cache.put(data, existing);
-//            if (cache.size() > 20) cache.removeLast();
+            // if (cache.size() > 20) cache.removeLast();
         }
         return existing;
     }

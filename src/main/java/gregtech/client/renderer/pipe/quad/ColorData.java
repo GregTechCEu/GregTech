@@ -10,6 +10,7 @@ import java.util.Arrays;
 @Desugar
 @SideOnly(Side.CLIENT)
 public record ColorData(int... colorsARGB) {
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;

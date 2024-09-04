@@ -27,7 +27,8 @@ public final class QuadHelper {
     private QuadHelper() {}
 
     public static @NotNull RecolorableBakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
-                                                          @NotNull UVMapper uv, @NotNull SpriteInformation targetSprite) {
+                                                          @NotNull UVMapper uv,
+                                                          @NotNull SpriteInformation targetSprite) {
         BlockPartFace face = new BlockPartFace(null, -1, targetSprite.sprite().getIconName(), uv.map(normal, box));
         BakedQuad quad = BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite.sprite(), normal,
                 ModelRotation.X0_Y0, null, false, true);
