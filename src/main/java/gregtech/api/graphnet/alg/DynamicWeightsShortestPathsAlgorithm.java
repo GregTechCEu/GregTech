@@ -34,7 +34,7 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
     public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
                                                                                        NetPathMapper<Path> remapper) {
         Set<GraphVertex> searchSpace = source.wrapped.getGroupSafe().getNodes().stream().filter(NetNode::isActive)
-                .map(n -> n.wrapper).filter(node -> !source.equals(node)).collect(Collectors.toSet());
+                .map(n -> n.wrapper).filter(node -> !(source == node) && graph.containsVertex(node)).collect(Collectors.toSet());
         return (graph, testObject, simulator, queryTick) -> {
             if (recomputeEveryCall) graph.prepareForAlgorithmRun(testObject, simulator, queryTick);
             return new LimitedIterator<>(source, searchSpace, remapper);
@@ -89,7 +89,8 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
 
         private boolean isUnique(Path path) {
             for (Path other : visited) {
-                if (path.matches(other)) return false;
+                if (path.getOrderedNodes().equals(other.getOrderedNodes()) &&
+                        path.getOrderedEdges().equals(other.getOrderedEdges())) return false;
             }
             return true;
         }

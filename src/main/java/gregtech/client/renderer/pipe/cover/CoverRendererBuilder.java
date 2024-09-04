@@ -49,7 +49,7 @@ public class CoverRendererBuilder {
     private static final EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> OVERLAY_BOXES_2 = new EnumMap<>(
             EnumFacing.class);
 
-    private static final UVMapper defaultMapper = UVMapper.standard(0);
+    private static final UVMapper defaultMapper = UVMapper.standard(180);
 
     static {
         for (EnumFacing facing : EnumFacing.VALUES) {
@@ -72,19 +72,18 @@ public class CoverRendererBuilder {
 
     public static ColorQuadCache buildPlates(SpriteInformation sprite) {
         List<RecolorableBakedQuad> quads = new ObjectArrayList<>();
-        UVMapper mapper = UVMapper.standard(0);
         for (EnumFacing facing : EnumFacing.VALUES) {
-            PLATE_COORDS.put(facing, buildPlates(quads, facing, mapper, sprite));
+            PLATE_COORDS.put(facing, buildPlates(quads, facing, sprite));
         }
         return new ColorQuadCache(quads);
     }
 
     protected static SubListAddress buildPlates(List<RecolorableBakedQuad> quads, EnumFacing facing,
-                                                UVMapper mapper, SpriteInformation sprite) {
+                                                SpriteInformation sprite) {
         int start = quads.size();
         Pair<Vector3f, Vector3f> box = PLATE_BOXES.get(facing);
         for (EnumFacing dir : EnumFacing.values()) {
-            quads.add(QuadHelper.buildQuad(dir, box, mapper, sprite));
+            quads.add(QuadHelper.buildQuad(dir, box, CoverRendererBuilder.defaultMapper, sprite));
         }
         return new SubListAddress(start, quads.size());
     }

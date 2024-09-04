@@ -220,7 +220,7 @@ public class ToolEventHandlers {
         boolean sneaking = player.isSneaking();
 
         // Grid overlays
-        if (shouldRenderGridOverlays(state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
+        if (shouldRenderGridOverlays(player, pos, state, tile, stack, player.getHeldItemOffhand(), sneaking) &&
                 renderGridOverlays(player, pos, state, event.getTarget().sideHit, tile, event.getPartialTicks())) {
             event.setCanceled(true);
             return;
@@ -300,11 +300,11 @@ public class ToolEventHandlers {
     }
 
     @SideOnly(Side.CLIENT)
-    private static boolean shouldRenderGridOverlays(@NotNull IBlockState state, @Nullable TileEntity tile,
+    private static boolean shouldRenderGridOverlays(@NotNull EntityPlayer player, @NotNull BlockPos pos,
+                                                    @NotNull IBlockState state, @Nullable TileEntity tile,
                                                     ItemStack mainHand, ItemStack offHand, boolean isSneaking) {
         if (state.getBlock() instanceof PipeBlock pipe) {
-            if (isSneaking &&
-                    (mainHand.isEmpty() || mainHand.getItem().getClass() == Item.getItemFromBlock(pipe).getClass())) {
+            if (pipe.hasPipeCollisionChangingItem(player.world, pos, player)) {
                 return true;
             } else {
                 Set<String> mainToolClasses = mainHand.getItem().getToolClasses(mainHand);
