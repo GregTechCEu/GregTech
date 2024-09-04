@@ -395,7 +395,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
                                  IBlockState newState) {
         return oldState.getBlock() != newState.getBlock(); // MetaTileEntityHolder should never refresh (until block
-                                                           // changes)
+        // changes)
     }
 
     @Override
