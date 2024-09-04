@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
+import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
@@ -25,6 +26,7 @@ import gregtech.client.model.SimpleStateMapper;
 import gregtech.client.model.modelfactories.BakedModelHandler;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityTESR;
+import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.explosive.BlockITNT;
 import gregtech.common.blocks.explosive.BlockPowderbarrel;
@@ -68,6 +70,8 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -76,6 +80,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -622,6 +627,22 @@ public class MetaBlocks {
             blockColors.registerBlockColorHandler((s, w, p, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
             itemColors.registerItemColorHandler((s, i) -> block.getGtMaterial(s).getMaterialRGB(), block);
         }
+
+        IBlockColor pipeBlockColor = (s, w, p, i) -> i;
+        IItemColor pipeItemColor = (s, i) -> i;
+        for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
+            MaterialPipeBlock[] pipes = MATERIAL_PIPES.get(registry.getModid());
+            blockColors.registerBlockColorHandler(pipeBlockColor, pipes);
+            itemColors.registerItemColorHandler(pipeItemColor, pipes);
+
+            CableBlock[] cables = CABLES.get(registry.getModid());
+            blockColors.registerBlockColorHandler(pipeBlockColor, cables);
+            itemColors.registerItemColorHandler(pipeItemColor, cables);
+        }
+        blockColors.registerBlockColorHandler(pipeBlockColor, OPTICAL_PIPES);
+        itemColors.registerItemColorHandler(pipeItemColor, OPTICAL_PIPES);
+        blockColors.registerBlockColorHandler(pipeBlockColor, LASER_PIPES);
+        itemColors.registerItemColorHandler(pipeItemColor, LASER_PIPES);
 
         for (BlockFrame block : FRAME_BLOCKS) {
             blockColors.registerBlockColorHandler((s, w, p, i) -> block.getGtMaterial(s).getMaterialRGB(), block);

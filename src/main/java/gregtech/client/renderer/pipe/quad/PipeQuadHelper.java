@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.EnumMap;
@@ -59,7 +60,7 @@ public final class PipeQuadHelper {
     }
 
     private void generateBox(float xS, float xL, float yS, float yL, float zS, float zL,
-                             OverlayLayerDefinition definition) {
+                             @NotNull OverlayLayerDefinition definition) {
         coreBoxList.add(definition.computeBox(null, xS, yS, zS, xL, yL, zL));
         EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> sideBoxes = new EnumMap<>(EnumFacing.class);
         sideBoxes.put(EnumFacing.DOWN, definition.computeBox(EnumFacing.DOWN, xS, 0, zS, xL, yS, zL));
@@ -71,13 +72,15 @@ public final class PipeQuadHelper {
         sideBoxesList.add(sideBoxes);
     }
 
-    public static PipeQuadHelper create(float thickness, double x, double y, double z) {
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull PipeQuadHelper create(float thickness, double x, double y, double z) {
         float small = 0.5f - thickness / 2;
         float large = 0.5f + thickness / 2;
         return new PipeQuadHelper((float) x, (float) y, (float) z, small, large);
     }
 
-    public static PipeQuadHelper create(float thickness) {
+    @Contract("_ -> new")
+    public static @NotNull PipeQuadHelper create(float thickness) {
         return create(thickness, 0, 0, 0);
     }
 
@@ -85,19 +88,19 @@ public final class PipeQuadHelper {
         this.targetSprite = sprite;
     }
 
-    public RecolorableBakedQuad visitCore(EnumFacing facing) {
+    public @NotNull RecolorableBakedQuad visitCore(EnumFacing facing) {
         return visitCore(facing, 0);
     }
 
-    public RecolorableBakedQuad visitCore(EnumFacing facing, int overlayLayer) {
+    public @NotNull RecolorableBakedQuad visitCore(EnumFacing facing, int overlayLayer) {
         return visitQuad(facing, coreBoxList.get(overlayLayer), UVMapper.standard(0));
     }
 
-    public List<RecolorableBakedQuad> visitTube(EnumFacing facing) {
+    public @NotNull List<RecolorableBakedQuad> visitTube(EnumFacing facing) {
         return visitTube(facing, 0);
     }
 
-    public List<RecolorableBakedQuad> visitTube(EnumFacing facing, int overlayLayer) {
+    public @NotNull List<RecolorableBakedQuad> visitTube(EnumFacing facing, int overlayLayer) {
         List<RecolorableBakedQuad> list = new ObjectArrayList<>();
         Pair<Vector3f, Vector3f> box = sideBoxesList.get(overlayLayer).get(facing);
         switch (facing.getAxis()) {
@@ -123,19 +126,19 @@ public final class PipeQuadHelper {
         return list;
     }
 
-    public RecolorableBakedQuad visitCapper(EnumFacing facing) {
+    public @NotNull RecolorableBakedQuad visitCapper(EnumFacing facing) {
         return visitCapper(facing, 0);
     }
 
-    public RecolorableBakedQuad visitCapper(EnumFacing facing, int overlayLayer) {
+    public @NotNull RecolorableBakedQuad visitCapper(EnumFacing facing, int overlayLayer) {
         return visitQuad(facing, sideBoxesList.get(overlayLayer).get(facing), UVMapper.standard(0));
     }
 
-    public RecolorableBakedQuad visitQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box, UVMapper uv) {
+    public @NotNull RecolorableBakedQuad visitQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box, UVMapper uv) {
         return QuadHelper.buildQuad(normal, box, uv, targetSprite);
     }
 
-    public static List<RecolorableBakedQuad> createFrame(TextureAtlasSprite sprite) {
+    public static @NotNull List<RecolorableBakedQuad> createFrame(TextureAtlasSprite sprite) {
         PipeQuadHelper helper = PipeQuadHelper.create(0.998f).initialize();
         helper.setTargetSprite(new SpriteInformation(sprite, 0));
         List<RecolorableBakedQuad> list = new ObjectArrayList<>();

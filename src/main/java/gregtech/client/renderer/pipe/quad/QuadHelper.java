@@ -26,19 +26,16 @@ public final class QuadHelper {
 
     private QuadHelper() {}
 
-    public static RecolorableBakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
-                                                 UVMapper uv, SpriteInformation targetSprite) {
+    public static @NotNull RecolorableBakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
+                                                          @NotNull UVMapper uv, @NotNull SpriteInformation targetSprite) {
         BlockPartFace face = new BlockPartFace(null, -1, targetSprite.sprite().getIconName(), uv.map(normal, box));
         BakedQuad quad = BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite.sprite(), normal,
                 ModelRotation.X0_Y0, null, false, true);
-        RecolorableBakedQuad.Builder builder = new RecolorableBakedQuad.Builder(quad.getFormat());
-        builder.setTexture(targetSprite);
-        quad.pipe(builder);
-        return builder.build();
+        return new RecolorableBakedQuad(quad, targetSprite);
     }
 
-    public static BakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
-                                      UVMapper uv, TextureAtlasSprite targetSprite) {
+    public static @NotNull BakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
+                                               @NotNull UVMapper uv, @NotNull TextureAtlasSprite targetSprite) {
         BlockPartFace face = new BlockPartFace(null, -1, targetSprite.getIconName(), uv.map(normal, box));
         return BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite, normal, ModelRotation.X0_Y0,
                 null, false, true);

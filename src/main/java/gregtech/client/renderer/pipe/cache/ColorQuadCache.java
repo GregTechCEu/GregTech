@@ -25,14 +25,14 @@ public final class ColorQuadCache {
     }
 
     public List<BakedQuad> getQuads(ColorData data) {
-        List<BakedQuad> existing = cache.getAndMoveToFirst(data);
+        List<BakedQuad> existing = cache.get(data);
         if (existing == null) {
             existing = new ObjectArrayList<>();
             for (RecolorableBakedQuad quad : prototypes) {
                 existing.add(quad.withColor(data));
             }
             cache.put(data, existing);
-            if (cache.size() > 20) cache.removeLast();
+//            if (cache.size() > 20) cache.removeLast();
         }
         return existing;
     }
