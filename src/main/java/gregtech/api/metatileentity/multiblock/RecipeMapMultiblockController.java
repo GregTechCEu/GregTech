@@ -126,6 +126,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 getAbilities(MultiblockAbility.EXPORT_FLUIDS));
 
         List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
         inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.energyContainer = new EnergyContainerList(inputEnergy);
     }
