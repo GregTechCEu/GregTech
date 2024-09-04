@@ -68,6 +68,11 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             refreshList();
             syncME();
         }
+
+        // Immediately Sync if the status changed, to prevent running recipes while offline
+        if (this.meStatusChanged && !this.isOnline) {
+            syncME();
+        }
     }
 
     // Update the visual display for the fake items. This also is important for the item handler's

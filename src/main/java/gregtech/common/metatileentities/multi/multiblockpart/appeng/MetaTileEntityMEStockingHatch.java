@@ -68,6 +68,11 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             refreshList();
             syncME();
         }
+
+        // Immediately Sync if the status changed, to prevent running recipes while offline
+        if (this.meStatusChanged && !this.isOnline) {
+            syncME();
+        }
     }
 
     @Override
