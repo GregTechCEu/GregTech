@@ -83,7 +83,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                 }
                 if (endText == null) {
                     endText = ": " + TextFormattingUtil.formatNumbers(eut) + TextFormatting.RESET + " EU/t (" +
-                            GTValues.VNF[GTUtility.getTierByVoltage(eut)] + TextFormatting.RESET + ")";
+                            GTValues.VNF[GTUtility.getOCTierByVoltage(eut)] + TextFormatting.RESET + ")";
                 }
 
                 if (eut == 0) return tooltip;
