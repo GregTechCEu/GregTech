@@ -16,12 +16,12 @@ public interface MaterialModelOverride<T extends AbstractPipeModel<?>> {
 
     @Desugar
     record StandardOverride<T extends AbstractPipeModel<?>> (@NotNull T[] models,
-                                                             @NotNull Predicate<Material> predicate)
+                                                             @NotNull Predicate<@Nullable Material> predicate)
             implements MaterialModelOverride<T> {
 
         @Override
         public @Nullable T getModel(Material material, int i) {
-            if (material == null || !predicate.test(material)) return null;
+            if (!predicate.test(material)) return null;
             else return models[i];
         }
     }

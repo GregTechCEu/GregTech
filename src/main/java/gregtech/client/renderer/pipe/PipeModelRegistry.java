@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 @SideOnly(Side.CLIENT)
@@ -137,13 +138,14 @@ public final class PipeModelRegistry {
         array[4] = new PipeModel(Textures.PIPE_HUGE, Textures.PIPE_SIDE, false);
         array[5] = new PipeModel(Textures.PIPE_QUADRUPLE, Textures.PIPE_SIDE, false);
         array[6] = new PipeModel(Textures.PIPE_NONUPLE, Textures.PIPE_SIDE, false);
-        PIPE_OVERRIDES.add(new MaterialModelOverride.StandardOverride<>(array, m -> true));
+        PIPE_OVERRIDES.addAndMoveToLast(new MaterialModelOverride.StandardOverride<>(array, m -> true));
 
         array = new PipeModel[PIPE_MODEL_COUNT];
         array[1] = new PipeModel(Textures.PIPE_SMALL_WOOD, Textures.PIPE_SIDE_WOOD, false);
         array[2] = new PipeModel(Textures.PIPE_NORMAL_WOOD, Textures.PIPE_SIDE_WOOD, false);
         array[3] = new PipeModel(Textures.PIPE_LARGE_WOOD, Textures.PIPE_SIDE_WOOD, false);
-        registerPipeOverride(new MaterialModelOverride.StandardOverride<>(array, m -> m.hasProperty(PropertyKey.WOOD)));
+        registerPipeOverride(
+                new MaterialModelOverride.StandardOverride<>(array, m -> m != null && m.hasProperty(PropertyKey.WOOD)));
 
         array = new PipeModel[PIPE_MODEL_COUNT];
         array[0] = new PipeModel(Textures.PIPE_TINY, Textures.PIPE_SIDE, true);
@@ -153,7 +155,7 @@ public final class PipeModelRegistry {
         array[4] = new PipeModel(Textures.PIPE_HUGE, Textures.PIPE_SIDE, true);
         array[5] = new PipeModel(Textures.PIPE_QUADRUPLE, Textures.PIPE_SIDE, true);
         array[6] = new PipeModel(Textures.PIPE_NONUPLE, Textures.PIPE_SIDE, true);
-        PIPE_RESTRICTIVE_OVERRIDES.add(new MaterialModelOverride.StandardOverride<>(array, m -> true));
+        PIPE_RESTRICTIVE_OVERRIDES.addAndMoveToLast(new MaterialModelOverride.StandardOverride<>(array, m -> true));
 
         ResourceLocation loc = GTUtility.gregtechId("block/pipe_material");
         for (int i = 0; i < PIPE_MODEL_COUNT; i++) {
@@ -164,7 +166,7 @@ public final class PipeModelRegistry {
         }
     }
 
-    private static PipeModel getOrCachePipeModel(Material m, int i) {
+    private static PipeModel getOrCachePipeModel(@Nullable Material m, int i) {
         if (m == null) return PIPE_OVERRIDES.last().getModel(null, i);
         PipeModel[] cached = PIPE.computeIfAbsent(m, k -> new PipeModel[PIPE_MODEL_COUNT]);
         PipeModel selected = cached[i];
@@ -201,7 +203,7 @@ public final class PipeModelRegistry {
             }
             array[i] = new CableModel(Textures.INSULATION[i - 1], Textures.INSULATION_FULL);
         }
-        CABLE_OVERRIDES.add(new MaterialModelOverride.StandardOverride<>(array, m -> true));
+        CABLE_OVERRIDES.addAndMoveToLast(new MaterialModelOverride.StandardOverride<>(array, m -> true));
 
         ResourceLocation loc = GTUtility.gregtechId("block/cable");
         for (int i = 0; i < CABLE_MODEL_COUNT; i++) {
@@ -210,7 +212,7 @@ public final class PipeModelRegistry {
         }
     }
 
-    private static CableModel getOrCacheCableModel(Material m, int i) {
+    private static CableModel getOrCacheCableModel(@Nullable Material m, int i) {
         if (m == null) return CABLE_OVERRIDES.last().getModel(null, i);
         CableModel[] cached = CABLE.computeIfAbsent(m, k -> new CableModel[CABLE_MODEL_COUNT]);
         CableModel selected = cached[i];
