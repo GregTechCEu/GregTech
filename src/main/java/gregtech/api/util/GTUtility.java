@@ -276,7 +276,6 @@ public class GTUtility {
      *         {@code ULV} if there's no tier below
      */
     public static byte getFloorTierByVoltage(long voltage) {
-        // return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(V, voltage)); test
         return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(VOC, voltage));
     }
 
