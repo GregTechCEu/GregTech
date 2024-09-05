@@ -11,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
+import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -105,11 +106,15 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    @SuppressWarnings("DataFlowIssue") // this cover should always have a filter
     public @NotNull BaseFilter getFilter() {
-        return this.itemFilterContainer.hasFilter() ?
-                this.itemFilterContainer.getFilter() :
-                BaseFilter.ERROR_FILTER;
+        var filter = getFilterContainer().getFilter();
+        if (filter == null) return BaseFilter.ERROR_FILTER;
+
+        return filter;
+    }
+
+    public @NotNull BaseFilterContainer getFilterContainer() {
+        return this.itemFilterContainer;
     }
 
     @Override
@@ -145,11 +150,10 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         var filteringMode = new EnumSyncValue<>(ItemFilterMode.class, this::getFilterMode, this::setFilterMode);
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
-        getFilter().getFilterReader().readStack(this.itemFilterContainer.getFilterStack());
 
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
-                .child(CoverWithUI.createTitleRow(getPickItem()).left(4))
+                .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()).left(4))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
                                 .value(filteringMode)
