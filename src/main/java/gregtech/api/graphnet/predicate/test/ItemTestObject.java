@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -14,7 +15,7 @@ public class ItemTestObject implements IPredicateTestObject, Predicate<ItemStack
 
     public final Item item;
     public final int meta;
-    public final NBTTagCompound tag;
+    public final @Nullable NBTTagCompound tag;
 
     public final int stackLimit;
 
@@ -32,7 +33,7 @@ public class ItemTestObject implements IPredicateTestObject, Predicate<ItemStack
     @Contract(" -> new")
     public ItemStack recombine() {
         ItemStack stack = new ItemStack(item, 1, meta);
-        stack.setTagCompound(tag.copy());
+        if (tag != null) stack.setTagCompound(tag.copy());
         return stack;
     }
 
@@ -40,7 +41,7 @@ public class ItemTestObject implements IPredicateTestObject, Predicate<ItemStack
     public ItemStack recombine(int amount) {
         assert amount <= getStackLimit() && amount > 0;
         ItemStack stack = new ItemStack(item, amount, meta);
-        stack.setTagCompound(tag.copy());
+        if (tag != null) stack.setTagCompound(tag.copy());
         return stack;
     }
 
