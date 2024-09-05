@@ -15,6 +15,7 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
 import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
@@ -108,6 +109,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerBakedModels(ModelBakeEvent event) {
+        AbstractPipeModel.invalidateCaches();
         PipeModelRegistry.registerModels(event.getModelRegistry());
     }
 

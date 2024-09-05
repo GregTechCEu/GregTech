@@ -80,6 +80,7 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
                 next = remapper.map(source);
                 return;
             }
+            searchSpace.removeIf(vertex -> !graph.containsVertex(vertex));
             ManyToManyShortestPaths<GraphVertex, GraphEdge> paths = getManyToManyPaths(Collections.singleton(source),
                     searchSpace);
             Optional<Path> next = searchSpace.stream().map(node -> paths.getPath(source, node)).filter(Objects::nonNull)
