@@ -1302,7 +1302,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
 
-        data.setUniqueId("Owner", owner);
+        if (owner != null)
+            data.setUniqueId("Owner", owner);
 
         return data;
     }
