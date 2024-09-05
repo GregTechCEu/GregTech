@@ -38,6 +38,11 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
     }
 
     @Override
+    protected ItemStack getPickItem(EntityPlayer player) {
+        return getBlockType().getItem(material);
+    }
+
+    @Override
     public @NotNull PipeMaterialBlock getBlockType() {
         return (PipeMaterialBlock) super.getBlockType();
     }

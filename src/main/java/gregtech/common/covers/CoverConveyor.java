@@ -717,11 +717,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     protected CoverRenderer buildRenderer() {
-        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY).build();
+        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY).setPlateQuads(tier).build();
     }
 
     protected CoverRenderer buildRendererInverted() {
-        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY_INVERTED).build();
+        return new CoverRendererBuilder(Textures.CONVEYOR_OVERLAY_INVERTED).setPlateQuads(tier).build();
     }
 
     @Override

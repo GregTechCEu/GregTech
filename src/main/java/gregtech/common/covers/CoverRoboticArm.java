@@ -71,12 +71,12 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected CoverRenderer buildRenderer() {
-        return new CoverRendererBuilder(Textures.ARM_OVERLAY).build();
+        return new CoverRendererBuilder(Textures.ARM_OVERLAY).setPlateQuads(tier).build();
     }
 
     @Override
     protected CoverRenderer buildRendererInverted() {
-        return new CoverRendererBuilder(Textures.ARM_OVERLAY_INVERTED).build();
+        return new CoverRendererBuilder(Textures.ARM_OVERLAY_INVERTED).setPlateQuads(tier).build();
     }
 
     @Override

@@ -14,6 +14,7 @@ import gregtech.api.graphnet.pipenet.physical.IInsulatable;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.RayTraceAABB;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.unification.material.Material;
 import gregtech.client.particle.GTOverheatParticle;
@@ -39,6 +40,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -748,6 +750,24 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
                 .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask)
                 .withProperty(CoverRendererPackage.PROPERTY, getCoverHolder().createPackage());
+    }
+
+    public final ItemStack getPickItem(RayTraceResult target, EntityPlayer player) {
+        if (target instanceof RayTraceAABB traceAABB) {
+            for (var bb : CoverRendererBuilder.PLATE_AABBS.entrySet()) {
+                if (traceAABB.getBB().equals(bb.getValue())) {
+                    // trace hit a cover box
+                    Cover cover = getCoverHolder().getCoverAtSide(bb.getKey());
+                    if (cover == null) break;
+                    return cover.getPickItem();
+                }
+            }
+        }
+        return getPickItem(player);
+    }
+
+    protected ItemStack getPickItem(EntityPlayer player) {
+        return new ItemStack(getBlockType());
     }
 
     @Override

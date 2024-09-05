@@ -122,15 +122,19 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
             if (neighbor instanceof PipeTileEntity other) {
                 // first check -- does the other tile have a cover that would prevent connection
                 Cover cover = other.getCoverHolder().getCoverAtSide(facing.getOpposite());
-                if (cover != null && !cover.canPipePassThrough()) continue;
-                // second check -- connect to matching mark pipes if side matches or config allows.
-                if (tile.getPaintingColor() == other.getPaintingColor() && (facing == placedBlockSearchSide ||
-                        !ConfigHolder.machines.gt6StylePipesCables)) {
-                    if (coverCheck(tile, other, facing)) connectTile(tile, other, facing);
-                    continue;
+                if (cover != null && !cover.canPipePassThrough()) {
+                    // first check extended -- connect visually if the cover visually connects
+                    if (cover.forcePipeRenderConnection() && (facing == placedBlockSearchSide ||
+                            !ConfigHolder.machines.gt6StylePipesCables))
+                        connectTile(tile, null, facing);
                 }
+                // second check -- connect to matching mark pipes if side matches or config allows.
+                else if (tile.getPaintingColor() == other.getPaintingColor() && (facing == placedBlockSearchSide ||
+                        !ConfigHolder.machines.gt6StylePipesCables)) {
+                            if (coverCheck(tile, other, facing)) connectTile(tile, other, facing);
+                        }
                 // third check -- connect to pipes with an open connection, no matter the mark status.
-                if (other.isConnected(facing.getOpposite())) {
+                else if (other.isConnected(facing.getOpposite())) {
                     if (coverCheck(tile, other, facing)) connectTile(tile, other, facing);
                 }
             } else if (facing == placedBlockSearchSide) {
@@ -550,7 +554,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         if (entity instanceof EntityPlayer player) {
             return hasPipeCollisionChangingItem(world, pos, player.getHeldItemMainhand()) ||
                     hasPipeCollisionChangingItem(world, pos, player.getHeldItemOffhand()) ||
-                    entity.isSneaking() && isHoldingPipe(player);
+                    entity.isSneaking() && (isHoldingPipe(player) || player.getHeldItemMainhand().isEmpty());
         }
         return false;
     }
@@ -567,6 +571,14 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     public static PipeBlock getBlockFromItem(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof ItemPipeBlock block) return block.getBlock();
         else return null;
+    }
+
+    @Override
+    public @NotNull ItemStack getPickBlock(@NotNull IBlockState state, @NotNull RayTraceResult target,
+                                           @NotNull World world, @NotNull BlockPos pos, @NotNull EntityPlayer player) {
+        PipeTileEntity tile = getTileEntity(world, pos);
+        if (tile != null) return tile.getPickItem(target, player);
+        return super.getPickBlock(state, target, world, pos, player);
     }
 
     public boolean hasPipeCollisionChangingItem(IBlockAccess world, BlockPos pos, ItemStack stack) {

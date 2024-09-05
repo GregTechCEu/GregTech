@@ -563,11 +563,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     @Override
     protected CoverRenderer buildRenderer() {
-        return new CoverRendererBuilder(Textures.PUMP_OVERLAY).build();
+        return new CoverRendererBuilder(Textures.PUMP_OVERLAY).setPlateQuads(tier).build();
     }
 
     protected CoverRenderer buildRendererInverted() {
-        return new CoverRendererBuilder(Textures.PUMP_OVERLAY_INVERTED).build();
+        return new CoverRendererBuilder(Textures.PUMP_OVERLAY_INVERTED).setPlateQuads(tier).build();
     }
 
     @Override

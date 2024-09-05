@@ -1,6 +1,5 @@
 package gregtech.client.renderer.pipe.cover;
 
-import gregtech.api.GTValues;
 import gregtech.api.cover.CoverUtil;
 import gregtech.client.renderer.pipe.cache.ColorQuadCache;
 import gregtech.client.renderer.pipe.cache.SubListAddress;
@@ -39,7 +38,7 @@ public class CoverRendererBuilder {
     private static final float OVERLAY_DIST_1 = 0.003f;
     private static final float OVERLAY_DIST_2 = 0.006f;
 
-    private static final ColorQuadCache PLATE_QUADS;
+    private static final ColorQuadCache[] PLATE_QUADS;
     private static final EnumMap<EnumFacing, SubListAddress> PLATE_COORDS = new EnumMap<>(EnumFacing.class);
 
     public static final EnumMap<EnumFacing, AxisAlignedBB> PLATE_AABBS = new EnumMap<>(EnumFacing.class);
@@ -63,11 +62,15 @@ public class CoverRendererBuilder {
             OVERLAY_BOXES_2.put(value.getKey(),
                     QuadHelper.fullOverlay(value.getKey(), value.getValue(), OVERLAY_DIST_2));
         }
-        PLATE_QUADS = buildPlates(new SpriteInformation(defaultPlateSprite(), 0));
+        PLATE_QUADS = new ColorQuadCache[Textures.VOLTAGE_CASINGS.length];
+        for (int i = 0; i < Textures.VOLTAGE_CASINGS.length; i++) {
+            if (Textures.VOLTAGE_CASINGS[i] == null) break;
+            PLATE_QUADS[i] = buildPlates(new SpriteInformation(plateSprite(i), 0));
+        }
     }
 
-    private static @NotNull TextureAtlasSprite defaultPlateSprite() {
-        return Textures.VOLTAGE_CASINGS[GTValues.LV].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
+    private static @NotNull TextureAtlasSprite plateSprite(int i) {
+        return Textures.VOLTAGE_CASINGS[i].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 
     public static ColorQuadCache buildPlates(SpriteInformation sprite) {
@@ -100,7 +103,7 @@ public class CoverRendererBuilder {
     protected UVMapper mapper = defaultMapper;
     protected UVMapper mapperEmissive = defaultMapper;
 
-    protected ColorQuadCache plateQuads = PLATE_QUADS;
+    protected ColorQuadCache plateQuads = PLATE_QUADS[1];
 
     public CoverRendererBuilder(@NotNull SimpleOverlayRenderer overlay) {
         this(overlay.getSprite(), overlay.getSpriteEmissive());
@@ -123,6 +126,11 @@ public class CoverRendererBuilder {
 
     public CoverRendererBuilder setPlateQuads(ColorQuadCache cache) {
         this.plateQuads = cache;
+        return this;
+    }
+
+    public CoverRendererBuilder setPlateQuads(int index) {
+        this.plateQuads = PLATE_QUADS[index];
         return this;
     }
 

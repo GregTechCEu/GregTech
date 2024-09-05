@@ -16,6 +16,7 @@ import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
 import gregtech.client.renderer.pipe.util.CacheKey;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
+import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -99,7 +100,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> {
                 int matColor = GTUtility.convertRGBtoARGB(material.getMaterialRGB());
                 if (color == 0 || color == matColor) {
                     // unpainted
-                    color = 0xFFFFFFFF;
+                    color = ConfigHolder.client.defaultPaintingColor;
                 }
             }
         }
