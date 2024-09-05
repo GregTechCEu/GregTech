@@ -925,10 +925,10 @@ public class GTUtility {
             if (test.test(middle) ^ !ascending) {
                 maxValue = middle;
             } else {
-                minValue = maxValue;
+                minValue = middle;
             }
         }
-        return ascending ? maxValue : minValue;
+        return test.test(ascending ? minValue : maxValue) ^ ascending ? maxValue : minValue;
     }
 
     public static int[] convertARGBtoArray(int argb) {

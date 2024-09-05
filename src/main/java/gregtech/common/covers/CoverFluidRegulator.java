@@ -353,10 +353,13 @@ public class CoverFluidRegulator extends CoverPump {
         }
 
         @Override
-        public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
-            long availableFlow = flowReachingDestination;
-            for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
-                if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
+        public long finalizeAtDestination(@NotNull WorldPipeNetNode node, long flowReachingNode,
+                                          int expectedDestinations) {
+            long availableFlow = flowReachingNode;
+            long flowPerDestination = flowReachingNode / expectedDestinations;
+            if (flowPerDestination == 0) return 0;
+            for (var capability : node.getTileEntity().getTargetsWithCapabilities(node).entrySet()) {
+                if (GTUtility.arePosEqual(node.getEquivalencyData(), sourcePos) &&
                         capability.getKey() == inputFacing)
                     continue; // anti insert-to-our-source logic
 
@@ -368,12 +371,12 @@ public class CoverFluidRegulator extends CoverPump {
                     assert getFluidFilter() != null;
                     int kept = getFluidFilter().getTransferLimit(getTestObject().recombine());
                     if (contained >= kept) continue;
-                    availableFlow -= IFluidTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
+                    availableFlow -= IFluidTransferController.CONTROL.get(node.getTileEntity().getCoverHolder()
                             .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
-                                    (int) Math.min(kept - contained, availableFlow), container, !simulating());
+                                    (int) Math.min(kept - contained, flowPerDestination), container, !simulating());
                 }
             }
-            return flowReachingDestination - availableFlow;
+            return flowReachingNode - availableFlow;
         }
     }
 

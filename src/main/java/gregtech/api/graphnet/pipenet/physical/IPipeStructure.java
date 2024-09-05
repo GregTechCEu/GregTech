@@ -38,11 +38,11 @@ public interface IPipeStructure extends IStringSerializable {
     default List<AxisAlignedBB> getPipeBoxes(@NotNull PipeTileEntity tileContext) {
         List<AxisAlignedBB> pipeBoxes = new ObjectArrayList<>();
         float thickness = getRenderThickness();
-        if ((tileContext.getConnectionMask() & 63) < 63) {
+        if ((tileContext.getCoverAdjustedConnectionMask() & 63) < 63) {
             pipeBoxes.add(getSideBox(null, thickness));
         }
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if (tileContext.isConnected(facing))
+            if (tileContext.isConnectedCoverAdjusted(facing))
                 pipeBoxes.add(getSideBox(facing, thickness));
         }
         return pipeBoxes;

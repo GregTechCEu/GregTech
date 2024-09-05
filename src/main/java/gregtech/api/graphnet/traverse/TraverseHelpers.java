@@ -285,7 +285,7 @@ public final class TraverseHelpers {
                 if (pathFlow <= 0) continue pathloop;
             }
 
-            long accepted = data.finalizeAtDestination(nodes.get(nodes.size() - 1), pathFlow);
+            long accepted = data.finalizeAtDestination(nodes.get(nodes.size() - 1), pathFlow, entry.getIntValue());
             if (!simulate) pathTraverseCalls.forEach(Runnable::run);
             availableFlow -= stack.consumeWithEndValue(accepted);
 

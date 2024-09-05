@@ -63,4 +63,25 @@ public class FluidEQTraverseData extends FluidTraverseData
     public long getMaxFlowToLeastDestination(@NotNull WorldPipeNetNode destination) {
         return maxMinFlow;
     }
+
+    @Override
+    public long finalizeAtDestination(@NotNull WorldPipeNetNode node, long flowReachingNode, int expectedDestinations) {
+        long availableFlow = flowReachingNode;
+        long flowPerDestination = flowReachingNode / expectedDestinations;
+        if (flowPerDestination == 0) return 0;
+        for (var capability : node.getTileEntity().getTargetsWithCapabilities(node).entrySet()) {
+            if (GTUtility.arePosEqual(node.getEquivalencyData(), sourcePos) &&
+                    capability.getKey() == inputFacing)
+                continue; // anti insert-to-our-source logic
+
+            IFluidHandler container = capability.getValue()
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, capability.getKey().getOpposite());
+            if (container != null) {
+                availableFlow -= IFluidTransferController.CONTROL.get(node.getTileEntity().getCoverHolder()
+                        .getCoverAtSide(capability.getKey())).insertToHandler(getTestObject(),
+                                (int) Math.min(Integer.MAX_VALUE, flowPerDestination), container, !simulating());
+            }
+        }
+        return flowReachingNode - availableFlow;
+    }
 }
