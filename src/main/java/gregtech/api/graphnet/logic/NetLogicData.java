@@ -157,10 +157,11 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
     public NBTTagList serializeNBT() {
         NBTTagList list = new NBTTagList();
         for (NetLogicEntry<?, ?> entry : getEntries()) {
+            NBTBase nbt = entry.serializeNBT();
+            if (nbt == null) continue;
             NBTTagCompound tag = new NBTTagCompound();
             tag.setString("Name", entry.getName());
-            NBTBase nbt = entry.serializeNBT();
-            if (nbt != null) tag.setTag("Tag", nbt);
+            tag.setTag("Tag", nbt);
             list.appendTag(tag);
         }
         return list;

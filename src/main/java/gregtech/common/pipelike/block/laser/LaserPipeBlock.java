@@ -2,13 +2,12 @@ package gregtech.common.pipelike.block.laser;
 
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.physical.block.PipeActivableBlock;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.handlers.LaserNetHandler;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +34,8 @@ public class LaserPipeBlock extends PipeActivableBlock {
     }
 
     @Override
-    protected @NotNull IPipeNetNodeHandler getHandler(IBlockAccess world, BlockPos pos) {
+    @NotNull
+    public IPipeNetNodeHandler getHandler(PipeTileEntity tileContext) {
         return LaserNetHandler.INSTANCE;
     }
 

@@ -371,20 +371,12 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
     public static Collection<WorldPipeNetNode> getNodesForTile(PipeTileEntity tile) {
         assert !tile.getWorld().isRemote;
-        return tile.getBlockType().getHandler(tile.getWorld(), tile.getPos())
+        return tile.getBlockType().getHandler(tile)
                 .getOrCreateFromNets(tile.getWorld(), tile.getPos(), tile.getStructure());
     }
 
-    @Override
-    public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
-        super.breakBlock(worldIn, pos, state);
-        if (!worldIn.isRemote) {
-            getHandler(worldIn, pos).removeFromNets(worldIn, pos, getStructure());
-        }
-    }
-
     @NotNull
-    protected abstract IPipeNetNodeHandler getHandler(IBlockAccess world, BlockPos pos);
+    public abstract IPipeNetNodeHandler getHandler(PipeTileEntity tileContext);
 
     @NotNull
     protected abstract IPipeNetNodeHandler getHandler(@NotNull ItemStack stack);

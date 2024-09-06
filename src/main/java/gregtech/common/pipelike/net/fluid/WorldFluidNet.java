@@ -46,7 +46,7 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
     }
 
     public WorldFluidNet(String name) {
-        super(name, false, DynamicWeightsShortestPathsAlgorithm::new);
+        super(name, true, DynamicWeightsShortestPathsAlgorithm::new);
     }
 
     @Override

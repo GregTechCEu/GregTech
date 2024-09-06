@@ -1,7 +1,8 @@
-package gregtech.common.pipelike.net.energy;
+package gregtech.common.pipelike.net.fluid;
 
 import gregtech.api.graphnet.logic.AbstractTransientLogicData;
 
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -12,37 +13,43 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class EnergyFlowLogic extends AbstractTransientLogicData<EnergyFlowLogic> {
+public class FluidFlowLogic extends AbstractTransientLogicData<FluidFlowLogic> {
 
-    public static final EnergyFlowLogic INSTANCE = new EnergyFlowLogic();
+    public static final FluidFlowLogic INSTANCE = new FluidFlowLogic();
 
     public static final int MEMORY_TICKS = 10;
 
-    private final Long2ObjectOpenHashMap<List<EnergyFlowData>> memory = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<List<FluidStack>> memory = new Long2ObjectOpenHashMap<>();
+    private FluidStack last;
 
-    protected EnergyFlowLogic() {
-        super("EnergyFlow");
+    protected FluidFlowLogic() {
+        super("FluidFlow");
     }
 
-    public @NotNull Long2ObjectOpenHashMap<List<EnergyFlowData>> getMemory() {
+    public @NotNull Long2ObjectOpenHashMap<List<FluidStack>> getMemory() {
         updateMemory(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
         return memory;
     }
 
-    public @NotNull List<EnergyFlowData> getFlow(long tick) {
+    public @NotNull List<FluidStack> getFlow(long tick) {
         updateMemory(tick);
         return memory.getOrDefault(tick, Collections.emptyList());
     }
 
-    public void recordFlow(long tick, EnergyFlowData flow) {
+    public void recordFlow(long tick, FluidStack flow) {
         updateMemory(tick);
         memory.computeIfAbsent(tick, k -> new ObjectArrayList<>()).add(flow);
+        last = flow;
+    }
+
+    public FluidStack getLast() {
+        return last;
     }
 
     private void updateMemory(long tick) {
         var iter = memory.long2ObjectEntrySet().fastIterator();
         while (iter.hasNext()) {
-            Long2ObjectMap.Entry<List<EnergyFlowData>> entry = iter.next();
+            Long2ObjectMap.Entry<List<FluidStack>> entry = iter.next();
             if (entry.getLongKey() + MEMORY_TICKS < tick) {
                 iter.remove();
             }
@@ -50,7 +57,7 @@ public class EnergyFlowLogic extends AbstractTransientLogicData<EnergyFlowLogic>
     }
 
     @Override
-    public @NotNull EnergyFlowLogic getNew() {
-        return new EnergyFlowLogic();
+    public @NotNull FluidFlowLogic getNew() {
+        return new FluidFlowLogic();
     }
 }

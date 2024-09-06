@@ -5,6 +5,7 @@ import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
@@ -187,6 +188,9 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
                     .mergeLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature,
                                     minFluidTemperature, 50 * pipe.material(), null));
+            if (pipe.channelCount() > 1) {
+                data.setLogicEntry(ChannelCountLogic.INSTANCE.getWith(pipe.channelCount()));
+            }
         }
     }
 

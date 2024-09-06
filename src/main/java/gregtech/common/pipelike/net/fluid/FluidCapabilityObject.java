@@ -85,7 +85,9 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing) {
+        if (facing == null) return null; // hard override to prevent TOP from displaying a tank.
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            // noinspection ConstantValue
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(facing == null ? this : wrappers.get(facing));
         }
         return null;

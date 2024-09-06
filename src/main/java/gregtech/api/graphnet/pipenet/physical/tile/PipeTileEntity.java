@@ -57,6 +57,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -122,6 +123,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     @Override
     public void invalidate() {
         super.invalidate();
+        if (!getWorld().isRemote) getBlockType().getHandler(this)
+                .removeFromNets(this.getWorld(), this.getPos(), this.getStructure());
         // TODO I hate this so much can someone please make it so that covers go through getDrops()?
         getCoverHolder().dropAllCovers();
     }
@@ -458,6 +461,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public NetLogicData getNetLogicData(int networkID) {
         return netLogicDatas.get(networkID);
+    }
+
+    public @UnmodifiableView Int2ObjectOpenHashMap<NetLogicData> getNetLogicDatas() {
+        return netLogicDatas;
     }
 
     @Override

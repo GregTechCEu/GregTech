@@ -46,7 +46,7 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
     }
 
     public WorldItemNet(String name) {
-        super(name, false, DynamicWeightsShortestPathsAlgorithm::new);
+        super(name, true, DynamicWeightsShortestPathsAlgorithm::new);
     }
 
     @Override

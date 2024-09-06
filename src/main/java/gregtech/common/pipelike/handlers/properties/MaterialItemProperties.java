@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.handlers.properties;
 
 import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
@@ -84,6 +85,9 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
             long throughput = baseItemsPer5Ticks * pipe.material();
             data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput));
+            if (pipe.channelCount() > 1) {
+                data.setLogicEntry(ChannelCountLogic.INSTANCE.getWith(pipe.channelCount()));
+            }
         }
     }
 

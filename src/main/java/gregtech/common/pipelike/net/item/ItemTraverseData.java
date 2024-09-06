@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.net.item;
 
 import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
@@ -60,5 +62,22 @@ public class ItemTraverseData extends AbstractTraverseData<WorldPipeNetNode, Flo
             }
         }
         return flowReachingDestination - availableFlow;
+    }
+
+    @Override
+    public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode, long consumption) {
+        super.consumeFlowLimit(edge, targetNode, consumption);
+        if (consumption > 0 && !simulating()) {
+            recordFlow(targetNode, consumption);
+        }
+    }
+
+    private void recordFlow(@NotNull NetNode node, long flow) {
+        ItemFlowLogic logic = node.getData().getLogicEntryNullable(ItemFlowLogic.INSTANCE);
+        if (logic == null) {
+            logic = ItemFlowLogic.INSTANCE.getNew();
+            node.getData().setLogicEntry(logic);
+        }
+        logic.recordFlow(getQueryTick(), getTestObject().recombine(GTUtility.safeCastLongToInt(flow)));
     }
 }

@@ -104,6 +104,11 @@ gregtech.top.ld_pipe_output=Output
 gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
 gregtech.top.ld_pipe_output_endpoint=Output Endpoint:
 
+gregtech.top.pipe.voltage=Average Voltage/s:
+gregtech.top.pipe.amperage=Average Amperage/s:
+gregtech.top.pipe.fluid_last=Last Fluid:
+gregtech.top.pipe.item_last=Last Item:
+
 option.gregtech.block_ore=Ore Blocks
 option.gregtech.controllable=Controllable Machines
 option.gregtech.converter=Energy Converters

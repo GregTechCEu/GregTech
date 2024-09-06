@@ -74,10 +74,9 @@ public abstract class PipeMaterialBlock extends PipeBlock {
     }
 
     @Override
-    protected @NotNull IPipeNetNodeHandler getHandler(IBlockAccess world, BlockPos pos) {
-        PipeMaterialTileEntity tile = getTileEntity(world, pos);
-        if (tile != null) return tile.getMaterial().getProperty(PropertyKey.PIPENET_PROPERTIES);
-        else return Materials.Aluminium.getProperty(PropertyKey.PIPENET_PROPERTIES);
+    @NotNull
+    public IPipeNetNodeHandler getHandler(PipeTileEntity tileContext) {
+        return ((PipeMaterialTileEntity) tileContext).getMaterial().getProperty(PropertyKey.PIPENET_PROPERTIES);
     }
 
     @Override

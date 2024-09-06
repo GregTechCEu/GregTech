@@ -166,14 +166,26 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     public void consumeFlowLimit(@NotNull AbstractNetFlowEdge edge, NetNode targetNode,
                                  long consumption) {
         super.consumeFlowLimit(edge, targetNode, consumption);
-        TemperatureLogic temperatureLogic = targetNode.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
-        if (temperatureLogic != null) {
-            FluidContainmentLogic containmentLogic = targetNode.getData()
-                    .getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
-            boolean overMax = fluidTemp > containmentLogic.getMaximumTemperature() &&
-                    !(state == FluidState.PLASMA && containmentLogic.contains(FluidState.PLASMA));
-            temperatureLogic.moveTowardsTemperature(fluidTemp,
-                    getQueryTick(), consumption * TEMPERATURE_EFFECT, !overMax);
+        if (consumption > 0 && !simulating()) {
+            recordFlow(targetNode, consumption);
+            TemperatureLogic temperatureLogic = targetNode.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            if (temperatureLogic != null) {
+                FluidContainmentLogic containmentLogic = targetNode.getData()
+                        .getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
+                boolean overMax = fluidTemp > containmentLogic.getMaximumTemperature() &&
+                        !(state == FluidState.PLASMA && containmentLogic.contains(FluidState.PLASMA));
+                temperatureLogic.moveTowardsTemperature(fluidTemp,
+                        getQueryTick(), consumption * TEMPERATURE_EFFECT, !overMax);
+            }
         }
+    }
+
+    private void recordFlow(@NotNull NetNode node, long flow) {
+        FluidFlowLogic logic = node.getData().getLogicEntryNullable(FluidFlowLogic.INSTANCE);
+        if (logic == null) {
+            logic = FluidFlowLogic.INSTANCE.getNew();
+            node.getData().setLogicEntry(logic);
+        }
+        logic.recordFlow(getQueryTick(), getTestObject().recombine(GTUtility.safeCastLongToInt(flow)));
     }
 }
