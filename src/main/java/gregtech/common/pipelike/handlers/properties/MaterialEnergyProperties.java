@@ -178,14 +178,17 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             boolean insulated = cable.partialBurnStructure() != null;
             // insulated cables cool down half as fast
             float coolingFactor = (float) (Math.sqrt(cable.material()) / (insulated ? 8 : 4));
+            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            float energy = existing == null ? 0 : existing.getThermalEnergy();
             data.setLogicEntry(VoltageLossLogic.INSTANCE.getWith(loss))
                     .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
-                    .mergeLogicEntry(TemperatureLogic.INSTANCE
+                    .setLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreateCable(coolingFactor), materialMeltTemperature,
                                     1,
-                                    100 * cable.material(), cable.partialBurnThreshold()));
+                                    100 * cable.material(), cable.partialBurnThreshold())
+                            .setInitialThermalEnergy(energy));
             if (superconductorCriticalTemperature > 0) {
                 data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
             }
@@ -194,13 +197,16 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             if (amperage == 0) return; // skip pipes that are too small
             long loss = getLoss(structure);
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
+            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            float energy = existing == null ? 0 : existing.getThermalEnergy();
             data.setLogicEntry(VoltageLossLogic.INSTANCE.getWith(loss))
                     .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
                     .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
-                    .mergeLogicEntry(TemperatureLogic.INSTANCE
+                    .setLogicEntry(TemperatureLogic.INSTANCE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature, 1,
-                                    50 * pipe.material(), null));
+                                    50 * pipe.material(), null)
+                            .setInitialThermalEnergy(energy));
             if (superconductorCriticalTemperature > 0) {
                 data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
             }

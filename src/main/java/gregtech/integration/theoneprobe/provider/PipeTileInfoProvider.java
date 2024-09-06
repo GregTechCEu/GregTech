@@ -12,7 +12,6 @@ import gregtech.common.pipelike.net.energy.EnergyFlowData;
 import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
 import gregtech.common.pipelike.net.fluid.FluidFlowLogic;
 import gregtech.common.pipelike.net.item.ItemFlowLogic;
-
 import gregtech.integration.theoneprobe.element.FluidStackElement;
 
 import net.minecraft.block.state.IBlockState;
@@ -66,20 +65,16 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
         long cumulativeVoltage = 0;
         long cumulativeAmperage = 0;
         for (var memory : logic.getMemory().values()) {
-            int count = 0;
             double voltage = 0;
             long amperage = 0;
             for (EnergyFlowData flow : memory) {
-                count++;
                 long prev = amperage;
                 amperage += flow.amperage();
                 // weighted average
                 voltage = voltage * prev / amperage + (double) (flow.voltage() * flow.amperage()) / amperage;
             }
-            if (count != 0) {
-                cumulativeVoltage += voltage / count;
-                cumulativeAmperage += amperage / count;
-            }
+            cumulativeVoltage += voltage;
+            cumulativeAmperage += amperage;
         }
         long v = cumulativeVoltage / EnergyFlowLogic.MEMORY_TICKS;
         String voltage = TextFormattingUtil.formatNumbers(v);
@@ -116,9 +111,11 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
     private void addItemFlowInformation(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer,
                                         IProbeHitData iProbeHitData, ItemFlowLogic logic) {
         if (logic.getMemory().isEmpty()) {
+            ItemStack countlessLast = logic.getLast().copy();
+            countlessLast.setCount(1);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .text(TextStyleClass.INFO + "{*gregtech.top.pipe.item_last*} ")
-                    .item(logic.getLast())
+                    .item(countlessLast)
                     .text(" " + logic.getLast().getDisplayName());
         }
 

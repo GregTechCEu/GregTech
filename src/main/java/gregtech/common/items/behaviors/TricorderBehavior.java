@@ -283,30 +283,22 @@ public class TricorderBehavior implements IItemBehaviour {
             }
             NetLogicData data = pipeTile.getNetLogicData(WorldEnergyNet.getWorldNet(world).getNetworkID());
             if (data != null) {
-                int cumulativeCount = 0;
                 long cumulativeVoltage = 0;
                 long cumulativeAmperage = 0;
                 for (var memory : data.getLogicEntryDefaultable(EnergyFlowLogic.INSTANCE).getMemory().values()) {
-                    cumulativeCount++;
-                    int count = 0;
                     double voltage = 0;
                     long amperage = 0;
                     for (EnergyFlowData flow : memory) {
-                        count++;
                         long prev = amperage;
                         amperage += flow.amperage();
                         // weighted average
                         voltage = voltage * prev / amperage + (double) (flow.voltage() * flow.amperage()) / amperage;
                     }
-                    if (count != 0) {
-                        cumulativeVoltage += voltage / count;
-                        cumulativeAmperage += amperage / count;
-                    }
+                    cumulativeVoltage += voltage;
+                    cumulativeAmperage += amperage;
                 }
-                if (cumulativeCount != 0) {
-                    cumulativeVoltage /= cumulativeCount;
-                    cumulativeAmperage /= cumulativeCount;
-                }
+                cumulativeVoltage /= EnergyFlowLogic.MEMORY_TICKS;
+                cumulativeAmperage /= EnergyFlowLogic.MEMORY_TICKS;
                 list.add(new TextComponentTranslation("behavior.tricorder.eut_per_sec",
                         new TextComponentTranslation(TextFormattingUtil.formatNumbers(cumulativeVoltage))
                                 .setStyle(new Style().setColor(TextFormatting.RED))));

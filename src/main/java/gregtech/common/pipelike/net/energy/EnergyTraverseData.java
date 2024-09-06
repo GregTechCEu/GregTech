@@ -11,6 +11,9 @@ import gregtech.api.graphnet.pipenet.NodeLossCache;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.traverse.FlowManagerMap;
+import gregtech.api.graphnet.pipenet.traverse.ITileFlowManager;
+import gregtech.api.graphnet.pipenet.traverse.LocalTransferInformation;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.AbstractTraverseData;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
@@ -19,12 +22,15 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, FlowWorldPipeNetPath> {
 
     private final Object2ObjectOpenHashMap<WorldPipeNetNode, OverVoltageInformation> overVoltageInformation;
+
+    protected final FlowManagerMap managers = new FlowManagerMap(EnergyFlowManager::new);
 
     private final long startVoltage;
     private long pathVoltage;
@@ -45,8 +51,9 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
 
     @Override
     public boolean prepareForPathWalk(@NotNull FlowWorldPipeNetPath path, long flow) {
-        if (flow <= 0) return true;
         resetPathVoltage();
+        if (flow <= 0 || !managers.access(path.getTargetNode()).canAcceptFlow()) return true;
+        managers.access(path.getTargetNode()).reportAttemptingFlow(flow);
         this.overVoltageInformation.clear();
         this.overVoltageInformation.trim(10);
         return false;
@@ -113,21 +120,7 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
         this.pathVoltage = (long) GTUtility.geometricMean(pathVoltage,
                 overVoltageInformation.values().stream().filter(o -> o.voltageCap < this.pathVoltage)
                         .mapToDouble(o -> (double) o.voltageCap).toArray());
-        long availableFlow = flowReachingDestination;
-        for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
-            if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
-                    capability.getKey() == inputFacing)
-                continue; // anti insert-to-our-source logic
-
-            IEnergyContainer container = capability.getValue()
-                    .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, capability.getKey().getOpposite());
-            if (container != null) {
-                availableFlow -= IEnergyTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
-                        .getCoverAtSide(capability.getKey())).insertToHandler(pathVoltage, availableFlow, container,
-                                capability.getKey(), simulating());
-            }
-        }
-        long accepted = flowReachingDestination - availableFlow;
+        long accepted = managers.access(destination).acceptFlow(flowReachingDestination);
         if (!simulating() && destination.getGroupUnsafe() != null &&
                 destination.getGroupSafe().getData() instanceof EnergyGroupData data) {
             data.addEnergyOutPerSec(accepted * pathVoltage, getQueryTick());
@@ -176,6 +169,61 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
             if (logic != null) {
                 logic.applyThermalEnergy(calculateHeatV(amperage, finalVoltage, voltageCap), tick);
             }
+        }
+    }
+
+    protected class EnergyFlowManager extends
+                                      Object2LongOpenHashMap<LocalTransferInformation<IEnergyTransferController, IEnergyContainer>>
+                                      implements ITileFlowManager {
+
+        public EnergyFlowManager(@NotNull WorldPipeNetNode node) {
+            for (var capability : node.getTileEntity().getTargetsWithCapabilities(node).entrySet()) {
+                if (GTUtility.arePosEqual(node.getEquivalencyData(), sourcePos) &&
+                        capability.getKey() == inputFacing)
+                    continue; // anti insert-to-our-source logic
+
+                IEnergyContainer container = capability.getValue()
+                        .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                                capability.getKey().getOpposite());
+                if (container != null) {
+                    IEnergyTransferController controller = IEnergyTransferController.CONTROL.get(node.getTileEntity()
+                            .getCoverHolder().getCoverAtSide(capability.getKey()));
+                    this.put(new LocalTransferInformation<>(capability.getKey(), controller, container),
+                            controller.insertToHandler(pathVoltage, Long.MAX_VALUE, container, capability.getKey(),
+                                    true));
+                }
+            }
+        }
+
+        @Override
+        public long getMaximumFlow() {
+            long sum = 0;
+            for (long l : this.values()) {
+                sum += l;
+            }
+            return sum;
+        }
+
+        @Override
+        public void reportAttemptingFlow(long flow) {
+            for (var entry : this.entrySet()) {
+                entry.setValue(Math.max(entry.getValue() - flow, 0));
+            }
+        }
+
+        @Override
+        public long acceptFlow(long flow) {
+            long availableFlow = flow;
+            var iter = this.entrySet().iterator();
+            while (iter.hasNext()) {
+                var entry = iter.next();
+                var info = entry.getKey();
+                long accepted = info.controller().insertToHandler(pathVoltage, availableFlow, info.container(),
+                        info.facing(), simulating());
+                if (entry.getValue() == 0) iter.remove();
+                availableFlow -= accepted;
+            }
+            return flow - availableFlow;
         }
     }
 }

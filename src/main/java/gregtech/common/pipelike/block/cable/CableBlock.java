@@ -1,9 +1,11 @@
 package gregtech.common.pipelike.block.cable;
 
 import gregtech.api.damagesources.DamageSources;
+import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.registry.MaterialRegistry;
@@ -19,6 +21,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -31,6 +35,8 @@ import java.util.Map;
 public class CableBlock extends PipeMaterialBlock implements IBurnable {
 
     private static final Map<MaterialRegistry, Map<CableStructure, CableBlock>> CACHE = new Object2ObjectOpenHashMap<>();
+
+    private static final ThreadLocal<Boolean> RELOCATING_TILE = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     public CableBlock(CableStructure structure, MaterialRegistry registry) {
         super(structure, registry);
@@ -62,9 +68,27 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
         CableStructure structure = getStructure();
         if (structure.partialBurnStructure() != null) {
             CableBlock newBlock = CACHE.get(registry).get(structure.partialBurnStructure());
+            PipeMaterialTileEntity tileOld = getTileEntity(world, pos);
+            RELOCATING_TILE.set(Boolean.TRUE);
             // noinspection deprecation
             world.setBlockState(pos, newBlock.getStateFromMeta(this.getMetaFromState(state)));
+            RELOCATING_TILE.set(Boolean.FALSE);
+            TileEntity tileNew = world.getTileEntity(pos);
+            if (tileOld != null && tileNew instanceof PipeTileEntity pipeTile) {
+                pipeTile.deserializeNBT(tileOld.writeToNBT(new NBTTagCompound()));
+                pipeTile.initialize();
+                pipeTile.forceFullSync();
+            }
         }
+    }
+
+    @Override
+    public @NotNull IPipeNetNodeHandler getHandler(PipeTileEntity tileContext) {
+        if (RELOCATING_TILE.get()) {
+            // prevent node removal when relocating tile
+            return IPipeNetNodeHandler.EMPTY;
+        }
+        return super.getHandler(tileContext);
     }
 
     @Override

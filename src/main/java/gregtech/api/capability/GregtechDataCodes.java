@@ -58,6 +58,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_FACADE_STACK = assignId();
 
     // Pipe implementation update codes
+    public static final int SYNC_EVERYTHING = assignId();
     public static final int UPDATE_PAINT = assignId();
     public static final int UPDATE_CONNECTIONS = assignId();
     public static final int SYNC_COVER_IMPLEMENTATION = assignId();

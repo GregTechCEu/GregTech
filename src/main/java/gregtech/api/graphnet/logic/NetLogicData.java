@@ -176,6 +176,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
             if (entry == null) entry = NetLogicRegistry.getSupplierNotNull(key).get();
             if (entry == null) continue;
             entry.deserializeNBTNaive(tag.getTag("Tag"));
+            this.logicEntrySet.put(key, entry);
         }
     }
 

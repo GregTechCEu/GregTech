@@ -54,6 +54,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -301,9 +302,13 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         initialize();
         // since we're an instance of ITickable, we're automatically added to the tickable list just before this exact
         // moment.
-        // it would theoretically be a micro optimization to just pop the last tile from the tickable list, but that's
-        // not guaranteed.
-        if (!this.isTicking()) this.getWorld().tickableTileEntities.remove(this);
+        if (!this.isTicking()) {
+            // check the last tile first to see if it's us, otherwise fallback to default.
+            List<TileEntity> tickables = this.getWorld().tickableTileEntities;
+            TileEntity last = tickables.get(tickables.size() - 1);
+            if (last == this) tickables.remove(tickables.size() - 1);
+            else tickables.remove(this);
+        }
     }
 
     public void removeTicker(ITickable ticker) {
@@ -479,13 +484,16 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         super.setWorld(worldIn);
     }
 
-    protected void initialize() {
+    /**
+     * DO NOT CALL UNLESS YOU KNOW WHAT YOU ARE DOING
+     */
+    @ApiStatus.Internal
+    public void initialize() {
         if (!getWorld().isRemote) {
             this.netLogicDatas.clear();
             this.capabilities.clear();
             this.netCapabilities.clear();
             this.listeners.clear();
-            boolean firstNode = true;
             for (WorldPipeNetNode node : PipeBlock.getNodesForTile(this)) {
                 this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
                 this.netCapabilities.put(node, new PipeCapabilityWrapper(this, node));
@@ -495,9 +503,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 for (NetLogicEntry<?, ?> entry : node.getData().getEntries()) {
                     writeLogicData(networkID, entry, false, true);
                 }
-                if (firstNode) {
-                    firstNode = false;
-                    this.temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+                if (this.temperatureLogic == null) {
+                    TemperatureLogic candidate = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+                    if (candidate != null)
+                        updateTemperatureLogic(candidate);
                 }
             }
             this.netLogicDatas.trim();
@@ -505,6 +514,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.netCapabilities.trim();
             this.listeners.trim();
             updateActiveStatus(null, false);
+        } else {
+            getBlockType(); // ensure block is cached on client for later reference
         }
     }
 
@@ -554,6 +565,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return GregTechAPI.materialManager.getRegistry(buf.readVarInt()).getObjectById(buf.readInt());
     }
 
+    public void forceFullSync() {
+        writeCustomData(SYNC_EVERYTHING, this::writeInitialSyncData);
+    }
+
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         buf.writeByte(connectionMask);
@@ -594,7 +609,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     @Override
     public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {
-        if (discriminator == UPDATE_PIPE_LOGIC) {
+        if (discriminator == SYNC_EVERYTHING) {
+            receiveInitialSyncData(buf);
+            scheduleRenderUpdate();
+        } else if (discriminator == UPDATE_PIPE_LOGIC) {
             // extra check just to make sure we don't affect actual net data with our writes
             if (world.isRemote) {
                 int networkID = buf.readVarInt();
@@ -647,6 +665,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     // particle //
 
     public void updateTemperatureLogic(@NotNull TemperatureLogic logic) {
+        this.temperatureLogic = logic;
         if (overheatParticle == null || !overheatParticle.isAlive()) {
             long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
             int temp = logic.getTemperature(tick);

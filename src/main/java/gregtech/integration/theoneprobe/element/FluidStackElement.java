@@ -2,18 +2,16 @@ package gregtech.integration.theoneprobe.element;
 
 import gregtech.client.utils.RenderUtil;
 
-import io.netty.buffer.ByteBuf;
-import mcjty.theoneprobe.TheOneProbe;
-import mcjty.theoneprobe.api.IElement;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.FluidStack;
 
+import io.netty.buffer.ByteBuf;
+import mcjty.theoneprobe.TheOneProbe;
+import mcjty.theoneprobe.api.IElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;

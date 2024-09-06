@@ -18,6 +18,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,6 +79,16 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
                 .setThermalMass(thermalMass)
                 .setPartialBurnTemperature(partialBurnTemperature)
                 .setFunctionPriority(functionPriority);
+    }
+
+    @Contract("_ -> this")
+    public TemperatureLogic setInitialThermalEnergy(float energy) {
+        this.energy = energy;
+        return this;
+    }
+
+    public float getThermalEnergy() {
+        return energy;
     }
 
     @Override
@@ -179,13 +190,13 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
 
     private void restoreTemperature(long tick) {
         long timePassed = tick - lastRestorationTick;
-        this.lastRestorationTick = tick;
-        float energy = this.energy;
-        if (timePassed != 0) {
-            if (timePassed >= Integer.MAX_VALUE || timePassed < 0) {
+        // sometimes the tick time randomly warps backward for no explicable reason, on both server and client.
+        if (timePassed > 0) {
+            float energy = this.energy;
+            this.lastRestorationTick = tick;
+            if (timePassed >= Integer.MAX_VALUE) {
                 this.energy = 0;
-            } else this.energy = temperatureLossFunction
-                    .restoreTemperature(energy, (int) timePassed);
+            } else this.energy = temperatureLossFunction.restoreTemperature(energy, (int) timePassed);
         }
     }
 

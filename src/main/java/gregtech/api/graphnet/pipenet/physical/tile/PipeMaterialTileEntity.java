@@ -23,7 +23,7 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
     private Material material;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         // prevent initialization when we don't know our material;
         // this specifically happens right after we have been
         // placed and placedBy() has yet to be called.
