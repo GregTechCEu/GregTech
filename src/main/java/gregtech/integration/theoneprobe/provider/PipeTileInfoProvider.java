@@ -6,12 +6,15 @@ import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.pipelike.net.energy.EnergyFlowData;
 import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
 import gregtech.common.pipelike.net.fluid.FluidFlowLogic;
 import gregtech.common.pipelike.net.item.ItemFlowLogic;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -76,18 +79,21 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
                 cumulativeAmperage += amperage / count;
             }
         }
-        iProbeInfo.text(TextStyleClass.INFO + "{*gregtech.top.pipe.voltage*} " + TextStyleClass.INFOIMP +
-                cumulativeVoltage / EnergyFlowLogic.MEMORY_TICKS);
-        iProbeInfo.text(TextStyleClass.INFO + "{*gregtech.top.pipe.amperage*} " + TextStyleClass.INFOIMP +
-                cumulativeAmperage / EnergyFlowLogic.MEMORY_TICKS);
+        long v = cumulativeVoltage / EnergyFlowLogic.MEMORY_TICKS;
+        String voltage = TextFormattingUtil.formatNumbers(v);
+        String amperage = TextFormattingUtil.formatNumbers(cumulativeAmperage / EnergyFlowLogic.MEMORY_TICKS);
+        String tier = GTValues.VNF[GTUtility.getTierByVoltage(v)];
+        iProbeInfo.text(I18n.format("gregtech.top.pipe.energy", voltage, tier, amperage));
     }
 
     private void addFluidFlowInformation(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer,
                                          IProbeHitData iProbeHitData, FluidFlowLogic logic) {
-        iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
-                .text(TextStyleClass.INFO + "{*gregtech.top.pipe.fluid_last*}")
-                .icon(logic.getLast().getFluid().getStill(logic.getLast()), -1, -1, 14, 14)
-                .text(logic.getLast().getLocalizedName());
+        if (logic.getMemory().isEmpty()) {
+            iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
+                    .text(TextStyleClass.INFO + "{*gregtech.top.pipe.fluid_last*} ")
+                    .icon(logic.getLast().getFluid().getStill(logic.getLast()), -1, -1, 14, 14)
+                    .text(" " + logic.getLast().getLocalizedName());
+        }
 
         Object2IntOpenHashMap<FluidTestObject> counts = new Object2IntOpenHashMap<>();
         for (var memory : logic.getMemory().values()) {
@@ -98,18 +104,21 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
 
         for (var entry : counts.object2IntEntrySet()) {
             FluidStack stack = entry.getKey().recombine();
+            String value = TextFormattingUtil.formatNumbers(entry.getIntValue() * 20L / FluidFlowLogic.MEMORY_TICKS);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .icon(stack.getFluid().getStill(stack), -1, -1, 14, 14)
-                    .text(entry.getIntValue() * 20 / FluidFlowLogic.MEMORY_TICKS + " L/s " + stack.getLocalizedName());
+                    .text(" " + value + " L/s " + stack.getLocalizedName());
         }
     }
 
     private void addItemFlowInformation(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer,
                                         IProbeHitData iProbeHitData, ItemFlowLogic logic) {
-        iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
-                .text(TextStyleClass.INFO + "{*gregtech.top.pipe.item_last*}")
-                .item(logic.getLast())
-                .text(logic.getLast().getDisplayName());
+        if (logic.getMemory().isEmpty()) {
+            iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
+                    .text(TextStyleClass.INFO + "{*gregtech.top.pipe.item_last*} ")
+                    .item(logic.getLast())
+                    .text(" " + logic.getLast().getDisplayName());
+        }
 
         Object2IntOpenHashMap<ItemTestObject> counts = new Object2IntOpenHashMap<>();
         for (var memory : logic.getMemory().values()) {
@@ -120,9 +129,10 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
 
         for (var entry : counts.object2IntEntrySet()) {
             ItemStack stack = entry.getKey().recombine();
+            String value = TextFormattingUtil.formatNumbers(entry.getIntValue() * 20L / ItemFlowLogic.MEMORY_TICKS);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .item(stack)
-                    .text(entry.getIntValue() * 20 / ItemFlowLogic.MEMORY_TICKS + " /s " + stack.getDisplayName());
+                    .text(" " + value + " /s " + stack.getDisplayName());
         }
     }
 }
