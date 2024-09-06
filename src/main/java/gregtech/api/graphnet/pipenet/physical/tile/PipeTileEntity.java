@@ -125,6 +125,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         super.invalidate();
         if (!getWorld().isRemote) getBlockType().getHandler(this)
                 .removeFromNets(this.getWorld(), this.getPos(), this.getStructure());
+        else killOverheatParticle();
         // TODO I hate this so much can someone please make it so that covers go through getDrops()?
         getCoverHolder().dropAllCovers();
     }

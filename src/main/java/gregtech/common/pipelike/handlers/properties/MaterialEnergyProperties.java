@@ -48,6 +48,8 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     public static final MaterialPropertyKey<MaterialEnergyProperties> KEY = new MaterialPropertyKey<>(
             "EnergyProperties");
 
+    private static final int MINIMUM_MELT_TEMPERATURE = 1500;
+
     private final long voltageLimit;
     private final long amperageLimit;
     private int materialMeltTemperature;
@@ -141,13 +143,14 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             if (fluid == null) {
                 FluidBuilder builder = prop.getQueuedBuilder(FluidStorageKeys.LIQUID);
                 if (builder != null) {
-                    return builder.getDeterminedTemperature(properties.getMaterial(), FluidStorageKeys.LIQUID);
+                    return Math.max(MINIMUM_MELT_TEMPERATURE,
+                            builder.getDeterminedTemperature(properties.getMaterial(), FluidStorageKeys.LIQUID));
                 }
             } else {
-                return fluid.getTemperature();
+                return Math.max(MINIMUM_MELT_TEMPERATURE, fluid.getTemperature());
             }
         }
-        return 3000;
+        return MINIMUM_MELT_TEMPERATURE;
     }
 
     @Override
@@ -244,6 +247,6 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     @Override
     public boolean supportsStructure(IPipeStructure structure) {
-        return structure instanceof CableStructure || structure instanceof MaterialPipeStructure;
+        return structure instanceof CableStructure /* || structure instanceof MaterialPipeStructure */;
     }
 }

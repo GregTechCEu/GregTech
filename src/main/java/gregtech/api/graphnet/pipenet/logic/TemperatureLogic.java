@@ -165,12 +165,11 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
         float thermalEnergy = mult * (temperature - temp);
         if (noParticle) {
             float thermalMax = this.thermalMass * (GTOverheatParticle.TEMPERATURE_CUTOFF - DEFAULT_TEMPERATURE);
-            if (thermalMax > this.energy) return;
             if (thermalEnergy + this.energy > thermalMax) {
                 thermalEnergy = thermalMax - this.energy;
             }
         }
-        if (thermalEnergy > 0) applyThermalEnergy(thermalEnergy, tick);
+        applyThermalEnergy(thermalEnergy, tick);
     }
 
     public int getTemperature(long tick) {

@@ -156,11 +156,11 @@ public class EnergyTraverseData extends AbstractTraverseData<WorldPipeNetNode, F
     }
 
     private static int calculateHeatV(long amperage, long voltage, long maxVoltage) {
-        return (int) (amperage * (Math.log1p(4 * Math.log((double) voltage / maxVoltage)) * 85 + 36));
+        return (int) (amperage * (Math.log1p((double) voltage / maxVoltage) * 85 + 36));
     }
 
     private static int calculateHeatA(long amperage, long voltage) {
-        return (int) (amperage * (Math.log1p(4 * Math.log1p(Math.log((double) voltage))) * 85 + 36));
+        return (int) (amperage * (Math.log1p(Math.log(voltage)) * 85 + 36));
     }
 
     protected static class OverVoltageInformation {
