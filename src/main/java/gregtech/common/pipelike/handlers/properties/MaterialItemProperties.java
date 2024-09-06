@@ -50,6 +50,7 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     @Override
     public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
+        tooltip.add(I18n.format("gregtech.item_pipe"));
         if (baseItemsPer5Ticks % 16 != 0) {
             tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate",
                     baseItemsPer5Ticks * 4));

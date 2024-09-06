@@ -150,6 +150,7 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     @Override
     public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
+        tooltip.add(I18n.format("gregtech.fluid_pipe"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", getThroughput(structure)));
         tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", getMaxFluidTemperature()));
         tooltip.add(I18n.format("gregtech.fluid_pipe.min_temperature", getMinFluidTemperature()));

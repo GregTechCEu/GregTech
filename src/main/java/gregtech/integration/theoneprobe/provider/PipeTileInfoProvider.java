@@ -107,7 +107,7 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
             String value = TextFormattingUtil.formatNumbers(entry.getIntValue() * 20L / FluidFlowLogic.MEMORY_TICKS);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .icon(stack.getFluid().getStill(stack), -1, -1, 14, 14)
-                    .text(" " + value + " L/s " + stack.getLocalizedName());
+                    .text(" §b" + value + " L/s §f" + stack.getLocalizedName());
         }
     }
 
@@ -132,7 +132,7 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
             String value = TextFormattingUtil.formatNumbers(entry.getIntValue() * 20L / ItemFlowLogic.MEMORY_TICKS);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .item(stack)
-                    .text(" " + value + " /s " + stack.getDisplayName());
+                    .text(" §b" + value + " /s §f" + stack.getDisplayName());
         }
     }
 }
