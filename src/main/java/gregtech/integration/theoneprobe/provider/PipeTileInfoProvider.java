@@ -13,6 +13,8 @@ import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
 import gregtech.common.pipelike.net.fluid.FluidFlowLogic;
 import gregtech.common.pipelike.net.item.ItemFlowLogic;
 
+import gregtech.integration.theoneprobe.element.FluidStackElement;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -91,7 +93,7 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
         if (logic.getMemory().isEmpty()) {
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .text(TextStyleClass.INFO + "{*gregtech.top.pipe.fluid_last*} ")
-                    .icon(logic.getLast().getFluid().getStill(logic.getLast()), -1, -1, 14, 14)
+                    .element(new FluidStackElement(logic.getLast()))
                     .text(" " + logic.getLast().getLocalizedName());
         }
 
@@ -106,7 +108,7 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
             FluidStack stack = entry.getKey().recombine();
             String value = TextFormattingUtil.formatNumbers(entry.getIntValue() * 20L / FluidFlowLogic.MEMORY_TICKS);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
-                    .icon(stack.getFluid().getStill(stack), -1, -1, 14, 14)
+                    .element(new FluidStackElement(stack))
                     .text(" §b" + value + " L/s §f" + stack.getLocalizedName());
         }
     }
