@@ -4,17 +4,12 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.tree.CompactibleIterator;
 import gregtech.api.recipes.tree.RecipeTree;
 
-import gregtech.api.recipes.tree.RecipeWrapper;
-
 import it.unimi.dsi.fastutil.shorts.Short2LongArrayMap;
-import it.unimi.dsi.fastutil.shorts.Short2LongOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import static it.unimi.dsi.fastutil.HashCommon.arraySize;
 
 public final class FlagMap extends Short2LongArrayMap {
 

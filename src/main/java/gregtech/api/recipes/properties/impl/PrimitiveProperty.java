@@ -12,8 +12,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Simple Marker Property to tell JEI to not display Total EU and EU/t.
+ * Simple Marker Property to tell JEI to not display Total EU.
  */
+@Deprecated
 public final class PrimitiveProperty extends RecipeProperty<Boolean> {
 
     public static final String KEY = "primitive_property";
@@ -52,11 +53,6 @@ public final class PrimitiveProperty extends RecipeProperty<Boolean> {
 
     @Override
     public boolean hideTotalEU() {
-        return true;
-    }
-
-    @Override
-    public boolean hideEUt() {
         return true;
     }
 }

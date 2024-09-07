@@ -1,0 +1,23 @@
+package gregtech.api.recipes.tree.property;
+
+import com.github.bsideup.jabel.Desugar;
+
+import gregtech.api.recipes.properties.impl.PowerPropertyData;
+
+import org.jetbrains.annotations.Nullable;
+
+@Desugar
+public record PowerSupplyProperty(long voltage, long amperage) implements IRecipeSearchProperty {
+
+    public static final PowerSupplyProperty EMPTY = new PowerSupplyProperty(0, 0);
+
+    @Override
+    public boolean propertyEquals(@Nullable IRecipeSearchProperty other) {
+        return other instanceof PowerSupplyProperty;
+    }
+
+    @Override
+    public int propertyHash() {
+        return 128;
+    }
+}

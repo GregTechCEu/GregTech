@@ -405,7 +405,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected boolean checkPreviousRecipe() {
         if (this.previousRecipe == null) return false;
-        if (this.previousRecipe.getEUt() > this.getMaxVoltage()) return false;
+        if (this.previousRecipe.getVoltage() > this.getMaxVoltage()) return false;
         return this.previousRecipe.matches(false, getInputInventory(), getInputTank());
     }
 
@@ -471,9 +471,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (euDiscount > 0 || speedBonus > 0) { // if-statement to avoid unnecessarily creating RecipeBuilder object
             RecipeBuilder<?> builder = new RecipeBuilder<>(recipe, recipeMap);
             if (euDiscount > 0) {
-                int newEUt = (int) Math.round(recipe.getEUt() * euDiscount);
+                int newEUt = (int) Math.round(recipe.getVoltage() * euDiscount);
                 if (newEUt <= 0) newEUt = 1;
-                builder.EUt(newEUt);
+                builder.volts(newEUt);
             }
             if (speedBonus > 0) {
                 int duration = recipe.getDuration();
@@ -759,7 +759,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
 
         Recipe r = new RecipeBuilder<>(recipe, map)
-                .EUt(ocResult.eut())
+                .volts(ocResult.eut())
                 .build()
                 .getResult();
 
@@ -780,8 +780,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             return recipe;
         }
 
-        ocResult.setEut(builder.getEUt());
-        r = builder.EUt(builder.getEUt())
+        ocResult.setEut(builder.getVoltage());
+        r = builder.EUt(builder.getVoltage())
                 .build()
                 .getResult();
 
@@ -825,7 +825,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected final void calculateOverclock(@NotNull Recipe recipe) {
         // perform the actual overclocking
-        ocParams.initialize(recipe.getEUt(), recipe.getDuration(), getNumberOfOCs(recipe.getEUt()));
+        ocParams.initialize(recipe.getVoltage(), recipe.getDuration(), getNumberOfOCs(recipe.getVoltage()));
         performOverclocking(recipe, this.ocParams, this.ocResult);
         ocParams.reset();
     }
@@ -943,7 +943,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaxProgress(ocResult.duration());
         this.recipeEUt = consumesEnergy() ? ocResult.eut() : -ocResult.eut();
 
-        int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
+        int recipeTier = GTUtility.getTierByVoltage(recipe.getVoltage());
         int machineTier = getOverclockForTier(getMaximumOverclockVoltage());
 
         RecipeMap<?> map = getRecipeMap();

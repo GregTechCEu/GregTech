@@ -40,7 +40,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
 
         for (int i = 0; i < fluidOutputs.size(); i++) {
             SimpleRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy()
-                    .EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
+                    .volts(Math.max(1, this.getVoltage() / 4)).circuitMeta(i + 1);
 
             int ratio = getRatioForDistillery(this.fluidInputs.get(0).getInputFluidStack(), this.fluidOutputs.get(i),
                     !this.outputs.isEmpty() ? this.outputs.get(0) : null);

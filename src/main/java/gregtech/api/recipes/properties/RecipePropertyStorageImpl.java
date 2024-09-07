@@ -27,22 +27,20 @@ public final class RecipePropertyStorageImpl implements RecipePropertyStorage {
     }
 
     @Override
-    public boolean store(@NotNull RecipeProperty<?> recipeProperty, @NotNull Object value) {
+    public <T> boolean store(@NotNull RecipeProperty<T> recipeProperty, @NotNull T value) {
         String key = recipeProperty.getKey();
         if (map.containsKey(recipeProperty)) {
             GTLog.logger.warn("Duplicate recipe property added: {} -> {}", key, value, new Throwable());
             return false;
         }
 
-        try {
-            recipeProperty.castValue(value);
-        } catch (ClassCastException e) {
-            GTLog.logger.error("Provided incorrect value for RecipeProperty with key {}", key, e);
-            return false;
-        }
-
         map.put(recipeProperty, value);
         return true;
+    }
+
+    @Override
+    public <T> T remove(@NotNull RecipeProperty<T> recipeProperty) {
+        return recipeProperty.castValue(map.remove(recipeProperty));
     }
 
     @Override

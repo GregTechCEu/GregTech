@@ -10,12 +10,10 @@ import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.tree.flag.FlagApplicator;
-import gregtech.api.recipes.tree.flag.FlagApplicatorMap;
 import gregtech.api.recipes.tree.flag.FlagMap;
 import gregtech.api.recipes.tree.flag.FluidStackApplicatorMap;
 import gregtech.api.recipes.tree.flag.ItemStackApplicatorMap;
 import gregtech.api.recipes.tree.flag.SingleFlagApplicator;
-import gregtech.api.recipes.tree.property.IPropertyFilter;
 import gregtech.api.recipes.tree.property.PropertyFilterMap;
 
 import gregtech.api.recipes.tree.property.PropertySet;
@@ -32,7 +30,6 @@ import org.jetbrains.annotations.Range;
 
 import java.util.BitSet;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -134,9 +131,7 @@ public class RecipeTree {
         fluidNBT = null;
         for (int i = 0; i < recipes.size(); i++) {
             RecipeWrapper recipe = recipes.get(i);
-            for (IPropertyFilter filter : recipe.getPropertyFilters()) {
-                filters.addFilter(i, filter);
-            }
+            filters.addFilters(i, recipe.getRecipe().propertyStorage());
             long flags = 0;
             byte flag = 0;
             for (GTRecipeInput input : recipe.getRecipe().getInputs()) {

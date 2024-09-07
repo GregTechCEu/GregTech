@@ -1,7 +1,12 @@
 package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.tree.property.EUToStartProperty;
+import gregtech.api.recipes.tree.property.PropertySet;
+import gregtech.api.recipes.tree.property.filter.FilterEqualityBehavior;
+import gregtech.api.recipes.tree.property.filter.IPropertyFilter;
+import gregtech.api.recipes.tree.property.filter.LongAVLFilter;
+import gregtech.api.recipes.tree.property.filter.RecipePropertyWithFilter;
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.client.Minecraft;
@@ -14,11 +19,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.BitSet;
 import java.util.Map;
 import java.util.TreeMap;
 
-public final class FusionEUToStartProperty extends RecipeProperty<Long> {
+public final class FusionEUToStartProperty extends RecipePropertyWithFilter<Long> {
 
     public static final String KEY = "eu_to_start";
 
@@ -77,5 +84,35 @@ public final class FusionEUToStartProperty extends RecipeProperty<Long> {
         Validate.notNull(shortName);
         long maxEU = 16 * 10000000L * (long) Math.pow(2, tier - 6);
         registeredFusionTiers.put(maxEU, Pair.of(tier, shortName));
+    }
+
+    @Override
+    public boolean filterEquals(@Nullable IPropertyFilter<?> other) {
+        return other instanceof FusionEUToStartProperty;
+    }
+
+    @Override
+    public int filterHash() {
+        return 3;
+    }
+
+    @Override
+    public @NotNull Filter<Long> getNewFilter() {
+        return new EUToStartFilter();
+    }
+
+    private static final class EUToStartFilter implements IPropertyFilter.Filter<Long> {
+
+        private final LongAVLFilter filter = new LongAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL, true, false);
+
+        @Override
+        public void accumulate(short recipeID, @NotNull Long filterInformation) {
+            filter.accumulate(recipeID, filterInformation);
+        }
+
+        @Override
+        public void filter(@NotNull BitSet recipeMask, @NotNull PropertySet properties) {
+            filter.filter(recipeMask, properties.getDefaultable(EUToStartProperty.EMPTY).eu());
+        }
     }
 }

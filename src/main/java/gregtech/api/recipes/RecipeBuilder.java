@@ -19,8 +19,12 @@ import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
+import gregtech.api.recipes.properties.impl.CircuitProperty;
 import gregtech.api.recipes.properties.impl.CleanroomProperty;
 import gregtech.api.recipes.properties.impl.DimensionProperty;
+import gregtech.api.recipes.properties.impl.PowerUsageProperty;
+import gregtech.api.recipes.properties.impl.PowerGenerationProperty;
+import gregtech.api.recipes.properties.impl.PowerPropertyData;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -46,6 +50,7 @@ import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +82,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected ChancedOutputLogic chancedFluidOutputLogic = ChancedOutputLogic.OR;
 
     protected int duration;
-    protected long EUt;
     protected boolean hidden = false;
     protected GTRecipeCategory category;
     protected boolean isCTRecipe = false;
@@ -104,7 +108,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
         this.chancedFluidOutputs = new ArrayList<>(recipe.getChancedFluidOutputs().getChancedEntries());
         this.duration = recipe.getDuration();
-        this.EUt = recipe.getEUt();
         this.hidden = recipe.isHidden();
         this.category = recipe.getRecipeCategory();
         this.recipePropertyStorage = recipe.propertyStorage().copy();
@@ -122,7 +125,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.chancedOutputLogic = recipeBuilder.chancedOutputLogic;
         this.chancedFluidOutputLogic = recipeBuilder.chancedFluidOutputLogic;
         this.duration = recipeBuilder.duration;
-        this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
         this.category = recipeBuilder.category;
         this.recipePropertyStorage = recipeBuilder.recipePropertyStorage.copy();
@@ -190,7 +192,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    public final boolean applyProperty(@NotNull RecipeProperty<?> property, @NotNull Object value) {
+    public final <T> boolean applyProperty(@NotNull RecipeProperty<T> property, @NotNull T value) {
         if (this.recipePropertyStorage == RecipePropertyStorage.EMPTY) {
             this.recipePropertyStorage = new RecipePropertyStorageImpl();
         }
@@ -200,6 +202,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             this.recipePropertyStorageErrored = true;
         }
         return stored;
+    }
+
+    @Contract("_, !null -> !null")
+    public final <T> @Nullable T getProperty(@NotNull RecipeProperty<T> property, @Nullable T defaultValue) {
+        if (this.recipePropertyStorage == RecipePropertyStorage.EMPTY) return defaultValue;
+        return this.recipePropertyStorage.get(property, defaultValue);
     }
 
     public R input(GTRecipeInput input) {
@@ -470,9 +478,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R circuitMeta(int circuitNumber) {
-        if (IntCircuitIngredient.CIRCUIT_MIN > circuitNumber || circuitNumber > IntCircuitIngredient.CIRCUIT_MAX) {
+        if (CircuitProperty.CIRCUIT_MIN > circuitNumber || circuitNumber > CircuitProperty.CIRCUIT_MAX) {
             GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
-                    IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, new Throwable());
+                    CircuitProperty.CIRCUIT_MIN, CircuitProperty.CIRCUIT_MAX, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
@@ -796,7 +804,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
         chancedOutputsMultiply(recipe, multiplier);
 
-        this.EUt(multiplyDuration ? recipe.getEUt() : this.EUt + recipe.getEUt() * multiplier);
+        this.EUt(multiplyDuration ? recipe.getEUt() : this.getEUt() + recipe.getEUt() * multiplier);
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
         if (this.parallel == 0) {
             this.parallel = multiplier;
@@ -859,8 +867,65 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    /**
+     * @deprecated use {@link #volts(long)} instead.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public R EUt(long EUt) {
-        this.EUt = EUt;
+        return volts(EUt);
+    }
+
+    public long getVoltage() {
+        PowerPropertyData generation = this.getProperty(PowerGenerationProperty.getInstance(), null);
+        if (generation != null) return generation.getVoltage();
+        else return this.getProperty(PowerUsageProperty.getInstance(), PowerPropertyData.EMPTY).getVoltage();
+    }
+
+    public long getAmperage() {
+        PowerPropertyData generation = this.getProperty(PowerGenerationProperty.getInstance(), null);
+        if (generation != null) return generation.getVoltage();
+        else return this.getProperty(PowerUsageProperty.getInstance(), PowerPropertyData.EMPTY).getVoltage();
+    }
+
+    public R volts(long voltage) {
+        PowerPropertyData generation = this.getProperty(PowerGenerationProperty.getInstance(), null);
+        if (generation != null) {
+            generation.setVoltage(voltage);
+            return (R) this;
+        }
+        PowerPropertyData existing = this.getProperty(PowerUsageProperty.getInstance(), null);
+        if (existing == null) {
+            this.applyProperty(PowerUsageProperty.getInstance(), new PowerPropertyData(voltage));
+        } else {
+            existing.setVoltage(voltage);
+        }
+        return (R) this;
+    }
+
+    public R amps(long amperage) {
+        PowerPropertyData generation = this.getProperty(PowerGenerationProperty.getInstance(), null);
+        if (generation != null) {
+            generation.setAmperage(amperage);
+            return (R) this;
+        }
+        PowerPropertyData existing = this.getProperty(PowerUsageProperty.getInstance(), null);
+        if (existing == null) {
+            this.applyProperty(PowerUsageProperty.getInstance(), new PowerPropertyData(1, amperage));
+        } else {
+            existing.setAmperage(amperage);
+        }
+        return (R) this;
+    }
+
+    public R setGenerating() {
+        PowerPropertyData existing = this.getProperty(PowerUsageProperty.getInstance(), null);
+        if (existing == null) {
+            this.applyProperty(PowerGenerationProperty.getInstance(), new PowerPropertyData(1, 1));
+        } else {
+            this.applyProperty(PowerGenerationProperty.getInstance(), existing);
+            this.recipePropertyStorage.remove(PowerUsageProperty.getInstance());
+        }
         return (R) this;
     }
 
@@ -894,7 +959,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 new ChancedOutputList<>(this.chancedOutputLogic, chancedOutputs),
                 fluidInputs, fluidOutputs,
                 new ChancedOutputList<>(this.chancedFluidOutputLogic, chancedFluidOutputs),
-                duration, EUt, hidden, isCTRecipe, recipePropertyStorage, category));
+                duration, hidden, isCTRecipe, recipePropertyStorage, category));
     }
 
     protected EnumValidationResult validate() {
@@ -902,13 +967,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GroovyLog.Msg msg = GroovyLog.msg("Error adding GregTech " + recipeMap.unlocalizedName + " recipe").error();
             validateGroovy(msg);
             return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
-        }
-        if (EUt == 0) {
-            GTLog.logger.error("EU/t cannot be equal to 0", new Throwable());
-            if (isCTRecipe) {
-                CraftTweakerAPI.logError("EU/t cannot be equal to 0", new Throwable());
-            }
-            recipeStatus = EnumValidationResult.INVALID;
         }
         if (duration <= 0) {
             GTLog.logger.error("Duration cannot be less or equal to 0", new Throwable());
@@ -941,7 +999,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     protected void validateGroovy(GroovyLog.Msg errorMsg) {
-        errorMsg.add(EUt == 0, () -> "EU/t must not be to 0");
         errorMsg.add(duration <= 0, () -> "Duration must not be less or equal to 0");
         int maxInput = recipeMap.getMaxInputs();
         int maxOutput = recipeMap.getMaxOutputs();
@@ -1036,8 +1093,13 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return fluidOutputs;
     }
 
+    /**
+     * @deprecated use {@link #getVoltage()} instead.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public long getEUt() {
-        return EUt;
+        return getVoltage();
     }
 
     public int getDuration() {
@@ -1059,7 +1121,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("fluidInputs", fluidInputs)
                 .append("fluidOutputs", fluidOutputs)
                 .append("duration", duration)
-                .append("EUt", EUt)
                 .append("hidden", hidden)
                 .append("cleanroom", getCleanroom())
                 .append("dimensions", getDimensionIDs().toString())

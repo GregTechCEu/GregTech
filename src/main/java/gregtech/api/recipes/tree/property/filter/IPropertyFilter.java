@@ -1,16 +1,18 @@
-package gregtech.api.recipes.tree.property;
+package gregtech.api.recipes.tree.property.filter;
+
+import gregtech.api.recipes.tree.property.PropertySet;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
 
-public interface IPropertyFilter {
+public interface IPropertyFilter<T> {
 
     /**
      * {@link IPropertyFilter}s should be limited in scope using this method.
      */
-    boolean filterEquals(@Nullable IPropertyFilter other);
+    boolean filterEquals(@Nullable IPropertyFilter<?> other);
 
     /**
      * {@link IPropertyFilter}s should strive to avoid hash collisions with <i>all other instances</i> of
@@ -18,14 +20,17 @@ public interface IPropertyFilter {
      */
     int filterHash();
     // reserved hashes:
-    // 0 circuit filter
-    // 1 voltage filter
+    // -1 circuit filter
+    // 0 power usage filter
+    // 1 power generation filter
+    // 2 cleanroom filter
+    // 3 fusion heat filter
 
-    @NotNull Filter getNewFilter();
+    @NotNull Filter<T> getNewFilter();
 
-    interface Filter {
+    interface Filter<T> {
 
-        void accumulate(short recipeID, @NotNull IPropertyFilter filter);
+        void accumulate(short recipeID, @NotNull T filterInformation);
 
         void filter(@NotNull BitSet recipeMask, @NotNull PropertySet properties);
     }

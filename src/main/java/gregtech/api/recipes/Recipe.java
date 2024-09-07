@@ -11,6 +11,9 @@ import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
+import gregtech.api.recipes.properties.impl.PowerUsageProperty;
+import gregtech.api.recipes.properties.impl.PowerGenerationProperty;
+import gregtech.api.recipes.properties.impl.PowerPropertyData;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.integration.groovy.GroovyScriptModule;
@@ -83,11 +86,6 @@ public class Recipe {
     private final int duration;
 
     /**
-     * if > 0 means EU/t consumed, if < 0 - produced
-     */
-    private final long EUt;
-
-    /**
      * If this Recipe is hidden from JEI
      */
     private final boolean hidden;
@@ -110,7 +108,6 @@ public class Recipe {
                   List<FluidStack> fluidOutputs,
                   @NotNull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
                   int duration,
-                  long EUt,
                   boolean hidden,
                   boolean isCTRecipe,
                   @NotNull RecipePropertyStorage recipePropertyStorage,
@@ -127,7 +124,6 @@ public class Recipe {
         this.fluidInputs = GTRecipeInputCache.deduplicateInputs(fluidInputs);
         this.fluidOutputs = fluidOutputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidOutputs);
         this.duration = duration;
-        this.EUt = EUt;
         this.hidden = hidden;
         this.recipeCategory = recipeCategory;
         this.isCTRecipe = isCTRecipe;
@@ -139,7 +135,7 @@ public class Recipe {
     public Recipe copy() {
         return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs,
                 this.fluidOutputs, this.chancedFluidOutputs, this.duration,
-                this.EUt, this.hidden, this.isCTRecipe, this.recipePropertyStorage, this.recipeCategory);
+                this.hidden, this.isCTRecipe, this.recipePropertyStorage, this.recipeCategory);
     }
 
     /**
@@ -437,7 +433,6 @@ public class Recipe {
                 .append("fluidInputs", fluidInputs)
                 .append("fluidOutputs", fluidOutputs)
                 .append("duration", duration)
-                .append("EUt", EUt)
                 .append("hidden", hidden)
                 .append("CTRecipe", isCTRecipe)
                 .append("GSRecipe", groovyRecipe)
@@ -697,8 +692,29 @@ public class Recipe {
         return duration;
     }
 
+    /**
+     * @deprecated use {@link #getVoltage()} instead.
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public long getEUt() {
-        return EUt;
+        return getVoltage();
+    }
+
+    public long getVoltage() {
+        PowerPropertyData generation = recipePropertyStorage.get(PowerGenerationProperty.getInstance(), null);
+        if (generation != null) return generation.getVoltage();
+        return recipePropertyStorage.get(PowerUsageProperty.getInstance(), PowerPropertyData.EMPTY).getVoltage();
+    }
+
+    public long getAmperage() {
+        PowerPropertyData generation = recipePropertyStorage.get(PowerGenerationProperty.getInstance(), null);
+        if (generation != null) return generation.getAmperage();
+        return recipePropertyStorage.get(PowerUsageProperty.getInstance(), PowerPropertyData.EMPTY).getAmperage();
+    }
+
+    public boolean isGenerating() {
+        return recipePropertyStorage.contains(PowerGenerationProperty.getInstance());
     }
 
     public boolean isHidden() {

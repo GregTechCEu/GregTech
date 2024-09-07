@@ -20,7 +20,13 @@ public interface RecipePropertyStorage {
      * @param value          the value to store
      * @return if the store succeeds
      */
-    boolean store(@NotNull RecipeProperty<?> recipeProperty, @NotNull Object value);
+    <T> boolean store(@NotNull RecipeProperty<T> recipeProperty, @NotNull T value);
+
+    /**
+     * @param recipeProperty the property to remove
+     * @return the removed property, if it existed.
+     */
+    <T> T remove(@NotNull RecipeProperty<T> recipeProperty);
 
     /**
      * @return a copy of this property storage
@@ -69,7 +75,12 @@ public interface RecipePropertyStorage {
     RecipePropertyStorage EMPTY = new RecipePropertyStorage() {
 
         @Override
-        public boolean store(@NotNull RecipeProperty<?> recipeProperty, @NotNull Object value) {
+        public <T> boolean store(@NotNull RecipeProperty<T> recipeProperty, @NotNull T value) {
+            throw new UnsupportedOperationException("empty");
+        }
+
+        @Override
+        public <T> T remove(@NotNull RecipeProperty<T> recipeProperty) {
             throw new UnsupportedOperationException("empty");
         }
 

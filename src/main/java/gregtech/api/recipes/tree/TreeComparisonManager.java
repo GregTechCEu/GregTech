@@ -457,7 +457,7 @@ public final class TreeComparisonManager {
             long finish = System.nanoTime();
             if (i >= WARMUP) nsMap[i - WARMUP] = GTUtility.safeCastLongToInt(finish - start);
             start = System.nanoTime();
-            iter = tree.findRecipes(itemInputs, fluidInputs, PropertySet.of(voltage, itemInputs));
+            iter = tree.findRecipes(itemInputs, fluidInputs, PropertySet.circuit(voltage, itemInputs));
             finish = System.nanoTime();
             if (i >= WARMUP) nsTree[i - WARMUP] = GTUtility.safeCastLongToInt(finish - start);
             if (i == 0) {

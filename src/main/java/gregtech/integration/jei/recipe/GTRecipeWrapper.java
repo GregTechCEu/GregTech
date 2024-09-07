@@ -256,7 +256,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
         // Default entries
         if (drawTotalEU) {
-            long eu = recipe.getEUt() * recipe.getDuration();
+            long eu = recipe.getVoltage() * recipe.getDuration();
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
             if (storage.contains(TotalComputationProperty.getInstance()) &&
                     storage.contains(ComputationProperty.getInstance())) {
@@ -272,7 +272,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     I18n.format(
                             recipeMap.getRecipeMapUI().isGenerator() ? "gregtech.recipe.eu_inverted" :
                                     "gregtech.recipe.eu",
-                            recipe.getEUt(), GTValues.VN[GTUtility.getTierByVoltage(recipe.getEUt())]),
+                            recipe.getVoltage(), GTValues.VN[GTUtility.getTierByVoltage(recipe.getVoltage())]),
                     0, yPosition += LINE_HEIGHT, 0x111111);
         }
         if (drawDuration) {

@@ -1,13 +1,18 @@
 package gregtech.api.recipes.tree.property;
 
+import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+
+import gregtech.api.recipes.tree.property.filter.IPropertyFilter;
+import gregtech.api.recipes.tree.property.filter.RecipePropertyWithFilter;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
 import java.util.BitSet;
 
-public final class PropertyFilterMap extends Object2ObjectOpenCustomHashMap<IPropertyFilter, IPropertyFilter.Filter> {
+public final class PropertyFilterMap extends Object2ObjectOpenCustomHashMap<IPropertyFilter<?>, IPropertyFilter.Filter<?>> {
 
-    private static final Hash.Strategy<IPropertyFilter> STRATEGY = new Strategy<>() {
+    private static final Hash.Strategy<IPropertyFilter<?>> STRATEGY = new Strategy<>() {
 
         @Override
         public int hashCode(IPropertyFilter o) {
@@ -15,7 +20,7 @@ public final class PropertyFilterMap extends Object2ObjectOpenCustomHashMap<IPro
         }
 
         @Override
-        public boolean equals(IPropertyFilter a, IPropertyFilter b) {
+        public boolean equals(IPropertyFilter<?> a, IPropertyFilter<?> b) {
             if (a == null) {
                 if (b == null) return true;
                 else return b.filterEquals(null);
@@ -27,12 +32,26 @@ public final class PropertyFilterMap extends Object2ObjectOpenCustomHashMap<IPro
         super(STRATEGY);
     }
 
-    public void addFilter(int recipeID, IPropertyFilter filter) {
-        addFilter((short) recipeID, filter);
+    public void addFilters(int recipeID, RecipePropertyStorage storage) {
+        for (var entry : storage.entrySet()) {
+            if (entry.getKey() instanceof RecipePropertyWithFilter<?> filter) {
+                handle(recipeID, filter, storage);
+            }
+        }
     }
 
-    public void addFilter(short recipeID, IPropertyFilter filter) {
-        this.computeIfAbsent(filter, IPropertyFilter::getNewFilter).accumulate(recipeID, filter);
+    private <T> void handle(int recipeID, RecipePropertyWithFilter<T> property, RecipePropertyStorage storage) {
+        addFilter(recipeID, property, storage.get(property, null));
+    }
+
+    public <H, T extends RecipeProperty<H> & IPropertyFilter<H>> void addFilter(int recipeID, T filter, H obj) {
+        addFilter((short) recipeID, filter, obj);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <H, T extends RecipeProperty<H> & IPropertyFilter<H>> void addFilter(short recipeID, T filter, H obj) {
+        if (obj == null) return;
+        ((IPropertyFilter.Filter<H>) this.computeIfAbsent(filter, IPropertyFilter::getNewFilter)).accumulate(recipeID, obj);
     }
 
     public BitSet filter(PropertySet properties) {
@@ -42,7 +61,7 @@ public final class PropertyFilterMap extends Object2ObjectOpenCustomHashMap<IPro
     }
 
     public void filter(BitSet bitSet, PropertySet properties) {
-        for (IPropertyFilter.Filter filter : values()) {
+        for (IPropertyFilter.Filter<?> filter : values()) {
             filter.filter(bitSet, properties);
         }
     }
