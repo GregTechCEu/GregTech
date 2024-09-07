@@ -74,6 +74,9 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private final Int2ObjectOpenHashMap<NetLogicData> netLogicDatas = new Int2ObjectOpenHashMap<>();
     private final ObjectOpenHashSet<NetLogicData.ILogicDataListener> listeners = new ObjectOpenHashSet<>();
 
+    // this tile was loaded from datafixed NBT and needs to initialize its connections
+    private boolean legacy;
+
     // information that is only required for determining graph topology should be stored on the tile entity level,
     // while information interacted with during graph traversal should be stored on the NetLogicData level.
 
@@ -509,6 +512,13 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                         updateTemperatureLogic(candidate);
                 }
             }
+            if (this.legacy) {
+                for (EnumFacing facing : EnumFacing.VALUES) {
+                    if (this.isConnected(facing))
+                        PipeBlock.connectTile(this, this.getPipeNeighbor(facing, false), facing);
+                }
+                this.legacy = false;
+            }
             this.netLogicDatas.trim();
             this.capabilities.trim();
             this.netCapabilities.trim();
@@ -538,6 +548,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         compound.setByte("RenderMask", renderMask);
         compound.setByte("BlockedMask", blockedMask);
         compound.setInteger("Paint", paintingColor);
+        if (legacy) compound.setBoolean("Legacy", true);
         if (frameMaterial != null) compound.setString("Frame", frameMaterial.getRegistryName());
         compound.setTag("Covers", getCoverHolder().serializeNBT());
         return compound;
@@ -550,6 +561,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         renderMask = compound.getByte("RenderMask");
         blockedMask = compound.getByte("BlockedMask");
         paintingColor = compound.getInteger("Paint");
+        legacy = compound.getBoolean("Legacy");
         if (compound.hasKey("Frame"))
             this.frameMaterial = GregTechAPI.materialManager.getMaterial(compound.getString("Frame"));
         else this.frameMaterial = null;
