@@ -9,7 +9,6 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -71,9 +70,6 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        if (TooltipHelper.isCtrlDown())
-            return getCoverableView().getStackForm();
-
         return this.itemFilterContainer.getFilterStack();
     }
 
