@@ -374,10 +374,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         RecipeDataQuery query = new RecipeDataQuery(recipe);
         for (IDataAccess hatch : hatches) {
             // hatches need to have the recipe available
-            hatch.accessData(query);
-            if (query.isFound()) return true;
+            if (query.traverseTo(hatch) && hatch.accessData(query)) break;
         }
-        return false;
+        return query.isFound();
     }
 
     @Override

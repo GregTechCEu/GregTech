@@ -151,7 +151,6 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public boolean accessData(@NotNull DataQueryObject queryObject) {
-        if (!supportsQuery(queryObject)) return false;
         if (queryObject instanceof RecipeDataQuery query) {
             if (isCreative || recipes.contains(query.getRecipe())) {
                 query.setFound();

@@ -10,8 +10,7 @@ public interface IDataAccess {
     /**
      * Queries this {@link IDataAccess} with the specified query.
      * 
-     * @param queryObject the object representing the query. Can be cached in a
-     *                    {@link gregtech.api.util.reference.WeakHashSet} in order to prevent endless recursion.
+     * @param queryObject the object representing the query.
      * @return if the query has been cancelled
      */
     boolean accessData(@NotNull DataQueryObject queryObject);
@@ -42,10 +41,12 @@ public interface IDataAccess {
         boolean walk = false;
         boolean cancelled = false;
         for (IDataAccess access : accesses) {
-            query.setShouldTriggerWalker(false);
-            cancelled = access.accessData(query);
-            if (!walk) walk = query.shouldTriggerWalker();
-            if (cancelled) break;
+            if (query.traverseTo(access)) {
+                query.setShouldTriggerWalker(false);
+                cancelled = access.accessData(query);
+                if (!walk) walk = query.shouldTriggerWalker();
+                if (cancelled) break;
+            }
         }
         query.setShouldTriggerWalker(walk);
         return cancelled;

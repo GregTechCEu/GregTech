@@ -13,7 +13,6 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.reference.WeakHashSet;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
@@ -38,8 +37,6 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
 
     private final boolean isTransmitter;
 
-    private final WeakHashSet<DataQueryObject> recentQueries = new WeakHashSet<>();
-
     public MetaTileEntityComputationHatch(ResourceLocation metaTileEntityId, boolean isTransmitter) {
         super(metaTileEntityId, GTValues.ZPM);
         this.isTransmitter = isTransmitter;
@@ -57,7 +54,6 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public boolean accessData(@NotNull DataQueryObject queryObject) {
-        if (!supportsQuery(queryObject) || !recentQueries.add(queryObject)) return false;
         if (isAttachedToMultiBlock()) {
             if (isTransmitter()) {
                 MultiblockControllerBase controller = getController();
@@ -79,7 +75,7 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
 
                 IDataAccess cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
                         getFrontFacing().getOpposite());
-                return cap != null && cap.accessData(queryObject);
+                if (queryObject.traverseTo(cap)) return cap.accessData(queryObject);
             }
         }
         return false;
