@@ -102,14 +102,6 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
         }
     }
 
-    protected static final class MaterialPropertyComparator implements Comparator<IPipeNetMaterialProperty> {
-
-        @Override
-        public int compare(IPipeNetMaterialProperty o1, IPipeNetMaterialProperty o2) {
-            return 0;
-        }
-    }
-
     public interface IPipeNetMaterialProperty extends IMaterialProperty {
 
         @Nullable

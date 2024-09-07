@@ -10,6 +10,7 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+import gregtech.api.util.reference.WeakHashSet;
 import gregtech.common.pipelike.net.SlowActiveWalker;
 
 import net.minecraft.util.EnumFacing;
@@ -27,6 +28,8 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
 
     private @Nullable PipeTileEntity tile;
 
+    private final WeakHashSet<DataQueryObject> recentQueries = new WeakHashSet<>();
+
     public <N extends WorldPipeNet & BasicWorldPipeNetPath.Provider> DataCapabilityObject(@NotNull N net) {
         this.net = net;
     }
@@ -42,7 +45,7 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
 
     @Override
     public boolean accessData(@NotNull DataQueryObject queryObject) {
-        if (tile == null) return false;
+        if (tile == null || !recentQueries.add(queryObject)) return false;
 
         for (Iterator<BasicWorldPipeNetPath> it = getPaths(); it.hasNext();) {
             BasicWorldPipeNetPath path = it.next();
