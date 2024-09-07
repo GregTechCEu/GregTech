@@ -43,6 +43,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -513,10 +514,17 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 }
             }
             if (this.legacy) {
+                BlockPos.PooledMutableBlockPos mutablePos = BlockPos.PooledMutableBlockPos.retain();
                 for (EnumFacing facing : EnumFacing.VALUES) {
-                    if (this.isConnected(facing))
-                        PipeBlock.connectTile(this, this.getPipeNeighbor(facing, false), facing);
+                    if (this.isConnected(facing)) {
+                        mutablePos.setPos(this.getPos().offset(facing));
+                        TileEntity candidate = getWorld().getChunk(mutablePos)
+                                .getTileEntity(mutablePos, Chunk.EnumCreateEntityType.CHECK);
+                        if (candidate instanceof PipeTileEntity pipe)
+                            PipeBlock.connectTile(this, pipe, facing);
+                    }
                 }
+                mutablePos.release();
                 this.legacy = false;
             }
             this.netLogicDatas.trim();
