@@ -80,7 +80,8 @@ public class CoverShutter extends CoverBase implements IControllable, TransferCo
 
     @Override
     public boolean canPipePassThrough() {
-        return !isWorkingAllowed;
+        // isWorkingAllowed restriction is applied during edge predication
+        return true;
     }
 
     @Override

@@ -754,4 +754,9 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             return super.drain(maxDrain, doDrain);
         }
     }
+
+    @Override
+    public boolean canPipePassThrough() {
+        return true;
+    }
 }

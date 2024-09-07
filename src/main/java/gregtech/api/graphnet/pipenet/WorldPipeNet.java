@@ -9,10 +9,12 @@ import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
+import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.worldnet.WorldPosNet;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.reference.WeakHashSet;
+import gregtech.common.covers.CoverShutter;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -129,7 +131,12 @@ public abstract class WorldPipeNet extends WorldPosNet {
      * @param a    the cover on the source of the edge
      * @param b    the cover on the sink of the edge
      */
-    protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {}
+    protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
+        if (a instanceof CoverShutter aS && aS.isWorkingEnabled() ||
+                b instanceof CoverShutter bS && bS.isWorkingEnabled()) {
+            edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+        }
+    }
 
     public abstract Capability<?>[] getTargetCapabilities();
 

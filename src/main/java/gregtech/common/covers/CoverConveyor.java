@@ -789,4 +789,9 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             return super.extractItem(slot, amount, simulate);
         }
     }
+
+    @Override
+    public boolean canPipePassThrough() {
+        return true;
+    }
 }

@@ -37,7 +37,6 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.IntUnaryOperator;
 
@@ -189,41 +188,41 @@ public class CoverFluidRegulator extends CoverPump {
                                 .setTextColor(Color.WHITE.darker(1))));
     }
 
-    @Override
-    public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
-                               boolean doFill) {
-        if (pumpMode == PumpMode.EXPORT) {
-            if (transferMode == TransferMode.KEEP_EXACT) {
-                int contained = computeContained(destHandler, testObject);
-                assert getFluidFilter() != null;
-                int keep = getFluidFilter().getTransferLimit(testObject.recombine());
-                if (contained >= keep) return 0;
-                return super.insertToHandler(testObject, Math.min(keep - contained, amount), destHandler, doFill);
-            } else if (transferMode == TransferMode.TRANSFER_EXACT) {
-                assert getFluidFilter() != null;
-                int required = getFluidFilter().getTransferLimit(testObject.recombine());
-                if (amount < required) return 0;
-                return super.insertToHandler(testObject, required, destHandler, doFill);
-            }
-        }
-        return super.insertToHandler(testObject, amount, destHandler, doFill);
-    }
-
-    @Override
-    public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
-                                                   IFluidHandler sourceHandler, boolean doDrain) {
-        if (pumpMode == PumpMode.IMPORT) {
-            // TODO should extraction instead be ignored for transfer exact?
-            if (transferMode == TransferMode.TRANSFER_EXACT) {
-                assert getFluidFilter() != null;
-                int required = testObject == null ? getFluidFilter().getTransferSize() :
-                        getFluidFilter().getTransferLimit(testObject.recombine());
-                if (amount < required) return null;
-                else amount = required;
-            }
-        }
-        return super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
-    }
+    // @Override
+    // public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
+    // boolean doFill) {
+    // if (pumpMode == PumpMode.EXPORT) {
+    // if (transferMode == TransferMode.KEEP_EXACT) {
+    // int contained = computeContained(destHandler, testObject);
+    // assert getFluidFilter() != null;
+    // int keep = getFluidFilter().getTransferLimit(testObject.recombine());
+    // if (contained >= keep) return 0;
+    // return super.insertToHandler(testObject, Math.min(keep - contained, amount), destHandler, doFill);
+    // } else if (transferMode == TransferMode.TRANSFER_EXACT) {
+    // assert getFluidFilter() != null;
+    // int required = getFluidFilter().getTransferLimit(testObject.recombine());
+    // if (amount < required) return 0;
+    // return super.insertToHandler(testObject, required, destHandler, doFill);
+    // }
+    // }
+    // return super.insertToHandler(testObject, amount, destHandler, doFill);
+    // }
+    //
+    // @Override
+    // public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
+    // IFluidHandler sourceHandler, boolean doDrain) {
+    // if (pumpMode == PumpMode.IMPORT) {
+    // // should extraction instead be ignored for transfer exact?
+    // if (transferMode == TransferMode.TRANSFER_EXACT) {
+    // assert getFluidFilter() != null;
+    // int required = testObject == null ? getFluidFilter().getTransferSize() :
+    // getFluidFilter().getTransferLimit(testObject.recombine());
+    // if (amount < required) return null;
+    // else amount = required;
+    // }
+    // }
+    // return super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
+    // }
 
     @Override
     public int getMaxTransferRate() {

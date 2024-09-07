@@ -210,41 +210,42 @@ public class CoverRoboticArm extends CoverConveyor {
                                 .setTextColor(Color.WHITE.darker(1))));
     }
 
-    @Override
-    public int insertToHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler destHandler,
-                               boolean simulate) {
-        if (conveyorMode == ConveyorMode.EXPORT) {
-            if (transferMode == TransferMode.KEEP_EXACT) {
-                int contained = computeContained(destHandler, testObject);
-                assert getItemFilter() != null;
-                int keep = getItemFilter().getTransferLimit(testObject.recombine());
-                if (contained >= keep) return amount;
-                int allowed = Math.min(keep - contained, amount);
-                return (amount - allowed) + super.insertToHandler(testObject, allowed, destHandler, simulate);
-            } else if (transferMode == TransferMode.TRANSFER_EXACT) {
-                assert getItemFilter() != null;
-                int required = getItemFilter().getTransferLimit(testObject.recombine());
-                if (amount < required) return amount;
-                return (amount - required) + super.insertToHandler(testObject, required, destHandler, simulate);
-            }
-        }
-        return super.insertToHandler(testObject, amount, destHandler, simulate);
-    }
-
-    @Override
-    public int extractFromHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler sourceHandler,
-                                  boolean simulate) {
-        if (conveyorMode == ConveyorMode.IMPORT) {
-            // TODO should extraction instead be ignored for transfer exact?
-            if (transferMode == TransferMode.TRANSFER_EXACT) {
-                assert getItemFilter() != null;
-                int required = getItemFilter().getTransferLimit(testObject.recombine());
-                if (amount < required) return 0;
-                else amount = required;
-            }
-        }
-        return super.extractFromHandler(testObject, amount, sourceHandler, simulate);
-    }
+    // @Override
+    // public int insertToHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler destHandler,
+    // boolean simulate) {
+    // if (conveyorMode == ConveyorMode.EXPORT) {
+    // if (transferMode == TransferMode.KEEP_EXACT) {
+    // int contained = computeContained(destHandler, testObject);
+    // assert getItemFilter() != null;
+    // int keep = getItemFilter().getTransferLimit(testObject.recombine());
+    // if (contained >= keep) return amount;
+    // int allowed = Math.min(keep - contained, amount);
+    // return (amount - allowed) + super.insertToHandler(testObject, allowed, destHandler, simulate);
+    // } else if (transferMode == TransferMode.TRANSFER_EXACT) {
+    // assert getItemFilter() != null;
+    // int required = getItemFilter().getTransferLimit(testObject.recombine());
+    // if (amount < required) return amount;
+    // return (amount - required) + super.insertToHandler(testObject, required, destHandler, simulate);
+    // }
+    // }
+    // return super.insertToHandler(testObject, amount, destHandler, simulate);
+    // }
+    //
+    // @Override
+    // public int extractFromHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler
+    // sourceHandler,
+    // boolean simulate) {
+    // if (conveyorMode == ConveyorMode.IMPORT) {
+    // // should extraction instead be ignored for transfer exact?
+    // if (transferMode == TransferMode.TRANSFER_EXACT) {
+    // assert getItemFilter() != null;
+    // int required = getItemFilter().getTransferLimit(testObject.recombine());
+    // if (amount < required) return 0;
+    // else amount = required;
+    // }
+    // }
+    // return super.extractFromHandler(testObject, amount, sourceHandler, simulate);
+    // }
 
     @Override
     protected int getMaxStackSize() {
