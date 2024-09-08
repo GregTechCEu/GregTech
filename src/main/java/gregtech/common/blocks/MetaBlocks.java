@@ -437,7 +437,7 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(MetaTileEntityHolder.class, gregtechId("machine"));
         GameRegistry.registerTileEntity(PipeTileEntity.class, gregtechId("pipe"));
         GameRegistry.registerTileEntity(PipeMaterialTileEntity.class, gregtechId("material_pipe"));
-        GameRegistry.registerTileEntity(PipeActivableTileEntity.class, gregtechId("activable_pipe"));
+        GameRegistry.registerTileEntity(PipeActivableTileEntity.class, gregtechId("activatable_pipe"));
     }
 
     @SideOnly(Side.CLIENT)
