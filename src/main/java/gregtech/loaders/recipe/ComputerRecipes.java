@@ -1,8 +1,8 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.metatileentity.multiblock.CleanroomType;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.ingredients.old.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.old.nbtmatch.NBTMatcher;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockComputerCasing;

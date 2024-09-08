@@ -1,7 +1,7 @@
 package gregtech.api.gui.widgets;
 
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 

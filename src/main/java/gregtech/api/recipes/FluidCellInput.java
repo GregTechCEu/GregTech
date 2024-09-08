@@ -1,6 +1,6 @@
 package gregtech.api.recipes;
 
-import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeItemInput;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.item.ItemStack;

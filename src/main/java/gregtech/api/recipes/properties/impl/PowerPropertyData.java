@@ -1,9 +1,5 @@
 package gregtech.api.recipes.properties.impl;
 
-import gregtech.api.recipes.tree.property.IRecipeSearchProperty;
-
-import org.jetbrains.annotations.Nullable;
-
 public class PowerPropertyData {
 
     public static final PowerPropertyData EMPTY = new PowerPropertyData(0, 0);

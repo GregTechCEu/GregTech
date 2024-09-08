@@ -1,12 +1,12 @@
 package gregtech.integration.crafttweaker.recipe;
 
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.ingredients.GTRecipeItemInput;
-import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.ingredients.old.GTRecipeFluidInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.old.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.old.nbtmatch.NBTMatcher;
 import gregtech.api.util.ItemStackHashStrategy;
 
 import net.minecraft.item.ItemStack;

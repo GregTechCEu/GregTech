@@ -6,7 +6,7 @@ import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;

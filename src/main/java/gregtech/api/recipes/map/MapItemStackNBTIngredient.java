@@ -1,6 +1,6 @@
 package gregtech.api.recipes.map;
 
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

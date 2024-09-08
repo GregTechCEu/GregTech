@@ -10,7 +10,8 @@ import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
+import gregtech.api.recipes.lookup.AbstractRecipeLookup;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -94,8 +95,10 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public static void afterScriptLoad(ScriptRunEvent.Post event) {
         // Not Needed if JEI Module is enabled
-        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI))
+        if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI)) {
             GTRecipeOreInput.refreshStackCache();
+            AbstractRecipeLookup.rebuildRecipeLookups();
+        }
     }
 
     @SubscribeEvent

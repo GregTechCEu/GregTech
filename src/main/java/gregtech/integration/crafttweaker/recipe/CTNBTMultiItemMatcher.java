@@ -1,7 +1,7 @@
 package gregtech.integration.crafttweaker.recipe;
 
-import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
+import gregtech.api.recipes.ingredients.old.nbtmatch.NBTCondition;
+import gregtech.api.recipes.ingredients.old.nbtmatch.NBTMatcher;
 import gregtech.api.util.GTLog;
 
 import net.minecraft.item.ItemStack;

@@ -7,7 +7,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.common.covers.filter.readers.SmartItemFilterReader;
 

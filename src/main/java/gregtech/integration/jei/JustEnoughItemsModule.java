@@ -16,8 +16,9 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.category.ICategoryOverride;
-import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
+import gregtech.api.recipes.lookup.AbstractRecipeLookup;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
@@ -320,6 +321,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
 
         // Refresh Ore Ingredients Cache
         GTRecipeOreInput.refreshStackCache();
+        AbstractRecipeLookup.rebuildRecipeLookups();
     }
 
     private void setupInputHandler() {

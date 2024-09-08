@@ -1,12 +1,12 @@
 package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.recipes.tree.property.EUToStartProperty;
-import gregtech.api.recipes.tree.property.PropertySet;
-import gregtech.api.recipes.tree.property.filter.FilterEqualityBehavior;
-import gregtech.api.recipes.tree.property.filter.IPropertyFilter;
-import gregtech.api.recipes.tree.property.filter.LongAVLFilter;
-import gregtech.api.recipes.tree.property.filter.RecipePropertyWithFilter;
+import gregtech.api.recipes.lookup.property.EUToStartProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
+import gregtech.api.recipes.lookup.property.filter.FilterEqualityBehavior;
+import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
+import gregtech.api.recipes.lookup.property.filter.LongAVLFilter;
+import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.client.Minecraft;

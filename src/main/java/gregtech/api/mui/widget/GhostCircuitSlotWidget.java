@@ -3,7 +3,7 @@ package gregtech.api.mui.widget;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.item.ItemStack;

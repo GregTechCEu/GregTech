@@ -2,7 +2,7 @@ package gregtech.integration.crafttweaker;
 
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.RecipeCompatUtil;
 

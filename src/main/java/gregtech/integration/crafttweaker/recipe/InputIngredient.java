@@ -1,6 +1,6 @@
 package gregtech.integration.crafttweaker.recipe;
 
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.*;

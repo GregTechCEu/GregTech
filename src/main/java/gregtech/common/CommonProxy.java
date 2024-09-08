@@ -9,9 +9,10 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.IngredientCache;
+import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
+import gregtech.api.recipes.lookup.AbstractRecipeLookup;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
-import gregtech.api.recipes.tree.TreeComparisonManager;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
@@ -362,8 +363,10 @@ public class CommonProxy {
 
         // On initial load we need to postpone cache flushing until FMLPostInitializationEvent
         // to account for post-init recipe registration
-        if (Loader.instance().hasReachedState(LoaderState.AVAILABLE))
+        if (Loader.instance().hasReachedState(LoaderState.AVAILABLE)) {
             GTRecipeInputCache.disableCache();
+            IngredientCache.releaseCaches();
+        }
     }
 
     @SubscribeEvent
@@ -420,14 +423,16 @@ public class CommonProxy {
 
     public void onLoadComplete() {
         GTRecipeInputCache.disableCache();
+        IngredientCache.releaseCaches();
 
         // If JEI and GS is not loaded, refresh ore dict ingredients
         // Not needed if JEI is loaded, as done in the JEI plugin (and this runs after that)
         // Not needed if GS is loaded, as done after script loads (and this runs after that)
         if (!GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_JEI) &&
-                !GroovyScriptModule.isCurrentlyRunning())
+                !GroovyScriptModule.isCurrentlyRunning()) {
             GTRecipeOreInput.refreshStackCache();
-        TreeComparisonManager.run();
+            AbstractRecipeLookup.rebuildRecipeLookups();
+        }
     }
 
     public boolean isFancyGraphics() {

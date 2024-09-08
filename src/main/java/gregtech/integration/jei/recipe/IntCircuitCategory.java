@@ -1,7 +1,7 @@
 package gregtech.integration.jei.recipe;
 
 import gregtech.api.GTValues;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.jei.JustEnoughItemsModule;

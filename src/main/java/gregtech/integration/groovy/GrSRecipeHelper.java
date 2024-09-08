@@ -2,7 +2,7 @@ package gregtech.integration.groovy;
 
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.integration.RecipeCompatUtil;
 
 import net.minecraft.item.ItemStack;

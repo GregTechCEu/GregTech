@@ -2,7 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.persistence.PersistentData;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 

@@ -2,15 +2,13 @@ package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
-import gregtech.api.recipes.properties.RecipeProperty;
 
-import gregtech.api.recipes.tree.property.CleanroomFulfilmentProperty;
-import gregtech.api.recipes.tree.property.PropertySet;
-import gregtech.api.recipes.tree.property.filter.IPropertyFilter;
-import gregtech.api.recipes.tree.property.filter.RecipePropertyWithFilter;
+import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
+import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
+import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;

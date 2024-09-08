@@ -13,7 +13,7 @@ import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.properties.RecipeProperty;

@@ -3,7 +3,7 @@ package gregtech.loaders.recipe;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;

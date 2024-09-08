@@ -8,7 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.resources.I18n;

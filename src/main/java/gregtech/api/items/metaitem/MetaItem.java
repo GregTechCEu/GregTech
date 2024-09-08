@@ -23,7 +23,7 @@ import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.items.metaitem.stats.IItemUseManager;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;

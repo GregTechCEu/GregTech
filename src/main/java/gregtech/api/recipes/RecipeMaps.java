@@ -15,7 +15,7 @@ import gregtech.api.recipes.builders.ImplosionRecipeBuilder;
 import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.machines.RecipeMapAssemblyLine;
 import gregtech.api.recipes.machines.RecipeMapFluidCanner;
 import gregtech.api.recipes.machines.RecipeMapFormingPress;

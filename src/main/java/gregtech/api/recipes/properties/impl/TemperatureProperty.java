@@ -1,13 +1,12 @@
 package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.recipes.properties.RecipeProperty;
-import gregtech.api.recipes.tree.property.PropertySet;
-import gregtech.api.recipes.tree.property.TemperatureMaximumProperty;
-import gregtech.api.recipes.tree.property.filter.FilterEqualityBehavior;
-import gregtech.api.recipes.tree.property.filter.IPropertyFilter;
-import gregtech.api.recipes.tree.property.filter.IntAVLFilter;
-import gregtech.api.recipes.tree.property.filter.RecipePropertyWithFilter;
+import gregtech.api.recipes.lookup.property.PropertySet;
+import gregtech.api.recipes.lookup.property.TemperatureMaximumProperty;
+import gregtech.api.recipes.lookup.property.filter.FilterEqualityBehavior;
+import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
+import gregtech.api.recipes.lookup.property.filter.IntAVLFilter;
+import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
 import gregtech.api.unification.material.Material;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
@@ -24,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
-import java.util.Map;
-import java.util.TreeMap;
 
 public final class TemperatureProperty extends RecipePropertyWithFilter<Integer> {
 

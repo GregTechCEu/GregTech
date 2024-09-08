@@ -1,6 +1,6 @@
 package gregtech.integration.jei.recipe;
 
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 
 import net.minecraft.item.ItemStack;
 

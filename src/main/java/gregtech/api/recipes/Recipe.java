@@ -7,7 +7,9 @@ import gregtech.api.recipes.chance.output.ChancedOutputList;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.IFluidIngredient;
+import gregtech.api.recipes.ingredients.IItemIngredient;
+import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
@@ -17,6 +19,9 @@ import gregtech.api.recipes.properties.impl.PowerPropertyData;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.integration.groovy.GroovyScriptModule;
+
+import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -61,25 +66,17 @@ import java.util.List;
  */
 public class Recipe {
 
-    /**
-     * This method was deprecated in 2.8 and will be removed in 2.9
-     *
-     * @deprecated use {@link ChancedOutputLogic#getMaxChancedValue()}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public static int getMaxChancedValue() {
-        return ChancedOutputLogic.getMaxChancedValue();
-    }
-
-    private final List<GTRecipeInput> inputs;
+    private final List<IItemIngredient> itemIngredients;
+    private final Object2ByteOpenHashMap<IItemIngredient> equalityItemFrequencyMap;
+    private final List<IFluidIngredient> fluidIngredients;
+    private final Object2ByteOpenHashMap<IFluidIngredient> equalityFluidFrequencyMap;
+    public final long ingredientFlags;
     private final List<ItemStack> outputs;
 
     /**
      * A chance of 10000 equals 100%
      */
     private final ChancedOutputList<ItemStack, ChancedItemOutput> chancedOutputs;
-    private final List<GTRecipeInput> fluidInputs;
     private final List<FluidStack> fluidOutputs;
     private final ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs;
 
@@ -101,10 +98,10 @@ public class Recipe {
 
     private final int hashCode;
 
-    public Recipe(@NotNull List<GTRecipeInput> inputs,
+    public Recipe(@NotNull List<IItemIngredient> itemIngredients,
+                  @NotNull List<IFluidIngredient> fluidIngredients,
                   List<ItemStack> outputs,
                   @NotNull ChancedOutputList<ItemStack, ChancedItemOutput> chancedOutputs,
-                  List<GTRecipeInput> fluidInputs,
                   List<FluidStack> fluidOutputs,
                   @NotNull ChancedOutputList<FluidStack, ChancedFluidOutput> chancedFluidOutputs,
                   int duration,
@@ -112,8 +109,11 @@ public class Recipe {
                   boolean isCTRecipe,
                   @NotNull RecipePropertyStorage recipePropertyStorage,
                   @NotNull GTRecipeCategory recipeCategory) {
+        int ingredients = itemIngredients.size() + fluidIngredients.size();
+        if (ingredients > 64) throw new IllegalArgumentException("Recipe Search cannot support more than 64 item and fluid inputs to a recipe!");
+        else this.ingredientFlags = 1L << ingredients;
         this.recipePropertyStorage = recipePropertyStorage;
-        this.inputs = GTRecipeInputCache.deduplicateInputs(inputs);
+        this.itemIngredients = itemIngredients;
         if (outputs.isEmpty()) {
             this.outputs = Collections.emptyList();
         } else {
@@ -121,7 +121,7 @@ public class Recipe {
         }
         this.chancedOutputs = chancedOutputs;
         this.chancedFluidOutputs = chancedFluidOutputs;
-        this.fluidInputs = GTRecipeInputCache.deduplicateInputs(fluidInputs);
+        this.fluidIngredients = fluidIngredients;
         this.fluidOutputs = fluidOutputs.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(fluidOutputs);
         this.duration = duration;
         this.hidden = hidden;
@@ -129,11 +129,19 @@ public class Recipe {
         this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
         this.groovyRecipe = GroovyScriptModule.isCurrentlyRunning();
+        this.equalityItemFrequencyMap = new Object2ByteOpenHashMap<>();
+        for (IItemIngredient ingredient : this.itemIngredients) {
+            this.equalityItemFrequencyMap.merge(ingredient, (byte) 1, (a, b) -> (byte) (a + b));
+        }
+        this.equalityFluidFrequencyMap = new Object2ByteOpenHashMap<>();
+        for (IFluidIngredient ingredient : this.fluidIngredients) {
+            this.equalityFluidFrequencyMap.merge(ingredient, (byte) 1, (a, b) -> (byte) (a + b));
+        }
     }
 
     @NotNull
     public Recipe copy() {
-        return new Recipe(this.inputs, this.outputs, this.chancedOutputs, this.fluidInputs,
+        return new Recipe(this.itemIngredients, this.fluidIngredients, this.outputs, this.chancedOutputs,
                 this.fluidOutputs, this.chancedFluidOutputs, this.duration,
                 this.hidden, this.isCTRecipe, this.recipePropertyStorage, this.recipeCategory);
     }
@@ -182,54 +190,7 @@ public class Recipe {
 
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs,
                                  IMultipleTankHandler fluidInputs) {
-        Pair<Boolean, int[]> fluids = null;
-        Pair<Boolean, int[]> items = null;
-
-        if (fluidInputs.getFluidTanks().size() > 0) {
-            fluids = matchesFluid(GTUtility.fluidHandlerToList(fluidInputs));
-            if (!fluids.getKey()) {
-                return false;
-            }
-        }
-
-        if (inputs.getSlots() > 0) {
-            items = matchesItems(GTUtility.itemHandlerToList(inputs));
-            if (!items.getKey()) {
-                return false;
-            }
-        }
-
-        if (consumeIfSuccessful) {
-            if (fluids != null) {
-                int[] fluidAmountInTank = fluids.getValue();
-                var backedList = fluidInputs.getFluidTanks();
-
-                for (int i = 0; i < fluidAmountInTank.length; i++) {
-                    var tank = backedList.get(i);
-                    FluidStack fluidStack = tank.getFluid();
-                    int fluidAmount = fluidAmountInTank[i];
-
-                    if (fluidStack == null || fluidStack.amount == fluidAmount) {
-                        continue;
-                    }
-                    tank.drain(Math.abs(fluidAmount - fluidStack.amount), true);
-                }
-            }
-            if (items != null) {
-                int[] itemAmountInSlot = items.getValue();
-                for (int i = 0; i < itemAmountInSlot.length; i++) {
-                    ItemStack itemInSlot = inputs.getStackInSlot(i);
-                    int itemAmount = itemAmountInSlot[i];
-
-                    if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount) {
-                        continue;
-                    }
-                    inputs.extractItem(i, Math.abs(itemAmount - itemInSlot.getCount()), false);
-                }
-            }
-        }
-
-        return true;
+        return false;
     }
 
     /**
@@ -241,112 +202,7 @@ public class Recipe {
      * @return true if the recipe matches the given inputs false otherwise.
      */
     public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        Pair<Boolean, int[]> fluids = null;
-        Pair<Boolean, int[]> items = null;
-
-        if (fluidInputs.size() > 0) {
-            fluids = matchesFluid(fluidInputs);
-            if (!fluids.getKey()) {
-                return false;
-            }
-        }
-
-        if (inputs.size() > 0) {
-            items = matchesItems(inputs);
-            if (!items.getKey()) {
-                return false;
-            }
-        }
-
-        if (consumeIfSuccessful) {
-            if (fluids != null) {
-                int[] fluidAmountInTank = fluids.getValue();
-
-                for (int i = 0; i < fluidAmountInTank.length; i++) {
-                    FluidStack fluidStack = fluidInputs.get(i);
-                    int fluidAmount = fluidAmountInTank[i];
-                    if (fluidStack == null || fluidStack.amount == fluidAmount)
-                        continue;
-                    fluidStack.amount = fluidAmount;
-                    if (fluidStack.amount == 0)
-                        fluidInputs.set(i, null);
-                }
-            }
-            if (items != null) {
-                int[] itemAmountInSlot = items.getValue();
-                for (int i = 0; i < itemAmountInSlot.length; i++) {
-                    ItemStack itemInSlot = inputs.get(i);
-                    int itemAmount = itemAmountInSlot[i];
-                    if (itemInSlot.isEmpty() || itemInSlot.getCount() == itemAmount)
-                        continue;
-                    itemInSlot.setCount(itemAmountInSlot[i]);
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private Pair<Boolean, int[]> matchesItems(List<ItemStack> inputs) {
-        int[] itemAmountInSlot = new int[inputs.size()];
-        int indexed = 0;
-
-        List<GTRecipeInput> gtRecipeInputs = this.inputs;
-        for (GTRecipeInput ingredient : gtRecipeInputs) {
-            int ingredientAmount = ingredient.getAmount();
-            for (int j = 0; j < inputs.size(); j++) {
-                ItemStack inputStack = inputs.get(j);
-
-                if (j == indexed) {
-                    itemAmountInSlot[j] = inputStack.isEmpty() ? 0 : inputStack.getCount();
-                    indexed++;
-                }
-
-                if (inputStack.isEmpty() || !ingredient.acceptsStack(inputStack))
-                    continue;
-                int itemAmountToConsume = Math.min(itemAmountInSlot[j], ingredientAmount);
-                ingredientAmount -= itemAmountToConsume;
-                if (!ingredient.isNonConsumable()) itemAmountInSlot[j] -= itemAmountToConsume;
-                if (ingredientAmount == 0) break;
-            }
-            if (ingredientAmount > 0)
-                return Pair.of(false, itemAmountInSlot);
-        }
-        int[] retItemAmountInSlot = new int[indexed];
-        System.arraycopy(itemAmountInSlot, 0, retItemAmountInSlot, 0, indexed);
-
-        return Pair.of(true, retItemAmountInSlot);
-    }
-
-    private Pair<Boolean, int[]> matchesFluid(List<FluidStack> fluidInputs) {
-        int[] fluidAmountInTank = new int[fluidInputs.size()];
-        int indexed = 0;
-
-        List<GTRecipeInput> gtRecipeInputs = this.fluidInputs;
-        for (GTRecipeInput fluid : gtRecipeInputs) {
-            int fluidAmount = fluid.getAmount();
-            for (int j = 0; j < fluidInputs.size(); j++) {
-                FluidStack tankFluid = fluidInputs.get(j);
-
-                if (j == indexed) {
-                    indexed++;
-                    fluidAmountInTank[j] = tankFluid == null ? 0 : tankFluid.amount;
-                }
-
-                if (tankFluid == null || !fluid.acceptsFluid(tankFluid))
-                    continue;
-                int fluidAmountToConsume = Math.min(fluidAmountInTank[j], fluidAmount);
-                fluidAmount -= fluidAmountToConsume;
-                if (!fluid.isNonConsumable()) fluidAmountInTank[j] -= fluidAmountToConsume;
-                if (fluidAmount == 0) break;
-            }
-            if (fluidAmount > 0)
-                return Pair.of(false, fluidAmountInTank);
-        }
-        int[] retfluidAmountInTank = new int[indexed];
-        System.arraycopy(fluidAmountInTank, 0, retfluidAmountInTank, 0, indexed);
-
-        return Pair.of(true, retfluidAmountInTank);
+        return false;
     }
 
     @Override
@@ -354,32 +210,23 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return hasSameInputs(recipe) && hasSameFluidInputs(recipe);
+        return this.equalityItemFrequencyMap.equals(recipe.equalityItemFrequencyMap) && this.equalityFluidFrequencyMap.equals(recipe.equalityFluidFrequencyMap);
     }
 
     private int makeHashCode() {
-        int hash = 31 * hashInputs();
-        hash = 31 * hash + hashFluidList(this.fluidInputs);
+        int hash = 0;
+        for (IItemIngredient ingredient : itemIngredients) {
+            hash = 31 * hash + ingredient.hashCode();
+        }
+        for (IFluidIngredient ingredient : fluidIngredients) {
+            hash = 31 * hash + ingredient.hashCode();
+        }
         return hash;
     }
 
     @Override
     public int hashCode() {
         return this.hashCode;
-    }
-
-    private int hashInputs() {
-        int hash = 0;
-        for (GTRecipeInput recipeIngredient : this.inputs) {
-            if (!recipeIngredient.isOreDict()) {
-                for (ItemStack is : recipeIngredient.getInputStacks()) {
-                    hash = 31 * hash + ItemStackHashStrategy.comparingAll().hashCode(is);
-                }
-            } else {
-                hash = 31 * hash + recipeIngredient.getOreDict();
-            }
-        }
-        return hash;
     }
 
     private boolean hasSameInputs(Recipe otherRecipe) {
