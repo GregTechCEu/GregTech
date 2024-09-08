@@ -1,5 +1,6 @@
 package gregtech.api.pattern.pattern;
 
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
@@ -20,6 +21,7 @@ import net.minecraft.world.World;
 import it.unimi.dsi.fastutil.chars.Char2IntMap;
 import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -303,7 +305,7 @@ public class BlockPattern implements IBlockPattern {
     }
 
     @Override
-    public MultiblockShapeInfo getDefaultShape() {
+    public MultiblockShapeInfo getDefaultShape(boolean skipMTEs) {
         // for each symbol, which simple predicate is being used
         // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
         // preview counts are treated as exactly that many
@@ -317,7 +319,7 @@ public class BlockPattern implements IBlockPattern {
 
         List<char[][]> pattern = new ArrayList<>(dimensions[0]);
 
-        // 0 is reserved as a null for char
+        // 0 is reserved for air
         char currentChar = 1;
         int aisleOffset = 0;
 
@@ -338,9 +340,20 @@ public class BlockPattern implements IBlockPattern {
 
                         // cache all the BlockInfo, so that we only need to get it once per simple predicate
                         if (!infos.containsKey(simple)) {
-                            BlockInfo info = simple.candidates.get()[0];
+                            BlockInfo[] blockInfos = simple.candidates.get();
+                            int pointer = 0;
+                            if (blockInfos.length != 1 && skipMTEs) {
+                                // move the pointer to the last pos where there is no MTE
+                                try {
+                                    while ((blockInfos[pointer].getTileEntity() instanceof MetaTileEntityHolder))
+                                        pointer++;
+                                } catch (ArrayIndexOutOfBoundsException e) {
+                                    // every candidate is a MTE, just do first one
+                                    pointer = 0;
+                                }
+                            }
                             infos.put(simple, currentChar);
-                            candidates.put(currentChar, info);
+                            candidates.put(currentChar, blockInfos[pointer]);
                             currentChar++;
                         }
 
@@ -401,7 +414,7 @@ public class BlockPattern implements IBlockPattern {
                             int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
                             if (newIndex >= predicate.common.size())
                                 GTLog.logger.warn("Failed to generate default structure pattern.",
-                                        new IllegalStateException());
+                                        new Throwable());
                             next = predicate.common.get(newIndex);
                             globalCount = globalCache.getInt(next);
                             layerCount = layerCache.getInt(next);
@@ -429,7 +442,7 @@ public class BlockPattern implements IBlockPattern {
         }
 
         return new MultiblockShapeInfo(pattern.stream().map(a -> new PatternAisle(1, a)).toArray(PatternAisle[]::new),
-                candidates, new Char2ObjectOpenHashMap<>(), directions);
+                candidates, Char2ObjectMaps.emptyMap(), directions);
     }
 
     @Override

@@ -91,7 +91,7 @@ public class MultiblockPreviewRenderer {
         mbpEndTime = System.currentTimeMillis() + durTimeMillis;
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
-        List<MultiblockShapeInfo> shapes = controller.getMatchingShapes();
+        List<MultiblockShapeInfo> shapes = controller.getBuildableShapes("MAIN", null);
         if (!shapes.isEmpty()) {
             renderControllerInList(controller, shapes.get(0), layer);
             shapes.get(0).sendDotMessage(player);

@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.SortableListWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -41,6 +41,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -113,7 +114,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         initNBT(guiData.getUsedItemStack());
 
         StringSyncValue[] keyValues = new StringSyncValue[MAX_KEYS];
@@ -178,7 +179,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed("MAIN")) {
-                multiblock.getBuildableShapes("MAIN", getMap(player.getHeldItem(hand)));
+                multiblock.getBuildableShapes("MAIN", getMap(player.getHeldItem(hand))).get(0).getMap(multiblock, new BlockPos(0, 128, 0), new HashMap<>());
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;

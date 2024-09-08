@@ -40,8 +40,7 @@ public enum RelativeDirection {
      * Gets the ordinal of the RelativeDirection opposite to this. UP <-> DOWN, LEFT <-> RIGHT, FRONT <-> BACK.
      */
     public int oppositeOrdinal() {
-        // floor to nearest even + adjustment
-        return (ordinal() / 2) * 2 + (1 - ordinal() % 2);
+        return ordinal() ^ 1;
     }
 
     public EnumFacing getRelativeFacing(EnumFacing frontFacing, EnumFacing upFacing) {
@@ -122,92 +121,5 @@ public enum RelativeDirection {
         oZ += relForward.getZOffset() * forwardOffset;
 
         return pos.add(oX, oY, oZ);
-    }
-
-    /**
-     * Offset a BlockPos relatively in any direction by any amount. Pass negative values to offset down, right or
-     * backwards.
-     */
-    public static BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing, EnumFacing upwardsFacing,
-                                                   boolean isFlipped, RelativeDirection[] structureDir) {
-        int[] c0 = new int[] { x, y, z }, c1 = new int[3];
-        if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
-            EnumFacing of = facing == EnumFacing.DOWN ? upwardsFacing : upwardsFacing.getOpposite();
-            for (int i = 0; i < 3; i++) {
-                switch (structureDir[i].getActualFacing(of)) {
-                    case UP -> c1[1] = c0[i];
-                    case DOWN -> c1[1] = -c0[i];
-                    case WEST -> c1[0] = -c0[i];
-                    case EAST -> c1[0] = c0[i];
-                    case NORTH -> c1[2] = -c0[i];
-                    case SOUTH -> c1[2] = c0[i];
-                }
-            }
-            int xOffset = upwardsFacing.getXOffset();
-            int zOffset = upwardsFacing.getZOffset();
-            int tmp;
-            if (xOffset == 0) {
-                tmp = c1[2];
-                c1[2] = zOffset > 0 ? c1[1] : -c1[1];
-                c1[1] = zOffset > 0 ? -tmp : tmp;
-            } else {
-                tmp = c1[0];
-                c1[0] = xOffset > 0 ? c1[1] : -c1[1];
-                c1[1] = xOffset > 0 ? -tmp : tmp;
-            }
-            if (isFlipped) {
-                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
-                    c1[0] = -c1[0]; // flip X-axis
-                } else {
-                    c1[2] = -c1[2]; // flip Z-axis
-                }
-            }
-        } else {
-            for (int i = 0; i < 3; i++) {
-                switch (structureDir[i].getActualFacing(facing)) {
-                    case UP -> c1[1] = c0[i];
-                    case DOWN -> c1[1] = -c0[i];
-                    case WEST -> c1[0] = -c0[i];
-                    case EAST -> c1[0] = c0[i];
-                    case NORTH -> c1[2] = -c0[i];
-                    case SOUTH -> c1[2] = c0[i];
-                }
-            }
-            if (upwardsFacing == EnumFacing.WEST || upwardsFacing == EnumFacing.EAST) {
-                int xOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getXOffset() :
-                        facing.rotateY().getOpposite().getXOffset();
-                int zOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getZOffset() :
-                        facing.rotateY().getOpposite().getZOffset();
-                int tmp;
-                if (xOffset == 0) {
-                    tmp = c1[2];
-                    c1[2] = zOffset > 0 ? -c1[1] : c1[1];
-                    c1[1] = zOffset > 0 ? tmp : -tmp;
-                } else {
-                    tmp = c1[0];
-                    c1[0] = xOffset > 0 ? -c1[1] : c1[1];
-                    c1[1] = xOffset > 0 ? tmp : -tmp;
-                }
-            } else if (upwardsFacing == EnumFacing.SOUTH) {
-                c1[1] = -c1[1];
-                if (facing.getXOffset() == 0) {
-                    c1[0] = -c1[0];
-                } else {
-                    c1[2] = -c1[2];
-                }
-            }
-            if (isFlipped) {
-                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
-                    if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH) {
-                        c1[0] = -c1[0]; // flip X-axis
-                    } else {
-                        c1[2] = -c1[2]; // flip Z-axis
-                    }
-                } else {
-                    c1[1] = -c1[1]; // flip Y-axis
-                }
-            }
-        }
-        return new BlockPos(c1[0], c1[1], c1[2]);
     }
 }

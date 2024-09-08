@@ -230,7 +230,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         List<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
+        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
                 .aisle("AA", "EC", "MC", "HC", "AA")
                 .aisle("VA", "6V", "3V", "0V", "VA")
                 .aisle("VA", "7V", "4V", "1V", "VA")

@@ -172,7 +172,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             float max = Math.max(Math.max(Math.max(size.x, size.y), size.z), 1);
             this.zoom = (float) (3.5 * Math.sqrt(max));
             this.rotationYaw = 20.0f;
-            this.rotationPitch = 50f;
+            this.rotationPitch = 230f;
             this.currentRendererPage = 0;
             setNextLayer(-1);
         } else {

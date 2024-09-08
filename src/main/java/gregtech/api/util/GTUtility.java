@@ -670,18 +670,19 @@ public class GTUtility {
         // first check if the block is a GT machine
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof IGregTechTileEntity) {
-            stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
+            stack =  ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
         }
 
         if (stack.isEmpty()) {
             // first, see what the block has to say for itself before forcing it to use a particular meta value
             stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos,
                     new GregFakePlayer(world));
-        }
+        } else return stack;
+
         if (stack.isEmpty()) {
             // try the default itemstack constructor if we're not a GT machine
             stack = GTUtility.toItem(state);
-        }
+        } else return stack;
 
         if (stack.isEmpty()) {
             // add the first of the block's drops if the others didn't work
@@ -690,7 +691,7 @@ public class GTUtility {
             if (!list.isEmpty()) {
                 return list.get(0);
             }
-        }
+        } else return stack;
 
         return ItemStack.EMPTY;
     }
@@ -957,7 +958,6 @@ public class GTUtility {
      * Gets the cross product of 2 facings. Null is returned if the result is a zero vector(facings are on the same
      * axis).
      */
-    @Nullable
     public static EnumFacing cross(EnumFacing a, EnumFacing b) {
         if (a.getAxis() == b.getAxis()) return null;
 

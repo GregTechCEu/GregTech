@@ -50,9 +50,12 @@ public interface IBlockPattern {
     /**
      * Gets the default shape, if the multiblock does not specify one. Return null to represent the default shape does
      * not exist.
+     * 
+     * @param skipMTEs If enabled, does not place MTEs at positions unless all candidates are MTEs, in which case
+     *                 selects the first candidate.
      */
     @Nullable
-    MultiblockShapeInfo getDefaultShape();
+    MultiblockShapeInfo getDefaultShape(boolean skipMTEs);
 
     /**
      * Gets the internal pattern state, you should use the one returned from

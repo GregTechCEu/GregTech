@@ -144,7 +144,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        return Collections.singletonList(MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
+        return Collections.singletonList(MultiblockShapeInfo.builder()
                 .aisle("XXX", "VVV", "POP", "PEP", "PMP", "VVV", "XXX")
                 .aisle("XXX", "VAV", "AAA", "AAA", "AAA", "VAV", "XXX")
                 .aisle("XXX", "VAV", "XAX", "XSX", "XAX", "VAV", "XXX")

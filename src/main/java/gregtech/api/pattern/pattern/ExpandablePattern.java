@@ -173,7 +173,7 @@ public class ExpandablePattern implements IBlockPattern {
     }
 
     @Override
-    public MultiblockShapeInfo getDefaultShape() {
+    public MultiblockShapeInfo getDefaultShape(boolean skipMTEs) {
         // todo undo
         return null;
     }

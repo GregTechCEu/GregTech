@@ -816,7 +816,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             // for jei and stuff
             if (getSubstructure(substructureName) == null) createStructurePatterns();
 
-            MultiblockShapeInfo info = getSubstructure(substructureName).getDefaultShape();
+            MultiblockShapeInfo info = getSubstructure(substructureName).getDefaultShape(false);
             if (info == null) return Collections.emptyList();
             return Collections.singletonList(info);
         }
