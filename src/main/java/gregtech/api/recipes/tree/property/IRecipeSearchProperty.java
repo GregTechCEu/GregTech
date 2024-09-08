@@ -19,5 +19,6 @@ public interface IRecipeSearchProperty {
     // 128 power supply property
     // 129 power capacity property
     // 130 cleanroom property
-    // 131 fusion heat property
+    // 131 eu to start property
+    // 132 temperature property
 }

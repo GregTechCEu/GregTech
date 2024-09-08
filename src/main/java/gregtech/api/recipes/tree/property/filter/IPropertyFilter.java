@@ -24,7 +24,8 @@ public interface IPropertyFilter<T> {
     // 0 power usage filter
     // 1 power generation filter
     // 2 cleanroom filter
-    // 3 fusion heat filter
+    // 3 eu to start filter
+    // 4 temperature filter
 
     @NotNull Filter<T> getNewFilter();
 

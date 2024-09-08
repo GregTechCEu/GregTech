@@ -2,7 +2,15 @@ package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.tree.property.PropertySet;
+import gregtech.api.recipes.tree.property.TemperatureMaximumProperty;
+import gregtech.api.recipes.tree.property.filter.FilterEqualityBehavior;
+import gregtech.api.recipes.tree.property.filter.IPropertyFilter;
+import gregtech.api.recipes.tree.property.filter.IntAVLFilter;
+import gregtech.api.recipes.tree.property.filter.RecipePropertyWithFilter;
 import gregtech.api.unification.material.Material;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -13,15 +21,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.BitSet;
 import java.util.Map;
 import java.util.TreeMap;
 
-public final class TemperatureProperty extends RecipeProperty<Integer> {
+public final class TemperatureProperty extends RecipePropertyWithFilter<Integer> {
 
     public static final String KEY = "temperature";
 
-    private static final TreeMap<Integer, Object> registeredCoilTypes = new TreeMap<>((x, y) -> y - x);
+    private static final Int2ObjectAVLTreeMap<Object> registeredCoilTypes = new Int2ObjectAVLTreeMap<>((x, y) -> y - x);
 
     private static TemperatureProperty INSTANCE;
 
@@ -57,8 +67,8 @@ public final class TemperatureProperty extends RecipeProperty<Integer> {
     @NotNull
     private String getMinTierForTemperature(Integer value) {
         String name = "";
-        for (Map.Entry<Integer, Object> coil : registeredCoilTypes.entrySet()) {
-            if (value <= coil.getKey()) {
+        for (var coil : registeredCoilTypes.int2ObjectEntrySet()) {
+            if (value <= coil.getIntKey()) {
                 Object mapValue = coil.getValue();
                 if (mapValue instanceof Material) {
                     name = ((Material) mapValue).getLocalizedName();
@@ -84,6 +94,36 @@ public final class TemperatureProperty extends RecipeProperty<Integer> {
             registeredCoilTypes.put(temperature, coilName);
         } else {
             registeredCoilTypes.put(temperature, coilMaterial);
+        }
+    }
+
+    @Override
+    public boolean filterEquals(@Nullable IPropertyFilter<?> other) {
+        return other instanceof TemperatureProperty;
+    }
+
+    @Override
+    public int filterHash() {
+        return 4;
+    }
+
+    @Override
+    public @NotNull Filter<Integer> getNewFilter() {
+        return new TemperatureFilter();
+    }
+
+    private static final class TemperatureFilter implements IPropertyFilter.Filter<Integer> {
+
+        private final IntAVLFilter filter = new IntAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL, true, false);
+
+        @Override
+        public void accumulate(short recipeID, @NotNull Integer filterInformation) {
+            filter.accumulate(recipeID, filterInformation);
+        }
+
+        @Override
+        public void filter(@NotNull BitSet recipeMask, @NotNull PropertySet properties) {
+            filter.filter(recipeMask, properties.getDefaultable(TemperatureMaximumProperty.EMPTY).temperature());
         }
     }
 }

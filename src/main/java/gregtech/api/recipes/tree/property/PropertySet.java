@@ -2,6 +2,8 @@ package gregtech.api.recipes.tree.property;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 
+import gregtech.api.recipes.properties.impl.CircuitProperty;
+
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 
@@ -24,31 +26,37 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     }
 
     /**
-     * @param voltage the voltage
-     * @return a new {@link PropertySet} with voltage set.
+     * @param voltage the voltage supply
+     * @param amperage the amperage supply
+     * @return a new {@link PropertySet} with power supply set.
      */
-    @Contract("_ -> new")
-    public static @NotNull PropertySet voltage(long voltage) {
+    @Contract("_, _ -> new")
+    public static @NotNull PropertySet supply(long voltage, long amperage) {
         PropertySet set = new PropertySet();
-        set.add(new VoltageProperty(voltage));
+        set.add(new PowerSupplyProperty(voltage, amperage));
         return set;
     }
 
     /**
-     * @param voltage the voltage
-     * @param items the items
-     * @return a new {@link PropertySet} with circuits set based on the list of item inputs.
+     * @param voltage the voltage capacity
+     * @param amperage the amperage capacity
+     * @return a new {@link PropertySet} with power capacity set.
      */
     @Contract("_, _ -> new")
-    public static @NotNull PropertySet circuit(long voltage, @NotNull List<ItemStack> items) {
+    public static @NotNull PropertySet capacity(long voltage, long amperage) {
         PropertySet set = new PropertySet();
-        set.add(new VoltageProperty(voltage));
+        set.add(new PowerCapacityProperty(voltage, amperage));
+        return set;
+    }
+
+    @Contract("_ -> this")
+    public PropertySet circuits(@NotNull List<ItemStack> items) {
         for (ItemStack stack : items) {
             if (IntCircuitIngredient.isIntegratedCircuit(stack)) {
-                set.add(CircuitPresenceProperty.get(IntCircuitIngredient.getCircuitConfiguration(stack)));
+                this.add(CircuitPresenceProperty.get(CircuitProperty.getCircuitConfiguration(stack)));
             }
         }
-        return set;
+        return this;
     }
 
     public <T extends IRecipeSearchProperty> @Nullable T getNullable(@NotNull T k) {
