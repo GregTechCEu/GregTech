@@ -420,7 +420,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 // The voltage for recipe search is always on tier, so take the closest lower tier.
                 // List check is done because single hatches will always be a "clean voltage," no need
                 // for any additional checks.
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             }
             return voltage;
         } else {
