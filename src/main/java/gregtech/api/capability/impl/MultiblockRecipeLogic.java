@@ -331,7 +331,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 // amperage is 1 when the energy is not exactly on a tier
 
                 // the voltage for recipe search is always on tier, so take the closest lower tier
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             } else {
                 // amperage != 1 means the voltage is exactly on a tier
                 // ignore amperage, since only the voltage is relevant for recipe search
@@ -420,7 +420,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 // The voltage for recipe search is always on tier, so take the closest lower tier.
                 // List check is done because single hatches will always be a "clean voltage," no need
                 // for any additional checks.
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             }
             return voltage;
         } else {
