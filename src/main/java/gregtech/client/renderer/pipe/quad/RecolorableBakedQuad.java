@@ -27,7 +27,7 @@ public class RecolorableBakedQuad extends BakedQuad {
     protected RecolorableBakedQuad(BakedQuad prototype, int tintIndex,
                                    SpriteInformation spriteInformation,
                                    Int2ObjectOpenHashMap<RecolorableBakedQuad> cache) {
-        super(prototype.vertexData, tintIndex, prototype.getFace(), spriteInformation.sprite(),
+        super(prototype.getVertexData(), tintIndex, prototype.getFace(), spriteInformation.sprite(),
                 prototype.shouldApplyDiffuseLighting(), prototype.getFormat());
         this.spriteInformation = spriteInformation;
         this.cache = cache;

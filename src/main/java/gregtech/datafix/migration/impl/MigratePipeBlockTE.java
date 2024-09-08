@@ -1,6 +1,5 @@
 package gregtech.datafix.migration.impl;
 
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
 import gregtech.datafix.GTDataFixers;
 
@@ -92,7 +91,6 @@ public class MigratePipeBlockTE implements IFixableData {
         } else {
             tag.setInteger("Paint", -1);
         }
-        GTLog.logger.fatal("PAINING COLOR: {}", tag.getInteger("Paint"));
         tag.setString("Frame", tag.getString("FrameMaterial"));
         tag.setBoolean("Legacy", true);
 
