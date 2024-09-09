@@ -11,8 +11,7 @@ import gregtech.common.blocks.BlockGlassCasing;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.ASSEMBLY_LINE_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.MetaBlocks.*;
@@ -313,13 +312,49 @@ public class ComputerRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(100).EUt(VA[IV]).buildAndRegister();
 
-        // ASSEMBLER_RECIPES.recipeBuilder()
-        // .input(LASER_PIPES[0], 2)
-        // .input(foil, Silver, 2)
-        // .input(NEUTRON_REFLECTOR)
-        // .fluidInputs(Polytetrafluoroethylene.getFluid(L))
-        // .output(LASER_PIPES[1])
-        // .cleanroom(CleanroomType.CLEANROOM)
-        // .duration(150).EUt(VA[IV]).buildAndRegister();
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(dust, BorosilicateGlass, 5)
+                .fluidInputs(Water.getFluid(1000))
+                .output(ULTRASMOOTH_BOROSILICATE)
+                .duration(3000).EUt(VA[IV]).buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder()
+                .input(dust, BorosilicateGlass, 5)
+                .fluidInputs(DistilledWater.getFluid(1000))
+                .output(ULTRASMOOTH_BOROSILICATE)
+                .duration(2000).EUt(VA[IV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .notConsumable(EMITTER_ZPM)
+                .input(foil, TitaniumDioxide, 3)
+                .input(foil, SiliconDioxide, 3)
+                .input(ULTRASMOOTH_BOROSILICATE)
+                .fluidInputs(Oxygen.getPlasma(85))
+                .output(LASER_REFLECTOR)
+                .cleanroom(CleanroomType.CLEANROOM)
+                .duration(10000).EUt(VA[LuV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .notConsumable(EMITTER_UV)
+                .input(foil, Titanium)
+                .input(foil, Silicon)
+                .input(ULTRASMOOTH_BOROSILICATE)
+                .fluidInputs(Oxygen.getPlasma(1085))
+                .output(LASER_REFLECTOR)
+                .cleanroom(CleanroomType.CLEANROOM)
+                .duration(1000).EUt(VA[ZPM]).buildAndRegister();
+
+        ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(LASER_REFLECTOR)
+                .input(lens, NetherStar, 2)
+                .input(stick, Duranium, 6)
+                .input(ELECTRIC_PUMP_ZPM)
+                .input(foil, Osmiridium, 5)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 3),
+                        NaquadahAlloy.getFluid(L * 32))
+                .output(LASER_PIPES[1])
+                .cleanroom(CleanroomType.CLEANROOM)
+                .stationResearch(s -> s.researchStack(LASER_REFLECTOR.getStackForm()).EUt(VA[ZPM]).CWUt(32))
+                .duration(350).EUt(VA[ZPM]).buildAndRegister();
     }
 }

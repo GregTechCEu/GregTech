@@ -831,7 +831,7 @@ public class ElementMaterials {
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR,
-                        GENERATE_FRAME)
+                        GENERATE_FRAME, GENERATE_FOIL)
                 .element(Elements.Ti)
                 .toolStats(ToolProperty.Builder.of(8.0F, 6.0F, 1536, 3)
                         .enchantability(14).build())

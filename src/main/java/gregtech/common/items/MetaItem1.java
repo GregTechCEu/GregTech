@@ -1162,5 +1162,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
+
+        ULTRASMOOTH_BOROSILICATE = addItem(1005, "ultrasmooth_borosilicate_glass");
+        LASER_REFLECTOR = addItem(1006, "laser_reflector");
     }
 }

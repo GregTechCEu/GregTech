@@ -1188,6 +1188,9 @@ metaitem.fertilizer.name=Fertilizer
 metaitem.blacklight.name=Blacklight
 metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
 
+metaitem.ultrasmooth_borosilicate_glass.name=Ultrasmooth Borosilicate Glass
+metaitem.laser_reflector.name=Dielectric Laser Mirror
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
@@ -1838,6 +1841,7 @@ gregtech.material.hafnia=Hafnia
 gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
 gregtech.material.zircaloy_4=Zircaloy-4
 gregtech.material.inconel_718=Inconel-718
+gregtech.material.titanium_dioxide=Titanium Dioxide
 
 
 # Organic Chemistry Materials
