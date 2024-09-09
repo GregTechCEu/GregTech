@@ -60,18 +60,17 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
             79, 55,     // wireFine
             79, 85,     // frameGt
             79, 117,    // round
-            79, 147,    // pipeNormalFluid 15
-            79, 147,    // pipeNormalItem
+            79, 147,    // pipeNormal 15
             104, 55,    // screw
             104, 85,    // bolt
             104, 117,   // gear
-            104, 147,   // plateDouble 20
-            129, 55,    // spring
+            104, 147,   // plateDouble
+            129, 55,    // spring 20
             129, 85,    // stickLong
             129, 117,   // gearSmall
             129, 147,   // plateDense
-            154, 55,    // springSmall 25
-            154, 78,    // ring
+            154, 55,    // springSmall
+            154, 78,    // ring 25
             154, 124,   // lens
             154, 147    // foil
     );
@@ -224,38 +223,38 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         // stick -> frameGt
         drawArrow(minecraft, "d7r25u6", 62, 103, itemExists.get(9) && itemExists.get(13));
         // stick -> bolt
-        drawArrow(minecraft, "d7r50u6", 62, 103, itemExists.get(9) && itemExists.get(18));
+        drawArrow(minecraft, "d7r50u6", 62, 103, itemExists.get(9) && itemExists.get(17));
         // stick -> gear
-        drawArrow(minecraft, "d7r50d7", 62, 103, itemExists.get(9) && itemExists.get(19));
+        drawArrow(minecraft, "d7r50d7", 62, 103, itemExists.get(9) && itemExists.get(18));
         // stick -> stickLong
-        drawArrow(minecraft, "d7r75u6", 62, 103, itemExists.get(9) && itemExists.get(22));
+        drawArrow(minecraft, "d7r75u6", 62, 103, itemExists.get(9) && itemExists.get(21));
         // stick -> gearSmall
-        drawArrow(minecraft, "d7r75d7", 62, 103, itemExists.get(9) && itemExists.get(23));
+        drawArrow(minecraft, "d7r75d7", 62, 103, itemExists.get(9) && itemExists.get(22));
         // stick -> springSmall
-        drawArrow(minecraft, "d7r87u46r4", 62, 61, itemExists.get(9) && itemExists.get(25));
+        drawArrow(minecraft, "d7r87u46r4", 62, 61, itemExists.get(9) && itemExists.get(24));
         // stick -> ring
-        drawArrow(minecraft, "d7r87u22r4", 62, 85, itemExists.get(9) && itemExists.get(26));
+        drawArrow(minecraft, "d7r87u22r4", 62, 85, itemExists.get(9) && itemExists.get(25));
         // nugget -> round
         drawArrow(minecraft, "r7", 72, 123, itemExists.get(10) && itemExists.get(14));
-        // plate -> pipeNormalFluid/pipeNormalItem
+        // plate -> pipeNormal
         drawArrow(minecraft, "u7r25d6", 62, 140, itemExists.get(11) &&
-                (itemExists.get(15) || itemExists.get(16)));
+                (itemExists.get(15)));
         // plate -> gear
-        drawArrow(minecraft, "u7r50u5", 62, 135, itemExists.get(11) && itemExists.get(19));
+        drawArrow(minecraft, "u7r50u5", 62, 135, itemExists.get(11) && itemExists.get(18));
         // plate -> plateDouble
-        drawArrow(minecraft, "u7r50d6", 62, 140, itemExists.get(11) && itemExists.get(20));
+        drawArrow(minecraft, "u7r50d6", 62, 140, itemExists.get(11) && itemExists.get(19));
         // plate -> gearSmall
-        drawArrow(minecraft, "u7r75u5", 62, 135, itemExists.get(11) && itemExists.get(23));
+        drawArrow(minecraft, "u7r75u5", 62, 135, itemExists.get(11) && itemExists.get(22));
         // plate -> plateDense
-        drawArrow(minecraft, "u7r75d6", 62, 140, itemExists.get(11) && itemExists.get(24));
+        drawArrow(minecraft, "u7r75d6", 62, 140, itemExists.get(11) && itemExists.get(23));
         // plate -> lens
-        drawArrow(minecraft, "u7r87u8r4", 62, 130, itemExists.get(11) && itemExists.get(27));
+        drawArrow(minecraft, "u7r87u8r4", 62, 130, itemExists.get(11) && itemExists.get(26));
         // plate -> foil
-        drawArrow(minecraft, "u7r87d15r4", 62, 140, itemExists.get(11) && itemExists.get(28));
+        drawArrow(minecraft, "u7r87d15r4", 62, 140, itemExists.get(11) && itemExists.get(27));
         // bolt -> screw
-        drawArrow(minecraft, "u12", 110, 73, itemExists.get(18) && itemExists.get(17));
+        drawArrow(minecraft, "u12", 110, 73, itemExists.get(17) && itemExists.get(16));
         // stickLong -> spring
-        drawArrow(minecraft, "u12", 135, 73, itemExists.get(22) && itemExists.get(21));
+        drawArrow(minecraft, "u12", 135, 73, itemExists.get(21) && itemExists.get(20));
 
         // material info rendering
         int linesDrawn = 0;
