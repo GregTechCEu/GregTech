@@ -332,7 +332,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 }
             }
 
-            metaTileEntity.onPlacement();
+            metaTileEntity.onPlacement(placer);
         }
     }
 

@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class TricorderBehavior implements IItemBehaviour {
 
@@ -144,12 +145,28 @@ public class TricorderBehavior implements IItemBehaviour {
 
             // name of the machine
             list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                    new TextComponentTranslation(LocalizationUtils.format(metaTileEntity.getMetaFullName()))
+                    new TextComponentTranslation(metaTileEntity.getMetaFullName())
                             .setStyle(new Style().setColor(TextFormatting.BLUE)),
                     new TextComponentTranslation(TextFormattingUtil
                             .formatNumbers(
                                     metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId)))
                                             .setStyle(new Style().setColor(TextFormatting.BLUE))));
+
+            UUID owner = metaTileEntity.getOwner();
+            if (owner != null) {
+                EntityPlayer ownerEntity = metaTileEntity.getWorld().getPlayerEntityByUUID(owner);
+                if (ownerEntity != null) {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner",
+                            new TextComponentTranslation(ownerEntity.getName())
+                                    .setStyle(new Style().setColor(TextFormatting.AQUA))));
+                } else {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_offline")
+                            .setStyle(new Style().setColor(TextFormatting.YELLOW)));
+                }
+            } else {
+                list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_null")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
 
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
