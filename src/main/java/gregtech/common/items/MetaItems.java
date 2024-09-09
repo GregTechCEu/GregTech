@@ -564,7 +564,6 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem MULTIBLOCK_BUILDER;
 
-    public static MetaItem<?>.MetaValueItem ULTRASMOOTH_BOROSILICATE;
     public static MetaItem<?>.MetaValueItem LASER_REFLECTOR;
 
     private static final List<OrePrefix> orePrefixes = new ArrayList<>();

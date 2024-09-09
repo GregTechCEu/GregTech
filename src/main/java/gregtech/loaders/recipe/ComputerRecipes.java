@@ -312,49 +312,27 @@ public class ComputerRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(100).EUt(VA[IV]).buildAndRegister();
 
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(dust, BorosilicateGlass, 5)
-                .fluidInputs(Water.getFluid(1000))
-                .output(ULTRASMOOTH_BOROSILICATE)
-                .duration(3000).EUt(VA[IV]).buildAndRegister();
-
-        AUTOCLAVE_RECIPES.recipeBuilder()
-                .input(dust, BorosilicateGlass, 5)
-                .fluidInputs(DistilledWater.getFluid(1000))
-                .output(ULTRASMOOTH_BOROSILICATE)
-                .duration(2000).EUt(VA[IV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .notConsumable(EMITTER_ZPM)
-                .input(foil, TitaniumDioxide, 3)
-                .input(foil, SiliconDioxide, 3)
-                .input(ULTRASMOOTH_BOROSILICATE)
-                .fluidInputs(Oxygen.getPlasma(85))
+        FORMING_PRESS_RECIPES.recipeBuilder()
+                .input(plate, BorosilicateGlass)
+                .input(foil, Titanium, 12)
+                .input(foil, Silicon, 12)
+                .input(foil, Tantalum, 12)
+                .input(foil, Zinc, 12)
+                .input(foil, Beryllium, 12)
                 .output(LASER_REFLECTOR)
                 .cleanroom(CleanroomType.CLEANROOM)
-                .duration(10000).EUt(VA[LuV]).buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .notConsumable(EMITTER_UV)
-                .input(foil, Titanium)
-                .input(foil, Silicon)
-                .input(ULTRASMOOTH_BOROSILICATE)
-                .fluidInputs(Oxygen.getPlasma(1085))
-                .output(LASER_REFLECTOR)
-                .cleanroom(CleanroomType.CLEANROOM)
-                .duration(1000).EUt(VA[ZPM]).buildAndRegister();
+                .duration(200).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
+                .input(frameGt, Trinium)
+                .input(LASER_PIPES[0], 2)
                 .input(LASER_REFLECTOR)
                 .input(lens, NetherStar, 2)
-                .input(stick, Duranium, 6)
-                .input(ELECTRIC_PUMP_ZPM)
-                .input(foil, Osmiridium, 5)
-                .fluidInputs(Polytetrafluoroethylene.getFluid(L * 3),
-                        NaquadahAlloy.getFluid(L * 32))
+                .input(foil, Osmiridium, 20)
+                .fluidInputs(Polybenzimidazole.getFluid(L))
                 .output(LASER_PIPES[1])
-                .cleanroom(CleanroomType.CLEANROOM)
-                .stationResearch(s -> s.researchStack(LASER_REFLECTOR.getStackForm()).EUt(VA[ZPM]).CWUt(32))
-                .duration(350).EUt(VA[ZPM]).buildAndRegister();
+                .scannerResearch(b -> b.researchStack(new ItemStack(LASER_PIPES[0]))
+                        .EUt(VA[IV]))
+                .duration(200).EUt(VA[LuV]).buildAndRegister();
     }
 }

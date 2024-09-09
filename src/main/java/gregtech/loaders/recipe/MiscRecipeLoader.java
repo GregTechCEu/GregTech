@@ -507,21 +507,5 @@ public class MiscRecipeLoader {
                 .input(ring, Steel, 2)
                 .output(STEEL_MINECART_WHEELS)
                 .duration(60).EUt(20).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Titanium)
-                .fluidInputs(Oxygen.getFluid(2000))
-                .output(dust, TitaniumDioxide, 3)
-                .duration(100).EUt(60).buildAndRegister();
-
-        COMPRESSOR_RECIPES.recipeBuilder()
-                .input(dustSmall, SiliconDioxide)
-                .output(foil, SiliconDioxide)
-                .duration(200).EUt(1).buildAndRegister();
-
-        COMPRESSOR_RECIPES.recipeBuilder()
-                .input(dustSmall, TitaniumDioxide)
-                .output(foil, TitaniumDioxide)
-                .duration(200).EUt(1).buildAndRegister();
     }
 }

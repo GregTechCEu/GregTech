@@ -91,7 +91,7 @@ public class ElementMaterials {
                 .liquid(new FluidBuilder().temperature(1560))
                 .ore()
                 .color(0x64B464).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_DOUBLE_PLATE)
+                .flags(STD_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL)
                 .element(Elements.Be)
                 .build();
 
@@ -1001,7 +1001,7 @@ public class ElementMaterials {
         Trinium = new Material.Builder(130, gregtechId("trinium"))
                 .ingot(7).fluid()
                 .color(0x9973BD).iconSet(SHINY)
-                .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW, GENERATE_GEAR)
+                .flags(GENERATE_FOIL, GENERATE_BOLT_SCREW, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.Ke)
                 .cableProperties(V[ZPM], 6, 4)
                 .blast(b -> b

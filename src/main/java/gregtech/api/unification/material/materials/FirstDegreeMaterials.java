@@ -885,7 +885,7 @@ public class FirstDegreeMaterials {
         SiliconDioxide = new Material.Builder(356, gregtechId("silicon_dioxide"))
                 .dust(1)
                 .color(0xC8C8C8).iconSet(QUARTZ)
-                .flags(NO_SMASHING, NO_SMELTING, GENERATE_FOIL)
+                .flags(NO_SMASHING, NO_SMELTING)
                 .components(Silicon, 1, Oxygen, 2)
                 .build();
 
@@ -1590,13 +1590,6 @@ public class FirstDegreeMaterials {
         IlmeniteSlag = new Material.Builder(452, gregtechId("ilmenite_slag"))
                 .dust(1)
                 .color(0x8B0000).iconSet(SAND)
-                .build();
-
-        TitaniumDioxide = new Material.Builder(453, gregtechId("titanium_dioxide"))
-                .dust(1)
-                .color(0xF8C8C8).iconSet(QUARTZ)
-                .flags(NO_SMASHING, NO_SMELTING, GENERATE_FOIL)
-                .components(Titanium, 1, Oxygen, 2)
                 .build();
     }
 }

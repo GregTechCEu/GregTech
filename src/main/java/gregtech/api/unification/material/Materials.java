@@ -477,7 +477,6 @@ public class Materials {
     public static Material HafniumTetrachloride;
     public static Material Zircaloy4;
     public static Material Inconel718;
-    public static Material TitaniumDioxide;
 
     /**
      * Organic chemistry
