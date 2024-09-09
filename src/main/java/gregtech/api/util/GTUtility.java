@@ -81,6 +81,7 @@ import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.V;
+import static gregtech.api.GTValues.VOC;
 
 public class GTUtility {
 
@@ -265,13 +266,22 @@ public class GTUtility {
     }
 
     /**
+     * @return Lowest tier of the voltage that can handle {@code voltage}, extended up to max long value; that is,
+     *         a voltage with value greater than equal than {@code voltage}. If there's no
+     *         tier that can handle it, {@code MAX_TRUE} is returned.
+     */
+    public static byte getOCTierByVoltage(long voltage) {
+        return (byte) Math.min(GTValues.MAX_TRUE, nearestLesser(VOC, voltage) + 1);
+    }
+
+    /**
      * Ex: This method turns both 1024 and 512 into HV.
      *
      * @return the highest voltage tier with value below or equal to {@code voltage}, or
      *         {@code ULV} if there's no tier below
      */
     public static byte getFloorTierByVoltage(long voltage) {
-        return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(V, voltage));
+        return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(VOC, voltage));
     }
 
     @SuppressWarnings("deprecation")
