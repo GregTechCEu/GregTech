@@ -386,11 +386,11 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     @Override
     public void addInformation(@NotNull ItemStack stack, World worldIn, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flagIn) {
+        getHandler(stack).addInformation(stack, worldIn, tooltip, flagIn, getStructure());
         if (getStructure() instanceof IPipeChanneledStructure channeledStructure) {
             if (channeledStructure.getChannelCount() > 1)
                 tooltip.add(I18n.format("gregtech.pipe.channels", channeledStructure.getChannelCount()));
         }
-        getHandler(stack).addInformation(stack, worldIn, tooltip, flagIn, getStructure());
         if (TooltipHelper.isShiftDown()) {
             tooltip.add(I18n.format(getConnectLangKey()));
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));

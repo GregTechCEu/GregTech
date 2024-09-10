@@ -152,10 +152,9 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
                                @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
         tooltip.add(I18n.format("gregtech.fluid_pipe"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_transfer_rate", getThroughput(structure)));
-        tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", getMaxFluidTemperature()));
-        tooltip.add(I18n.format("gregtech.fluid_pipe.min_temperature", getMinFluidTemperature()));
-        tooltip.add(I18n.format("gregtech.fluid_pipe.priority",
+        tooltip.add(I18n.format("gregtech.pipe.priority",
                 TextFormattingUtil.formatNumbers(getFlowPriority(structure))));
+        appendTooltips(tooltip);
     }
 
     @Override

@@ -641,7 +641,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
             if (fluidHandler instanceof IFilteredFluidContainer filtered &&
                     filtered.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
-                propertyFilter.appendTooltips(lines, false, true);
+                propertyFilter.appendTooltips(lines);
             }
         }
 

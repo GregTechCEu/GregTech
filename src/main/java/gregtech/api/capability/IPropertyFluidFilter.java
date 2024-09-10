@@ -3,7 +3,6 @@ package gregtech.api.capability;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
-import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.Fluid;
@@ -70,27 +69,15 @@ public interface IPropertyFluidFilter extends IFilter<FluidStack> {
     /**
      * Append tooltips about containment info
      *
-     * @param tooltip             the tooltip to append to
-     * @param showToolsInfo       if the "hold shift" line should mention tool info
-     * @param showTemperatureInfo if the temperature information should be displayed
+     * @param tooltip the tooltip to append to
      */
-    default void appendTooltips(@NotNull List<String> tooltip, boolean showToolsInfo, boolean showTemperatureInfo) {
-        if (TooltipHelper.isShiftDown()) {
-            if (showTemperatureInfo) {
-                tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", getMaxFluidTemperature()));
-                tooltip.add(I18n.format("gregtech.fluid_pipe.min_temperature", getMinFluidTemperature()));
-            }
-            if (isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
-            else tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
-            if (isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
-            getContainedAttributes().forEach(a -> a.appendContainerTooltips(tooltip));
-        } else if (isGasProof() || isPlasmaProof() || !getContainedAttributes().isEmpty()) {
-            if (showToolsInfo) {
-                tooltip.add(I18n.format("gregtech.tooltip.tool_fluid_hold_shift"));
-            } else {
-                tooltip.add(I18n.format("gregtech.tooltip.fluid_pipe_hold_shift"));
-            }
-        }
+    default void appendTooltips(@NotNull List<String> tooltip) {
+        tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", getMaxFluidTemperature()));
+        tooltip.add(I18n.format("gregtech.fluid_pipe.min_temperature", getMinFluidTemperature()));
+        if (isGasProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.gas_proof"));
+        else tooltip.add(I18n.format("gregtech.fluid_pipe.not_gas_proof"));
+        if (isPlasmaProof()) tooltip.add(I18n.format("gregtech.fluid_pipe.plasma_proof"));
+        getContainedAttributes().forEach(a -> a.appendContainerTooltips(tooltip));
     }
 
     /**

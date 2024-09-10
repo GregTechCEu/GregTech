@@ -5589,12 +5589,13 @@ gregtech.item_filter.footer=§eClick with item to override
 gregtech.cable.voltage=§aMax Voltage: §f%,d §f(%s§f)
 gregtech.cable.amperage=§eMax Amperage: §f%,d
 gregtech.cable.loss_per_block=§cLoss/Meter/Ampere: §f%,d§f EU-Volt
-gregtech.cable.superconductor_loss=§cLoss is set to §f0§c under critical temperature §f%,d§f K
+gregtech.cable.superconductor_loss=§cLoss is §f0§c under critical temperature §f%,d§f K
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: §f%,d K
-gregtech.fluid_pipe.min_temperature=§6Can handle fluids at or above §f%,d K
+gregtech.fluid_pipe.max_temperature=§cMax Temperature: §f%,d K
+gregtech.fluid_pipe.min_temperature=§bMin Temperature: §f%,d K
 gregtech.pipe.channels=§eChannels: §f%d
+gregtech.pipe.priority=§9Priority: §f%s
 gregtech.fluid_pipe.gas_proof=§6Can handle Gases
 gregtech.fluid_pipe.acid_proof=§6Can handle Acids
 gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
@@ -5602,8 +5603,6 @@ gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
 gregtech.fluid_pipe=§dFluid Pipe
 gregtech.item_pipe=§dItem Pipe
-gregtech.fluid_pipe.priority=§9Priority: §f%s
-gregtech.item_pipe.priority=§9Priority: §f%s
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.

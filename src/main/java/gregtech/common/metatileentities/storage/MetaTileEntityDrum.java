@@ -11,7 +11,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -278,13 +277,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
-        this.fluidFilter.appendTooltips(tooltip, true, true);
-
-        if (TooltipHelper.isShiftDown()) {
-            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
-            tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
-            tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
-        }
+        this.fluidFilter.appendTooltips(tooltip);
 
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null && tagCompound.hasKey("Fluid", Constants.NBT.TAG_COMPOUND)) {
@@ -295,10 +288,11 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         }
     }
 
-    // Override this so that we can control the "Hold SHIFT" tooltip manually
     @Override
-    public boolean showToolUsages() {
-        return false;
+    public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.auto_output_down"));
+        tooltip.add(I18n.format("gregtech.tool_action.crowbar"));
     }
 
     @Override

@@ -5577,7 +5577,7 @@ gregtech.fluid_pipe.cryo_proof=§6可传输低温物质
 gregtech.fluid_pipe.plasma_proof=§6可传输所有等离子体
 gregtech.fluid_pipe.not_gas_proof=§4气体可能泄漏！
 
-gregtech.item_pipe.priority=§9优先级：§f%,d
+gregtech.pipe.priority=§9优先级：§f%,d
 
 gregtech.multiblock.work_paused=暂停。
 gregtech.multiblock.running=运行正常。

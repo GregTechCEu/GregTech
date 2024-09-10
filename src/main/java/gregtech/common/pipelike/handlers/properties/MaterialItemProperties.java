@@ -58,7 +58,7 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
             tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks",
                     baseItemsPer5Ticks / 16));
         }
-        tooltip.add(I18n.format("gregtech.item_pipe.priority",
+        tooltip.add(I18n.format("gregtech.pipe.priority",
                 TextFormattingUtil.formatNumbers(getFlowPriority(structure))));
     }
 

@@ -116,9 +116,13 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             tooltip.add(I18n.format("gregtech.cable.superconductor", GTValues.VN[tier]));
         tooltip.add(I18n.format("gregtech.cable.voltage", voltageLimit, GTValues.VNF[tier]));
         tooltip.add(I18n.format("gregtech.cable.amperage", getAmperage(structure)));
-        tooltip.add(I18n.format("gregtech.cable.loss_per_block", getLoss(structure)));
-        if (isSuperconductor())
+
+        long loss = isSuperconductor() && superconductorCriticalTemperature == Integer.MAX_VALUE ? 0 :
+                getLoss(structure);
+        tooltip.add(I18n.format("gregtech.cable.loss_per_block", loss));
+        if (isSuperconductor() && superconductorCriticalTemperature != Integer.MAX_VALUE) {
             tooltip.add(I18n.format("gregtech.cable.superconductor_loss", superconductorCriticalTemperature));
+        }
     }
 
     @Override
