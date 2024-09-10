@@ -4,8 +4,17 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.graphnet.logic.ChannelCountLogic;
+import gregtech.api.graphnet.logic.NetLogicRegistrationEvent;
+import gregtech.api.graphnet.logic.ThroughputLogic;
+import gregtech.api.graphnet.logic.WeightFactorLogic;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistrationEvent;
 import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
 import gregtech.api.graphnet.pipenet.physical.block.ItemPipeMaterialBlock;
+import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
+import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
+import gregtech.api.graphnet.predicate.NetPredicateRegistrationEvent;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -37,9 +46,20 @@ import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.block.cable.CableBlock;
+import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.laser.LaserPipeBlock;
+import gregtech.common.pipelike.block.laser.LaserStructure;
 import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
+import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
+import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
+import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
+import gregtech.common.pipelike.net.energy.SuperconductorLogic;
+import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
+import gregtech.common.pipelike.net.energy.VoltageLossLogic;
+import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
+import gregtech.common.pipelike.net.fluid.FluidFlowLogic;
+import gregtech.common.pipelike.net.item.ItemFlowLogic;
 import gregtech.datafix.GTDataFixers;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.loaders.MaterialInfoLoader;
@@ -362,6 +382,35 @@ public class CommonProxy {
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void registerPipeStructures(PipeStructureRegistrationEvent event) {
+        CableStructure.register(event);
+        MaterialPipeStructure.register(event);
+        LaserStructure.register(event);
+        OpticalStructure.register(event);
+    }
+
+    @SubscribeEvent
+    public static void registerNetLogics(NetLogicRegistrationEvent event) {
+        event.accept(ChannelCountLogic.TYPE);
+        event.accept(EnergyFlowLogic.TYPE);
+        event.accept(FluidFlowLogic.TYPE);
+        event.accept(ItemFlowLogic.TYPE);
+        event.accept(FluidContainmentLogic.TYPE);
+        event.accept(SuperconductorLogic.TYPE);
+        event.accept(TemperatureLogic.TYPE);
+        event.accept(ThroughputLogic.TYPE);
+        event.accept(WeightFactorLogic.TYPE);
+        event.accept(VoltageLimitLogic.TYPE);
+        event.accept(VoltageLossLogic.TYPE);
+    }
+
+    @SubscribeEvent
+    public static void registerNetPredicates(NetPredicateRegistrationEvent event) {
+        event.accept(BlockedPredicate.TYPE);
+        event.accept(FilterPredicate.TYPE);
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

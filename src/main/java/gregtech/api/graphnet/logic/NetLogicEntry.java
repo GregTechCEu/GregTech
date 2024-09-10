@@ -7,7 +7,6 @@ import gregtech.api.network.IPacket;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,19 +17,9 @@ import org.jetbrains.annotations.Nullable;
  * {@link #union(NetLogicEntry)} behavior.
  */
 public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBTBase>
-                                   implements INBTSerializable<N>, IStringSerializable, IPacket {
+                                   implements INBTSerializable<N>, IPacket {
 
-    private final @NotNull String name;
-
-    protected NetLogicEntry(@NotNull String name) {
-        this.name = name;
-        NetLogicRegistry.register(this);
-    }
-
-    @Override
-    public final @NotNull String getName() {
-        return name;
-    }
+    public abstract @NotNull NetLogicType<T> getType();
 
     public void deserializeNBTNaive(@Nullable NBTBase nbt) {
         if (nbt != null) deserializeNBT((N) nbt);
@@ -90,8 +79,6 @@ public abstract class NetLogicEntry<T extends NetLogicEntry<T, N>, N extends NBT
     public void registerToNetLogicData(NetLogicData data) {}
 
     public void deregisterFromNetLogicData(NetLogicData data) {}
-
-    public abstract @NotNull T getNew();
 
     public T cast(NetLogicEntry<?, ?> entry) {
         return (T) entry;

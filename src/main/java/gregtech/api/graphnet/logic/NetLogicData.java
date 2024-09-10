@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -16,14 +15,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Note - since the internal map representation encodes keys using {@link IStringSerializable#getName()} on logics,
- * making a logics class return two different names is a valid way to register multiple instances.
- */
 public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket, INetLogicEntryListener {
 
-    // TODO caching logic on simple logics to reduce amount of reduntant creation?
-    private final Object2ObjectOpenHashMap<String, NetLogicEntry<?, ?>> logicEntrySet;
+    private final Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> logicEntrySet;
 
     private final WeakHashSet<ILogicDataListener> listeners = new WeakHashSet<>();
 
@@ -31,7 +25,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         logicEntrySet = new Object2ObjectOpenHashMap<>(4);
     }
 
-    private NetLogicData(Object2ObjectOpenHashMap<String, NetLogicEntry<?, ?>> logicEntrySet) {
+    private NetLogicData(Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> logicEntrySet) {
         this.logicEntrySet = logicEntrySet;
     }
 
@@ -40,7 +34,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
      * nothing happens if an entry is already present.
      */
     public NetLogicData mergeLogicEntry(NetLogicEntry<?, ?> entry) {
-        NetLogicEntry<?, ?> current = logicEntrySet.get(entry.getName());
+        NetLogicEntry<?, ?> current = logicEntrySet.get(entry.getType());
         if (current == null) return setLogicEntry(entry);
 
         if (entry.getClass().isInstance(current)) {
@@ -52,7 +46,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     public NetLogicData setLogicEntry(NetLogicEntry<?, ?> entry) {
         entry.registerToNetLogicData(this);
-        logicEntrySet.put(entry.getName(), entry);
+        logicEntrySet.put(entry.getType(), entry);
         this.markLogicEntryAsUpdated(entry, true);
         return this;
     }
@@ -69,12 +63,12 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         logicEntrySet.trim(4);
     }
 
-    public NetLogicData removeLogicEntry(@NotNull NetLogicEntry<?, ?> key) {
-        return removeLogicEntry(key.getName());
+    public NetLogicData removeLogicEntry(@NotNull NetLogicEntry<?, ?> entry) {
+        return removeLogicEntry(entry.getType());
     }
 
-    public NetLogicData removeLogicEntry(@NotNull String key) {
-        NetLogicEntry<?, ?> entry = logicEntrySet.remove(key);
+    public NetLogicData removeLogicEntry(@NotNull NetLogicType<?> type) {
+        NetLogicEntry<?, ?> entry = logicEntrySet.remove(type);
         if (entry != null) {
             entry.deregisterFromNetLogicData(this);
             this.listeners.forEach(l -> l.markChanged(entry, true, true));
@@ -88,36 +82,18 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         this.listeners.forEach(l -> l.markChanged(entry, false, fullChange));
     }
 
-    public boolean hasLogicEntry(@NotNull String key) {
-        return logicEntrySet.containsKey(key);
-    }
-
-    public boolean hasLogicEntry(@NotNull NetLogicEntry<?, ?> key) {
-        return logicEntrySet.containsKey(key.getName());
+    public boolean hasLogicEntry(@NotNull NetLogicType<?> type) {
+        return logicEntrySet.containsKey(type);
     }
 
     @Nullable
-    public NetLogicEntry<?, ?> getLogicEntryNullable(@NotNull String key) {
-        return logicEntrySet.get(key);
-    }
-
-    @Nullable
-    public <T extends NetLogicEntry<?, ?>> T getLogicEntryNullable(@NotNull T key) {
-        try {
-            return (T) logicEntrySet.get(key.getName());
-        } catch (ClassCastException ignored) {
-            return null;
-        }
+    public <T extends NetLogicEntry<T, ?>> T getLogicEntryNullable(@NotNull NetLogicType<T> type) {
+        return type.cast(logicEntrySet.get(type));
     }
 
     @NotNull
-    public <T extends NetLogicEntry<T, ?>> T getLogicEntryDefaultable(@NotNull T key) {
-        try {
-            T returnable = (T) logicEntrySet.get(key.getName());
-            return returnable == null ? key : returnable;
-        } catch (ClassCastException ignored) {
-            return key;
-        }
+    public <T extends NetLogicEntry<T, ?>> T getLogicEntryDefaultable(@NotNull NetLogicType<T> type) {
+        return type.cast(logicEntrySet.getOrDefault(type, type.getDefault()));
     }
 
     @Contract("null, null -> null; !null, _ -> new; _, !null -> new")
@@ -129,10 +105,10 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     @Contract("_, _ -> new")
     public static @NotNull NetLogicData union(@NotNull NetLogicData sourceData, @Nullable NetLogicData targetData) {
-        Object2ObjectOpenHashMap<String, NetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
+        Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
                 sourceData.logicEntrySet);
         if (targetData != null) {
-            for (String key : newLogic.keySet()) {
+            for (NetLogicType<?> key : newLogic.keySet()) {
                 newLogic.computeIfPresent(key, (k, v) -> v.union(targetData.logicEntrySet.get(k)));
             }
             targetData.logicEntrySet.forEach((key, value) -> newLogic.computeIfAbsent(key, k -> value.union(null)));
@@ -142,10 +118,10 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     @Contract("_, _ -> new")
     public static @NotNull NetLogicData union(@NotNull NetLogicData first, @NotNull NetLogicData... others) {
-        Object2ObjectOpenHashMap<String, NetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
+        Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
                 first.logicEntrySet);
         for (NetLogicData other : others) {
-            for (String key : newLogic.keySet()) {
+            for (NetLogicType<?> key : newLogic.keySet()) {
                 newLogic.computeIfPresent(key, (k, v) -> v.union(other.logicEntrySet.get(k)));
             }
             other.logicEntrySet.forEach((key, value) -> newLogic.computeIfAbsent(key, k -> value.union(null)));
@@ -160,7 +136,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
             NBTBase nbt = entry.serializeNBT();
             if (nbt == null) continue;
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("Name", entry.getName());
+            tag.setString("Type", entry.getType().getName());
             tag.setTag("Tag", nbt);
             list.appendTag(tag);
         }
@@ -171,25 +147,24 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
     public void deserializeNBT(NBTTagList nbt) {
         for (int i = 0; i < nbt.tagCount(); i++) {
             NBTTagCompound tag = nbt.getCompoundTagAt(i);
-            String key = tag.getString("Name");
-            NetLogicEntry<?, ?> entry = this.logicEntrySet.get(key);
-            if (entry == null) entry = NetLogicRegistry.getSupplierNotNull(key).get();
-            if (entry == null) continue;
+            NetLogicType<?> type = NetLogicRegistry.getTypeNullable(tag.getString("Type"));
+            if (type == null) continue;
+            NetLogicEntry<?, ?> entry = this.logicEntrySet.get(type);
+            if (entry == null) entry = type.getNew();
             entry.deserializeNBTNaive(tag.getTag("Tag"));
-            this.logicEntrySet.put(key, entry);
+            this.logicEntrySet.put(type, entry);
         }
     }
 
     @Override
     public void encode(PacketBuffer buf) {
-        buf.writeVarInt(getEntries().size());
+        int count = 0;
         for (NetLogicEntry<?, ?> entry : getEntries()) {
-            if (entry.shouldEncode()) {
-                buf.writeString(entry.getName());
-                entry.encode(buf, true);
-            } else {
-                buf.writeString("");
-            }
+            if (entry.shouldEncode()) count++;
+        }
+        buf.writeVarInt(count);
+        for (NetLogicEntry<?, ?> entry : getEntries()) {
+            if (entry.shouldEncode()) writeEntry(buf, entry, true);
         }
     }
 
@@ -198,14 +173,41 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
         this.logicEntrySet.clear();
         int entryCount = buf.readVarInt();
         for (int i = 0; i < entryCount; i++) {
-            String name = buf.readString(255);
-            if (name.equals("")) continue;
-            NetLogicEntry<?, ?> existing = NetLogicRegistry.getSupplierErroring(name).get();
-            existing.registerToNetLogicData(this);
-            existing.decode(buf);
-            this.logicEntrySet.put(name, existing);
+            readEntry(buf);
         }
         this.logicEntrySet.trim();
+    }
+
+    public static void writeEntry(@NotNull PacketBuffer buf, @NotNull NetLogicEntry<?, ?> entry, boolean fullChange) {
+        buf.writeVarInt(NetLogicRegistry.getNetworkID(entry));
+        buf.writeBoolean(fullChange);
+        entry.encode(buf, fullChange);
+    }
+
+    /**
+     * @return the net logic entry decoded to.
+     */
+    @Nullable
+    public NetLogicEntry<?, ?> readEntry(@NotNull PacketBuffer buf) {
+        int id = buf.readVarInt();
+        boolean fullChange = buf.readBoolean();
+        NetLogicType<?> type = NetLogicRegistry.getType(id);
+        NetLogicEntry<?, ?> existing = this.getLogicEntryNullable(type);
+        boolean add = false;
+        if (existing == null) {
+            // never partially decode into a new entry
+            if (!fullChange) return null;
+            existing = type.getNew();
+            add = true;
+        }
+        try {
+            existing.decode(buf, fullChange);
+        } catch (Exception ignored) {
+            NetLogicRegistry.throwDecodingError();
+        }
+        // make sure to add after decoding, so we don't notify listeners with an empty logic entry
+        if (add) this.setLogicEntry(existing);
+        return existing;
     }
 
     /**

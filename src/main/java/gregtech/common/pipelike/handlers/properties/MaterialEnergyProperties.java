@@ -182,37 +182,37 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             boolean insulated = cable.partialBurnStructure() != null;
             // insulated cables cool down half as fast
             float coolingFactor = (float) (Math.sqrt(cable.material()) / (insulated ? 8 : 4));
-            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.TYPE);
             float energy = existing == null ? 0 : existing.getThermalEnergy();
-            data.setLogicEntry(VoltageLossLogic.INSTANCE.getWith(loss))
-                    .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
-                    .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
-                    .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
-                    .setLogicEntry(TemperatureLogic.INSTANCE
+            data.setLogicEntry(VoltageLossLogic.TYPE.getWith(loss))
+                    .setLogicEntry(WeightFactorLogic.TYPE.getWith(loss + 0.001 / amperage))
+                    .setLogicEntry(ThroughputLogic.TYPE.getWith(amperage))
+                    .setLogicEntry(VoltageLimitLogic.TYPE.getWith(voltageLimit))
+                    .setLogicEntry(TemperatureLogic.TYPE
                             .getWith(TemperatureLossFunction.getOrCreateCable(coolingFactor), materialMeltTemperature,
                                     1,
                                     100 * cable.material(), cable.partialBurnThreshold())
                             .setInitialThermalEnergy(energy));
             if (superconductorCriticalTemperature > 0) {
-                data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
+                data.setLogicEntry(SuperconductorLogic.TYPE.getWith(superconductorCriticalTemperature));
             }
         } else if (structure instanceof MaterialPipeStructure pipe) {
             long amperage = getAmperage(structure);
             if (amperage == 0) return; // skip pipes that are too small
             long loss = getLoss(structure);
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
-            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.TYPE);
             float energy = existing == null ? 0 : existing.getThermalEnergy();
-            data.setLogicEntry(VoltageLossLogic.INSTANCE.getWith(loss))
-                    .setLogicEntry(WeightFactorLogic.INSTANCE.getWith(loss + 0.001 / amperage))
-                    .setLogicEntry(ThroughputLogic.INSTANCE.getWith(amperage))
-                    .setLogicEntry(VoltageLimitLogic.INSTANCE.getWith(voltageLimit))
-                    .setLogicEntry(TemperatureLogic.INSTANCE
+            data.setLogicEntry(VoltageLossLogic.TYPE.getWith(loss))
+                    .setLogicEntry(WeightFactorLogic.TYPE.getWith(loss + 0.001 / amperage))
+                    .setLogicEntry(ThroughputLogic.TYPE.getWith(amperage))
+                    .setLogicEntry(VoltageLimitLogic.TYPE.getWith(voltageLimit))
+                    .setLogicEntry(TemperatureLogic.TYPE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature, 1,
                                     50 * pipe.material(), null)
                             .setInitialThermalEnergy(energy));
             if (superconductorCriticalTemperature > 0) {
-                data.setLogicEntry(SuperconductorLogic.INSTANCE.getWith(superconductorCriticalTemperature));
+                data.setLogicEntry(SuperconductorLogic.TYPE.getWith(superconductorCriticalTemperature));
             }
         }
     }

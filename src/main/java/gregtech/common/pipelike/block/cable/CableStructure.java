@@ -2,7 +2,7 @@ package gregtech.common.pipelike.block.cable;
 
 import gregtech.api.graphnet.pipenet.physical.IInsulatable;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
-import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistrationEvent;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.client.renderer.pipe.PipeModelRedirector;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
@@ -42,20 +42,6 @@ public record CableStructure(String name, int material, int costFactor, OrePrefi
     public static final CableStructure CABLE_HEX = new CableStructure("cable_hex", 16, 1, OrePrefix.cableGtHex,
             WIRE_HEX, INSULATION_BURN_TEMP, 1f, PipeModelRegistry.getCableModel(5));
 
-    public CableStructure(String name, int material, int costFactor, OrePrefix ore,
-                          @Nullable CableStructure partialBurnStructure, @Nullable Integer partialBurnThreshold,
-                          float renderThickness, PipeModelRedirector model) {
-        this.name = name;
-        this.material = material;
-        this.costFactor = costFactor;
-        this.ore = ore;
-        this.partialBurnStructure = partialBurnStructure;
-        this.partialBurnThreshold = partialBurnThreshold;
-        this.renderThickness = renderThickness;
-        this.model = model;
-        PipeStructureRegistry.register(this);
-    }
-
     @Override
     public @NotNull String getName() {
         return name;
@@ -84,5 +70,18 @@ public record CableStructure(String name, int material, int costFactor, OrePrefi
     @Override
     public PipeModelRedirector getModel() {
         return model;
+    }
+
+    public static void register(@NotNull PipeStructureRegistrationEvent event) {
+        event.register(WIRE_SINGLE);
+        event.register(WIRE_DOUBLE);
+        event.register(WIRE_QUADRUPLE);
+        event.register(WIRE_OCTAL);
+        event.register(WIRE_HEX);
+        event.register(CABLE_SINGLE);
+        event.register(CABLE_DOUBLE);
+        event.register(CABLE_QUADRUPLE);
+        event.register(CABLE_OCTAL);
+        event.register(CABLE_HEX);
     }
 }

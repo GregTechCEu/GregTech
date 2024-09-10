@@ -43,15 +43,15 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
             PipeTileEntity tile = pipe.getTileEntity(world, iProbeHitData.getPos());
             if (tile != null) {
                 for (NetLogicData data : tile.getNetLogicDatas().values()) {
-                    EnergyFlowLogic energy = data.getLogicEntryNullable(EnergyFlowLogic.INSTANCE);
+                    EnergyFlowLogic energy = data.getLogicEntryNullable(EnergyFlowLogic.TYPE);
                     if (energy != null) {
                         addEnergyFlowInformation(probeMode, iProbeInfo, entityPlayer, iProbeHitData, energy);
                     }
-                    FluidFlowLogic fluid = data.getLogicEntryNullable(FluidFlowLogic.INSTANCE);
+                    FluidFlowLogic fluid = data.getLogicEntryNullable(FluidFlowLogic.TYPE);
                     if (fluid != null) {
                         addFluidFlowInformation(probeMode, iProbeInfo, entityPlayer, iProbeHitData, fluid);
                     }
-                    ItemFlowLogic item = data.getLogicEntryNullable(ItemFlowLogic.INSTANCE);
+                    ItemFlowLogic item = data.getLogicEntryNullable(ItemFlowLogic.TYPE);
                     if (item != null) {
                         addItemFlowInformation(probeMode, iProbeInfo, entityPlayer, iProbeHitData, item);
                     }

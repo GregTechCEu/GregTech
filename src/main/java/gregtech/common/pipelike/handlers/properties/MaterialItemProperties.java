@@ -84,10 +84,10 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     public void mutateData(NetLogicData data, IPipeStructure structure) {
         if (structure instanceof MaterialPipeStructure pipe) {
             long throughput = baseItemsPer5Ticks * pipe.material();
-            data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
-                    .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput));
+            data.setLogicEntry(WeightFactorLogic.TYPE.getWith(getFlowPriority(structure)))
+                    .setLogicEntry(ThroughputLogic.TYPE.getWith(throughput));
             if (pipe.channelCount() > 1) {
-                data.setLogicEntry(ChannelCountLogic.INSTANCE.getWith(pipe.channelCount()));
+                data.setLogicEntry(ChannelCountLogic.TYPE.getWith(pipe.channelCount()));
             }
         }
     }

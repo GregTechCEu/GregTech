@@ -1,8 +1,10 @@
 package gregtech.common.pipelike.net.fluid;
 
+import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.graphnet.logic.NetLogicEntry;
+import gregtech.api.graphnet.logic.NetLogicType;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,27 +25,16 @@ import java.util.Set;
 
 public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentLogic, NBTTagCompound> {
 
-    public static final FluidContainmentLogic INSTANCE = new FluidContainmentLogic().contain(FluidState.LIQUID);
+    public static final FluidContainmentLogicType TYPE = new FluidContainmentLogicType();
 
     private int maximumTemperature;
 
     private final Set<ResourceLocation> containableAttributes = new ObjectOpenHashSet<>();
     private @NotNull EnumSet<FluidState> containableStates = EnumSet.noneOf(FluidState.class);
 
-    public FluidContainmentLogic() {
-        super("FluidContainment");
-    }
-
-    public @NotNull FluidContainmentLogic getWith(Collection<FluidState> states,
-                                                  @NotNull Collection<FluidAttribute> attributes,
-                                                  int maximumTemperature) {
-        FluidContainmentLogic logic = getNew();
-        logic.containableStates.addAll(states);
-        for (FluidAttribute attribute : attributes) {
-            logic.contain(attribute);
-        }
-        logic.maximumTemperature = maximumTemperature;
-        return logic;
+    @Override
+    public @NotNull FluidContainmentLogicType getType() {
+        return TYPE;
     }
 
     @Contract("_ -> this")
@@ -93,7 +84,7 @@ public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentL
                     this.containableStates.equals(logic.containableStates)) {
                 return this;
             } else {
-                FluidContainmentLogic returnable = getNew();
+                FluidContainmentLogic returnable = TYPE.getNew();
                 returnable.containableStates = EnumSet.copyOf(this.containableStates);
                 returnable.containableStates.retainAll(logic.containableStates);
                 returnable.containableAttributes.addAll(this.containableAttributes);
@@ -126,11 +117,6 @@ public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentL
     }
 
     @Override
-    public @NotNull FluidContainmentLogic getNew() {
-        return new FluidContainmentLogic();
-    }
-
-    @Override
     public void encode(PacketBuffer buf, boolean fullChange) {
         buf.writeVarInt(containableAttributes.size());
         for (ResourceLocation loc : containableAttributes) {
@@ -146,5 +132,25 @@ public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentL
             containableAttributes.add(new ResourceLocation(buf.readString(255)));
         }
         containableStates = GTUtility.maskToSet(FluidState.class, BitSet.valueOf(buf.readByteArray(255)));
+    }
+
+    public static final class FluidContainmentLogicType extends NetLogicType<FluidContainmentLogic> {
+
+        public FluidContainmentLogicType() {
+            super(GTValues.MODID, "FluidContainment", FluidContainmentLogic::new,
+                    new FluidContainmentLogic().contain(FluidState.LIQUID));
+        }
+
+        public @NotNull FluidContainmentLogic getWith(Collection<FluidState> states,
+                                                      @NotNull Collection<FluidAttribute> attributes,
+                                                      int maximumTemperature) {
+            FluidContainmentLogic logic = getNew();
+            logic.containableStates.addAll(states);
+            for (FluidAttribute attribute : attributes) {
+                logic.contain(attribute);
+            }
+            logic.maximumTemperature = maximumTemperature;
+            return logic;
+        }
     }
 }

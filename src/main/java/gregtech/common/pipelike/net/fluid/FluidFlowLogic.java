@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.net.fluid;
 
+import gregtech.api.GTValues;
 import gregtech.api.graphnet.logic.AbstractTransientLogicData;
+import gregtech.api.graphnet.logic.NetLogicType;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -15,15 +17,17 @@ import java.util.List;
 
 public class FluidFlowLogic extends AbstractTransientLogicData<FluidFlowLogic> {
 
-    public static final FluidFlowLogic INSTANCE = new FluidFlowLogic();
+    public static final NetLogicType<FluidFlowLogic> TYPE = new NetLogicType<>(GTValues.MODID, "FluidFlow",
+            FluidFlowLogic::new, new FluidFlowLogic());
 
     public static final int MEMORY_TICKS = 10;
 
     private final Long2ObjectOpenHashMap<List<FluidStack>> memory = new Long2ObjectOpenHashMap<>();
     private FluidStack last;
 
-    protected FluidFlowLogic() {
-        super("FluidFlow");
+    @Override
+    public @NotNull NetLogicType<FluidFlowLogic> getType() {
+        return TYPE;
     }
 
     public @NotNull Long2ObjectOpenHashMap<List<FluidStack>> getMemory() {
@@ -54,10 +58,5 @@ public class FluidFlowLogic extends AbstractTransientLogicData<FluidFlowLogic> {
                 iter.remove();
             }
         }
-    }
-
-    @Override
-    public @NotNull FluidFlowLogic getNew() {
-        return new FluidFlowLogic();
     }
 }

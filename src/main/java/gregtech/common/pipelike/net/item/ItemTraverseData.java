@@ -73,9 +73,9 @@ public class ItemTraverseData extends AbstractTraverseData<WorldPipeNetNode, Flo
     }
 
     private void recordFlow(@NotNull NetNode node, long flow) {
-        ItemFlowLogic logic = node.getData().getLogicEntryNullable(ItemFlowLogic.INSTANCE);
+        ItemFlowLogic logic = node.getData().getLogicEntryNullable(ItemFlowLogic.TYPE);
         if (logic == null) {
-            logic = ItemFlowLogic.INSTANCE.getNew();
+            logic = ItemFlowLogic.TYPE.getNew();
             node.getData().setLogicEntry(logic);
         }
         logic.recordFlow(getQueryTick(), getTestObject().recombine(GTUtility.safeCastLongToInt(flow)));

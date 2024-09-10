@@ -998,7 +998,7 @@ public class GTUtility {
      *
      * @param clazz the class object to initialize.
      */
-    public static void forceInitialization(Class<?> clazz) {
+    public static void forceInitialization(@NotNull Class<?> clazz) {
         try {
             Class.forName(clazz.getName(), true, clazz.getClassLoader());
         } catch (ClassNotFoundException e) {

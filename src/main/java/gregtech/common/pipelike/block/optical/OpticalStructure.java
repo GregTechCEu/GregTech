@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.block.optical;
 
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistrationEvent;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.PipeModelRedirector;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
@@ -17,13 +17,6 @@ public record OpticalStructure(String name, float renderThickness, PipeModelRedi
 
     public static final OpticalStructure INSTANCE = new OpticalStructure("optical_pipe_normal", 0.375f,
             PipeModelRegistry.getOpticalModel());
-
-    public OpticalStructure(String name, float renderThickness, PipeModelRedirector model) {
-        this.name = name;
-        this.renderThickness = renderThickness;
-        this.model = model;
-        PipeStructureRegistry.register(this);
-    }
 
     @Override
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {
@@ -56,5 +49,9 @@ public record OpticalStructure(String name, float renderThickness, PipeModelRedi
     @Override
     public PipeModelRedirector getModel() {
         return model;
+    }
+
+    public static void register(@NotNull PipeStructureRegistrationEvent event) {
+        event.register(INSTANCE);
     }
 }

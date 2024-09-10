@@ -82,9 +82,9 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
             return result.getLossFunction();
         } else {
             FluidContainmentLogic containmentLogic = node.getData()
-                    .getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
+                    .getLogicEntryDefaultable(FluidContainmentLogic.TYPE);
 
-            TemperatureLogic temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            TemperatureLogic temperatureLogic = node.getData().getLogicEntryNullable(TemperatureLogic.TYPE);
             if (temperatureLogic != null) {
                 result = temperatureLogic.getLossResult(getQueryTick());
                 boolean overMax = fluidTemp > containmentLogic.getMaximumTemperature() &&
@@ -168,10 +168,10 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
         super.consumeFlowLimit(edge, targetNode, consumption);
         if (consumption > 0 && !simulating()) {
             recordFlow(targetNode, consumption);
-            TemperatureLogic temperatureLogic = targetNode.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            TemperatureLogic temperatureLogic = targetNode.getData().getLogicEntryNullable(TemperatureLogic.TYPE);
             if (temperatureLogic != null) {
                 FluidContainmentLogic containmentLogic = targetNode.getData()
-                        .getLogicEntryDefaultable(FluidContainmentLogic.INSTANCE);
+                        .getLogicEntryDefaultable(FluidContainmentLogic.TYPE);
                 boolean overMax = fluidTemp > containmentLogic.getMaximumTemperature() &&
                         !(state == FluidState.PLASMA && containmentLogic.contains(FluidState.PLASMA));
                 temperatureLogic.moveTowardsTemperature(fluidTemp,
@@ -181,9 +181,9 @@ public class FluidTraverseData extends AbstractTraverseData<WorldPipeNetNode, Fl
     }
 
     private void recordFlow(@NotNull NetNode node, long flow) {
-        FluidFlowLogic logic = node.getData().getLogicEntryNullable(FluidFlowLogic.INSTANCE);
+        FluidFlowLogic logic = node.getData().getLogicEntryNullable(FluidFlowLogic.TYPE);
         if (logic == null) {
-            logic = FluidFlowLogic.INSTANCE.getNew();
+            logic = FluidFlowLogic.TYPE.getNew();
             node.getData().setLogicEntry(logic);
         }
         logic.recordFlow(getQueryTick(), getTestObject().recombine(GTUtility.safeCastLongToInt(flow)));

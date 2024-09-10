@@ -1,10 +1,12 @@
 package gregtech.api.graphnet.pipenet.logic;
 
+import gregtech.api.GTValues;
 import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.logic.INetLogicEntryListener;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
+import gregtech.api.graphnet.logic.NetLogicType;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.IFreezable;
@@ -26,7 +28,7 @@ import java.lang.ref.WeakReference;
 
 public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTTagCompound> {
 
-    public static final TemperatureLogic INSTANCE = new TemperatureLogic();
+    public static final TemperatureLogicType TYPE = new TemperatureLogicType();
 
     public static final int DEFAULT_TEMPERATURE = 298;
 
@@ -43,42 +45,9 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
     private int functionPriority;
     private long lastRestorationTick;
 
-    private TemperatureLogic() {
-        super("Temperature");
-    }
-
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
-                                    int temperatureMaximum) {
-        return getWith(temperatureRestorationFunction, temperatureMaximum, 1);
-    }
-
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
-                                    int temperatureMaximum, int temperatureMinimum) {
-        return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, 1000);
-    }
-
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
-                                    int temperatureMaximum, int temperatureMinimum, int thermalMass) {
-        return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass, 0);
-    }
-
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
-                                    int temperatureMaximum, int temperatureMinimum, int thermalMass,
-                                    @Nullable Integer partialBurnTemperature) {
-        return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass,
-                partialBurnTemperature, 0);
-    }
-
-    public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
-                                    int temperatureMaximum, int temperatureMinimum, int thermalMass,
-                                    @Nullable Integer partialBurnTemperature, int functionPriority) {
-        return getNew()
-                .setRestorationFunction(temperatureRestorationFunction)
-                .setTemperatureMaximum(temperatureMaximum)
-                .setTemperatureMinimum(temperatureMinimum)
-                .setThermalMass(thermalMass)
-                .setPartialBurnTemperature(partialBurnTemperature)
-                .setFunctionPriority(functionPriority);
+    @Override
+    public @NotNull TemperatureLogicType getType() {
+        return TYPE;
     }
 
     @Contract("_ -> this")
@@ -335,6 +304,47 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
             int partialBurn = buf.readVarInt();
             if (partialBurn != -1) this.partialBurnTemperature = partialBurn;
             else this.partialBurnTemperature = null;
+        }
+    }
+
+    public static class TemperatureLogicType extends NetLogicType<TemperatureLogic> {
+
+        public TemperatureLogicType() {
+            super(GTValues.MODID, "Temperature", TemperatureLogic::new, new TemperatureLogic());
+        }
+
+        public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                        int temperatureMaximum) {
+            return getWith(temperatureRestorationFunction, temperatureMaximum, 1);
+        }
+
+        public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                        int temperatureMaximum, int temperatureMinimum) {
+            return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, 1000);
+        }
+
+        public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                        int temperatureMaximum, int temperatureMinimum, int thermalMass) {
+            return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass, 0);
+        }
+
+        public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                        int temperatureMaximum, int temperatureMinimum, int thermalMass,
+                                        @Nullable Integer partialBurnTemperature) {
+            return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass,
+                    partialBurnTemperature, 0);
+        }
+
+        public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
+                                        int temperatureMaximum, int temperatureMinimum, int thermalMass,
+                                        @Nullable Integer partialBurnTemperature, int functionPriority) {
+            return getNew()
+                    .setRestorationFunction(temperatureRestorationFunction)
+                    .setTemperatureMaximum(temperatureMaximum)
+                    .setTemperatureMinimum(temperatureMinimum)
+                    .setThermalMass(thermalMass)
+                    .setPartialBurnTemperature(partialBurnTemperature)
+                    .setFunctionPriority(functionPriority);
         }
     }
 }

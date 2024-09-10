@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.block.laser;
 
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
-import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistrationEvent;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.PipeModelRedirector;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
@@ -20,14 +20,6 @@ public record LaserStructure(String name, float renderThickness, boolean mirror,
             false, PipeModelRegistry.getLaserModel());
     public static final LaserStructure MIRROR = new LaserStructure("laser_pipe_mirror", 0.5f,
             true, PipeModelRegistry.getLaserModel());
-
-    public LaserStructure(String name, float renderThickness, boolean mirror, PipeModelRedirector model) {
-        this.name = name;
-        this.renderThickness = renderThickness;
-        this.mirror = mirror;
-        this.model = model;
-        PipeStructureRegistry.register(this);
-    }
 
     @Override
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {
@@ -70,5 +62,10 @@ public record LaserStructure(String name, float renderThickness, boolean mirror,
     @Override
     public PipeModelRedirector getModel() {
         return model;
+    }
+
+    public static void register(@NotNull PipeStructureRegistrationEvent event) {
+        event.register(NORMAL);
+        event.register(MIRROR);
     }
 }

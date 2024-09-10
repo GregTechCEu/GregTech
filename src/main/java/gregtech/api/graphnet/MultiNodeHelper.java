@@ -66,7 +66,7 @@ public class MultiNodeHelper implements INetLogicEntryListener {
         List<NetLogicEntry<?, ?>> toSet = new ObjectArrayList<>();
         for (NetLogicEntry<?, ?> entry : node.getData().getEntries()) {
             if (entry.mergedToMultiNodeHelper()) {
-                NetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(entry);
+                NetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(entry.getType());
                 if (existing != null) {
                     existing.merge(node, entry);
                     // don't put it into the data yet because we're currently iterating through the data's entries.
@@ -114,7 +114,7 @@ public class MultiNodeHelper implements INetLogicEntryListener {
             if (!fullChange || !updatedEntry.mergedToMultiNodeHelper()) return;
             NetNode node = nodeRef.get();
             if (node == null) return;
-            NetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(updatedEntry);
+            NetLogicEntry<?, ?> existing = mergedData.getLogicEntryNullable(updatedEntry.getType());
             if (removed) {
                 if (existing != null) mergedData.removeLogicEntry(existing);
             } else {

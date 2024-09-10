@@ -181,18 +181,18 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
         if (structure instanceof MaterialPipeStructure pipe) {
             long throughput = getThroughput(structure);
             float coolingFactor = (float) Math.sqrt((double) pipe.material() / (4 + pipe.channelCount()));
-            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.INSTANCE);
+            TemperatureLogic existing = data.getLogicEntryNullable(TemperatureLogic.TYPE);
             float energy = existing == null ? 0 : existing.getThermalEnergy();
-            data.setLogicEntry(WeightFactorLogic.INSTANCE.getWith(getFlowPriority(structure)))
-                    .setLogicEntry(ThroughputLogic.INSTANCE.getWith(throughput))
-                    .setLogicEntry(FluidContainmentLogic.INSTANCE.getWith(containableStates, containableAttributes,
+            data.setLogicEntry(WeightFactorLogic.TYPE.getWith(getFlowPriority(structure)))
+                    .setLogicEntry(ThroughputLogic.TYPE.getWith(throughput))
+                    .setLogicEntry(FluidContainmentLogic.TYPE.getWith(containableStates, containableAttributes,
                             maxFluidTemperature))
-                    .setLogicEntry(TemperatureLogic.INSTANCE
+                    .setLogicEntry(TemperatureLogic.TYPE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature,
                                     minFluidTemperature, 50 * pipe.material(), null)
                             .setInitialThermalEnergy(energy));
             if (pipe.channelCount() > 1) {
-                data.setLogicEntry(ChannelCountLogic.INSTANCE.getWith(pipe.channelCount()));
+                data.setLogicEntry(ChannelCountLogic.TYPE.getWith(pipe.channelCount()));
             }
         }
     }

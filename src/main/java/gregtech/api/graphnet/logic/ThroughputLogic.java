@@ -1,18 +1,17 @@
 package gregtech.api.graphnet.logic;
 
+import gregtech.api.GTValues;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class ThroughputLogic extends AbstractLongLogicData<ThroughputLogic> {
 
-    public static final ThroughputLogic INSTANCE = new ThroughputLogic().setValue(0);
-
-    private ThroughputLogic() {
-        super("Throughput");
-    }
+    public static final LongLogicType<ThroughputLogic> TYPE = new LongLogicType<>(GTValues.MODID, "Throughput",
+            ThroughputLogic::new, new ThroughputLogic());
 
     @Override
-    public @NotNull ThroughputLogic getNew() {
-        return new ThroughputLogic();
+    public @NotNull LongLogicType<ThroughputLogic> getType() {
+        return TYPE;
     }
 
     @Override

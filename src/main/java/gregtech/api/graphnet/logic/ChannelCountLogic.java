@@ -1,18 +1,17 @@
 package gregtech.api.graphnet.logic;
 
+import gregtech.api.GTValues;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class ChannelCountLogic extends AbstractIntLogicData<ChannelCountLogic> {
 
-    public static final ChannelCountLogic INSTANCE = new ChannelCountLogic().setValue(1);
-
-    public ChannelCountLogic() {
-        super("ChannelCount");
-    }
+    public static final IntLogicType<ChannelCountLogic> TYPE = new IntLogicType<>(GTValues.MODID, "ChannelCount",
+            ChannelCountLogic::new, new ChannelCountLogic().setValue(1));
 
     @Override
-    public @NotNull ChannelCountLogic getNew() {
-        return new ChannelCountLogic();
+    public @NotNull IntLogicType<ChannelCountLogic> getType() {
+        return TYPE;
     }
 
     @Override

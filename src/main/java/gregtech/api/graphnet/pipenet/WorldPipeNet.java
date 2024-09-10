@@ -11,6 +11,7 @@ import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.predicate.EdgePredicate;
+import gregtech.api.graphnet.predicate.NetPredicateType;
 import gregtech.api.graphnet.worldnet.WorldPosNet;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.reference.WeakHashSet;
@@ -101,7 +102,7 @@ public abstract class WorldPipeNet extends WorldPosNet {
     protected boolean predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source,
                                     @Nullable Cover coverSource,
                                     @NotNull WorldPipeNetNode target, @Nullable Cover coverTarget) {
-        Map<String, EdgePredicate<?, ?>> prevValue = new Object2ObjectOpenHashMap<>(
+        Map<NetPredicateType<?>, EdgePredicate<?, ?>> prevValue = new Object2ObjectOpenHashMap<>(
                 edge.getPredicateHandler().getPredicateSet());
         edge.getPredicateHandler().clearPredicates();
         coverPredication(edge, coverSource, coverTarget);
@@ -134,7 +135,7 @@ public abstract class WorldPipeNet extends WorldPosNet {
     protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
         if (a instanceof CoverShutter aS && aS.isWorkingEnabled() ||
                 b instanceof CoverShutter bS && bS.isWorkingEnabled()) {
-            edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+            edge.getPredicateHandler().setPredicate(BlockedPredicate.TYPE.getNew());
         }
     }
 

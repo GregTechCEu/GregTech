@@ -3,7 +3,6 @@ package gregtech.api.graphnet.predicate;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,19 +13,9 @@ import org.jetbrains.annotations.Nullable;
  * {@link #union(EdgePredicate)} behavior.
  */
 public abstract class EdgePredicate<T extends EdgePredicate<T, N>, N extends NBTBase>
-                                   implements INBTSerializable<N>, IStringSerializable {
+                                   implements INBTSerializable<N> {
 
-    private final @NotNull String name;
-
-    public EdgePredicate(@NotNull String name) {
-        this.name = name;
-        NetPredicateRegistry.register(this);
-    }
-
-    @Override
-    public final @NotNull String getName() {
-        return name;
-    }
+    public abstract @NotNull NetPredicateType<T> getType();
 
     public void deserializeNBTNaive(NBTBase nbt) {
         deserializeNBT((N) nbt);
@@ -40,9 +29,6 @@ public abstract class EdgePredicate<T extends EdgePredicate<T, N>, N extends NBT
      * (andy1) && (andy2) && (ory1 || ory2 || ory3)
      */
     public abstract boolean andy();
-
-    @NotNull
-    public abstract T getNew();
 
     public abstract boolean test(IPredicateTestObject object);
 

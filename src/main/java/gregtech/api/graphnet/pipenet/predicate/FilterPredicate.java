@@ -1,6 +1,8 @@
 package gregtech.api.graphnet.pipenet.predicate;
 
+import gregtech.api.GTValues;
 import gregtech.api.graphnet.predicate.EdgePredicate;
+import gregtech.api.graphnet.predicate.NetPredicateType;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.common.covers.filter.BaseFilterContainer;
 
@@ -14,13 +16,15 @@ import java.util.Objects;
 
 public final class FilterPredicate extends EdgePredicate<FilterPredicate, NBTTagCompound> {
 
-    public static final FilterPredicate INSTANCE = new FilterPredicate();
+    public static final NetPredicateType<FilterPredicate> TYPE = new NetPredicateType<>(GTValues.MODID, "Filter",
+            FilterPredicate::new, new FilterPredicate());
 
     private @Nullable BaseFilterContainer sourceFilter;
     private @Nullable BaseFilterContainer targetFilter;
 
-    private FilterPredicate() {
-        super("FluidFilter");
+    @Override
+    public @NotNull NetPredicateType<FilterPredicate> getType() {
+        return TYPE;
     }
 
     public void setSourceFilter(@Nullable BaseFilterContainer sourceFilter) {
@@ -54,11 +58,6 @@ public final class FilterPredicate extends EdgePredicate<FilterPredicate, NBTTag
     @Override
     public boolean andy() {
         return true;
-    }
-
-    @Override
-    public @NotNull FilterPredicate getNew() {
-        return new FilterPredicate();
     }
 
     @Override

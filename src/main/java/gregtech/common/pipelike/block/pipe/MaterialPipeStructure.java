@@ -2,7 +2,7 @@ package gregtech.common.pipelike.block.pipe;
 
 import gregtech.api.graphnet.pipenet.physical.IPipeChanneledStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
-import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistry;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistrationEvent;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.client.renderer.pipe.PipeModelRedirector;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
@@ -50,18 +50,6 @@ public record MaterialPipeStructure(String name, int material, int channelCount,
             "pipe_nonuple_restrictive", 18, 9, true, OrePrefix.pipeNonupleRestrictive, 0.95f,
             PipeModelRegistry.getPipeRestrictiveModel(6));
 
-    public MaterialPipeStructure(String name, int material, int channelCount, boolean restrictive, OrePrefix ore,
-                                 float renderThickness, PipeModelRedirector model) {
-        this.name = name;
-        this.material = material;
-        this.channelCount = channelCount;
-        this.restrictive = restrictive;
-        this.ore = ore;
-        this.renderThickness = renderThickness;
-        this.model = model;
-        PipeStructureRegistry.register(this);
-    }
-
     @Override
     public @NotNull String getName() {
         return name;
@@ -90,5 +78,22 @@ public record MaterialPipeStructure(String name, int material, int channelCount,
     @Override
     public PipeModelRedirector getModel() {
         return model;
+    }
+
+    public static void register(@NotNull PipeStructureRegistrationEvent event) {
+        event.register(TINY);
+        event.register(SMALL);
+        event.register(NORMAL);
+        event.register(LARGE);
+        event.register(HUGE);
+        event.register(QUADRUPLE);
+        event.register(NONUPLE);
+        event.register(TINY_RESTRICTIVE);
+        event.register(SMALL_RESTRICTIVE);
+        event.register(NORMAL_RESTRICTIVE);
+        event.register(LARGE_RESTRICTIVE);
+        event.register(HUGE_RESTRICTIVE);
+        event.register(QUADRUPLE_RESTRICTIVE);
+        event.register(NONUPLE_RESTRICTIVE);
     }
 }

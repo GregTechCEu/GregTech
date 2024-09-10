@@ -57,27 +57,27 @@ public class WorldFluidNet extends WorldPipeNet implements FlowWorldPipeNetPath.
     @Override
     protected void coverPredication(@NotNull NetEdge edge, @Nullable Cover a, @Nullable Cover b) {
         super.coverPredication(edge, a, b);
-        if (edge.getPredicateHandler().hasPredicate(BlockedPredicate.INSTANCE)) return;
+        if (edge.getPredicateHandler().hasPredicate(BlockedPredicate.TYPE)) return;
         FilterPredicate predicate = null;
         if (a instanceof CoverWithFluidFilter filter) {
             if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
                 edge.getPredicateHandler().clearPredicates();
-                edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+                edge.getPredicateHandler().setPredicate(BlockedPredicate.TYPE.getNew());
                 return;
             } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
                     filter.getFilterMode() != FluidFilterMode.FILTER_FILL) {
-                        predicate = FilterPredicate.INSTANCE.getNew();
+                        predicate = FilterPredicate.TYPE.getNew();
                         predicate.setSourceFilter(filter.getFluidFilter());
                     }
         }
         if (b instanceof CoverWithFluidFilter filter) {
             if (filter.getManualMode() == ManualImportExportMode.DISABLED) {
                 edge.getPredicateHandler().clearPredicates();
-                edge.getPredicateHandler().setPredicate(BlockedPredicate.INSTANCE);
+                edge.getPredicateHandler().setPredicate(BlockedPredicate.TYPE.getNew());
                 return;
             } else if (filter.getManualMode() == ManualImportExportMode.FILTERED &&
                     filter.getFilterMode() != FluidFilterMode.FILTER_DRAIN) {
-                        if (predicate == null) predicate = FilterPredicate.INSTANCE.getNew();
+                        if (predicate == null) predicate = FilterPredicate.TYPE.getNew();
                         predicate.setTargetFilter(filter.getFluidFilter());
                     }
         }

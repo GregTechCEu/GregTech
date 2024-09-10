@@ -47,7 +47,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                                                                                           WorldPipeNetNode node) {
         this.net = net;
         this.node = node;
-        properties = new IFluidTankProperties[node.getData().getLogicEntryDefaultable(ChannelCountLogic.INSTANCE)
+        properties = new IFluidTankProperties[node.getData().getLogicEntryDefaultable(ChannelCountLogic.TYPE)
                 .getValue()];
         Arrays.fill(properties, this);
         for (EnumFacing facing : EnumFacing.VALUES) {

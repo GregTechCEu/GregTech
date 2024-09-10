@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.net.energy;
 
+import gregtech.api.GTValues;
 import gregtech.api.graphnet.logic.AbstractTransientLogicData;
+import gregtech.api.graphnet.logic.NetLogicType;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -14,14 +16,16 @@ import java.util.List;
 
 public class EnergyFlowLogic extends AbstractTransientLogicData<EnergyFlowLogic> {
 
-    public static final EnergyFlowLogic INSTANCE = new EnergyFlowLogic();
+    public static final NetLogicType<EnergyFlowLogic> TYPE = new NetLogicType<>(GTValues.MODID, "EnergyFlow",
+            EnergyFlowLogic::new, new EnergyFlowLogic());
 
     public static final int MEMORY_TICKS = 10;
 
     private final Long2ObjectOpenHashMap<List<EnergyFlowData>> memory = new Long2ObjectOpenHashMap<>();
 
-    protected EnergyFlowLogic() {
-        super("EnergyFlow");
+    @Override
+    public @NotNull NetLogicType<EnergyFlowLogic> getType() {
+        return TYPE;
     }
 
     public @NotNull Long2ObjectOpenHashMap<List<EnergyFlowData>> getMemory() {
@@ -47,10 +51,5 @@ public class EnergyFlowLogic extends AbstractTransientLogicData<EnergyFlowLogic>
                 iter.remove();
             }
         }
-    }
-
-    @Override
-    public @NotNull EnergyFlowLogic getNew() {
-        return new EnergyFlowLogic();
     }
 }

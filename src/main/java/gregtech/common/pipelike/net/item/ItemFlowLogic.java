@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.net.item;
 
+import gregtech.api.GTValues;
 import gregtech.api.graphnet.logic.AbstractTransientLogicData;
+import gregtech.api.graphnet.logic.NetLogicType;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -15,15 +17,17 @@ import java.util.List;
 
 public class ItemFlowLogic extends AbstractTransientLogicData<ItemFlowLogic> {
 
-    public static final ItemFlowLogic INSTANCE = new ItemFlowLogic();
+    public static final NetLogicType<ItemFlowLogic> TYPE = new NetLogicType<>(GTValues.MODID, "ItemFlow",
+            ItemFlowLogic::new, new ItemFlowLogic());
 
     public static final int MEMORY_TICKS = 10;
 
     private final Long2ObjectOpenHashMap<List<ItemStack>> memory = new Long2ObjectOpenHashMap<>();
     private ItemStack last;
 
-    protected ItemFlowLogic() {
-        super("ItemFlow");
+    @Override
+    public @NotNull NetLogicType<ItemFlowLogic> getType() {
+        return TYPE;
     }
 
     public @NotNull Long2ObjectOpenHashMap<List<ItemStack>> getMemory() {
@@ -54,10 +58,5 @@ public class ItemFlowLogic extends AbstractTransientLogicData<ItemFlowLogic> {
                 iter.remove();
             }
         }
-    }
-
-    @Override
-    public @NotNull ItemFlowLogic getNew() {
-        return new ItemFlowLogic();
     }
 }

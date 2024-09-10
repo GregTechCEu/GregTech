@@ -1,6 +1,8 @@
 package gregtech.api.graphnet.pipenet.predicate;
 
+import gregtech.api.GTValues;
 import gregtech.api.graphnet.predicate.EdgePredicate;
+import gregtech.api.graphnet.predicate.NetPredicateType;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagByte;
@@ -9,16 +11,14 @@ import org.jetbrains.annotations.NotNull;
 
 public final class BlockedPredicate extends EdgePredicate<BlockedPredicate, NBTTagByte> {
 
-    public static final BlockedPredicate INSTANCE = new BlockedPredicate();
+    private static final BlockedPredicate INSTANCE = new BlockedPredicate();
 
-    private BlockedPredicate() {
-        super("Blocked");
-    }
+    public static final NetPredicateType<BlockedPredicate> TYPE = new NetPredicateType<>(GTValues.MODID, "Blocked",
+            () -> INSTANCE, INSTANCE);
 
     @Override
-    @Deprecated
-    public @NotNull BlockedPredicate getNew() {
-        return INSTANCE;
+    public @NotNull NetPredicateType<BlockedPredicate> getType() {
+        return TYPE;
     }
 
     @Override

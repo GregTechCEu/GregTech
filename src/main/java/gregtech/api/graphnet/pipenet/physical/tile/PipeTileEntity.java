@@ -7,6 +7,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicRegistry;
+import gregtech.api.graphnet.logic.NetLogicType;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
@@ -508,7 +509,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                     writeLogicData(networkID, entry, false, true);
                 }
                 if (this.temperatureLogic == null) {
-                    TemperatureLogic candidate = node.getData().getLogicEntryNullable(TemperatureLogic.INSTANCE);
+                    TemperatureLogic candidate = node.getData().getLogicEntryNullable(TemperatureLogic.TYPE);
                     if (candidate != null)
                         updateTemperatureLogic(candidate);
                 }
@@ -540,12 +541,9 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private void writeLogicData(int networkID, NetLogicEntry<?, ?> entry, boolean removed, boolean fullChange) {
         writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
             buf.writeVarInt(networkID);
-            buf.writeString(entry.getName());
             buf.writeBoolean(removed);
-            buf.writeBoolean(fullChange);
-            if (!removed) {
-                entry.encode(buf, fullChange);
-            }
+            if (removed) buf.writeVarInt(NetLogicRegistry.getNetworkID(entry.getType()));
+            else NetLogicData.writeEntry(buf, entry, fullChange);
         });
     }
 
@@ -636,29 +634,16 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             // extra check just to make sure we don't affect actual net data with our writes
             if (world.isRemote) {
                 int networkID = buf.readVarInt();
-                String identifier = buf.readString(255);
                 boolean removed = buf.readBoolean();
-                boolean fullChange = buf.readBoolean();
                 if (removed) {
-                    this.netLogicDatas.computeIfPresent(networkID, (k, v) -> v.removeLogicEntry(identifier));
+                    NetLogicType<?> type = NetLogicRegistry.getType(buf.readVarInt());
+                    NetLogicData data = this.netLogicDatas.get(networkID);
+                    if (data != null) data.removeLogicEntry(type);
                 } else {
-                    if (fullChange) {
-                        NetLogicEntry<?, ?> logic = NetLogicRegistry.getSupplierErroring(identifier).get();
-                        logic.decode(buf, true);
-                        this.netLogicDatas.computeIfAbsent(networkID, k -> new NetLogicData()).setLogicEntry(logic);
-                    } else {
-                        NetLogicData data = this.netLogicDatas.get(networkID);
-                        if (data == null) return;
-                        NetLogicEntry<?, ?> entry = data.getLogicEntryNullable(identifier);
-                        if (entry != null) {
-                            entry.decode(buf, false);
-                            data.markLogicEntryAsUpdated(entry, false);
-                        }
-                    }
-                    if (identifier.equals(TemperatureLogic.INSTANCE.getName())) {
-                        TemperatureLogic tempLogic = this.netLogicDatas.get(networkID)
-                                .getLogicEntryNullable(TemperatureLogic.INSTANCE);
-                        if (tempLogic != null) updateTemperatureLogic(tempLogic);
+                    NetLogicData data = this.netLogicDatas.computeIfAbsent(networkID, i -> new NetLogicData());
+                    NetLogicEntry<?, ?> read = data.readEntry(buf);
+                    if (read instanceof TemperatureLogic tempLogic) {
+                        updateTemperatureLogic(tempLogic);
                     }
                 }
             }
