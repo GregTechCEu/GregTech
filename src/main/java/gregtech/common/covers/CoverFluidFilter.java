@@ -5,13 +5,21 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.cover.filter.CoverWithFluidFilter;
+import gregtech.api.graphnet.pipenet.transfer.TransferControl;
+import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
+import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
+import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.pipelike.net.fluid.IFluidTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,12 +30,12 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -45,7 +53,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CoverFluidFilter extends CoverBase implements CoverWithUI {
+public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWithFluidFilter, TransferControlProvider,
+                              IFluidTransferController {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -60,6 +69,16 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
         this.texture = texture;
+    }
+
+    @Override
+    public @NotNull FluidFilterContainer getFluidFilter() {
+        return fluidFilterContainer;
+    }
+
+    @Override
+    public ManualImportExportMode getManualMode() {
+        return ManualImportExportMode.FILTERED;
     }
 
     public void setFilterMode(FluidFilterMode filterMode) {
@@ -107,6 +126,10 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
+    public @NotNull BaseFilterContainer getFilterContainer() {
+        return this.fluidFilterContainer;
+    }
+
     @SuppressWarnings("DataFlowIssue") // this cover always has a filter
     public @NotNull BaseFilter getFilter() {
         return this.fluidFilterContainer.hasFilter() ?
@@ -125,7 +148,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
         }
@@ -167,6 +190,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(this.texture).build();
+    }
+
+    @Override
     public <T> T getCapability(@NotNull Capability<T> capability, @Nullable T defaultValue) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             if (defaultValue instanceof IFluidHandler delegate) {
@@ -198,6 +226,35 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         } else {
             this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         }
+    }
+
+    @Override
+    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
+        if (control == IFluidTransferController.CONTROL) {
+            return control.cast(this);
+        }
+        return null;
+    }
+
+    @Override
+    public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
+                               boolean doFill) {
+        if (getFilterMode() == FluidFilterMode.FILTER_FILL) // insert to handler is a drain for us
+            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
+        if (getFluidFilter().test(testObject.recombine())) {
+            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
+        } else return 0;
+    }
+
+    @Override
+    public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
+                                                   IFluidHandler sourceHandler, boolean doDrain) {
+        if (testObject == null ||
+                getFilterMode() == FluidFilterMode.FILTER_DRAIN) // extract from handler is an insert to us
+            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
+        if (getFluidFilter().test(testObject.recombine())) {
+            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
+        } else return null;
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

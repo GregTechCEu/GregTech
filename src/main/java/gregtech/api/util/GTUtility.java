@@ -24,7 +24,9 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
@@ -64,6 +66,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,6 +77,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.V;
@@ -909,5 +914,95 @@ public class GTUtility {
      */
     public static int safeCastLongToInt(long v) {
         return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    }
+
+    public static double geometricMean(double first, double... numbers) {
+        for (double number : numbers) {
+            first *= number;
+        }
+        return Math.pow(first, 1D / (1 + numbers.length));
+    }
+
+    @NotNull
+    public static EntityPlayer getSP() {
+        return Minecraft.getMinecraft().player;
+    }
+
+    public static long binarySearch(long minValue, long maxValue, LongPredicate test, boolean ascending) {
+        while (maxValue - minValue > 1) {
+            long middle = (minValue + maxValue) / 2;
+            // XOR
+            if (test.test(middle) ^ !ascending) {
+                maxValue = middle;
+            } else {
+                minValue = middle;
+            }
+        }
+        return test.test(ascending ? minValue : maxValue) ^ ascending ? maxValue : minValue;
+    }
+
+    public static int[] convertARGBtoArray(int argb) {
+        int a = argb >> 24 & 255;
+        int r = argb >> 16 & 255;
+        int g = argb >> 8 & 255;
+        int b = argb & 255;
+        return new int[] { a, r, g, b };
+    }
+
+    @Contract(pure = true)
+    public static boolean evalMask(@NotNull Enum<?> anEnum, byte mask) {
+        return (mask & (1 << anEnum.ordinal())) > 0;
+    }
+
+    @Contract(pure = true)
+    public static boolean evalMask(@NotNull Enum<?> anEnum, @NotNull BitSet mask) {
+        return mask.get(anEnum.ordinal());
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static <T extends Enum<T>> EnumSet<T> maskToSet(@NotNull Class<T> enumClass, byte mask) {
+        EnumSet<T> set = EnumSet.noneOf(enumClass);
+        for (T anEnum : enumClass.getEnumConstants()) {
+            if (evalMask(anEnum, mask)) set.add(anEnum);
+        }
+        return set;
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static <T extends Enum<T>> EnumSet<T> maskToSet(@NotNull Class<T> enumClass, @NotNull BitSet mask) {
+        EnumSet<T> set = EnumSet.noneOf(enumClass);
+        for (T anEnum : enumClass.getEnumConstants()) {
+            if (evalMask(anEnum, mask)) set.add(anEnum);
+        }
+        return set;
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static BitSet setToMask(@NotNull EnumSet<?> enumSet) {
+        BitSet mask = new BitSet();
+        for (Enum<?> anEnum : enumSet) {
+            mask.set(anEnum.ordinal());
+        }
+        return mask;
+    }
+
+    /**
+     * Forces the initialization of a class; this includes things like loading its static fields.
+     * This can be useful because a statement like {@code AClass.class} does not initialize a class.
+     * <br>
+     * <br>
+     * Does nothing if the class is already initialized.
+     *
+     * @param clazz the class object to initialize.
+     */
+    public static void forceInitialization(@NotNull Class<?> clazz) {
+        try {
+            Class.forName(clazz.getName(), true, clazz.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError(e);  // Can't happen
+        }
     }
 }

@@ -5,13 +5,21 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.cover.filter.CoverWithItemFilter;
+import gregtech.api.graphnet.pipenet.transfer.TransferControl;
+import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
+import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
+import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.pipelike.net.item.IItemTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,11 +30,11 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -44,7 +52,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CoverItemFilter extends CoverBase implements CoverWithUI {
+public class CoverItemFilter extends CoverBase implements CoverWithUI, CoverWithItemFilter, TransferControlProvider,
+                             IItemTransferController {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -58,6 +67,16 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         this.titleLocale = titleLocale;
         this.texture = texture;
         this.itemFilterContainer = new ItemFilterContainer(this);
+    }
+
+    @Override
+    public @NotNull ItemFilterContainer getItemFilter() {
+        return itemFilterContainer;
+    }
+
+    @Override
+    public ManualImportExportMode getManualMode() {
+        return ManualImportExportMode.FILTERED;
     }
 
     @Override
@@ -105,6 +124,10 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
+    public @NotNull BaseFilterContainer getFilterContainer() {
+        return this.itemFilterContainer;
+    }
+
     @SuppressWarnings("DataFlowIssue") // this cover should always have a filter
     public @NotNull BaseFilter getFilter() {
         return this.itemFilterContainer.hasFilter() ?
@@ -124,7 +147,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             openUI((EntityPlayerMP) playerIn);
         }
@@ -169,6 +192,11 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(this.texture).build();
+    }
+
+    @Override
     public void writeToNBT(@NotNull NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("FilterMode", filterMode.ordinal());
@@ -201,6 +229,34 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
         }
         return defaultValue;
+    }
+
+    @Override
+    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
+        if (control == IItemTransferController.CONTROL) {
+            return control.cast(this);
+        }
+        return null;
+    }
+
+    @Override
+    public int insertToHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler destHandler,
+                               boolean simulate) {
+        if (getFilterMode() == ItemFilterMode.FILTER_INSERT) // insert to handler is an extract from us
+            return IItemTransferController.super.insertToHandler(testObject, amount, destHandler, simulate);
+        if (getItemFilter().test(testObject.recombine())) {
+            return IItemTransferController.super.insertToHandler(testObject, amount, destHandler, simulate);
+        } else return amount;
+    }
+
+    @Override
+    public int extractFromHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler sourceHandler,
+                                  boolean simulate) {
+        if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT) // extract from handler is an insert to us
+            return IItemTransferController.super.extractFromHandler(testObject, amount, sourceHandler, simulate);
+        if (getItemFilter().test(testObject.recombine())) {
+            return IItemTransferController.super.extractFromHandler(testObject, amount, sourceHandler, simulate);
+        } else return 0;
     }
 
     private class ItemHandlerFiltered extends ItemHandlerDelegate {

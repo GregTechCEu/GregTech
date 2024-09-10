@@ -134,6 +134,7 @@ public class CoreModule implements IGregTechModule {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         GregTechAPIInternal.preInit();
+
         GregTechAPI.advancementManager = AdvancementManager.getInstance();
         AdvancementTriggers.register();
 
