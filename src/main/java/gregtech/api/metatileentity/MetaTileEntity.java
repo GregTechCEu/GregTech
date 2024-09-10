@@ -163,7 +163,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
 
-    private UUID owner;
+    @Nullable
+    private UUID owner = null;
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -1383,7 +1384,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * this should be manually called immediately afterwards
      */
     public void onPlacement() {
-        this.owner = null;
+        onPlacement(null);
     }
 
     /**
