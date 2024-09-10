@@ -1383,7 +1383,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement() {
+    public final void onPlacement() {
         onPlacement(null);
     }
 
