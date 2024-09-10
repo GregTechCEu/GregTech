@@ -105,14 +105,33 @@ public class GTValues {
      * The short names for the voltages, used for registration primarily
      */
     public static final String[] VN = new String[] { "ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV",
-            "UEV", "UIV", "UXV", "OpV", "MAX", "MAX+" };
+            "UEV", "UIV", "UXV", "OpV", "MAX" };
+
+    /**
+     * The short names for the voltages, up to max Long, used for registration primarily
+     */
+    public static final String[] VOCN = new String[] { "ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV",
+            "UEV", "UIV", "UXV", "OpV", "MAX", "MAX+1", "MAX+2", "MAX+3", "MAX+4", "MAX+5", "MAX+6", "MAX+7", "MAX+8",
+            "MAX+9", "MAX+10", "MAX+11", "MAX+12", "MAX+13", "MAX+14", "MAX+15", "MAX+16",
+    };
+
+    private static final String MAX_PLUS = RED.toString() + BOLD + "M" + YELLOW + BOLD + "A" + GREEN + BOLD + "X" +
+            AQUA + BOLD + "+" + LIGHT_PURPLE + BOLD;
 
     /**
      * The short names for the voltages, formatted for text
      */
-    public static final String MAX_PLUS = RED.toString() + BOLD + "M" + YELLOW + BOLD + "A" + GREEN + BOLD + "X" +
-            AQUA + BOLD + "+" + LIGHT_PURPLE + BOLD;
     public static final String[] VNF = new String[] {
+            DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
+            GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
+            LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
+            DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
+            YELLOW + "UXV", BLUE + "OpV", RED.toString() + BOLD + "MAX" };
+
+    /**
+     * The short names for the voltages, up to max Long, formatted for text
+     */
+    public static final String[] VOCNF = new String[] {
             DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
             GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
             LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
