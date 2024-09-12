@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.client.utils.PipelineUtil;
@@ -18,9 +19,11 @@ import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -223,12 +226,14 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void onPlacement() {
+    public void onPlacement(@Nullable EntityLivingBase placer) {
+        super.onPlacement(placer);
+        if (getWorld() == null || getWorld().isRemote)
+            return;
+
         // add to the network if an adjacent block is part of a network
         // use whatever we find first, merging networks is not supported
-        if (!getWorld().isRemote) {
-            tryFindNetwork();
-        }
+        tryFindNetwork();
     }
 
     @Override
@@ -237,28 +242,66 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
+    public ICubeRenderer getBaseTexture() {
+        var qcontroller = getQuantumController();
+        if (qcontroller != null) {
+            return Textures.QUANTUM_CASING;
+        }
+        return super.getBaseTexture();
+    }
+
+    @Override
     public void setConnected(IQuantumController controller) {
         if (getWorld().isRemote) return;
+
         if (!controller.getPos().equals(controllerPos)) {
             this.controller = new WeakReference<>(controller);
             this.controllerPos = controller.getPos();
-            if (!getWorld().isRemote) {
-                writeCustomData(GregtechDataCodes.UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
-                scheduleRenderUpdate();
-                markDirty();
-            }
+            writeCustomData(GregtechDataCodes.UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
+            markDirty();
         }
     }
 
     @Override
     public void setDisconnected() {
-        if (!getWorld().isRemote) {
-            controller.clear();
-            controllerPos = null;
-            writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
+        if (getWorld().isRemote) return;
+
+        controller.clear();
+        controllerPos = null;
+        writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
+        tryFindNetwork();
+        markDirty();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.UPDATE_CONTROLLER_POS) {
+            this.controllerPos = buf.readBlockPos();
+            this.controller.clear();
             scheduleRenderUpdate();
-            tryFindNetwork();
-            markDirty();
+        } else if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) {
+            this.controllerPos = null;
+            this.controller.clear();
+            scheduleRenderUpdate();
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(controllerPos != null);
+        if (controllerPos != null) {
+            buf.writeBlockPos(controllerPos);
+        }
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        if (buf.readBoolean()) {
+            controllerPos = buf.readBlockPos();
+            scheduleRenderUpdate();
         }
     }
 

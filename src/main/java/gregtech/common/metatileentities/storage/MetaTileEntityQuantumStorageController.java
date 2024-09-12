@@ -17,6 +17,7 @@ import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -193,7 +194,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public void onPlacement() {
+    public void onPlacement(@Nullable EntityLivingBase placer) {
+        super.onPlacement(placer);
         rebuildNetwork();
     }
 

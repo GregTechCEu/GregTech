@@ -15,6 +15,7 @@ import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,27 +68,24 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     @Override
     public void setConnected(IQuantumController controller) {
         if (getWorld().isRemote) return;
+
         if (!controller.getPos().equals(controllerPos)) {
             this.controller = new WeakReference<>(controller);
             this.controllerPos = controller.getPos();
-            if (!getWorld().isRemote) {
-                writeCustomData(GregtechDataCodes.UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
-                scheduleRenderUpdate();
-                markDirty();
-            }
+            writeCustomData(GregtechDataCodes.UPDATE_CONTROLLER_POS, buf -> buf.writeBlockPos(controllerPos));
+            markDirty();
         }
     }
 
     @Override
     public void setDisconnected() {
-        if (!getWorld().isRemote) {
-            controller.clear();
-            controllerPos = null;
-            writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
-            scheduleRenderUpdate();
-            tryFindNetwork();
-            markDirty();
-        }
+        if (getWorld().isRemote) return;
+
+        controller.clear();
+        controllerPos = null;
+        writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
+        tryFindNetwork();
+        markDirty();
     }
 
     // use this to make sure controller is properly initialized
@@ -128,12 +126,14 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void onPlacement() {
+    public void onPlacement(@Nullable EntityLivingBase placer) {
+        super.onPlacement(placer);
+        if (getWorld() == null || getWorld().isRemote)
+            return;
+
         // add to the network if an adjacent block is part of a network
         // use whatever we find first, merging networks is not supported
-        if (!getWorld().isRemote) {
-            tryFindNetwork();
-        }
+        tryFindNetwork();
     }
 
     private void tryFindNetwork() {
