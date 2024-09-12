@@ -35,6 +35,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
@@ -162,7 +163,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
 
-    private UUID owner;
+    @Nullable
+    private UUID owner = null;
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -927,13 +929,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public final ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
+        final boolean isCreativePickBlock = player.isCreative() && TooltipHelper.isCtrlDown();
         if (hitCuboid.data instanceof CoverRayTracer.CoverSideData coverSideData) {
             Cover cover = getCoverAtSide(coverSideData.side);
-            return cover == null ? ItemStack.EMPTY : cover.getPickItem();
+            return cover == null || isCreativePickBlock ? ItemStack.EMPTY : cover.getPickItem();
         } else if (hitCuboid.data == null || hitCuboid.data instanceof CoverRayTracer.PrimaryBoxData) {
             // data is null -> MetaTileEntity hull hit
             Cover cover = getCoverAtSide(result.sideHit);
-            if (cover != null) {
+            if (cover != null && !isCreativePickBlock) {
                 return cover.getPickItem();
             }
             return getPickItem(player);
@@ -1302,7 +1305,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
 
-        data.setUniqueId("Owner", owner);
+        if (owner != null)
+            data.setUniqueId("Owner", owner);
 
         return data;
     }
@@ -1330,7 +1334,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
 
-        this.owner = data.getUniqueId("Owner");
+        if (data.hasKey("Owner"))
+            this.owner = data.getUniqueId("Owner");
     }
 
     @Override
@@ -1378,8 +1383,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement() {
-        this.owner = null;
+    public final void onPlacement() {
+        onPlacement(null);
     }
 
     /**
