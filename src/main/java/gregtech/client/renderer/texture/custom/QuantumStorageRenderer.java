@@ -82,10 +82,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
                 .getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
 
         if (mte.isConnected()) {
-            var qcontroller = mte.getQuantumController();
-            if (qcontroller != null) {
-                hullTexture = Textures.QUANTUM_CASING.getParticleSprite();
-            }
+            hullTexture = Textures.QUANTUM_CASING.getParticleSprite();
         }
 
         for (var facing : boxFacingMap.keySet()) {

@@ -23,6 +23,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
@@ -243,8 +244,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public ICubeRenderer getBaseTexture() {
-        var qcontroller = getQuantumController();
-        if (qcontroller != null) {
+        if (isConnected()) {
             return Textures.QUANTUM_CASING;
         }
         return super.getBaseTexture();
@@ -361,5 +361,23 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     @Override
     public IEnergyContainer getTypeValue() {
         return this.energyContainer;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        NBTTagCompound tagCompound = super.writeToNBT(data);
+        tagCompound.setBoolean("HasController", controllerPos != null);
+        if (controllerPos != null) {
+            tagCompound.setLong("ControllerPos", controllerPos.toLong());
+        }
+        return tagCompound;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        if (data.getBoolean("HasController")) {
+            this.controllerPos = BlockPos.fromLong(data.getLong("ControllerPos"));
+        }
     }
 }
