@@ -253,6 +253,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     @Override
     public void setConnected(IQuantumController controller) {
         if (getWorld().isRemote) return;
+        if (isExportHatch) return;
 
         if (!controller.getPos().equals(controllerPos)) {
             this.controller = new WeakReference<>(controller);

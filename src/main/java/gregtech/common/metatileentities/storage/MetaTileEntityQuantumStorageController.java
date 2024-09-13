@@ -229,8 +229,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         while (!searchQueue.isEmpty()) {
             BlockPos pos = searchQueue.remove();
 
-            if (checked.contains(pos)) continue;
-            checked.add(pos);
+            if (!checked.add(pos))
+                continue;
 
             if (!isInRange(pos) || !getWorld().isBlockLoaded(pos, false)) continue;
 
