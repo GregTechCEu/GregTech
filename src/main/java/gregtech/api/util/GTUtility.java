@@ -282,7 +282,7 @@ public class GTUtility {
         if (voltage < GTValues.V[GTValues.LV]) {
             return GTValues.ULV;
         }
-        if (voltage == Long.MAX_VALUE) {
+        if (voltage == GTValues.VOC[GTValues.MAX_TRUE]) {
             return GTValues.MAX_TRUE;
         }
 
