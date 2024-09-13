@@ -75,9 +75,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static gregtech.api.GTValues.V;
-import static gregtech.api.GTValues.VOC;
-
 public class GTUtility {
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
