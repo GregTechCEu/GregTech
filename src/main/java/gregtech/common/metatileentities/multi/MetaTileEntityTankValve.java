@@ -5,6 +5,7 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -129,8 +130,8 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void registerAbilities(@NotNull List<IFluidHandler> abilityList) {
-        abilityList.add(this.getImportFluids());
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this.getImportFluids());
     }
 
     @Override
