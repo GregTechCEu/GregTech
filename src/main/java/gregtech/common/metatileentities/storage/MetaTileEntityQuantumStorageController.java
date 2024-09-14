@@ -191,6 +191,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage != null) storage.setDisconnected();
         }
         handler.invalidate();
+        storagePositions.clear();
+        storageInstances.clear();
     }
 
     @Override
