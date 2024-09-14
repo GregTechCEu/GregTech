@@ -101,8 +101,10 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "gregtech.creative.chest.tpc");
 
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value,
-                "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> {
+            active = value;
+            scheduleRenderUpdate();
+        }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         builder.widget(createConnectedGui(6));
 
@@ -182,7 +184,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.handler.setStackInSlot(0, this.virtualItemStack);
     }

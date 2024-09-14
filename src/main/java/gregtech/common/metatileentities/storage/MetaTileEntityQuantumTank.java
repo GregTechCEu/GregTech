@@ -455,7 +455,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
@@ -492,7 +492,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputFluids);
@@ -503,7 +503,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
 

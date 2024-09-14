@@ -24,6 +24,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
@@ -100,7 +101,7 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) scheduleRenderUpdate();
     }
