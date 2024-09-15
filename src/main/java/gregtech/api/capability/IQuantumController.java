@@ -3,6 +3,7 @@ package gregtech.api.capability;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
+// ICapabilityProvider is needed because getCapability is called in the quantum proxy against this interface
 public interface IQuantumController extends ICapabilityProvider {
 
     /**
