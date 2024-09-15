@@ -59,7 +59,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     private static final int MAX_DISTANCE_RADIUS = 16;
 
-    private EnergyContainerList energyContainer = new EnergyContainerList(Collections.emptyList());
+    private QuantumEnergyHandler energyContainer = new QuantumEnergyHandler(Collections.emptyList());
     /** Somewhat lazily initialized, make sure to call {@code getStorage()} before trying to access anything in this */
     private Map<BlockPos, WeakReference<IQuantumStorage<?>>> storageInstances = new HashMap<>();
 
@@ -192,13 +192,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     public void onRemoval() {
         if (getWorld().isRemote) return;
         isDead = true;
-        for (BlockPos pos : storagePositions) {
-            IQuantumStorage<?> storage = getStorage(pos);
-            if (storage != null) storage.setDisconnected();
-        }
+        var oldPositions = new HashSet<>(storagePositions);
+        oldPositions.forEach(this::removeStorage);
         handler.invalidate();
-        storagePositions.clear();
-        storageInstances.clear();
     }
 
     @Override
@@ -211,6 +207,31 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     public void onLoad() {
         calculateEnergyUsage();
         super.onLoad();
+    }
+
+    @Override
+    public void addStorage(@NotNull IQuantumStorage<?> storage) {
+        if (storagePositions.add(storage.getPos())) {
+            storageInstances.put(storage.getPos(), new WeakReference<>(storage));
+            storage.setConnected(this);
+            addEnergy(storage);
+            handler.rebuildCache();
+            markDirty();
+        }
+    }
+
+    @Override
+    public void removeStorage(@NotNull BlockPos pos) {
+        if (storagePositions.remove(pos)) {
+            var storage = getStorage(pos);
+            if (storage != null) {
+                removeEnergy(storage);
+                storage.setDisconnected();
+            }
+            storageInstances.remove(pos);
+            handler.rebuildCache();
+            markDirty();
+        }
     }
 
     // Used when this controller is initially placed. Try to find all possible
@@ -250,9 +271,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
 
             // valid chest/tank located, add it
-            storageInstances.put(pos, new WeakReference<>(storage));
-            storagePositions.add(pos);
-            storage.setConnected(this);
+            addStorage(storage);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
 
@@ -275,16 +294,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             // if the pos is air, there's nothing to check
             if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
 
-            IQuantumStorage<?> storage = null;
-            if (oldInstances.containsKey(pos)) {
-                storage = oldInstances.get(pos).get();
-            } else {
-                MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-                if (mte instanceof IQuantumStorage<?>quantumStorage) {
-                    storage = quantumStorage;
-                }
-            }
-            if (storage != null) storage.setDisconnected();
+            removeStorage(pos);
         }
         handler.rebuildCache();
         calculateEnergyUsage();
@@ -296,24 +306,48 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         energyConsumption = 0;
         for (var pos : storagePositions) {
             var storage = getStorage(pos);
-            if (storage == null) continue;
-
-            energyConsumption += switch (storage.getType()) {
-                case ITEM, FLUID -> {
-                    int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 1;
-                    yield tier > 5 ?
-                            GTValues.V[GTValues.HV] / 2 :
-                            GTValues.V[GTValues.LV] / 2;
-                }
-                case PROXY -> 8L;
-                case EXTENDER -> 2L;
-                case ENERGY -> {
+            if (storage != null) {
+                energyConsumption += getTypeEnergy(storage);
+                if (storage.getType() == IQuantumStorage.Type.ENERGY) {
                     energyContainers.add((IEnergyContainer) storage.getTypeValue());
-                    yield 1L;
                 }
-            };
+            }
         }
-        energyContainer = new EnergyContainerList(energyContainers);
+        energyContainer = new QuantumEnergyHandler(energyContainers);
+        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
+    }
+
+    private long getTypeEnergy(IQuantumStorage<?> storage) {
+        return switch (storage.getType()) {
+            case ITEM, FLUID -> {
+                int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 1;
+                yield tier > 5 ?
+                        GTValues.V[GTValues.HV] / 2 :
+                        GTValues.V[GTValues.LV] / 2;
+            }
+            case PROXY -> 8L;
+            case EXTENDER -> 2L;
+            case ENERGY -> 1L;
+        };
+    }
+
+    private void addEnergy(IQuantumStorage<?> storage) {
+        var list = energyContainer.getBackingList();
+        energyConsumption += getTypeEnergy(storage);
+        if (storage.getType() == IQuantumStorage.Type.ENERGY) {
+            list.add((IEnergyContainer) storage.getTypeValue());
+            energyContainer = new QuantumEnergyHandler(list);
+        }
+        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
+    }
+
+    private void removeEnergy(IQuantumStorage<?> storage) {
+        var list = energyContainer.getBackingList();
+        energyConsumption -= getTypeEnergy(storage);
+        if (storage.getType() == IQuantumStorage.Type.ENERGY) {
+            list.remove((IEnergyContainer) storage.getTypeValue());
+            energyContainer = new QuantumEnergyHandler(list);
+        }
         writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
@@ -442,6 +476,17 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 rebuildCache();
             }
             return itemHandlers;
+        }
+    }
+
+    private static final class QuantumEnergyHandler extends EnergyContainerList {
+
+        public QuantumEnergyHandler(@NotNull List<IEnergyContainer> energyContainerList) {
+            super(energyContainerList);
+        }
+
+        private List<IEnergyContainer> getBackingList() {
+            return energyContainerList;
         }
     }
 }

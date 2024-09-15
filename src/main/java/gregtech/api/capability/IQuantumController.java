@@ -11,6 +11,10 @@ public interface IQuantumController extends ICapabilityProvider {
      */
     void rebuildNetwork();
 
+    void addStorage(IQuantumStorage<?> storage);
+
+    void removeStorage(BlockPos pos);
+
     /**
      * Return whether this storage block can connect. Can be used to implement a maximum distance from controller for
      * example.

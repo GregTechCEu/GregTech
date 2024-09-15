@@ -84,7 +84,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         controller.clear();
         controllerPos = null;
         writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
-        tryFindNetwork();
         markDirty();
     }
 
@@ -100,6 +99,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             } else {
                 // controller is no longer there for some reason, need to disconnect
                 setDisconnected();
+                tryFindNetwork();
             }
         }
         return null;
@@ -121,7 +121,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     public void onRemoval() {
         if (!getWorld().isRemote && isConnected()) {
             IQuantumController controller = getQuantumController();
-            if (controller != null) controller.rebuildNetwork();
+            if (controller != null) controller.removeStorage(getPos());
         }
     }
 
@@ -161,7 +161,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 }
             }
             if (candidate != null) {
-                candidate.rebuildNetwork();
+                candidate.addStorage(this);
                 return;
             }
         }

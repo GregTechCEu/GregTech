@@ -222,7 +222,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     public void onRemoval() {
         if (!getWorld().isRemote && isConnected()) {
             IQuantumController controller = getQuantumController();
-            if (controller != null) controller.rebuildNetwork();
+            if (controller != null) controller.removeStorage(getPos());
         }
     }
 
@@ -270,7 +270,6 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
         controller.clear();
         controllerPos = null;
         writeCustomData(GregtechDataCodes.REMOVE_CONTROLLER, buf -> {});
-        tryFindNetwork();
         markDirty();
     }
 
@@ -318,6 +317,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
             } else {
                 // controller is no longer there for some reason, need to disconnect
                 setDisconnected();
+                tryFindNetwork();
             }
         }
         return null;
@@ -353,7 +353,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
                 }
             }
             if (candidate != null) {
-                candidate.rebuildNetwork();
+                candidate.addStorage(this);
                 return;
             }
         }

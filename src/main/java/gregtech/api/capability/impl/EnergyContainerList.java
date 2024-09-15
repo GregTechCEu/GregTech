@@ -10,7 +10,7 @@ import java.util.List;
 
 public class EnergyContainerList implements IEnergyContainer {
 
-    private final List<IEnergyContainer> energyContainerList;
+    protected final List<IEnergyContainer> energyContainerList;
     private final long inputVoltage;
     private final long outputVoltage;
     private final long inputAmperage;
