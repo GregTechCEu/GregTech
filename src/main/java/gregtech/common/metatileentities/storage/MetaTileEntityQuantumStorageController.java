@@ -230,7 +230,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         // check the posses around the controller
         for (EnumFacing facing : EnumFacing.VALUES) {
-                searchQueue.add(getPos().offset(facing));
+            searchQueue.add(getPos().offset(facing));
         }
 
         // while there are blocks to search
