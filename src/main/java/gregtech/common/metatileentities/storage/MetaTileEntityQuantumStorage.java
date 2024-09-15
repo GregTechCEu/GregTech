@@ -106,13 +106,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public final boolean isConnected() {
-        // use controllerPos here because it is synced
-        // on both sides, where controller is not
-        return controllerPos != null;
-    }
-
-    @Override
     public BlockPos getControllerPos() {
         return controllerPos;
     }
@@ -121,7 +114,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     public void onRemoval() {
         if (!getWorld().isRemote && isConnected()) {
             IQuantumController controller = getQuantumController();
-            if (controller != null) controller.removeStorage(getPos());
+            if (controller != null) controller.removeStorage(this);
         }
     }
 

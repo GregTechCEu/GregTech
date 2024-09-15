@@ -20,6 +20,8 @@ public interface IQuantumStorage<T> {
     BlockPos getPos();
 
     default boolean isConnected() {
+        // use controllerPos here because it is synced
+        // on both sides, where controller is not
         return getControllerPos() != null;
     }
 

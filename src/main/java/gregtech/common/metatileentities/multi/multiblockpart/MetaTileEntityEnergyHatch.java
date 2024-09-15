@@ -222,7 +222,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     public void onRemoval() {
         if (!getWorld().isRemote && isConnected()) {
             IQuantumController controller = getQuantumController();
-            if (controller != null) controller.removeStorage(getPos());
+            if (controller != null) controller.removeStorage(this);
         }
     }
 
