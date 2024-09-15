@@ -45,11 +45,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -246,7 +246,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
 
-        Queue<BlockPos> searchQueue = new LinkedList<>();
+        Queue<BlockPos> searchQueue = new ArrayDeque<>();
         Set<BlockPos> checked = new HashSet<>();
 
         // check the posses around the controller
