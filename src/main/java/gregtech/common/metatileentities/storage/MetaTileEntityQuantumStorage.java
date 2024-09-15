@@ -206,7 +206,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 this.connectedIcon.setTooltipText("gregtech.machine.quantum_storage.disconnected");
             }
             scheduleRenderUpdate();
-        } else if (dataId == GregtechDataCodes.LOCATE_CONTROLLER && buf.readBoolean()) {
+        } else if (dataId == GregtechDataCodes.LOCATE_CONTROLLER) {
             // tell controller to highlight
             BlockPosHighlightRenderer.renderBlockBoxHighLight(getControllerPos(), 6000, 1500);
             Minecraft.getMinecraft().player.closeScreen();
@@ -234,9 +234,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     protected ClickButtonWidget createConnectedGui(int y) {
         connectedIcon = new ClickButtonWidget(151, y, 18, 18, "",
                 clickData -> {
-                    writeCustomData(GregtechDataCodes.LOCATE_CONTROLLER, buffer -> {
-                        buffer.writeBoolean(this.isConnected());
-                    });
+                    if (isConnected())
+                        writeCustomData(GregtechDataCodes.LOCATE_CONTROLLER, buffer -> {});
                 });
         connectedIcon.setButtonTexture(isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
 
