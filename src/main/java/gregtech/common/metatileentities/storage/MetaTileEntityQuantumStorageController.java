@@ -146,6 +146,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         return true;
     }
 
+    @Nullable
     @SuppressWarnings("SameParameterValue")
     private IQuantumStorage<?> getStorage(BlockPos pos, boolean rebuild) {
         if (getWorld().isRemote) return null;
@@ -170,6 +171,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         return null;
     }
 
+    @Nullable
+    public final IQuantumStorage<?> getStorage(BlockPos pos) {
+        return getStorage(pos, false);
+    }
+
     @Override
     public boolean canConnect(IQuantumStorage<?> storage) {
         return !isDead && isInRange(storage.getPos());
@@ -187,7 +193,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         if (getWorld().isRemote) return;
         isDead = true;
         for (BlockPos pos : storagePositions) {
-            IQuantumStorage<?> storage = getStorage(pos, false);
+            IQuantumStorage<?> storage = getStorage(pos);
             if (storage != null) storage.setDisconnected();
         }
         handler.invalidate();
@@ -224,7 +230,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         // check the posses around the controller
         for (EnumFacing facing : EnumFacing.VALUES) {
-            searchQueue.add(getPos().offset(facing));
+                searchQueue.add(getPos().offset(facing));
         }
 
         // while there are blocks to search
@@ -289,7 +295,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         List<IEnergyContainer> energyContainers = new ArrayList<>();
         energyConsumption = 0;
         for (var pos : storagePositions) {
-            var storage = getStorage(pos, false);
+            var storage = getStorage(pos);
             if (storage == null) continue;
 
             energyConsumption += switch (storage.getType()) {
@@ -399,7 +405,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             List<IItemHandler> itemHandlerList = new ArrayList<>();
             List<IFluidTank> fluidTankList = new ArrayList<>();
             for (BlockPos pos : storagePositions) {
-                IQuantumStorage<?> storage = getStorage(pos, false);
+                IQuantumStorage<?> storage = getStorage(pos);
                 if (storage == null) continue;
                 switch (storage.getType()) {
                     case ITEM -> itemHandlerList.add((IItemHandler) storage.getTypeValue());
