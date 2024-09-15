@@ -4391,6 +4391,7 @@ gregtech.machine.quantum_storage_proxy.tooltip=Proxies the Quantum Storage Netwo
 gregtech.machine.quantum_storage_extender.name=Quantum Storage Extender
 gregtech.machine.quantum_storage_extender.tooltip=Extends the Quantum Storage Network to other chests/tanks
 gregtech.machine.quantum_storage.connected=Connected to Quantum Controller at [%d, %d, %d]/n/nClick to highlight the controller
+gregtech.machine.quantum_storage.disconnected=Not Connected
 
 #Buffers
 gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids

@@ -203,7 +203,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
             this.controller.clear();
             if (this.connectedIcon != null) {
                 this.connectedIcon.setButtonTexture(GuiTextures.GREGTECH_LOGO_DARK);
-                this.connectedIcon.setTooltipText(null);
+                this.connectedIcon.setTooltipText("gregtech.machine.quantum_storage.disconnected");
             }
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.LOCATE_CONTROLLER && buf.readBoolean()) {
@@ -243,6 +243,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         if (isConnected()) {
             connectedIcon.setTooltipText("gregtech.machine.quantum_storage.connected",
                     controllerPos.getX(), controllerPos.getZ(), controllerPos.getY());
+        } else {
+            connectedIcon.setTooltipText("gregtech.machine.quantum_storage.disconnected");
         }
 
         return connectedIcon;
