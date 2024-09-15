@@ -235,7 +235,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
-                               boolean advanced) {}
+                               boolean advanced) {
+        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
+    }
 
     /**
      * Override this to add extended tool information to the "Hold SHIFT to show Tool Info" tooltip section.

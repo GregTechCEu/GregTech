@@ -58,14 +58,6 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
-                               boolean advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
-        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
-            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
-    }
-
-    @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(getBaseRenderer().getParticleSprite(), getPaintingColorForRendering());
