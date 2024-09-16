@@ -12,6 +12,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 
@@ -59,7 +60,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     private static final int MAX_DISTANCE_RADIUS = 16;
 
-    private QuantumEnergyHandler energyContainer = new QuantumEnergyHandler(Collections.emptyList());
+    private EnergyContainerList energyHandler = new EnergyContainerList(Collections.emptyList());
+    private final List<IEnergyContainer> energyContainers = new ArrayList<>();
     /** Somewhat lazily initialized, make sure to call {@code getStorage()} before trying to access anything in this */
     private Map<BlockPos, WeakReference<IQuantumStorage<?>>> storageInstances = new HashMap<>();
 
@@ -86,8 +88,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         if (getWorld().isRemote) return;
 
         if (getOffsetTimer() % 10 == 0) {
-            boolean isPowered = energyContainer.getEnergyStored() > energyConsumption && energyConsumption > 0;
-            if (isPowered) energyContainer.removeEnergy(energyConsumption);
+            boolean isPowered = energyHandler.getEnergyStored() > energyConsumption && energyConsumption > 0;
+            if (isPowered) energyHandler.removeEnergy(energyConsumption);
 
             if (isPowered != this.isPowered) {
                 this.isPowered = isPowered;
@@ -217,6 +219,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             addEnergy(storage);
             handler.rebuildCache();
             markDirty();
+        } else {
+            GTLog.logger.warn("Tried to add storage whose pos already exists!");
         }
     }
 
@@ -251,7 +255,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         // check the posses around the controller
         for (EnumFacing facing : EnumFacing.VALUES) {
-            searchQueue.add(getPos().offset(facing));
+            if (checkStorageNeighbor(this, facing)) {
+                searchQueue.add(getPos().offset(facing));
+            }
         }
 
         // while there are blocks to search
@@ -281,7 +287,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 if (checked.contains(offsetPos) || getPos().equals(offsetPos)) continue;
 
                 // add a new pos to search
-                searchQueue.add(offsetPos);
+                if (checkStorageNeighbor(mte, facing))
+                    searchQueue.add(offsetPos);
             }
         }
 
@@ -301,8 +308,15 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         markDirty();
     }
 
+    private static boolean checkStorageNeighbor(MetaTileEntity mte, EnumFacing facing) {
+        if (mte.getNeighbor(facing) instanceof IGregTechTileEntity gtte) {
+            return gtte.getMetaTileEntity() instanceof IQuantumStorage<?>;
+        }
+        return false;
+    }
+
     private void calculateEnergyUsage() {
-        List<IEnergyContainer> energyContainers = new ArrayList<>();
+        energyContainers.clear();
         energyConsumption = 0;
         for (var pos : storagePositions) {
             var storage = getStorage(pos);
@@ -313,7 +327,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 }
             }
         }
-        energyContainer = new QuantumEnergyHandler(energyContainers);
+        energyHandler = new EnergyContainerList(energyContainers);
         writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
@@ -332,21 +346,19 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     private void addEnergy(IQuantumStorage<?> storage) {
-        var list = energyContainer.getBackingList();
         energyConsumption += getTypeEnergy(storage);
         if (storage.getType() == IQuantumStorage.Type.ENERGY) {
-            list.add((IEnergyContainer) storage.getTypeValue());
-            energyContainer = new QuantumEnergyHandler(list);
+            energyContainers.add((IEnergyContainer) storage.getTypeValue());
+            energyHandler = new EnergyContainerList(energyContainers);
         }
         writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
     private void removeEnergy(IQuantumStorage<?> storage) {
-        var list = energyContainer.getBackingList();
         energyConsumption -= getTypeEnergy(storage);
         if (storage.getType() == IQuantumStorage.Type.ENERGY) {
-            list.remove((IEnergyContainer) storage.getTypeValue());
-            energyContainer = new QuantumEnergyHandler(list);
+            energyContainers.remove((IEnergyContainer) storage.getTypeValue());
+            energyHandler = new EnergyContainerList(energyContainers);
         }
         writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
@@ -417,8 +429,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public IEnergyContainer getEnergyContainer() {
-        return this.energyContainer;
+    public IEnergyContainer getEnergyHandler() {
+        return this.energyHandler;
     }
 
     // todo use DualHandler instead once the multis ability pr is merged
@@ -476,17 +488,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                 rebuildCache();
             }
             return itemHandlers;
-        }
-    }
-
-    private static final class QuantumEnergyHandler extends EnergyContainerList {
-
-        public QuantumEnergyHandler(@NotNull List<IEnergyContainer> energyContainerList) {
-            super(energyContainerList);
-        }
-
-        private List<IEnergyContainer> getBackingList() {
-            return energyContainerList;
         }
     }
 }

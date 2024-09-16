@@ -229,7 +229,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     @Override
     public void onPlacement(@Nullable EntityLivingBase placer) {
         super.onPlacement(placer);
-        if (getWorld() == null || getWorld().isRemote)
+        if (getWorld() == null || getWorld().isRemote || isExportHatch)
             return;
 
         // add to the network if an adjacent block is part of a network
