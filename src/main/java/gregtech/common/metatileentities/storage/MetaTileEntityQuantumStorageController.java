@@ -271,7 +271,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
-            if (!(mte instanceof IQuantumStorage<?>storage)) continue;
+            // the mte at this pos is always an instance of quantum storage
+            IQuantumStorage<?> storage = (IQuantumStorage<?>) mte;
 
             // connected to some other network already, ignore
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
