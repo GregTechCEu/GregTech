@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDualHandler;
 import gregtech.api.capability.IQuantumController;
 import gregtech.api.gui.ModularUI;
@@ -11,7 +10,6 @@ import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -24,7 +22,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDualHandler> {
@@ -87,9 +84,9 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
 
     @Override
     public IDualHandler getTypeValue() {
-        IQuantumController c = getPoweredController();
-        if (c == null) return null;
-        return c.getHandler();
+        var controller = getPoweredController();
+        if (controller == null) return null;
+        return controller.getHandler();
     }
 
     @Nullable
@@ -98,11 +95,5 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
         var controller = getQuantumController();
         if (controller == null || !controller.isPowered()) return null;
         return controller;
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.REMOVE_CONTROLLER) scheduleRenderUpdate();
     }
 }

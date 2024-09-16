@@ -184,10 +184,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     private boolean isInRange(BlockPos pos) {
-        boolean isXValid = Math.abs(getPos().getX() - pos.getX()) <= MAX_DISTANCE_RADIUS;
-        boolean isYValid = Math.abs(getPos().getY() - pos.getY()) <= MAX_DISTANCE_RADIUS;
-        boolean isZValid = Math.abs(getPos().getZ() - pos.getZ()) <= MAX_DISTANCE_RADIUS;
-        return isXValid && isYValid && isZValid;
+        return Math.abs(getPos().getX() - pos.getX()) <= MAX_DISTANCE_RADIUS &&     // valid X
+                Math.abs(getPos().getY() - pos.getY()) <= MAX_DISTANCE_RADIUS &&    // valid Y
+                Math.abs(getPos().getZ() - pos.getZ()) <= MAX_DISTANCE_RADIUS;      // valid Z
     }
 
     @Override
@@ -222,7 +221,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             }
             markDirty();
         } else {
-            GTLog.logger.warn("Tried to add storage whose pos already exists!");
+            GTLog.logger.warn("Tried to add storage [{}] whose pos already exists!", storage);
         }
     }
 
@@ -244,7 +243,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     // Used when this controller is initially placed. Try to find all possible
     // storage instances that are connected and within our distance radius
-    // todo rework this to use neighbor cache somehow
     @Override
     public void rebuildNetwork() {
         if (getWorld().isRemote) return;
@@ -431,11 +429,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     @Override
     public IDualHandler getHandler() {
         return this.handler;
-    }
-
-    @Override
-    public IEnergyContainer getEnergyHandler() {
-        return this.energyHandler;
     }
 
     // todo use DualHandler instead once the multis ability pr is merged
