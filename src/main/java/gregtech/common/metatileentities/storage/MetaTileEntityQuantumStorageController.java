@@ -217,7 +217,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             storageInstances.put(storage.getPos(), new WeakReference<>(storage));
             storage.setConnected(this);
             addEnergy(storage);
-            handler.rebuildCache();
+            switch (storage.getType()) {
+                case ITEM, FLUID -> handler.rebuildCache();
+            }
             markDirty();
         } else {
             GTLog.logger.warn("Tried to add storage whose pos already exists!");
@@ -231,9 +233,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage != null) {
                 removeEnergy(storage);
                 storage.setDisconnected();
+                switch (storage.getType()) {
+                    case ITEM, FLUID -> handler.rebuildCache();
+                }
             }
             storageInstances.remove(pos);
-            handler.rebuildCache();
             markDirty();
         }
     }
