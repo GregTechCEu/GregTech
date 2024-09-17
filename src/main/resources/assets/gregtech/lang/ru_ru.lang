@@ -6000,3 +6000,6 @@ gregtech.command.datafix.bqu.backup=Скопируйте ваши сохране
 gregtech.command.datafix.bqu.start=Начинается перенос BQu Базы данных Квестов...
 gregtech.command.datafix.bqu.complete=Закончен перенос Базы данных Квестов
 gregtech.command.datafix.bqu.failed=Перенос Базы данных Квестов был произведен с ошибкой. Восстановите ваши сохранения!
+behavior.tricorder.mte_owner=Владелец: %s
+behavior.tricorder.mte_owner_offline=Владелец Не в сети или Не в этом мире!
+behavior.tricorder.mte_owner_null=Это установлено не игроком!
