@@ -2,9 +2,12 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.RecipeRunner;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
@@ -25,7 +28,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
+public class SteamMultiblockRecipeLogic extends DistributedRecipeLogic {
 
     private IMultipleTankHandler steamFluidTank;
     private IFluidTank steamFluidTankCombined;
@@ -35,11 +38,15 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
     public SteamMultiblockRecipeLogic(RecipeMapSteamMultiblockController tileEntity, RecipeMap<?> recipeMap,
                                       IMultipleTankHandler steamFluidTank, double conversionRate) {
-        super(tileEntity, recipeMap);
+        super(tileEntity, recipeMap, false);
         this.steamFluidTank = steamFluidTank;
         this.conversionRate = conversionRate;
-        setAllowOverclocking(false);
         combineSteamTanks();
+    }
+
+    @Override
+    public @NotNull RecipeMapSteamMultiblockController getMetaTileEntity() {
+        return (RecipeMapSteamMultiblockController) metaTileEntity;
     }
 
     public IFluidTank getSteamFluidTankCombined() {
@@ -47,21 +54,8 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         return steamFluidTankCombined;
     }
 
-    @Override
-    protected IItemHandlerModifiable getInputInventory() {
-        RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
-        return controller.getInputInventory();
-    }
-
-    @Override
-    protected IItemHandlerModifiable getOutputInventory() {
-        RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
-        return controller.getOutputInventory();
-    }
-
     protected IMultipleTankHandler getSteamFluidTank() {
-        RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
-        return controller.getSteamFluidTank();
+        return getMetaTileEntity().getSteamFluidTank();
     }
 
     private void combineSteamTanks() {
@@ -88,18 +82,11 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         super.update();
     }
 
-    @Override
-    protected long getEnergyInputPerSecond() {
-        return 0;
-    }
-
-    @Override
     protected long getEnergyStored() {
         combineSteamTanks();
         return (long) Math.ceil(steamFluidTankCombined.getFluidAmount() * conversionRate);
     }
 
-    @Override
     protected long getEnergyCapacity() {
         combineSteamTanks();
         return (long) Math.floor(steamFluidTankCombined.getCapacity() * conversionRate);
@@ -114,32 +101,53 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getMaxVoltage() {
+    protected boolean produceEnergy(long eu, boolean simulate) {
+        return true;
+    }
+
+    @Override
+    public long getMaxVoltageIn() {
         return GTValues.V[GTValues.LV];
     }
 
     @Override
-    public boolean isAllowOverclocking() {
+    public long getMaxVoltageOut() {
+        return 0;
+    }
+
+    @Override
+    public long getMaxAmperageIn() {
+        return 2;
+    }
+
+    @Override
+    public long getMaxAmperageOut() {
+        return 0;
+    }
+
+    @Override
+    public long getMaxOverclockVoltage(boolean generatingRecipe) {
+        return 0;
+    }
+
+    @Override
+    protected boolean canSubtick() {
         return false;
     }
 
     @Override
-    protected @Nullable Recipe setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
-                                                           @NotNull IItemHandlerModifiable importInventory) {
-        RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
+    public boolean checkRecipe(@NotNull Recipe recipe) {
+        RecipeMapSteamMultiblockController controller = getMetaTileEntity();
         if (controller.checkRecipe(recipe, false)) {
-            recipe = super.setupAndConsumeRecipeInputs(recipe, importInventory);
-            if (recipe != null) {
-                controller.checkRecipe(recipe, true);
-                return recipe;
-            }
+            controller.checkRecipe(recipe, true);
+            return super.checkRecipe(recipe);
         }
-        return null;
+        return false;
     }
 
     @Override
-    protected void completeRecipe() {
-        super.completeRecipe();
+    protected void attemptRecipeCompletion(RecipeRunner runner) {
+        super.attemptRecipeCompletion(runner);
         ventSteam();
     }
 
@@ -171,22 +179,5 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
             world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f,
                     1.0f);
         }
-    }
-
-    @Override
-    protected boolean hasEnoughPower(long eut, int duration) {
-        long totalSteam = (long) (eut * duration / conversionRate);
-        if (totalSteam > 0) {
-            long steamStored = getEnergyStored();
-            long steamCapacity = getEnergyCapacity();
-            // if the required steam is larger than the full buffer, just require the full buffer
-            if (steamCapacity < totalSteam) {
-                return steamCapacity == steamStored;
-            }
-            // otherwise require the full amount of steam for the recipe
-            return steamStored >= totalSteam;
-        }
-        // generation case unchanged
-        return super.hasEnoughPower(eut, duration);
     }
 }

@@ -4,14 +4,12 @@ import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.ItemStackApplicatorMap;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.nbt.NBTTagCompound;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,21 +21,21 @@ import java.util.EnumMap;
 import java.util.Objects;
 import java.util.Set;
 
-public final class StandardItemIngredient implements IItemIngredient {
+public final class StandardItemIngredient implements GTItemIngredient {
 
     private final ItemIngredientBacker backer;
     private final @Nullable NBTMatcher matcher;
     private final long count;
 
     StandardItemIngredient(@NotNull StandardItemIngredient.ItemIngredientBacker backer, @Nullable NBTMatcher matcher,
-                                  @Range(from = 1, to = Long.MAX_VALUE) long count) {
+                           @Range(from = 1, to = Long.MAX_VALUE) long count) {
         this.backer = backer;
         this.matcher = matcher;
         this.count = count;
     }
 
     @Override
-    public @Nullable Collection<ItemStack> getMatchingStacksWithinContext(@NotNull ItemStackMatchingContext context) {
+    public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(@NotNull ItemStackMatchingContext context) {
         return backer.getMatchingStacksWithinContext(context);
     }
 
@@ -77,8 +75,8 @@ public final class StandardItemIngredient implements IItemIngredient {
             this.matching = matching;
         }
 
-        public @Nullable Collection<ItemStack> getMatchingStacksWithinContext(
-                @NotNull ItemStackMatchingContext context) {
+        public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(
+                                                                             @NotNull ItemStackMatchingContext context) {
             return matching.getOrDefault(context, Collections.emptyList());
         }
 
@@ -117,8 +115,8 @@ public final class StandardItemIngredient implements IItemIngredient {
 
     public static class ItemIngredientBuilder {
 
-        private final EnumMap<ItemStackMatchingContext, Collection<ItemStack>> matching =
-                new EnumMap<>(ItemStackMatchingContext.class);
+        private final EnumMap<ItemStackMatchingContext, Collection<ItemStack>> matching = new EnumMap<>(
+                ItemStackMatchingContext.class);
 
         private Set<ItemStack> stacks = new ObjectOpenCustomHashSet<>(ItemStackApplicatorMap.ITEM_DAMAGE_NBT);
         private @Nullable NBTMatcher matcher = null;

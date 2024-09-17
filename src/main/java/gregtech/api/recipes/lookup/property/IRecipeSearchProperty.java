@@ -21,4 +21,7 @@ public interface IRecipeSearchProperty {
     // 130 cleanroom property
     // 131 eu to start property
     // 132 temperature property
+    // 133 dimension property
+    // 134 CWUt property
+    // 135 biome property
 }

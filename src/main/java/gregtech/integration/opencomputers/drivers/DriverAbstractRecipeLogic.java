@@ -7,6 +7,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
+import gregtech.api.recipes.ingredients.GTFluidIngredient;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 
 import net.minecraft.item.ItemStack;
@@ -70,11 +72,11 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 recipe.put("EUt", previousRecipe.getEUt());
 
                 List<Map<String, Object>> itemInput = new ArrayList<>();
-                List<GTRecipeInput> inputs = previousRecipe.getInputs();
+                List<GTItemIngredient> inputs = previousRecipe.getItemIngredients();
                 inputs.forEach(iR -> {
-                    for (ItemStack itemStack : iR.getInputStacks()) {
+                    for (ItemStack itemStack : iR.getAllMatchingStacks()) {
                         Map<String, Object> input = new Object2ObjectOpenHashMap<>();
-                        input.put("count", iR.getAmount());
+                        input.put("count", iR.getRequiredCount());
                         input.put("name", itemStack.getDisplayName());
                         itemInput.add(input);
                     }
@@ -84,12 +86,14 @@ public class DriverAbstractRecipeLogic extends DriverSidedTileEntity {
                 }
 
                 List<Map<String, Object>> fluidInput = new ArrayList<>();
-                List<GTRecipeInput> fluidInputs = previousRecipe.getFluidInputs();
+                List<GTFluidIngredient> fluidInputs = previousRecipe.getFluidIngredients();
                 fluidInputs.forEach(iR -> {
-                    Map<String, Object> input = new Object2ObjectOpenHashMap<>();
-                    input.put("amount", iR.getAmount());
-                    input.put("name", iR.getInputFluidStack().getFluid().getName());
-                    fluidInput.add(input);
+                    for (FluidStack fluidStack : iR.getAllMatchingStacks()) {
+                        Map<String, Object> input = new Object2ObjectOpenHashMap<>();
+                        input.put("amount", iR.getRequiredCount());
+                        input.put("name", fluidStack.getFluid().getName());
+                        fluidInput.add(input);
+                    }
                 });
                 if (!fluidInput.isEmpty()) {
                     recipe.put("fluidInputs", fluidInput);

@@ -48,8 +48,6 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
 
     public BoilerRecipeLogic(MetaTileEntityLargeBoiler tileEntity) {
         super(tileEntity, null);
-        this.fluidOutputs = Collections.emptyList();
-        this.itemOutputs = Collections.emptyList();
     }
 
     @Override
@@ -88,8 +86,9 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
                     GTValues.V[GTValues.MAX], Collections.emptyList(), Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (dieselRecipe != null &&
-                    fuelStack.amount >= dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(dieselRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
+                    fuelStack.amount >=
+                            dieselRecipe.getFluidIngredients().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+                fluidTank.drain(dieselRecipe.getFluidIngredients().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
                 // divide by 2, as it is half burntime for combustion
                 setMaxProgress(adjustBurnTimeForThrottle(Math.max(1, boiler.boilerType.runtimeBoost(
                         GTUtility.safeCastLongToInt((Math.abs(dieselRecipe.getEUt()) * dieselRecipe.getDuration()) /
@@ -102,8 +101,10 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
                     GTValues.V[GTValues.MAX], Collections.emptyList(), Collections.singletonList(fuelStack));
             // run only if it can apply a certain amount of "parallel", this is to mitigate int division
             if (denseFuelRecipe != null &&
-                    fuelStack.amount >= denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
-                fluidTank.drain(denseFuelRecipe.getFluidInputs().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER, true);
+                    fuelStack.amount >=
+                            denseFuelRecipe.getFluidIngredients().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER) {
+                fluidTank.drain(denseFuelRecipe.getFluidIngredients().get(0).getAmount() * FLUID_DRAIN_MULTIPLIER,
+                        true);
                 // multiply by 2, as it is 2x burntime for semi-fluid
                 setMaxProgress(adjustBurnTimeForThrottle(
                         Math.max(1,
@@ -147,7 +148,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     }
 
     @Override
-    protected void updateRecipeProgress() {
+    protected void updateRecipeStatus() {
         if (canRecipeProgress) {
             int generatedSteam = GTUtility
                     .safeCastLongToInt(this.recipeEUt * getMaximumHeatFromMaintenance() / getMaximumHeat());
@@ -325,7 +326,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     }
 
     @Override
-    public long getMaxVoltage() {
+    public long getMaxVoltageIn() {
         GTLog.logger.error("Large Boiler called getMaxVoltage(), this should not be possible!");
         return 0;
     }

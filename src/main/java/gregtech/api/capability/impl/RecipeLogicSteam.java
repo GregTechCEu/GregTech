@@ -9,6 +9,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.RecipeRunner;
+import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -30,6 +32,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
 
@@ -184,33 +187,27 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    protected void completeRecipe() {
-        super.completeRecipe();
+    protected void attemptRecipeCompletion(RecipeRunner runner) {
+        super.attemptRecipeCompletion(runner);
         setNeedsVenting(true);
         tryDoVenting();
     }
 
     @Override
-    protected void performOverclocking(@NotNull Recipe recipe, @NotNull OCParams ocParams,
-                                       @NotNull OCResult ocResult) {
-        if (isHighPressure) {
-            ocResult.init(recipe.getEUt() * 2L, recipe.getDuration());
-        } else {
-            ocResult.init(recipe.getEUt(), recipe.getDuration() * 2);
-        }
+    protected float computeVoltageMultiplier(RecipeView recipe,
+                                             @Range(from = 0, to = Integer.MAX_VALUE) int overclocks) {
+        return super.computeVoltageMultiplier(recipe, overclocks) * (isHighPressure ? 2 : 1);
     }
 
     @Override
-    protected long getEnergyInputPerSecond() {
-        return 0;
+    protected float computeDuration(RecipeView recipe, @Range(from = 0, to = Integer.MAX_VALUE) int overclocks) {
+        return super.computeDuration(recipe, overclocks) * (isHighPressure ? 1 : 2);
     }
 
-    @Override
     protected long getEnergyStored() {
         return (long) Math.ceil(steamFluidTank.getFluidAmount() * conversionRate);
     }
 
-    @Override
     protected long getEnergyCapacity() {
         return (long) Math.floor(steamFluidTank.getCapacity() * conversionRate);
     }
@@ -223,25 +220,33 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public long getMaxVoltage() {
+    protected boolean produceEnergy(long eu, boolean simulate) {
+        return true;
+    }
+
+    @Override
+    public long getMaxVoltageIn() {
         return GTValues.V[GTValues.LV];
     }
 
     @Override
-    protected boolean hasEnoughPower(long eut, int duration) {
-        long totalSteam = (long) (eut * duration / conversionRate);
-        if (totalSteam > 0) {
-            long steamStored = getEnergyStored();
-            long steamCapacity = getEnergyCapacity();
-            // if the required steam is larger than the full buffer, just require the full buffer
-            if (steamCapacity < totalSteam) {
-                return steamCapacity == steamStored;
-            }
-            // otherwise require the full amount of steam for the recipe
-            return steamStored >= totalSteam;
-        }
-        // generation case unchanged
-        return super.hasEnoughPower(eut, duration);
+    public long getMaxVoltageOut() {
+        return 0;
+    }
+
+    @Override
+    public long getMaxAmperageIn() {
+        return isHighPressure ? 2 : 1;
+    }
+
+    @Override
+    public long getMaxAmperageOut() {
+        return 0;
+    }
+
+    @Override
+    protected boolean canSubtick() {
+        return false;
     }
 
     @NotNull

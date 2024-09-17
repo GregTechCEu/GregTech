@@ -3,7 +3,6 @@ package gregtech.api.recipes.lookup.flag;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.lookup.CompactibleIterator;
 import gregtech.api.recipes.lookup.IndexedRecipeLookup;
-import gregtech.api.recipes.lookup.RecipeLookup;
 
 import it.unimi.dsi.fastutil.shorts.Short2LongArrayMap;
 import org.jetbrains.annotations.NotNull;
@@ -36,14 +35,15 @@ public final class FlagMap extends Short2LongArrayMap {
     }
 
     private class MatchIterator implements CompactibleIterator<Recipe> {
+
         private Recipe next = null;
         private int pointer = -1;
 
         @Override
         public boolean hasNext() {
             while (next == null && movePointer()) {
-                RecipeWrapper wrapper = tree.getRecipeByIndex(pointer);
-                if (wrapper.matchFlags(get((short) pointer))) next = wrapper.getRecipe();
+                Recipe recipe = lookup.getRecipeByIndex(pointer);
+                if (recipe.ingredientFlags >= get((short) pointer)) next = recipe;
             }
             return next != null;
         }
@@ -63,12 +63,12 @@ public final class FlagMap extends Short2LongArrayMap {
         }
 
         @Override
-        public Iterator<Recipe> compact() {
+        public @NotNull Iterator<Recipe> compact() {
             BitSet fullmatch = (BitSet) filter.clone();
             int pointer = this.pointer + 1;
             while (pointer < lookup.getRecipeCount()) {
                 // pre-emptively calculate all the matches to pass on to the compacted iterator
-//                 if (!tree.getRecipeByIndex(pointer).matchFlags(get((short) pointer))) fullmatch.set(pointer);
+                if (lookup.getRecipeByIndex(pointer).ingredientFlags < get((short) pointer)) fullmatch.set(pointer);
                 pointer = filter.nextClearBit(pointer + 1);
             }
             return new CompactedIterator(lookup, fullmatch, this.pointer);
@@ -77,13 +77,13 @@ public final class FlagMap extends Short2LongArrayMap {
 
     private static class CompactedIterator implements Iterator<Recipe> {
 
-        private final RecipeLookup tree;
+        private final IndexedRecipeLookup tree;
         private final BitSet filter;
 
         private Recipe next = null;
         private int pointer;
 
-        public CompactedIterator(RecipeLookup tree, BitSet filter, int pointer) {
+        public CompactedIterator(IndexedRecipeLookup tree, BitSet filter, int pointer) {
             this.tree = tree;
             this.filter = filter;
             this.pointer = pointer;
@@ -92,7 +92,7 @@ public final class FlagMap extends Short2LongArrayMap {
         @Override
         public boolean hasNext() {
             while (next == null && movePointer()) {
-//                next = tree.getRecipeByIndex(pointer).getRecipe();
+                next = tree.getRecipeByIndex(pointer);
             }
             return next != null;
         }

@@ -12,6 +12,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
@@ -102,7 +103,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
                         int processingSpeed = coilTier == 0 ? 75 : 50 * (coilTier + 1);
@@ -122,7 +123,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
                         tl.add(TextComponentUtil.setHover(base, hover));
                     }
                 })
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
@@ -165,28 +166,26 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
         return true;
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
-    private class PyrolyseOvenWorkableHandler extends MultiblockRecipeLogic {
+    private static class PyrolyseOvenWorkableHandler extends MultiblockRecipeLogic {
 
-        public PyrolyseOvenWorkableHandler(RecipeMapMultiblockController tileEntity) {
+        public PyrolyseOvenWorkableHandler(MetaTileEntityPyrolyseOven tileEntity) {
             super(tileEntity);
         }
 
         @Override
-        protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
-            super.modifyOverclockPost(ocResult, storage);
+        public @NotNull MetaTileEntityPyrolyseOven getMetaTileEntity() {
+            return (MetaTileEntityPyrolyseOven) metaTileEntity;
+        }
 
-            int coilTier = ((MetaTileEntityPyrolyseOven) metaTileEntity).getCoilTier();
-            if (coilTier == -1)
-                return;
-
-            if (coilTier == 0) {
-                // 75% speed with cupronickel (coilTier = 0)
-                ocResult.setDuration(Math.max(1, (int) (ocResult.duration() * 4.0 / 3)));
-            } else {
-                // each coil above kanthal (coilTier = 1) is 50% faster
-                ocResult.setDuration(Math.max(1, (int) (ocResult.duration() * 2.0 / (coilTier + 1))));
-            }
+        @Override
+        protected float computeDuration(RecipeView recipe, int overclocks) {
+            float duration = super.computeDuration(recipe, overclocks);
+            int coilTier = getMetaTileEntity().getCoilTier();
+            if (coilTier < 0) return duration;
+            // 75% speed with cupronickel (coilTier = 0)
+            if (coilTier == 0) return duration * 4 / 3;
+            // each coil above kanthal (coilTier = 1) is 50% faster
+            return duration * 2 / (1 + coilTier);
         }
     }
 }

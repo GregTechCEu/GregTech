@@ -9,6 +9,7 @@ import gregtech.api.items.armor.ISpecialArmorLogic;
 import gregtech.api.items.metaitem.stats.*;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;
@@ -194,9 +195,8 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
         IFluidHandlerItem internalTank = getIFluidHandlerItem(stack);
         if (internalTank != null) {
             FluidStack fluidStack = internalTank.drain(1, false);
-            if (previousRecipe != null && fluidStack != null &&
-                    fluidStack.isFluidEqual(previousRecipe.getFluidInputs().get(0).getInputFluidStack()) &&
-                    fluidStack.amount > 0) {
+            if (previousRecipe != null && fluidStack != null && fluidStack.amount > 0 &&
+                    previousRecipe.getFluidIngredients().get(0).matches(fluidStack)) {
                 currentRecipe = previousRecipe;
                 return;
             } else if (fluidStack != null) {
@@ -219,7 +219,7 @@ public class PowerlessJetpack implements ISpecialArmorLogic, IJetpack, IItemHUDP
 
     public FluidStack getFuel() {
         if (currentRecipe != null) {
-            return currentRecipe.getFluidInputs().get(0).getInputFluidStack();
+            return currentRecipe.getFluidIngredients().get(0).getAllMatchingStacks().get(0);
         }
 
         return null;

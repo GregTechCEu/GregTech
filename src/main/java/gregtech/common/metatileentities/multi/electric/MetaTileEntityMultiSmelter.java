@@ -7,17 +7,17 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
-import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.machines.RecipeMapFurnace;
-import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.ingredients.match.MatchCalculation;
+import gregtech.api.recipes.logic.RecipeView;
+import gregtech.api.recipes.logic.StandardRecipeView;
+import gregtech.api.recipes.logic.TrimmedRecipeView;
+import gregtech.api.recipes.machines.RecipeLookupFurnace;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -29,18 +29,18 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static gregtech.api.recipes.logic.OverclockingLogic.standardOC;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
@@ -62,7 +62,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
                         // Heating coil discount
@@ -85,10 +85,10 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                         }
 
                         // Custom parallels line so we can have a hover text
-                        if (recipeMapWorkable.getParallelLimit() > 1) {
+                        if (recipeMapWorkable.getBaseParallelLimit() > 1) {
                             ITextComponent parallels = TextComponentUtil.stringWithColor(
                                     TextFormatting.DARK_PURPLE,
-                                    TextFormattingUtil.formatNumbers(recipeMapWorkable.getParallelLimit()));
+                                    TextFormattingUtil.formatNumbers(recipeMapWorkable.getBaseParallelLimit()));
                             ITextComponent bodyText = TextComponentUtil.translationWithColor(
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.parallel",
@@ -173,8 +173,27 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
      * @param discount the energy discount
      * @return the un-overclocked EUt for an amount of parallel recipes
      */
-    public static int getEUtForParallel(int parallel, int discount) {
-        return RecipeMapFurnace.RECIPE_EUT * Math.max(1, (parallel / 8) / discount);
+    public static long getEUtAtParallel(int parallel, int discount) {
+        return getVoltageAfterDiscount(RecipeLookupFurnace.STANDARD_VOLTAGE, discount) *
+                getAmperageAtParallel(1, parallel);
+    }
+
+    /**
+     * @param voltage the voltage of the recipe
+     * @param discount the voltage discount
+     * @return the voltage after discount
+     */
+    public static long getVoltageAfterDiscount(long voltage, int discount) {
+        return Math.max(1, voltage / discount);
+    }
+
+    /**
+     * @param amperage the amperage of the recipe
+     * @param parallel the parallel of the recipe
+     * @return the amperage at this parallel
+     */
+    public static long getAmperageAtParallel(long amperage, int parallel) {
+        return (long) Math.ceil(amperage * parallel / 8d);
     }
 
     /**
@@ -191,7 +210,17 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
      * @return the un-overclocked duration for an amount of parallel recipes
      */
     public static int getDurationForParallel(int parallel, int parallelLimit) {
-        return (int) Math.max(1.0, RecipeMapFurnace.RECIPE_DURATION * 2 * parallel / Math.max(1, parallelLimit * 1.0));
+        return getDurationForParallel(RecipeLookupFurnace.STANDARD_DURATION, parallel, parallelLimit);
+    }
+
+    /**
+     * @param duration      the base duration of the recipe
+     * @param parallel      the amount of parallel recipes
+     * @param parallelLimit the maximum limit on parallel recipes
+     * @return the un-overclocked duration for an amount of parallel recipes
+     */
+    public static int getDurationForParallel(int duration, int parallel, int parallelLimit) {
+        return (int) Math.max(1.0, duration * 2d * parallel / Math.max(1, parallelLimit));
     }
 
     protected class MultiSmelterWorkable extends MultiblockRecipeLogic {
@@ -200,28 +229,62 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             super(tileEntity);
         }
 
-        @NotNull
-        @Override
-        public ParallelLogicType getParallelLogicType() {
-            return ParallelLogicType.APPEND_ITEMS;
+        protected int determineParallel(@NotNull RecipeView recipe) {
+            @SuppressWarnings("deprecation")
+            int limit = getParallelLimit(recipe.getRecipe());
+            long recipeAmperage = recipe.getActualAmperage();
+            long maxAmperage = getMaxParallelAmperage(recipe.getActualVoltage(), recipe.getRecipe().isGenerating());
+            int parallel = 0;
+            while (parallel - limit > 1) {
+                int middle = (limit + parallel) / 2;
+                if (testParallel(recipeAmperage, maxAmperage, middle)) {
+                    parallel = middle;
+                } else {
+                    limit = middle;
+                }
+            }
+            return testParallel(recipeAmperage, maxAmperage, limit) ? limit : parallel;
+        }
+
+        protected boolean testParallel(long recipeAmperage, long maxAmperage, int parallel) {
+            return getAmperageAtParallel(recipeAmperage, parallel) <= maxAmperage;
         }
 
         @Override
-        protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                            @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
-            standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
-                    getOverclockingVoltageFactor());
+        protected @NotNull StandardRecipeView getTrimmedRecipeView(@NotNull Recipe recipe,
+                                                                   @NotNull MatchCalculation<ItemStack> itemMatch,
+                                                                   @NotNull MatchCalculation<FluidStack> fluidMatch) {
+            return new MultiSmelterRecipeView(recipe, itemMatch, fluidMatch, getEUtDiscount(), 1,
+                    metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
         }
 
         @Override
-        public void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
-            builder.EUt(getEUtForParallel(builder.getParallel(), heatingCoilDiscount))
-                    .duration(getDurationForParallel(builder.getParallel(), getParallelLimit()));
-        }
-
-        @Override
-        public int getParallelLimit() {
+        public int getBaseParallelLimit() {
             return getMaxParallel(heatingCoilLevel);
+        }
+
+        @Override
+        protected boolean canSubtick() {
+            return false;
+        }
+    }
+
+    protected class MultiSmelterRecipeView extends TrimmedRecipeView {
+
+        public MultiSmelterRecipeView(@NotNull Recipe recipe, @NotNull MatchCalculation<ItemStack> itemMatch,
+                                      @NotNull MatchCalculation<FluidStack> fluidMatch, double voltageDiscount,
+                                      int initialParallel, int maxItems, int maxFluids) {
+            super(recipe, itemMatch, fluidMatch, voltageDiscount, initialParallel, maxItems, maxFluids);
+        }
+
+        @Override
+        public int getActualDuration() {
+            return getDurationForParallel(super.getActualDuration(), getParallel(), getMaxParallel(heatingCoilLevel));
+        }
+
+        @Override
+        public long getActualVoltage() {
+            return getVoltageAfterDiscount(super.getActualVoltage(), heatingCoilDiscount);
         }
     }
 }

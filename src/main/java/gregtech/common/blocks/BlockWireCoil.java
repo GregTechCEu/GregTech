@@ -64,7 +64,7 @@ public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
             int coilTier = coilType.ordinal();
             lines.add(I18n.format("tile.wire_coil.tooltip_smelter"));
             lines.add(I18n.format("tile.wire_coil.tooltip_parallel_smelter", coilType.level * 32));
-            int EUt = MetaTileEntityMultiSmelter.getEUtForParallel(
+            long EUt = MetaTileEntityMultiSmelter.getEUtAtParallel(
                     MetaTileEntityMultiSmelter.getMaxParallel(coilType.getLevel()), coilType.getEnergyDiscount());
             lines.add(I18n.format("tile.wire_coil.tooltip_energy_smelter", EUt));
             lines.add(I18n.format("tile.wire_coil.tooltip_pyro"));

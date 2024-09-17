@@ -51,14 +51,6 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         resetTileAbilities();
     }
 
-    public IItemHandlerModifiable getInputInventory() {
-        return inputInventory;
-    }
-
-    public IItemHandlerModifiable getOutputInventory() {
-        return outputInventory;
-    }
-
     public IMultipleTankHandler getSteamFluidTank() {
         return steamFluidTank;
     }
@@ -121,7 +113,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
                                 steamInfo));
                     }
                 })
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }

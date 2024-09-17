@@ -20,9 +20,9 @@ public class GrSRecipeHelper {
                 .append(recipe.getEUt())
                 .append(", ");
 
-        if (recipe.getInputs().size() > 0) {
+        if (recipe.getItemIngredients().size() > 0) {
             builder.append("[");
-            for (GTRecipeInput ci : recipe.getInputs()) {
+            for (GTRecipeInput ci : recipe.getItemIngredients()) {
                 String ingredient = getGroovyItemString(ci);
                 builder.append(ingredient);
             }
@@ -32,9 +32,9 @@ public class GrSRecipeHelper {
             builder.append("null, ");
         }
 
-        if (recipe.getFluidInputs().size() > 0) {
+        if (recipe.getFluidIngredients().size() > 0) {
             builder.append("[");
-            for (GTRecipeInput fluidIngredient : recipe.getFluidInputs()) {
+            for (GTRecipeInput fluidIngredient : recipe.getFluidIngredients()) {
                 builder.append(IngredientHelper.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
 
                 if (fluidIngredient.getAmount() > 1) {

@@ -140,9 +140,9 @@ public class RecipeMapTest {
         Recipe rec = (Recipe) r.build().getResult();
 
         MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(
-                rec.getInputs().get(0).getInputStacks()[0], rec.getInputs().get(0));
+                rec.getItemIngredients().get(0).getInputStacks()[0], rec.getItemIngredients().get(0));
         MapItemStackIngredient ing1FromGTRecipeInput = new MapItemStackIngredient(
-                rec.getInputs().get(1).getInputStacks()[0], rec.getInputs().get(1));
+                rec.getItemIngredients().get(1).getInputStacks()[0], rec.getItemIngredients().get(1));
 
         MatcherAssert.assertThat(ingFromStack, equalTo(ing0FromGTRecipeInput));
         MatcherAssert.assertThat(ingFromStack, equalTo(ing1FromGTRecipeInput));
@@ -162,8 +162,8 @@ public class RecipeMapTest {
                 .EUt(1).duration(1);
         Recipe rec = (Recipe) r.build().getResult();
 
-        MapFluidIngredient ing0FromGTRecipeInput = new MapFluidIngredient(rec.getFluidInputs().get(0));
-        MapFluidIngredient ing1FromGTRecipeInput = new MapFluidIngredient(rec.getFluidInputs().get(1));
+        MapFluidIngredient ing0FromGTRecipeInput = new MapFluidIngredient(rec.getFluidIngredients().get(0));
+        MapFluidIngredient ing1FromGTRecipeInput = new MapFluidIngredient(rec.getFluidIngredients().get(1));
 
         MatcherAssert.assertThat(ingFromStack, equalTo(ing0FromGTRecipeInput));
         MatcherAssert.assertThat(ingFromStack, equalTo(ing1FromGTRecipeInput));
@@ -195,14 +195,16 @@ public class RecipeMapTest {
         Recipe rec = (Recipe) r.build().getResult();
 
         MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(
-                rec.getInputs().get(0).getInputStacks()[0], rec.getInputs().get(0));
+                rec.getItemIngredients().get(0).getInputStacks()[0], rec.getItemIngredients().get(0));
         MapOreDictIngredient ing1FromGTRecipeInput = new MapOreDictIngredient(OreDictionary.getOreID("cobblestone"));
 
         MatcherAssert.assertThat(ing0FromGTRecipeInput, new IsNot<>(equalTo(ing1FromGTRecipeInput)));
         MatcherAssert.assertThat(ing1FromGTRecipeInput, new IsNot<>(equalTo(ing0FromGTRecipeInput)));
 
-        MatcherAssert.assertThat(rec.getInputs().get(0).acceptsStack(new ItemStack(Blocks.COBBLESTONE)), is(true));
-        MatcherAssert.assertThat(rec.getInputs().get(1).acceptsStack(new ItemStack(Blocks.COBBLESTONE)), is(true));
+        MatcherAssert.assertThat(rec.getItemIngredients().get(0).acceptsStack(new ItemStack(Blocks.COBBLESTONE)),
+                is(true));
+        MatcherAssert.assertThat(rec.getItemIngredients().get(1).acceptsStack(new ItemStack(Blocks.COBBLESTONE)),
+                is(true));
     }
 
     @Test
@@ -220,13 +222,13 @@ public class RecipeMapTest {
         // create the MapItemStackIngredient and call hashCode so the hash cached to the "hash" field
 
         MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(
-                rec.getInputs().get(0).getInputStacks()[0], rec.getInputs().get(0));
+                rec.getItemIngredients().get(0).getInputStacks()[0], rec.getItemIngredients().get(0));
         ing0FromGTRecipeInput.hashCode();
         MapItemStackIngredient ing1FromGTRecipeInput = new MapItemStackIngredient(
-                rec.getInputs().get(1).getInputStacks()[0], rec.getInputs().get(0));
+                rec.getItemIngredients().get(1).getInputStacks()[0], rec.getItemIngredients().get(0));
         ing1FromGTRecipeInput.hashCode();
         MapItemStackIngredient ing2FromGTRecipeInput = new MapItemStackIngredient(
-                rec.getInputs().get(2).getInputStacks()[0], rec.getInputs().get(0));
+                rec.getItemIngredients().get(2).getInputStacks()[0], rec.getItemIngredients().get(0));
         ing1FromGTRecipeInput.hashCode();
 
         // Reflection so the equals in AbstractMapIngredient doesn't return false due to anonymous class check failure

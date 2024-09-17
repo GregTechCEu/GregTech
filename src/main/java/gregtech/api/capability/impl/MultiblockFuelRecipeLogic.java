@@ -3,24 +3,32 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.RecipeRun;
+import gregtech.api.recipes.logic.RecipeView;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
+
+    private boolean blockConsumption = false;
 
     protected long totalContinuousRunningTime;
 
@@ -29,43 +37,14 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
-        // apply maintenance bonuses
-        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
-
-        // duration bonus
-        if (maintenanceValues.getSecond() != 1.0) {
-            ocParams.setDuration((int) Math.round(ocParams.duration() / maintenanceValues.getSecond()));
-        }
-    }
-
-    @Override
-    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
-        // apply maintenance penalties
-        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
-
-        // duration penalty
-        if (maintenanceValues.getFirst() > 0) {
-            ocResult.setDuration((int) (ocResult.duration() * (1 - 0.1 * maintenanceValues.getFirst())));
-        }
-    }
-
-    @NotNull
-    @Override
-    public ParallelLogicType getParallelLogicType() {
-        return ParallelLogicType.MULTIPLY; // TODO APPEND_FLUIDS
-    }
-
-    @Override
-    protected boolean hasEnoughPower(long eut, int duration) {
-        // generators always have enough power to run recipes
-        return true;
+    protected boolean canSubtick() {
+        return false;
     }
 
     @Override
     public void update() {
         super.update();
-        if (workingEnabled && isActive && progressTime > 0) {
+        if (workingEnabled && isActive && currentRecipe != null) {
             totalContinuousRunningTime++;
         } else {
             totalContinuousRunningTime = 0;
@@ -73,14 +52,9 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    public int getParallelLimit() {
+    public int getBaseParallelLimit() {
         // parallel is limited by voltage
         return Integer.MAX_VALUE;
-    }
-
-    @Override
-    protected long getMaxParallelVoltage() {
-        return getMaxVoltage();
     }
 
     /**
@@ -95,14 +69,8 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(long recipeEUt, boolean simulate) {
-        long euToDraw = boostProduction(recipeEUt);
-        long resultEnergy = getEnergyStored() - euToDraw;
-        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
-            if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);
-            return true;
-        }
-        return false;
+    protected boolean produceEnergy(long eu, boolean simulate) {
+        return super.produceEnergy(boostProduction(eu), simulate);
     }
 
     @Override
@@ -111,16 +79,21 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    public boolean consumesEnergy() {
-        return false;
-    }
-
-    @Override
     public void invalidate() {
         super.invalidate();
         totalContinuousRunningTime = 0;
     }
 
+    @Override
+    protected boolean performConsumption(@NotNull MatchCalculation<ItemStack> itemMatch,
+                                         @NotNull MatchCalculation<FluidStack> fluidMatch, @NotNull RecipeView view,
+                                         @NotNull RecipeRun run, @NotNull List<ItemStack> items,
+                                         @NotNull List<FluidStack> fluids) {
+        if (!blockConsumption) return super.performConsumption(itemMatch, fluidMatch, view, run, items, fluids);
+        else return true;
+    }
+
+    @Nullable
     public String getRecipeFluidInputInfo() {
         IRotorHolder rotorHolder = null;
 
@@ -130,17 +103,26 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         }
 
         // Previous Recipe is always null on first world load, so try to acquire a new recipe
-        Recipe recipe;
+        Recipe recipe = null;
         if (previousRecipe == null) {
-            recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+            PropertySet set = computePropertySet();
+            blockConsumption = true;
+            for (DistinctInputGroup group : getInputGroups()) {
+                Pair<RecipeRun, Recipe> pair = findRecipeRun(group.itemInventoryView(), group.fluidInventoryView(), set);
+                if (pair != null) {
+                    recipe = pair.getRight();
+                    break;
+                }
+            }
+            blockConsumption = false;
             if (recipe == null) return null;
         } else {
             recipe = previousRecipe;
         }
-        FluidStack requiredFluidInput = recipe.getFluidInputs().get(0).getInputFluidStack();
+        FluidStack requiredFluidInput = recipe.getFluidIngredients().get(0).getAllMatchingStacks().get(0);
 
-        int ocAmount = GTUtility.safeCastLongToInt(getMaxVoltage() / recipe.getEUt());
-        int neededAmount = ocAmount * requiredFluidInput.amount;
+        int parallel = GTUtility.safeCastLongToInt(getMaxAmperageOut() / recipe.getAmperage());
+        int neededAmount = parallel * requiredFluidInput.amount;
         if (rotorHolder != null && rotorHolder.hasRotor()) {
             neededAmount /= (rotorHolder.getTotalEfficiency() / 100.0);
         } else if (rotorHolder != null && !rotorHolder.hasRotor()) {
@@ -151,19 +133,36 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     public FluidStack getInputFluidStack() {
         // Previous Recipe is always null on first world load, so try to acquire a new recipe
-        if (previousRecipe == null) {
-            Recipe recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
+        PropertySet set = computePropertySet();
+        blockConsumption = true;
+        FluidStack input = null;
+        for (DistinctInputGroup group : getInputGroups()) {
+            RecipeRun recipe = null;
+            if (previousRecipe != null) {
+                Pair<RecipeRun, Recipe> pair = matchRecipe(previousRecipe, group.itemInventoryView(), group.fluidInventoryView(), set);
+                if (pair != null) recipe = pair.getLeft();
+            }
+            if (recipe == null) {
+                Pair<RecipeRun, Recipe> pair = findRecipeRun(group.itemInventoryView(), group.fluidInventoryView(), set);
+                if (pair != null) recipe = pair.getLeft();
+            }
+            if (recipe == null) continue;
 
-            return recipe == null ? null : getInputTank().drain(
-                    new FluidStack(recipe.getFluidInputs().get(0).getInputFluidStack().getFluid(), Integer.MAX_VALUE),
-                    false);
+            input = recipe.getFluidsConsumed().get(0).copy();
+            input.amount = 0;
+            for (FluidStack stack : group.fluidInventoryView()) {
+                if (input.isFluidEqual(stack)) {
+                    input.amount += stack.amount;
+                }
+            }
+            break;
         }
-        FluidStack fuelStack = previousRecipe.getFluidInputs().get(0).getInputFluidStack();
-        return getInputTank().drain(new FluidStack(fuelStack.getFluid(), Integer.MAX_VALUE), false);
+        blockConsumption = false;
+        return input;
     }
 
     @Override
-    public boolean isAllowOverclocking() {
-        return false;
+    public long getMaxOverclockVoltage(boolean generatingRecipe) {
+        return 0;
     }
 }

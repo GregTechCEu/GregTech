@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
@@ -7,34 +8,42 @@ import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 
+import gregtech.api.util.GTUtility;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.subTickNonParallelOC;
 
+/**
+ * For singleblocks.
+ */
 public class RecipeLogicEnergy extends AbstractRecipeLogic {
 
     protected final Supplier<IEnergyContainer> energyContainer;
+
+    protected long overclockVoltage;
 
     public RecipeLogicEnergy(MetaTileEntity tileEntity, RecipeMap<?> recipeMap,
                              Supplier<IEnergyContainer> energyContainer) {
         super(tileEntity, recipeMap);
         this.energyContainer = energyContainer;
-        setMaximumOverclockVoltage(getMaxVoltage());
+    }
+
+    public void setOverclockTier(int tier) {
+        overclockVoltage = GTValues.V[tier];
     }
 
     @Override
-    protected long getEnergyInputPerSecond() {
-        return energyContainer.get().getInputPerSec();
+    public long getMaxOverclockVoltage(boolean generatingRecipe) {
+        return overclockVoltage;
     }
 
-    @Override
     protected long getEnergyStored() {
         return energyContainer.get().getEnergyStored();
     }
 
-    @Override
     protected long getEnergyCapacity() {
         return energyContainer.get().getEnergyCapacity();
     }
@@ -50,14 +59,36 @@ public class RecipeLogicEnergy extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getMaxVoltage() {
-        return Math.max(energyContainer.get().getInputVoltage(), energyContainer.get().getOutputVoltage());
+    protected boolean produceEnergy(long eu, boolean simulate) {
+        long resultEnergy = getEnergyStored() + eu;
+        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
+            if (!simulate) energyContainer.get().changeEnergy(eu);
+            return true;
+        } else return false;
     }
 
     @Override
-    protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
-        subTickNonParallelOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
-                getOverclockingVoltageFactor());
+    public long getMaxVoltageIn() {
+        return energyContainer.get().getInputVoltage();
+    }
+
+    @Override
+    public long getMaxVoltageOut() {
+        return energyContainer.get().getOutputVoltage();
+    }
+
+    @Override
+    public long getMaxAmperageIn() {
+        return energyContainer.get().getInputAmperage();
+    }
+
+    @Override
+    public long getMaxAmperageOut() {
+        return energyContainer.get().getOutputAmperage();
+    }
+
+    @Override
+    protected boolean canSubtick() {
+        return false;
     }
 }

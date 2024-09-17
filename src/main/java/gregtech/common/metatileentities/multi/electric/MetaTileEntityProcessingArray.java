@@ -24,6 +24,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.logic.RecipeRunner;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
@@ -149,7 +150,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                             mapText = TextComponentUtil.translationWithColor(
                                     TextFormatting.DARK_PURPLE,
                                     "%sx %s",
-                                    logic.getParallelLimit(), mapText);
+                                    logic.getBaseParallelLimit(), mapText);
                             ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
                                     "gregtech.machine.machine_hatch.machines", mapText);
                             ITextComponent voltageName = new TextComponentString(GTValues.VNF[logic.machineTier]);
@@ -301,8 +302,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         }
 
         @Override
-        protected boolean shouldSearchForRecipes() {
-            return canWorkWithMachines() && super.shouldSearchForRecipes();
+        protected boolean shouldSearchForRecipes(RecipeRunner runner) {
+            return canWorkWithMachines() && super.shouldSearchForRecipes(runner);
         }
 
         public boolean canWorkWithMachines() {
@@ -377,25 +378,25 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         @Override
         protected int getOverclockForTier(long voltage) {
-            return super.getOverclockForTier(Math.min(machineVoltage, getMaximumOverclockVoltage()));
+            return super.getOverclockForTier(Math.min(machineVoltage, getMaxOverclockVoltage()));
         }
 
         @Override
-        public int getParallelLimit() {
+        public int getBaseParallelLimit() {
             return (currentMachineStack == null || currentMachineStack.isEmpty()) ? getMachineLimit() :
                     Math.min(currentMachineStack.getCount(), getMachineLimit());
         }
 
         @Override
         protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-            return super.findRecipe(Math.min(super.getMaxVoltage(), this.machineVoltage), inputs, fluidInputs);
+            return super.findRecipe(Math.min(super.getMaxVoltageIn(), this.machineVoltage), inputs, fluidInputs);
         }
 
         @Override
-        public long getMaxVoltage() {
+        public long getMaxVoltageIn() {
             // Allow the PA to use as much power as provided, since tier is gated by the machine anyway.
             // UI text uses the machine stack's tier instead of the getMaxVoltage() tier as well.
-            return super.getMaximumOverclockVoltage();
+            return super.getMaxOverclockVoltage();
         }
 
         @Override
@@ -404,7 +405,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
             int recipeTier = Math.max(0,
                     GTUtility.getTierByVoltage(recipeEUt / Math.max(1, this.parallelRecipesPerformed)));
-            int maximumTier = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltage()));
+            int maximumTier = Math.min(this.machineTier, GTUtility.getTierByVoltage(getMaxVoltageIn()));
 
             // The maximum number of overclocks is determined by the difference between the tier the recipe is running
             // at,

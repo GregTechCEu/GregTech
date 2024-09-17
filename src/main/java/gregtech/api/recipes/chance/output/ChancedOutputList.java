@@ -2,6 +2,7 @@ package gregtech.api.recipes.chance.output;
 
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -40,7 +41,30 @@ public class ChancedOutputList<I, T extends ChancedOutput<I>> {
      */
     public @Nullable @Unmodifiable List<T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier,
                                                 int machineTier) {
-        return chancedOutputLogic.roll(getChancedEntries(), boostFunction, baseTier, machineTier);
+        return roll(boostFunction, baseTier, machineTier, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Roll the chances for this output list
+     *
+     * @param boostFunction the function used to boost the outputs
+     * @param baseTier      the base tier of the recipe
+     * @param machineTier   the tier the recipe is run at
+     * @param trimLimit the trim limit for chance entries
+     * @return a list of the rolled outputs
+     */
+    public @Nullable @Unmodifiable List<T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier,
+                                                int machineTier, int trimLimit) {
+        List<T> entries = getChancedEntries();
+        if (entries.size() > trimLimit) {
+            if (trimLimit == 0) return Collections.emptyList();
+            List<T> trimmed = new ObjectArrayList<>(trimLimit);
+            for (int i = 0; i < trimLimit; i++) {
+                trimmed.add(entries.get(i));
+            }
+            entries = trimmed;
+        }
+        return chancedOutputLogic.roll(entries, boostFunction, baseTier, machineTier);
     }
 
     public @NotNull ChancedOutputLogic getChancedOutputLogic() {

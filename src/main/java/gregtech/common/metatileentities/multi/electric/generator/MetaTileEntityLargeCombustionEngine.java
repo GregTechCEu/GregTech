@@ -20,6 +20,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.logic.RecipeRunner;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
@@ -56,8 +57,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, tier);
-        this.recipeMapWorkable = new LargeCombustionEngineWorkableHandler(this, tier > GTValues.EV);
-        this.recipeMapWorkable.setMaximumOverclockVoltage(GTValues.V[tier]);
+        this.recipeMapWorkable = new LargeCombustionEngineWorkableHandler(this, tier);
         this.tier = tier;
         this.isExtreme = tier > GTValues.EV;
     }
@@ -340,25 +340,20 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         private static final FluidStack LIQUID_OXYGEN_STACK = Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, 80);
         private static final FluidStack LUBRICANT_STACK = Materials.Lubricant.getFluid(1);
 
-        public LargeCombustionEngineWorkableHandler(RecipeMapMultiblockController tileEntity, boolean isExtreme) {
+        public LargeCombustionEngineWorkableHandler(RecipeMapMultiblockController tileEntity, int tier) {
             super(tileEntity);
             this.combustionEngine = (MetaTileEntityLargeCombustionEngine) tileEntity;
-            this.isExtreme = isExtreme;
-            this.tier = isExtreme ? GTValues.IV : GTValues.EV;
+            this.isExtreme = tier > GTValues.EV;
+            this.tier = tier;
         }
 
         @Override
-        protected void updateRecipeProgress() {
-            if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
+        protected boolean produceEnergy(long eu, boolean simulate) {
+            if (!simulate) {
                 drainLubricant();
                 drainOxygen();
-                drawEnergy(recipeEUt, false);
-
-                // as recipe starts with progress on 1 this has to be > only not => to compensate for it
-                if (++progressTime > maxProgressTime) {
-                    completeRecipe();
-                }
             }
+            return super.produceEnergy(eu, simulate);
         }
 
         protected void checkOxygen() {
@@ -396,9 +391,9 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         @Override
-        protected boolean shouldSearchForRecipes() {
+        protected boolean shouldSearchForRecipes(RecipeRunner runner) {
             checkOxygen();
-            return super.shouldSearchForRecipes() && checkLubricant();
+            return super.shouldSearchForRecipes(runner) && checkLubricant();
         }
 
         @Override
@@ -407,12 +402,14 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         @Override
-        public long getMaxVoltage() {
+        public long getMaxVoltageOut() {
+            return GTValues.V[tier];
+        }
+
+        @Override
+        public long getMaxAmperageOut() {
             // this multiplies consumption through parallel
-            if (isOxygenBoosted)
-                return GTValues.V[tier] * 2;
-            else
-                return GTValues.V[tier];
+            return isOxygenBoosted ? 2 : 1;
         }
 
         @Override

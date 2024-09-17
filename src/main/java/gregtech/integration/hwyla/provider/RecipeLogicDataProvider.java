@@ -47,8 +47,9 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
     protected NBTTagCompound getNBTData(AbstractRecipeLogic capability, NBTTagCompound tag) {
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Working", capability.isWorking());
-        if (capability.isWorking() && !(capability instanceof PrimitiveRecipeLogic)) {
+        if (capability.isWorking() && capability.getCurrent() != null && !(capability instanceof PrimitiveRecipeLogic)) {
             subTag.setLong("RecipeEUt", capability.getInfoProviderEUt());
+            subTag.setBoolean("Generating", capability.getCurrent().isGenerating());
         }
         tag.setTag("gregtech.AbstractRecipeLogic", subTag);
         return tag;
@@ -66,7 +67,7 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.AbstractRecipeLogic");
             if (tag.getBoolean("Working")) {
                 long eut = tag.getLong("RecipeEUt");
-                boolean consumer = false;
+                boolean consumer = !tag.getBoolean("Generating");
                 String endText = null;
 
                 if (accessor.getTileEntity() instanceof IGregTechTileEntity gtte) {
@@ -75,10 +76,6 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
                             mte instanceof RecipeMapSteamMultiblockController) {
                         endText = ": " + TextFormattingUtil.formatNumbers(eut) + TextFormatting.RESET + " L/t " +
                                 I18n.format(Materials.Steam.getUnlocalizedName());
-                    }
-                    AbstractRecipeLogic arl = mte.getRecipeLogic();
-                    if (arl != null) {
-                        consumer = arl.consumesEnergy();
                     }
                 }
                 if (endText == null) {

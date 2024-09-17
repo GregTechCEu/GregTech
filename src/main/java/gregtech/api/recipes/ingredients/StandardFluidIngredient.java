@@ -3,19 +3,13 @@ package gregtech.api.recipes.ingredients;
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.FluidStackApplicatorMap;
 import gregtech.api.recipes.lookup.flag.FluidStackMatchingContext;
-import gregtech.api.recipes.lookup.flag.ItemStackApplicatorMap;
-import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,21 +21,21 @@ import java.util.EnumMap;
 import java.util.Objects;
 import java.util.Set;
 
-public final class StandardFluidIngredient implements IFluidIngredient {
+public final class StandardFluidIngredient implements GTFluidIngredient {
 
     private final FluidIngredientBacker backer;
     private final @Nullable NBTMatcher matcher;
     private final long count;
 
     StandardFluidIngredient(@NotNull StandardFluidIngredient.FluidIngredientBacker backer, @Nullable NBTMatcher matcher,
-                                   @Range(from = 1, to = Long.MAX_VALUE) long count) {
+                            @Range(from = 1, to = Long.MAX_VALUE) long count) {
         this.backer = backer;
         this.matcher = matcher;
         this.count = count;
     }
 
     @Override
-    public @Nullable Collection<FluidStack> getMatchingStacksWithinContext(@NotNull FluidStackMatchingContext context) {
+    public @NotNull Collection<FluidStack> getMatchingStacksWithinContext(@NotNull FluidStackMatchingContext context) {
         return backer.getMatchingStacksWithinContext(context);
     }
 
@@ -81,8 +75,8 @@ public final class StandardFluidIngredient implements IFluidIngredient {
             this.matching = matching;
         }
 
-        public @Nullable Collection<FluidStack> getMatchingStacksWithinContext(
-                @NotNull FluidStackMatchingContext context) {
+        public @NotNull Collection<FluidStack> getMatchingStacksWithinContext(
+                                                                              @NotNull FluidStackMatchingContext context) {
             return matching.getOrDefault(context, Collections.emptyList());
         }
 
@@ -120,8 +114,8 @@ public final class StandardFluidIngredient implements IFluidIngredient {
 
     public static class FluidIngredientBuilder {
 
-        private final EnumMap<FluidStackMatchingContext, Collection<FluidStack>> matching =
-                new EnumMap<>(FluidStackMatchingContext.class);
+        private final EnumMap<FluidStackMatchingContext, Collection<FluidStack>> matching = new EnumMap<>(
+                FluidStackMatchingContext.class);
 
         private Set<FluidStack> stacks = new ObjectOpenCustomHashSet<>(FluidStackApplicatorMap.FLUID_NBT);
         private @Nullable NBTMatcher matcher = null;

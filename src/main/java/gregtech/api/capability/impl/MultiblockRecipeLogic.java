@@ -2,46 +2,42 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.logic.RecipeRun;
+import gregtech.api.recipes.logic.RecipeRunner;
+import gregtech.api.recipes.logic.RecipeView;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
-import net.minecraft.util.Tuple;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.subTickParallelOC;
-
-public class MultiblockRecipeLogic extends AbstractRecipeLogic {
-
-    // Used for distinct mode
-    protected int lastRecipeIndex = 0;
-    protected IItemHandlerModifiable currentDistinctInputBus;
-    protected List<IItemHandlerModifiable> invalidatedInputList = new ArrayList<>();
+public class MultiblockRecipeLogic extends DistributedRecipeLogic {
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
-        super(tileEntity, tileEntity.recipeMap);
+        super(tileEntity, tileEntity.recipeMap, false);
     }
 
-    public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity, boolean hasPerfectOC) {
-        super(tileEntity, tileEntity.recipeMap, hasPerfectOC);
+    public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity, boolean initialDistributing) {
+        super(tileEntity, tileEntity.recipeMap, initialDistributing);
+    }
+
+    @Override
+    public @NotNull RecipeMapMultiblockController getMetaTileEntity() {
+        return (RecipeMapMultiblockController) metaTileEntity;
     }
 
     @Override
@@ -53,7 +49,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected boolean canProgressRecipe() {
-        return super.canProgressRecipe() && !((IMultiblockController) metaTileEntity).isStructureObstructed();
+        return super.canProgressRecipe() && !getMetaTileEntity().isStructureObstructed();
     }
 
     /**
@@ -62,259 +58,58 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     public void invalidate() {
         super.invalidate();
-        lastRecipeIndex = 0;
-        invalidatedInputList.clear();
-    }
-
-    public void onDistinctChanged() {
-        this.lastRecipeIndex = 0;
     }
 
     public IEnergyContainer getEnergyContainer() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getEnergyContainer();
+        return getMetaTileEntity().getEnergyContainer();
     }
 
     @Override
-    protected IItemHandlerModifiable getInputInventory() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getInputInventory();
-    }
-
-    // Used for distinct bus recipe checking
-    protected List<IItemHandlerModifiable> getInputBuses() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getAbilities(MultiblockAbility.IMPORT_ITEMS);
+    public Collection<DistinctInputGroup> getInputGroups() {
+        return getMetaTileEntity().getInputGroups();
     }
 
     @Override
     protected IItemHandlerModifiable getOutputInventory() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getOutputInventory();
-    }
-
-    @Override
-    protected IMultipleTankHandler getInputTank() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getInputFluidInventory();
+        return getMetaTileEntity().getOutputInventory();
     }
 
     @Override
     protected IMultipleTankHandler getOutputTank() {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
-        return controller.getOutputFluidInventory();
+        return getMetaTileEntity().getOutputFluidInventory();
     }
 
     @Override
-    protected boolean canWorkWithInputs() {
-        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        if (controller instanceof RecipeMapMultiblockController) {
-            RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-
-            if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
-                    getInputInventory().getSlots() > 0) {
-                boolean canWork = false;
-                if (invalidatedInputList.isEmpty()) {
-                    return true;
-                }
-                if (!metaTileEntity.getNotifiedFluidInputList().isEmpty()) {
-                    canWork = true;
-                    invalidatedInputList.clear();
-                    metaTileEntity.getNotifiedFluidInputList().clear();
-                    metaTileEntity.getNotifiedItemInputList().clear();
-                } else {
-                    Iterator<IItemHandlerModifiable> notifiedIter = metaTileEntity.getNotifiedItemInputList()
-                            .iterator();
-                    while (notifiedIter.hasNext()) {
-                        IItemHandlerModifiable bus = notifiedIter.next();
-                        Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
-                        while (invalidatedIter.hasNext()) {
-                            IItemHandler invalidatedHandler = invalidatedIter.next();
-                            if (invalidatedHandler instanceof ItemHandlerList) {
-                                for (IItemHandler ih : ((ItemHandlerList) invalidatedHandler).getBackingHandlers()) {
-                                    if (ih == bus) {
-                                        canWork = true;
-                                        invalidatedIter.remove();
-                                        break;
-                                    }
-                                }
-                            } else if (invalidatedHandler == bus) {
-                                canWork = true;
-                                invalidatedIter.remove();
-                            }
-                        }
-                        notifiedIter.remove();
-                    }
-                }
-                ArrayList<IItemHandler> flattenedHandlers = new ArrayList<>();
-                for (IItemHandler ih : getInputBuses()) {
-                    if (ih instanceof ItemHandlerList) {
-                        flattenedHandlers.addAll(((ItemHandlerList) ih).getBackingHandlers());
-                    }
-                    flattenedHandlers.add(ih);
-                }
-
-                if (!invalidatedInputList.containsAll(flattenedHandlers)) {
-                    canWork = true;
-                }
-                return canWork;
-            }
-        }
-        return super.canWorkWithInputs();
-    }
-
-    @Override
-    protected void trySearchNewRecipe() {
+    protected void findAndSetupRecipeToRun(@NotNull List<ItemStack> listViewOfItemInputs,
+                                           @NotNull List<FluidStack> listViewOfFluidInputs,
+                                           @NotNull PropertySet properties, @NotNull RecipeRunner runner) {
         // do not run recipes when there are more than 5 maintenance problems
-        // Maintenance can apply to all multiblocks, so cast to a base multiblock class
-        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        if (ConfigHolder.machines.enableMaintenance && controller.hasMaintenanceMechanics() &&
-                controller.getNumMaintenanceProblems() > 5) {
+        if (ConfigHolder.machines.enableMaintenance && getMetaTileEntity().hasMaintenanceMechanics() &&
+                getMetaTileEntity().getNumMaintenanceProblems() > 5) {
             return;
         }
-
-        // Distinct buses only apply to some multiblocks, so check the controller against a lower class
-        if (controller instanceof RecipeMapMultiblockController) {
-            RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-
-            if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
-                    getInputInventory().getSlots() > 0) {
-                trySearchNewRecipeDistinct();
-                return;
-            }
-        }
-
-        trySearchNewRecipeCombined();
-    }
-
-    /**
-     * Put into place so multiblocks can override {@link AbstractRecipeLogic#trySearchNewRecipe()} without having to
-     * deal with
-     * the maintenance and distinct logic in {@link MultiblockRecipeLogic#trySearchNewRecipe()}
-     */
-    protected void trySearchNewRecipeCombined() {
-        super.trySearchNewRecipe();
-    }
-
-    protected void trySearchNewRecipeDistinct() {
-        long maxVoltage = getMaxVoltage();
-        Recipe currentRecipe;
-        List<IItemHandlerModifiable> importInventory = getInputBuses();
-        IMultipleTankHandler importFluids = getInputTank();
-
-        // Our caching implementation
-        // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
-        if (checkPreviousRecipeDistinct(importInventory.get(lastRecipeIndex)) && checkRecipe(previousRecipe)) {
-            currentRecipe = previousRecipe;
-            currentDistinctInputBus = importInventory.get(lastRecipeIndex);
-            if (prepareRecipeDistinct(currentRecipe)) {
-                // No need to cache the previous recipe here, as it is not null and matched by the current recipe,
-                // so it will always be the same
-                return;
-            }
-        }
-
-        // On a cache miss, our efficiency is much worse, as it will check
-        // each bus individually instead of the combined inventory all at once.
-        for (int i = 0; i < importInventory.size(); i++) {
-            IItemHandlerModifiable bus = importInventory.get(i);
-            // Skip this bus if no recipe was found last time
-            if (invalidatedInputList.contains(bus)) {
-                continue;
-            }
-            // Look for a new recipe after a cache miss
-            currentRecipe = findRecipe(maxVoltage, bus, importFluids);
-            // Cache the current recipe, if one is found
-            if (currentRecipe != null && checkRecipe(currentRecipe)) {
-                this.previousRecipe = currentRecipe;
-                currentDistinctInputBus = bus;
-                if (prepareRecipeDistinct(currentRecipe)) {
-                    lastRecipeIndex = i;
-                    return;
-                }
-            }
-            if (currentRecipe == null) {
-                // no valid recipe found, invalidate this bus
-                invalidatedInputList.add(bus);
-            }
-        }
+        super.findAndSetupRecipeToRun(listViewOfItemInputs, listViewOfFluidInputs, properties, runner);
     }
 
     @Override
-    public void invalidateInputs() {
-        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-        if (distinctController.canBeDistinct() && distinctController.isDistinct() &&
-                getInputInventory().getSlots() > 0) {
-            invalidatedInputList.add(currentDistinctInputBus);
+    protected float computeDuration(RecipeView recipe, int overclocks) {
+        MaintenanceValues values = getMaintenanceValues();
+        if (recipe.getRecipe().isGenerating()) {
+            return (float) (super.computeDuration(recipe, overclocks) / values.durationBonus() *
+                    (1 - 0.1 * values.count()));
         } else {
-            super.invalidateInputs();
-        }
-    }
-
-    protected boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
-        return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank());
-    }
-
-    protected boolean prepareRecipeDistinct(Recipe recipe) {
-        recipe = Recipe.trimRecipeOutputs(recipe, getRecipeMap(), metaTileEntity.getItemOutputLimit(),
-                metaTileEntity.getFluidOutputLimit());
-
-        recipe = findParallelRecipe(
-                recipe,
-                currentDistinctInputBus,
-                getInputTank(),
-                getOutputInventory(),
-                getOutputTank(),
-                getMaxParallelVoltage(),
-                getParallelLimit());
-
-        if (recipe != null) {
-            recipe = setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus);
-            if (recipe != null) {
-                setupRecipe(recipe);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
-        super.modifyOverclockPre(ocParams, storage);
-
-        // apply maintenance bonuses
-        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
-
-        // duration bonus
-        if (maintenanceValues.getSecond() != 1.0) {
-            ocParams.setDuration((int) Math.round(ocParams.duration() * maintenanceValues.getSecond()));
+            return (float) (super.computeDuration(recipe, overclocks) * values.durationBonus() *
+                    (1 + 0.1 * values.count()));
         }
     }
 
     @Override
-    protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
-        subTickParallelOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
-                getOverclockingVoltageFactor());
+    protected boolean canSubtick() {
+        return true;
     }
 
     @Override
-    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
-        super.modifyOverclockPost(ocResult, storage);
-
-        // apply maintenance penalties
-        Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
-
-        // duration penalty
-        if (maintenanceValues.getFirst() > 0) {
-            ocResult.setDuration((int) (ocResult.duration() * (1 + 0.1 * maintenanceValues.getFirst())));
-        }
-    }
-
-    @Override
-    public long getMaximumOverclockVoltage() {
+    public long getMaxOverclockVoltage(boolean generatingRecipe) {
         IEnergyContainer energyContainer = getEnergyContainer();
         if (energyContainer instanceof EnergyContainerList) {
             long voltage;
@@ -343,21 +138,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @NotNull
-    protected Tuple<Integer, Double> getMaintenanceValues() {
-        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ?
-                (MultiblockWithDisplayBase) metaTileEntity : null;
-        int numMaintenanceProblems = displayBase == null || !displayBase.hasMaintenanceMechanics() ||
-                !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
+    protected MaintenanceValues getMaintenanceValues() {
+        MultiblockWithDisplayBase displayBase = getMetaTileEntity();
+        int numMaintenanceProblems =
+                !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
-        if (displayBase != null && displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
+        if (displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
             durationMultiplier = displayBase.getMaintenanceDurationMultiplier();
         }
-        return new Tuple<>(numMaintenanceProblems, durationMultiplier);
+        return new MaintenanceValues(numMaintenanceProblems, durationMultiplier);
     }
 
     @Override
     public boolean checkRecipe(@NotNull Recipe recipe) {
-        RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
+        RecipeMapMultiblockController controller = getMetaTileEntity();
         if (controller.checkRecipe(recipe, false)) {
             controller.checkRecipe(recipe, true);
             return super.checkRecipe(recipe);
@@ -366,35 +160,25 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void completeRecipe() {
-        performMufflerOperations();
-        super.completeRecipe();
+    protected void attemptRecipeCompletion(RecipeRunner runner) {
+        super.attemptRecipeCompletion(runner);
+        RecipeRun run = runner.getCurrent();
+        if (run == null) return;
+        performMufflerOperations(run);
     }
 
-    protected void performMufflerOperations() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase controller) {
-            // output muffler items
-            if (controller.hasMufflerMechanics()) {
-                if (parallelRecipesPerformed > 1) {
-                    controller.outputRecoveryItems(parallelRecipesPerformed);
-                } else {
-                    controller.outputRecoveryItems();
-                }
-            }
+    protected void performMufflerOperations(@NotNull RecipeRun run) {
+        RecipeMapMultiblockController controller = getMetaTileEntity();
+        // output muffler items
+        if (controller.hasMufflerMechanics()) {
+            controller.outputRecoveryItems(run.getParallel());
         }
     }
 
-    @Override
-    protected long getEnergyInputPerSecond() {
-        return getEnergyContainer().getInputPerSec();
-    }
-
-    @Override
     protected long getEnergyStored() {
         return getEnergyContainer().getEnergyStored();
     }
 
-    @Override
     protected long getEnergyCapacity() {
         return getEnergyContainer().getEnergyCapacity();
     }
@@ -409,40 +193,55 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    public long getMaxVoltage() {
+    protected boolean produceEnergy(long eu, boolean simulate) {
+        long resultEnergy = getEnergyStored() + eu;
+        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
+            if (!simulate) getEnergyContainer().changeEnergy(eu);
+            return true;
+        } else return false;
+    }
+
+    @Override
+    public long getMaxVoltageIn() {
         IEnergyContainer energyContainer = getEnergyContainer();
-        if (!consumesEnergy()) {
-            // Generators
-            long voltage = energyContainer.getOutputVoltage();
-            long amperage = energyContainer.getOutputAmperage();
-            if (energyContainer instanceof EnergyContainerList && amperage == 1) {
-                // Amperage is 1 when the energy is not exactly on a tier.
-                // The voltage for recipe search is always on tier, so take the closest lower tier.
-                // List check is done because single hatches will always be a "clean voltage," no need
-                // for any additional checks.
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
-            }
-            return voltage;
-        } else {
-            // Machines
-            if (energyContainer instanceof EnergyContainerList energyList) {
-                long highestVoltage = energyList.getHighestInputVoltage();
-                if (energyList.getNumHighestInputContainers() > 1) {
-                    // allow tier + 1 if there are multiple hatches present at the highest tier
-                    int tier = GTUtility.getTierByVoltage(highestVoltage);
-                    return GTValues.V[Math.min(tier + 1, GTValues.MAX)];
-                } else {
-                    return highestVoltage;
-                }
+        if (energyContainer instanceof EnergyContainerList energyList) {
+            long highestVoltage = energyList.getHighestInputVoltage();
+            if (energyList.getNumHighestInputContainers() > 1) {
+                // allow tier + 1 if there are multiple hatches present at the highest tier
+                int tier = GTUtility.getTierByVoltage(highestVoltage);
+                return GTValues.V[Math.min(tier + 1, GTValues.MAX)];
             } else {
-                return energyContainer.getInputVoltage();
+                return highestVoltage;
             }
+        } else {
+            return energyContainer.getInputVoltage();
         }
     }
 
     @Override
-    protected long getMaxParallelVoltage() {
-        return getMaximumOverclockVoltage();
+    public long getMaxVoltageOut() {
+        IEnergyContainer energyContainer = getEnergyContainer();
+        // Generators
+        long voltage = energyContainer.getOutputVoltage();
+        long amperage = energyContainer.getOutputAmperage();
+        if (energyContainer instanceof EnergyContainerList && amperage == 1) {
+            // Amperage is 1 when the energy is not exactly on a tier.
+            // The voltage for recipe search is always on tier, so take the closest lower tier.
+            // List check is done because single hatches will always be a "clean voltage," no need
+            // for any additional checks.
+            return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+        }
+        return voltage;
+    }
+
+    @Override
+    public long getMaxAmperageIn() {
+        return getEnergyContainer().getInputAmperage();
+    }
+
+    @Override
+    public long getMaxAmperageOut() {
+        return getEnergyContainer().getOutputAmperage();
     }
 
     @Nullable
@@ -453,4 +252,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             return ((IMultipleRecipeMaps) metaTileEntity).getCurrentRecipeMap();
         return super.getRecipeMap();
     }
+
+    protected record MaintenanceValues(int count, double durationBonus) {}
 }

@@ -16,10 +16,11 @@ import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
 import gregtech.api.recipes.ingredients.old.GTRecipeInput;
+import gregtech.api.recipes.machines.RecipeLookupFurnace;
+import gregtech.api.recipes.machines.RecipeLookupSolidFuels;
 import gregtech.api.recipes.machines.RecipeMapAssemblyLine;
 import gregtech.api.recipes.machines.RecipeMapFluidCanner;
 import gregtech.api.recipes.machines.RecipeMapFormingPress;
-import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.recipes.machines.RecipeMapResearchStation;
 import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.recipes.ui.RecipeMapUI;
@@ -931,7 +932,7 @@ public final class RecipeMaps {
      *         .buildAndRegister();
      * </pre>
      *
-     * When looking up recipes from the GTCEu Furnaces, they will first check the Vanilla Furnace Recipe list, therefore
+     * When looking up recipes from the GTCEu Furnaces, they will also check the Vanilla Furnace Recipe list, therefore
      * our Furnaces can perform any recipe that is in the Vanilla Furnace Recipe List. This also means there is no need
      * to add Furnace Recipes that duplicate Vanilla recipes.
      * <p>
@@ -939,7 +940,7 @@ public final class RecipeMaps {
      * Recipe List, so any recipes added will be exclusive to the GTCEu Furnaces.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace",
+    public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = RecipeLookupFurnace.createMap("electric_furnace",
             new SimpleRecipeBuilder(), recipeMap -> {
                 RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
                 ui.setItemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false);
@@ -1521,6 +1522,17 @@ public final class RecipeMaps {
                     .allowEmptyOutputs()
                     .generator()
                     .build();
+
+    @ZenProperty
+    public static final RecipeMap<FuelRecipeBuilder> SOLID_GENERATOR_FUELS = RecipeLookupSolidFuels.mapBuilder(
+            "solid_fuel_generator", new FuelRecipeBuilder())
+            .itemInputs(1)
+            .itemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false)
+            .progressBar(GuiTextures.PROGRESS_BAR_ARROW)
+            .sound(GTSoundEvents.FURNACE)
+            .allowEmptyOutputs()
+            .generator()
+            .build();
 
     @ZenProperty
     public static final RecipeMap<FuelRecipeBuilder> PLASMA_GENERATOR_FUELS = new RecipeMapBuilder<>("plasma_generator",

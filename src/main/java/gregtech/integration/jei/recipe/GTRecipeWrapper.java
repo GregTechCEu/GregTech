@@ -61,9 +61,9 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         this.recipeMap = recipeMap;
         this.recipe = recipe;
 
-        this.sortedInputs = new ArrayList<>(recipe.getInputs());
+        this.sortedInputs = new ArrayList<>(recipe.getItemIngredients());
         this.sortedInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
-        this.sortedFluidInputs = new ArrayList<>(recipe.getFluidInputs());
+        this.sortedFluidInputs = new ArrayList<>(recipe.getFluidIngredients());
         this.sortedFluidInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
     }
 

@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.DistinctRecipeLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -26,17 +27,24 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
                                                     ICleanroomReceiver, IDistinctBusController {
@@ -49,6 +57,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
 
+    private List<DistinctRecipeLogic.DistinctInputGroup> distinctInputGroups = new ObjectArrayList<>();
     private boolean isDistinct = false;
 
     private ICleanroomProvider cleanroom;
@@ -125,9 +134,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
                 getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        initializeDistinctGroups();
     }
 
     private void resetTileAbilities() {
+        this.distinctInputGroups.clear();
         this.inputInventory = new GTItemStackHandler(this, 0);
         this.inputFluidInventory = new FluidTankList(true);
         this.outputInventory = new GTItemStackHandler(this, 0);
@@ -144,8 +155,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
+                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
@@ -245,7 +256,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     public void setDistinct(boolean isDistinct) {
         this.isDistinct = isDistinct;
-        recipeMapWorkable.onDistinctChanged();
         getMultiblockParts().forEach(part -> part.onDistinctChange(isDistinct));
         // mark buses as changed on distinct toggle
         if (this.isDistinct) {
@@ -253,6 +263,32 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         } else {
             this.notifiedItemInputList.add(this.inputInventory);
         }
+        initializeDistinctGroups();
+    }
+
+    protected void initializeDistinctGroups() {
+        distinctInputGroups.clear();
+        List<IFluidTank> ih = this.getAbilities(MultiblockAbility.IMPORT_FLUIDS);
+        Set<IFluidHandler> inputHatches = new ObjectOpenHashSet<>(ih.size());
+        for (IFluidTank tank : ih) {
+            if (tank instanceof IFluidHandler h) inputHatches.add(h);
+        }
+        if (isDistinct) {
+            for (IItemHandlerModifiable input : this.getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
+                distinctInputGroups.add(new DistinctRecipeLogic.DefaultInputGroup(input, Collections.singleton(input),
+                        getInputFluidInventory(), inputHatches));
+            }
+        } else {
+            Set<IItemHandlerModifiable> inputBuses = new ObjectOpenHashSet<>(
+                    this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+            distinctInputGroups.add(
+                    new DistinctRecipeLogic.DefaultInputGroup(getInputInventory(), inputBuses, getInputFluidInventory(),
+                            inputHatches));
+        }
+    }
+
+    public Collection<DistinctRecipeLogic.DistinctInputGroup> getInputGroups() {
+        return this.distinctInputGroups;
     }
 
     @Override
@@ -300,9 +336,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                             .setStyle(new Style().setColor(TextFormatting.RED))));
         }
 
-        if (recipeMapWorkable.getParallelLimit() > 1) {
+        if (recipeMapWorkable.getBaseParallelLimit() > 1) {
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_parallel",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getParallelLimit()))
+                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getBaseParallelLimit()))
                             .setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
 

@@ -73,7 +73,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
                 .addCustom(tl -> {
                     // Coil heat capacity line
                     if (isStructureFormed()) {
@@ -87,7 +87,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                                 heatString));
                     }
                 })
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
@@ -110,11 +110,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     public void invalidateStructure() {
         super.invalidateStructure();
         this.blastFurnaceTemperature = 0;
-    }
-
-    @Override
-    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
-        return this.blastFurnaceTemperature >= recipe.getProperty(TemperatureProperty.getInstance(), 0);
     }
 
     @Override

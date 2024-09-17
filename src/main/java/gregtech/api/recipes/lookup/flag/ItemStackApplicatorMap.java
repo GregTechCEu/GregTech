@@ -1,10 +1,9 @@
 package gregtech.api.recipes.lookup.flag;
 
-import it.unimi.dsi.fastutil.Hash;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import it.unimi.dsi.fastutil.Hash;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +88,8 @@ public class ItemStackApplicatorMap extends Object2ApplicatorMapMap<ItemStack> {
         @Override
         public boolean equals(ItemStack a, ItemStack b) {
             if (a == null || b == null) return false;
-            return a.getItem().equals(b.getItem()) && a.getItemDamage() == b.getItemDamage() && Objects.equals(a.getTagCompound(), b.getTagCompound());
+            return a.getItem().equals(b.getItem()) && a.getItemDamage() == b.getItemDamage() &&
+                    Objects.equals(a.getTagCompound(), b.getTagCompound());
         }
     };
 

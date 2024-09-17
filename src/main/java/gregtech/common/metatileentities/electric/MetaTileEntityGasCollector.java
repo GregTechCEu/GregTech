@@ -26,9 +26,4 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         return new MetaTileEntityGasCollector(this.metaTileEntityId, RecipeMaps.GAS_COLLECTOR_RECIPES,
                 Textures.GAS_COLLECTOR_OVERLAY, this.getTier(), this.hasFrontFacing(), this.getTankScalingFunction());
     }
-
-    @Override
-    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
-    }
 }

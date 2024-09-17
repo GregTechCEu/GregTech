@@ -1,14 +1,12 @@
 package gregtech.api.recipes.lookup.property;
 
 import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
-
 import gregtech.api.recipes.properties.impl.CircuitProperty;
-
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 
 import net.minecraft.item.ItemStack;
 
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +24,7 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     }
 
     /**
-     * @param voltage the voltage supply
+     * @param voltage  the voltage supply
      * @param amperage the amperage supply
      * @return a new {@link PropertySet} with power supply set.
      */
@@ -38,7 +36,7 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     }
 
     /**
-     * @param voltage the voltage capacity
+     * @param voltage  the voltage capacity
      * @param amperage the amperage capacity
      * @return a new {@link PropertySet} with power capacity set.
      */
@@ -46,6 +44,21 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     public static @NotNull PropertySet capacity(long voltage, long amperage) {
         PropertySet set = new PropertySet();
         set.add(new PowerCapacityProperty(voltage, amperage));
+        return set;
+    }
+
+    /**
+     * @param voltageIn  the voltage supply
+     * @param amperageIn the amperage supply
+     * @param voltageOut the voltage capacity
+     * @param amperageOut the amperage capacity
+     * @return a new {@link PropertySet} with power supply and capacity set.
+     */
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull PropertySet comprehensive(long voltageIn, long amperageIn, long voltageOut, long amperageOut) {
+        PropertySet set = new PropertySet();
+        set.add(new PowerSupplyProperty(voltageIn, amperageIn));
+        set.add(new PowerCapacityProperty(voltageOut, voltageOut));
         return set;
     }
 
@@ -60,12 +73,12 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     }
 
     public <T extends IRecipeSearchProperty> @Nullable T getNullable(@NotNull T k) {
-        //noinspection unchecked
+        // noinspection unchecked
         return (T) super.get(k);
     }
 
     public <T extends IRecipeSearchProperty> @NotNull T getDefaultable(@NotNull T k) {
-        //noinspection unchecked
+        // noinspection unchecked
         T fetch = (T) super.get(k);
         return fetch == null ? k : fetch;
     }
@@ -89,5 +102,4 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     private PropertySet() {
         super(STRATEGY);
     }
-
 }

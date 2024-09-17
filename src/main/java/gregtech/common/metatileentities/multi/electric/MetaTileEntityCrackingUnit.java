@@ -11,8 +11,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -34,6 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.List;
 
@@ -84,7 +84,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
                 .addCustom(tl -> {
                     // Coil energy discount line
                     if (isStructureFormed()) {
@@ -103,7 +103,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
                         tl.add(TextComponentUtil.setHover(base, hover));
                     }
                 })
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
@@ -142,23 +142,24 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         return this.coilTier;
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
-    private class CrackingUnitWorkableHandler extends MultiblockRecipeLogic {
+    protected static class CrackingUnitWorkableHandler extends MultiblockRecipeLogic {
 
-        public CrackingUnitWorkableHandler(RecipeMapMultiblockController tileEntity) {
+        public CrackingUnitWorkableHandler(MetaTileEntityCrackingUnit tileEntity) {
             super(tileEntity);
         }
 
         @Override
-        protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
-            super.modifyOverclockPost(ocResult, storage);
+        public @NotNull MetaTileEntityCrackingUnit getMetaTileEntity() {
+            return (MetaTileEntityCrackingUnit) metaTileEntity;
+        }
 
-            int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();
-            if (coilTier <= 0)
-                return;
+        @Override
+        protected float computeVoltageMultiplier(RecipeView recipe,
+                                                 @Range(from = 0, to = Integer.MAX_VALUE) int overclocks) {
 
+            int coilTier = getMetaTileEntity().getCoilTier();
             // each coil above cupronickel (coilTier = 0) uses 10% less energy
-            ocResult.setEut(Math.max(1, (long) (ocResult.eut() * (1.0 - coilTier * 0.1))));
+            return super.computeVoltageMultiplier(recipe, overclocks) * (1 - coilTier * 0.1f);
         }
     }
 }

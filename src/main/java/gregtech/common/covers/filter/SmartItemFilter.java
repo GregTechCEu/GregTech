@@ -7,8 +7,10 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
+import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.readers.SmartItemFilterReader;
 
 import net.minecraft.item.ItemStack;
@@ -28,6 +30,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class SmartItemFilter extends BaseFilter {
@@ -57,15 +60,15 @@ public class SmartItemFilter extends BaseFilter {
             ItemStack infinitelyBigStack = stack.copy();
             infinitelyBigStack.setCount(Integer.MAX_VALUE);
 
-            Recipe recipe = filterMode.recipeMap.findRecipe(Long.MAX_VALUE,
-                    Collections.singletonList(infinitelyBigStack), Collections.emptyList());
+            Recipe recipe = filterMode.recipeMap.find(Collections.singletonList(infinitelyBigStack),
+                    Collections.emptyList(), Objects::nonNull);
             if (recipe == null) {
                 filterMode.transferStackSizesCache.put(itemAndMetadata, 0);
                 cachedTransferRateValue = 0;
             } else {
-                GTRecipeInput inputIngredient = recipe.getInputs().iterator().next();
-                filterMode.transferStackSizesCache.put(itemAndMetadata, inputIngredient.getAmount());
-                cachedTransferRateValue = inputIngredient.getAmount();
+                GTItemIngredient inputIngredient = recipe.getItemIngredients().iterator().next();
+                filterMode.transferStackSizesCache.put(itemAndMetadata, GTUtility.safeCastLongToInt(inputIngredient.getRequiredCount()));
+                cachedTransferRateValue = GTUtility.safeCastLongToInt(inputIngredient.getRequiredCount());
             }
         }
 

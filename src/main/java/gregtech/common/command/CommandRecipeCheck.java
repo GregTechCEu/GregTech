@@ -10,8 +10,16 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTFluidIngredient;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
+import gregtech.api.recipes.ingredients.OreItemIngredient;
 import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
+import gregtech.api.recipes.lookup.flag.FluidStackMatchingContext;
+import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
+import gregtech.api.recipes.output.FluidOutputProvider;
+import gregtech.api.recipes.output.ItemOutputProvider;
+import gregtech.api.recipes.output.StandardFluidOutput;
+import gregtech.api.recipes.output.StandardItemOutput;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
@@ -35,13 +43,11 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CommandRecipeCheck extends CommandBase {
 
@@ -61,64 +67,40 @@ public class CommandRecipeCheck extends CommandBase {
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String[] args) {
         sender.sendMessage(new TextComponentTranslation("gregtech.command.recipecheck.begin"));
 
-        Object2ObjectOpenHashMap<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> mismatchedRecipes = new Object2ObjectOpenHashMap<>();
+        Object2ObjectOpenHashMap<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, ReferenceOpenHashSet<Recipe>>> mismatchedRecipes = new Object2ObjectOpenHashMap<>();
         Object2ObjectOpenHashMap<RecipeMap<?>, Set<Recipe>> emptyInputRecipes = new Object2ObjectOpenHashMap<>();
         IntSet emptyOreDicts = new IntOpenHashSet();
 
         GTLog.logger.info("[Recipe Checker] Starting recipe issue check...");
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            mismatchedRecipes.put(recipeMap, new Object2ObjectOpenHashMap<>());
+            Object2ObjectOpenHashMap<Recipe, ReferenceOpenHashSet<Recipe>> equivalency = new Object2ObjectOpenHashMap<>(
+                    recipeMap.getRecipeList().size());
+            mismatchedRecipes.put(recipeMap, equivalency);
             emptyInputRecipes.put(recipeMap, new ObjectOpenHashSet<>());
             GTLog.logger.info("Checking Recipe Map: {}", recipeMap.unlocalizedName);
             for (Recipe currentRecipe : recipeMap.getRecipeList()) {
                 // check for any empty or null inputs
-                for (GTRecipeInput input : currentRecipe.getInputs()) {
-                    if (input == null || input.getInputStacks().length == 0) {
+                for (GTItemIngredient input : currentRecipe.getItemIngredients()) {
+                    if (input == null) {
                         emptyInputRecipes.get(recipeMap).add(currentRecipe);
-                        if (input != null && input.isOreDict()) {
-                            emptyOreDicts.add(input.getOreDict());
+                        continue;
+                    }
+                    int count = 0;
+                    for (ItemStackMatchingContext context : ItemStackMatchingContext.VALUES) {
+                        count += input.getMatchingStacksWithinContext(context).size();
+                    }
+                    if (count == 0) {
+                        emptyInputRecipes.get(recipeMap).add(currentRecipe);
+                        if (input instanceof OreItemIngredient i) {
+                            emptyOreDicts.add(i.getOreID());
                         }
                     }
                 }
-
-                // set amount of itemstacks to Integer.MAX_VALUE to detect conflicts only occurring if batching the
-                // recipe
-                List<ItemStack> inputs = new ArrayList<>();
-                for (GTRecipeInput input : currentRecipe.getInputs()) {
-                    for (ItemStack stack : input.getInputStacks()) {
-                        stack = stack.copy();
-                        stack.setCount(Integer.MAX_VALUE);
-                        inputs.add(stack);
-                    }
-                }
-
-                List<FluidStack> fluidInputs = currentRecipe.getFluidInputs()
-                        // set volume of fluids to Integer.MAX_VALUE to detect conflicts only occurring if batching the
-                        // recipe
-                        .stream().map(stack -> new FluidStack(stack.getInputFluidStack(), Integer.MAX_VALUE))
-                        .collect(Collectors.toList());
-
-                Set<Recipe> collidingRecipeSet = recipeMap.findRecipeCollisions(
-                        inputs, fluidInputs);
-
-                if (collidingRecipeSet == null) {
-                    GTLog.logger.error("This recipe returned null for findRecipeCollisions: {}",
-                            prettyPrintRecipe(currentRecipe));
-                    continue;
-                }
-                if (collidingRecipeSet.size() > 1) {
-                    // remove the current recipe from the list of recipes, as it's not a conflict
-                    collidingRecipeSet.remove(currentRecipe);
-                    Object2ObjectOpenHashMap<Recipe, Set<Recipe>> conflictingRecipeMap = mismatchedRecipes
-                            .get(recipeMap);
-                    // if the conflicting recipe was iterated over before, and the current recipe is in the list, remove
-                    // it
-                    collidingRecipeSet.removeIf(cf -> conflictingRecipeMap.get(cf) != null &&
-                            conflictingRecipeMap.get(cf).contains(currentRecipe));
-                    if (collidingRecipeSet.size() > 0) {
-                        mismatchedRecipes.get(recipeMap).put(currentRecipe, collidingRecipeSet);
-                    }
-                }
+            }
+            var iter = equivalency.object2ObjectEntrySet().fastIterator();
+            while (iter.hasNext()) {
+                // remove the recipes that did not collide.
+                if (iter.next().getValue().isEmpty()) iter.remove();
             }
             if (mismatchedRecipes.get(recipeMap).isEmpty()) {
                 GTLog.logger.info("No mismatched recipes found for recipe map: {}", recipeMap.unlocalizedName);
@@ -141,11 +123,10 @@ public class CommandRecipeCheck extends CommandBase {
             count = (int) mismatchedRecipes.values().stream()
                     .mapToLong(s -> s.values().stream().mapToLong(Set::size).sum()).sum();
             GTLog.logger.info("[Recipe Checker] Found {} potential conflicts", count);
-            for (Map.Entry<RecipeMap<?>, Object2ObjectOpenHashMap<Recipe, Set<Recipe>>> recipeMap : mismatchedRecipes
-                    .entrySet()) {
+            for (var recipeMap : mismatchedRecipes.entrySet()) {
                 GTLog.logger.error(
                         "\n[In Recipe map] : \"{}\"", recipeMap.getKey().unlocalizedName);
-                for (Map.Entry<Recipe, Set<Recipe>> reciper : mismatchedRecipes.get(recipeMap.getKey()).entrySet()) {
+                for (var reciper : mismatchedRecipes.get(recipeMap.getKey()).entrySet()) {
                     StringBuilder conflictingRecipes = new StringBuilder();
                     conflictingRecipes.append("\n[Tried matching]: ").append(prettyPrintRecipe(reciper.getKey()));
                     for (Recipe c : reciper.getValue()) {
@@ -195,7 +176,7 @@ public class CommandRecipeCheck extends CommandBase {
         }
         StringBuilder output = new StringBuilder();
         output.append("EU/t: ")
-                .append(recipe.getEUt())
+                .append(recipe.getVoltage())
                 .append(", Duration: ")
                 .append(recipe.getDuration());
         if (recipe.isHidden()) {
@@ -203,97 +184,134 @@ public class CommandRecipeCheck extends CommandBase {
         }
         output.append("\n");
 
-        if (!recipe.getInputs().isEmpty()) {
+        if (!recipe.getItemIngredients().isEmpty()) {
             output.append("Item inputs:\n");
-            for (GTRecipeInput ingredient : recipe.getInputs()) {
+            for (GTItemIngredient ingredient : recipe.getItemIngredients()) {
                 output.append("    ")
                         .append(prettyPrintRecipeInput(ingredient))
                         .append("\n");
             }
         }
 
-        if (!recipe.getFluidInputs().isEmpty()) {
+        if (!recipe.getFluidIngredients().isEmpty()) {
             output.append("Fluid inputs:\n");
-            for (GTRecipeInput fluid : recipe.getFluidInputs()) {
+            for (GTFluidIngredient fluid : recipe.getFluidIngredients()) {
                 output.append("    ")
-                        .append(fluid.getInputFluidStack().getUnlocalizedName())
-                        .append(" * ")
-                        .append(fluid.getAmount())
+                        .append(prettyPrintRecipeInput(fluid))
                         .append("\n");
             }
         }
 
-        if (!recipe.getOutputs().isEmpty()) {
-            output.append("Item outputs:\n");
-            for (ItemStack stack : recipe.getOutputs()) {
-                output.append("    ")
-                        .append(prettyPrintItemStack(stack))
-                        .append("\n");
+        ItemOutputProvider itemProvider = recipe.getItemOutputProvider();
+
+        if (itemProvider.getMaximumOutputs() > 0) {
+            if (itemProvider instanceof StandardItemOutput standard) {
+                if (!standard.getOutputs().isEmpty()) {
+                    output.append("Item outputs:\n");
+                    for (ItemStack stack : standard.getOutputs()) {
+                        output.append("    ")
+                                .append(prettyPrintItemStack(stack))
+                                .append("\n");
+                    }
+                }
+
+                if (!standard.getChancedEntries().isEmpty()) {
+                    output.append("Item chanced outputs:\n");
+                    for (ChancedItemOutput chanceEntry : standard.getChancedEntries()) {
+                        output.append("    ")
+                                .append(prettyPrintItemStack(chanceEntry.getIngredient()))
+                                .append(" (Chance: ")
+                                .append(chanceEntry.getChance())
+                                .append(", Boost: ")
+                                .append(chanceEntry.getChanceBoost())
+                                .append(")\n");
+                    }
+                }
+            } else {
+                output.append("Custom Item Output Provider.\n");
             }
         }
 
-        if (!recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
-            output.append("Item chanced outputs:\n");
-            for (ChancedItemOutput chanceEntry : recipe.getChancedOutputs().getChancedEntries()) {
-                output.append("    ")
-                        .append(prettyPrintItemStack(chanceEntry.getIngredient()))
-                        .append(" (Chance: ")
-                        .append(chanceEntry.getChance())
-                        .append(", Boost: ")
-                        .append(chanceEntry.getChanceBoost())
-                        .append(")\n");
-            }
-        }
+        FluidOutputProvider fluidProvider = recipe.getFluidOutputProvider();
 
-        if (!recipe.getFluidOutputs().isEmpty()) {
-            output.append("Fluid outputs:\n");
-            for (FluidStack fluid : recipe.getFluidOutputs()) {
-                output.append("    ")
-                        .append(fluid.getUnlocalizedName())
-                        .append(" * ")
-                        .append(fluid.amount)
-                        .append("\n");
-            }
-        }
+        if (fluidProvider.getMaximumOutputs() > 0) {
+            if (fluidProvider instanceof StandardFluidOutput standard) {
+                if (!standard.getOutputs().isEmpty()) {
+                    output.append("Fluid outputs:\n");
+                    for (FluidStack fluid : standard.getOutputs()) {
+                        output.append("    ")
+                                .append(fluid.getUnlocalizedName())
+                                .append(" * ")
+                                .append(fluid.amount)
+                                .append("\n");
+                    }
+                }
 
-        if (!recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
-            output.append("Fluid chanced outputs:\n");
-            for (ChancedFluidOutput chanceEntry : recipe.getChancedFluidOutputs().getChancedEntries()) {
-                output.append("    ")
-                        .append(chanceEntry.getIngredient().getUnlocalizedName())
-                        .append(" (Chance: ")
-                        .append(chanceEntry.getChance())
-                        .append(", Boost: ")
-                        .append(chanceEntry.getChanceBoost())
-                        .append(")\n");
+                if (!standard.getChancedEntries().isEmpty()) {
+                    output.append("Fluid chanced outputs:\n");
+                    for (ChancedFluidOutput chanceEntry : standard.getChancedEntries()) {
+                        output.append("    ")
+                                .append(chanceEntry.getIngredient().getUnlocalizedName())
+                                .append(" (Chance: ")
+                                .append(chanceEntry.getChance())
+                                .append(", Boost: ")
+                                .append(chanceEntry.getChanceBoost())
+                                .append(")\n");
+                    }
+                }
+            } else {
+                output.append("Custom Fluid Output Provider.\n");
             }
         }
 
         return output.toString();
     }
 
-    public static String prettyPrintRecipeInput(GTRecipeInput recipeInput) {
+    public static @NotNull String prettyPrintRecipeInput(GTItemIngredient recipeInput) {
         StringBuilder output = new StringBuilder();
-        if (recipeInput.isOreDict()) {
+        if (recipeInput instanceof OreItemIngredient ore) {
             output.append("(OreDict: ")
                     .append("\"")
-                    .append(OreDictionary.getOreName(recipeInput.getOreDict()))
+                    .append(OreDictionary.getOreName(ore.getOreID()))
                     .append("\")");
         }
         output.append(" { ");
 
-        ItemStack[] matchingStacks = recipeInput.getInputStacks();
-
-        for (ItemStack stack : matchingStacks) {
-            output.append(" ")
-                    .append(prettyPrintItemStack(stack))
-                    .append(",");
+        boolean one = false;
+        for (ItemStackMatchingContext context : ItemStackMatchingContext.VALUES) {
+            for (ItemStack stack : recipeInput.getMatchingStacksWithinContext(context)) {
+                one = true;
+                output.append(" ")
+                        .append(prettyPrintItemStack(stack))
+                        .append(",");
+            }
         }
-        if (matchingStacks.length > 0) {
+        if (one) {
             output.delete(output.lastIndexOf(","), output.length());
         }
         output.append(" } * ")
-                .append(recipeInput.getAmount());
+                .append(recipeInput.getRequiredCount());
+        return output.toString();
+    }
+
+    public static @NotNull String prettyPrintRecipeInput(GTFluidIngredient recipeInput) {
+        StringBuilder output = new StringBuilder();
+        output.append(" { ");
+
+        boolean one = false;
+        for (FluidStackMatchingContext context : FluidStackMatchingContext.VALUES) {
+            for (FluidStack stack : recipeInput.getMatchingStacksWithinContext(context)) {
+                one = true;
+                output.append(" ")
+                        .append(stack.getUnlocalizedName())
+                        .append(",");
+            }
+        }
+        if (one) {
+            output.delete(output.lastIndexOf(","), output.length());
+        }
+        output.append(" } * ")
+                .append(recipeInput.getRequiredCount());
         return output.toString();
     }
 

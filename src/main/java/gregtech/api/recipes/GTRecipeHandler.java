@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class GTRecipeHandler {
@@ -56,7 +57,7 @@ public class GTRecipeHandler {
             }
         }
 
-        Recipe recipeFound = map.findRecipe(Long.MAX_VALUE, itemIn, fluidIn);
+        Recipe recipeFound = map.find(itemIn, fluidIn, Objects::nonNull);
         boolean wasRemoved = recipeFound != null && map.removeRecipe(recipeFound);
         if (ConfigHolder.misc.debug) {
             if (wasRemoved)

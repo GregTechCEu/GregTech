@@ -1,7 +1,6 @@
 package gregtech.api.recipes.lookup.property;
 
 import com.github.bsideup.jabel.Desugar;
-
 import org.jetbrains.annotations.Nullable;
 
 @Desugar

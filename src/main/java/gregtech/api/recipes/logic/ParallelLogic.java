@@ -310,7 +310,7 @@ public abstract class ParallelLogic {
         // notConsumable ingredients are not counted towards the max ratio
         Object2IntOpenHashMap<GTRecipeInput> notConsumableMap = new Object2IntOpenHashMap<>();
         Object2IntOpenHashMap<GTRecipeInput> countableMap = new Object2IntOpenHashMap<>();
-        for (GTRecipeInput recipeIngredient : recipe.getInputs()) {
+        for (GTRecipeInput recipeIngredient : recipe.getItemIngredients()) {
 
             int ingredientCount = recipeIngredient.getAmount();
             if (recipeIngredient.isNonConsumable()) {
@@ -397,7 +397,7 @@ public abstract class ParallelLogic {
         // so their sum is counted against the total of fluids available in the input
         Map<FluidKey, Integer> fluidCountMap = new HashMap<>();
         Map<FluidKey, Integer> notConsumableMap = new HashMap<>();
-        for (GTRecipeInput fluidInput : recipe.getFluidInputs()) {
+        for (GTRecipeInput fluidInput : recipe.getFluidIngredients()) {
             int fluidAmount = fluidInput.getAmount();
             if (fluidInput.isNonConsumable()) {
                 notConsumableMap.computeIfPresent(new FluidKey(fluidInput.getInputFluidStack()),
@@ -555,7 +555,7 @@ public abstract class ParallelLogic {
 
             GTRecipeInput inputIngredient;
             if (matchingRecipe != null) {
-                inputIngredient = matchingRecipe.getInputs().get(0);
+                inputIngredient = matchingRecipe.getItemIngredients().get(0);
                 if (recipeBuilder == null) {
                     // here we make a copy of the recipe builder of the current recipe map, while zeroing
                     // the recipe builder EUt, since we're going to add to the total EUt of the recipes appended.
@@ -578,7 +578,7 @@ public abstract class ParallelLogic {
 
             // equivalent of getting the max ratio from the inputs from Parallel logic
             int ingredientRatio = Math.min(parallelAmount - engagedItems,
-                    currentInputItem.getCount() / Math.max(matchingRecipe.getInputs().get(0).getAmount(), 1));
+                    currentInputItem.getCount() / Math.max(matchingRecipe.getItemIngredients().get(0).getAmount(), 1));
 
             // how much we can add to the output inventory
             int limitByOutput = Integer.MAX_VALUE;

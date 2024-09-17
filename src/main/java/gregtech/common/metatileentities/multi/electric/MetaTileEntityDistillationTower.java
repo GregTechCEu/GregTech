@@ -12,8 +12,8 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
@@ -174,20 +174,21 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
         }
 
         @Override
-        protected void outputRecipeOutputs() {
-            GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
-            handler.applyFluidToOutputs(fluidOutputs, true);
+        protected boolean outputRecipeOutputs(@NotNull RecipeRun run) {
+
+            if (GTTransferUtils.addItemsToItemHandler(getOutputInventory(), true, run.getItemsOut()) &&
+                    handler.applyFluidToOutputs(run.getFluidsOut(), false)) {
+                GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, run.getItemsOut());
+                handler.applyFluidToOutputs(run.getFluidsOut(), true);
+                return true;
+            }
+            else return false;
         }
 
         @Override
-        protected boolean checkOutputSpaceFluids(@NotNull Recipe recipe, @NotNull IMultipleTankHandler exportFluids) {
-            // We have already trimmed fluid outputs at this time
-            if (!metaTileEntity.canVoidRecipeFluidOutputs() &&
-                    !handler.applyFluidToOutputs(recipe.getAllFluidOutputs(), false)) {
-                this.isOutputsFull = true;
-                return false;
-            }
-            return true;
+        protected boolean canFitFluids(List<FluidStack> fluids) {
+            return metaTileEntity.canVoidRecipeFluidOutputs() ||
+                    handler.applyFluidToOutputs(fluids, false);
         }
 
         @Override

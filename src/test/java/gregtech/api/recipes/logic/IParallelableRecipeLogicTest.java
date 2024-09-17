@@ -530,7 +530,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            public long getMaxVoltage() {
+            public long getMaxVoltageIn() {
                 return 32;
             }
 
@@ -605,7 +605,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            public long getMaxVoltage() {
+            public long getMaxVoltageIn() {
                 return 32;
             }
 
@@ -670,7 +670,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            public long getMaxVoltage() {
+            public long getMaxVoltageIn() {
                 return 32;
             }
 
@@ -737,7 +737,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            public long getMaxVoltage() {
+            public long getMaxVoltageIn() {
                 return 32;
             }
 

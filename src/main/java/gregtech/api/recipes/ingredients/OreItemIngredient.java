@@ -5,12 +5,10 @@ import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.ItemStackApplicatorMap;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
-
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.oredict.OreDictionary;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -20,7 +18,8 @@ import java.util.EnumMap;
 import java.util.Objects;
 import java.util.Set;
 
-public final class OreItemIngredient implements IItemIngredient {
+public final class OreItemIngredient implements GTItemIngredient {
+
     private static short STANDARD = 0;
 
     private final OreItemIngredientBacker backer;
@@ -34,8 +33,12 @@ public final class OreItemIngredient implements IItemIngredient {
         this.count = count;
     }
 
+    public int getOreID() {
+        return backer.getOreID();
+    }
+
     @Override
-    public @Nullable Collection<ItemStack> getMatchingStacksWithinContext(@NotNull ItemStackMatchingContext context) {
+    public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(@NotNull ItemStackMatchingContext context) {
         return backer.getMatchingStacksWithinContext(context);
     }
 
@@ -77,14 +80,18 @@ public final class OreItemIngredient implements IItemIngredient {
             this(OreDictionary.getOreID(ore));
         }
 
+        public int getOreID() {
+            return oreID;
+        }
+
         protected OreItemIngredientBacker(int oreID) {
             super(new EnumMap<>(ItemStackMatchingContext.class));
             this.oreID = oreID;
         }
 
         @Override
-        public @Nullable Collection<ItemStack> getMatchingStacksWithinContext(
-                @NotNull ItemStackMatchingContext context) {
+        public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(
+                                                                             @NotNull ItemStackMatchingContext context) {
             if (localStandard != STANDARD) rebuildCache();
             return super.getMatchingStacksWithinContext(context);
         }

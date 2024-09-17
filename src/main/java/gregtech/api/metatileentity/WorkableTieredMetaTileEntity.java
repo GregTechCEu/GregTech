@@ -11,6 +11,7 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 
@@ -39,7 +40,7 @@ import java.util.function.Function;
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
                                                    implements IDataInfoProvider, ICleanroomReceiver {
 
-    protected final AbstractRecipeLogic workable;
+    protected final RecipeLogicEnergy workable;
     protected final RecipeMap<?> recipeMap;
     protected final ICubeRenderer renderer;
 
@@ -68,7 +69,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
         reinitializeEnergyContainer();
     }
 
-    protected AbstractRecipeLogic createWorkable(RecipeMap<?> recipeMap) {
+    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
         return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
     }
 
@@ -182,24 +183,27 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
                                 TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()))
                                         .setStyle(new Style().setColor(TextFormatting.YELLOW))));
             }
-            // multi amp recipes: change 0 ? 0 : 1 to 0 ? 0 : amperage
-            if (workable.consumesEnergy()) {
-                list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
-                                .setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(
-                                TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 : 1))
-                                        .setStyle(new Style().setColor(TextFormatting.RED))));
-            } else {
-                list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
-                                .setStyle(new Style().setColor(TextFormatting.RED)),
-                        new TextComponentTranslation(
-                                TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 : 1))
-                                        .setStyle(new Style().setColor(TextFormatting.RED))));
+            RecipeRun current = workable.getCurrent();
+            if (current != null) {
+                if (current.isGenerating()) {
+                    list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
+                                    .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(
+                                    TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 :
+                                            current.getRequiredAmperage()))
+                                    .setStyle(new Style().setColor(TextFormatting.RED))));
+                } else {
+                    list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
+                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
+                                    .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(
+                                    TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 :
+                                            current.getRequiredAmperage()))
+                                    .setStyle(new Style().setColor(TextFormatting.RED))));
+                }
             }
         }
-
         return list;
     }
 

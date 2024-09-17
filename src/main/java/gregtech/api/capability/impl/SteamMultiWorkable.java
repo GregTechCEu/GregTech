@@ -1,10 +1,20 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 
+import gregtech.api.recipes.ingredients.match.MatchCalculation;
+import gregtech.api.recipes.logic.RecipeView;
+
+import gregtech.api.recipes.logic.StandardRecipeView;
+import gregtech.api.recipes.logic.TrimmedRecipeView;
+
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * General Recipe Handler for Steam Multiblocks.
@@ -16,19 +26,33 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
     public SteamMultiWorkable(RecipeMapSteamMultiblockController tileEntity, double conversionRate) {
         super(tileEntity, tileEntity.recipeMap, tileEntity.getSteamFluidTank(), conversionRate);
-    }
-
-    @NotNull
-    @Override
-    public ParallelLogicType getParallelLogicType() {
-        return ParallelLogicType.APPEND_ITEMS;
+        setDistributing(true);
     }
 
     @Override
-    public void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
-        long currentRecipeEU = builder.getEUt();
-        int currentRecipeDuration = builder.getDuration() / getParallelLimit();
-        builder.EUt((long) Math.min(32, Math.ceil(currentRecipeEU * 1.33)))
-                .duration((int) (currentRecipeDuration * 1.5));
+    protected @NotNull StandardRecipeView getTrimmedRecipeView(@NotNull Recipe recipe,
+                                                               @NotNull MatchCalculation<ItemStack> itemMatch,
+                                                               @NotNull MatchCalculation<FluidStack> fluidMatch) {
+        return new SteamRecipeView(recipe, itemMatch, fluidMatch, getEUtDiscount(), 1,
+                metaTileEntity.getItemOutputLimit(), metaTileEntity.getFluidOutputLimit());
+    }
+
+    protected class SteamRecipeView extends TrimmedRecipeView {
+
+        public SteamRecipeView(@NotNull Recipe recipe, @NotNull MatchCalculation<ItemStack> itemMatch,
+                                      @NotNull MatchCalculation<FluidStack> fluidMatch, double voltageDiscount,
+                                      int initialParallel, int maxItems, int maxFluids) {
+            super(recipe, itemMatch, fluidMatch, voltageDiscount, initialParallel, maxItems, maxFluids);
+        }
+
+        @Override
+        public int getActualDuration() {
+            return (int) (1.5 * super.getActualDuration() * getParallel() / getBaseParallelLimit());
+        }
+
+        @Override
+        public long getActualVoltage() {
+            return (long) Math.min(32, Math.ceil(super.getActualVoltage() * 1.33));
+        }
     }
 }

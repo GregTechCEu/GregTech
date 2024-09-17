@@ -30,6 +30,9 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.RecipeView;
+import gregtech.api.recipes.lookup.property.EUToStartProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.util.RelativeDirection;
@@ -77,6 +80,7 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -592,8 +596,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        public long getMaxVoltage() {
-            return Math.min(GTValues.V[tier], super.getMaxVoltage());
+        public long getMaxVoltageIn() {
+            return Math.min(GTValues.V[tier], super.getMaxVoltageIn());
         }
 
         @Override
@@ -612,12 +616,16 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
+        protected @NotNull PropertySet computePropertySet() {
+            PropertySet set = super.computePropertySet();
+            set.add(new EUToStartProperty(Math.min(energyContainer.getEnergyCapacity(),
+                    energyContainer.getEnergyStored() + heat)));
+            return set;
+        }
+
+        @Override
         public boolean checkRecipe(@NotNull Recipe recipe) {
             if (!super.checkRecipe(recipe))
-                return false;
-
-            // if the reactor is not able to hold enough energy for it, do not run the recipe
-            if (recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) > energyContainer.getEnergyCapacity())
                 return false;
 
             long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
@@ -637,16 +645,16 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
-            super.modifyOverclockPre(ocParams, storage);
-
+        protected @Range(from = 0, to = Integer.MAX_VALUE) int computeOverclockCount(@NotNull RecipeView recipeView,
+                                                                                     @NotNull PropertySet properties,
+                                                                                     int machineVoltageTier) {
             // Limit the number of OCs to the difference in fusion reactor MK.
             // I.e., a MK2 reactor can overclock a MK1 recipe once, and a
             // MK3 reactor can overclock a MK2 recipe once, or a MK1 recipe twice.
-            long euToStart = storage.get(FusionEUToStartProperty.getInstance(), 0L);
+            long euToStart = recipeView.getRecipe().getProperty(FusionEUToStartProperty.getInstance(), 0L);
             int fusionTier = FusionEUToStartProperty.getFusionTier(euToStart);
             if (fusionTier != 0) fusionTier = MetaTileEntityFusionReactor.this.tier - fusionTier;
-            ocParams.setOcAmount(Math.min(fusionTier, ocParams.ocAmount()));
+            return Math.min(fusionTier, super.computeOverclockCount(recipeView, properties, machineVoltageTier));
         }
 
         @NotNull

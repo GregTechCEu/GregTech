@@ -20,7 +20,7 @@ import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 import gregtech.api.recipes.lookup.AbstractRecipeLookup;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
-import gregtech.api.recipes.machines.RecipeMapFurnace;
+import gregtech.api.recipes.machines.RecipeLookupFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.Mods;
@@ -172,7 +172,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             if (recipeMap.getRecipeMapUI().isJEIVisible()) {
                 for (Map.Entry<GTRecipeCategory, List<Recipe>> entry : recipeMap.getRecipesByCategory().entrySet()) {
                     Stream<Recipe> recipeStream = entry.getValue().stream()
-                            .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay());
+                            .filter(recipe -> !recipe.isHidden() && recipe.isValid());
 
                     if (recipeMap.getSmallRecipeMap() != null) {
                         Collection<Recipe> smallRecipes = recipeMap.getSmallRecipeMap().getRecipeList();
@@ -348,7 +348,7 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             }
         }
 
-        if (recipeMap instanceof RecipeMapFurnace) {
+        if (recipeMap.getLookup() instanceof RecipeLookupFurnace) {
             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
             return;
         }

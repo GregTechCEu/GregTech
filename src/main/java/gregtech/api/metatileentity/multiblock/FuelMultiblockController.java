@@ -6,6 +6,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -27,8 +28,14 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
 
     public FuelMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier) {
         super(metaTileEntityId, recipeMap);
-        this.recipeMapWorkable = new MultiblockFuelRecipeLogic(this);
-        this.recipeMapWorkable.setMaximumOverclockVoltage(GTValues.V[tier]);
+        long max = GTValues.V[tier];
+        this.recipeMapWorkable = new MultiblockFuelRecipeLogic(this) {
+
+            @Override
+            public long getMaxVoltageOut() {
+                return Math.min(super.getMaxVoltageOut(), max);
+            }
+        };
     }
 
     @Override
@@ -94,7 +101,8 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()))
                         .setStyle(new Style().setColor(TextFormatting.YELLOW))));
 
-        if (!recipeMapWorkable.consumesEnergy()) {
+        RecipeRun current = recipeMapWorkable.getCurrent();
+        if (current != null && current.isGenerating()) {
             list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
                     new TextComponentTranslation(
                             TextFormattingUtil.formatNumbers(Math.abs(recipeMapWorkable.getInfoProviderEUt())))

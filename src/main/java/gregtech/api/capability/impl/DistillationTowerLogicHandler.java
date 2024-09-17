@@ -46,7 +46,8 @@ public class DistillationTowerLogicHandler {
      */
     public boolean applyFluidToOutputs(List<FluidStack> fluids, boolean doFill) {
         boolean valid = true;
-        for (int i = 0; i < Math.min(fluids.size(), this.getOrderedFluidOutputs().size()); i++) {
+        int size = Math.min(fluids.size(), this.getOrderedFluidOutputs().size());
+        for (int i = 0; i < size; i++) {
             IFluidHandler handler = this.getOrderedFluidOutputs().get(i);
             int accepted = handler.fill(fluids.get(i), doFill);
             if (accepted != fluids.get(i).amount) valid = false;

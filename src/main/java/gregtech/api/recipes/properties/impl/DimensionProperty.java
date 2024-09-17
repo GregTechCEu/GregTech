@@ -1,7 +1,10 @@
 package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.lookup.property.DimensionInhabitedProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
+import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
+import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 
 import net.minecraft.client.Minecraft;
@@ -12,11 +15,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class DimensionProperty extends RecipeProperty<DimensionProperty.DimensionPropertyList> {
+import java.util.BitSet;
+
+public final class DimensionProperty extends RecipePropertyWithFilter<DimensionProperty.DimensionPropertyList> {
 
     public static final String KEY = "dimension";
 
@@ -86,6 +93,21 @@ public final class DimensionProperty extends RecipeProperty<DimensionProperty.Di
         return str;
     }
 
+    @Override
+    public boolean filterEquals(@Nullable IPropertyFilter<?> other) {
+        return other instanceof DimensionProperty;
+    }
+
+    @Override
+    public int filterHash() {
+        return 5;
+    }
+
+    @Override
+    public @NotNull Filter<DimensionPropertyList> getNewFilter() {
+        return new DimensionFilter();
+    }
+
     // It would've been better to have one list and swap between blacklist and whitelist, but that would've been
     // a bit awkward to apply to the property in practice.
     public static class DimensionPropertyList {
@@ -112,6 +134,46 @@ public final class DimensionProperty extends RecipeProperty<DimensionProperty.Di
 
         public boolean checkDimension(int dim) {
             return !blackListDimensions.contains(dim) && whiteListDimensions.contains(dim);
+        }
+    }
+
+    @Override
+    public boolean matches(PropertySet properties, DimensionPropertyList value) {
+        DimensionInhabitedProperty inhabited = properties.getNullable(DimensionFilter.MATCHER);
+        if (inhabited == null) return value.whiteListDimensions.isEmpty();
+        int dim = inhabited.dimension();
+        return value.checkDimension(dim);
+    }
+
+    private static class DimensionFilter implements Filter<DimensionPropertyList> {
+
+        private static final DimensionInhabitedProperty MATCHER = new DimensionInhabitedProperty(0);
+
+        Int2ObjectOpenHashMap<BitSet> whiteList = new Int2ObjectOpenHashMap<>();
+        Int2ObjectOpenHashMap<BitSet> blackList = new Int2ObjectOpenHashMap<>();
+
+        @Override
+        public void accumulate(short recipeID, @NotNull DimensionPropertyList filterInformation) {
+            for (int i : filterInformation.whiteListDimensions) {
+                whiteList.computeIfAbsent(i, v -> new BitSet()).set(recipeID);
+            }
+            for (int i : filterInformation.blackListDimensions) {
+                blackList.computeIfAbsent(i, v -> new BitSet()).set(recipeID);
+            }
+        }
+
+        @Override
+        public void filter(@NotNull BitSet recipeMask, @NotNull PropertySet properties) {
+            DimensionInhabitedProperty inhabited = properties.getNullable(MATCHER);
+            int dimension = inhabited == null ? 0 : inhabited.dimension();
+            for (var entry : whiteList.int2ObjectEntrySet()) {
+                if (inhabited == null || entry.getIntKey() != dimension) {
+                    recipeMask.or(entry.getValue());
+                }
+            }
+            if (inhabited == null) return;
+            BitSet fetch = blackList.get(dimension);
+            if (fetch != null) recipeMask.or(fetch);
         }
     }
 }

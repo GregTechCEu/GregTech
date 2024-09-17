@@ -1,10 +1,17 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import com.github.bsideup.jabel.Desugar;
+
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.DistinctRecipeLogic;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
@@ -13,6 +20,10 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTFluidIngredient;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
+import gregtech.api.recipes.ingredients.match.AbstractMatchCalculation;
+import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.properties.impl.ResearchProperty;
 import gregtech.api.util.GTUtility;
@@ -28,7 +39,10 @@ import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.core.sound.GTSoundEvents;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -39,7 +53,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -50,9 +67,15 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -66,6 +89,9 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     private GTLaserBeamParticle[][] beamParticles;
     private int beamCount;
     private int beamTime;
+
+    protected @Nullable List<IItemHandlerModifiable> orderedItemBusesCache;
+    protected @Nullable List<IMultipleTankHandler> orderedFluidHatchesCache;
 
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
@@ -93,7 +119,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                         .or(abilities(MultiblockAbility.INPUT_ENERGY)
                                 .setMinGlobalLimited(1)
                                 .setMaxGlobalLimited(3)))
-                .where('I', metaTileEntities(MetaTileEntities.ITEM_IMPORT_BUS[GTValues.ULV]))
+                .where('I', abilities(MultiblockAbility.IMPORT_ITEMS))
                 .where('G', states(getGrateState()))
                 .where('A',
                         states(MetaBlocks.MULTIBLOCK_CASING
@@ -327,45 +353,47 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .setEmit(0.2f);
     }
 
+    @NotNull
+    public List<IMultipleTankHandler> getOrderedFluidHatches() {
+        if (orderedFluidHatchesCache != null) return orderedFluidHatchesCache;
+        List<IMultipleTankHandler> orderedHandlerList = new ObjectArrayList<>();
+        this.getMultiblockParts().stream()
+                .filter(iMultiblockPart -> iMultiblockPart instanceof IMultiblockAbilityPart<?> abilityPart &&
+                        abilityPart.getAbility() == MultiblockAbility.EXPORT_FLUIDS &&
+                        abilityPart instanceof MetaTileEntityMultiblockPart)
+                .map(iMultiblockPart -> (MetaTileEntityMultiblockPart) iMultiblockPart)
+                .forEach(hatch -> {
+                    List<IFluidTank> hatchTanks = new ObjectArrayList<>();
+                    // noinspection unchecked
+                    ((IMultiblockAbilityPart<IFluidTank>) hatch).registerAbilities(hatchTanks);
+                    orderedHandlerList.add(new FluidTankList(false, hatchTanks));
+                });
+        return (orderedFluidHatchesCache = orderedHandlerList);
+    }
+
+    public List<IItemHandlerModifiable> getOrderedItemBuses() {
+        if (orderedItemBusesCache != null) return orderedItemBusesCache;
+        return (orderedItemBusesCache = this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+    }
+
+    @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        orderedItemBusesCache = null;
+        orderedFluidHatchesCache = null;
+    }
+
     @Override
     public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
         if (consumeIfSuccess) return true; // don't check twice
-        // check ordered items
-        if (ConfigHolder.machines.orderedAssembly) {
-            List<GTRecipeInput> inputs = recipe.getInputs();
-            List<IItemHandlerModifiable> itemInputInventory = getAbilities(MultiblockAbility.IMPORT_ITEMS);
-
-            // slot count is not enough, so don't try to match it
-            if (itemInputInventory.size() < inputs.size()) return false;
-
-            for (int i = 0; i < inputs.size(); i++) {
-                if (!inputs.get(i).acceptsStack(itemInputInventory.get(i).getStackInSlot(0))) {
-                    return false;
-                }
-            }
-
-            // check ordered fluids
-            if (ConfigHolder.machines.orderedFluidAssembly) {
-                inputs = recipe.getFluidInputs();
-                List<IFluidTank> fluidInputInventory = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
-
-                // slot count is not enough, so don't try to match it
-                if (fluidInputInventory.size() < inputs.size()) return false;
-
-                for (int i = 0; i < inputs.size(); i++) {
-                    if (!inputs.get(i).acceptsFluid(fluidInputInventory.get(i).getFluid())) {
-                        return false;
-                    }
-                }
-            }
-        }
-
+        if (getOrderedItemBuses().size() < recipe.getItemIngredients().size() ||
+                getOrderedFluidHatches().size() < recipe.getFluidIngredients().size()) return false;
         if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
-            return super.checkRecipe(recipe, consumeIfSuccess);
+            return super.checkRecipe(recipe, false);
+        } else {
+            return isRecipeAvailable(getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
+                    isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
         }
-
-        return isRecipeAvailable(getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
-                isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
     }
 
     private static boolean isRecipeAvailable(@NotNull Iterable<? extends IDataAccessHatch> hatches,
@@ -389,6 +417,277 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_items"));
         } else if (ConfigHolder.machines.orderedFluidAssembly) {
             tooltip.add(I18n.format("gregtech.machine.assembly_line.tooltip_ordered_fluids"));
+        }
+    }
+
+    protected static class AssemblyLineRecipeLogic extends MultiblockRecipeLogic {
+
+        private final List<DistinctInputGroup> group = Collections.singletonList(new AssemblyLineInputGroup());
+
+        public AssemblyLineRecipeLogic(MetaTileEntityAssemblyLine tileEntity) {
+            super(tileEntity);
+        }
+
+        @Override
+        public @NotNull MetaTileEntityAssemblyLine getMetaTileEntity() {
+            return (MetaTileEntityAssemblyLine) metaTileEntity;
+        }
+
+        @Override
+        public Collection<DistinctInputGroup> getInputGroups() {
+            return group;
+        }
+
+        @Override
+        protected @NotNull MatchCalculation<ItemStack> getItemMatch(@NotNull Recipe recipe,
+                                                                    @NotNull List<ItemStack> items) {
+            if (ConfigHolder.machines.orderedAssembly) return new OrderedItemMatch(recipe.getItemIngredients(),
+                    getMetaTileEntity().getOrderedItemBuses(), items);
+            else return super.getItemMatch(recipe, items);
+        }
+
+        @Override
+        protected @NotNull MatchCalculation<FluidStack> getFluidMatch(@NotNull Recipe recipe,
+                                                                      @NotNull List<FluidStack> fluids) {
+            if (ConfigHolder.machines.orderedFluidAssembly) return new OrderedFluidMatch(recipe.getFluidIngredients(),
+                        getMetaTileEntity().getOrderedFluidHatches(), fluids);
+            else return super.getFluidMatch(recipe, fluids);
+        }
+
+        public class AssemblyLineInputGroup implements DistinctRecipeLogic.DistinctInputGroup {
+
+            private final List<ItemStack> item = new AbstractList<>() {
+
+                @Override
+                public ItemStack set(int index, ItemStack element) {
+                    for (IItemHandlerModifiable bus : getMetaTileEntity().getOrderedItemBuses()) {
+                        int size = bus.getSlots();
+                        if (index >= size) {
+                            index -= size;
+                            continue;
+                        }
+                        ItemStack oldStack = bus.getStackInSlot(index);
+                        bus.setStackInSlot(index, element == null ? ItemStack.EMPTY : element);
+                        return oldStack;
+                    }
+                    throw new IndexOutOfBoundsException();
+                }
+
+                @Override
+                public ItemStack get(int index) {
+                    for (IItemHandlerModifiable bus : getMetaTileEntity().getOrderedItemBuses()) {
+                        int size = bus.getSlots();
+                        if (index >= size) {
+                            index -= size;
+                            continue;
+                        }
+                        return bus.getStackInSlot(index);
+                    }
+                    throw new IndexOutOfBoundsException();
+                }
+
+                @Override
+                public int size() {
+                    int size = 0;
+                    for (IItemHandlerModifiable bus : getMetaTileEntity().getOrderedItemBuses()) {
+                        size += bus.getSlots();
+                    }
+                    return size;
+                }
+            };
+
+            private final List<FluidStack> fluid = new AbstractList<>() {
+
+                @Override
+                public FluidStack set(int index, FluidStack element) {
+                    for (IMultipleTankHandler hatch : getMetaTileEntity().getOrderedFluidHatches()) {
+                        int size = hatch.getTanks();
+                        if (index >= size) {
+                            index -= size;
+                            continue;
+                        }
+                        IFluidTank fluidTank = hatch.getTankAt(index).getDelegate();
+                        FluidStack oldStack = fluidTank.getFluid();
+                        if (fluidTank instanceof FluidTank) {
+                            ((FluidTank) fluidTank).setFluid(element);
+                        }
+                        return oldStack;
+                    }
+                    throw new IndexOutOfBoundsException();
+                }
+
+                @Override
+                public FluidStack get(int index) {
+                    for (IMultipleTankHandler hatch : getMetaTileEntity().getOrderedFluidHatches()) {
+                        int size = hatch.getTanks();
+                        if (index >= size) {
+                            index -= size;
+                            continue;
+                        }
+                        return hatch.getTankAt(index).getFluid();
+                    }
+                    throw new IndexOutOfBoundsException();
+                }
+
+                @Override
+                public int size() {
+                    int size = 0;
+                    for (IMultipleTankHandler hatch : getMetaTileEntity().getOrderedFluidHatches()) {
+                        size += hatch.getTanks();
+                    }
+                    return size;
+                }
+            };
+
+            @Override
+            public @NotNull List<ItemStack> itemInventoryView() {
+                return item;
+            }
+
+            @Override
+            public boolean containsItemHandler(IItemHandlerModifiable handler) {
+                return true;
+            }
+
+            @Override
+            public @NotNull List<FluidStack> fluidInventoryView() {
+                return fluid;
+            }
+
+            @Override
+            public boolean containsFluidHandler(IFluidHandler handler) {
+                return true;
+            }
+
+            @Override
+            public void setInvalidItemInputs(boolean invalidInputs) {
+                AssemblyLineRecipeLogic.super.setInvalidItemInputs(invalidInputs);
+            }
+
+            @Override
+            public void setInvalidFluidInputs(boolean invalidInputs) {
+                AssemblyLineRecipeLogic.super.setInvalidFluidInputs(invalidInputs);
+            }
+
+            @Override
+            public boolean areItemInputsInvalid() {
+                return hasInvalidItemInputs();
+            }
+
+            @Override
+            public boolean areFluidInputsInvalid() {
+                return hasInvalidFluidInputs();
+            }
+
+        }
+    }
+
+    protected static class OrderedItemMatch extends AbstractMatchCalculation<ItemStack> {
+
+        protected final List<GTItemIngredient> ingredients;
+        protected final List<IItemHandlerModifiable> orderedItemInputs;
+        protected final List<ItemStack> itemView;
+
+        public OrderedItemMatch(List<GTItemIngredient> ingredients, List<IItemHandlerModifiable> orderedItemInputs,
+                                List<ItemStack> itemView) {
+            this.ingredients = ingredients;
+            this.orderedItemInputs = orderedItemInputs;
+            this.itemView = itemView;
+            if (ingredients.size() > orderedItemInputs.size()) reportNoValidScales();
+        }
+
+        @Override
+        protected void rescale(int oldScale, int newScale) {}
+
+        @Override
+        protected long @Nullable [] attemptScaleInternal() {
+            long[] consumptions = new long[itemView.size()];
+            int offset = 0;
+            for (int i = 0; i < ingredients.size(); i++) {
+                GTItemIngredient ingredient = ingredients.get(i);
+                int size = orderedItemInputs.get(i).getSlots();
+                long desired = ingredient.getRequiredCount() * scaling;
+                for (int j = offset; j < offset + size; j++) {
+                    ItemStack stack = itemView.get(j);
+                    if (ingredient.matches(stack)) {
+                        int count = (int) Math.min(stack.getCount(), desired);
+                        consumptions[j] = count;
+                        desired -= count;
+                        if (desired == 0) break;
+                    }
+                }
+                // fail immediately if we can't match a given ingredient.
+                if (desired > 0) return null;
+                offset += size;
+            }
+            return consumptions;
+        }
+
+        @Override
+        public @NotNull List<ItemStack> getConsumed(int scale) {
+            long[] results = getMatchResultsForScale(scale);
+            if (results == null) return Collections.emptyList();
+            List<ItemStack> list = new ObjectArrayList<>(itemView.size());
+            for (int i = 0; i < itemView.size(); i++) {
+                ItemStack stack = itemView.get(i).copy();
+                stack.setCount((int) results[i]);
+                list.add(stack);
+            }
+            return list;
+        }
+    }
+
+    protected static class OrderedFluidMatch extends AbstractMatchCalculation<FluidStack> {
+
+        protected final List<GTFluidIngredient> ingredients;
+        protected final List<IMultipleTankHandler> orderedFluidInputs;
+        protected final List<FluidStack> fluidView;
+
+        public OrderedFluidMatch(List<GTFluidIngredient> ingredients, List<IMultipleTankHandler> orderedFluidInputs,
+                                 List<FluidStack> fluidView) {
+            this.ingredients = ingredients;
+            this.orderedFluidInputs = orderedFluidInputs;
+            this.fluidView = fluidView;
+        }
+
+        @Override
+        protected void rescale(int oldScale, int newScale) {}
+
+        @Override
+        protected long @Nullable [] attemptScaleInternal() {
+            long[] consumptions = new long[fluidView.size()];
+            int offset = 0;
+            for (int i = 0; i < ingredients.size(); i++) {
+                GTFluidIngredient ingredient = ingredients.get(i);
+                int size = orderedFluidInputs.get(i).getTanks();
+                long desired = ingredient.getRequiredCount() * scaling;
+                for (int j = offset; j < offset + size; j++) {
+                    FluidStack stack = fluidView.get(j);
+                    if (ingredient.matches(stack)) {
+                        long count = Math.min(stack.amount, desired);
+                        consumptions[j] = count;
+                        desired -= count;
+                        if (desired == 0) break;
+                    }
+                }
+                // fail immediately if we can't match a given ingredient.
+                if (desired > 0) return null;
+                offset += size;
+            }
+            return consumptions;
+        }
+
+        @Override
+        public @NotNull List<FluidStack> getConsumed(int scale) {
+            long[] results = getMatchResultsForScale(scale);
+            if (results == null) return Collections.emptyList();
+            List<FluidStack> list = new ObjectArrayList<>(fluidView.size());
+            for (int i = 0; i < fluidView.size(); i++) {
+                FluidStack stack = fluidView.get(i).copy();
+                stack.amount = (int) results[i];
+                list.add(stack);
+            }
+            return list;
         }
     }
 }

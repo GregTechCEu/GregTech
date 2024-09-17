@@ -9,8 +9,6 @@ import gregtech.api.recipes.lookup.property.filter.IntAVLFilter;
 import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
 import gregtech.api.unification.material.Material;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTBase;
@@ -18,6 +16,7 @@ import net.minecraft.nbt.NBTTagInt;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,6 +106,11 @@ public final class TemperatureProperty extends RecipePropertyWithFilter<Integer>
     @Override
     public @NotNull Filter<Integer> getNewFilter() {
         return new TemperatureFilter();
+    }
+
+    @Override
+    public boolean matches(PropertySet properties, Integer value) {
+        return properties.getDefaultable(TemperatureMaximumProperty.EMPTY).temperature() >= value;
     }
 
     private static final class TemperatureFilter implements IPropertyFilter.Filter<Integer> {

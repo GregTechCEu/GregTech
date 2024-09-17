@@ -9,6 +9,7 @@ import gregtech.api.recipes.chance.output.ChancedOutputList;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.old.GTRecipeFluidInput;
 import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.ingredients.old.GTRecipeItemInput;
@@ -22,9 +23,9 @@ import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
 import gregtech.api.recipes.properties.impl.CircuitProperty;
 import gregtech.api.recipes.properties.impl.CleanroomProperty;
 import gregtech.api.recipes.properties.impl.DimensionProperty;
-import gregtech.api.recipes.properties.impl.PowerUsageProperty;
 import gregtech.api.recipes.properties.impl.PowerGenerationProperty;
 import gregtech.api.recipes.properties.impl.PowerPropertyData;
+import gregtech.api.recipes.properties.impl.PowerUsageProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -101,10 +102,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
-        this.inputs = new ArrayList<>(recipe.getInputs());
+        this.inputs = new ArrayList<>(recipe.getItemIngredients());
         this.outputs = new ArrayList<>(recipe.getOutputs());
         this.chancedOutputs = new ArrayList<>(recipe.getChancedOutputs().getChancedEntries());
-        this.fluidInputs = new ArrayList<>(recipe.getFluidInputs());
+        this.fluidInputs = new ArrayList<>(recipe.getFluidIngredients());
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
         this.chancedFluidOutputs = new ArrayList<>(recipe.getChancedFluidOutputs().getChancedEntries());
         this.duration = recipe.getDuration();
@@ -425,6 +426,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             }
             this.inputs.add(input);
         }
+        return (R) this;
+    }
+
+    public R inputs(GTItemIngredient ingredient) {
+        // TODO
         return (R) this;
     }
 
@@ -823,7 +829,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                                                    List<FluidStack> outputFluids,
                                                    Recipe recipe,
                                                    int numberOfOperations) {
-        recipe.getInputs().forEach(ri -> {
+        recipe.getItemIngredients().forEach(ri -> {
             if (ri.isNonConsumable()) {
                 newRecipeInputs.add(ri);
             } else {
@@ -831,7 +837,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             }
         });
 
-        recipe.getFluidInputs().forEach(fi -> {
+        recipe.getFluidIngredients().forEach(fi -> {
             if (fi.isNonConsumable()) {
                 newFluidInputs.add(fi);
             } else {

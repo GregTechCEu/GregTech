@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public final class CompositeFlagApplicator<T> extends ObjectOpenHashSet<FlagApplicator<T>> implements FlagApplicator<T> {
+public final class CompositeFlagApplicator<T> extends ObjectOpenHashSet<FlagApplicator<T>>
+                                          implements FlagApplicator<T> {
 
     final long flags;
 
@@ -39,7 +40,6 @@ public final class CompositeFlagApplicator<T> extends ObjectOpenHashSet<FlagAppl
         this.flags = a.flags | b.flags;
         this.addAll(a);
         this.addAll(b);
-
     }
 
     @Override

@@ -55,6 +55,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,7 +64,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -447,7 +447,7 @@ public class GTUtility {
     }
 
     public static @NotNull List<@NotNull ItemStack> copyStackList(@NotNull List<@NotNull ItemStack> itemStacks) {
-        List<ItemStack> list = new ArrayList<>(itemStacks.size());
+        List<ItemStack> list = new ObjectArrayList<>(itemStacks.size());
         for (ItemStack itemStack : itemStacks) {
             list.add(copy(itemStack));
         }
@@ -455,7 +455,7 @@ public class GTUtility {
     }
 
     public static @NotNull List<@NotNull FluidStack> copyFluidList(@NotNull List<@NotNull FluidStack> fluidStacks) {
-        List<FluidStack> list = new ArrayList<>(fluidStacks.size());
+        List<FluidStack> list = new ObjectArrayList<>(fluidStacks.size());
         for (FluidStack stack : fluidStacks) {
             list.add(stack.copy());
         }

@@ -2,7 +2,6 @@ package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-
 import gregtech.api.recipes.lookup.property.PowerCapacityProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.lookup.property.filter.FilterEqualityBehavior;
@@ -56,7 +55,7 @@ public class PowerGenerationProperty extends RecipePropertyWithFilter<PowerPrope
                 I18n.format(
                         "gregtech.recipe.eu_inverted",
                         data.getVoltage(), GTValues.VN[GTUtility.getFloorTierByVoltage(data.getVoltage())],
-                data.getAmperage()),
+                        data.getAmperage()),
                 x, y, 0x111111);
     }
 
@@ -75,10 +74,18 @@ public class PowerGenerationProperty extends RecipePropertyWithFilter<PowerPrope
         return new PowerGenerationFilter();
     }
 
+    @Override
+    public boolean matches(PropertySet properties, PowerPropertyData value) {
+        PowerCapacityProperty data = properties.getDefaultable(PowerCapacityProperty.EMPTY);
+        return data.voltage() >= value.getVoltage() && data.amperage() >= value.getAmperage();
+    }
+
     private static final class PowerGenerationFilter implements IPropertyFilter.Filter<PowerPropertyData> {
 
-        private final LongAVLFilter voltageFilter = new LongAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL, true, false);
-        private final LongAVLFilter amperageFilter = new LongAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL, true, false);
+        private final LongAVLFilter voltageFilter = new LongAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL,
+                true, false);
+        private final LongAVLFilter amperageFilter = new LongAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL,
+                true, false);
 
         @Override
         public void accumulate(short recipeID, @NotNull PowerPropertyData filterInformation) {

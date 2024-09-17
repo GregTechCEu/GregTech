@@ -1,6 +1,7 @@
 package gregtech.api.recipes.lookup.property.filter;
 
 public enum FilterEqualityBehavior {
+
     EQUAL,
     LESS_THAN,
     LESS_THAN_OR_EQUAL,

@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.logic.RecipeRunner;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 
@@ -31,11 +32,6 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityRockBreaker(metaTileEntityId, RecipeMaps.ROCK_BREAKER_RECIPES,
                 Textures.ROCK_BREAKER_OVERLAY, getTier());
-    }
-
-    @Override
-    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        return new RockBreakerRecipeLogic(this, RecipeMaps.ROCK_BREAKER_RECIPES, () -> energyContainer);
     }
 
     @Override
@@ -103,8 +99,8 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
         }
 
         @Override
-        protected boolean shouldSearchForRecipes() {
-            return hasValidFluids && super.shouldSearchForRecipes();
+        protected boolean shouldSearchForRecipes(RecipeRunner runner) {
+            return hasValidFluids && super.shouldSearchForRecipes(runner);
         }
     }
 

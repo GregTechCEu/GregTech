@@ -61,7 +61,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         this.frontOverlay = frontOverlay;
         this.tier = tier;
         this.recipeMapWorkable = new LargeTurbineWorkableHandler(this, tier);
-        this.recipeMapWorkable.setMaximumOverclockVoltage(GTValues.V[tier]);
     }
 
     @Override
@@ -104,10 +103,10 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
 
     @Override
     protected long getMaxVoltage() {
-        long maxProduction = recipeMapWorkable.getMaxVoltage();
+        long maxProduction = recipeMapWorkable.getMaxVoltageIn();
         long currentProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).boostProduction((int) maxProduction);
         if (isActive() && currentProduction <= maxProduction) {
-            return recipeMapWorkable.getMaxVoltage();
+            return recipeMapWorkable.getMaxVoltageIn();
         } else {
             return 0L;
         }

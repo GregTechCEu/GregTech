@@ -38,7 +38,8 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
             if (value instanceof ItemStack stack) {
                 return this.applyProperty(ImplosionExplosiveProperty.getInstance(), stack);
             } else if (value instanceof Number number) {
-                return this.applyProperty(ImplosionExplosiveProperty.getInstance(), new ItemStack(Blocks.TNT, number.intValue()));
+                return this.applyProperty(ImplosionExplosiveProperty.getInstance(),
+                        new ItemStack(Blocks.TNT, number.intValue()));
             }
             return false;
         }

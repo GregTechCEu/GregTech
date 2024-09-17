@@ -22,9 +22,9 @@ public class CTRecipeHelper {
                 .append(recipe.getEUt())
                 .append(", ");
 
-        if (recipe.getInputs().size() > 0) {
+        if (recipe.getItemIngredients().size() > 0) {
             builder.append("[");
-            for (GTRecipeInput ci : recipe.getInputs()) {
+            for (GTRecipeInput ci : recipe.getItemIngredients()) {
                 String ingredient = getCtItemString(ci);
                 if (ingredient != null)
                     builder.append(ingredient);
@@ -35,9 +35,9 @@ public class CTRecipeHelper {
             builder.append("null, ");
         }
 
-        if (recipe.getFluidInputs().size() > 0) {
+        if (recipe.getFluidIngredients().size() > 0) {
             builder.append("[");
-            for (GTRecipeInput fluidIngredient : recipe.getFluidInputs()) {
+            for (GTRecipeInput fluidIngredient : recipe.getFluidIngredients()) {
                 builder.append("<liquid:")
                         .append(fluidIngredient.getInputFluidStack().getFluid().getName())
                         .append(">");
@@ -65,9 +65,9 @@ public class CTRecipeHelper {
                 .append(".recipeBuilder()")
                 .append(".inputs(");
 
-        if (recipe.getInputs().size() > 0) {
+        if (recipe.getItemIngredients().size() > 0) {
             builder.append("[");
-            for (GTRecipeInput ci : recipe.getInputs()) {
+            for (GTRecipeInput ci : recipe.getItemIngredients()) {
                 String ingredient = getCtItemString(ci);
                 if (ingredient != null)
                     builder.append(ingredient);
@@ -76,10 +76,10 @@ public class CTRecipeHelper {
                     .append("])");
         }
 
-        if (recipe.getFluidInputs().size() > 0) {
+        if (recipe.getFluidIngredients().size() > 0) {
             builder.append(".fluidInputs(");
             builder.append("[");
-            for (GTRecipeInput fluidStack : recipe.getFluidInputs()) {
+            for (GTRecipeInput fluidStack : recipe.getFluidIngredients()) {
 
                 builder.append("<liquid:")
                         .append(fluidStack.getInputFluidStack().getFluid().getName())

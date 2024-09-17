@@ -1,19 +1,19 @@
 package gregtech.api.recipes.lookup.property;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.metatileentity.multiblock.CleanroomType;
-import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 
+import com.github.bsideup.jabel.Desugar;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Predicate;
+
 @Desugar
-public record CleanroomFulfilmentProperty(ICleanroomProvider provider) implements IRecipeSearchProperty {
+public record CleanroomFulfilmentProperty(Predicate<CleanroomType> provider) implements IRecipeSearchProperty {
 
     public static final CleanroomFulfilmentProperty EMPTY = new CleanroomFulfilmentProperty(null);
 
     public boolean isFulfilled(CleanroomType type) {
-        return provider != null && provider.checkCleanroomType(type);
+        return provider != null && provider.test(type);
     }
 
     @Override

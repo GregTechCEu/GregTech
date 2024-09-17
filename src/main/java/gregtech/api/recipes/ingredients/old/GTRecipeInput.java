@@ -14,7 +14,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -186,7 +185,6 @@ public abstract class GTRecipeInput {
      *         non-consumable status.
      *         <p>
      *         used for unique input matching in RecipeMap
-     * @see gregtech.api.recipes.RecipeMap#uniqueIngredientsList(Collection) RecipeMap#uniqueIngredientsList(Collection)
      */
     public abstract boolean equalIgnoreAmount(GTRecipeInput input);
 

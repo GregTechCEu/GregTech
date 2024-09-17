@@ -9,14 +9,16 @@ public interface Matcher<T> {
 
     boolean matches(T t);
 
-    @Range(from = 1, to = Long.MAX_VALUE) long getRequiredCount();
+    @Range(from = 1, to = Long.MAX_VALUE)
+    long getRequiredCount();
 
     static <T> Matcher<T> simpleMatcher(Predicate<T> predicate, @Range(from = 1, to = Long.MAX_VALUE) long count) {
         return new SimpleMatcher<>(predicate, count);
     }
 
     @Desugar
-    record SimpleMatcher<T>(Predicate<T> predicate, @Range(from = 1, to = Long.MAX_VALUE) long count) implements Matcher<T> {
+    record SimpleMatcher<T> (Predicate<T> predicate, @Range(from = 1, to = Long.MAX_VALUE) long count)
+            implements Matcher<T> {
 
         @Override
         public @Range(from = 1, to = Long.MAX_VALUE) long getRequiredCount() {

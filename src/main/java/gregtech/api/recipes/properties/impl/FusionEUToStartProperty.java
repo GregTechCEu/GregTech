@@ -101,9 +101,15 @@ public final class FusionEUToStartProperty extends RecipePropertyWithFilter<Long
         return new EUToStartFilter();
     }
 
+    @Override
+    public boolean matches(PropertySet properties, Long value) {
+        return properties.getDefaultable(EUToStartProperty.EMPTY).eu() >= value;
+    }
+
     private static final class EUToStartFilter implements IPropertyFilter.Filter<Long> {
 
-        private final LongAVLFilter filter = new LongAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL, true, false);
+        private final LongAVLFilter filter = new LongAVLFilter(FilterEqualityBehavior.GREATER_THAN_OR_EQUAL, true,
+                false);
 
         @Override
         public void accumulate(short recipeID, @NotNull Long filterInformation) {

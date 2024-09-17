@@ -19,7 +19,8 @@ public final class IntAVLFilter extends Int2ObjectAVLTreeMap<BitSet> {
     @Contract("_, false, false -> fail")
     public IntAVLFilter(FilterEqualityBehavior equalityBehavior, boolean handlesPositive, boolean handlesNegative) {
         if (!handlesNegative && !handlesPositive)
-            throw new IllegalArgumentException("Cannot have a filter which handles neither positive nor negative numbers!");
+            throw new IllegalArgumentException(
+                    "Cannot have a filter which handles neither positive nor negative numbers!");
         if (equalityBehavior == FilterEqualityBehavior.EQUAL)
             GTLog.logger.warn("AVL filters should not be used with EQUAL behavior!", new Throwable());
         this.put(0, zeroReference);

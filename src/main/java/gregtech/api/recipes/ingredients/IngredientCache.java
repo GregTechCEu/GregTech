@@ -1,19 +1,16 @@
 package gregtech.api.recipes.ingredients;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.FluidStackMatchingContext;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +34,8 @@ public final class IngredientCache {
 
     public static OreItemIngredient getOreIngredient(String ore, long count, @Nullable NBTMatcher matcher) {
         if (oreCache != null)
-            return oreCache.computeIfAbsent(OreDictionary.getOreID(ore), OreItemIngredientCache::new).getWith(matcher, count);
+            return oreCache.computeIfAbsent(OreDictionary.getOreID(ore), OreItemIngredientCache::new).getWith(matcher,
+                    count);
         else return new OreItemIngredient(new OreItemIngredient.OreItemIngredientBacker(ore), matcher, count);
     }
 
@@ -50,19 +48,21 @@ public final class IngredientCache {
                                                            long count, @Nullable NBTMatcher matcher) {
         if (itemCache != null)
             return itemCache.computeIfAbsent(matching, StandardItemIngredientCache::new).getWith(matcher, count);
-        else return new StandardItemIngredient(new StandardItemIngredient.ItemIngredientBacker(matching), matcher, count);
+        else return new StandardItemIngredient(new StandardItemIngredient.ItemIngredientBacker(matching), matcher,
+                count);
     }
 
     public static StandardFluidIngredient getFluidIngredient(EnumMap<FluidStackMatchingContext, Collection<FluidStack>> matching,
-                                                           long count) {
+                                                             long count) {
         return getFluidIngredient(matching, count, null);
     }
 
     public static StandardFluidIngredient getFluidIngredient(EnumMap<FluidStackMatchingContext, Collection<FluidStack>> matching,
-                                                           long count, @Nullable NBTMatcher matcher) {
+                                                             long count, @Nullable NBTMatcher matcher) {
         if (fluidCache != null)
             return fluidCache.computeIfAbsent(matching, StandardFluidIngredientCache::new).getWith(matcher, count);
-        else return new StandardFluidIngredient(new StandardFluidIngredient.FluidIngredientBacker(matching), matcher, count);
+        else return new StandardFluidIngredient(new StandardFluidIngredient.FluidIngredientBacker(matching), matcher,
+                count);
     }
 
     /**
@@ -107,7 +107,8 @@ public final class IngredientCache {
             super(oreID);
         }
 
-        public OreItemIngredient getWith(@Nullable NBTMatcher matcher, @Range(from = 1, to = Long.MAX_VALUE) long count) {
+        public OreItemIngredient getWith(@Nullable NBTMatcher matcher,
+                                         @Range(from = 1, to = Long.MAX_VALUE) long count) {
             return cache.computeIfAbsent(MatcherAndCount.of(matcher, count),
                     c -> new OreItemIngredient(this, c.matcher(), c.count()));
         }
@@ -121,7 +122,8 @@ public final class IngredientCache {
             super(matching);
         }
 
-        public StandardItemIngredient getWith(@Nullable NBTMatcher matcher, @Range(from = 1, to = Long.MAX_VALUE) long count) {
+        public StandardItemIngredient getWith(@Nullable NBTMatcher matcher,
+                                              @Range(from = 1, to = Long.MAX_VALUE) long count) {
             return cache.computeIfAbsent(MatcherAndCount.of(matcher, count),
                     c -> new StandardItemIngredient(this, c.matcher(), c.count()));
         }
@@ -135,7 +137,8 @@ public final class IngredientCache {
             super(matching);
         }
 
-        public StandardFluidIngredient getWith(@Nullable NBTMatcher matcher, @Range(from = 1, to = Long.MAX_VALUE) long count) {
+        public StandardFluidIngredient getWith(@Nullable NBTMatcher matcher,
+                                               @Range(from = 1, to = Long.MAX_VALUE) long count) {
             return cache.computeIfAbsent(MatcherAndCount.of(matcher, count),
                     c -> new StandardFluidIngredient(this, c.matcher(), c.count()));
         }
@@ -143,6 +146,7 @@ public final class IngredientCache {
 
     @Desugar
     private record MatcherAndCount(@Nullable NBTMatcher matcher, long count) {
+
         @Contract("_, _ -> new")
         public static @NotNull MatcherAndCount of(@Nullable NBTMatcher matcher, long count) {
             return new MatcherAndCount(matcher, count);

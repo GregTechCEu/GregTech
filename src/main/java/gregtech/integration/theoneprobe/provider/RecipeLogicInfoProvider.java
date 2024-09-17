@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
+import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
@@ -41,9 +42,10 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                                 @NotNull EntityPlayer player, @NotNull TileEntity tileEntity,
                                 @NotNull IProbeHitData data) {
         // do not show energy usage on machines that do not use energy
-        if (capability.isWorking()) {
+        if (capability.isWorking() && capability.getCurrent() != null) {
+            RecipeRun run = capability.getCurrent();
             if (capability instanceof PrimitiveRecipeLogic) {
-                return; // do not show info for primitive machines, as they are supposed to appear powerless
+                return; // do not show info for primitive machines, as they are powerless
             }
             long eut = capability.getInfoProviderEUt();
             String text = null;
@@ -68,7 +70,7 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
 
             if (eut == 0) return; // do not display 0 eut
 
-            if (capability.consumesEnergy()) {
+            if (!run.isGenerating()) {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);
             } else {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_production*} " + text);

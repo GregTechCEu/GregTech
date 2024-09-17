@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static it.unimi.dsi.fastutil.HashCommon.arraySize;
 
-public final class FlagApplicatorMap<T> extends Short2ObjectOpenHashMap<FlagApplicator<T>> implements IApplicatorMap<T> {
+public final class FlagApplicatorMap<T> extends Short2ObjectOpenHashMap<FlagApplicator<T>>
+                                    implements IApplicatorMap<T> {
 
     public void insertApplicator(int k, @NotNull FlagApplicator<T> applicator) {
         insertApplicator((short) k, applicator);

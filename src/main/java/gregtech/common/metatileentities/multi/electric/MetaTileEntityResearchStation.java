@@ -17,8 +17,10 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.match.MatchCalculation;
+import gregtech.api.recipes.logic.RecipeRun;
+import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -35,9 +37,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -231,9 +233,9 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                         "gregtech.multiblock.work_paused",
                         "gregtech.machine.research_station.researching")
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
                 .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
@@ -242,7 +244,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
-                .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
+                .addLowComputationLine(getRecipeMapWorkable().hasNotEnoughComputation())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
@@ -259,49 +261,37 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         }
 
         @Override
-        public boolean isAllowOverclocking() {
-            return false;
+        public long getMaxOverclockVoltage(boolean generatingRecipe) {
+            return 0;
         }
 
         @Override
-        protected @Nullable Recipe setupAndConsumeRecipeInputs(@NotNull Recipe recipe,
-                                                               @NotNull IItemHandlerModifiable importInventory) {
-            // this machine cannot overclock, so don't bother calling it
-            if (!hasEnoughPower(recipe.getEUt(), recipe.getDuration())) {
-                return null;
-            }
-
-            // skip "can fit" checks, it can always fit
-
-            // do not consume inputs here, consume them on completion
-            if (recipe.matches(false, importInventory, getInputTank())) {
-                this.metaTileEntity.addNotifiedInput(importInventory);
-                return recipe;
-            }
-            return null;
-        }
-
-        // lock the object holder on recipe start
-        @Override
-        protected void setupRecipe(@NotNull Recipe recipe) {
+        protected boolean performConsumption(@NotNull MatchCalculation<ItemStack> itemMatch,
+                                             @NotNull MatchCalculation<FluidStack> fluidMatch, @NotNull RecipeView view,
+                                             @NotNull RecipeRun run, @NotNull List<ItemStack> items,
+                                             @NotNull List<FluidStack> fluids) {
+            // we do not consume at this stage, but instead lock the object holder.
             IObjectHolder holder = getMetaTileEntity().getObjectHolder();
             holder.setLocked(true);
-            super.setupRecipe(recipe);
+            return true;
         }
+
 
         // "replace" the items in the slots rather than outputting elsewhere
         // unlock the object holder
         @Override
-        protected void outputRecipeOutputs() {
+        protected boolean outputRecipeOutputs(@NotNull RecipeRun run) {
+            super.outputRecipeOutputs(run);
             IObjectHolder holder = getMetaTileEntity().getObjectHolder();
             holder.setHeldItem(ItemStack.EMPTY);
 
             ItemStack outputItem = ItemStack.EMPTY;
-            if (itemOutputs != null && itemOutputs.size() >= 1) {
-                outputItem = itemOutputs.get(0);
+            if (run.getItemsOut().size() >= 1) {
+                outputItem = run.getItemsOut().get(0);
             }
             holder.setDataItem(outputItem);
             holder.setLocked(false);
+            return true;
         }
     }
 }

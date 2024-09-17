@@ -2,6 +2,8 @@ package gregtech.api.recipes;
 
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.recipes.lookup.AbstractRecipeLookup;
+import gregtech.api.recipes.lookup.RecipeLookup;
 import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 
@@ -48,6 +50,8 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private boolean allowEmptyOutputs;
 
     private @Nullable Map<ResourceLocation, RecipeBuildAction<B>> buildActions;
+
+    private @Nullable AbstractRecipeLookup lookup;
 
     /**
      * @param unlocalizedName      the name of the recipemap
@@ -265,6 +269,10 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         return this;
     }
 
+    public @NotNull RecipeMapBuilder<B> lookup(AbstractRecipeLookup lookup) {
+        this.lookup = lookup;
+    }
+
     /**
      * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
      *
@@ -289,7 +297,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
      */
     public @NotNull RecipeMap<B> build() {
         RecipeMap<B> recipeMap = new RecipeMap<>(unlocalizedName, defaultRecipeBuilder, this.recipeMapUIFunction,
-                itemInputs, itemOutputs, fluidInputs, fluidOutputs);
+                itemInputs, itemOutputs, fluidInputs, fluidOutputs, lookup);
         recipeMap.setSound(sound);
         if (allowEmptyOutputs) {
             recipeMap.allowEmptyOutput();

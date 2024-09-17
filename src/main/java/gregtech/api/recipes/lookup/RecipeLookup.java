@@ -1,30 +1,34 @@
 package gregtech.api.recipes.lookup;
 
 import gregtech.api.recipes.Recipe;
-
+import gregtech.api.recipes.ingredients.GTFluidIngredient;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
+import gregtech.api.recipes.lookup.flag.FlagApplicator;
 import gregtech.api.recipes.lookup.flag.FlagMap;
 import gregtech.api.recipes.lookup.flag.FluidStackApplicatorMap;
+import gregtech.api.recipes.lookup.flag.FluidStackMatchingContext;
 import gregtech.api.recipes.lookup.flag.ItemStackApplicatorMap;
+import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
+import gregtech.api.recipes.lookup.flag.SingleFlagApplicator;
 import gregtech.api.recipes.lookup.property.PropertyFilterMap;
-
 import gregtech.api.recipes.lookup.property.PropertySet;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.List;
 
 public class RecipeLookup extends IndexedRecipeLookup {
 
-    private final ObjectArrayList<Recipe> recipes = new ObjectArrayList<>();
+    protected final ObjectArrayList<Recipe> recipes = new ObjectArrayList<>();
 
     private final PropertyFilterMap filters = new PropertyFilterMap();
 
@@ -36,25 +40,40 @@ public class RecipeLookup extends IndexedRecipeLookup {
     private @Nullable FluidStackApplicatorMap fluid = null;
     private @Nullable FluidStackApplicatorMap fluidNBT = null;
 
+    private boolean valid = false;
+
     @Override
-    public void addRecipe(@NotNull Recipe recipe) {
-        if (recipes.size() == 65536) throw new IndexOutOfBoundsException("Cannot support more than 65536 recipes per recipe map!");
+    public boolean addRecipe(@NotNull Recipe recipe) {
+        if (recipes.size() == 65536) return false;
         recipes.add(recipe);
+        return true;
     }
 
     @Override
-    public @NotNull Recipe getRecipeByIndex(@Range(from = 0, to = 65536) int index) {
-        return recipes.get(index);
+    public boolean removeRecipe(@NotNull Recipe recipe) {
+        return recipes.remove(recipe);
     }
 
     @Override
-    public @Range(from = 0, to = 65536) int getRecipeCount() {
-        return recipes.size();
+    public @NotNull @UnmodifiableView List<Recipe> getAllRecipes() {
+        return recipes;
     }
 
     @Override
-    public CompactibleIterator<Recipe> findRecipes(List<ItemStack> items, List<FluidStack> fluids, PropertySet properties) {
-        BitSet filter = filters.filter(properties);
+    public void clear() {
+        invalidate();
+        recipes.clear();
+    }
+
+    @Override
+    @NotNull
+    public CompactibleIterator<Recipe> findRecipes(@NotNull List<ItemStack> items, @NotNull List<FluidStack> fluids,
+                                                   @Nullable PropertySet properties) {
+        if (!valid) {
+            if (recipes.isEmpty()) return CompactibleIterator.empty();
+            rebuild();
+        }
+        BitSet filter = properties == null ? new BitSet() : filters.filter(properties);
         if (filter.cardinality() == getRecipeCount()) return CompactibleIterator.empty();
         FlagMap map = new FlagMap(this, filter);
         for (ItemStack stack : items) {
@@ -70,38 +89,39 @@ public class RecipeLookup extends IndexedRecipeLookup {
         return map.matchedIterator();
     }
 
-    private @NotNull ItemStackApplicatorMap getItem() {
+    protected @NotNull ItemStackApplicatorMap getItem() {
         if (item == null) item = ItemStackApplicatorMap.item();
         return item;
     }
 
-    private @NotNull ItemStackApplicatorMap getItemDamage() {
+    protected @NotNull ItemStackApplicatorMap getItemDamage() {
         if (itemDamage == null) itemDamage = ItemStackApplicatorMap.itemDamage();
         return itemDamage;
     }
 
-    private @NotNull ItemStackApplicatorMap getItemNBT() {
+    protected @NotNull ItemStackApplicatorMap getItemNBT() {
         if (itemNBT == null) itemNBT = ItemStackApplicatorMap.itemDamageNBT();
         return itemNBT;
     }
 
-    private @NotNull ItemStackApplicatorMap getItemDamageNBT() {
+    protected @NotNull ItemStackApplicatorMap getItemDamageNBT() {
         if (itemDamageNBT == null) itemDamageNBT = ItemStackApplicatorMap.itemDamageNBT();
         return itemDamageNBT;
     }
 
-    private @NotNull FluidStackApplicatorMap getFluid() {
+    protected @NotNull FluidStackApplicatorMap getFluid() {
         if (fluid == null) fluid = FluidStackApplicatorMap.fluid();
         return fluid;
     }
 
-    private @NotNull FluidStackApplicatorMap getFluidNBT() {
+    protected @NotNull FluidStackApplicatorMap getFluidNBT() {
         if (fluidNBT == null) fluidNBT = FluidStackApplicatorMap.fluidNBT();
         return fluidNBT;
     }
 
-    @Override
-    public void rebuild() {
+    @MustBeInvokedByOverriders
+    protected void invalidate() {
+        valid = false;
         filters.clear();
         item = null;
         itemDamage = null;
@@ -109,66 +129,71 @@ public class RecipeLookup extends IndexedRecipeLookup {
         itemDamageNBT = null;
         fluid = null;
         fluidNBT = null;
-        for (int i = 0; i < recipes.size(); i++) {
-            RecipeWrapper recipe = recipes.get(i);
-            filters.addFilters(i, recipe.getRecipe().propertyStorage());
-            long flags = 0;
-            byte flag = 0;
-            for (GTRecipeInput input : recipe.getRecipe().getInputs()) {
-                if (input instanceof GTRecipeItemInput || input instanceof GTRecipeOreInput) {
-                    boolean nbtMap;
-                    FlagApplicator<ItemStack> applicator = new SingleFlagApplicator<>(flag);
-                    NBTMatcher matcher = input.getNBTMatcher();
-                    if (matcher != null) {
-                        if (matcher != NBTMatcher.ANY) {
-                            NBTCondition condition = input.getNBTMatchingCondition();
-                            final byte finalFlag = flag;
-                            applicator = (c, e) -> e | (matcher.evaluate(c, condition) ? (1L << finalFlag) : 0);
-                        }
-                        nbtMap = false;
-                    } else nbtMap = true;
+    }
 
-                    flags += (1L << flag);
-                    flag++;
-                    ItemStack[] stacks;
-                    if (input instanceof GTRecipeItemInput s) stacks = s.getOriginalStacks();
-                    else stacks = input.getInputStacks();
-                    for (ItemStack stack : stacks) {
-                        ItemStackApplicatorMap map;
-                        if (stack.getMetadata() == GTValues.W) {
-                            if (nbtMap) map = getItemNBT();
-                            else map = getItem();
-                        } else {
-                            if (nbtMap) map = getItemDamageNBT();
-                            else map = getItemDamage();
+    @Override
+    public void rebuild() {
+        invalidate();
+        for (int i = 0; i < recipes.size(); i++) {
+            Recipe recipe = recipes.get(i);
+            filters.addFilters(i, recipe.propertyStorage());
+
+            List<GTItemIngredient> itemIngredients = recipe.getItemIngredients();
+            List<GTFluidIngredient> fluidIngredients = recipe.getFluidIngredients();
+
+            if (itemIngredients.size() + fluidIngredients.size() > 64)
+                throw new IllegalStateException("Found a recipe with more than 64 inputs in it!");
+
+            for (byte j = 0; j < itemIngredients.size(); j++) {
+                GTItemIngredient ingredient = itemIngredients.get(j);
+                FlagApplicator<ItemStack> applicator;
+                if (ingredient.getMatcher() == null) applicator = new SingleFlagApplicator<>(j);
+                else {
+                    byte finalJ = j;
+                    applicator = (context, flags) -> ingredient.getMatcher().matches(context) ? flags | (1L << finalJ) :
+                            flags;
+                }
+                for (ItemStackMatchingContext context : ItemStackMatchingContext.VALUES) {
+                    Collection<ItemStack> stacks = ingredient.getMatchingStacksWithinContext(context);
+                    if (!stacks.isEmpty()) {
+                        ItemStackApplicatorMap map = switch (context) {
+                            case ITEM -> getItem();
+                            case ITEM_DAMAGE -> getItemDamage();
+                            case ITEM_NBT -> getItemNBT();
+                            case ITEM_DAMAGE_NBT -> getItemDamageNBT();
+                        };
+                        for (ItemStack stack : stacks) {
+                            map.getOrCreate(stack).insertApplicator(i, applicator);
                         }
-                        map.getOrCreate(stack).insertApplicator(i, applicator);
                     }
                 }
             }
-            for (GTRecipeInput input : recipe.getRecipe().getFluidInputs()) {
-                if (input instanceof GTRecipeFluidInput) {
-                    boolean nbtMap;
-                    FlagApplicator<FluidStack> applicator = new SingleFlagApplicator<>(flag);
-                    NBTMatcher matcher = input.getNBTMatcher();
-                    if (matcher != null) {
-                        if (matcher != NBTMatcher.ANY) {
-                            NBTCondition condition = input.getNBTMatchingCondition();
-                            final byte finalFlag = flag;
-                            applicator = (c, e) -> e | (matcher.evaluate(c, condition) ? (1L << finalFlag) : 0);
-                        }
-                        nbtMap = false;
-                    } else nbtMap = true;
+            int offset = itemIngredients.size();
 
-                    flags += (1L << flag);
-                    flag++;
-                    FluidStackApplicatorMap map = nbtMap ? getFluidNBT() : getFluid();
-                    map.getOrCreate(input.getInputFluidStack()).insertApplicator(i, applicator);
+            for (byte j = 0; j < fluidIngredients.size(); j++) {
+                GTFluidIngredient ingredient = fluidIngredients.get(j);
+                FlagApplicator<FluidStack> applicator;
+                if (ingredient.getMatcher() == null) applicator = new SingleFlagApplicator<>((byte) (offset + j));
+                else {
+                    byte finalJ = j;
+                    applicator = (context, flags) -> ingredient.getMatcher().matches(context) ? flags | (1L << finalJ) :
+                            flags;
+                }
+                for (FluidStackMatchingContext context : FluidStackMatchingContext.VALUES) {
+                    Collection<FluidStack> stacks = ingredient.getMatchingStacksWithinContext(context);
+                    if (!stacks.isEmpty()) {
+                        FluidStackApplicatorMap map = switch (context) {
+                            case FLUID -> getFluid();
+                            case FLUID_NBT -> getFluidNBT();
+                        };
+                        for (FluidStack stack : stacks) {
+                            map.getOrCreate(stack).insertApplicator(i, applicator);
+                        }
+                    }
                 }
             }
-            recipe.setFlagsThreshold(flags);
         }
         filters.trim(2);
-
+        valid = true;
     }
 }

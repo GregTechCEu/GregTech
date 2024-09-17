@@ -5,6 +5,10 @@ import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockContro
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.lookup.property.BiomeInhabitedProperty;
+import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
+import gregtech.api.recipes.lookup.property.DimensionInhabitedProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,51 +16,53 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Recipe Logic for a Multiblock that does not require power.
  */
-public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
+public class PrimitiveRecipeLogic extends DistributedRecipeLogic {
 
     public PrimitiveRecipeLogic(RecipeMapPrimitiveMultiblockController tileEntity, RecipeMap<?> recipeMap) {
-        super(tileEntity, recipeMap);
-    }
-
-    @Override
-    protected long getEnergyInputPerSecond() {
-        return Integer.MAX_VALUE;
-    }
-
-    @Override
-    protected long getEnergyStored() {
-        return Integer.MAX_VALUE;
-    }
-
-    @Override
-    protected long getEnergyCapacity() {
-        return Integer.MAX_VALUE;
+        super(tileEntity, recipeMap, false);
     }
 
     @Override
     protected boolean drawEnergy(long recipeEUt, boolean simulate) {
-        return true; // spoof energy being drawn
-    }
-
-    @Override
-    protected boolean hasEnoughPower(long eut, int duration) {
         return true;
     }
 
     @Override
-    public long getMaxVoltage() {
-        return GTValues.LV;
+    protected boolean produceEnergy(long eu, boolean simulate) {
+        return true;
     }
 
     @Override
-    protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
-        ocParams.setEut(1L);
-        super.runOverclockingLogic(ocParams, ocResult, propertyStorage, maxVoltage);
+    protected @NotNull PropertySet computePropertySet() {
+        PropertySet set = PropertySet.empty();
+        set.add(new DimensionInhabitedProperty(this.getMetaTileEntity().getWorld().provider.getDimension()));
+        set.add(new BiomeInhabitedProperty(this.getMetaTileEntity().getWorld().getBiomeForCoordsBody(this.getMetaTileEntity().getPos())));
+        set.add(new CleanroomFulfilmentProperty(getCleanroomPredicate()));
+        return set;
     }
 
     @Override
-    public long getMaximumOverclockVoltage() {
-        return GTValues.V[GTValues.LV];
+    public long getMaxVoltageIn() {
+        return 0;
+    }
+
+    @Override
+    public long getMaxVoltageOut() {
+        return 0;
+    }
+
+    @Override
+    public long getMaxAmperageIn() {
+        return 0;
+    }
+
+    @Override
+    public long getMaxAmperageOut() {
+        return 0;
+    }
+
+    @Override
+    protected boolean canSubtick() {
+        return false;
     }
 }

@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.SteamMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.logic.RecipeRunner;
 import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.texture.Textures;
 
@@ -131,8 +132,8 @@ public class SteamRockBreaker extends SteamMetaTileEntity {
         }
 
         @Override
-        protected boolean shouldSearchForRecipes() {
-            return hasValidFluids && super.shouldSearchForRecipes();
+        protected boolean shouldSearchForRecipes(RecipeRunner runner) {
+            return hasValidFluids && super.shouldSearchForRecipes(runner);
         }
     }
 }

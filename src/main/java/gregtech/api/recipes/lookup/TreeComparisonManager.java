@@ -3,7 +3,6 @@ package gregtech.api.recipes.lookup;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-
 import gregtech.api.recipes.ingredients.old.IntCircuitIngredient;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.unification.OreDictUnifier;
@@ -11,21 +10,17 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
-
 import gregtech.common.blocks.BlockFusionCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
-
 import gregtech.common.items.MetaItems;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -80,9 +75,9 @@ public final class TreeComparisonManager {
     }
 
     private static void assemblerLookup() {
-
         List<LookupHelper> helpers = new ObjectArrayList<>();
-        LookupHelper helper = new LookupHelper("Assembler", "insufficient", RecipeMaps.ASSEMBLER_RECIPES, ASSEMBLER, V[UV]);
+        LookupHelper helper = new LookupHelper("Assembler", "insufficient", RecipeMaps.ASSEMBLER_RECIPES, ASSEMBLER,
+                V[UV]);
         helper.add(HI_AMP_TRANSFORMER[UV].getStackForm());
         helper.add(ENERGY_INPUT_HATCH_4A[5].getStackForm(1));
         helper.add(wireGtOctal, Europium, 2);
@@ -136,14 +131,16 @@ public final class TreeComparisonManager {
         helper.add(rotor, Titanium, 2);
         helper.add(pipeNormalFluid, Titanium, 4);
         helper.add(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.TITANIUM_STABLE));
-        helper.add(MetaBlocks.MULTIBLOCK_CASING.getItemVariant(BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING, 2));
+        helper.add(MetaBlocks.MULTIBLOCK_CASING
+                .getItemVariant(BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING, 2));
         helpers.add(helper);
 
         helper = helper.newInstance("extra");
         helper.add(rotor, Titanium, 2);
         helper.add(pipeNormalFluid, Titanium, 4);
         helper.add(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.TITANIUM_STABLE));
-        helper.add(MetaBlocks.MULTIBLOCK_CASING.getItemVariant(BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING, 2));
+        helper.add(MetaBlocks.MULTIBLOCK_CASING
+                .getItemVariant(BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING, 2));
         helper.add(SolderingAlloy.getFluid(200));
         helper.add(new ItemStack(Blocks.WOODEN_BUTTON, 34));
         helper.add(HI_AMP_TRANSFORMER[LuV].getStackForm(4));
@@ -171,7 +168,7 @@ public final class TreeComparisonManager {
         helper.add(Oxygen.getFluid(200));
         helper.add(2);
         helpers.add(helper);
-        
+
         helper = helper.newInstance("excessive");
         helper.add(dust, WroughtIron, 64);
         helper.add(2);
@@ -227,9 +224,9 @@ public final class TreeComparisonManager {
     }
 
     private static void assemblyLineLookup() {
-
         List<LookupHelper> helpers = new ObjectArrayList<>();
-        LookupHelper helper = new LookupHelper("Assembly Line", "insufficient", RecipeMaps.ASSEMBLY_LINE_RECIPES, ASSEMBLY_LINE, 6000);
+        LookupHelper helper = new LookupHelper("Assembly Line", "insufficient", RecipeMaps.ASSEMBLY_LINE_RECIPES,
+                ASSEMBLY_LINE, 6000);
         helper.add(stickLong, SamariumMagnetic);
         helper.add(stickLong, HSSS, 2);
         helper.add(ring, HSSS, 2);
@@ -273,7 +270,6 @@ public final class TreeComparisonManager {
         helper.add(Steam.getFluid(100));
         helpers.add(helper);
 
-
         helper = helper.newInstance("exact");
         helper.add(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL));
         helper.add(circuit, MarkerMaterials.Tier.UHV, 4);
@@ -286,7 +282,6 @@ public final class TreeComparisonManager {
         helper.add(SolderingAlloy.getFluid(L * 8));
         helper.add(YttriumBariumCuprate.getFluid(L * 8));
         helpers.add(helper);
-
 
         helper = helper.newInstance("overlap");
         helper.add(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.FUSION_COIL));
@@ -379,7 +374,7 @@ public final class TreeComparisonManager {
 
         helper = helper.newInstance("extra");
         helper.add(LATHE[5].getStackForm());
-        helper.add(dust, Ash ,5);
+        helper.add(dust, Ash, 5);
         helper.add(dust, DarkAsh, 10);
         helper.add(dust, SodaAsh, 15);
         helper.add(dust, Potash, 20);
@@ -393,12 +388,15 @@ public final class TreeComparisonManager {
 
     private static void report(String name, String type, int items, int fluids, long[] nsMap, long[] nsTree) {
         try (var writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
-            writer.write(name + " MAP " + type + " w/ " + items + " items & " + fluids + " fluids," + StringUtils.join(nsMap, ',') + "\n");
-            writer.write(name + " TREE " + type + " w/ " + items + " items & " + fluids + " fluids," + StringUtils.join(nsTree, ',') + "\n");
+            writer.write(name + " MAP " + type + " w/ " + items + " items & " + fluids + " fluids," +
+                    StringUtils.join(nsMap, ',') + "\n");
+            writer.write(name + " TREE " + type + " w/ " + items + " items & " + fluids + " fluids," +
+                    StringUtils.join(nsTree, ',') + "\n");
         } catch (IOException ignored) {}
     }
 
     private static class LookupHelper {
+
         long voltage;
         String name;
         String type;

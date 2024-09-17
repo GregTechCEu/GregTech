@@ -3,6 +3,7 @@ package gregtech.common.terminal.app.console;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverWithUI;
@@ -127,26 +128,25 @@ public class MachineConsoleWidget extends WidgetGroup {
                 // AbstractRecipeLogic
                 AbstractRecipeLogic recipeLogic = mte.getCapability(GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC,
                         facing);
-                if (recipeLogic != null) {
+                if (recipeLogic instanceof RecipeLogicEnergy e) {
                     addWidget(new CycleButtonWidget(35, y, 20, 20,
-                            recipeLogic.getAvailableOverclockingTiers(), recipeLogic::getOverclockTier,
-                            recipeLogic::setOverclockTier)
+                            e.getAvailableOverclockingTiers(), e::getOverclockTier,
+                            e::setOverclockTier)
                                     .setTooltipHoverString("gregtech.gui.overclock.description")
                                     .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
                     addWidget(new ProgressWidget(recipeLogic::getProgressPercent, 60, y, 63, 20,
                             GuiTextures.PROGRESS_BAR_ARC_FURNACE, ProgressWidget.MoveType.HORIZONTAL));
-                    if (recipeLogic instanceof RecipeLogicSteam) {
-                        y += 25;
-                        addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
-                                .setClickListener(clickData -> {
-                                    EnumFacing currentVentingSide = ((RecipeLogicSteam) recipeLogic).getVentingSide();
-                                    if (currentVentingSide == facing || mte.getFrontFacing() == facing) return;
-                                    ((RecipeLogicSteam) recipeLogic).setVentingSide(facing);
-                                })
-                                .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(),
-                                        TerminalTheme.COLOR_B_2.getColor())
-                                .setIcon(new TextTexture("terminal.console.venting", -1)));
-                    }
+                } else if (recipeLogic instanceof RecipeLogicSteam) {
+                    y += 25;
+                    addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
+                            .setClickListener(clickData -> {
+                                EnumFacing currentVentingSide = ((RecipeLogicSteam) recipeLogic).getVentingSide();
+                                if (currentVentingSide == facing || mte.getFrontFacing() == facing) return;
+                                ((RecipeLogicSteam) recipeLogic).setVentingSide(facing);
+                            })
+                            .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(),
+                                    TerminalTheme.COLOR_B_2.getColor())
+                            .setIcon(new TextTexture("terminal.console.venting", -1)));
                 }
                 y += 25;
             }

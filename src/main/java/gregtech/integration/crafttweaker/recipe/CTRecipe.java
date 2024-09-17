@@ -7,7 +7,6 @@ import gregtech.api.util.GTUtility;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.mc1120.liquid.MCLiquidStack;
 import stanhebben.zenscript.annotations.Optional;
@@ -35,7 +34,7 @@ public class CTRecipe {
 
     @ZenGetter("inputs")
     public List<InputIngredient> getInputs() {
-        return this.backingRecipe.getInputs().stream()
+        return this.backingRecipe.getItemIngredients().stream()
                 .map(InputIngredient::new)
                 .collect(Collectors.toList());
     }
@@ -57,14 +56,9 @@ public class CTRecipe {
 
     @ZenGetter("fluidInputs")
     public List<ILiquidStack> getFluidInputs() {
-        return this.backingRecipe.getFluidInputs().stream()
+        return this.backingRecipe.getFluidIngredients().stream()
                 .map(fi -> new MCLiquidStack(fi.getInputFluidStack()))
                 .collect(Collectors.toList());
-    }
-
-    @ZenMethod
-    public boolean hasInputFluid(ILiquidStack liquidStack) {
-        return this.backingRecipe.hasInputFluid(CraftTweakerMC.getLiquidStack(liquidStack));
     }
 
     @ZenGetter("fluidOutputs")

@@ -1,24 +1,19 @@
 package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
-
 import gregtech.api.recipes.lookup.property.CircuitPresenceProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
 import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
-
 import gregtech.common.items.MetaItems;
-
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-
 import net.minecraft.nbt.NBTTagByte;
-
 import net.minecraft.nbt.NBTTagCompound;
 
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,6 +112,11 @@ public final class CircuitProperty extends RecipePropertyWithFilter<Byte> {
     @Override
     public @NotNull Filter<Byte> getNewFilter() {
         return new CircuitFilterMap();
+    }
+
+    @Override
+    public boolean matches(PropertySet properties, Byte value) {
+        return properties.contains(CircuitPresenceProperty.get(value));
     }
 
     private static final class CircuitFilterMap extends Byte2ObjectArrayMap<BitSet> implements Filter<Byte> {

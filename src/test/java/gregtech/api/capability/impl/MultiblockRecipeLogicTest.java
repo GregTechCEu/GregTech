@@ -199,7 +199,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            public long getMaxVoltage() {
+            public long getMaxVoltageIn() {
                 return 32;
             }
 
@@ -276,7 +276,7 @@ public class MultiblockRecipeLogicTest {
         mbl.updateWorkable();
         MatcherAssert.assertThat(mbl.isActive, is(true));
         MatcherAssert.assertThat(mbl.isOutputsFull, is(false));
-        mbl.completeRecipe();
+        mbl.attemptRecipeCompletion();
         MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(mbl.getOutputInventory().getStackInSlot(0),
                 new ItemStack(Blocks.STONE, 1)), is(true));
     }
@@ -446,7 +446,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            public long getMaxVoltage() {
+            public long getMaxVoltageIn() {
                 return 32;
             }
 
@@ -546,7 +546,7 @@ public class MultiblockRecipeLogicTest {
         mbl.updateWorkable();
         MatcherAssert.assertThat(mbl.isActive, is(true));
         MatcherAssert.assertThat(mbl.isOutputsFull, is(false));
-        mbl.completeRecipe();
+        mbl.attemptRecipeCompletion();
         MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(mbl.getOutputInventory().getStackInSlot(0),
                 new ItemStack(Blocks.STONE, 1)), is(true));
     }
@@ -673,7 +673,7 @@ public class MultiblockRecipeLogicTest {
             }
 
             @Override
-            public long getMaxVoltage() {
+            public long getMaxVoltageIn() {
                 return 32;
             }
 
@@ -731,7 +731,7 @@ public class MultiblockRecipeLogicTest {
         // 1 problem is 10% slower. 10 * 1.1 = 11
         MatcherAssert.assertThat(mbl.maxProgressTime, is(11));
 
-        mbl.completeRecipe();
+        mbl.attemptRecipeCompletion();
 
         // fix old problems
         for (int i = 0; i < 6; i++) {

@@ -448,10 +448,10 @@ public class MinerLogic {
     protected static void applyTieredHammerNoRandomDrops(@NotNull IBlockState blockState, List<ItemStack> drops,
                                                          int fortuneLevel, @NotNull RecipeMap<?> map, int tier) {
         ItemStack itemStack = GTUtility.toItem(blockState);
-        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList());
+        Recipe recipe = map.find(Collections.singletonList(itemStack), Collections.emptyList(), Objects::nonNull);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
-            for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getEUt()), tier,
+            for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getVoltage()), tier,
                     map)) {
                 outputStack = outputStack.copy();
                 if (OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {

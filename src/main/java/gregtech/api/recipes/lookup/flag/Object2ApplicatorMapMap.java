@@ -2,7 +2,6 @@ package gregtech.api.recipes.lookup.flag;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

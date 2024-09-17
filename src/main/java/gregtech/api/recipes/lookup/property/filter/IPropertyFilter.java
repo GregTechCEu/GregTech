@@ -26,8 +26,15 @@ public interface IPropertyFilter<T> {
     // 2 cleanroom filter
     // 3 eu to start filter
     // 4 temperature filter
+    // 5 dimension filter
+    // 6 CWUt filter
+    // 7 biome filter
 
-    @NotNull Filter<T> getNewFilter();
+    /**
+     * @return a new filter instance for filtering during recipe search.
+     */
+    @NotNull
+    Filter<T> getNewFilter();
 
     interface Filter<T> {
 

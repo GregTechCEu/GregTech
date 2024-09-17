@@ -2,13 +2,10 @@ package gregtech.api.recipes.properties.impl;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.multiblock.CleanroomType;
-
 import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
 import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -17,6 +14,7 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +79,13 @@ public final class CleanroomProperty extends RecipePropertyWithFilter<CleanroomT
         return new CleanroomFilter();
     }
 
-    private static final class CleanroomFilter extends Object2ObjectArrayMap<CleanroomType, BitSet> implements IPropertyFilter.Filter<CleanroomType> {
+    @Override
+    public boolean matches(PropertySet properties, CleanroomType value) {
+        return properties.getDefaultable(CleanroomFulfilmentProperty.EMPTY).isFulfilled(value);
+    }
+
+    private static final class CleanroomFilter extends Object2ObjectArrayMap<CleanroomType, BitSet>
+                                               implements IPropertyFilter.Filter<CleanroomType> {
 
         private final BitSet zeroReference = new BitSet();
 
