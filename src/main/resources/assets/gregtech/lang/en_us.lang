@@ -5370,7 +5370,7 @@ gregtech.universal.tooltip.uses_per_op=Uses §f%,d EU/operation
 gregtech.universal.tooltip.base_production_eut=§eBase Production: §f%,d EU/t
 gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
-gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
+gregtech.universal.tooltip.terrain_resist=§eThis Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
 gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
