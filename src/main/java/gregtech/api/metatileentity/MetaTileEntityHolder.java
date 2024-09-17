@@ -89,9 +89,12 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
      * Also can use certain data to preinit the block before data is synced
      */
     @Override
-    public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
+    public MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity sampleMetaTileEntity,
+                                            @Nullable NBTTagCompound tagCompound) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+        if (tagCompound != null && !tagCompound.isEmpty())
+            getMetaTileEntity().readFromNBT(tagCompound);
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             writeCustomData(INITIALIZE_MTE, buffer -> {
@@ -395,7 +398,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
                                  IBlockState newState) {
         return oldState.getBlock() != newState.getBlock(); // MetaTileEntityHolder should never refresh (until block
-                                                           // changes)
+        // changes)
     }
 
     @Override

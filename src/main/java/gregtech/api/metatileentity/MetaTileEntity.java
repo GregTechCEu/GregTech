@@ -35,6 +35,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
@@ -45,6 +46,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -109,6 +111,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -159,6 +162,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
+
+    @Nullable
+    private UUID owner = null;
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -505,6 +511,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                     MetaTileEntityGuiFactory.open(playerIn, this);
                 } else {
                     MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                }
+
+                if (getOwner() == null) {
+                    this.owner = playerIn.getUniqueID();
                 }
             }
             return true;
@@ -919,13 +929,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public final ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
+        final boolean isCreativePickBlock = player.isCreative() && TooltipHelper.isCtrlDown();
         if (hitCuboid.data instanceof CoverRayTracer.CoverSideData coverSideData) {
             Cover cover = getCoverAtSide(coverSideData.side);
-            return cover == null ? ItemStack.EMPTY : cover.getPickItem();
+            return cover == null || isCreativePickBlock ? ItemStack.EMPTY : cover.getPickItem();
         } else if (hitCuboid.data == null || hitCuboid.data instanceof CoverRayTracer.PrimaryBoxData) {
             // data is null -> MetaTileEntity hull hit
             Cover cover = getCoverAtSide(result.sideHit);
-            if (cover != null) {
+            if (cover != null && !isCreativePickBlock) {
                 return cover.getPickItem();
             }
             return getPickItem(player);
@@ -1293,6 +1304,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.writeCoverNBT(data, this);
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
+
+        if (owner != null)
+            data.setUniqueId("Owner", owner);
+
         return data;
     }
 
@@ -1318,6 +1333,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
+
+        if (data.hasKey("Owner"))
+            this.owner = data.getUniqueId("Owner");
     }
 
     @Override
@@ -1346,12 +1364,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     /**
-     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner by UUID
      * <p>
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement() {}
+    public void onPlacement(@Nullable EntityLivingBase placer) {
+        if (placer instanceof EntityPlayer player) {
+            this.owner = player.getUniqueID();
+        }
+    }
+
+    /**
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner of Null
+     * <p>
+     * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
+     * this should be manually called immediately afterwards
+     */
+    public final void onPlacement() {
+        onPlacement(null);
+    }
 
     /**
      * Called from breakBlock right before meta tile entity destruction
@@ -1449,6 +1483,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public boolean getWitherProof() {
         return false;
+    }
+
+    @Nullable
+    public UUID getOwner() {
+        return owner;
     }
 
     public final void toggleMuffled() {
