@@ -1,7 +1,6 @@
 package gregtech.api.capability;
 
 import gregtech.api.cover.CoverableView;
-
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 
