@@ -193,9 +193,13 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     public void onRemoval() {
         if (getWorld().isRemote) return;
         isDead = true;
-        var oldPositions = new HashSet<>(storagePositions);
-        oldPositions.forEach(this::removeStorage);
+        for (BlockPos pos : storagePositions) {
+            IQuantumStorage<?> storage = getStorage(pos);
+            if (storage != null) storage.setDisconnected();
+        }
         handler.invalidate();
+        storagePositions.clear();
+        storageInstances.clear();
     }
 
     @Override
@@ -210,36 +214,43 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         super.onLoad();
     }
 
-    @Override
-    public void addStorage(@NotNull IQuantumStorage<?> storage) {
-        if (storagePositions.add(storage.getPos())) {
-            storageInstances.put(storage.getPos(), new WeakReference<>(storage));
-            storage.setConnected(this);
-            addEnergy(storage);
-            switch (storage.getType()) {
-                case ITEM, FLUID -> handler.rebuildCache();
-            }
-            markDirty();
-        } else {
-            GTLog.logger.warn("Tried to add storage [{}] whose pos already exists!", storage);
-        }
-    }
+//    @Override
+//    public void addStorage(@NotNull IQuantumStorage<?> storage) {
+//        if (storagePositions.add(storage.getPos())) {
+//            storageInstances.put(storage.getPos(), new WeakReference<>(storage));
+//            storage.setConnected(this);
+//            addEnergy(storage);
+//            switch (storage.getType()) {
+//                case ITEM, FLUID -> handler.rebuildCache();
+//            }
+//            markDirty();
+//        } else {
+//            GTLog.logger.warn("Tried to add storage [{}] whose pos already exists!", storage);
+//        }
+//    }
 
-    @Override
-    public void removeStorage(@NotNull BlockPos pos) {
-        if (storagePositions.remove(pos)) {
-            var storage = getStorage(pos);
-            if (storage != null) {
-                removeEnergy(storage);
-                storage.setDisconnected();
-                switch (storage.getType()) {
-                    case ITEM, FLUID -> handler.rebuildCache();
-                }
-            }
-            storageInstances.remove(pos);
-            markDirty();
-        }
-    }
+//    @Override
+//    public void removeStorage(@NotNull BlockPos pos) {
+//        if (storagePositions.contains(pos)) {
+//            var storage = getStorage(pos);
+//            if (storage != null) {
+//                removeEnergy(storage);
+//                storage.setDisconnected();
+//                switch (storage.getType()) {
+//                    case ITEM, FLUID -> handler.rebuildCache();
+//                }
+//            }
+//            if (isDead) {
+//                storagePositions.remove(pos);
+//                var storage = getStorage(pos);
+//                if (storage != null) storage.setDisconnected();
+//                storageInstances.remove(pos);
+//            } else {
+//                rebuildNetwork();
+//                markDirty();
+//            }
+//        }
+//    }
 
     // Used when this controller is initially placed. Try to find all possible
     // storage instances that are connected and within our distance radius
@@ -280,7 +291,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (storage.isConnected() && !storage.getControllerPos().equals(getPos())) continue;
 
             // valid chest/tank located, add it
-            addStorage(storage);
+            storageInstances.put(pos, new WeakReference<>(storage));
+            storagePositions.add(pos);
+            storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
 
@@ -288,6 +301,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = pos.offset(facing);
                 if (checked.contains(offsetPos) || getPos().equals(offsetPos)) continue;
+                if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
 
                 // add a new pos to search
                 if (checkStorageNeighbor(mte, facing))
@@ -304,7 +318,15 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             // if the pos is air, there's nothing to check
             if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
 
-            removeStorage(pos);
+            IQuantumStorage<?> storage = oldInstances.get(pos).get();
+            if (storage == null) {
+                MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
+                if (!(mte instanceof IQuantumStorage<?> quantumStorage)) {
+                    continue;
+                }
+                storage = quantumStorage;
+            }
+            storage.setDisconnected();
         }
         handler.rebuildCache();
         calculateEnergyUsage();
