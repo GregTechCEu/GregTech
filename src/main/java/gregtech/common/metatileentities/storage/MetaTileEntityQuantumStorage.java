@@ -129,36 +129,6 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         tryFindNetwork();
     }
 
-    private void tryFindNetwork() {
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            if (getWorld().getBlockState(getPos().offset(facing)).getBlock() == Blocks.AIR) continue;
-            MetaTileEntity mte;
-            if (getNeighbor(facing) instanceof IGregTechTileEntity gtte) {
-                mte = gtte.getMetaTileEntity();
-            } else {
-                continue;
-            }
-
-            IQuantumController candidate = null;
-            if (mte instanceof IQuantumStorage<?>storage) {
-                if (storage.isConnected()) {
-                    IQuantumController controller = storage.getQuantumController();
-                    if (controller != null && controller.canConnect(this)) {
-                        candidate = controller;
-                    }
-                }
-            } else if (mte instanceof IQuantumController quantumController) {
-                if (quantumController.canConnect(this)) {
-                    candidate = quantumController;
-                }
-            }
-            if (candidate != null) {
-                candidate.rebuildNetwork();
-                return;
-            }
-        }
-    }
-
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
