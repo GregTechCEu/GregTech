@@ -43,7 +43,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             var fluid = this.syncHandler.getFluid();
             if (fluid == null) return;
 
-            tooltip.add(fluid.getLocalizedName());
+            tooltip.add(fluid.getLocalizedName()).newLine();
             tooltip.addLine(IKey.lang("gregtech.fluid.amount", fluid.amount, this.syncHandler.getCapacity()));
 
             // Add various tooltips from the material
@@ -51,7 +51,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             if (formula != null) {
                 for (String s : formula) {
                     if (s.isEmpty()) continue;
-                    tooltip.add(s);
+                    tooltip.add(s).newLine();
                 }
             }
 

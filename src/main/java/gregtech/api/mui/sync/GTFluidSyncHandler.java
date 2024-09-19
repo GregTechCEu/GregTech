@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class GTFluidSyncHandler extends SyncHandler {
 
     private static final int TRY_CLICK_CONTAINER = 1;
+    private static final int UPDATE_TANK = 2;
 
     private final IFluidTank tank;
     private boolean canDrainSlot = true;
@@ -57,6 +58,13 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
+        switch (id) {
+            case TRY_CLICK_CONTAINER -> replaceCursorItemStack(NetworkUtils.readItemStack(buf));
+            case UPDATE_TANK -> {
+                tank.drain(Integer.MAX_VALUE, true);
+                tank.fill(NetworkUtils.readFluidStack(buf), true);
+            }
+        }
         if (id == TRY_CLICK_CONTAINER) {
             replaceCursorItemStack(NetworkUtils.readItemStack(buf));
         }
@@ -88,20 +96,24 @@ public class GTFluidSyncHandler extends SyncHandler {
         if (tankFluid == null && heldFluid == null)
             return ItemStack.EMPTY;
 
+        ItemStack returnable = ItemStack.EMPTY;
+
         // tank is empty, try to fill tank
         if (canFillSlot && tankFluid == null) {
-            return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
 
             // hand is empty, try to drain tank
         } else if (canDrainSlot && heldFluid == null) {
-            return drainTankFromStack(fluidHandlerItem, tankFluid, tryFillAll);
+            returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
 
             // neither is empty but tank is not full, try to fill tank
         } else if (canFillSlot && tank.getFluidAmount() < tank.getCapacity() && heldFluid != null) {
-            return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
         }
 
-        return ItemStack.EMPTY;
+        syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+
+        return returnable;
     }
 
     private ItemStack fillTankFromStack(IFluidHandlerItem fluidHandler, @NotNull FluidStack heldFluid,
@@ -141,15 +153,15 @@ public class GTFluidSyncHandler extends SyncHandler {
         return itemStackEmptied;
     }
 
-    private ItemStack drainTankFromStack(IFluidHandlerItem fluidHandler, FluidStack tankFluid, boolean tryFillAll) {
+    private ItemStack drainTankIntoStack(IFluidHandlerItem fluidHandler, FluidStack tankFluid, boolean tryFillAll) {
         ItemStack heldItem = getSyncManager().getCursorItem();
         if (heldItem.isEmpty()) return ItemStack.EMPTY;
 
         ItemStack fluidContainer = fluidHandler.getContainer();
         int filled = fluidHandler.fill(tankFluid, false);
         if (filled > 0) {
-            tank.drain(filled, true);
             fluidHandler.fill(tankFluid, true);
+            tank.drain(filled, true);
             if (tryFillAll) {
                 // Determine how many more items we can fill. One item is already filled.
                 // Integer division means it will round down, so it will only fill equivalent fluid amounts.
@@ -160,6 +172,7 @@ public class GTFluidSyncHandler extends SyncHandler {
                 tank.drain(filled * additional, true);
                 fluidContainer.grow(additional);
             }
+            fluidContainer = fluidHandler.getContainer();
             replaceCursorItemStack(fluidContainer);
             playSound(tankFluid, false);
             return fluidContainer;
