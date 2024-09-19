@@ -13,8 +13,11 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +34,15 @@ import net.minecraftforge.fluids.IFluidTank;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart
@@ -114,12 +124,19 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(workingEnabled);
+        for (var tank : fluidTankList.getFluidTanks()) {
+            NetworkUtils.writeFluidStack(buf, tank.getFluid());
+        }
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.workingEnabled = buf.readBoolean();
+        for (var tank : fluidTankList.getFluidTanks()) {
+            var fluid = NetworkUtils.readFluidStack(buf);
+            tank.fill(fluid, true);
+        }
     }
 
     @Override
@@ -187,6 +204,35 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
         abilityList.addAll(fluidTankList.getFluidTanks());
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        int rowSize = (int) Math.sqrt(numSlots);
+
+        List<GTFluidSlot> fluidSlots = new ArrayList<>();
+        for (int i = 0; i < numSlots; i++) {
+            fluidSlots.add(new GTFluidSlot());
+        }
+
+        return GTGuis.createPanel(this, 176, 18 + 18 * rowSize + 94)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(new Grid()
+                        .margin(0)
+                        .leftRel(0.5f)
+                        .top(17)
+                        .mapTo(rowSize, fluidSlots,
+                                (i, slot) -> slot.syncHandler(GTFluidSlot.sync(fluidTankList.getTankAt(i))
+                                        .canDrainSlot(true)
+                                        .canFillSlot(!isExportHatch))
+                                        .background(GTGuiTextures.FLUID_SLOT))
+                        .coverChildren())
+                .bindPlayerInventory();
     }
 
     @Override
