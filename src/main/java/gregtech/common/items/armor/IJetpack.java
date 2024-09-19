@@ -89,7 +89,7 @@ public interface IJetpack {
                     float speedForward = (float) (player.isSprinting() ? speedSideways * getSprintSpeedModifier() :
                             speedSideways);
 
-                    boolean anyKeyPressed = false;
+                    boolean anyKeyPressed = flyKeyDown || descendKeyDown;
                     if (KeyBind.VANILLA_FORWARD.isKeyDown(player)) {
                         player.moveRelative(0, 0, speedForward, speedForward);
                         anyKeyPressed = true;
@@ -107,7 +107,8 @@ public interface IJetpack {
                         anyKeyPressed = true;
                     }
 
-                    if (!anyKeyPressed && hover && cancelInertia) {
+                    /* hover check not needed, because of "flyKeyDown || hover && !player.onGround" check */
+                    if (!anyKeyPressed && cancelInertia) {
                         player.motionX *= 0.75;
                         player.motionY *= 0.75;
                         player.motionZ *= 0.75;
