@@ -138,7 +138,7 @@ public class MultiblockDisplayText {
                 String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(
-                        GTValues.VNF[GTUtility.getTierByVoltage(energyUsage)]);
+                        GTValues.VNF[GTUtility.getOCTierByVoltage(energyUsage)]);
 
                 textList.add(TextComponentUtil.translationWithColor(
                         TextFormatting.GRAY,

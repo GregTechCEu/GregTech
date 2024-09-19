@@ -8,6 +8,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.MetaTileEntities;
 
+import net.minecraft.util.ResourceLocation;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -38,8 +40,10 @@ public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
         if (json.isJsonObject()) {
             for (String valid : valids) {
                 JsonElement id = json.getAsJsonObject().get(valid);
-                if (id != null && id.isJsonPrimitive())
-                    return GregTechAPI.MTE_REGISTRY.getObject(GTUtility.gregtechId(id.getAsString()));
+                if (id != null && id.isJsonPrimitive()) {
+                    ResourceLocation location = GTUtility.gregtechId(id.getAsString());
+                    return GregTechAPI.mteManager.getRegistry(location.getNamespace()).getObject(location);
+                }
             }
         }
         return null;

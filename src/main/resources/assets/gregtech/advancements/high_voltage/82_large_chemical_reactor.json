@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.high_voltage.82_large_chemical_reactor.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1023
     }
   },
@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1023
           }
         ]

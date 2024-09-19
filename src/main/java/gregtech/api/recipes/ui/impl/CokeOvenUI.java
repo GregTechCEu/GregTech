@@ -19,7 +19,7 @@ public class CokeOvenUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
      * @param recipeMap the recipemap corresponding to this ui
      */
     public CokeOvenUI(@NotNull R recipeMap) {
-        super(recipeMap, false, false, false, false);
+        super(recipeMap, false, false, false, false, false);
     }
 
     @Override

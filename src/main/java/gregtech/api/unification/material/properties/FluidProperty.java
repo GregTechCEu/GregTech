@@ -1,51 +1,114 @@
 package gregtech.api.unification.material.properties;
 
+import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorage;
+import gregtech.api.fluids.store.FluidStorageImpl;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
+import gregtech.api.unification.material.Material;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FluidProperty implements IMaterialProperty {
+public class FluidProperty implements IMaterialProperty, FluidStorage {
 
-    private final FluidStorage storage = new FluidStorage();
-    private @Nullable FluidStorageKey primaryKey = null;
+    private final FluidStorageImpl storage = new FluidStorageImpl();
+    private FluidStorageKey primaryKey = null;
     private @Nullable Fluid solidifyingFluid = null;
 
     public FluidProperty() {}
 
-    public @NotNull FluidStorage getStorage() {
-        return this.storage;
+    /**
+     * Helper constructor which automatically calls {@link #enqueueRegistration(FluidStorageKey, FluidBuilder)} for a
+     * builder.
+     * <p>
+     * This is primarily useful for adding FluidProperties to materials after they are registered with a single fluid
+     * stored.
+     *
+     * @param key     the fluid storage key to store the builder with
+     * @param builder the builder to enqueue
+     */
+    public FluidProperty(@NotNull FluidStorageKey key, @NotNull FluidBuilder builder) {
+        enqueueRegistration(key, builder);
     }
 
     /**
-     * @return the FluidStorageKey fluid is stored as primarily
+     * Obsolete method, FluidProperty now contains this functionality.
+     *
+     * @deprecated {@link FluidStorage}
      */
-    public @Nullable FluidStorageKey getPrimaryKey() {
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    public @NotNull FluidStorage getStorage() {
+        return this;
+    }
+
+    /**
+     * @see FluidStorageImpl#registerFluids(Material)
+     */
+    @ApiStatus.Internal
+    public void registerFluids(@NotNull Material material) {
+        this.storage.registerFluids(material);
+    }
+
+    @Override
+    public void enqueueRegistration(@NotNull FluidStorageKey key, @NotNull FluidBuilder builder) {
+        storage.enqueueRegistration(key, builder);
+        if (primaryKey == null) {
+            primaryKey = key;
+        }
+    }
+
+    @Override
+    public void store(@NotNull FluidStorageKey key, @NotNull Fluid fluid) {
+        storage.store(key, fluid);
+        if (primaryKey == null) {
+            primaryKey = key;
+        }
+    }
+
+    @Override
+    public @Nullable Fluid get(@NotNull FluidStorageKey key) {
+        return storage.get(key);
+    }
+
+    @Override
+    public @Nullable FluidBuilder getQueuedBuilder(@NotNull FluidStorageKey key) {
+        return storage.getQueuedBuilder(key);
+    }
+
+    /**
+     *
+     * @return the key the fluid is stored with primarily
+     */
+    public @NotNull FluidStorageKey getPrimaryKey() {
         return primaryKey;
     }
 
     /**
      * @param primaryKey the key to use primarily
      */
-    public void setPrimaryKey(@Nullable FluidStorageKey primaryKey) {
+    public void setPrimaryKey(@NotNull FluidStorageKey primaryKey) {
         this.primaryKey = primaryKey;
     }
 
     @Override
-    public void verifyProperty(MaterialProperties properties) {}
+    public void verifyProperty(MaterialProperties properties) {
+        if (this.primaryKey == null) {
+            throw new IllegalStateException("FluidProperty cannot be empty");
+        }
+    }
 
     /**
      * @return the Fluid which solidifies into the material.
      */
-
-    public Fluid solidifiesFrom() {
+    public @Nullable Fluid solidifiesFrom() {
         if (this.solidifyingFluid == null) {
-            return getStorage().get(FluidStorageKeys.LIQUID);
+            return storage.get(FluidStorageKeys.LIQUID);
         }
         return solidifyingFluid;
     }

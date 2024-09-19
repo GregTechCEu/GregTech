@@ -1,4 +1,4 @@
-//version: 1707682661
+//version: 1723428048
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -7,13 +7,23 @@
  */
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.gtnewhorizons.retrofuturagradle.MinecraftExtension
+import com.gtnewhorizons.retrofuturagradle.mcp.MCPTasks
+import com.gtnewhorizons.retrofuturagradle.minecraft.MinecraftTasks
 import com.gtnewhorizons.retrofuturagradle.mcp.ReobfuscatedJar
+import com.gtnewhorizons.retrofuturagradle.minecraft.RunMinecraftTask
+import com.gtnewhorizons.retrofuturagradle.util.Distribution
 import com.modrinth.minotaur.dependencies.ModDependency
 import com.modrinth.minotaur.dependencies.VersionDependency
+import de.undercouch.gradle.tasks.download.DownloadExtension
+import org.apache.commons.io.FileUtils
+import org.gradle.api.internal.artifacts.configurations.DefaultUnlockedConfiguration
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.gradle.ext.Gradle
+
+import javax.inject.Inject
 
 import static org.gradle.internal.logging.text.StyledTextOutput.Style
 
@@ -23,9 +33,9 @@ plugins {
     id 'base'
     id 'eclipse'
     id 'maven-publish'
-    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
-    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.33'
-    id 'net.darkhax.curseforgegradle' version '1.1.18' apply false
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.8'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.0'
+    id 'net.darkhax.curseforgegradle' version '1.1.24' apply false
     id 'com.modrinth.minotaur' version '2.8.7' apply false
     id 'com.diffplug.spotless' version '6.13.0' apply false
     id 'com.palantir.git-version' version '3.0.0' apply false
@@ -33,6 +43,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
     id 'org.jetbrains.kotlin.kapt' version '1.8.0' apply false
     id 'com.google.devtools.ksp' version '1.8.0-1.0.9' apply false
+    id 'de.undercouch.download' version '5.6.0' apply false
 }
 
 def out = services.get(StyledTextOutputFactory).create('an-output')
@@ -58,6 +69,8 @@ propertyDefaultIfUnset("includeMCVersionJar", false)
 propertyDefaultIfUnset("autoUpdateBuildScript", false)
 propertyDefaultIfUnset("modArchivesBaseName", project.modId)
 propertyDefaultIfUnsetWithEnvVar("developmentEnvironmentUserName", "Developer", "DEV_USERNAME")
+propertyDefaultIfUnset("additionalJavaArguments", "")
+propertyDefaultIfUnset("enableJava17RunTasks", false)
 propertyDefaultIfUnset("generateGradleTokenClass", "")
 propertyDefaultIfUnset("gradleTokenModId", "")
 propertyDefaultIfUnset("gradleTokenModName", "")
@@ -65,8 +78,10 @@ propertyDefaultIfUnset("gradleTokenVersion", "")
 propertyDefaultIfUnset("useSrcApiPath", false)
 propertyDefaultIfUnset("includeWellKnownRepositories", true)
 propertyDefaultIfUnset("includeCommonDevEnvMods", true)
+propertyDefaultIfUnset("stripForgeRequirements", false)
 propertyDefaultIfUnset("noPublishedSources", false)
 propertyDefaultIfUnset("forceEnableMixins", false)
+propertyDefaultIfUnset("mixinConfigRefmap", "mixins.${project.modId}.refmap.json")
 propertyDefaultIfUnsetWithEnvVar("enableCoreModDebug", false, "CORE_MOD_DEBUG")
 propertyDefaultIfUnset("generateMixinConfig", true)
 propertyDefaultIfUnset("usesShadowedDependencies", false)
@@ -107,7 +122,7 @@ if (!getFile(targetPackageJava).exists() && !getFile(targetPackageScala).exists(
 
 if (apiPackage) {
     final String endApiPath = modGroupPath + '/' + apiPackagePath
-    if (useSrcApiPath) {
+    if (useSrcApiPath.toBoolean()) {
         targetPackageJava = 'src/api/java/' + endApiPath
         targetPackageScala = 'src/api/scala/' + endApiPath
         targetPackageKotlin = 'src/api/kotlin/' + endApiPath
@@ -369,6 +384,14 @@ minecraft {
                 '-Dlegacy.debugClassLoadingSave=true'
         ])
     }
+
+    if (additionalJavaArguments.size() != 0) {
+        extraRunJvmArguments.addAll(additionalJavaArguments.split(';'))
+    }
+
+    if (enableJava17RunTasks.toBoolean()) {
+        lwjgl3Version = "3.3.2"
+    }
 }
 
 if (coreModClass) {
@@ -504,7 +527,7 @@ dependencies {
         // should use 2.8.6 but 2.8.9+ has a vulnerability fix
         annotationProcessor 'com.google.code.gson:gson:2.8.9'
 
-        mixinProviderSpec = modUtils.enableMixins(mixinProviderSpec, "mixins.${modId}.refmap.json")
+        mixinProviderSpec = modUtils.enableMixins(mixinProviderSpec, mixinConfigRefmap)
         api (mixinProviderSpec) {
             transitive = false
         }
@@ -544,6 +567,10 @@ dependencies {
     annotationProcessor 'org.jetbrains:annotations:24.1.0'
     patchedMinecraft('net.minecraft:launchwrapper:1.17.2') {
         transitive = false
+    }
+
+    if ((usesMixins.toBoolean() || forceEnableMixins.toBoolean()) && stripForgeRequirements.toBoolean()) {
+        runtimeOnlyNonPublishable 'com.cleanroommc:strip-latest-forge-requirements:1.0'
     }
 
     if (includeCommonDevEnvMods.toBoolean()) {
@@ -679,7 +706,6 @@ tasks.register('generateAssets') {
         if (usesMixins.toBoolean() && generateMixinConfig.toBoolean()) {
             def mixinConfigFile = getFile("src/main/resources/mixins.${modId}.json")
             if (!mixinConfigFile.exists()) {
-                def mixinConfigRefmap = "mixins.${modId}.refmap.json"
 
                 mixinConfigFile.text = """{
   "package": "${modGroup}.${mixinsPackage}",
@@ -820,6 +846,218 @@ def getManifestAttributes() {
 }
 
 
+// LWJGL3ify setup
+if (enableJava17RunTasks.toBoolean()) {
+
+    apply plugin: 'de.undercouch.download'
+
+    ext.java17Toolchain = (JavaToolchainSpec spec) -> {
+        spec.languageVersion.set(JavaLanguageVersion.of(17))
+        spec.vendor.set(JvmVendorSpec.matching("jetbrains"))
+    }
+    ext.java21Toolchain = (JavaToolchainSpec spec) -> {
+        spec.languageVersion.set(JavaLanguageVersion.of(21))
+        spec.vendor.set(JvmVendorSpec.matching("jetbrains"))
+    }
+
+    ext.java17DependenciesCfg = (DefaultUnlockedConfiguration) configurations.create("java17Dependencies") {
+        extendsFrom(configurations.getByName("runtimeClasspath")) // Ensure consistent transitive dependency resolution
+        canBeConsumed = false
+    }
+    ext.java17PatchDependenciesCfg = (DefaultUnlockedConfiguration) configurations.create("java17PatchDependencies") {
+        canBeConsumed = false
+    }
+
+    dependencies {
+        if (modId != 'lwjgl3ify') {
+            java17Dependencies("io.github.twilightflower:lwjgl3ify:1.0.0")
+        }
+        java17PatchDependencies("io.github.twilightflower:lwjgl3ify:1.0.0:forgePatches") {
+            transitive = false
+        }
+    }
+
+    ext.java17JvmArgs = [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.system.class.loader=com.gtnewhorizons.retrofuturabootstrap.RfbSystemClassLoader",
+            "-Djava.security.manager=allow",
+            "--add-opens", "java.base/jdk.internal.loader=ALL-UNNAMED",
+            "--add-opens", "java.base/java.net=ALL-UNNAMED",
+            "--add-opens", "java.base/java.nio=ALL-UNNAMED",
+            "--add-opens", "java.base/java.io=ALL-UNNAMED",
+            "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+            "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED",
+            "--add-opens", "java.base/java.text=ALL-UNNAMED",
+            "--add-opens", "java.base/java.util=ALL-UNNAMED",
+            "--add-opens", "java.base/jdk.internal.reflect=ALL-UNNAMED",
+            "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+            "--add-opens", "jdk.naming.dns/com.sun.jndi.dns=ALL-UNNAMED,java.naming",
+            "--add-opens", "java.desktop/sun.awt=ALL-UNNAMED",
+            "--add-opens", "java.desktop/sun.awt.image=ALL-UNNAMED",
+            "--add-opens", "java.desktop/com.sun.imageio.plugins.png=ALL-UNNAMED",
+            "--add-opens", "jdk.dynalink/jdk.dynalink.beans=ALL-UNNAMED",
+            "--add-opens", "java.sql.rowset/javax.sql.rowset.serial=ALL-UNNAMED"
+    ]
+
+    ext.hotswapJvmArgs = [
+            // DCEVM advanced hot reload
+            "-XX:+AllowEnhancedClassRedefinition",
+            "-XX:HotswapAgent=fatjar"
+    ]
+
+    ext.setupHotswapAgent17 = tasks.register("setupHotswapAgent17", SetupHotswapAgentTask, t -> {
+        t.setTargetForToolchain(java17Toolchain)
+    })
+
+    ext.setupHotswapAgent21 = tasks.register("setupHotswapAgent21", SetupHotswapAgentTask, t -> {
+        t.setTargetForToolchain(java21Toolchain)
+    })
+
+    def runClient17Task = tasks.register("runClient17", RunHotswappableMinecraftTask, Distribution.CLIENT, "runClient")
+    runClient17Task.configure {
+        dependsOn(setupHotswapAgent17)
+        setup(project)
+        javaLauncher = project.javaToolchains.launcherFor(project.java17Toolchain)
+    }
+
+    def runServer17Task = tasks.register("runServer17", RunHotswappableMinecraftTask, Distribution.DEDICATED_SERVER, "runServer")
+    runServer17Task.configure {
+        dependsOn(setupHotswapAgent17)
+        setup(project)
+        javaLauncher = project.javaToolchains.launcherFor(project.java17Toolchain)
+    }
+
+    def runClient21Task = tasks.register("runClient21", RunHotswappableMinecraftTask, Distribution.CLIENT, "runClient")
+    runClient21Task.configure {
+        dependsOn(setupHotswapAgent21)
+        setup(project)
+        javaLauncher = project.javaToolchains.launcherFor(project.java21Toolchain)
+    }
+
+    def runServer21Task = tasks.register("runServer21", RunHotswappableMinecraftTask, Distribution.DEDICATED_SERVER, "runServer")
+    runServer21Task.configure {
+        dependsOn(setupHotswapAgent21)
+        setup(project)
+        javaLauncher = project.javaToolchains.launcherFor(project.java21Toolchain)
+    }
+}
+
+abstract class RunHotswappableMinecraftTask extends RunMinecraftTask {
+
+    // IntelliJ doesn't seem to allow pre-set commandline arguments, so we also support an env variable
+    private boolean enableHotswap = Boolean.valueOf(System.getenv("HOTSWAP"))
+
+    public final Distribution side
+    public final String superTask
+
+    @Input
+    boolean getEnableHotswap() {
+        return enableHotswap
+    }
+
+    @Option(option = "hotswap", description = "Enables HotSwapAgent for enhanced class reloading under a debugger")
+    boolean setEnableHotswap(boolean enable) {
+        enableHotswap = enable
+    }
+
+    @Inject
+    RunHotswappableMinecraftTask(Distribution side, String superTask, org.gradle.api.invocation.Gradle gradle) {
+        super(side, gradle)
+
+        this.side = side
+        this.superTask = superTask
+        setGroup("Modded Minecraft")
+        setDescription("Runs the modded " + side.name().toLowerCase(Locale.ROOT) + " using modern Java and lwjgl3ify")
+        this.getLwjglVersion().set(3)
+    }
+
+    void setup(Project project) {
+        final MinecraftExtension minecraft = project.getExtensions().getByType(MinecraftExtension.class)
+        final MCPTasks mcpTasks = project.getExtensions().getByType(MCPTasks.class)
+        final MinecraftTasks mcTasks = project.getExtensions().getByType(MinecraftTasks.class)
+
+        this.getExtraJvmArgs().addAll((List<String>) project.property("java17JvmArgs"))
+        if (getEnableHotswap()) {
+            this.getExtraJvmArgs().addAll((List<String>) project.property("hotswapJvmArgs"))
+        }
+
+        this.classpath(project.property("java17PatchDependenciesCfg"))
+        this.classpath(mcpTasks.getTaskPackageMcLauncher())
+        this.classpath(mcpTasks.getTaskPackagePatchedMc())
+        this.classpath(mcpTasks.getPatchedConfiguration())
+        this.classpath(project.getTasks().named("jar"))
+        this.classpath(project.property("java17DependenciesCfg"))
+
+        super.setup(project)
+
+        dependsOn(
+                mcpTasks.getLauncherSources().getClassesTaskName(),
+                mcTasks.getTaskDownloadVanillaAssets(),
+                mcpTasks.getTaskPackagePatchedMc(),
+                "jar"
+        )
+
+        getMainClass().set((side == Distribution.CLIENT) ? "GradleStart" : "GradleStartServer")
+        getUsername().set(minecraft.getUsername())
+        getUserUUID().set(minecraft.getUserUUID())
+        if (side == Distribution.DEDICATED_SERVER) {
+            getExtraArgs().add("nogui")
+        }
+
+        systemProperty("gradlestart.bouncerClient", "com.gtnewhorizons.retrofuturabootstrap.Main")
+        systemProperty("gradlestart.bouncerServer", "com.gtnewhorizons.retrofuturabootstrap.Main")
+
+        if (project.usesMixins.toBoolean()) {
+            this.extraJvmArgs.addAll(project.provider(() -> {
+                def mixinCfg = project.configurations.detachedConfiguration(project.dependencies.create(project.mixinProviderSpec))
+                mixinCfg.canBeConsumed = false
+                mixinCfg.canBeResolved = true
+                mixinCfg.transitive = false
+                enableHotswap ? ["-javaagent:" + mixinCfg.singleFile.absolutePath] : []
+            }))
+        }
+    }
+}
+
+abstract class SetupHotswapAgentTask extends DefaultTask {
+
+    @OutputFile
+    abstract RegularFileProperty getTargetFile()
+
+    void setTargetForToolchain(Action<JavaToolchainSpec> spec) {
+        getTargetFile().set(project.javaToolchains.launcherFor(spec).map {
+            it.metadata.installationPath.file("lib/hotswap/hotswap-agent.jar")
+        })
+    }
+
+    @Inject
+    SetupHotswapAgentTask() {
+        setGroup("GT Buildscript")
+        setDescription("Installs a recent version of HotSwapAgent into the Java runtime directory")
+        onlyIf("Run only if not already installed", t -> !((SetupHotswapAgentTask) t).getTargetFile().getAsFile().get().exists())
+    }
+
+    @TaskAction
+    void installHSA() {
+        final String url = 'https://github.com/HotswapProjects/HotswapAgent/releases/download/1.4.2-SNAPSHOT/hotswap-agent-1.4.2-SNAPSHOT.jar'
+        final File target = getTargetFile().getAsFile().get()
+        final File parent = target.getParentFile()
+        FileUtils.forceMkdir(parent)
+        final DownloadExtension download = getProject().getExtensions().findByType(DownloadExtension.class)
+        download.run(ds -> {
+            try {
+                ds.src(url)
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e)
+            }
+            ds.dest(target)
+            ds.overwrite(false)
+            ds.tempAndMove(true)
+        })
+    }
+}
+
+
 // IDE Configuration
 
 eclipse {
@@ -844,8 +1082,24 @@ idea {
                 '2. Run Client'(Gradle) {
                     taskNames = ['runClient']
                 }
+                if (enableJava17RunTasks.toBoolean()) {
+                    '2a. Run Client (Java 17)'(Gradle) {
+                        taskNames = ['runClient17']
+                    }
+                    '2b. Run Client (Java 21)'(Gradle) {
+                        taskNames = ['runClient21']
+                    }
+                }
                 '3. Run Server'(Gradle) {
                     taskNames = ['runServer']
+                }
+                if (enableJava17RunTasks.toBoolean()) {
+                    '3a. Run Server (Java 17)'(Gradle) {
+                        taskNames = ['runServer17']
+                    }
+                    '3b. Run Server (Java 21)'(Gradle) {
+                        taskNames = ['runServer21']
+                    }
                 }
                 '4. Run Obfuscated Client'(Gradle) {
                     taskNames = ['runObfClient']
@@ -983,6 +1237,30 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                 additionalFile.changelog = changelogRaw
             }
         }
+        doLast {
+            // No File IDs in Debug Mode
+            if (!deploymentDebug.toBoolean()) {
+                def list = []
+                for (def artifact : tasks.curseforge.getUploadArtifacts()) {
+                    list.add(artifact)
+                    for (def additionalArtifact : artifact.getAdditionalArtifacts()) {
+                        list.add(additionalArtifact)
+                    }
+                }
+                def summary = "## CurseForge Build Summary (Mod ${modName} | Project ID ${curseForgeProjectId})"
+                for (def artifact : list) {
+                    def fileId = artifact.getCurseFileId()
+                    def fileName = artifact.getArtifact().getSingleFile().name
+                    println("Uploaded File ${fileName}, With File ID: ${fileId}")
+                    summary = summary + "\n  - File: ${fileName} | File ID: ${fileId}"
+                }
+                println(summary)
+                def stepSummary = providers.environmentVariable("GITHUB_STEP_SUMMARY")
+                if (stepSummary.isPresent()) {
+                    file(stepSummary.get()).write(summary)
+                }
+            }
+        }
     }
     tasks.curseforge.dependsOn(build)
     tasks.curseforge.dependsOn('generateChangelog')
@@ -1113,7 +1391,7 @@ def getChangelog() {
 
 // Buildscript updating
 
-def buildscriptGradleVersion = '8.5'
+def buildscriptGradleVersion = '8.9'
 
 tasks.named('wrapper', Wrapper).configure {
     gradleVersion = buildscriptGradleVersion

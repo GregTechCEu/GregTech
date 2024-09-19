@@ -60,9 +60,7 @@ public class GTGuis {
         public PopupPanel(@NotNull String name, int width, int height, boolean disableBelow,
                           boolean closeOnOutsideClick) {
             super(name);
-            flex().startDefaultMode();
-            flex().size(width, height).align(Alignment.Center);
-            flex().endDefaultMode();
+            size(width, height).align(Alignment.Center);
             background(GTGuiTextures.BACKGROUND_POPUP);
             child(ButtonWidget.panelCloseButton().top(5).right(5));
             this.disableBelow = disableBelow;

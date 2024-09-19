@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -18,7 +17,6 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.dragon.phase.PhaseChargingPlayer;
 import net.minecraft.entity.boss.dragon.phase.PhaseList;
 import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
@@ -219,11 +217,6 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     @Override
     protected boolean openGUIOnRightClick() {
         return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @SideOnly(Side.CLIENT)

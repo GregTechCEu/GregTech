@@ -88,7 +88,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new Object2ReferenceOpenHashMap<>();
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration)
-            .thenComparingInt(Recipe::getEUt)
+            .thenComparingLong(Recipe::getEUt)
             .thenComparing(Recipe::hashCode);
 
     private static boolean foundInvalidRecipe = false;
@@ -193,7 +193,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipeBuilder;
 
         this.recipeMapUI = new RecipeMapUI<>(this, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
-                modifyFluidOutputs);
+                modifyFluidOutputs, false);
         this.recipeMapUI.setJEIVisible(!isHidden);
 
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
@@ -437,7 +437,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @see GTRecipeHandler#removeAllRecipes(RecipeMap)
      */
     @ApiStatus.Internal
-    void removeAllRecipes() {
+    protected void removeAllRecipes() {
         if (GroovyScriptModule.isCurrentlyRunning()) {
             this.lookup.getRecipes(false).forEach(this.getGroovyScriptRecipeMap()::addBackup);
         }

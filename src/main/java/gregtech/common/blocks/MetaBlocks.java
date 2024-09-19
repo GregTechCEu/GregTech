@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.longdist.BlockLongDistancePipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -113,7 +114,6 @@ public class MetaBlocks {
 
     private MetaBlocks() {}
 
-    public static BlockMachine MACHINE;
     public static final Map<String, BlockCable[]> CABLES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, BlockFluidPipe[]> FLUID_PIPES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, BlockItemPipe[]> ITEM_PIPES = new Object2ObjectOpenHashMap<>();
@@ -187,8 +187,11 @@ public class MetaBlocks {
     public static final List<BlockFluidBase> FLUID_BLOCKS = new ArrayList<>();
 
     public static void init() {
-        GregTechAPI.MACHINE = MACHINE = new BlockMachine();
-        MACHINE.setRegistryName("machine");
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            BlockMachine machine = new BlockMachine();
+            machine.setRegistryName(registry.getModid(), "mte");
+            registry.setBlock(machine);
+        }
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
@@ -437,8 +440,11 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE),
-                stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(registry.getBlock()),
+                    stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        }
+
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             for (BlockCable cable : CABLES.get(registry.getModid())) cable.onModelRegister();
             for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) pipe.onModelRegister();
@@ -536,7 +542,10 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
-        ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            ModelLoader.setCustomStateMapper(registry.getBlock(),
+                    new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        }
 
         IStateMapper normalStateMapper;
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {

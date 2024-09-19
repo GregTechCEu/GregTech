@@ -21,7 +21,7 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -89,12 +89,12 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         return super.buildUI(guiData, guiSyncManager).height(192 + 18);
     }
 
     @Override
-    protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
         var voidingMode = new EnumSyncValue<>(VoidingMode.class, this::getVoidingMode, this::setVoidingMode);
         guiSyncManager.syncValue("voiding_mode", voidingMode);
 

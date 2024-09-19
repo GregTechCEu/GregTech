@@ -158,7 +158,7 @@ public class AssemblerRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
                 .input(stick, NeodymiumMagnetic)
-                .input(wireFine, TungstenSteel, 16)
+                .input(wireFine, Platinum, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_EV.getStackForm())
                 .buildAndRegister();

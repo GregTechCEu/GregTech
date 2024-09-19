@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
 import appeng.api.AEApi;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_ONLINE_STATUS;
 
@@ -61,7 +61,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
      * So there is no need to drop them.
      */
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {}
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {

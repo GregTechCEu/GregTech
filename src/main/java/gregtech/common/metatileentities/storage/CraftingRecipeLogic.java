@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -24,6 +23,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import com.google.common.collect.Lists;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class CraftingRecipeLogic {
@@ -111,9 +111,8 @@ public class CraftingRecipeLogic {
             return false;
         }
         ForgeHooks.setCraftingPlayer(player);
-        NonNullList<ItemStack> remainingItems = cachedRecipe.getRemainingItems(inventoryCrafting); // todo right here is
-                                                                                                   // where tools get
-                                                                                                   // damaged (in UI)
+        // todo right here is where tools get damaged (in UI)
+        List<ItemStack> remainingItems = cachedRecipe.getRemainingItems(inventoryCrafting);
         ForgeHooks.setCraftingPlayer(null);
         for (int i = 0; i < remainingItems.size(); i++) {
             ItemStack itemStack = remainingItems.get(i);

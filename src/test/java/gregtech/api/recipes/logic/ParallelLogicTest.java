@@ -878,7 +878,7 @@ public class ParallelLogicTest {
         assertThat(testMaceratorRecipe, notNullValue());
 
         // 2 is the default EUt value assigned to macerator recipes when not specified
-        assertThat(testMaceratorRecipe.getEUt(), is(2 * parallelAmount));
+        assertThat(testMaceratorRecipe.getEUt(), is(2L * parallelAmount));
 
         // 150 is the default duration value assigned to macerator recipes when not specified
         assertThat(testMaceratorRecipe.getDuration(), is(150));

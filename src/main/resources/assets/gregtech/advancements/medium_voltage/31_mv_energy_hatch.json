@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.medium_voltage.31_mv_energy_hatch.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1212
     },
     "frame": "goal"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1212
           }
         ]

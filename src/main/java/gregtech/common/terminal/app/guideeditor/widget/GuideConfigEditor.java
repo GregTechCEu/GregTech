@@ -6,9 +6,16 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AbstractWidgetGroup;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.PhantomSlotWidget;
+import gregtech.api.gui.widgets.TabGroup;
+import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.CustomTabListRenderer;
@@ -275,10 +282,12 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                         }
                     } else if ((app instanceof MultiBlockGuideApp || app instanceof SimpleMachineGuideApp) &&
                             stack.getItem() instanceof MachineItemBlock) {
-                                MetaTileEntity mte = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+                                MTERegistry registry = GregTechAPI.mteManager.getRegistry(
+                                        Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
+                                MetaTileEntity mte = registry.getObjectById(stack.getItemDamage());
                                 if (mte != null) {
                                     jsonObject.addProperty("metatileentity",
-                                            GregTechAPI.MTE_REGISTRY.getNameForObject(mte).getPath());
+                                            registry.getNameForObject(mte).getPath());
                                 } else {
                                     TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.warning",
                                             "terminal.guide_editor.error_type").setClientSide().open();

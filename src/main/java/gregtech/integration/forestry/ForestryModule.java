@@ -323,7 +323,8 @@ public class ForestryModule extends IntegrationSubmodule {
                 createOreProperty(Materials.Osmium, Materials.Iridium);
                 createOreProperty(Materials.Iridium, Materials.Platinum, Materials.Osmium);
                 createOreProperty(Materials.Electrum, Materials.Gold, Materials.Silver);
-                createOreProperty(Materials.Uranium238, Materials.Lead, Materials.Uranium235, Materials.Thorium);
+                createOreProperty(Materials.Uranium, Materials.Lead, Materials.Uranium235, Materials.Thorium);
+                createOreProperty(Materials.Plutonium, Materials.Uraninite, Materials.Lead, Materials.Uraninite);
                 createOreProperty(Materials.NaquadahEnriched, Materials.Naquadah, Materials.Naquadria);
                 createOreProperty(Materials.Uranium235);
                 createOreProperty(Materials.Neutronium);
@@ -358,7 +359,7 @@ public class ForestryModule extends IntegrationSubmodule {
             Class<?> mutationHandler = Class.forName("binnie.extrabees.utils.AlvearyMutationHandler");
             Method method = mutationHandler.getDeclaredMethod("addMutationItem", ItemStack.class, float.class);
 
-            registerAlvearyMutator(method, Materials.Uranium238, 2.0f);
+            registerAlvearyMutator(method, Materials.Uranium, 2.0f);
             registerAlvearyMutator(method, Materials.Uranium235, 4.0f);
             registerAlvearyMutator(method, Materials.Plutonium241, 6.0f);
             registerAlvearyMutator(method, Materials.Plutonium239, 8.0f);

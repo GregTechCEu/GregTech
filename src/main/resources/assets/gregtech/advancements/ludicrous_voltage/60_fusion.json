@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.ludicrous_voltage.60_fusion.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1020
     },
     "frame": "challenge"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1020
           }
         ]

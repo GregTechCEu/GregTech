@@ -81,7 +81,7 @@ public class CTRecipe {
     }
 
     @ZenGetter("EUt")
-    public int getEUt() {
+    public long getEUt() {
         return this.backingRecipe.getEUt();
     }
 

@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.root_luv.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1019
     },
     "frame": "challenge",
@@ -19,7 +19,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1019
           }
         ]

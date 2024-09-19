@@ -31,7 +31,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
@@ -40,6 +39,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -118,6 +119,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), getPaintingColorForRendering());
     }
@@ -513,7 +515,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);
     }
 

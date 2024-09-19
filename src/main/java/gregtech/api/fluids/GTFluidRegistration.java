@@ -82,7 +82,7 @@ public class GTFluidRegistration {
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             FluidProperty property = material.getProperty(PropertyKey.FLUID);
             if (property != null) {
-                property.getStorage().registerFluids(material);
+                property.registerFluids(material);
             }
         }
     }

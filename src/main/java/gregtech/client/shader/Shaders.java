@@ -148,6 +148,7 @@ public class Shaders {
         // GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 
         // OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+        fbo.bindFramebuffer(false);
         return fbo;
     }
 }

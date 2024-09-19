@@ -209,6 +209,8 @@ public class Textures {
     public static final OrientedOverlayRenderer ARC_FURNACE_OVERLAY = new OrientedOverlayRenderer(
             "machines/arc_furnace");
     public static final OrientedOverlayRenderer ASSEMBLER_OVERLAY = new OrientedOverlayRenderer("machines/assembler");
+    public static final OrientedOverlayRenderer CIRCUIT_ASSEMBLER_OVERLAY = new OrientedOverlayRenderer(
+            "machines/circuit_assembler");
     public static final OrientedOverlayRenderer AUTOCLAVE_OVERLAY = new OrientedOverlayRenderer("machines/autoclave");
     public static final OrientedOverlayRenderer BENDER_OVERLAY = new OrientedOverlayRenderer("machines/bender");
     public static final OrientedOverlayRenderer BREWERY_OVERLAY = new OrientedOverlayRenderer("machines/brewery");

@@ -6,6 +6,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.Cover;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Mods;
 import gregtech.api.util.TextFormattingUtil;
@@ -24,7 +25,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -84,13 +89,18 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
      * Also can use certain data to preinit the block before data is synced
      */
     @Override
-    public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
+    public MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity sampleMetaTileEntity,
+                                            @Nullable NBTTagCompound tagCompound) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+        if (tagCompound != null && !tagCompound.isEmpty())
+            getMetaTileEntity().readFromNBT(tagCompound);
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             writeCustomData(INITIALIZE_MTE, buffer -> {
-                buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(getMetaTileEntity().metaTileEntityId));
+                buffer.writeVarInt(sampleMetaTileEntity.getRegistry().getNetworkId());
+                buffer.writeVarInt(
+                        sampleMetaTileEntity.getRegistry().getIdByObjectName(getMetaTileEntity().metaTileEntityId));
                 getMetaTileEntity().writeInitialSyncData(buffer);
             });
             // just to update neighbours so cables and other things will work properly
@@ -126,7 +136,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (compound.hasKey("MetaId", NBT.TAG_STRING)) {
             String metaTileEntityIdRaw = compound.getString("MetaId");
             ResourceLocation metaTileEntityId = new ResourceLocation(metaTileEntityIdRaw);
-            MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
+            MTERegistry registry = GregTechAPI.mteManager.getRegistry(metaTileEntityId.getNamespace());
+            MetaTileEntity sampleMetaTileEntity = registry.getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
@@ -136,7 +147,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                  */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
             } else {
-                GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
+                GTLog.logger.error("Failed to load MetaTileEntity with invalid ID {}", metaTileEntityIdRaw);
             }
             if (Mods.AppliedEnergistics2.isModLoaded()) {
                 readFromNBT_AENetwork(compound);
@@ -297,7 +308,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         buf.writeString(getName());
         if (metaTileEntity != null) {
             buf.writeBoolean(true);
-            buf.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
+            buf.writeVarInt(metaTileEntity.getRegistry().getNetworkId());
+            buf.writeVarInt(metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId));
             metaTileEntity.writeInitialSyncData(buf);
         } else buf.writeBoolean(false);
     }
@@ -325,8 +337,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
      * @param buf the buffer to read data from
      */
     private void receiveMTEInitializationData(@NotNull PacketBuffer buf) {
+        int networkId = buf.readVarInt();
         int metaTileEntityId = buf.readVarInt();
-        setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(networkId);
+        setMetaTileEntity(registry.getObjectById(metaTileEntityId));
         this.metaTileEntity.onPlacement();
         this.metaTileEntity.receiveInitialSyncData(buf);
         scheduleRenderUpdate();
@@ -384,7 +398,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
                                  IBlockState newState) {
         return oldState.getBlock() != newState.getBlock(); // MetaTileEntityHolder should never refresh (until block
-                                                           // changes)
+        // changes)
     }
 
     @Override

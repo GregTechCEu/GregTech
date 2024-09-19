@@ -20,7 +20,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -188,7 +192,9 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
         }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
-        lines.add(I18n.format("behaviour.paintspray.offhand"));
+        if (color != null) {
+            lines.add(I18n.format("behaviour.paintspray.offhand"));
+        }
     }
 
     @Override

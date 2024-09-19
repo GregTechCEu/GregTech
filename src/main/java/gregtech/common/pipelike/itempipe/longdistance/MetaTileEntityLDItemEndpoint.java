@@ -2,7 +2,6 @@ package gregtech.common.pipelike.itempipe.longdistance;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.ILDEndpoint;
@@ -11,12 +10,13 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -56,11 +56,6 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (getWorld().isRemote || side != getFrontFacing() || !isInput()) {
@@ -97,6 +92,7 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[GTValues.LV].getParticleSprite(), 0xFFFFFF);
     }

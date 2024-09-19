@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi;
 
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -14,7 +13,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -106,11 +104,6 @@ public class MetaTileEntityTankValve extends MetaTileEntityMultiblockPart
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         super.removeFromMultiBlock(controllerBase);
         initializeDummyInventory();
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

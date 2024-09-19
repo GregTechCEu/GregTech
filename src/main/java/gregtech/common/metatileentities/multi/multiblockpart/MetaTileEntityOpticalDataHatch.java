@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IOpticalDataAccessHatch;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -15,7 +14,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -45,11 +43,6 @@ public class MetaTileEntityOpticalDataHatch extends MetaTileEntityMultiblockNoti
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityOpticalDataHatch(metaTileEntityId, this.isTransmitter);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

@@ -8,16 +8,14 @@ import gregtech.api.gui.widgets.WidgetUIAccess;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
 
-import com.google.common.collect.Lists;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FakeModularGuiContainer implements WidgetUIAccess {
 
-    protected final NonNullList<ItemStack> inventoryItemStacks = NonNullList.create();
-    public final List<Slot> inventorySlots = Lists.newArrayList();
+    protected final List<ItemStack> inventoryItemStacks = new ArrayList<>();
+    public final List<Slot> inventorySlots = new ArrayList<>();
     public final ModularUI modularUI;
     protected int windowId;
 

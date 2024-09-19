@@ -62,6 +62,12 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     }
 
     @Override
+    protected void removeAllRecipes() {
+        super.removeAllRecipes();
+        researchEntries.clear();
+    }
+
+    @Override
     public void addDataStickEntry(@NotNull String researchId, @NotNull Recipe recipe) {
         if (researchId.contains("xmetaitem.")) {
             // save compatibility with an issue in 2.8.6, causing research IDs to change

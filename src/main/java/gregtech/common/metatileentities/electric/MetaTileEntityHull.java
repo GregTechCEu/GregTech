@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -15,7 +14,6 @@ import gregtech.client.utils.PipelineUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -70,11 +68,6 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     @Override
     protected boolean openGUIOnRightClick() {
         return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

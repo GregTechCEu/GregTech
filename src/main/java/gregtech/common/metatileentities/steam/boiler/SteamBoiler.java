@@ -372,7 +372,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, containerInventory);
     }

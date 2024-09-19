@@ -25,8 +25,8 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -64,7 +64,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
     }
 
     @Override
-    default ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    default ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         return null;
     }
 

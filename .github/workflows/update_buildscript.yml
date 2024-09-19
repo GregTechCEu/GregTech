@@ -35,13 +35,11 @@ jobs:
 
       - name: Create Pull Request
         id: create-pull-request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         env:
           GITHUB_TOKEN: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
         with:
           token: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit-message: 'update build script version to ${{ steps.version-check.outputs.NEW_VERSION }}'
           branch: gha-update-buildscript
           title: Update build script version to ${{ steps.version-check.outputs.NEW_VERSION }}

@@ -390,7 +390,7 @@ public class CraftingComponent {
                 { 4, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Titanium) },
                 { 5, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.TungstenSteel) },
                 { 6, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.NiobiumTitanium) },
-                { 7, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Ultimet) },
+                { 7, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Iridium) },
                 { 8, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Naquadah) },
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));

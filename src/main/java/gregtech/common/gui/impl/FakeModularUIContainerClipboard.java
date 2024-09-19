@@ -10,10 +10,8 @@ import gregtech.core.network.packets.PacketClipboardUIWidgetUpdate;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 
-import com.google.common.collect.Lists;
 import io.netty.buffer.Unpooled;
 
 import java.util.ArrayList;
@@ -24,8 +22,8 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_UI;
 
 public class FakeModularUIContainerClipboard extends FakeModularGuiContainer {
 
-    private final NonNullList<ItemStack> inventoryItemStacks = NonNullList.create();
-    public final List<Slot> inventorySlots = Lists.newArrayList();
+    private final List<ItemStack> inventoryItemStacks = new ArrayList<>();
+    public final List<Slot> inventorySlots = new ArrayList<>();
     public int windowId;
     public MetaTileEntityClipboard clipboard;
 
