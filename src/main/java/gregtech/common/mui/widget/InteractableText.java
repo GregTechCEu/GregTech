@@ -38,6 +38,11 @@ public class InteractableText<T extends VirtualEntry> extends TextWidget impleme
         return Result.SUCCESS;
     }
 
+    @Override
+    public boolean isValidSyncHandler(SyncHandler syncHandler) {
+        return syncHandler instanceof EntryColorSH;
+    }
+
     private static class EntryColorSH extends SyncHandler {
 
         private final Consumer<String> setter;

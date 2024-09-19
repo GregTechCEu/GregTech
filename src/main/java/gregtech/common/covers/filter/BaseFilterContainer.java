@@ -1,5 +1,6 @@
 package gregtech.common.covers.filter;
 
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.IDirtyNotifiable;
 
@@ -12,9 +13,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
-import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -212,7 +212,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
     }
 
     /** Uses Cleanroom MUI */
-    public IWidget initUI(ModularPanel main, PanelSyncManager manager) {
+    public IWidget initUI(GuiData data, PanelSyncManager manager) {
         PanelSyncHandler panel = (PanelSyncHandler) manager.panel("filter_panel", (syncManager, syncHandler) -> {
             var filter = hasFilter() ? getFilter() : BaseFilter.ERROR_FILTER;
             filter.setMaxTransferSize(getMaxTransferSize());
@@ -246,12 +246,11 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                             } else {
                                 panel.closePanel();
                             }
-                            // Interactable.playButtonClickSound();
                             return true;
                         }))
                 .child(IKey.dynamic(this::getFilterName)
-                        .color(Color.WHITE.main)
-                        .shadow(true)
+                        .color(CoverWithUI.UI_TEXT_COLOR)
+                        .shadow(false)
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
     }

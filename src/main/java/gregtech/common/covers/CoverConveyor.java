@@ -45,6 +45,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -509,11 +510,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createUI(panel, guiSyncManager))
+                .child(createUI(guiData, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<Flow> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
         var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 
@@ -566,7 +567,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
         if (createFilterRow())
-            column.child(getItemFilterContainer().initUI(mainPanel, guiSyncManager));
+            column.child(getItemFilterContainer().initUI(data, guiSyncManager));
 
         if (createManualIOModeRow())
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
