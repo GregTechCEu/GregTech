@@ -162,6 +162,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
         guiSyncManager.syncValue("working_state", workingStateValue);
 
+        // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
