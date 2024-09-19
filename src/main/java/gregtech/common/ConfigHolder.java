@@ -144,6 +144,12 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public boolean orderedFluidAssembly = false;
 
+        @Config.Comment({ "Whether the Assembly Line should check every permutation of inputs for a valid recipe.",
+                "Prevents the Assembly Line from locking up due to bad hatch stocking, but can cause significant lag during recipe search.",
+                "This does nothing if B:orderedAssembly is false.",
+                "Default: true" })
+        public boolean advancedAssemblyRecipeSearch = true;
+
         /**
          * <strong>Addons mods should not reference this config directly.</strong>
          * Use {@link GregTechAPI#isHighTier()} instead.
