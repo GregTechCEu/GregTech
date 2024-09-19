@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.BlockableSlotWidget;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
@@ -74,13 +75,13 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
                 .child(GTGuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE.asWidget()
                         .left(46).top(18)
                         .size(84, 60))
-                .child(new gregtech.api.mui.widget.BlockableSlotWidget()
+                .child(new BlockableSlotWidget()
                         .setIsBlocked(this::isSlotBlocked)
                         .slot(SyncHandlers.itemSlot(heldItems, 0)
                                 .slotGroup("item_inv"))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.RESEARCH_STATION_OVERLAY)
                         .left(79).top(39))
-                .child(new gregtech.api.mui.widget.BlockableSlotWidget()
+                .child(new BlockableSlotWidget()
                         .setIsBlocked(this::isSlotBlocked)
                         .slot(SyncHandlers.itemSlot(heldItems, 1)
                                 .slotGroup("item_inv"))
