@@ -221,11 +221,6 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         return false;
     }
 
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick() {

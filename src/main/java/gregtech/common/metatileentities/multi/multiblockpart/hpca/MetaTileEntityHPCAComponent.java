@@ -63,11 +63,6 @@ public abstract class MetaTileEntityHPCAComponent extends MetaTileEntityMultiblo
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     public MultiblockAbility<IHPCAComponentHatch> getAbility() {
         return MultiblockAbility.HPCA_COMPONENT;
     }

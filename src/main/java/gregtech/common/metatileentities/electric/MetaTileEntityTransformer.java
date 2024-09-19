@@ -251,11 +251,6 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         String lowerTierName = GTValues.VNF[getTier()];
         String higherTierName = GTValues.VNF[getTier() + 1];

@@ -111,11 +111,6 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
         addDescriptorTooltip(stack, world, tooltip, advanced);
