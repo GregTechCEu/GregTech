@@ -24,6 +24,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -38,10 +39,11 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
@@ -49,10 +51,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -146,13 +146,13 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .bindPlayerInventory();
     }
 
-    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
+    protected Flow createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
         var entrySelectorSH = createEntrySelector(panel);
         syncManager.syncValue("entry_selector", entrySelectorSH);
 
-        return new Column().coverChildrenHeight().top(24)
+        return Flow.column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
                 .child(new Row().marginBottom(2)
                         .coverChildrenHeight()
@@ -171,18 +171,18 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                 .disableHoverBackground()
                                 .addTooltipLine(IKey.lang("cover.generic.ender.open_selector"))
                                 .onMousePressed(i -> {
-                                    if (entrySelectorSH.isPanelOpen()) {
-                                        entrySelectorSH.closePanel();
-                                    } else {
-                                        entrySelectorSH.openPanel();
-                                    }
-                                    Interactable.playButtonClickSound();
+                                    // if (entrySelectorSH.isPanelOpen()) {
+                                    // entrySelectorSH.closePanel();
+                                    // } else {
+                                    // entrySelectorSH.openPanel();
+                                    // }
+                                    // Interactable.playButtonClickSound();
                                     return true;
                                 })))
                 .child(createIoRow());
     }
 
-    protected abstract PanelSyncHandler createEntrySelector(ModularPanel panel);
+    protected abstract EntrySelectorSH createEntrySelector(ModularPanel panel);
 
     protected abstract IWidget createEntrySlot();
 
@@ -217,7 +217,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected IWidget createIoRow() {
         var ioEnabled = new BooleanSyncValue(this::isIoEnabled, this::setIoEnabled);
 
-        return new Row().marginBottom(2)
+        return Flow.row().marginBottom(2)
                 .coverChildrenHeight()
                 .child(new ToggleButton()
                         .value(ioEnabled)
@@ -291,20 +291,19 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         nbt.setInteger("Frequency", activeEntry.getColor());
     }
 
-    protected abstract class EntrySelectorSH extends PanelSyncHandler {
+    protected abstract class EntrySelectorSH extends SyncHandler implements IPanelHandler {
 
-        private static final int TRACK_SUBPANELS = 3;
+        // private static final int TRACK_SUBPANELS = 3;
         private static final int DELETE_ENTRY = 1;
         private final EntryTypes<T> type;
         private final ModularPanel mainPanel;
         private static final String PANEL_NAME = "entry_selector";
-        private final Set<String> opened = new HashSet<>();
+        // private final Set<String> opened = new HashSet<>();
         protected UUID playerUUID;
 
         protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
-            super(mainPanel, EntrySelectorSH::defaultPanel);
-            this.type = type;
             this.mainPanel = mainPanel;
+            this.type = type;
         }
 
         @Override
@@ -313,18 +312,33 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             this.playerUUID = syncManager.getPlayer().getUniqueID();
         }
 
-        private static ModularPanel defaultPanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
-            return GTGuis.createPopupPanel(PANEL_NAME, 168, 112);
-        }
-
         public UUID getPlayerUUID() {
             return isPrivate ? playerUUID : null;
         }
 
         @Override
+        public void openPanel() {}
+
+        @Override
+        public void closePanel() {}
+
+        @Override
+        public void closePanelInternal() {}
+
+        @Override
+        public void closeSubPanels() {}
+
+        @Override
+        public void deleteCachedPanel() {}
+
+        @Override
+        public boolean isSubPanel() {
+            return false;
+        }
+
         public ModularPanel createUI(PanelSyncManager syncManager) {
             List<String> names = new ArrayList<>(VirtualEnderRegistry.getEntryNames(getPlayerUUID(), type));
-            return super.createUI(syncManager)
+            return GTGuis.createPopupPanel(PANEL_NAME, 168, 112)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR).asWidget()
                             .top(6)
@@ -345,7 +359,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             var entryDescriptionSH = new EntryDescriptionSH(mainPanel, key, entry);
             syncManager.syncValue(key, isPrivate ? 1 : 0, entryDescriptionSH);
 
-            return new Row()
+            return Flow.row()
                     .left(4)
                     .marginBottom(2)
                     .height(18)
@@ -363,7 +377,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .tooltipBuilder(tooltip -> {
                                 String desc = entry.getDescription();
                                 if (!desc.isEmpty())
-                                    tooltip.addLine(desc);
+                                    tooltip.add(desc);
                             })
                             .width(64)
                             .height(16)
@@ -374,12 +388,12 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .addTooltipLine(IKey.lang("cover.generic.ender.set_description.tooltip"))
                             .onMousePressed(i -> {
                                 // open entry settings
-                                if (entryDescriptionSH.isPanelOpen()) {
-                                    entryDescriptionSH.closePanel();
-                                } else {
-                                    entryDescriptionSH.openPanel();
-                                }
-                                Interactable.playButtonClickSound();
+                                // if (entryDescriptionSH.isPanelOpen()) {
+                                // entryDescriptionSH.closePanel();
+                                // } else {
+                                // entryDescriptionSH.openPanel();
+                                // }
+                                // Interactable.playButtonClickSound();
                                 return true;
                             }))
                     .child(createSlotWidget(entry))
@@ -399,43 +413,43 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             }));
         }
 
-        @Override
-        public void closePanel() {
-            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
-            for (var key : opened) {
-                if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
-                    psh.closePanel();
-                }
-            }
-            super.closePanel();
-        }
+        // @Override
+        // public void closePanel() {
+        // var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
+        // for (var key : opened) {
+        // if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
+        // psh.closePanel();
+        // }
+        // }
+        // super.closePanel();
+        // }
 
-        @Override
-        @SuppressWarnings("UnstableApiUsage")
-        public void closePanelInternal() {
-            var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
-            for (var key : opened) {
-                if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
-                    psh.closePanel();
-                }
-            }
-            super.closePanelInternal();
-        }
+        // @Override
+        // @SuppressWarnings("UnstableApiUsage")
+        // public void closePanelInternal() {
+        // var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
+        // for (var key : opened) {
+        // if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
+        // psh.closePanel();
+        // }
+        // }
+        // super.closePanelInternal();
+        // }
 
         @Override
         public void readOnClient(int i, PacketBuffer packetBuffer) throws IOException {
-            if (i == TRACK_SUBPANELS) {
-                handleTracking(packetBuffer);
-            }
-            super.readOnClient(i, packetBuffer);
+            // if (i == TRACK_SUBPANELS) {
+            // handleTracking(packetBuffer);
+            // }
+            // super.readOnClient(i, packetBuffer);
         }
 
         @Override
         public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
-            if (i == TRACK_SUBPANELS) {
-                handleTracking(packetBuffer);
-            }
-            super.readOnServer(i, packetBuffer);
+            // if (i == TRACK_SUBPANELS) {
+            // handleTracking(packetBuffer);
+            // }
+            // super.readOnServer(i, packetBuffer);
             if (i == DELETE_ENTRY) {
                 UUID uuid = UUID.fromString(NetworkUtils.readStringSafe(packetBuffer));
                 String name = NetworkUtils.readStringSafe(packetBuffer);
@@ -443,16 +457,16 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             }
         }
 
-        private void handleTracking(PacketBuffer buffer) {
-            boolean add = buffer.readBoolean();
-            String key = NetworkUtils.readStringSafe(buffer);
-            if (key != null) {
-                if (add) opened.add(key);
-                else opened.remove(key);
-            }
-        }
+        // private void handleTracking(PacketBuffer buffer) {
+        // boolean add = buffer.readBoolean();
+        // String key = NetworkUtils.readStringSafe(buffer);
+        // if (key != null) {
+        // if (add) opened.add(key);
+        // else opened.remove(key);
+        // }
+        // }
 
-        private class EntryDescriptionSH extends PanelSyncHandler {
+        private static class EntryDescriptionSH extends SyncHandler implements IPanelHandler {
 
             /**
              * Creates a PanelSyncHandler
@@ -460,8 +474,17 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
              * @param mainPanel the main panel of the current GUI
              */
             public EntryDescriptionSH(ModularPanel mainPanel, String key, VirtualEntry entry) {
-                super(mainPanel, (syncManager, syncHandler) -> defaultPanel(syncHandler, key, entry));
+                // super(mainPanel, (syncManager, syncHandler) -> defaultPanel(syncHandler, key, entry));
             }
+            //
+            // @Override
+            // public boolean isSubPanel() {
+            // return subPanel;
+            // }
+            //
+            // public boolean isPanelOpen() {
+            // return this.open;
+            // }
 
             private static ModularPanel defaultPanel(@NotNull PanelSyncHandler syncHandler, String key,
                                                      VirtualEntry entry) {
@@ -487,23 +510,43 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
             @Override
             public void openPanel() {
-                opened.add(getKey());
-                EntrySelectorSH.this.sync(3, buffer -> {
-                    buffer.writeBoolean(true);
-                    NetworkUtils.writeStringSafe(buffer, getKey());
-                });
-                super.openPanel();
+                // opened.add(getKey());
+                // EntrySelectorSH.this.sync(3, buffer -> {
+                // buffer.writeBoolean(true);
+                // NetworkUtils.writeStringSafe(buffer, getKey());
+                // });
+                // super.openPanel();
             }
 
             @Override
             public void closePanel() {
-                opened.remove(getKey());
-                EntrySelectorSH.this.sync(3, buffer -> {
-                    buffer.writeBoolean(false);
-                    NetworkUtils.writeStringSafe(buffer, getKey());
-                });
-                super.closePanel();
+                // opened.remove(getKey());
+                // EntrySelectorSH.this.sync(3, buffer -> {
+                // buffer.writeBoolean(false);
+                // NetworkUtils.writeStringSafe(buffer, getKey());
+                // });
+                // super.closePanel();
             }
+
+            @Override
+            public void closeSubPanels() {}
+
+            @Override
+            public void closePanelInternal() {}
+
+            @Override
+            public void deleteCachedPanel() {}
+
+            @Override
+            public boolean isSubPanel() {
+                return false;
+            }
+
+            @Override
+            public void readOnClient(int id, PacketBuffer buf) throws IOException {}
+
+            @Override
+            public void readOnServer(int id, PacketBuffer buf) throws IOException {}
         }
 
         protected abstract IWidget createSlotWidget(T entry);

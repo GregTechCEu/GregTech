@@ -15,11 +15,10 @@ import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.drawable.TextRenderer;
+import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.screen.Tooltip;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
-import com.cleanroommc.modularui.theme.WidgetSlotTheme;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
@@ -36,13 +35,14 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
     private GTFluidSyncHandler syncHandler;
 
     public GTFluidSlot() {
-        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltip().setAutoUpdate(true);
+        // .setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
             var fluid = this.syncHandler.getFluid();
             if (fluid == null) return;
 
-            tooltip.addLine(fluid.getLocalizedName());
+            tooltip.add(fluid.getLocalizedName());
             tooltip.addLine(IKey.lang("gregtech.fluid.amount", fluid.amount, this.syncHandler.getCapacity()));
 
             // Add various tooltips from the material
@@ -50,7 +50,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             if (formula != null) {
                 for (String s : formula) {
                     if (s.isEmpty()) continue;
-                    tooltip.addLine(s);
+                    tooltip.add(s);
                 }
             }
 
@@ -80,7 +80,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
     }
 
     @Override
-    public void draw(GuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         FluidStack content = this.syncHandler.getFluid();
         if (content != null) {
             GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
@@ -93,7 +93,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);
             GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2,
-                    getWidgetTheme(context.getTheme()).getSlotHoverColor());
+                    getWidgetTheme(context.getTheme()).getColor());
             GlStateManager.colorMask(true, true, true, true);
         }
     }
@@ -118,7 +118,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
     }
 
     @Override
-    public WidgetSlotTheme getWidgetTheme(ITheme theme) {
+    protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
         return theme.getFluidSlotTheme();
     }
 
@@ -127,7 +127,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         return this.syncHandler.getFluid();
     }
 
-    public static void addIngotMolFluidTooltip(FluidStack fluidStack, Tooltip tooltip) {
+    public static void addIngotMolFluidTooltip(FluidStack fluidStack, RichTooltip tooltip) {
         // Add tooltip showing how many "ingot moles" (increments of 144) this fluid is if shift is held
         if (TooltipHelper.isShiftDown() && fluidStack.amount > GTValues.L) {
             int numIngots = fluidStack.amount / GTValues.L;
@@ -136,7 +136,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             if (extra != 0) {
                 fluidAmount += String.format(" + %d L", extra);
             }
-            tooltip.addLine(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
+            tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
         }
     }
 }
