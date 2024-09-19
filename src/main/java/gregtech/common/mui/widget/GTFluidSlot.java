@@ -44,6 +44,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
+    private static final int TRY_CLICK_CONTAINER = 1;
 
     public GTFluidSlot() {
         tooltip().setAutoUpdate(true).setHasTitleMargin(true);
@@ -180,17 +181,17 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
 
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
-            if (id == 1) {
+            if (id == TRY_CLICK_CONTAINER) {
                 replaceCursorItemStack(NetworkUtils.readItemStack(buf));
             }
         }
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
-            if (id == 1) {
+            if (id == TRY_CLICK_CONTAINER) {
                 var stack = tryClickContainer(buf.readBoolean());
                 if (!stack.isEmpty())
-                    syncToClient(1, buffer -> NetworkUtils.writeItemStack(buffer, stack));
+                    syncToClient(TRY_CLICK_CONTAINER, buffer -> NetworkUtils.writeItemStack(buffer, stack));
             }
         }
 
@@ -301,7 +302,7 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             ItemStack playerStack = getSyncManager().getCursorItem();
 
             if (!getSyncManager().isClient())
-                syncToClient(1, buffer -> NetworkUtils.writeItemStack(buffer, resultStack));
+                syncToClient(TRY_CLICK_CONTAINER, buffer -> NetworkUtils.writeItemStack(buffer, resultStack));
 
             while (resultStack.getCount() > resultStackSize) {
                 playerStack.shrink(resultStackSize);
