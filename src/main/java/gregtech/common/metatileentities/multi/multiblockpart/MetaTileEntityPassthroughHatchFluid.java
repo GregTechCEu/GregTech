@@ -40,7 +40,6 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,9 +140,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         int rowSize = (int) Math.sqrt(getTier() + 1);
 
-        int backgroundWidth = Math.max(
-                9 * 18 + 18 + 14 + 5,   // Player Inv width
-                rowSize * 18 + 14); // Bus Inv width
+        int backgroundWidth = 9 * 18 + 14;
         int backgroundHeight = 18 + 18 * rowSize + 94;
 
         List<List<IWidget>> widgets = new ArrayList<>();
@@ -161,25 +158,21 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
-                .child(new Column()
-                        .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
-                        .width(18).height(18 * 4 + 5)
-                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))
-                        .child(new ToggleButton()
-                                .top(18 * 2)
-                                .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
-                                        workingStateValue::setBoolValue))
-                                .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
-                                .tooltipBuilder(t -> t.setAutoUpdate(true)
-                                        .addLine(workingStateValue.getBoolValue() ?
-                                                IKey.lang("gregtech.gui.fluid_passthrough.enabled") :
-                                                IKey.lang("gregtech.gui.fluid_passthrough.disabled")))))
                 .child(new Grid()
                         .top(18).height(rowSize * 18)
                         .minElementMargin(0, 0)
                         .minColWidth(18).minRowHeight(18)
                         .alignX(0.5f)
-                        .matrix(widgets));
+                        .matrix(widgets))
+                .child(new ToggleButton()
+                        .top(18 * 2).left(18 * 8 + 7)
+                        .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
+                                workingStateValue::setBoolValue))
+                        .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
+                        .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                .addLine(workingStateValue.getBoolValue() ?
+                                        IKey.lang("gregtech.gui.fluid_passthrough.enabled") :
+                                        IKey.lang("gregtech.gui.fluid_passthrough.disabled"))));
     }
 
     @Override
