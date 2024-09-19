@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.storage;
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -295,11 +294,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     public boolean showToolUsages() {
         return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override
