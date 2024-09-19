@@ -31,9 +31,8 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -119,7 +118,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     @Override
-    protected PanelSyncHandler createEntrySelector(ModularPanel panel) {
+    protected EntrySelectorSH createEntrySelector(ModularPanel panel) {
         return new EntrySelectorSH(panel, EntryTypes.ENDER_FLUID) {
 
             @Override
@@ -151,7 +150,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                 .marginRight(2);
     }
 
-    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
+    protected Flow createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
         getFluidFilterContainer().setMaxTransferSize(1);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
