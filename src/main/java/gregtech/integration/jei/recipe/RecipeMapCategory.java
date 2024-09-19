@@ -12,8 +12,8 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.category.GTRecipeCategory;
-import gregtech.api.recipes.recipeproperties.ResearchProperty;
-import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
+import gregtech.api.recipes.properties.impl.ResearchProperty;
+import gregtech.api.recipes.properties.impl.ResearchPropertyData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
@@ -213,9 +213,9 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
             if (data != null) {
                 List<ItemStack> dataItems = new ArrayList<>();
                 for (ResearchPropertyData.ResearchEntry entry : data) {
-                    ItemStack dataStick = entry.getDataItem().copy();
+                    ItemStack dataStick = entry.dataItem().copy();
                     AssemblyLineManager.writeResearchToNBT(GTUtility.getOrCreateNbtCompound(dataStick),
-                            entry.getResearchId());
+                            entry.researchId());
                     dataItems.add(dataStick);
                 }
                 itemStackGroup.set(16, dataItems);

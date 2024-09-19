@@ -1,17 +1,22 @@
-package gregtech.api.recipes.recipeproperties;
+package gregtech.api.recipes.properties.impl;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import org.jetbrains.annotations.NotNull;
 
-public class DimensionProperty extends RecipeProperty<DimensionProperty.DimensionPropertyList> {
+public final class DimensionProperty extends RecipeProperty<DimensionProperty.DimensionPropertyList> {
 
     public static final String KEY = "dimension";
 
@@ -22,9 +27,34 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
     }
 
     public static DimensionProperty getInstance() {
-        if (INSTANCE == null)
+        if (INSTANCE == null) {
             INSTANCE = new DimensionProperty();
+            GregTechAPI.RECIPE_PROPERTIES.register(KEY, INSTANCE);
+        }
         return INSTANCE;
+    }
+
+    @Override
+    public @NotNull NBTBase serialize(@NotNull Object value) {
+        DimensionPropertyList list = castValue(value);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setIntArray("whiteListDimensions", list.whiteListDimensions.toArray(new int[0]));
+        tag.setIntArray("blackListDimensions", list.blackListDimensions.toArray(new int[0]));
+        return tag;
+    }
+
+    @Override
+    public @NotNull Object deserialize(@NotNull NBTBase nbt) {
+        NBTTagCompound tag = (NBTTagCompound) nbt;
+        DimensionPropertyList list = new DimensionPropertyList();
+        for (int i : tag.getIntArray("whiteListDimensions")) {
+            list.add(i, false);
+        }
+
+        for (int i : tag.getIntArray("blackListDimensions")) {
+            list.add(i, true);
+        }
+        return tag;
     }
 
     @Override
@@ -62,8 +92,8 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
 
         public static DimensionPropertyList EMPTY_LIST = new DimensionPropertyList();
 
-        public IntList whiteListDimensions = new IntArrayList();
-        public IntList blackListDimensions = new IntArrayList();
+        public final IntList whiteListDimensions = new IntArrayList();
+        public final IntList blackListDimensions = new IntArrayList();
 
         public void add(int key, boolean toBlacklist) {
             if (toBlacklist) {
@@ -75,16 +105,13 @@ public class DimensionProperty extends RecipeProperty<DimensionProperty.Dimensio
             }
         }
 
-        public void merge(DimensionPropertyList list) {
+        public void merge(@NotNull DimensionPropertyList list) {
             this.whiteListDimensions.addAll(list.whiteListDimensions);
             this.blackListDimensions.addAll(list.blackListDimensions);
         }
 
         public boolean checkDimension(int dim) {
-            boolean valid = true;
-            if (this.blackListDimensions.size() > 0) valid = !this.blackListDimensions.contains(dim);
-            if (this.whiteListDimensions.size() > 0) valid = this.whiteListDimensions.contains(dim);
-            return valid;
+            return !blackListDimensions.contains(dim) && whiteListDimensions.contains(dim);
         }
     }
 }

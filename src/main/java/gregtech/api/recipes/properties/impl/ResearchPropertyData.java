@@ -1,6 +1,7 @@
-package gregtech.api.recipes.recipeproperties;
+package gregtech.api.recipes.properties.impl;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +12,6 @@ import java.util.Iterator;
 public final class ResearchPropertyData implements Iterable<ResearchPropertyData.ResearchEntry> {
 
     private final Collection<ResearchEntry> entries = new ArrayList<>();
-
-    public ResearchPropertyData() {}
 
     /**
      * @param entry the entry to add
@@ -46,14 +45,23 @@ public final class ResearchPropertyData implements Iterable<ResearchPropertyData
             this.dataItem = dataItem;
         }
 
-        @NotNull
-        public String getResearchId() {
+        public @NotNull String researchId() {
             return researchId;
         }
 
-        @NotNull
-        public ItemStack getDataItem() {
+        public @NotNull ItemStack dataItem() {
             return dataItem;
+        }
+
+        public @NotNull NBTTagCompound serializeNBT() {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setString("researchId", researchId);
+            tag.setTag("dataItem", dataItem.serializeNBT());
+            return tag;
+        }
+
+        public static @NotNull ResearchEntry deserializeFromNBT(@NotNull NBTTagCompound tag) {
+            return new ResearchEntry(tag.getString("researchId"), new ItemStack(tag.getCompoundTag("dataItem")));
         }
     }
 }

@@ -91,28 +91,28 @@ public class MaterialRecipeHandler {
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(new ItemStack(MetaBlocks.POWDERBARREL, 8))
+                        .explosives(new ItemStack(MetaBlocks.POWDERBARREL, 8))
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesAmount(4)
+                        .explosives(4)
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(MetaItems.DYNAMITE.getStackForm(2))
+                        .explosives(MetaItems.DYNAMITE.getStackForm(2))
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(new ItemStack(MetaBlocks.ITNT))
+                        .explosives(new ItemStack(MetaBlocks.ITNT))
                         .buildAndRegister();
             }
 
