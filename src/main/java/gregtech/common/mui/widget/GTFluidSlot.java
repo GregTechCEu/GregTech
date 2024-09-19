@@ -28,10 +28,13 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider {
+public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider {
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
+    private boolean showAmount = true;
+    private boolean disableBackground = false;
+    // todo phantom
 
     public GTFluidSlot() {
         tooltip().setAutoUpdate(true);
@@ -75,22 +78,40 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         return this;
     }
 
+    public GTFluidSlot showAmount(boolean showAmount) {
+        this.showAmount = showAmount;
+        return this;
+    }
+
+    public GTFluidSlot disableBackground() {
+        this.disableBackground = true;
+        return this;
+    }
+
     @Override
     public boolean isValidSyncHandler(SyncHandler syncHandler) {
         return syncHandler instanceof GTFluidSyncHandler;
     }
 
     @Override
+    public void drawBackground(ModularGuiContext context, WidgetTheme widgetTheme) {
+        if (disableBackground) return;
+        super.drawBackground(context, widgetTheme);
+    }
+
+    @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         FluidStack content = this.syncHandler.getFluid();
-        if (content != null) {
-            GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
 
+        GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
+
+        if (content != null && showAmount) {
             String s = NumberFormat.formatWithMaxDigits(getBaseUnitAmount(content.amount)) + getBaseUnit();
             this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - 1f);
             this.textRenderer.setPos(0, 12);
             this.textRenderer.draw(s);
         }
+
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);
             GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2,
@@ -99,12 +120,12 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         }
     }
 
-    protected double getBaseUnitAmount(double amount) {
+    private double getBaseUnitAmount(double amount) {
         return amount / 1000;
     }
 
-    protected String getBaseUnit() {
-        return "L";
+    private String getBaseUnit() {
+        return "kL";
     }
 
     @NotNull

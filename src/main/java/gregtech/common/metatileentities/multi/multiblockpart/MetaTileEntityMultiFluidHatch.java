@@ -13,7 +13,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -229,8 +228,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
                         .mapTo(rowSize, fluidSlots,
                                 (i, slot) -> slot.syncHandler(GTFluidSlot.sync(fluidTankList.getTankAt(i))
                                         .canDrainSlot(true)
-                                        .canFillSlot(!isExportHatch))
-                                        .background(GTGuiTextures.FLUID_SLOT))
+                                        .canFillSlot(!isExportHatch)))
                         .coverChildren())
                 .bindPlayerInventory();
     }
