@@ -5,17 +5,13 @@ import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.cover.CoverRayTracer;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.QuantumItemRendererWidget;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -33,8 +29,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -50,6 +44,13 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -172,16 +173,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     protected static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
         return ItemStack.areItemsEqual(first, second) &&
                 ItemStack.areItemStackTagsEqual(first, second);
-    }
-
-    protected void addDisplayInformation(List<ITextComponent> textList) {
-        textList.add(new TextComponentTranslation("gregtech.machine.quantum_chest.items_stored"));
-        textList.add(new TextComponentString(String.format("%,d", itemsStoredInside)));
-        ItemStack export = exportItems.getStackInSlot(0);
-        if (!export.isEmpty()) {
-            textList.add(
-                    new TextComponentString(TextFormattingUtil.formatStringWithNewlines(export.getDisplayName(), 14)));
-        }
     }
 
     @Override
@@ -331,26 +322,26 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        Builder builder = ModularUI.defaultBuilder();
-        builder.image(7, 16, 81, 46, GuiTextures.DISPLAY);
-        builder.widget(new AdvancedTextWidget(11, 20, this::addDisplayInformation, 0xFFFFFF));
-        builder.label(6, 6, getMetaFullName())
-                .widget(new SlotWidget(importItems, 0, 90, 17, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .widget(new SlotWidget(exportItems, 0, 90, 44, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-                .widget(new ToggleButtonWidget(7, 64, 18, 18,
-                        GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                                .shouldUseBaseBackground()
-                                .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
-                .widget(new ToggleButtonWidget(25, 64, 18, 18,
-                        GuiTextures.BUTTON_ITEM_VOID, this::isVoiding, this::setVoiding)
-                                .setTooltipText("gregtech.gui.item_voiding.tooltip")
-                                .shouldUseBaseBackground())
-                .bindPlayerInventory(entityPlayer.inventory);
+    public boolean usesMui2() {
+        return true;
+    }
 
-        return builder.build(getHolder(), entityPlayer);
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        var autoOutput = new BooleanSyncValue(this::isAutoOutputItems, this::setAutoOutputItems);
+        var isLocked = new BooleanSyncValue(() -> false, b -> {});
+        var isVoiding = new BooleanSyncValue(this::isVoiding, this::setVoiding);
+
+        return GTGuis.createQuantumPanel(this)
+                .child(GTGuis.createQuantumDisplay("gregtech.machine.quantum_chest.items_stored",
+                        () -> IKey.lang(virtualItemStack.getDisplayName()).get(),
+                        textWidget -> !virtualItemStack.isEmpty(),
+                        () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
+                .child(GTGuis.createQuantumIO(importItems, exportItems))
+                .child(new QuantumItemRendererWidget(itemInventory)
+                        .pos(148, 41))
+                .child(GTGuis.createQuantumButtonRow(false, autoOutput, isLocked, isVoiding))
+                .child(SlotGroupWidget.playerInventory().left(7));
     }
 
     public EnumFacing getOutputFacing() {
@@ -553,7 +544,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
         return new AxisAlignedBB(getPos());
     }
 
-    private class QuantumChestItemHandler implements IItemHandler {
+    private class QuantumChestItemHandler extends SyncHandler implements IItemHandler {
 
         @Override
         public int getSlots() {
@@ -596,6 +587,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                 if (itemsStoredInside == 0L) {
                     MetaTileEntityQuantumChest.this.virtualItemStack = ItemStack.EMPTY;
                 }
+                updateClient();
             }
             return extractedStack;
         }
@@ -645,6 +637,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                     } else {
                         MetaTileEntityQuantumChest.this.itemsStoredInside += actualVirtualizedAmount;
                     }
+                    updateClient();
                 }
             }
 
@@ -654,6 +647,26 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                 return remainingStack;
             }
         }
+
+        private void updateClient() {
+            if (isValid() && !getSyncManager().isClient()) {
+                syncToClient(1, buffer -> {
+                    buffer.writeInt((int) itemsStoredInside);
+                    buffer.writeItemStack(virtualItemStack);
+                });
+            }
+        }
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) throws IOException {
+            if (id == 1) {
+                itemsStoredInside = buf.readInt();
+                virtualItemStack = buf.readItemStack();
+            }
+        }
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) throws IOException {}
     }
 
     @Override
