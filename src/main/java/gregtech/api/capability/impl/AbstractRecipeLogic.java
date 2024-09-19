@@ -21,9 +21,11 @@ import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.recipeproperties.CleanroomProperty;
 import gregtech.api.recipes.recipeproperties.DimensionProperty;
 import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.util.FluidStackHashStrategy;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
@@ -37,12 +39,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
@@ -70,7 +74,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int maxProgressTime;
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
+    protected Map<FluidStack, Integer> fluidChancesCache = new Object2IntOpenCustomHashMap<>(
+            FluidStackHashStrategy.builder()
+                    .compareFluid(true)
+                    .build());
     protected List<ItemStack> itemOutputs;
+    protected Map<ItemStack, Integer> itemChancesCache = new Object2IntOpenCustomHashMap<>(
+            ItemStackHashStrategy.builder()
+                    .compareItem(true)
+                    .compareDamage(true)
+                    .build());
 
     protected boolean isActive;
     protected boolean workingEnabled = true;
@@ -390,6 +403,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {
+
+            // we found a new recipe, clear the cache
+            if (this.previousRecipe != null && !currentRecipe.equals(this.previousRecipe)) {
+                this.itemChancesCache.clear();
+                this.fluidChancesCache.clear();
+            }
             this.previousRecipe = currentRecipe;
         }
         this.invalidInputsForRecipes = (currentRecipe == null);
@@ -947,9 +966,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         RecipeMap<?> map = getRecipeMap();
         if (map != null) {
             this.fluidOutputs = GTUtility
-                    .copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, map));
+                    .copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, map, fluidChancesCache));
             this.itemOutputs = GTUtility
-                    .copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, map));
+                    .copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, map, itemChancesCache));
         }
 
         if (this.wasActiveAndNeedsUpdate) {
@@ -1209,6 +1228,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             }
             compound.setTag("ItemOutputs", itemOutputsList);
             compound.setTag("FluidOutputs", fluidOutputsList);
+
+            NBTTagList itemCache = new NBTTagList();
+            for (var entry : itemChancesCache.entrySet()) {
+                var tag = entry.getKey().serializeNBT();
+                tag.setInteger("CachedChance", entry.getValue());
+                itemCache.appendTag(tag);
+            }
+            NBTTagList fluidCache = new NBTTagList();
+            for (var entry : fluidChancesCache.entrySet()) {
+                var tag = entry.getKey().writeToNBT(new NBTTagCompound());
+                tag.setInteger("CachedChance", entry.getValue());
+                fluidCache.appendTag(tag);
+            }
+            compound.setTag("ItemChanceCache", itemCache);
+            compound.setTag("FluidChanceCache", fluidCache);
         }
         return compound;
     }
@@ -1234,6 +1268,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             this.fluidOutputs = new ArrayList<>();
             for (int i = 0; i < fluidOutputsList.tagCount(); i++) {
                 this.fluidOutputs.add(FluidStack.loadFluidStackFromNBT(fluidOutputsList.getCompoundTagAt(i)));
+            }
+
+            NBTTagList itemCache = compound.getTagList("ItemChanceCache", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < itemCache.tagCount(); i++) {
+                var stack = itemCache.getCompoundTagAt(i);
+                int cache = stack.getInteger("CachedChance");
+                this.itemChancesCache.put(new ItemStack(stack), cache);
+            }
+
+            NBTTagList fluidCache = compound.getTagList("FluidChanceCache", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < fluidCache.tagCount(); i++) {
+                var stack = fluidCache.getCompoundTagAt(i);
+                int cache = stack.getInteger("CachedChance");
+                this.fluidChancesCache.put(FluidStack.loadFluidStackFromNBT(stack), cache);
             }
         }
     }
