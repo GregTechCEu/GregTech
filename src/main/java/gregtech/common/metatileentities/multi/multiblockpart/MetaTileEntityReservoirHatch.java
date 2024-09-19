@@ -131,6 +131,7 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
+        // TODO: Use controlsAmount(false) in the sync handler when #2622 is done
         GTFluidSyncHandler tankSyncHandler = new GTFluidSyncHandler(this.fluidTank)
                 .canDrainSlot(true).canFillSlot(false);
 
@@ -151,16 +152,11 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
                 .child(IKey.dynamic(() -> getFluidNameTranslated(tankSyncHandler))
                         .color(0xFFFFFF)
                         .asWidget().pos(11, 40))
-                // TODO: Use controlsAmount(false) in the sync handler when #2622 is done
                 .child(new GTFluidSlot().syncHandler(tankSyncHandler)
                         .pos(69, 52))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.importItems, 0)
                         .slotGroup("item_inv")
-                        .filter(itemStack -> {
-                            IFluidHandlerItem fluidHandlerItem = FluidUtil.getFluidHandler(itemStack);
-                            return fluidHandlerItem != null &&
-                                    fluidHandlerItem.getTankProperties()[0].getContents() != null;
-                        }))
+                        .filter(itemStack -> FluidUtil.getFluidHandler(itemStack) != null))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
                         .pos(90, 16))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.exportItems, 0)
