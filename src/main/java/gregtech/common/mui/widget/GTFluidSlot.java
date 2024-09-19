@@ -47,12 +47,9 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
             tooltip.addLine(IKey.lang("gregtech.fluid.amount", fluid.amount, this.syncHandler.getCapacity()));
 
             // Add various tooltips from the material
-            List<String> formula = FluidTooltipUtil.getFluidTooltip(fluid);
-            if (formula != null) {
-                for (String s : formula) {
-                    if (s.isEmpty()) continue;
-                    tooltip.add(s).newLine();
-                }
+            for (String s : FluidTooltipUtil.getFluidTooltip(fluid)) {
+                if (s.isEmpty()) continue;
+                tooltip.add(s).newLine();
             }
 
             addIngotMolFluidTooltip(fluid, tooltip);
