@@ -6,6 +6,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.Mods;
+import gregtech.common.ConfigHolder;
 import gregtech.integration.baubles.BaublesModule;
 
 import net.minecraft.client.resources.I18n;
@@ -81,7 +82,7 @@ public class ItemMagnetBehavior implements IItemBehaviour {
     public void onUpdate(ItemStack stack, Entity entity) {
         // Adapted logic from Draconic Evolution
         // https://github.com/Draconic-Inc/Draconic-Evolution/blob/1.12.2/src/main/java/com/brandon3055/draconicevolution/items/tools/Magnet.java
-        if (!entity.isSneaking() && entity.ticksExisted % 10 == 0 && isActive(stack) &&
+        if (!entity.isSneaking() && entity.ticksExisted % ConfigHolder.tools.magnetDelay == 0 && isActive(stack) &&
                 entity instanceof EntityPlayer player) {
             World world = entity.getEntityWorld();
             if (!drainEnergy(true, stack, energyDraw)) {
