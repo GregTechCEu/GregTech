@@ -1,7 +1,7 @@
 package gregtech.common.mui.widget;
 
 import com.cleanroommc.modularui.api.value.IStringValue;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldHandler;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldRenderer;
@@ -53,7 +53,7 @@ public class HighlightedTextField extends TextFieldWidget {
     }
 
     @Override
-    public void onRemoveFocus(GuiContext context) {
+    public void onRemoveFocus(ModularGuiContext context) {
         super.onRemoveFocus(context);
         highlighter.runHighlighter(getText());
         if (isSynced())
@@ -70,7 +70,7 @@ public class HighlightedTextField extends TextFieldWidget {
 
         private Function<String, String> highlightRule = string -> string;
 
-        private Map<String, String> cacheMap = new Object2ObjectOpenHashMap<>();
+        private final Map<String, String> cacheMap = new Object2ObjectOpenHashMap<>();
 
         public TextHighlighter(TextFieldHandler handler) {
             super(handler);
@@ -81,8 +81,8 @@ public class HighlightedTextField extends TextFieldWidget {
         }
 
         @Override
-        protected float draw(String text, float x, float y) {
-            return super.draw(this.cacheMap.getOrDefault(text, text), x, y);
+        protected void draw(String text, float x, float y) {
+            super.draw(this.cacheMap.getOrDefault(text, text), x, y);
         }
 
         public void runHighlighter(String text) {

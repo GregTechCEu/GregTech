@@ -32,7 +32,7 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverFluidVoiding extends CoverPump {
@@ -80,7 +80,7 @@ public class CoverFluidVoiding extends CoverPump {
         var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
         return super.createUI(mainPanel, syncManager)
-                .child(new Row().height(18).widthRel(1f)
+                .child(Flow.row().height(18).widthRel(1f)
                         .marginBottom(2)
                         .child(new ToggleButton()
                                 .value(isWorking)

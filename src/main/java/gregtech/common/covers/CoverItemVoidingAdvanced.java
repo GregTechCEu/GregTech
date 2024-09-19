@@ -24,8 +24,7 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +93,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
         var voidingMode = new EnumSyncValue<>(VoidingMode.class, this::getVoidingMode, this::setVoidingMode);
         guiSyncManager.syncValue("voiding_mode", voidingMode);
 
@@ -112,7 +111,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
                         .lang("cover.voiding.voiding_mode")
                         .overlay(16, GTGuiTextures.VOIDING_MODE_OVERLAY)
                         .build())
-                .child(new Row().right(0).coverChildrenHeight()
+                .child(Flow.row().right(0).coverChildrenHeight()
                         .child(transferTextField
                                 .setEnabledIf(w -> this.itemFilterContainer.showGlobalTransferLimitSlider() &&
                                         this.voidingMode == VoidingMode.VOID_OVERFLOW)

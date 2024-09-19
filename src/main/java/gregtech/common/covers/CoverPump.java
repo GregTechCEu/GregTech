@@ -53,8 +53,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -220,11 +219,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         syncManager.syncValue("pump_mode", pumpMode);
         syncManager.syncValue("throughput", throughput);
 
-        var column = new Column().top(24).margin(7, 0)
+        var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 
         if (createThroughputRow())
-            column.child(new Row().coverChildrenHeight()
+            column.child(Flow.row().coverChildrenHeight()
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
