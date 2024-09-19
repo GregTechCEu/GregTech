@@ -28,8 +28,6 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider {
 
     private final TextRenderer textRenderer = new TextRenderer();
