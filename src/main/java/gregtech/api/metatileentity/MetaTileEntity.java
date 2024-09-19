@@ -584,6 +584,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (toolClasses.contains(ToolClasses.HARD_HAMMER)) {
             return onHardHammerClick(playerIn, hand, gridSideHit, hitResult);
         }
+        if (toolClasses.contains(ToolClasses.WIRE_CUTTER)) {
+            return onWireCutterClick(playerIn, hand, gridSideHit, hitResult);
+        }
         return false;
     }
 
@@ -662,6 +665,16 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                     "gregtech.machine.muffle.on" : "gregtech.machine.muffle.off"), true);
         }
         return true;
+    }
+
+    /**
+     * Called when player clicks a wire cutter on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
+        return false;
     }
 
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
