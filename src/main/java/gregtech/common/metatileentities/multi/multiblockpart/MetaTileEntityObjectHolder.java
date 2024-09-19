@@ -4,9 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IObjectHolder;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.BlockableSlotWidget;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -15,11 +12,12 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -31,6 +29,12 @@ import net.minecraftforge.items.IItemHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,18 +59,33 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.defaultBuilder()
-                .label(5, 5, getMetaFullName())
-                .image(46, 18, 84, 60, GuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE)
-                .widget(new BlockableSlotWidget(heldItems, 0, 79, 39)
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.registerSlotGroup("item_inv", 2);
+
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 176, 166)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(GTGuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE.asWidget()
+                        .left(46).top(18)
+                        .size(84, 60))
+                .child(new gregtech.api.mui.widget.BlockableSlotWidget()
                         .setIsBlocked(this::isSlotBlocked)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.RESEARCH_STATION_OVERLAY))
-                .widget(new BlockableSlotWidget(heldItems, 1, 15, 39)
+                        .slot(SyncHandlers.itemSlot(heldItems, 0)
+                                .slotGroup("item_inv"))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.RESEARCH_STATION_OVERLAY)
+                        .left(79).top(39))
+                .child(new gregtech.api.mui.widget.BlockableSlotWidget()
                         .setIsBlocked(this::isSlotBlocked)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DATA_ORB_OVERLAY))
-                .bindPlayerInventory(entityPlayer.inventory)
-                .build(getHolder(), entityPlayer);
+                        .slot(SyncHandlers.itemSlot(heldItems, 1)
+                                .slotGroup("item_inv"))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.DATA_ORB_OVERLAY)
+                        .left(15).top(39));
     }
 
     private boolean isSlotBlocked() {
