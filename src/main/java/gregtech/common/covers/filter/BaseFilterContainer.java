@@ -11,10 +11,10 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -246,10 +246,12 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                             } else {
                                 panel.closePanel();
                             }
-                            Interactable.playButtonClickSound();
+                            // Interactable.playButtonClickSound();
                             return true;
                         }))
                 .child(IKey.dynamic(this::getFilterName)
+                        .color(Color.WHITE.main)
+                        .shadow(true)
                         .alignment(Alignment.CenterRight).asWidget()
                         .left(36).right(0).height(18));
     }

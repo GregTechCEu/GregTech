@@ -118,27 +118,21 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     @Override
-    protected EntrySelectorSH createEntrySelector(ModularPanel panel) {
-        return new EntrySelectorSH(panel, EntryTypes.ENDER_FLUID) {
+    protected IWidget createSlotWidget(VirtualTank entry) {
+        var fluidTank = GTFluidSlot.sync(entry)
+                .canFillSlot(false)
+                .canDrainSlot(false);
 
-            @Override
-            protected IWidget createSlotWidget(VirtualTank entry) {
-                var fluidTank = GTFluidSlot.sync(entry)
-                        .canFillSlot(false)
-                        .canDrainSlot(false);
+        return new GTFluidSlot()
+                .size(18)
+                .background(GTGuiTextures.FLUID_SLOT)
+                .syncHandler(fluidTank)
+                .marginRight(2);
+    }
 
-                return new GTFluidSlot()
-                        .size(18)
-                        .background(GTGuiTextures.FLUID_SLOT)
-                        .syncHandler(fluidTank)
-                        .marginRight(2);
-            }
-
-            @Override
-            protected void deleteEntry(UUID uuid, String name) {
-                VirtualEnderRegistry.deleteEntry(uuid, getType(), name, tank -> tank.getFluidAmount() == 0);
-            }
-        };
+    @Override
+    protected void deleteEntry(UUID uuid, String name) {
+        VirtualEnderRegistry.deleteEntry(uuid, getType(), name, tank -> tank.getFluidAmount() == 0);
     }
 
     @Override
