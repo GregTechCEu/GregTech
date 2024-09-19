@@ -193,7 +193,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tag.setTag("Inventory", itemStackHandler.serializeNBT());
-        tag.setBoolean("workingEnabled", workingEnabled);
+        tag.setBoolean("WorkingEnabled", workingEnabled);
         return tag;
     }
 
@@ -201,10 +201,10 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         this.itemStackHandler.deserializeNBT(tag.getCompoundTag("Inventory"));
-        // Passthrough hatches before this change won't have workingEnabled at all, so we need to check if it exists
-        if (tag.hasKey("workingEnabled")) {
-            this.workingEnabled = tag.getBoolean("workingEnabled");
-        } else if (!tag.hasKey("workingEnabled")) {
+        // Passthrough hatches before this change won't have WorkingEnabled at all, so we need to check if it exists
+        if (tag.hasKey("WorkingEnabled")) {
+            this.workingEnabled = tag.getBoolean("WorkingEnabled");
+        } else {
             this.workingEnabled = true;
         }
     }

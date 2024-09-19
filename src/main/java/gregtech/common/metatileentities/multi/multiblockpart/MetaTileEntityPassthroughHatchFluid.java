@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import com.cleanroommc.modularui.widgets.FluidSlot;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -188,7 +186,7 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         tag.setTag("FluidInventory", fluidTankList.serializeNBT());
-        tag.setBoolean("workingEnabled", workingEnabled);
+        tag.setBoolean("WorkingEnabled", workingEnabled);
         return tag;
     }
 
@@ -196,10 +194,10 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         this.fluidTankList.deserializeNBT(tag.getCompoundTag("FluidInventory"));
-        // Passthrough hatches before this change won't have workingEnabled at all, so we need to check if it exists
-        if (tag.hasKey("workingEnabled")) {
-            this.workingEnabled = tag.getBoolean("workingEnabled");
-        } else if (!tag.hasKey("workingEnabled")) {
+        // Passthrough hatches before this change won't have WorkingEnabled at all, so we need to check if it exists
+        if (tag.hasKey("WorkingEnabled")) {
+            this.workingEnabled = tag.getBoolean("WorkingEnabled");
+        } else {
             this.workingEnabled = true;
         }
     }
