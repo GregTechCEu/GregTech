@@ -1830,6 +1830,14 @@ gregtech.material.enriched_naquadah_sulfate=硫酸富集硅岩
 gregtech.material.naquadria_sulfate=硫酸超能硅岩
 gregtech.material.pyrochlore=烧绿石
 gregtech.material.rtm_alloy=钌钨钼合金
+gregtech.material.ilmenite_slag=钛铁矿渣
+gregtech.material.zircon=锆石
+gregtech.material.zirconia=氧化锆
+gregtech.material.zirconium_tetrachloride=四氯化锆
+gregtech.material.hafnia=二氧化铪
+gregtech.material.hafnium_tetrachloride=四氯化铪
+gregtech.material.zircaloy_4=锆-4合金
+gregtech.material.inconel_718=因科镍-718
 
 
 # Organic Chemistry Materials
@@ -2043,6 +2051,11 @@ gregtech.material.acidic_naquadria_solution=酸性超能硅岩溶液
 gregtech.material.naquadria_waste=超能硅岩废液
 gregtech.material.lapotron=兰波顿
 gregtech.material.uu_matter=UU物质
+gregtech.material.bauxite_slurry=铝土浆液
+gregtech.material.cracked_bauxite_slurry=裂化铝土浆液
+gregtech.material.bauxite_sludge=铝土泥渣
+gregtech.material.decalcified_bauxite_sludge=脱钙铝土泥渣
+gregtech.material.bauxite_slag=铝土矿渣
 
 
 # Second Degree Materials
@@ -2403,7 +2416,7 @@ tile.optical_pipe_normal.name=光缆
 tile.optical_pipe_normal.tooltip1=传递§f算力§7或§f研究数据§7
 
 tile.laser_pipe_normal.name=激光传导线缆
-tile.laser_pipe_normal.tooltip1=无线损地传递能量，只限直线摆放
+tile.laser_pipe_normal.tooltip1=§f无损§7传递能量，仅限直线摆放
 
 metaitem.prospector.lv.name=电动勘探扫描仪（LV）
 metaitem.prospector.hv.name=电动勘探扫描仪（HV）
@@ -4792,7 +4805,7 @@ gregtech.machine.large_miner.ev.name=基础采矿场
 gregtech.machine.large_miner.iv.name=进阶采矿场
 gregtech.machine.large_miner.luv.name=进阶采矿场 II
 gregtech.machine.miner.multi.modes=具有精准采集模式与区块对齐模式。
-gregtech.machine.miner.multi.production=产出§f研磨机§7§f3x§7倍的粉碎矿石。
+gregtech.machine.miner.multi.production=它能产出§f三倍§7于§f研磨机§7的粉碎矿石。
 gregtech.machine.miner.fluid_usage=每tick消耗§f%,d L§7的§f%s§7，超频时翻倍。
 gregtech.machine.miner.multi.description=一台工作范围极广的多方块采矿机，能够提供巨量矿石。
 gregtech.machine.miner.multi.needsfluid=钻井液不足！
@@ -4811,7 +4824,7 @@ gregtech.machine.miner.chunkradius=区块半径：%d
 gregtech.machine.fluid_drilling_rig.mv.name=基础流体钻机
 gregtech.machine.fluid_drilling_rig.hv.name=进阶流体钻机
 gregtech.machine.fluid_drilling_rig.ev.name=进阶流体钻机 II
-gregtech.machine.fluid_drilling_rig.description=钻取基岩之下的涓涓流体。
+gregtech.machine.fluid_drilling_rig.description=钻取基岩之下的漫漫流体。
 gregtech.machine.fluid_drilling_rig.production=§e产量倍数：§f%dx，超频时为%fx
 gregtech.machine.fluid_drilling_rig.depletion=§b损耗率：§f%s%%
 gregtech.machine.fluid_drilling_rig.shows_depletion=显示流体矿脉信息
@@ -5149,9 +5162,9 @@ gregtech.maintenance.configurable_duration=处理耗时：%fx
 gregtech.maintenance.configurable_duration.unchanged_description=配方以正常速度运行。更改配置以更新。
 gregtech.maintenance.configurable_duration.changed_description=配方处理速度现为正常速度（不计超频）的%f倍。
 
-gregtech.maintenance.configurable_time=故障几率：%fx
-gregtech.maintenance.configurable_time.unchanged_description=故障的发生几率为正常值。更改配置以更新。
-gregtech.maintenance.configurable_time.changed_description=故障的发生几率现为正常值的%f倍。
+gregtech.maintenance.configurable_time=故障概率：%fx
+gregtech.maintenance.configurable_time.unchanged_description=故障的发生概率为正常值。更改配置以更新。
+gregtech.maintenance.configurable_time.changed_description=故障的发生概率现为正常值的%f倍。
 
 gregtech.maintenance.configurable.tooltip_basic=以更频繁的维护需求为代价，加快机器的处理速度
 gregtech.maintenance.configurable.tooltip_more_info=按住SHIFT进行特殊交互
@@ -5177,7 +5190,7 @@ gregtech.machine.muffler_hatch.uxv.name=§eUXV§r消声仓
 gregtech.machine.muffler_hatch.opv.name=§9OpV§r消声仓
 gregtech.machine.muffler_hatch.max.name=§c§lMAX§r消声仓
 
-gregtech.muffler.recovery_tooltip=§b收集几率：§f%d%%
+gregtech.muffler.recovery_tooltip=§b收集概率：§f%d%%
 
 gregtech.machine.pump_hatch.name=水泵输出仓
 gregtech.machine.pump_hatch.tooltip=原始水泵专用流体输出口
@@ -5289,7 +5302,7 @@ gregtech.machine.laser_hatch.target.tooltip1=远距离接收能量
 gregtech.machine.laser_hatch.tooltip2=§c激光传导线缆必须直线摆放！§7
 
 gregtech.machine.fluid_tank.max_multiblock=多方块结构最大尺寸：%,dx%,dx%,d
-gregtech.machine.fluid_tank.fluid=含有%s mB%s
+gregtech.machine.fluid_tank.fluid=含有%s L%s
 
 # ME Parts
 gregtech.machine.me_import_item_bus.name=ME输入总线
@@ -5493,14 +5506,14 @@ fluid.spawnlocation.name=流体矿脉信息
 gregtech.jei.fluid.vein_weight=矿脉权重：%d
 gregtech.jei.fluid.min_yield=最小产量：%d
 gregtech.jei.fluid.max_yield=最大产量：%d
-gregtech.jei.fluid.depletion_chance=消耗几率：%d%%
+gregtech.jei.fluid.depletion_chance=消耗概率：%d%%
 gregtech.jei.fluid.depletion_amount=消耗量：%d
 gregtech.jei.fluid.depleted_rate=殆尽后产量：%d
 gregtech.jei.fluid.dimension=维度：
 gregtech.jei.fluid.weight_hover=流体矿脉的生成权重。鼠标悬于图标可查看该流体在特定生物群系中特殊的生成权重
 gregtech.jei.fluid.min_hover=流体矿脉所能具有的的最小产量
 gregtech.jei.fluid.max_hover=流体矿脉所能具有的的最大产量
-gregtech.jei.fluid.dep_chance_hover=开采流体矿脉时消耗的几率
+gregtech.jei.fluid.dep_chance_hover=开采流体矿脉时消耗的概率
 gregtech.jei.fluid.dep_amount_hover=消耗后消耗的量
 gregtech.jei.fluid.dep_yield_hover=流体矿脉殆尽后能开采的最大流体量
 
@@ -5658,7 +5671,7 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=提供
 gregtech.multiblock.large_combustion_engine.obstructed=引擎进气口受阻！
 gregtech.multiblock.large_combustion_engine.obstructed.desc=引擎进气口前方必须有一格空气。
 
-gregtech.multiblock.turbine.fuel_amount=燃料量：%s mB（%s）
+gregtech.multiblock.turbine.fuel_amount=燃料量：%s L（%s）
 gregtech.multiblock.turbine.fuel_needed=消耗量：%s / %s ticks
 gregtech.multiblock.turbine.rotor_speed=转子转速：%s
 gregtech.multiblock.turbine.rotor_rpm_unit_name=RPM
@@ -5748,14 +5761,14 @@ gregtech.multiblock.hpca.warning_multiple_bridges=- 多个桥接组件（没有�
 gregtech.multiblock.hpca.warning_no_computation=- 没有计算组件
 gregtech.multiblock.hpca.warning_low_cooling=- 冷却不足
 gregtech.multiblock.hpca.info_max_computation=最大算力：%s
-gregtech.multiblock.hpca.info_max_cooling_demand=冷却液需求：%s
-gregtech.multiblock.hpca.info_max_cooling_available=冷却液可用：%s
-gregtech.multiblock.hpca.info_max_coolant_required=冷却液还需：%s
+gregtech.multiblock.hpca.info_max_cooling_demand=冷却需求：%s
+gregtech.multiblock.hpca.info_max_cooling_available=冷却可用：%s
+gregtech.multiblock.hpca.info_max_coolant_required=冷却液需求：%s L/t
 gregtech.multiblock.hpca.info_coolant_name=多氯联苯冷却液
 gregtech.multiblock.hpca.info_bridging_enabled=桥接已启动
 gregtech.multiblock.hpca.info_bridging_disabled=桥接已关闭
 
-gregtech.command.usage=用法：/gregtech <worldgen/hand/recipecheck>
+gregtech.command.usage=用法：/gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=用法：/gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=用法：/gregtech worldgen reload
 gregtech.command.worldgen.reload.success=已从配置文件中重载世界生成设定。
@@ -5782,6 +5795,12 @@ gregtech.command.copy.copied_and_click=已复制至剪贴板。点击以再次�
 gregtech.command.copy.click_to_copy=点击以复制
 gregtech.command.copy.copied_start=已复制[
 gregtech.command.copy.copied_end=]至剪贴板
+gregtech.command.datafix.usage=用法：/gregtech datafix <bqu>
+gregtech.command.datafix.bqu.usage=用法：/gregtech datafix <bqu> [confirm]
+gregtech.command.datafix.bqu.backup=备份你的存档和BQu配置文件，然后使用“confirm”参数重新运行
+gregtech.command.datafix.bqu.start=开始迁移BQu任务数据库…
+gregtech.command.datafix.bqu.complete=BQu任务数据库迁移完成
+gregtech.command.datafix.bqu.failed=BQu任务数据库迁移失败。恢复你的备份！
 
 gregtech.chat.cape=§5恭喜你：你刚刚解锁了一件新披风！查看终端应用程序“披风选择器”来使用它。§r
 

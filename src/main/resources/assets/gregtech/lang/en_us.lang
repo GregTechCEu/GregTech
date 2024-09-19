@@ -1358,6 +1358,13 @@ cover.ender_fluid_link.iomode.disabled=I/O Disabled
 cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode\nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
+cover.ender_fluid_link.transfer_unit=L/t
+
+cover.generic.ender.known_channels=Known Channels
+cover.generic.ender.open_selector=Open Entry Selector
+cover.generic.ender.set_description.tooltip=Set Description
+cover.generic.ender.set_description.title=Set Description [%s]
+cover.generic.ender.delete_entry=Delete Entry
 
 cover.generic.advanced_detector.latched=Latched
 cover.generic.advanced_detector.continuous=Continuous
@@ -5333,6 +5340,9 @@ gregtech.machine.me.import_copy_settings=Saved settings to Data Stick
 gregtech.machine.me.import_paste_settings=Applied settings from Data Stick
 gregtech.machine.me.item_import.data_stick.name=§oME Input Bus Configuration Data
 gregtech.machine.me.fluid_import.data_stick.name=§oME Input Hatch Configuration Data
+gregtech.machine.me.extra_connections.enabled=Allow connections from all sides
+gregtech.machine.me.extra_connections.disabled=Allow connection only on front face
+gregtech.machine.me.extra_connections.tooltip=Right-click with wire cutters to allow connecting to AE2 on all sides
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
