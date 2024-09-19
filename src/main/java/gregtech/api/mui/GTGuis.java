@@ -44,6 +44,24 @@ public class GTGuis {
         return createPanel(valueItem.unlocalizedName, width, height);
     }
 
+    public static ModularPanel createPanel(String name) {
+        return ModularPanel.defaultPanel(name);
+    }
+
+    public static ModularPanel createPanel(MetaTileEntity mte) {
+        return createPanel(mte.metaTileEntityId.getPath());
+    }
+
+    public static ModularPanel createPanel(Cover cover) {
+        return createPanel(cover.getDefinition().getResourceLocation().getPath());
+    }
+
+    public static ModularPanel createPanel(ItemStack stack) {
+        MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+        if (valueItem == null) throw new IllegalArgumentException("Item must be a meta item!");
+        return createPanel(valueItem.unlocalizedName);
+    }
+
     public static ModularPanel createPopupPanel(String name, int width, int height) {
         return createPopupPanel(name, width, height, false, false);
     }
@@ -51,6 +69,15 @@ public class GTGuis {
     public static ModularPanel createPopupPanel(String name, int width, int height, boolean disableBelow,
                                                 boolean closeOnOutsideClick) {
         return new PopupPanel(name, width, height, disableBelow, closeOnOutsideClick);
+    }
+
+    public static ModularPanel createPopupPanel(String name) {
+        return createPopupPanel(name, false, false);
+    }
+
+    public static ModularPanel createPopupPanel(String name, boolean disableBelow,
+                                                boolean closeOnOutsideClick) {
+        return new PopupPanel(name, 176, 166, disableBelow, closeOnOutsideClick);
     }
 
     private static class PopupPanel extends ModularPanel {
