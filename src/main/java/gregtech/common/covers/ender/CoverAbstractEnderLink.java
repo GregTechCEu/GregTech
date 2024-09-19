@@ -24,7 +24,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
-import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -49,10 +48,8 @@ import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -148,9 +145,9 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected Flow createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
+        this.playerUUID = syncManager.getPlayer().getUniqueID();
 
-        var entrySelectorSH = createEntrySelector(panel);
-        syncManager.syncValue("entry_selector", entrySelectorSH);
+        var entrySelectorSH = (PanelSyncHandler) syncManager.panel("entry_selector", entrySelector(getType()), true);
 
         return Flow.column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
@@ -171,18 +168,15 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                 .disableHoverBackground()
                                 .addTooltipLine(IKey.lang("cover.generic.ender.open_selector"))
                                 .onMousePressed(i -> {
-                                    // if (entrySelectorSH.isPanelOpen()) {
-                                    // entrySelectorSH.closePanel();
-                                    // } else {
-                                    // entrySelectorSH.openPanel();
-                                    // }
-                                    // Interactable.playButtonClickSound();
+                                    if (entrySelectorSH.isPanelOpen()) {
+                                        entrySelectorSH.closePanel();
+                                    } else {
+                                        entrySelectorSH.openPanel();
+                                    }
                                     return true;
                                 })))
                 .child(createIoRow());
     }
-
-    protected abstract EntrySelectorSH createEntrySelector(ModularPanel panel);
 
     protected abstract IWidget createEntrySlot();
 
@@ -291,59 +285,17 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         nbt.setInteger("Frequency", activeEntry.getColor());
     }
 
-    protected abstract class EntrySelectorSH extends SyncHandler implements IPanelHandler {
-
-        // private static final int TRACK_SUBPANELS = 3;
-        private static final int DELETE_ENTRY = 1;
-        private final EntryTypes<T> type;
-        private final ModularPanel mainPanel;
-        private static final String PANEL_NAME = "entry_selector";
-        // private final Set<String> opened = new HashSet<>();
-        protected UUID playerUUID;
-
-        protected EntrySelectorSH(ModularPanel mainPanel, EntryTypes<T> type) {
-            this.mainPanel = mainPanel;
-            this.type = type;
-        }
-
-        @Override
-        public void init(String key, PanelSyncManager syncManager) {
-            super.init(key, syncManager);
-            this.playerUUID = syncManager.getPlayer().getUniqueID();
-        }
-
-        public UUID getPlayerUUID() {
-            return isPrivate ? playerUUID : null;
-        }
-
-        @Override
-        public void openPanel() {}
-
-        @Override
-        public void closePanel() {}
-
-        @Override
-        public void closePanelInternal() {}
-
-        @Override
-        public void closeSubPanels() {}
-
-        @Override
-        public void deleteCachedPanel() {}
-
-        @Override
-        public boolean isSubPanel() {
-            return false;
-        }
-
-        public ModularPanel createUI(PanelSyncManager syncManager) {
-            List<String> names = new ArrayList<>(VirtualEnderRegistry.getEntryNames(getPlayerUUID(), type));
-            return GTGuis.createPopupPanel(PANEL_NAME, 168, 112)
+    protected PanelSyncHandler.IPanelBuilder entrySelector(EntryTypes<T> type) {
+        return (syncManager, syncHandler) -> {
+            Set<String> names = VirtualEnderRegistry.getEntryNames(getOwner(), type);
+            return GTGuis.createPopupPanel("entry_selector", 168, 112)
                     .child(IKey.lang("cover.generic.ender.known_channels")
-                            .color(UI_TITLE_COLOR).asWidget()
+                            .color(UI_TITLE_COLOR)
+                            .shadow(true)
+                            .asWidget()
                             .top(6)
                             .left(4))
-                    .child(ListWidget.builder(names, name -> createRow(name, this.mainPanel, syncManager))
+                    .child(ListWidget.builder(names, name -> createRow(name, syncManager, type))
                             .background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
                                     .height(112 - 20))
@@ -351,206 +303,112 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                             .size(168 - 12, 112 - 24)
                             .left(4)
                             .bottom(6));
-        }
+        };
+    }
 
-        protected IWidget createRow(String name, ModularPanel mainPanel, PanelSyncManager syncManager) {
-            T entry = VirtualEnderRegistry.getEntry(getPlayerUUID(), this.type, name);
-            String key = String.format("entry#%s_description", entry.getColorStr());
-            var entryDescriptionSH = new EntryDescriptionSH(mainPanel, key, entry);
-            syncManager.syncValue(key, isPrivate ? 1 : 0, entryDescriptionSH);
+    protected PanelSyncHandler.IPanelBuilder entryDescription(String key, T entry) {
+        return (syncManager, syncHandler) -> GTGuis.createPopupPanel(key, 168, 36 + 6)
+                .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
+                        .color(UI_TITLE_COLOR)
+                        .asWidget()
+                        .left(4)
+                        .top(6))
+                .child(new TextFieldWidget()
+                        .setTextColor(Color.WHITE.darker(1))
+                        .widthRel(0.95f)
+                        .height(18)
+                        .value(new StringSyncValue(entry::getDescription, string -> {
+                            entry.setDescription(string);
+                            if (syncHandler.isPanelOpen()) {
+                                syncHandler.closePanel();
+                            }
+                        }))
+                        .alignX(0.5f)
+                        .bottom(6));
+    }
 
-            return Flow.row()
-                    .left(4)
-                    .marginBottom(2)
-                    .height(18)
-                    .widthRel(0.98f)
-                    .setEnabledIf(row -> VirtualEnderRegistry.hasEntry(getOwner(), this.type, name))
-                    .child(new Rectangle()
-                            .setColor(entry.getColor())
-                            .asWidget()
-                            .marginRight(4)
-                            .size(16)
-                            .background(GTGuiTextures.SLOT.asIcon().size(18))
-                            .top(1))
-                    .child(new InteractableText<>(entry, CoverAbstractEnderLink.this::updateColor)
-                            .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                            .tooltipBuilder(tooltip -> {
-                                String desc = entry.getDescription();
-                                if (!desc.isEmpty())
-                                    tooltip.add(desc);
-                            })
-                            .width(64)
-                            .height(16)
-                            .top(1)
-                            .marginRight(4))
-                    .child(new ButtonWidget<>()
-                            .overlay(GuiTextures.GEAR)
-                            .addTooltipLine(IKey.lang("cover.generic.ender.set_description.tooltip"))
-                            .onMousePressed(i -> {
-                                // open entry settings
-                                // if (entryDescriptionSH.isPanelOpen()) {
-                                // entryDescriptionSH.closePanel();
-                                // } else {
-                                // entryDescriptionSH.openPanel();
-                                // }
-                                // Interactable.playButtonClickSound();
-                                return true;
-                            }))
-                    .child(createSlotWidget(entry))
-                    .child(new ButtonWidget<>()
-                            .overlay(GTGuiTextures.BUTTON_CROSS)
-                            .setEnabledIf(w -> !Objects.equals(entry.getColor(), activeEntry.getColor()))
-                            .addTooltipLine(IKey.lang("cover.generic.ender.delete_entry"))
-                            .onMousePressed(i -> {
-                                // todo option to force delete, maybe as a popup?
-                                deleteEntry(getPlayerUUID(), name);
-                                syncToServer(1, buffer -> {
-                                    NetworkUtils.writeStringSafe(buffer, getPlayerUUID().toString());
-                                    NetworkUtils.writeStringSafe(buffer, name);
-                                });
-                                Interactable.playButtonClickSound();
-                                return true;
-                            }));
-        }
+    protected IWidget createRow(final String name, final PanelSyncManager syncManager, final EntryTypes<T> type) {
+        final T entry = VirtualEnderRegistry.getEntry(getOwner(), type, name);
+        var key = String.format("entry#%s_description", entry.getColorStr());
+        var syncKey = PanelSyncManager.makeSyncKey(key, isPrivate ? 1 : 0);
+        final var entryDescriptionPanelHandler = (PanelSyncHandler) syncManager.panel(syncKey,
+                entryDescription(key, entry), true);
+        final var syncHandler = new EnderCoverSyncHandler();
+        syncManager.syncValue(key + "_handler", syncHandler);
 
-        // @Override
-        // public void closePanel() {
-        // var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
-        // for (var key : opened) {
-        // if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
-        // psh.closePanel();
-        // }
-        // }
-        // super.closePanel();
-        // }
+        return Flow.row()
+                .left(4)
+                .marginBottom(2)
+                .height(18)
+                .widthRel(0.98f)
+                .setEnabledIf(row -> VirtualEnderRegistry.hasEntry(getOwner(), type, name))
+                .child(new Rectangle()
+                        .setColor(entry.getColor())
+                        .asWidget()
+                        .marginRight(4)
+                        .size(16)
+                        .background(GTGuiTextures.SLOT.asIcon().size(18))
+                        .top(1))
+                .child(new InteractableText<>(entry, CoverAbstractEnderLink.this::updateColor)
+                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                        .tooltipBuilder(tooltip -> {
+                            String desc = entry.getDescription();
+                            if (!desc.isEmpty()) tooltip.add(desc);
+                        })
+                        .width(64)
+                        .height(16)
+                        .top(1)
+                        .marginRight(4))
+                .child(new ButtonWidget<>()
+                        .overlay(GuiTextures.GEAR)
+                        .addTooltipLine(IKey.lang("cover.generic.ender.set_description.tooltip"))
+                        .onMousePressed(i -> {
+                            // open entry settings
+                            if (entryDescriptionPanelHandler.isPanelOpen()) {
+                                entryDescriptionPanelHandler.closePanel();
+                            } else {
+                                entryDescriptionPanelHandler.openPanel();
+                            }
+                            Interactable.playButtonClickSound();
+                            return true;
+                        }))
+                .child(createSlotWidget(entry))
+                .child(new ButtonWidget<>()
+                        .overlay(GTGuiTextures.BUTTON_CROSS)
+                        .setEnabledIf(w -> !Objects.equals(entry.getColor(), activeEntry.getColor()))
+                        .addTooltipLine(IKey.lang("cover.generic.ender.delete_entry"))
+                        .onMousePressed(i -> {
+                            // todo option to force delete, maybe as a popup?
+                            deleteEntry(getOwner(), name);
+                            syncHandler.syncToServer(1, buffer -> {
+                                NetworkUtils.writeStringSafe(buffer,
+                                        getOwner() == null ? "null" : getOwner().toString());
+                                NetworkUtils.writeStringSafe(buffer, name);
+                            });
+                            Interactable.playButtonClickSound();
+                            return true;
+                        }));
+    }
 
-        // @Override
-        // @SuppressWarnings("UnstableApiUsage")
-        // public void closePanelInternal() {
-        // var manager = getSyncManager().getModularSyncManager().getPanelSyncManager(PANEL_NAME);
-        // for (var key : opened) {
-        // if (manager.getSyncHandler(key) instanceof PanelSyncHandler psh) {
-        // psh.closePanel();
-        // }
-        // }
-        // super.closePanelInternal();
-        // }
+    protected abstract IWidget createSlotWidget(T entry);
+
+    protected abstract void deleteEntry(UUID player, String name);
+
+    protected class EnderCoverSyncHandler extends SyncHandler {
+
+        private static final int DELETE_ENTRY = 1;
 
         @Override
-        public void readOnClient(int i, PacketBuffer packetBuffer) throws IOException {
-            // if (i == TRACK_SUBPANELS) {
-            // handleTracking(packetBuffer);
-            // }
-            // super.readOnClient(i, packetBuffer);
-        }
+        public void readOnClient(int i, PacketBuffer packetBuffer) {}
 
         @Override
-        public void readOnServer(int i, PacketBuffer packetBuffer) throws IOException {
-            // if (i == TRACK_SUBPANELS) {
-            // handleTracking(packetBuffer);
-            // }
-            // super.readOnServer(i, packetBuffer);
+        public void readOnServer(int i, PacketBuffer packetBuffer) {
             if (i == DELETE_ENTRY) {
-                UUID uuid = UUID.fromString(NetworkUtils.readStringSafe(packetBuffer));
+                var s = NetworkUtils.readStringSafe(packetBuffer);
+                UUID uuid = "null".equals(s) ? null : UUID.fromString(s);
                 String name = NetworkUtils.readStringSafe(packetBuffer);
                 deleteEntry(uuid, name);
             }
         }
-
-        // private void handleTracking(PacketBuffer buffer) {
-        // boolean add = buffer.readBoolean();
-        // String key = NetworkUtils.readStringSafe(buffer);
-        // if (key != null) {
-        // if (add) opened.add(key);
-        // else opened.remove(key);
-        // }
-        // }
-
-        private static class EntryDescriptionSH extends SyncHandler implements IPanelHandler {
-
-            /**
-             * Creates a PanelSyncHandler
-             *
-             * @param mainPanel the main panel of the current GUI
-             */
-            public EntryDescriptionSH(ModularPanel mainPanel, String key, VirtualEntry entry) {
-                // super(mainPanel, (syncManager, syncHandler) -> defaultPanel(syncHandler, key, entry));
-            }
-            //
-            // @Override
-            // public boolean isSubPanel() {
-            // return subPanel;
-            // }
-            //
-            // public boolean isPanelOpen() {
-            // return this.open;
-            // }
-
-            private static ModularPanel defaultPanel(@NotNull PanelSyncHandler syncHandler, String key,
-                                                     VirtualEntry entry) {
-                return GTGuis.createPopupPanel(key, 168, 36 + 6)
-                        .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
-                                .color(UI_TITLE_COLOR)
-                                .asWidget()
-                                .left(4)
-                                .top(6))
-                        .child(new TextFieldWidget()
-                                .setTextColor(Color.WHITE.darker(1))
-                                .widthRel(0.95f)
-                                .height(18)
-                                .value(new StringSyncValue(entry::getDescription, string -> {
-                                    entry.setDescription(string);
-                                    if (syncHandler.isPanelOpen()) {
-                                        syncHandler.closePanel();
-                                    }
-                                }))
-                                .alignX(0.5f)
-                                .bottom(6));
-            }
-
-            @Override
-            public void openPanel() {
-                // opened.add(getKey());
-                // EntrySelectorSH.this.sync(3, buffer -> {
-                // buffer.writeBoolean(true);
-                // NetworkUtils.writeStringSafe(buffer, getKey());
-                // });
-                // super.openPanel();
-            }
-
-            @Override
-            public void closePanel() {
-                // opened.remove(getKey());
-                // EntrySelectorSH.this.sync(3, buffer -> {
-                // buffer.writeBoolean(false);
-                // NetworkUtils.writeStringSafe(buffer, getKey());
-                // });
-                // super.closePanel();
-            }
-
-            @Override
-            public void closeSubPanels() {}
-
-            @Override
-            public void closePanelInternal() {}
-
-            @Override
-            public void deleteCachedPanel() {}
-
-            @Override
-            public boolean isSubPanel() {
-                return false;
-            }
-
-            @Override
-            public void readOnClient(int id, PacketBuffer buf) throws IOException {}
-
-            @Override
-            public void readOnServer(int id, PacketBuffer buf) throws IOException {}
-        }
-
-        protected abstract IWidget createSlotWidget(T entry);
-
-        protected abstract void deleteEntry(UUID player, String name);
     }
 }

@@ -23,6 +23,7 @@ import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.NumberFormat;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +78,11 @@ public class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, Je
         setSyncHandler(syncHandler);
         this.syncHandler = syncHandler;
         return this;
+    }
+
+    @Override
+    public boolean isValidSyncHandler(SyncHandler syncHandler) {
+        return syncHandler instanceof GTFluidSyncHandler;
     }
 
     @Override
