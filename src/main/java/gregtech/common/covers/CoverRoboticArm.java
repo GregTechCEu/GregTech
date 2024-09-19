@@ -26,8 +26,7 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 
@@ -197,7 +196,7 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
         EnumSyncValue<TransferMode> transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode,
                 this::setTransferMode);
         guiSyncManager.syncValue("transfer_mode", transferMode);
@@ -213,7 +212,7 @@ public class CoverRoboticArm extends CoverConveyor {
                         .lang("cover.generic.transfer_mode")
                         .overlay(GTGuiTextures.TRANSFER_MODE_OVERLAY)
                         .build())
-                .child(new Row().right(0).coverChildrenHeight()
+                .child(Flow.row().right(0).coverChildrenHeight()
                         .child(new TextFieldWidget().widthRel(0.5f).right(0)
                                 .setEnabledIf(w -> shouldDisplayAmountSlider())
                                 .setNumbers(0, Integer.MAX_VALUE)

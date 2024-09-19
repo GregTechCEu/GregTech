@@ -39,7 +39,7 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,7 +148,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
-                .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
+                .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(FluidFilterMode.class)
                                 .value(filteringMode)
                                 .lang("cover.filter.mode.title")
