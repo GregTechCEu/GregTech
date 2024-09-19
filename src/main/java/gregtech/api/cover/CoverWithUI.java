@@ -105,7 +105,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
                 .child(new ItemDrawable(stack).asWidget().size(16).marginRight(4))
                 .child(IKey.str(stack.getDisplayName())
                         .color(UI_TITLE_COLOR)
-                        .shadow(true)
+                        .shadow(false)
                         .asWidget().heightRel(1.0f));
     }
 

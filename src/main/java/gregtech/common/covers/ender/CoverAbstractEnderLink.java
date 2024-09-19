@@ -30,6 +30,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.Rectangle;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -138,14 +139,15 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
+        this.playerUUID = guiData.getPlayer().getUniqueID();
+
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createWidgets(panel, guiSyncManager))
+                .child(createWidgets(guiData, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected Flow createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
+    protected Flow createWidgets(GuiData data, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
-        this.playerUUID = syncManager.getPlayer().getUniqueID();
 
         var entrySelectorSH = (PanelSyncHandler) syncManager.panel("entry_selector", entrySelector(getType()), true);
 
@@ -291,7 +293,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             return GTGuis.createPopupPanel("entry_selector", 168, 112)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR)
-                            .shadow(true)
+                            .shadow(false)
                             .asWidget()
                             .top(6)
                             .left(4))
@@ -310,6 +312,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         return (syncManager, syncHandler) -> GTGuis.createPopupPanel(key, 168, 36 + 6)
                 .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
                         .color(UI_TITLE_COLOR)
+                        .shadow(false)
                         .asWidget()
                         .left(4)
                         .top(6))
@@ -394,7 +397,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected abstract void deleteEntry(UUID player, String name);
 
-    protected class EnderCoverSyncHandler extends SyncHandler {
+    private final class EnderCoverSyncHandler extends SyncHandler {
 
         private static final int DELETE_ENTRY = 1;
 
