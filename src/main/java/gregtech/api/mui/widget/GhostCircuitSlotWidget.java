@@ -7,7 +7,6 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
@@ -66,21 +65,15 @@ public class GhostCircuitSlotWidget extends ItemSlot {
         return this;
     }
 
-    // @Override
-    // protected List<String> getItemTooltip(ItemStack stack) {
-    // // we don't want the item tooltip
-    // return Collections.emptyList();
-    // }
-
     protected void getCircuitSlotTooltip(@NotNull RichTooltip tooltip) {
         String configString;
         int value = getSyncHandler().getGhostCircuitHandler().getCircuitValue();
         if (value == GhostCircuitItemStackHandler.NO_CONFIG) {
-            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
+            configString = IKey.lang("gregtech.gui.configurator_slot.no_value").get();
         } else {
             configString = String.valueOf(value);
         }
-
+        tooltip.clearText();
         tooltip.addLine(IKey.lang("gregtech.gui.configurator_slot.tooltip", configString));
     }
 
