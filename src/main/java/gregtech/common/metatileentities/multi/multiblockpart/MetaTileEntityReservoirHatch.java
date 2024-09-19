@@ -11,6 +11,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
@@ -35,6 +37,11 @@ import net.minecraftforge.items.ItemStackHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,6 +121,28 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
         abilityList.add(fluidTank);
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.registerSlotGroup("item_inv", 2);
+
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 176, 166)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(IKey.lang("gregtech.gui.fluid_amount").color(0xFFFFFF).asWidget().pos(11, 20))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(GTGuiTextures.DISPLAY.asWidget()
+                        .left(7).top(16)
+                        .size(81, 55))
+                .child(GTGuiTextures.TANK_ICON.asWidget()
+                        .left(91).top(36)
+                        .size(14, 15));
     }
 
     @Override
