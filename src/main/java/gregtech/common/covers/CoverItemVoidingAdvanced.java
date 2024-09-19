@@ -17,6 +17,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -93,7 +94,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
     }
 
     @Override
-    protected ParentWidget<Flow> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
         var voidingMode = new EnumSyncValue<>(VoidingMode.class, this::getVoidingMode, this::setVoidingMode);
         guiSyncManager.syncValue("voiding_mode", voidingMode);
 
@@ -105,7 +106,7 @@ public class CoverItemVoidingAdvanced extends CoverItemVoiding {
         transferTextField.setEnabled(this.itemFilterContainer.showGlobalTransferLimitSlider() &&
                 this.voidingMode == VoidingMode.VOID_OVERFLOW);
 
-        return super.createUI(mainPanel, guiSyncManager)
+        return super.createUI(data, guiSyncManager)
                 .child(new EnumRowBuilder<>(VoidingMode.class)
                         .value(voidingMode)
                         .lang("cover.voiding.voiding_mode")
