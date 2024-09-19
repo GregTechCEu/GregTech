@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
+import com.cleanroommc.modularui.widgets.FluidSlot;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -15,6 +17,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -37,7 +40,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -150,12 +152,11 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
         for (int i = 0; i < rowSize; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < rowSize; j++) {
-                widgets.get(i)
-                        .add(new FluidSlot().syncHandler(fluidTankList.getTankAt(i * rowSize + j))
-                                .background(GTGuiTextures.FLUID_SLOT)
-                                .alwaysShowFull(true));
+                widgets.get(i).add(new GTFluidSlot().syncHandler(fluidTankList.getTankAt(i * rowSize + j))
+                        .background(GTGuiTextures.FLUID_SLOT));
             }
         }
+
         BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
         guiSyncManager.syncValue("working_state", workingStateValue);
 
