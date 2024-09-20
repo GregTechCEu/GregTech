@@ -73,9 +73,6 @@ public class GTFluidSyncHandler extends SyncHandler {
                 tank.fill(NetworkUtils.readFluidStack(buf), true);
             }
         }
-        if (id == TRY_CLICK_CONTAINER) {
-            replaceCursorItemStack(NetworkUtils.readItemStack(buf));
-        }
     }
 
     @Override
