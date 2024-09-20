@@ -56,6 +56,14 @@ public class GTFluidSyncHandler extends SyncHandler {
         return this.canFillSlot;
     }
 
+    public String getFormattedFluidAmount() {
+        return String.format("%,d", tank.getFluid() == null ? 0 : tank.getFluid().amount);
+    }
+
+    public String getFluidLocalizedName() {
+        return tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName();
+    }
+
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
         switch (id) {
