@@ -232,25 +232,4 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
                         .coverChildren())
                 .bindPlayerInventory();
     }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(numSlots);
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * rowSize + 94)
-                .label(10, 5, getMetaFullName());
-
-        for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x++) {
-                int index = y * rowSize + x;
-                builder.widget(
-                        new TankWidget(fluidTankList.getTankAt(index), 89 - rowSize * 9 + x * 18, 18 + y * 18, 18, 18)
-                                .setBackgroundTexture(GuiTextures.FLUID_SLOT)
-                                .setContainerClicking(true, !isExportHatch)
-                                .setAlwaysShowFull(true));
-            }
-        }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
-        return builder.build(getHolder(), entityPlayer);
-    }
 }
