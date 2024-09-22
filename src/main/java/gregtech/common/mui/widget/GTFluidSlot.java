@@ -1,5 +1,9 @@
 package gregtech.common.mui.widget;
 
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
+
+import com.cleanroommc.modularui.utils.MouseData;
+
 import gregtech.api.GTValues;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.FluidTooltipUtil;
@@ -28,7 +32,8 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider {
+public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider,
+                                                                      JeiGhostIngredientSlot<FluidStack> {
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
@@ -69,7 +74,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
-        return syncHandler(new GTFluidSyncHandler(fluidTank));
+        return syncHandler(sync(fluidTank));
     }
 
     public GTFluidSlot syncHandler(GTFluidSyncHandler syncHandler) {
@@ -132,7 +137,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     @Override
     public Result onMouseTapped(int mouseButton) {
         if (this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
-            this.syncHandler.syncToServer(1, buffer -> buffer.writeBoolean(mouseButton == 0));
+            var data = MouseData.create(mouseButton);
+            this.syncHandler.syncToServer(GTFluidSyncHandler.TRY_CLICK_CONTAINER, data::writeToPacket);
             Interactable.playButtonClickSound();
             return Result.SUCCESS;
         }
@@ -160,5 +166,15 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             }
             tooltip.add(TextFormatting.GRAY + LocalizationUtils.format("gregtech.gui.amount_raw") + fluidAmount);
         }
+    }
+
+    @Override
+    public void setGhostIngredient(@NotNull FluidStack ingredient) {
+        this.syncHandler.setFluid(ingredient);
+    }
+
+    @Override
+    public @Nullable FluidStack castGhostIngredientIfValid(@NotNull Object ingredient) {
+        return this.syncHandler.isPhantom() && ingredient instanceof FluidStack fluidStack ? fluidStack : null;
     }
 }
