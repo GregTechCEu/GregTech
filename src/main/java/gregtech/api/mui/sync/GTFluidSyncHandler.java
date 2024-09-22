@@ -1,7 +1,5 @@
 package gregtech.api.mui.sync;
 
-import com.cleanroommc.modularui.utils.MouseData;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.entity.item.EntityItem;
@@ -17,6 +15,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 
