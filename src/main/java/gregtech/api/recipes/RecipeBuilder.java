@@ -129,10 +129,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
-        if (!ConfigHolder.machines.enableCleanroom) {
-            return (R) this;
+        if (ConfigHolder.machines.enableCleanroom && cleanroom != null) {
+            this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         }
-        this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         return (R) this;
     }
 
