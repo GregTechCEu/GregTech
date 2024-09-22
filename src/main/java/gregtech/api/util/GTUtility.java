@@ -254,7 +254,7 @@ public class GTUtility {
      *         tier that can handle it, {@code MAX} is returned.
      */
     public static byte getTierByVoltage(long voltage) {
-        if (voltage >= Integer.MAX_VALUE) {
+        if (voltage >= GTValues.V[GTValues.MAX]) {
             return GTValues.MAX;
         }
         return getOCTierByVoltage(voltage);
