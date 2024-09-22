@@ -1,9 +1,5 @@
 package gregtech.common.mui.widget;
 
-import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
-
-import com.cleanroommc.modularui.utils.MouseData;
-
 import gregtech.api.GTValues;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.FluidTooltipUtil;
@@ -20,12 +16,14 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
+import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.utils.NumberFormat;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
@@ -33,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactable, JeiIngredientProvider,
-                                                                      JeiGhostIngredientSlot<FluidStack> {
+                               JeiGhostIngredientSlot<FluidStack> {
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
