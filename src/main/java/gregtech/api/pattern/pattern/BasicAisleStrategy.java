@@ -22,7 +22,7 @@ public class BasicAisleStrategy extends AisleStrategy {
         for (int[] multiAisle : multiAisles) {
             int result = checkMultiAisle(multiAisle, offset, flip);
             if (result == -1) return false;
-            offset += result * (multiAisle[3] - multiAisle[2]);
+            offset += result;
         }
         return true;
     }
@@ -33,21 +33,25 @@ public class BasicAisleStrategy extends AisleStrategy {
 
     protected int checkMultiAisle(int[] multi, int offset, boolean flip) {
         int aisleOffset = 0;
+        int temp = 0;
         // go from 0 to max repeat
         for (int i = 1; i <= multi[1]; i++) {
             // check all aisles in the multi aisle
             for (int j = multi[2]; j < multi[3]; j++) {
-                int result = checkRepeatAisle(j, offset + aisleOffset, flip);
+                int result = checkRepeatAisle(j, offset + temp, flip);
                 // same logic as normal aisle check
                 if (result == -1) {
                     if (i <= multi[0]) return -1;
-                    return multi[4] = i - 1;
+                    multi[4] = i - 1;
+                    return aisleOffset;
                 }
-                aisleOffset += result;
+                temp += result;
             }
+            aisleOffset = temp;
         }
 
-        return multi[4] = multi[1];
+        multi[4] = multi[1];
+        return aisleOffset;
     }
 
     protected int checkRepeatAisle(int index, int offset, boolean flip) {
