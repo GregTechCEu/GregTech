@@ -407,7 +407,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         }
         return FactoryBlockPattern.start(LEFT, BACK, UP)
                 .aisle(start.toString())
-                .aisle(slice.toString()).setRepeatable(3, MAX_WIDTH)
+                .aisleRepeatable(3, MAX_WIDTH, slice.toString())
                 .aisle(end.toString())
                 .where('S', selfPredicate())
                 .where('A', states(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))

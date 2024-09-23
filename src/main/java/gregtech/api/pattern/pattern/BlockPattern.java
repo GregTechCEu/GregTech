@@ -53,6 +53,7 @@ public class BlockPattern implements IBlockPattern {
      */
     protected final boolean hasStartOffset;
     protected final PatternAisle[] aisles;
+    protected final AisleStrategy aisleStrategy;
     protected final Char2ObjectMap<TraceabilityPredicate> predicates;
     protected final BlockWorldState worldState;
     protected final Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCount = new Object2IntOpenHashMap<>();
@@ -61,11 +62,15 @@ public class BlockPattern implements IBlockPattern {
     protected final Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
 
     // how many not nulls to keep someone from not passing in null?
-    public BlockPattern(@NotNull PatternAisle @NotNull [] aisles, int @NotNull [] dimensions,
+    public BlockPattern(@NotNull PatternAisle @NotNull [] aisles,
+                        @NotNull AisleStrategy aisleStrategy,
+                        int @NotNull [] dimensions,
                         @NotNull RelativeDirection @NotNull [] directions,
-                        @Nullable OriginOffset offset, @NotNull Char2ObjectMap<TraceabilityPredicate> predicates,
+                        @Nullable OriginOffset offset,
+                        @NotNull Char2ObjectMap<@NotNull TraceabilityPredicate> predicates,
                         char centerChar) {
         this.aisles = aisles;
+        this.aisleStrategy = aisleStrategy;
         this.dimensions = dimensions;
         this.directions = directions;
         this.predicates = predicates;
@@ -174,48 +179,52 @@ public class BlockPattern implements IBlockPattern {
     @Override
     public boolean checkPatternAt(World world, BlockPos centerPos, EnumFacing frontFacing,
                                   EnumFacing upwardsFacing, boolean isFlipped) {
+        // todo still need to rework this to have a temporary global cache
         this.globalCount.clear();
         this.layerCount.clear();
         cache.clear();
 
         worldState.setWorld(world);
 
-        int aisleOffset = -1;
         GreggyBlockPos controllerPos = new GreggyBlockPos(centerPos);
 
-        for (int aisleI = 0; aisleI < aisles.length; aisleI++) {
-            PatternAisle aisle = aisles[aisleI];
+        aisleStrategy.pattern = this;
+        aisleStrategy.start(controllerPos, frontFacing, upwardsFacing);
+        if (!aisleStrategy.check(isFlipped)) return false;
 
-            // check everything below min repeats to ensure its valid
-            // don't check aisle.minRepeats itself since its checked below
-            for (int repeats = 1; repeats < aisle.minRepeats; repeats++) {
-                boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
-                        aisleOffset + repeats, isFlipped);
-                if (!aisleResult) return false;
-            }
-
-            // if this doesn't get set in the inner loop, then it means all repeats passed
-            int actualRepeats = aisle.maxRepeats;
-
-            for (int repeats = aisle.minRepeats; repeats <= aisle.maxRepeats; repeats++) {
-                boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
-                        aisleOffset + repeats, isFlipped);
-
-                // greedy search, tries to make the current aisle repeat as much as possible
-                if (!aisleResult) {
-                    // if the min repetition is invalid then the whole pattern is invalid
-                    if (repeats == aisle.minRepeats) {
-                        return false;
-                    }
-                    // otherwise this is the max repeats
-                    actualRepeats = repeats - 1;
-                    break;
-                }
-            }
-
-            aisle.setActualRepeats(actualRepeats);
-            aisleOffset += actualRepeats;
-        }
+        // for (int aisleI = 0; aisleI < aisles.length; aisleI++) {
+        // PatternAisle aisle = aisles[aisleI];
+        //
+        // // check everything below min repeats to ensure its valid
+        // // don't check aisle.minRepeats itself since its checked below
+        // for (int repeats = 1; repeats < aisle.minRepeats; repeats++) {
+        // boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
+        // aisleOffset + repeats, isFlipped);
+        // if (!aisleResult) return false;
+        // }
+        //
+        // // if this doesn't get set in the inner loop, then it means all repeats passed
+        // int actualRepeats = aisle.maxRepeats;
+        //
+        // for (int repeats = aisle.minRepeats; repeats <= aisle.maxRepeats; repeats++) {
+        // boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
+        // aisleOffset + repeats, isFlipped);
+        //
+        // // greedy search, tries to make the current aisle repeat as much as possible
+        // if (!aisleResult) {
+        // // if the min repetition is invalid then the whole pattern is invalid
+        // if (repeats == aisle.minRepeats) {
+        // return false;
+        // }
+        // // otherwise this is the max repeats
+        // actualRepeats = repeats - 1;
+        // break;
+        // }
+        // }
+        //
+        // aisle.setActualRepeats(actualRepeats);
+        // aisleOffset += actualRepeats;
+        // }
 
         // global minimum checks
         for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : globalCount.object2IntEntrySet()) {
@@ -450,9 +459,11 @@ public class BlockPattern implements IBlockPattern {
         return state;
     }
 
-    @Override
-    public boolean legacyBuilderError() {
-        return !hasStartOffset;
+    /**
+     * DO NOT MUTATE THIS
+     */
+    public AisleStrategy getAisleStrategy() {
+        return aisleStrategy;
     }
 
     @Override

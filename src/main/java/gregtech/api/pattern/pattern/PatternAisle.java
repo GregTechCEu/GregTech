@@ -25,6 +25,10 @@ public class PatternAisle {
         this(repeats, repeats, pattern);
     }
 
+    public PatternAisle(String[] pattern) {
+        this(1, 1, pattern);
+    }
+
     public void setRepeats(int minRepeats, int maxRepeats) {
         this.minRepeats = minRepeats;
         this.maxRepeats = maxRepeats;

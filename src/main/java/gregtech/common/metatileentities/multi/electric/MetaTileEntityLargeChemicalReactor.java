@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.pattern.BasicAisleStrategy;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -23,10 +24,13 @@ import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -55,6 +59,21 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     protected @NotNull BlockPattern createStructurePattern() {
         TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(10);
         TraceabilityPredicate abilities = autoAbilities();
+
+        if (true) {
+            return FactoryBlockPattern.start()
+                    .aisle("S")
+                    .aisle("G")
+                    .aisle("B")
+                    .aisle("W")
+                    .where('S', selfPredicate())
+                    .where('G', states(Blocks.CONCRETE.getStateFromMeta(5)))
+                    .where('B', states(Blocks.CONCRETE.getStateFromMeta(11)))
+                    .where('W', states(Blocks.CONCRETE.getDefaultState()))
+                    .aisleStrategy(new BasicAisleStrategy().multiAisle(1, 3, 1, 3))
+                    .build();
+        }
+
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XSX", "XXX")
                 .aisle("XCX", "CPC", "XCX")
@@ -138,6 +157,14 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(TooltipHelper.RAINBOW_SLOW + I18n.format("gregtech.machine.perfect_oc"));
+    }
+
+    @Override
+    public void addDisplayText(List<ITextComponent> textList) {
+        super.addDisplayText(textList);
+        textList.add(new TextComponentString("Multi aisle repeats: " +
+                ((BasicAisleStrategy) ((BlockPattern) structures.get("MAIN")).getAisleStrategy())
+                        .getMultiAisleRepeats(1)));
     }
 
     @SideOnly(Side.CLIENT)

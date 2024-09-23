@@ -234,7 +234,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         return FactoryBlockPattern.start(UP, FRONT, RIGHT)
                 .aisle("XXXXX", "XXXXX", "XXXXX", "XXXXX", "XXSXX")
                 .aisle("XXXXX", "XCCCX", "XCCCX", "XCCCX", "XXXXX")
-                .aisle("GGGGG", "GBBBG", "GBBBG", "GBBBG", "GGGGG").setRepeatable(1, MAX_BATTERY_LAYERS)
+                .aisleRepeatable(1, MAX_BATTERY_LAYERS, "GGGGG", "GBBBG", "GBBBG", "GBBBG", "GGGGG")
                 .aisle("GGGGG", "GGGGG", "GGGGG", "GGGGG", "GGGGG")
                 .where('S', selfPredicate())
                 .where('C', states(getCasingState()))

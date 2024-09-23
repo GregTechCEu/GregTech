@@ -79,15 +79,6 @@ public interface IBlockPattern {
      */
     Long2ObjectMap<BlockInfo> getCache();
 
-    /**
-     * If anything from legacy need to be updated.
-     * 
-     * @return True if yes, which will throw an error in the multiblock.
-     */
-    default boolean legacyBuilderError() {
-        return false;
-    }
-
     OriginOffset getOffset();
 
     default void moveOffset(RelativeDirection dir, int amount) {

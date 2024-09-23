@@ -110,7 +110,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void reinitializeStructurePattern() {
         createStructurePatterns();
-        validateStructurePatterns();
     }
 
     @Override
@@ -142,24 +141,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     protected void createStructurePatterns() {
         structures.put("MAIN", createStructurePattern());
-    }
-
-    private void validateStructurePatterns() {
-        List<String> failures = new ArrayList<>();
-
-        for (Object2ObjectMap.Entry<String, IBlockPattern> pattern : structures.object2ObjectEntrySet()) {
-            if ("MAIN".equals(pattern.getKey())) continue;
-
-            if (pattern.getValue().legacyBuilderError()) {
-                failures.add(pattern.getKey());
-            }
-        }
-
-        // todo remove this
-        if (!failures.isEmpty()) {
-            throw new IllegalStateException("Structure patterns " + Arrays.toString(failures.toArray()) +
-                    " needs some legacy updating");
-        }
     }
 
     public EnumFacing getUpwardsFacing() {

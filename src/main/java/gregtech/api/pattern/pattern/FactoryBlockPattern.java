@@ -2,7 +2,6 @@ package gregtech.api.pattern.pattern;
 
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import com.google.common.base.Joiner;
@@ -52,6 +51,7 @@ public class FactoryBlockPattern {
      */
     private OriginOffset offset;
     private char centerChar;
+    private AisleStrategy aisleStrategy;
 
     private final List<PatternAisle> aisles = new ArrayList<>();
 
@@ -63,18 +63,18 @@ public class FactoryBlockPattern {
     /**
      * In the form of [ aisleDir, stringDir, charDir ]
      */
-    private final RelativeDirection[] structureDir = new RelativeDirection[3];
+    private final RelativeDirection[] directions = new RelativeDirection[3];
 
     /**
      * @see FactoryBlockPattern#start(RelativeDirection, RelativeDirection, RelativeDirection)
      */
     private FactoryBlockPattern(RelativeDirection aisleDir, RelativeDirection stringDir, RelativeDirection charDir) {
-        structureDir[0] = aisleDir;
-        structureDir[1] = stringDir;
-        structureDir[2] = charDir;
+        directions[0] = aisleDir;
+        directions[1] = stringDir;
+        directions[2] = charDir;
         int flags = 0;
         for (int i = 0; i < 3; i++) {
-            switch (structureDir[i]) {
+            switch (directions[i]) {
                 case UP:
                 case DOWN:
                     flags |= 0x1;
@@ -95,45 +95,29 @@ public class FactoryBlockPattern {
 
     /**
      * Adds a repeatable aisle to this pattern.
-     * 
-     * @param aisle The aisle to add
-     * @see FactoryBlockPattern#setRepeatable(int, int)
+     *
+     * @param minRepeats The min repeats, inclusive
+     * @param maxRepeats The max repeats, inclusive
+     * @param aisle      The aisle to add
      */
-    public FactoryBlockPattern aisleRepeatable(int minRepeat, int maxRepeat, @NotNull String... aisle) {
-        if (ArrayUtils.isEmpty(aisle) || StringUtils.isEmpty(aisle[0]))
-            throw new IllegalArgumentException("Empty pattern for aisle");
-
-        // set the dimensions if the user hasn't already
-        if (dimensions[2] == -1) {
-            dimensions[2] = aisle[0].length();
-        }
-        if (dimensions[1] == -1) {
-            dimensions[1] = aisle.length;
-        }
-
-        if (aisle.length != dimensions[1]) {
-            throw new IllegalArgumentException("Expected aisle with height of " + dimensions[1] +
-                    ", but was given one with a height of " + aisle.length + ")");
-        } else {
-            for (String s : aisle) {
-                if (s.length() != dimensions[2]) {
-                    throw new IllegalArgumentException(
-                            "Not all rows in the given aisle are the correct width (expected " + dimensions[2] +
-                                    ", found one with " + s.length() + ")");
-                }
-
-                for (char c : s.toCharArray()) {
-                    if (!this.symbolMap.containsKey(c)) {
-                        this.symbolMap.put(c, null);
-                    }
+    public FactoryBlockPattern aisleRepeatable(int minRepeats, int maxRepeats, @NotNull String... aisle) {
+        validateAisle(aisle);
+        for (String s : aisle) {
+            for (char c : s.toCharArray()) {
+                if (!this.symbolMap.containsKey(c)) {
+                    this.symbolMap.put(c, null);
                 }
             }
-
-            aisles.add(new PatternAisle(minRepeat, maxRepeat, aisle));
-            if (minRepeat > maxRepeat)
-                throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
-            return this;
         }
+
+        if (minRepeats > maxRepeats)
+            throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
+
+        PatternAisle aile = new PatternAisle(aisle);
+        aile.minRepeats = minRepeats;
+        aile.maxRepeats = maxRepeats;
+        aisles.add(aile);
+        return this;
     }
 
     /**
@@ -141,28 +125,6 @@ public class FactoryBlockPattern {
      */
     public FactoryBlockPattern aisle(String... aisle) {
         return aisleRepeatable(1, 1, aisle);
-    }
-
-    /**
-     * Set last aisle repeatable
-     * 
-     * @param minRepeat Minimum amount of repeats, inclusive
-     * @param maxRepeat Maximum amount of repeats, inclusive
-     */
-    public FactoryBlockPattern setRepeatable(int minRepeat, int maxRepeat) {
-        if (minRepeat > maxRepeat)
-            throw new IllegalArgumentException("Lower bound of repeat counting must smaller than upper bound!");
-        aisles.get(aisles.size() - 1).setRepeats(minRepeat, maxRepeat);
-        return this;
-    }
-
-    /**
-     * Set last aisle repeatable
-     * 
-     * @param repeatCount The amount to repeat
-     */
-    public FactoryBlockPattern setRepeatable(int repeatCount) {
-        return setRepeatable(repeatCount, repeatCount);
     }
 
     /**
@@ -209,15 +171,19 @@ public class FactoryBlockPattern {
         return this;
     }
 
+    public FactoryBlockPattern aisleStrategy(AisleStrategy strategy) {
+        this.aisleStrategy = strategy;
+        return this;
+    }
+
     public BlockPattern build() {
         checkMissingPredicates();
         this.dimensions[0] = aisles.size();
-        // the reason this exists is before this rewrite, MultiblockControllerBase would
-        // pass the opposite front facing into the pattern check, but now this is fixed.
-        //
-        if (offset == null) GTLog.logger.warn(
-                "You didn't use .startOffset() on the builder! Start offset will now be auto detected, which may product unintended results!");
-        return new BlockPattern(aisles.toArray(new PatternAisle[0]), dimensions, structureDir, offset, symbolMap,
+        if (aisleStrategy == null) aisleStrategy = new BasicAisleStrategy();
+
+        aisleStrategy.finish(dimensions, directions, aisles);
+        return new BlockPattern(aisles.toArray(new PatternAisle[0]), aisleStrategy, dimensions, directions, offset,
+                symbolMap,
                 centerChar);
     }
 
@@ -232,6 +198,34 @@ public class FactoryBlockPattern {
 
         if (!list.isEmpty()) {
             throw new IllegalStateException("Predicates for character(s) " + COMMA_JOIN.join(list) + " are missing");
+        }
+    }
+
+    private String[] validateAisle(String[] aisle) {
+        if (ArrayUtils.isEmpty(aisle) || StringUtils.isEmpty(aisle[0]))
+            throw new IllegalArgumentException("Empty pattern for aisle");
+
+        // set the dimensions if the user hasn't already
+        if (dimensions[2] == -1) {
+            dimensions[2] = aisle[0].length();
+        }
+        if (dimensions[1] == -1) {
+            dimensions[1] = aisle.length;
+        }
+
+        if (aisle.length != dimensions[1]) {
+            throw new IllegalArgumentException("Expected aisle with height of " + dimensions[1] +
+                    ", but was given one with a height of " + aisle.length + ")");
+        } else {
+            for (String s : aisle) {
+                if (s.length() != dimensions[2]) {
+                    throw new IllegalArgumentException(
+                            "Not all rows in the given aisle are the correct width (expected " + dimensions[2] +
+                                    ", found one with " + s.length() + ")");
+                }
+            }
+
+            return aisle;
         }
     }
 }

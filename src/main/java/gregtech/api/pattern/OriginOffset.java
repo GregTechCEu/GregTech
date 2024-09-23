@@ -10,7 +10,8 @@ import net.minecraft.util.EnumFacing;
 public class OriginOffset {
 
     /**
-     * 3 long because the opposite directions cancel out, it stores amount with the first direction in each pair(an even
+     * length 3 because the opposite directions cancel out, it stores amount with the first direction in each pair(an
+     * even
      * ordinal).
      */
     protected final int[] offset = new int[3];

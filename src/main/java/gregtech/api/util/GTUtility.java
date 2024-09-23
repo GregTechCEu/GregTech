@@ -670,7 +670,7 @@ public class GTUtility {
         // first check if the block is a GT machine
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof IGregTechTileEntity) {
-            stack =  ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
+            stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
         }
 
         if (stack.isEmpty()) {
