@@ -188,6 +188,7 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.export.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.fluid_export.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.fluid_export.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 

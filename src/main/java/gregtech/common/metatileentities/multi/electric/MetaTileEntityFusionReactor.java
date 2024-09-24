@@ -30,8 +30,8 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -637,13 +637,13 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         @Override
-        protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull IRecipePropertyStorage storage) {
+        protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
             super.modifyOverclockPre(ocParams, storage);
 
             // Limit the number of OCs to the difference in fusion reactor MK.
             // I.e., a MK2 reactor can overclock a MK1 recipe once, and a
             // MK3 reactor can overclock a MK2 recipe once, or a MK1 recipe twice.
-            long euToStart = storage.getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
+            long euToStart = storage.get(FusionEUToStartProperty.getInstance(), 0L);
             int fusionTier = FusionEUToStartProperty.getFusionTier(euToStart);
             if (fusionTier != 0) fusionTier = MetaTileEntityFusionReactor.this.tier - fusionTier;
             ocParams.setOcAmount(Math.min(fusionTier, ocParams.ocAmount()));

@@ -5340,6 +5340,9 @@ gregtech.machine.me.import_copy_settings=Saved settings to Data Stick
 gregtech.machine.me.import_paste_settings=Applied settings from Data Stick
 gregtech.machine.me.item_import.data_stick.name=§oME Input Bus Configuration Data
 gregtech.machine.me.fluid_import.data_stick.name=§oME Input Hatch Configuration Data
+gregtech.machine.me.extra_connections.enabled=Allow connections from all sides
+gregtech.machine.me.extra_connections.disabled=Allow connection only on front face
+gregtech.machine.me.extra_connections.tooltip=Right-click with wire cutters to allow connecting to AE2 on all sides
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
