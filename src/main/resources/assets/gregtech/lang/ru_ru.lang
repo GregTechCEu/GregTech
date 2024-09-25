@@ -6009,3 +6009,5 @@ cover.generic.ender.open_selector=Открыть выбор
 cover.generic.ender.set_description.tooltip=Описание
 cover.generic.ender.set_description.title=Описание [%s]
 cover.generic.ender.delete_entry=Удалить запись
+gregtech.machine.me.extra_connections.disabled=Разрешить соединения только с лицевой стороны
+gregtech.machine.me.extra_connections.enabled=Разрешить соединения со всех сторон
