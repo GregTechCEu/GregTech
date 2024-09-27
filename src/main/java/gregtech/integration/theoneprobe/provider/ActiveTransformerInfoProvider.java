@@ -28,7 +28,7 @@ public class ActiveTransformerInfoProvider extends CapabilityInfoProvider<IMulti
 
     @Override
     protected boolean allowDisplaying(@NotNull IMultiblockController capability) {
-        return capability instanceof MetaTileEntityActiveTransformer;
+        return capability instanceof MetaTileEntityActiveTransformer activeTransformer && activeTransformer.isActive();
     }
 
     @Override
@@ -39,17 +39,15 @@ public class ActiveTransformerInfoProvider extends CapabilityInfoProvider<IMulti
     @Override
     protected void addProbeInfo(IMultiblockController capability, IProbeInfo probeInfo, EntityPlayer player,
                                 TileEntity tileEntity, IProbeHitData data) {
-        if (capability.isStructureFormed() && capability instanceof MetaTileEntityActiveTransformer activeTransformer &&
-                activeTransformer.isActive()) {
-            long averageIO = activeTransformer.getAverageIOLastSec();
-            ITextComponent text = TextComponentUtil.translationWithColor(
-                    TextFormatting.AQUA,
-                    "gregtech.multiblock.active_transformer.average_io",
-                    TextComponentUtil.stringWithColor(TextFormatting.WHITE,
-                            player.isSneaking() || averageIO < 10_000 ?
-                                    TextFormattingUtil.formatNumbers(averageIO) + " EU/t" :
-                                    ElementProgress.format(averageIO, NumberFormat.COMPACT, "EU/t")));
-            probeInfo.text(text.getFormattedText());
-        }
+        long averageIO = ((MetaTileEntityActiveTransformer) capability).getAverageIOLastSec();
+        ITextComponent text = TextComponentUtil.translationWithColor(
+                TextFormatting.AQUA,
+                "gregtech.multiblock.active_transformer.average_io",
+                TextComponentUtil.stringWithColor(TextFormatting.WHITE,
+                        player.isSneaking() || averageIO < 10_000 ?
+                                TextFormattingUtil.formatNumbers(averageIO) + " EU/t" :
+                                ElementProgress.format(averageIO, NumberFormat.COMPACT, "EU/t")));
+
+        probeInfo.text(text.getFormattedText());
     }
 }
