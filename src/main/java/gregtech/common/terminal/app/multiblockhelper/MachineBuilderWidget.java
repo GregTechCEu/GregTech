@@ -154,7 +154,7 @@ public class MachineBuilderWidget extends WidgetGroup {
     public void setSceneWidget(MachineSceneWidget sceneWidget) {
         this.sceneWidget = sceneWidget;
         this.highLightBlocks = new HashSet<>();
-        MachineSceneWidget.getWorldSceneRenderer().addRenderedBlocks(highLightBlocks, this::highLightRender);
+        MachineSceneWidget.getWorldSceneRenderer().addRenderedBlocks(highLightBlocks);
         sceneWidget.setOnSelected(this::setFocus);
         sceneWidget.getAround().clear();
         Set<BlockPos> cores = sceneWidget.getCores();

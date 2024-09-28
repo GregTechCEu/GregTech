@@ -226,7 +226,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 renderBlocks = world.renderedBlocks.stream().filter(pos -> pos.getY() - minY == newLayer)
                         .collect(Collectors.toSet());
             }
-            renderer.addRenderedBlocks(renderBlocks, null);
+            renderer.addRenderedBlocks(renderBlocks);
         }
     }
 
@@ -593,7 +593,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         Vector3f minPos = world.getMinPos();
         center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
 
-        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);
+        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks);
         worldSceneRenderer.setOnLookingAt(ray -> {});
 
         worldSceneRenderer.setAfterWorldRender(renderer -> {

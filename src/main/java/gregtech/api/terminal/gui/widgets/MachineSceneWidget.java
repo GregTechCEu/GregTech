@@ -247,8 +247,8 @@ public class MachineSceneWidget extends WidgetGroup {
             }
             center = new Vector3f(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
         }
-        worldSceneRenderer.addRenderedBlocks(cores, null);
-        worldSceneRenderer.addRenderedBlocks(around, this::aroundBlocksRenderHook);
+        worldSceneRenderer.addRenderedBlocks(cores);
+        worldSceneRenderer.addRenderedBlocks(around);
         worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
     }
 
