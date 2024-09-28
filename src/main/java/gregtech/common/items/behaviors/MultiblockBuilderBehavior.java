@@ -165,6 +165,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
     }
 
     @Override
+    // todo full substructure debug and autobuild support
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
                                            float hitY, float hitZ, EnumHand hand) {
         // Initial checks
@@ -179,13 +180,12 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed("MAIN")) {
-                multiblock.getBuildableShapes("MAIN", getMap(player.getHeldItem(hand))).get(0).getMap(multiblock,
-                        new BlockPos(0, 128, 0), new HashMap<>());
+//                multiblock.auto("MAIN", getMap(player.getHeldItem(hand))).get(0).getMap(multiblock,
+//                        new BlockPos(0, 128, 0), new HashMap<>());
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;
         } else {
-            // todo full substructure debug and autobuild support
             // If not sneaking, try to show structure debug info (if any) in chat.
             if (!multiblock.isStructureFormed("MAIN")) {
                 PatternError error = multiblock.getSubstructure("MAIN").getPatternState().getError();

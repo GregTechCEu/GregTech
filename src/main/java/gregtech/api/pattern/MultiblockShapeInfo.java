@@ -3,10 +3,13 @@ package gregtech.api.pattern;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pattern.pattern.PatternAisle;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
+
+import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -296,6 +299,29 @@ public class MultiblockShapeInfo {
     public static Builder builder() {
         // this is front now because idk the old code somehow reversed it and im not about to look into it
         return builder(RelativeDirection.FRONT, RelativeDirection.UP, RelativeDirection.RIGHT);
+    }
+
+    public static MultiblockShapeInfo fromShape(RelativeDirection[] directions, char[][][] shape, Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicates) {
+        if (shape == null) return null;
+        Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
+        for (Char2ObjectMap.Entry<TraceabilityPredicate.SimplePredicate> entry : predicates.char2ObjectEntrySet()) {
+            if (entry.getValue().candidates == null) {
+                candidates.put(entry.getCharKey(), BlockInfo.EMPTY);
+            } else {
+                candidates.put(entry.getCharKey(), entry.getValue().candidates.get()[0]);
+            }
+        }
+
+        return new MultiblockShapeInfo(Arrays.stream(shape).map(PatternAisle::new).toArray(PatternAisle[]::new), candidates,
+                Char2ObjectMaps.emptyMap(), directions);
+    }
+
+    public static MultiblockShapeInfo fromShape(IBlockPattern pattern) {
+        Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicates = new Char2ObjectOpenHashMap<>();
+        RelativeDirection[] directions = new RelativeDirection[3];
+        char[][][] shape = pattern.getDefaultShape(predicates, directions);
+        if (shape == null) return null;
+        return fromShape(directions, shape, predicates);
     }
 
     public static class Builder {

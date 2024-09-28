@@ -1,10 +1,8 @@
 package gregtech.api.pattern.pattern;
 
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
@@ -12,7 +10,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -21,8 +18,6 @@ import net.minecraft.world.World;
 import it.unimi.dsi.fastutil.chars.Char2IntMap;
 import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
-import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2CharMap;
@@ -192,40 +187,6 @@ public class BlockPattern implements IBlockPattern {
         aisleStrategy.start(controllerPos, frontFacing, upwardsFacing);
         if (!aisleStrategy.check(isFlipped)) return false;
 
-        // for (int aisleI = 0; aisleI < aisles.length; aisleI++) {
-        // PatternAisle aisle = aisles[aisleI];
-        //
-        // // check everything below min repeats to ensure its valid
-        // // don't check aisle.minRepeats itself since its checked below
-        // for (int repeats = 1; repeats < aisle.minRepeats; repeats++) {
-        // boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
-        // aisleOffset + repeats, isFlipped);
-        // if (!aisleResult) return false;
-        // }
-        //
-        // // if this doesn't get set in the inner loop, then it means all repeats passed
-        // int actualRepeats = aisle.maxRepeats;
-        //
-        // for (int repeats = aisle.minRepeats; repeats <= aisle.maxRepeats; repeats++) {
-        // boolean aisleResult = checkAisle(controllerPos, frontFacing, upwardsFacing, aisleI,
-        // aisleOffset + repeats, isFlipped);
-        //
-        // // greedy search, tries to make the current aisle repeat as much as possible
-        // if (!aisleResult) {
-        // // if the min repetition is invalid then the whole pattern is invalid
-        // if (repeats == aisle.minRepeats) {
-        // return false;
-        // }
-        // // otherwise this is the max repeats
-        // actualRepeats = repeats - 1;
-        // break;
-        // }
-        // }
-        //
-        // aisle.setActualRepeats(actualRepeats);
-        // aisleOffset += actualRepeats;
-        // }
-
         // global minimum checks
         for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : globalCount.object2IntEntrySet()) {
             if (entry.getIntValue() < entry.getKey().minGlobalCount) {
@@ -314,13 +275,13 @@ public class BlockPattern implements IBlockPattern {
     }
 
     @Override
-    public MultiblockShapeInfo getDefaultShape(boolean skipMTEs) {
+    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, RelativeDirection[] directions) {
         // for each symbol, which simple predicate is being used
         // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
         // preview counts are treated as exactly that many
         Char2IntMap predicateIndex = new Char2IntOpenHashMap();
         // candidates to be passed into MultiblockShapeInfo
-        Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
+//        Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
         // cache for candidates
         Object2CharMap<TraceabilityPredicate.SimplePredicate> infos = new Object2CharOpenHashMap<>();
         Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCache = new Object2IntOpenHashMap<>();
@@ -331,6 +292,15 @@ public class BlockPattern implements IBlockPattern {
         // 0 is reserved for air
         char currentChar = 1;
         int aisleOffset = 0;
+
+        for (TraceabilityPredicate predicate : predicates.values()) {
+            for (TraceabilityPredicate.SimplePredicate simple : predicate.common) {
+                if (infos.put(simple, currentChar) == 0) {
+                    map.put(currentChar, simple);
+                    currentChar++;
+                }
+            }
+        }
 
         // first pass fills in all the minimum counts
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
@@ -347,32 +317,11 @@ public class BlockPattern implements IBlockPattern {
 
                         if (simple.candidates == null) continue;
 
-                        // cache all the BlockInfo, so that we only need to get it once per simple predicate
-                        if (!infos.containsKey(simple)) {
-                            BlockInfo[] blockInfos = simple.candidates.get();
-                            int pointer = 0;
-                            if (blockInfos.length != 1 && skipMTEs) {
-                                // move the pointer to the last pos where there is no MTE
-                                try {
-                                    while ((blockInfos[pointer].getTileEntity() instanceof MetaTileEntityHolder))
-                                        pointer++;
-                                } catch (ArrayIndexOutOfBoundsException e) {
-                                    // every candidate is a MTE, just do first one
-                                    pointer = 0;
-                                }
-                            }
-                            infos.put(simple, currentChar);
-                            candidates.put(currentChar, blockInfos[pointer]);
-                            currentChar++;
-                        }
-
                         char info = infos.getChar(simple);
                         int layerCount = layerCache.put(simple, layerCache.getInt(simple) + 1) + 1;
                         int globalCount = globalCache.put(simple, globalCache.getInt(simple) + 1) + 1;
 
-                        // replace all air with 0 instead of whatever char
-                        pattern.get(aisleOffset)[stringI][charI] = candidates.get(info).getBlockState() ==
-                                Blocks.AIR.getDefaultState() ? 0 : info;
+                        pattern.get(aisleOffset)[stringI][charI] = info;
 
                         TraceabilityPredicate.SimplePredicate next = simple;
 
@@ -421,9 +370,11 @@ public class BlockPattern implements IBlockPattern {
                                 (next.maxGlobalCount != -1 && globalCount == next.maxGlobalCount)) {
                             // if the current predicate is used, move until the next free one
                             int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
-                            if (newIndex >= predicate.common.size())
+                            if (newIndex >= predicate.common.size()) {
                                 GTLog.logger.warn("Failed to generate default structure pattern.",
                                         new Throwable());
+                                newIndex = 0;
+                            }
                             next = predicate.common.get(newIndex);
                             globalCount = globalCache.getInt(next);
                             layerCount = layerCache.getInt(next);
@@ -431,27 +382,19 @@ public class BlockPattern implements IBlockPattern {
 
                         if (next.candidates == null) continue;
 
-                        if (!infos.containsKey(next)) {
-                            BlockInfo info = next.candidates.get()[0];
-                            infos.put(next, currentChar);
-                            candidates.put(currentChar, info);
-                            currentChar++;
-                        }
-
                         char info = infos.getChar(next);
                         layerCache.put(next, layerCount + 1);
                         globalCache.put(next, globalCount + 1);
 
-                        pattern.get(aisleOffset)[stringI][charI] = candidates.get(info).getBlockState() ==
-                                Blocks.AIR.getDefaultState() ? 0 : info;
+                        pattern.get(aisleOffset)[stringI][charI] = info;
                     }
                 }
                 aisleOffset++;
             }
         }
 
-        return new MultiblockShapeInfo(pattern.stream().map(a -> new PatternAisle(1, a)).toArray(PatternAisle[]::new),
-                candidates, Char2ObjectMaps.emptyMap(), directions);
+        System.arraycopy(this.directions, 0, directions, 0, 3);
+        return pattern.toArray(new char[0][][]);
     }
 
     @Override

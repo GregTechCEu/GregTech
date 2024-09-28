@@ -94,16 +94,13 @@ public class BasicAisleStrategy extends AisleStrategy {
         }
 
         int i = covered.nextClearBit(0);
+        // set default multi aisle if not specified
         while ((i = covered.nextClearBit(i)) < aisles.size()) {
             multiAisles.add(new int[] { 1, 1, i, i + 1, -1 });
             covered.set(i);
         }
 
         multiAisles.sort(Comparator.comparingInt(a -> a[2]));
-        GTLog.logger.error("lawrence");
-        for (int[] arr : multiAisles) {
-            GTLog.logger.error(Arrays.toString(arr));
-        }
     }
 
     protected void multiAisleError() {

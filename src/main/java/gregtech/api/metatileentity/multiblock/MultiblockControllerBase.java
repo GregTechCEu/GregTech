@@ -779,17 +779,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * The new(and better) way of getting shapes for in world, jei, and autobuild. Default impl just converts
-     * {@link MultiblockControllerBase#getMatchingShapes()}, if not empty, to this. If getMatchingShapes is empty, uses
-     * a default generated structure pattern, it's not very good which is why you should override this.
-     *
-     * @param keyMap A map for autobuild, or null if it is an in world or jei preview. Note that for in world and jei
-     *               previews you can return a singleton list(only the first element will be used anyway).
+     * Get the default preview shape for JEI and in world previews.
      */
     // todo add use for the keyMap with the multiblock builder
     // todo maybe add name arg for building substructures
-    public List<MultiblockShapeInfo> getBuildableShapes(String substructureName,
-                                                        @Nullable Object2IntMap<String> keyMap) {
+    public List<MultiblockShapeInfo> getPreviewShapes(String substructureName) {
         List<MultiblockShapeInfo> infos = getMatchingShapes();
 
         // if there is no overriden getMatchingShapes() just return the default one
@@ -797,8 +791,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             // for jei and stuff
             if (getSubstructure(substructureName) == null) createStructurePatterns();
 
-            MultiblockShapeInfo info = getSubstructure(substructureName).getDefaultShape(false);
+            MultiblockShapeInfo info = MultiblockShapeInfo.fromShape(getSubstructure(substructureName));
+
             if (info == null) return Collections.emptyList();
+
             return Collections.singletonList(info);
         }
 

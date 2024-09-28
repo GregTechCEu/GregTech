@@ -10,6 +10,8 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.function.QuadFunction;
 
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +23,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
@@ -173,7 +176,7 @@ public class ExpandablePattern implements IBlockPattern {
     }
 
     @Override
-    public MultiblockShapeInfo getDefaultShape(boolean skipMTEs) {
+    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, RelativeDirection[] directions) {
         // todo undo
         return null;
     }

@@ -29,6 +29,10 @@ public class PatternAisle {
         this(1, 1, pattern);
     }
 
+    public PatternAisle(char[][] pattern) {
+        this(1, pattern);
+    }
+
     public void setRepeats(int minRepeats, int maxRepeats) {
         this.minRepeats = minRepeats;
         this.maxRepeats = maxRepeats;

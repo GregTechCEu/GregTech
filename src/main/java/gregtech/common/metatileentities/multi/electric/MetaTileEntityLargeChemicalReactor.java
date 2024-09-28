@@ -60,6 +60,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(10);
         TraceabilityPredicate abilities = autoAbilities();
 
+        // todo remove
         if (true) {
             return FactoryBlockPattern.start()
                     .aisle("S")
