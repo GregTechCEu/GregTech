@@ -217,7 +217,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         if (renderer != null) {
             TrackedDummyWorld world = ((TrackedDummyWorld) renderer.world);
             resetCenter(world);
-            renderer.renderedBlocksMap.clear();
+            renderer.renderedBlocks.clear();
             int minY = (int) world.getMinPos().getY();
             Collection<BlockPos> renderBlocks;
             if (newLayer == -1) {
@@ -607,8 +607,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             renderBlockOverLay(selected, 255, 0, 0);
         });
         world.updateEntities();
-        world.setRenderFilter(
-                pos -> worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c -> c.contains(pos)));
+        world.setRenderFilter(worldSceneRenderer.renderedBlocks::contains);
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
         if (controllerBase != null) {
