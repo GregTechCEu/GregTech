@@ -213,44 +213,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         super.onLoad();
     }
 
-    // @Override
-    // public void addStorage(@NotNull IQuantumStorage<?> storage) {
-    // if (storagePositions.add(storage.getPos())) {
-    // storageInstances.put(storage.getPos(), new WeakReference<>(storage));
-    // storage.setConnected(this);
-    // addEnergy(storage);
-    // switch (storage.getType()) {
-    // case ITEM, FLUID -> handler.rebuildCache();
-    // }
-    // markDirty();
-    // } else {
-    // GTLog.logger.warn("Tried to add storage [{}] whose pos already exists!", storage);
-    // }
-    // }
-
-    // @Override
-    // public void removeStorage(@NotNull BlockPos pos) {
-    // if (storagePositions.contains(pos)) {
-    // var storage = getStorage(pos);
-    // if (storage != null) {
-    // removeEnergy(storage);
-    // storage.setDisconnected();
-    // switch (storage.getType()) {
-    // case ITEM, FLUID -> handler.rebuildCache();
-    // }
-    // }
-    // if (isDead) {
-    // storagePositions.remove(pos);
-    // var storage = getStorage(pos);
-    // if (storage != null) storage.setDisconnected();
-    // storageInstances.remove(pos);
-    // } else {
-    // rebuildNetwork();
-    // markDirty();
-    // }
-    // }
-    // }
-
     // Used when this controller is initially placed. Try to find all possible
     // storage instances that are connected and within our distance radius
     @Override
@@ -367,24 +329,6 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             case EXTENDER -> 2L;
             case ENERGY -> 1L;
         };
-    }
-
-    private void addEnergy(IQuantumStorage<?> storage) {
-        energyConsumption += getTypeEnergy(storage);
-        if (storage.getType() == IQuantumStorage.Type.ENERGY) {
-            energyContainers.add((IEnergyContainer) storage.getTypeValue());
-            energyHandler = new EnergyContainerList(energyContainers);
-        }
-        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
-    }
-
-    private void removeEnergy(IQuantumStorage<?> storage) {
-        energyConsumption -= getTypeEnergy(storage);
-        if (storage.getType() == IQuantumStorage.Type.ENERGY) {
-            energyContainers.remove((IEnergyContainer) storage.getTypeValue());
-            energyHandler = new EnergyContainerList(energyContainers);
-        }
-        writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
     public final long getEnergyUsage() {
