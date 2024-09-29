@@ -4,7 +4,6 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -33,7 +32,9 @@ public interface IQuantumStorage<T> extends CoverableView {
 
     default void tryFindNetwork() {
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if (getWorld().getBlockState(getPos().offset(facing)).getBlock() == Blocks.AIR) continue;
+            var offset = getPos().offset(facing);
+            var state = getWorld().getBlockState(offset);
+            if (state.getBlock().isAir(state, getWorld(), offset)) continue;
             MetaTileEntity mte;
             if (getNeighbor(facing) instanceof IGregTechTileEntity gtte) {
                 mte = gtte.getMetaTileEntity();

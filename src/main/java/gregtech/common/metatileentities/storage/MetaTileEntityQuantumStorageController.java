@@ -18,7 +18,6 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -243,7 +242,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             if (!isInRange(pos) || !getWorld().isBlockLoaded(pos, false)) continue;
 
-            if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
+            var state = getWorld().getBlockState(pos);
+            if (state.getBlock().isAir(state, getWorld(), pos)) continue;
+
             MetaTileEntity mte = GTUtility.getMetaTileEntity(getWorld(), pos);
             // the mte at this pos is always an instance of quantum storage
             IQuantumStorage<?> storage = (IQuantumStorage<?>) mte;
@@ -262,7 +263,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = pos.offset(facing);
                 if (checked.contains(offsetPos) || getPos().equals(offsetPos)) continue;
-                if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
+                state = getWorld().getBlockState(offsetPos);
+                if (state.getBlock().isAir(state, getWorld(), offsetPos)) continue;
 
                 // add a new pos to search
                 if (checkStorageNeighbor(mte, facing))
@@ -277,7 +279,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (checked.contains(pos)) continue;
 
             // if the pos is air, there's nothing to check
-            if (getWorld().getBlockState(pos).getBlock() == Blocks.AIR) continue;
+            var state = getWorld().getBlockState(pos);
+            if (state.getBlock().isAir(state, getWorld(), pos)) continue;
 
             IQuantumStorage<?> storage = oldInstances.get(pos).get();
             if (storage == null) {
