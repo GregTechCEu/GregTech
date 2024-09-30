@@ -289,20 +289,24 @@ public class TricorderBehavior implements IItemBehaviour {
             // quantum storage
             if (metaTileEntity instanceof IQuantumController quantumController) {
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
-                long power = quantumController.getEnergyUsage(); // eu per 10 ticks
+                long eut = quantumController.getEnergyUsage(); // eu per 10 ticks
+                int tier = GTUtility.getTierByVoltage(eut / 10);
                 list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.usage",
-                        power * 2, power / 10));
+                        TextFormatting.RED + String.format("%.1f", eut / 10d) + TextFormatting.RESET,
+                        GTValues.VNF[tier]));
                 var handler = quantumController.getHandler();
                 list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_items",
-                        handler.getItemHandlers().getSlots()));
+                        TextFormatting.RED.toString() + handler.getItemHandlers().getSlots()));
                 list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_fluids",
-                        handler.getFluidTanks().getTanks()));
+                        TextFormatting.RED.toString() + handler.getFluidTanks().getTanks()));
             } else if (metaTileEntity instanceof IQuantumStorage<?>storage) {
                 var qcontrollor = storage.getQuantumController();
                 if (qcontrollor != null) {
+                    long eut = qcontrollor.getTypeEnergy(storage);
+
                     list.add(new TextComponentTranslation("behavior.tricorder.divider"));
                     list.add(new TextComponentTranslation("behavior.tricorder.quantum_storage.usage",
-                            qcontrollor.getTypeEnergy(storage) * 2));
+                            TextFormatting.RED + String.format("%.1f", eut / 10d)));
                 }
             }
 
