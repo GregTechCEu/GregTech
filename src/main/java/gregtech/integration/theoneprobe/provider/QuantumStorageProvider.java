@@ -2,6 +2,7 @@ package gregtech.integration.theoneprobe.provider;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IQuantumController;
+import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 
@@ -16,11 +17,11 @@ import mcjty.theoneprobe.api.IProbeInfoProvider;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.theoneprobe.api.TextStyleClass;
 
-public class QuantumEnergyProvider implements IProbeInfoProvider {
+public class QuantumStorageProvider implements IProbeInfoProvider {
 
     @Override
     public String getID() {
-        return ":quantum_energy_provider";
+        return ":quantum_storage_provider";
     }
 
     @Override
@@ -30,6 +31,16 @@ public class QuantumEnergyProvider implements IProbeInfoProvider {
                 world.getTileEntity(data.getPos()) instanceof IGregTechTileEntity gtte) {
             if (gtte.getMetaTileEntity() instanceof IQuantumController controller) {
                 configureEnergyUsage(controller.getEnergyUsage() / 10, probeInfo);
+            } else if (gtte.getMetaTileEntity() instanceof IQuantumStorage<?>storage) {
+                var qcontroller = storage.getQuantumController();
+                String status = "gregtech.top.quantum_status.disconnected";
+                if (qcontroller != null) {
+                    status = qcontroller.isPowered() ?
+                            "gregtech.top.quantum_status.powered" :
+                            "gregtech.top.quantum_status.connected";
+                }
+                status = TextStyleClass.INFO + "{*gregtech.top.quantum_status.label*} " + "{*" + status + "*}";
+                probeInfo.text(status);
             }
         }
     }

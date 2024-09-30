@@ -53,6 +53,11 @@ gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Req
 gregtech.multiblock.require_steam_parts=Requires Steam Hatches and Buses!
 gregtech.multiblock.steam_.duration_modifier=Takes §f1.5x §7base duration to process, not affected by number of items.
 
+gregtech.top.quantum_status.label=Status:
+gregtech.top.quantum_status.powered=§bOnline
+gregtech.top.quantum_status.connected=§cNo Power
+gregtech.top.quantum_status.disconnected=Not connected
+
 gregtech.top.working_disabled=Working Disabled
 
 gregtech.top.energy_consumption=Using
