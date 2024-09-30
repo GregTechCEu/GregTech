@@ -47,12 +47,15 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+
+import static gregtech.api.capability.IQuantumStorage.Type.*;
 
 public class MetaTileEntityQuantumStorageController extends MetaTileEntity implements IQuantumController {
 
@@ -65,6 +68,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     /** The "definitive" set of positions of storage instances */
     private Set<BlockPos> storagePositions = new HashSet<>();
+    private final Map<IQuantumStorage.Type, Set<BlockPos>> typePosMap = new EnumMap<>(IQuantumStorage.Type.class);
     private long energyConsumption = 0;
     private final QuantumControllerHandler handler = new QuantumControllerHandler();
 
@@ -198,6 +202,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         handler.invalidate();
         storagePositions.clear();
         storageInstances.clear();
+        typePosMap.clear();
     }
 
     @Override
@@ -222,6 +227,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
+
+        typePosMap.clear();
+        for (var type : VALUES) {
+            typePosMap.put(type, new HashSet<>());
+        }
 
         Queue<BlockPos> searchQueue = new ArrayDeque<>();
         Set<BlockPos> checked = new HashSet<>();
@@ -255,6 +265,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             // valid chest/tank located, add it
             storageInstances.put(pos, new WeakReference<>(storage));
             storagePositions.add(pos);
+            typePosMap.get(storage.getType()).add(pos);
             storage.setConnected(this);
             oldInstances.remove(pos);
             oldPositions.remove(pos);
@@ -304,6 +315,17 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         return false;
     }
 
+    @Override
+    public void updateHandler() {
+        if (getWorld().isRemote) return;
+        notifyBlockUpdate();
+        for (var pos : typePosMap.get(PROXY)) {
+            var storage = getStorage(pos);
+            if (storage == null) continue;
+            storage.notifyBlockUpdate();
+        }
+    }
+
     private void calculateEnergyUsage() {
         energyContainers.clear();
         energyConsumption = 0;
@@ -311,7 +333,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             var storage = getStorage(pos);
             if (storage != null) {
                 energyConsumption += getTypeEnergy(storage);
-                if (storage.getType() == IQuantumStorage.Type.ENERGY) {
+                if (storage.getType() == ENERGY) {
                     energyContainers.add((IEnergyContainer) storage.getTypeValue());
                 }
             }

@@ -65,10 +65,13 @@ public interface IQuantumStorage<T> extends CoverableView {
     T getTypeValue();
 
     enum Type {
+
         ITEM,
         FLUID,
         EXTENDER,
         PROXY,
-        ENERGY
+        ENERGY;
+
+        public static final Type[] VALUES = values();
     }
 }

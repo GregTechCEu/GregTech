@@ -106,6 +106,8 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> {
             active = value;
             scheduleRenderUpdate();
+            var c = getQuantumController();
+            if (c != null) c.updateHandler();
         }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
 
         builder.widget(createConnectedGui(6));
@@ -191,6 +193,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
                             @Override
                             public FluidStack getContents() {
+                                if (!active) return null;
                                 var f = super.getContents();
                                 if (f != null) f.amount = mBPerCycle;
                                 return f;
