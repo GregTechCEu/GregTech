@@ -78,6 +78,12 @@ public class MetaTileEntityQuantumProxy extends MetaTileEntityQuantumStorage<IDu
     }
 
     @Override
+    public void setDisconnected() {
+        super.setDisconnected();
+        notifyBlockUpdate();
+    }
+
+    @Override
     public Type getType() {
         return Type.PROXY;
     }

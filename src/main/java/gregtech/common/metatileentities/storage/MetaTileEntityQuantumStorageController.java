@@ -96,6 +96,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             if (isPowered != this.isPowered) {
                 this.isPowered = isPowered;
                 writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(this.isPowered));
+                updateHandler();
             }
         }
     }
