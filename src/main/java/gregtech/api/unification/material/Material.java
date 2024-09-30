@@ -110,6 +110,13 @@ public class Material implements Comparable<Material> {
         return this;
     }
 
+    @ZenMethod
+    public Material setComponents(MaterialStack... components) {
+        this.materialInfo.setComponents(components);
+        this.chemicalFormula = this.calculateChemicalFormula();
+        return this;
+    }
+
     public ImmutableList<MaterialStack> getMaterialComponents() {
         return materialInfo.componentList;
     }
@@ -1171,6 +1178,11 @@ public class Material implements Comparable<Material> {
                     color = (int) (colorTemp / divisor);
                 }
             }
+        }
+
+        public MaterialInfo setComponents(MaterialStack... components) {
+            this.componentList = ImmutableList.copyOf(Arrays.stream(components).toList());
+            return this;
         }
     }
 }
