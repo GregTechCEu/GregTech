@@ -320,13 +320,13 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         writeCustomData(GregtechDataCodes.UPDATE_ENERGY_PER, buf -> buf.writeLong(energyConsumption));
     }
 
-    private long getTypeEnergy(IQuantumStorage<?> storage) {
+    public long getTypeEnergy(IQuantumStorage<?> storage) {
         return switch (storage.getType()) {
             case ITEM, FLUID -> {
                 int tier = storage instanceof ITieredMetaTileEntity tieredMTE ? tieredMTE.getTier() : 1;
                 yield tier > 5 ?
-                        GTValues.V[GTValues.HV] / 2 :
-                        GTValues.V[GTValues.LV] / 2;
+                        GTValues.VH[GTValues.HV] :
+                        GTValues.VH[GTValues.LV];
             }
             case PROXY -> 8L;
             case EXTENDER -> 2L;

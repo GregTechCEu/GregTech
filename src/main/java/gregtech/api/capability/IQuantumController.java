@@ -25,4 +25,6 @@ public interface IQuantumController extends ICapabilityProvider {
     boolean isPowered();
 
     long getEnergyUsage();
+
+    long getTypeEnergy(IQuantumStorage<?> storage);
 }

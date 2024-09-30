@@ -2479,6 +2479,10 @@ behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking
 behavior.tricorder.mte_owner=Owner: %s
 behavior.tricorder.mte_owner_offline=Owner is Offline or Offworld!
 behavior.tricorder.mte_owner_null=This wasn't placed by a player!
+behavior.tricorder.quantum_controller.usage=Using %d EU/s (%d EU/t)
+behavior.tricorder.quantum_controller.connected_items=Connected item storages: %d
+behavior.tricorder.quantum_controller.connected_fluids=Connected fluid storages: %d
+behavior.tricorder.quantum_storage.usage=Contributing %d EU/s
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
