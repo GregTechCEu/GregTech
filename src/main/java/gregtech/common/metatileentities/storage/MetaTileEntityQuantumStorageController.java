@@ -95,15 +95,39 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             if (isPowered != this.isPowered) {
                 this.isPowered = isPowered;
+                var bounds = getBounds();
                 writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> {
                     buf.writeBoolean(this.isPowered);
-                    // writing the entire list feels disgusting but this works
-                    buf.writeVarInt(storagePositions.size());
-                    storagePositions.forEach(buf::writeBlockPos);
+                    buf.writeBlockPos(bounds[0]);
+                    buf.writeBlockPos(bounds[1]);
                 });
                 updateHandler();
             }
         }
+    }
+
+    private BlockPos[] getBounds() {
+        int minx = getPos().getX();
+        int miny = getPos().getY();
+        int minz = getPos().getZ();
+        int maxx = minx;
+        int maxy = miny;
+        int maxz = minz;
+
+        for (var pos : storagePositions) {
+            minx = Math.min(minx, pos.getX());
+            miny = Math.min(miny, pos.getY());
+            minz = Math.min(minz, pos.getZ());
+
+            maxx = Math.max(maxx, pos.getX());
+            maxy = Math.max(maxy, pos.getY());
+            maxz = Math.max(maxz, pos.getZ());
+        }
+
+        return new BlockPos[] {
+                new BlockPos(minx, miny, minz),
+                new BlockPos(maxx, maxy, maxz)
+        };
     }
 
     public boolean isPowered() {
@@ -115,10 +139,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_ENERGY) {
             this.isPowered = buf.readBoolean();
-            for (int i = 0; i < buf.readVarInt(); i++) {
-                var pos = buf.readBlockPos();
-                getWorld().markBlockRangeForRenderUpdate(pos, pos);
-            }
+            getWorld().markBlockRangeForRenderUpdate(buf.readBlockPos(), buf.readBlockPos());
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.UPDATE_ENERGY_PER) {
             this.energyConsumption = buf.readLong();
