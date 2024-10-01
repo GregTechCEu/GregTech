@@ -95,7 +95,12 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             if (isPowered != this.isPowered) {
                 this.isPowered = isPowered;
-                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> buf.writeBoolean(this.isPowered));
+                writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> {
+                    buf.writeBoolean(this.isPowered);
+                    // writing the entire list feels disgusting but this works
+                    buf.writeVarInt(storagePositions.size());
+                    storagePositions.forEach(buf::writeBlockPos);
+                });
                 updateHandler();
             }
         }
@@ -110,6 +115,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_ENERGY) {
             this.isPowered = buf.readBoolean();
+            for (int i = 0; i < buf.readVarInt(); i++) {
+                var pos = buf.readBlockPos();
+                getWorld().markBlockRangeForRenderUpdate(pos, pos);
+            }
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.UPDATE_ENERGY_PER) {
             this.energyConsumption = buf.readLong();
