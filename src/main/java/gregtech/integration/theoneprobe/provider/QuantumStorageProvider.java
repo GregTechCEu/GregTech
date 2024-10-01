@@ -16,6 +16,7 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoProvider;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.theoneprobe.api.TextStyleClass;
+import org.jetbrains.annotations.NotNull;
 
 public class QuantumStorageProvider implements IProbeInfoProvider {
 
@@ -31,18 +32,24 @@ public class QuantumStorageProvider implements IProbeInfoProvider {
                 world.getTileEntity(data.getPos()) instanceof IGregTechTileEntity gtte) {
             if (gtte.getMetaTileEntity() instanceof IQuantumController controller) {
                 configureEnergyUsage(controller.getEnergyUsage() / 10, probeInfo);
-            } else if (gtte.getMetaTileEntity() instanceof IQuantumStorage<?>storage) {
-                var qcontroller = storage.getQuantumController();
-                String status = "gregtech.top.quantum_status.disconnected";
-                if (qcontroller != null) {
-                    status = qcontroller.isPowered() ?
-                            "gregtech.top.quantum_status.powered" :
-                            "gregtech.top.quantum_status.connected";
-                }
-                status = TextStyleClass.INFO + "{*gregtech.top.quantum_status.label*} " + "{*" + status + "*}";
-                probeInfo.text(status);
-            }
+            } else if (gtte.getMetaTileEntity() instanceof IQuantumStorage<?>storage &&
+                    (storage.getType() == IQuantumStorage.Type.ITEM ||
+                            storage.getType() == IQuantumStorage.Type.FLUID)) {
+                                probeInfo.text(getConnectionStatus(storage));
+                            }
         }
+    }
+
+    private static @NotNull String getConnectionStatus(IQuantumStorage<?> storage) {
+        var qcontroller = storage.getQuantumController();
+        String status = "gregtech.top.quantum_status.disconnected";
+        if (qcontroller != null) {
+            status = qcontroller.isPowered() ?
+                    "gregtech.top.quantum_status.powered" :
+                    "gregtech.top.quantum_status.connected";
+        }
+        return TextStyleClass.INFO + "{*gregtech.top.quantum_status.label*} " +
+                "{*" + status + "*}";
     }
 
     public void configureEnergyUsage(long EUs, IProbeInfo probeInfo) {
