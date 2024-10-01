@@ -38,6 +38,7 @@ import stanhebben.zenscript.annotations.ZenOperator;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
@@ -1181,7 +1182,7 @@ public class Material implements Comparable<Material> {
         }
 
         public MaterialInfo setComponents(MaterialStack... components) {
-            this.componentList = ImmutableList.copyOf(Arrays.stream(components).toList());
+            this.componentList = ImmutableList.copyOf(Arrays.stream(components).collect(Collectors.toList()));
             return this;
         }
     }
