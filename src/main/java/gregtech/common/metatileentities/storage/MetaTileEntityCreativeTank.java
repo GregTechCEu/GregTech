@@ -212,16 +212,19 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
 
         @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (!active) return null;
-
-            var f = super.drain(mBPerCycle, false);
-            if (f != null) f.amount = mBPerCycle;
-            return doDrain && f != null ? f.copy() : f;
+            return drain(resource == null ? 0 : resource.amount, doDrain);
         }
 
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
-            return drain(null, doDrain);
+            if (!active) return null;
+
+            var f = super.drain(maxDrain, false);
+            if (f != null) {
+                f = f.copy();
+                f.amount = Math.min(mBPerCycle, maxDrain);
+            }
+            return f;
         }
 
         @Override
