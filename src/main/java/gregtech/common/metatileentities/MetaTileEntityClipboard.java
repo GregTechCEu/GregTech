@@ -190,7 +190,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             this.guiContainerCache = fakeModularUIContainer;
             if (getWorld().isRemote)
                 this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
-            this.writeCustomData(CREATE_FAKE_UI, buffer -> {});
+            this.writeCustomData(CREATE_FAKE_UI);
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
