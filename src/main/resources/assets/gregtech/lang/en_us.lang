@@ -124,6 +124,7 @@ gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
 gregtech.waila.progress_computation=Computation: %s / %s
+gregtech.waila.active_transformer.average_io=Average I/O: %s EU/t
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -4890,6 +4891,9 @@ gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible di
 gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
 gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
 gregtech.machine.active_transformer.routing=Routing.
+gregtech.multiblock.active_transformer.max_in=Max Input: %s
+gregtech.multiblock.active_transformer.max_out=Max Output: %s
+gregtech.multiblock.active_transformer.average_io=Average I/O: %s
 
 gregtech.machine.research_station.name=Research Station
 gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
