@@ -1,6 +1,6 @@
 package gregtech.api.block;
 
-import gregtech.api.recipes.recipeproperties.TemperatureProperty;
+import gregtech.api.recipes.properties.impl.TemperatureProperty;
 import gregtech.api.unification.material.Material;
 
 import org.jetbrains.annotations.NotNull;

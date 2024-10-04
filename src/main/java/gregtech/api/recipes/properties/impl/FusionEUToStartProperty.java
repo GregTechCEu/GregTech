@@ -1,19 +1,24 @@
-package gregtech.api.recipes.recipeproperties;
+package gregtech.api.recipes.properties.impl;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagLong;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-public class FusionEUToStartProperty extends RecipeProperty<Long> {
+public final class FusionEUToStartProperty extends RecipeProperty<Long> {
 
     public static final String KEY = "eu_to_start";
 
@@ -21,16 +26,27 @@ public class FusionEUToStartProperty extends RecipeProperty<Long> {
 
     private static FusionEUToStartProperty INSTANCE;
 
-    protected FusionEUToStartProperty() {
+    private FusionEUToStartProperty() {
         super(KEY, Long.class);
     }
 
     public static FusionEUToStartProperty getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new FusionEUToStartProperty();
+            GregTechAPI.RECIPE_PROPERTIES.register(KEY, INSTANCE);
         }
 
         return INSTANCE;
+    }
+
+    @Override
+    public @NotNull NBTBase serialize(@NotNull Object value) {
+        return new NBTTagLong(castValue(value));
+    }
+
+    @Override
+    public @NotNull Object deserialize(@NotNull NBTBase nbt) {
+        return ((NBTTagLong) nbt).getLong();
     }
 
     @Override

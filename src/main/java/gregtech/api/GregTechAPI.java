@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.metatileentity.registry.MTEManager;
 import gregtech.api.modules.IModuleManager;
 import gregtech.api.network.INetworkHandler;
+import gregtech.api.recipes.properties.RecipePropertyRegistry;
 import gregtech.api.sound.ISoundManager;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.registry.IMaterialRegistryManager;
@@ -56,6 +57,7 @@ public class GregTechAPI {
     public static MTEManager mteManager;
     /** GT's data migrations API */
     public static final MigrationAPI MIGRATIONS = new MigrationAPI();
+    public static final RecipePropertyRegistry RECIPE_PROPERTIES = new RecipePropertyRegistry();
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;

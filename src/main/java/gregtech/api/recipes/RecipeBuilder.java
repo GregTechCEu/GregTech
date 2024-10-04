@@ -16,11 +16,11 @@ import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import gregtech.api.recipes.recipeproperties.CleanroomProperty;
-import gregtech.api.recipes.recipeproperties.DimensionProperty;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
+import gregtech.api.recipes.properties.impl.CleanroomProperty;
+import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -44,7 +44,6 @@ import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntLists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -84,7 +83,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
-    protected @Nullable IRecipePropertyStorage recipePropertyStorage = null;
+    protected RecipePropertyStorage recipePropertyStorage = RecipePropertyStorage.EMPTY;
     protected boolean recipePropertyStorageErrored = false;
 
     protected RecipeBuilder() {
@@ -108,10 +107,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.EUt = recipe.getEUt();
         this.hidden = recipe.isHidden();
         this.category = recipe.getRecipeCategory();
-        this.recipePropertyStorage = recipe.getRecipePropertyStorage().copy();
-        if (this.recipePropertyStorage != null) {
-            this.recipePropertyStorage.freeze(false);
-        }
+        this.recipePropertyStorage = recipe.propertyStorage().copy();
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
@@ -129,18 +125,13 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
         this.category = recipeBuilder.category;
-        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage == null ? null :
-                recipeBuilder.recipePropertyStorage.copy();
-        if (this.recipePropertyStorage != null) {
-            this.recipePropertyStorage = this.recipePropertyStorage.copy();
-        }
+        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage.copy();
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
-        if (!ConfigHolder.machines.enableCleanroom) {
-            return (R) this;
+        if (ConfigHolder.machines.enableCleanroom && cleanroom != null) {
+            this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         }
-        this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         return (R) this;
     }
 
@@ -150,7 +141,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R dimension(int dimensionID, boolean toBlackList) {
         DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
-        if (dimensionIDs == DimensionProperty.DimensionPropertyList.EMPTY_LIST) {
+        if (dimensionIDs == null) {
             dimensionIDs = new DimensionProperty.DimensionPropertyList();
             this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
         }
@@ -158,29 +149,26 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public DimensionProperty.DimensionPropertyList getCompleteDimensionIDs() {
-        return this.recipePropertyStorage == null ? DimensionProperty.DimensionPropertyList.EMPTY_LIST :
-                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
-                        DimensionProperty.DimensionPropertyList.EMPTY_LIST);
+    public @Nullable DimensionProperty.DimensionPropertyList getCompleteDimensionIDs() {
+        return this.recipePropertyStorage.get(DimensionProperty.getInstance(), null);
     }
 
-    public IntList getDimensionIDs() {
-        return this.recipePropertyStorage == null ? IntLists.EMPTY_LIST :
-                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
-                        DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
+    public @NotNull IntList getDimensionIDs() {
+        return this.recipePropertyStorage.get(DimensionProperty.getInstance(),
+                DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
     }
 
-    public IntList getBlockedDimensionIDs() {
-        return this.recipePropertyStorage == null ? IntLists.EMPTY_LIST :
-                this.recipePropertyStorage.getRecipePropertyValue(DimensionProperty.getInstance(),
-                        DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
+    public @NotNull IntList getBlockedDimensionIDs() {
+        return this.recipePropertyStorage.get(DimensionProperty.getInstance(),
+                DimensionProperty.DimensionPropertyList.EMPTY_LIST).blackListDimensions;
     }
 
-    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
+    @MustBeInvokedByOverriders
+    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
         if (key.equals(DimensionProperty.KEY)) {
             if (value instanceof DimensionProperty.DimensionPropertyList list) {
                 DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
-                if (dimensionIDs == DimensionProperty.DimensionPropertyList.EMPTY_LIST) {
+                if (dimensionIDs == null) {
                     dimensionIDs = new DimensionProperty.DimensionPropertyList();
                     this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
                 }
@@ -201,22 +189,16 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    public boolean applyProperty(@NotNull RecipeProperty<?> property, @Nullable Object value) {
-        if (value == null) {
-            if (this.recipePropertyStorage != null) {
-                return this.recipePropertyStorage.remove(property);
-            }
-        } else {
-            if (this.recipePropertyStorage == null) {
-                this.recipePropertyStorage = new RecipePropertyStorage();
-            }
-            boolean stored = this.recipePropertyStorage.store(property, value);
-            if (!stored) {
-                this.recipePropertyStorageErrored = true;
-            }
-            return stored;
+    public final boolean applyProperty(@NotNull RecipeProperty<?> property, @NotNull Object value) {
+        if (this.recipePropertyStorage == RecipePropertyStorage.EMPTY) {
+            this.recipePropertyStorage = new RecipePropertyStorageImpl();
         }
-        return true;
+
+        boolean stored = this.recipePropertyStorage.store(property, value);
+        if (!stored) {
+            this.recipePropertyStorageErrored = true;
+        }
+        return stored;
     }
 
     public R input(GTRecipeInput input) {
@@ -791,8 +773,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
      */
 
     public R append(Recipe recipe, int multiplier, boolean multiplyDuration) {
-        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
-            this.applyProperty(property.getKey().getKey(), property.getValue());
+        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.propertyStorage().entrySet()) {
+            this.applyPropertyCT(property.getKey().getKey(), property.getValue());
         }
 
         // Create holders for the various parts of the new multiplied Recipe
@@ -905,12 +887,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) new RecipeBuilder<>(this);
     }
 
-    protected EnumValidationResult finalizeAndValidate() {
-        return recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
-    }
-
     public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs,
+        EnumValidationResult result = recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
+        return ValidationResult.newResult(result, new Recipe(inputs, outputs,
                 new ChancedOutputList<>(this.chancedOutputLogic, chancedOutputs),
                 fluidInputs, fluidOutputs,
                 new ChancedOutputList<>(this.chancedFluidOutputLogic, chancedFluidOutputs),
@@ -955,9 +934,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         if (recipeStatus == EnumValidationResult.INVALID) {
             GTLog.logger.error("Invalid recipe, read the errors above: {}", this);
-        }
-        if (recipePropertyStorage != null) {
-            recipePropertyStorage.freeze(true);
         }
         return recipeStatus;
     }
@@ -1067,10 +1043,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return duration;
     }
 
-    @Nullable
-    public CleanroomType getCleanroom() {
-        return this.recipePropertyStorage == null ? null :
-                this.recipePropertyStorage.getRecipePropertyValue(CleanroomProperty.getInstance(), null);
+    public @Nullable CleanroomType getCleanroom() {
+        return this.recipePropertyStorage.get(CleanroomProperty.getInstance(), null);
     }
 
     @Override

@@ -9,8 +9,8 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
+import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -77,9 +77,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        if (TooltipHelper.isCtrlDown())
-            return getCoverableView().getStackForm();
-
         return this.fluidFilterContainer.getFilterStack();
     }
 
@@ -107,11 +104,15 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    @SuppressWarnings("DataFlowIssue") // this cover always has a filter
     public @NotNull BaseFilter getFilter() {
-        return this.fluidFilterContainer.hasFilter() ?
-                this.fluidFilterContainer.getFilter() :
-                BaseFilter.ERROR_FILTER;
+        var filter = getFilterContainer().getFilter();
+        if (filter == null) return BaseFilter.ERROR_FILTER;
+
+        return filter;
+    }
+
+    public @NotNull BaseFilterContainer getFilterContainer() {
+        return this.fluidFilterContainer;
     }
 
     @Override
@@ -143,11 +144,10 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
         this.fluidFilterContainer.setMaxTransferSize(1);
-        getFilter().getFilterReader().readStack(this.fluidFilterContainer.getFilterStack());
 
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
-                .child(CoverWithUI.createTitleRow(getPickItem()))
+                .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(FluidFilterMode.class)
                                 .value(filteringMode)

@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -59,7 +60,9 @@ public class ElectricContainerDataProvider extends CapabilityDataProvider<IEnerg
             NBTTagCompound energyTag = accessor.getNBTData().getCompoundTag("gregtech.IEnergyContainer");
             long stored = energyTag.getLong("Stored");
             long capacity = energyTag.getLong("Capacity");
-            tooltip.add(I18n.format("gregtech.waila.energy_stored", stored, capacity));
+            tooltip.add(I18n.format("gregtech.waila.energy_stored",
+                    TextFormattingUtil.formatNumbers(stored),
+                    TextFormattingUtil.formatNumbers(capacity)));
         }
         return tooltip;
     }
