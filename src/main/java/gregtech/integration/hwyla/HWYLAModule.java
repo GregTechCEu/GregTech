@@ -41,6 +41,7 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         BlockOreDataProvider.INSTANCE.register(registrar);
         LampDataProvider.INSTANCE.register(registrar);
         ActiveTransformerDataProvider.INSTANCE.register(registrar);
+        BatteryBufferDataProvider.INSTANCE.register(registrar);
     }
 
     /** Render an ItemStack. */
