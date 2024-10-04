@@ -19,6 +19,7 @@ import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
@@ -213,6 +214,14 @@ public class ToolRecipeHandler {
                             'T', new UnificationEntry(OrePrefix.screw, material),
                             'S', rod);
                 }
+            }
+
+            if (material.hasFlag(GENERATE_BOLT_SCREW) && material.hasFlag(GENERATE_RING)) {
+                addToolRecipe(material, ToolItems.TOOLBELT, false,
+                        "SSS", "LLL", "RSR",
+                        'L', Items.LEATHER,
+                        'S', new UnificationEntry(OrePrefix.screw, material),
+                        'R', new UnificationEntry(OrePrefix.ring, material));
             }
 
             addToolRecipe(material, ToolItems.SCREWDRIVER, true,
