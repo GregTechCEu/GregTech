@@ -11,10 +11,10 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.util.GTUtility;
-import gregtech.common.terminal.app.prospector.ProspectorMode;
-import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
-import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
-import gregtech.common.terminal.component.SearchComponent;
+import gregtech.common.gui.widget.prospector.ProspectorMode;
+import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
+import gregtech.common.gui.widget.prospector.widget.WidgetProspectingMap;
+import gregtech.common.gui.widget.terminal.SearchComponent;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;

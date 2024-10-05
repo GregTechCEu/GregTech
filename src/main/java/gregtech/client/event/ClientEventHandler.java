@@ -10,7 +10,6 @@ import gregtech.api.util.CapesRegistry;
 import gregtech.client.particle.GTParticleManager;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
-import gregtech.client.renderer.handler.TerminalARRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.DepthTextureUtil;
 import gregtech.client.utils.TooltipHelper;
@@ -69,7 +68,6 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         GTParticleManager.clientTick(event);
-        TerminalARRenderer.onClientTick(event);
         TooltipHelper.onClientTick(event);
         if (event.phase == TickEvent.Phase.END) {
             CLIENT_TIME++;
@@ -81,21 +79,14 @@ public class ClientEventHandler {
         DepthTextureUtil.renderWorld(event);
         MultiblockPreviewRenderer.renderWorldLastEvent(event);
         BlockPosHighlightRenderer.renderWorldLastEvent(event);
-        TerminalARRenderer.renderWorldLastEvent(event);
         GTParticleManager.renderWorld(event);
     }
 
     @SubscribeEvent
     public static void onRenderGameOverlayPre(RenderGameOverlayEvent.Pre event) {
-        TerminalARRenderer.renderGameOverlayEvent(event);
         if (ConfigHolder.misc.debug && event instanceof RenderGameOverlayEvent.Text text) {
             GTParticleManager.debugOverlay(text);
         }
-    }
-
-    @SubscribeEvent
-    public static void onRenderSpecificHand(RenderSpecificHandEvent event) {
-        TerminalARRenderer.renderHandEvent(event);
     }
 
     private static final Map<UUID, ResourceLocation> DEFAULT_CAPES = new Object2ObjectOpenHashMap<>();

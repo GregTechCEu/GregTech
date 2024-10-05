@@ -474,9 +474,6 @@ public class GuiTextures {
             .fullImage("textures/gui/terminal/icon/appearance_hover.png");
     public final static TextureArea ICON_CALCULATOR = TextureArea
             .fullImage("textures/gui/terminal/icon/calculator_hover.png");
-    public final static TextureArea UI_FRAME_SIDE_UP = TextureArea.fullImage("textures/gui/terminal/frame_side_up.png");
-    public final static TextureArea UI_FRAME_SIDE_DOWN = TextureArea
-            .fullImage("textures/gui/terminal/frame_side_down.png");
 
     // Texture Areas
     public static final TextureArea BUTTON_FLUID = TextureArea
