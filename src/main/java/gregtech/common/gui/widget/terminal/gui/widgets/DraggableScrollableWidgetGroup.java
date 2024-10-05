@@ -4,11 +4,11 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.common.gui.widget.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
+import gregtech.common.gui.widget.terminal.gui.IDraggable;
 
 import net.minecraft.util.math.MathHelper;
 

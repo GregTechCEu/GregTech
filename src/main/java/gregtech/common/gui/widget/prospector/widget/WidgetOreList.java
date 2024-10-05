@@ -9,12 +9,12 @@ import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.common.gui.widget.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.Position;
-
 import gregtech.common.gui.widget.prospector.ProspectorMode;
+import gregtech.common.gui.widget.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
