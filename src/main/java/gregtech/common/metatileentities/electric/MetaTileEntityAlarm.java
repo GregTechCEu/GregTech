@@ -11,7 +11,7 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.terminal.gui.widgets.SelectorWidget;
+import gregtech.common.gui.widget.terminal.gui.widgets.SelectorWidget;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
 import gregtech.core.sound.GTSoundEvents;
