@@ -216,6 +216,8 @@ public class GTGuiTextures {
 
     public static final UITexture RECIPE_LOCK = fullImage("textures/gui/widget/lock.png");
 
+    public static final UITexture TERMINAL_FRAME = fullImage("textures/gui/terminal/terminal_frame.png");
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS
