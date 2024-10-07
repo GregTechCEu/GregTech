@@ -90,6 +90,8 @@ public interface ChancedOutputLogic {
      */
     ChancedOutputLogic XOR = new ChancedOutputLogic() {
 
+        private int roll;
+
         @Override
         public @Nullable @Unmodifiable <I,
                 T extends ChancedOutput<I>> List<@NotNull T> roll(@NotNull @Unmodifiable List<@NotNull T> chancedEntries,
@@ -97,13 +99,29 @@ public interface ChancedOutputLogic {
                                                                   int baseTier, int machineTier,
                                                                   @Nullable Map<I, Integer> cache) {
             T selected = null;
+            int total = 1;
+            for (T entry : chancedEntries) {
+                total += entry.getMaxChance();
+            }
+
+            roll = GTValues.RNG.nextInt(total);
             for (T entry : chancedEntries) {
                 int chance = getChance(entry, boostFunction, baseTier, machineTier);
-                if (passesChance(chance, entry, cache) && selected == null) {
+                if (passesChance(chance, entry, cache)) {
                     selected = entry;
                 }
             }
             return selected == null ? null : Collections.singletonList(selected);
+        }
+
+        @Override
+        public <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry,
+                                                                    @Nullable Map<I, Integer> cache) {
+            int fullChance = getCachedChance(entry, cache) + chance;
+            boolean b = fullChance >= roll;
+            if (!b) roll -= fullChance;
+            updateCachedChance(entry, cache, fullChance);
+            return b;
         }
 
         @Override
@@ -163,22 +181,21 @@ public interface ChancedOutputLogic {
      * @param cache  the cache of previously rolled chances, can be null
      * @return if the roll with the chance is successful
      */
-    static <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry, @Nullable Map<I, Integer> cache) {
+    default <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry, @Nullable Map<I, Integer> cache) {
         if (cache == null || !cache.containsKey(entry.getIngredient())) {
             int initial = GTValues.RNG.nextInt(entry.getMaxChance());
-            updateCachedChance(entry.getIngredient(), cache, initial);
+            updateCachedChance(entry, cache, initial);
             return initial <= entry.getChance();
         }
 
+        boolean roll = false;
         int fullChance = getCachedChance(entry, cache) + chance;
         if (fullChance >= entry.getMaxChance()) {
-            fullChance %= entry.getMaxChance();
-            updateCachedChance(entry.getIngredient(), cache, fullChance);
-            return true;
+            roll = true;
         }
 
-        updateCachedChance(entry.getIngredient(), cache, fullChance);
-        return false;
+        updateCachedChance(entry, cache, fullChance);
+        return roll;
     }
 
     /**
@@ -206,9 +223,9 @@ public interface ChancedOutputLogic {
      * @param cache      the cache of previously rolled chances, can be null
      * @param chance     the chance to update the cache with
      */
-    static <I> void updateCachedChance(I ingredient, @Nullable Map<I, Integer> cache, int chance) {
+    static <I> void updateCachedChance(ChancedOutput<I> ingredient, @Nullable Map<I, Integer> cache, int chance) {
         if (cache == null) return;
-        cache.put(ingredient, chance);
+        cache.put(ingredient.getIngredient(), chance % ingredient.getMaxChance());
     }
 
     /**
