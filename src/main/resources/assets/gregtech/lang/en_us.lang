@@ -120,6 +120,8 @@ option.gregtech.transformer=Transformers
 option.gregtech.workable=Workable Machines
 
 gregtech.waila.energy_stored=Energy: %s EU / %s EU
+gregtech.waila.energy_input=Input: %s EU/t
+gregtech.waila.energy_output=Output: %s EU/t
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
@@ -4161,6 +4163,8 @@ gregtech.machine.battery_buffer.max.16.name=Maximum Voltage 16x Battery Buffer
 
 gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
+gregtech.battery_buffer.average_input.top=Input: %s
+gregtech.battery_buffer.average_output.top=Output: %s
 
 # Transformers
 gregtech.machine.transformer.description=Transforms Energy between voltage tiers
