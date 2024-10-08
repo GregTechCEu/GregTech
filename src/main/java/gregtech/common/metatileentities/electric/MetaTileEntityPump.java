@@ -11,7 +11,6 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
