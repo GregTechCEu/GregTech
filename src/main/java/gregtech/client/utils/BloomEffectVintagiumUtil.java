@@ -11,14 +11,12 @@ import java.util.Objects;
 @SideOnly(Side.CLIENT)
 public class BloomEffectVintagiumUtil {
 
-    public static BlockRenderPass bloom;
-
     /**
      * @return {@link BlockRenderPass} instance for the bloom render layer.
      */
     @NotNull
     @SuppressWarnings("unused")
     public static BlockRenderPass getBloomPass() {
-        return Objects.requireNonNull(bloom, "Bloom effect is not initialized yet");
+        return Objects.requireNonNull(BlockRenderPass.valueOf("BLOOM"), "Bloom effect is not initialized yet");
     }
 }

@@ -18,23 +18,19 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
-import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -336,24 +332,9 @@ public class BloomEffectUtil {
         }, validityChecker);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void init() {
-        bloom = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[] { String.class }, "Bloom");
+        bloom = BlockRenderLayer.valueOf("BLOOM");
         BLOOM = bloom;
-        if (Mods.Nothirium.isModLoaded()) {
-            try {
-                // Nothirium hard copies the BlockRenderLayer enum into a ChunkRenderPass enum. Add our BLOOM layer to
-                // that too.
-                Class crp = Class.forName("meldexun.nothirium.api.renderer.chunk.ChunkRenderPass", false,
-                        Launch.classLoader);
-                EnumHelper.addEnum(crp, "BLOOM", new Class[] {});
-                Field all = FieldUtils.getField(crp, "ALL", false);
-                FieldUtils.removeFinalModifier(all);
-                FieldUtils.writeStaticField(all, crp.getEnumConstants());
-            } catch (ClassNotFoundException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     // Calls injected via ASM
