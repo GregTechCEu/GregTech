@@ -69,9 +69,16 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch {
             syncME();
         }
 
-        // Immediately Sync if the status changed, to prevent running recipes while offline
+        // Immediately clear cached fluids if the status changed, to prevent running recipes while offline
         if (this.meStatusChanged && !this.isOnline) {
-            syncME();
+            if (autoPull) {
+                this.getAEFluidHandler().clearConfig();
+            } else {
+                for (int i = 0; i < CONFIG_SIZE; i++) {
+                    getAEFluidHandler().getInventory()[i].setStack(null);
+                }
+
+            }
         }
     }
 
