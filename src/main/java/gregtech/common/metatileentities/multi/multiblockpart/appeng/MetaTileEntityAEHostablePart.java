@@ -45,6 +45,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     private int meUpdateTick;
     protected boolean isOnline;
     private boolean allowExtraConnections;
+    protected boolean meStatusChanged = false;
 
     public MetaTileEntityAEHostablePart(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch,
                                         Class<? extends IStorageChannel<T>> storageChannel) {
@@ -158,6 +159,9 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
             if (this.isOnline != isOnline) {
                 writeCustomData(UPDATE_ONLINE_STATUS, buf -> buf.writeBoolean(isOnline));
                 this.isOnline = isOnline;
+                this.meStatusChanged = true;
+            } else {
+                this.meStatusChanged = false;
             }
         }
         return this.isOnline;
