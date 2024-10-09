@@ -2,13 +2,13 @@ package gregtech.client.renderer.texture.custom;
 
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorage;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -69,10 +69,10 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
                 .registerSprite(new ResourceLocation("gregtech:blocks/overlay/machine/overlay_screen_glass"));
     }
 
-    public <T extends MetaTileEntity & ITieredMetaTileEntity> void renderMachine(CCRenderState renderState,
-                                                                                 Matrix4 translation,
-                                                                                 IVertexOperation[] pipeline,
-                                                                                 T mte) {
+    public <T extends MetaTileEntityQuantumStorage<?> & ITieredMetaTileEntity> void renderMachine(CCRenderState renderState,
+                                                                                                  Matrix4 translation,
+                                                                                                  IVertexOperation[] pipeline,
+                                                                                                  T mte) {
         EnumFacing frontFacing = mte.getFrontFacing();
         int tier = mte.getTier();
         Textures.renderFace(renderState, translation, pipeline, frontFacing, glassBox, glassTexture,
@@ -80,6 +80,10 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
         TextureAtlasSprite hullTexture = Textures.VOLTAGE_CASINGS[tier]
                 .getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
+
+        if (mte.isConnected()) {
+            hullTexture = Textures.QUANTUM_CASING.getParticleSprite();
+        }
 
         for (var facing : boxFacingMap.keySet()) {
             // do not render the box at the front face when "facing" is "frontFacing"
