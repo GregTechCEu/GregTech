@@ -26,6 +26,8 @@ public interface IQuantumController extends ICapabilityProvider {
 
     long getEnergyUsage();
 
+    int getCount(IQuantumStorage.Type type);
+
     long getTypeEnergy(IQuantumStorage<?> storage);
 
     void updateHandler();

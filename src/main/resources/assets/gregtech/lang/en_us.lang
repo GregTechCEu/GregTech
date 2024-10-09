@@ -57,6 +57,8 @@ gregtech.top.quantum_status.label=Status:
 gregtech.top.quantum_status.powered=§bOnline
 gregtech.top.quantum_status.connected=§cNo Power
 gregtech.top.quantum_status.disconnected=Not connected
+gregtech.top.quantum_controller.no_hatches=§cNo Energy Hatches Connected
+gregtech.top.quantum_controller.no_power=§cNo Power
 
 gregtech.top.working_disabled=Working Disabled
 
@@ -4394,7 +4396,7 @@ gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
 
 #Quantum Storage Controller
 gregtech.machine.quantum_storage_controller.name=Quantum Storage Controller
-gregtech.machine.quantum_storage_controller.tooltip=Heart of the Quantum Storage Network
+gregtech.machine.quantum_storage_controller.tooltip=Heart of the Quantum Storage Network/nConnect Energy Hatches to power the Quantum Storage Network
 gregtech.machine.quantum_storage_proxy.name=Quantum Storage Proxy
 gregtech.machine.quantum_storage_proxy.tooltip=Proxies the Quantum Storage Network's inventory
 gregtech.machine.quantum_storage_extender.name=Quantum Storage Extender

@@ -31,7 +31,14 @@ public class QuantumStorageProvider implements IProbeInfoProvider {
         if (blockState.getBlock().hasTileEntity(blockState) &&
                 world.getTileEntity(data.getPos()) instanceof IGregTechTileEntity gtte) {
             if (gtte.getMetaTileEntity() instanceof IQuantumController controller) {
-                configureEnergyUsage(controller.getEnergyUsage() / 10, probeInfo);
+                if (controller.getCount(IQuantumStorage.Type.ENERGY) == 0) {
+                    probeInfo.text("{*gregtech.top.quantum_controller.no_hatches*}");
+                } else if (!controller.isPowered()) {
+                    probeInfo.text("{*gregtech.top.quantum_controller.no_power*}");
+                } else {
+                    long usage = controller.getEnergyUsage();
+                    configureEnergyUsage(usage / 10, probeInfo);
+                }
             } else if (gtte.getMetaTileEntity() instanceof IQuantumStorage<?>storage &&
                     (storage.getType() == IQuantumStorage.Type.ITEM ||
                             storage.getType() == IQuantumStorage.Type.FLUID)) {
@@ -53,6 +60,7 @@ public class QuantumStorageProvider implements IProbeInfoProvider {
     }
 
     public void configureEnergyUsage(long EUs, IProbeInfo probeInfo) {
+        if (EUs == 0) return;
         String text = TextFormatting.RED.toString() + EUs + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN +
                 " (" + GTValues.VNF[GTUtility.getTierByVoltage(EUs)] + TextFormatting.GREEN + ")";
         probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);

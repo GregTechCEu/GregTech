@@ -77,6 +77,9 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
     public MetaTileEntityQuantumStorageController(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        for (var type : VALUES) {
+            typePosMap.put(type, new HashSet<>());
+        }
     }
 
     @Override
@@ -259,10 +262,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         storageInstances = new HashMap<>();
         storagePositions = new HashSet<>();
 
-        typePosMap.clear();
-        for (var type : VALUES) {
-            typePosMap.put(type, new HashSet<>());
-        }
+        typePosMap.values().forEach(Set::clear);
 
         Queue<BlockPos> searchQueue = new ArrayDeque<>();
         Set<BlockPos> checked = new HashSet<>();
@@ -363,6 +363,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         for (var pos : storagePositions) {
             var storage = getStorage(pos);
             if (storage != null) {
+                typePosMap.get(storage.getType()).add(pos);
                 energyConsumption += getTypeEnergy(storage);
                 if (storage.getType() == ENERGY) {
                     energyContainers.add((IEnergyContainer) storage.getTypeValue());
@@ -385,6 +386,11 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             case EXTENDER -> 2L;
             case ENERGY -> 1L;
         };
+    }
+
+    @Override
+    public int getCount(IQuantumStorage.Type type) {
+        return typePosMap.get(type).size();
     }
 
     public final long getEnergyUsage() {
