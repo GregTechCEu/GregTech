@@ -69,6 +69,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     /** The "definitive" set of positions of storage instances */
     private Set<BlockPos> storagePositions = new HashSet<>();
     private final Map<IQuantumStorage.Type, Set<BlockPos>> typePosMap = new EnumMap<>(IQuantumStorage.Type.class);
+    private final BlockPos[] bounds = new BlockPos[2];
     private long energyConsumption = 0;
     private final QuantumControllerHandler handler = new QuantumControllerHandler();
 
@@ -98,39 +99,15 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
 
             if (isPowered != this.isPowered) {
                 this.isPowered = isPowered;
-                var bounds = getBounds();
+
                 writeCustomData(GregtechDataCodes.UPDATE_ENERGY, buf -> {
                     buf.writeBoolean(this.isPowered);
-                    buf.writeBlockPos(bounds[0]);
-                    buf.writeBlockPos(bounds[1]);
+                    buf.writeBlockPos(this.bounds[0]);
+                    buf.writeBlockPos(this.bounds[1]);
                 });
                 updateHandler();
             }
         }
-    }
-
-    private BlockPos[] getBounds() {
-        int minx = getPos().getX();
-        int miny = getPos().getY();
-        int minz = getPos().getZ();
-        int maxx = minx;
-        int maxy = miny;
-        int maxz = minz;
-
-        for (var pos : storagePositions) {
-            minx = Math.min(minx, pos.getX());
-            miny = Math.min(miny, pos.getY());
-            minz = Math.min(minz, pos.getZ());
-
-            maxx = Math.max(maxx, pos.getX());
-            maxy = Math.max(maxy, pos.getY());
-            maxz = Math.max(maxz, pos.getZ());
-        }
-
-        return new BlockPos[] {
-                new BlockPos(minx, miny, minz),
-                new BlockPos(maxx, maxy, maxz)
-        };
     }
 
     public boolean isPowered() {
@@ -274,6 +251,13 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             }
         }
 
+        int minx = getPos().getX();
+        int miny = getPos().getY();
+        int minz = getPos().getZ();
+        int maxx = minx;
+        int maxy = miny;
+        int maxz = minz;
+
         // while there are blocks to search
         while (!searchQueue.isEmpty()) {
             BlockPos pos = searchQueue.remove();
@@ -301,6 +285,15 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             oldInstances.remove(pos);
             oldPositions.remove(pos);
 
+            // calculate bounds
+            minx = Math.min(minx, pos.getX());
+            miny = Math.min(miny, pos.getY());
+            minz = Math.min(minz, pos.getZ());
+
+            maxx = Math.max(maxx, pos.getX());
+            maxy = Math.max(maxy, pos.getY());
+            maxz = Math.max(maxz, pos.getZ());
+
             // check against already check posses so we don't recheck a checked pos
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = pos.offset(facing);
@@ -313,6 +306,10 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                     searchQueue.add(offsetPos);
             }
         }
+
+        // update bounds
+        this.bounds[0] = new BlockPos(minx, miny, minz);
+        this.bounds[1] = new BlockPos(maxx, maxy, maxz);
 
         // check old posses to disconnect the storages
         for (BlockPos pos : oldPositions) {
@@ -419,6 +416,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             list.appendTag(new NBTTagLong(pos.toLong()));
         }
         tagCompound.setTag("StorageInstances", list);
+        tagCompound.setLong("MinBound", bounds[0].toLong());
+        tagCompound.setLong("MaxBound", bounds[1].toLong());
         tagCompound.setBoolean("isPowered", this.isPowered);
         return tagCompound;
     }
@@ -430,6 +429,8 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
         for (int i = 0; i < list.tagCount(); i++) {
             storagePositions.add(BlockPos.fromLong(((NBTTagLong) list.get(i)).getLong()));
         }
+        this.bounds[0] = BlockPos.fromLong(data.getLong("MinBound"));
+        this.bounds[1] = BlockPos.fromLong(data.getLong("MaxBound"));
         this.isPowered = data.getBoolean("isPowered");
     }
 
