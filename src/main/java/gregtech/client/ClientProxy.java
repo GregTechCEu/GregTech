@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -105,7 +104,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onPostLoad() {
         super.onPostLoad();
-        TerminalRegistry.initTerminalFiles();
         ItemRenderCompat.init();
         FacadeRenderer.init();
     }
