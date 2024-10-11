@@ -13,7 +13,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -53,7 +53,7 @@ public class SimpleFluidFilter extends BaseFilter {
 
     @Override
     public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
-        return new Row().coverChildrenHeight().widthRel(1f)
+        return Flow.row().coverChildrenHeight().widthRel(1f)
                 .child(SlotGroupWidget.builder()
                         .matrix("FFF",
                                 "FFF",

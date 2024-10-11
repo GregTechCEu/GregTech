@@ -9,28 +9,61 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class GTFluidSyncHandler extends SyncHandler {
 
-    private static final int TRY_CLICK_CONTAINER = 1;
+    public static final int TRY_CLICK_CONTAINER = 1;
+    public static final int UPDATE_TANK = 2;
+    public static final int UPDATE_AMOUNT = 3;
 
     private final IFluidTank tank;
+    private FluidStack lastFluid;
+    private FluidStack lockedFluid;
     private boolean canDrainSlot = true;
     private boolean canFillSlot = true;
+    private boolean phantom;
 
     public GTFluidSyncHandler(IFluidTank tank) {
         this.tank = tank;
     }
 
+    @Override
+    public void detectAndSendChanges(boolean init) {
+        var current = getFluid();
+        if (current == null && lastFluid == null) return;
+        if (current == null || lastFluid == null || lastFluid.getFluid() != current.getFluid()) {
+            lastFluid = current == null ? null : current.copy();
+            syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, current));
+        } else if (current.amount != lastFluid.amount) {
+            syncToClient(UPDATE_AMOUNT, buffer -> buffer.writeInt(current.amount));
+        }
+    }
+
     public FluidStack getFluid() {
         return this.tank.getFluid();
+    }
+
+    public void setFluid(FluidStack fluid) {
+        if (tank instanceof FluidTank fluidTank) {
+            fluidTank.setFluid(fluid);
+        } else {
+            tank.drain(Integer.MAX_VALUE, true);
+            tank.fill(fluid, true);
+        }
+    }
+
+    public void setAmount(int amount) {
+        if (getFluid() == null) return;
+        getFluid().amount = amount;
     }
 
     public int getCapacity() {
@@ -55,17 +88,37 @@ public class GTFluidSyncHandler extends SyncHandler {
         return this.canFillSlot;
     }
 
+    public GTFluidSyncHandler phantom(boolean phantom) {
+        this.phantom = phantom;
+        return this;
+    }
+
+    public boolean isPhantom() {
+        return phantom;
+    }
+
+    public String getFormattedFluidAmount() {
+        return String.format("%,d", tank.getFluid() == null ? 0 : tank.getFluid().amount);
+    }
+
+    public String getFluidLocalizedName() {
+        return tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName();
+    }
+
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
-        if (id == TRY_CLICK_CONTAINER) {
-            replaceCursorItemStack(NetworkUtils.readItemStack(buf));
+        switch (id) {
+            case TRY_CLICK_CONTAINER -> replaceCursorItemStack(NetworkUtils.readItemStack(buf));
+            case UPDATE_TANK -> setFluid(NetworkUtils.readFluidStack(buf));
+            case UPDATE_AMOUNT -> setAmount(buf.readInt());
         }
     }
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) {
         if (id == TRY_CLICK_CONTAINER) {
-            var stack = tryClickContainer(buf.readBoolean());
+            var data = MouseData.readPacket(buf);
+            var stack = tryClickContainer(data.mouseButton == 0);
             if (!stack.isEmpty())
                 syncToClient(TRY_CLICK_CONTAINER, buffer -> NetworkUtils.writeItemStack(buffer, stack));
         }
@@ -88,20 +141,24 @@ public class GTFluidSyncHandler extends SyncHandler {
         if (tankFluid == null && heldFluid == null)
             return ItemStack.EMPTY;
 
+        ItemStack returnable = ItemStack.EMPTY;
+
         // tank is empty, try to fill tank
         if (canFillSlot && tankFluid == null) {
-            return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
 
             // hand is empty, try to drain tank
         } else if (canDrainSlot && heldFluid == null) {
-            return drainTankFromStack(fluidHandlerItem, tankFluid, tryFillAll);
+            returnable = drainTankIntoStack(fluidHandlerItem, tankFluid, tryFillAll);
 
             // neither is empty but tank is not full, try to fill tank
         } else if (canFillSlot && tank.getFluidAmount() < tank.getCapacity() && heldFluid != null) {
-            return fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
+            returnable = fillTankFromStack(fluidHandlerItem, heldFluid, tryFillAll);
         }
 
-        return ItemStack.EMPTY;
+        syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, tank.getFluid()));
+
+        return returnable;
     }
 
     private ItemStack fillTankFromStack(IFluidHandlerItem fluidHandler, @NotNull FluidStack heldFluid,
@@ -141,30 +198,31 @@ public class GTFluidSyncHandler extends SyncHandler {
         return itemStackEmptied;
     }
 
-    private ItemStack drainTankFromStack(IFluidHandlerItem fluidHandler, FluidStack tankFluid, boolean tryFillAll) {
+    private ItemStack drainTankIntoStack(IFluidHandlerItem fluidHandler, FluidStack tankFluid, boolean tryFillAll) {
         ItemStack heldItem = getSyncManager().getCursorItem();
         if (heldItem.isEmpty()) return ItemStack.EMPTY;
 
-        ItemStack fluidContainer = fluidHandler.getContainer();
+        ItemStack fluidContainer = ItemStack.EMPTY;
         int filled = fluidHandler.fill(tankFluid, false);
+        int stored = tankFluid.amount;
         if (filled > 0) {
-            tank.drain(filled, true);
             fluidHandler.fill(tankFluid, true);
+            tank.drain(filled, true);
+            fluidContainer = fluidHandler.getContainer();
             if (tryFillAll) {
                 // Determine how many more items we can fill. One item is already filled.
                 // Integer division means it will round down, so it will only fill equivalent fluid amounts.
                 // For example:
                 // Click with 3 cells, with 2500L of fluid in the tank.
                 // 2 cells will be filled, and 500L will be left behind in the tank.
-                int additional = Math.min(heldItem.getCount(), tankFluid.amount / filled) - 1;
+                int additional = Math.min(heldItem.getCount(), stored / filled) - 1;
                 tank.drain(filled * additional, true);
                 fluidContainer.grow(additional);
             }
             replaceCursorItemStack(fluidContainer);
             playSound(tankFluid, false);
-            return fluidContainer;
         }
-        return ItemStack.EMPTY;
+        return fluidContainer;
     }
 
     /**
