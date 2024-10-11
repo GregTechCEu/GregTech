@@ -9,6 +9,7 @@
   },
   "mixins": [
     "BlockConcretePowderMixin",
+    "BlockRenderLayerMixin",
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
     "MinecraftMixin"
