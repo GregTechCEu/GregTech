@@ -68,6 +68,17 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
             refreshList();
             syncME();
         }
+
+        // Immediately clear cached items if the status changed, to prevent running recipes while offline
+        if (this.meStatusChanged && !this.isOnline) {
+            if (autoPull) {
+                clearInventory(0);
+            } else {
+                for (int i = 0; i < CONFIG_SIZE; i++) {
+                    getAEItemHandler().getInventory()[i].setStack(null);
+                }
+            }
+        }
     }
 
     // Update the visual display for the fake items. This also is important for the item handler's
