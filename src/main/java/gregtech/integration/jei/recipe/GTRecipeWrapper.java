@@ -23,6 +23,7 @@ import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
@@ -309,15 +310,22 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        // do not add the X button if no tweaker mod is present
+        // do not add the info or X button if no tweaker mod is present
         if (!RecipeCompatUtil.isTweakerLoaded()) return;
 
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
+        BooleanSupplier creativePlayerPredicate = () -> Minecraft.getMinecraft().player != null &&
                 Minecraft.getMinecraft().player.isCreative();
+        BooleanSupplier creativeTweaker = () -> creativePlayerPredicate.getAsBoolean() &&
+                (recipe.getIsCTRecipe() || recipe.isGroovyRecipe());
+        BooleanSupplier creativeDefault = () -> creativePlayerPredicate.getAsBoolean() && !recipe.getIsCTRecipe() &&
+                !recipe.isGroovyRecipe();
+
+        // X Button
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
-                        " script, to remove this recipe, to the clipboard"))
+                .setTooltipBuilder(lines -> lines.add(
+                        LocalizationUtils.format("gregtech.jei.remove_recipe.tooltip",
+                                RecipeCompatUtil.getTweakerName())))
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
                     String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
                     String output = RecipeCompatUtil.getFirstOutputString(recipe);
@@ -330,7 +338,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                             new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
                     return true;
                 })
-                .setActiveSupplier(creativePlayerCtPredicate));
+                .setActiveSupplier(creativeDefault));
+
+        // CT/GS Info
+        buttons.add(new JeiButton(166, 2, 10, 10)
+                .setTextures(GuiTextures.INFO_ICON)
+                .setTooltipBuilder(lines -> lines.add(recipe.isGroovyRecipe() ?
+                        LocalizationUtils.format("gregtech.jei.gs_recipe.tooltip") :
+                        LocalizationUtils.format("gregtech.jei.ct_recipe.tooltip")))
+                .setClickAction((mc, x, y, button) -> false)
+                .setActiveSupplier(creativeTweaker));
     }
 
     public ChancedItemOutput getOutputChance(int slot) {
