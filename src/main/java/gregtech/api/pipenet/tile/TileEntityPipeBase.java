@@ -67,7 +67,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (tileEntity instanceof SyncedTileEntityBase pipeBase) {
             addPacketsFrom(pipeBase);
         }
-        coverableImplementation.transferDataTo(tileEntity.getCoverableImplementation());
+        tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
         setFrameMaterial(tileEntity.getFrameMaterial());
     }
 
