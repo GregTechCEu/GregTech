@@ -44,6 +44,7 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         return LaserPipeRenderer.INSTANCE.getParticleTexture((TileEntityLaserPipe) world.getTileEntity(blockPos));
     }
