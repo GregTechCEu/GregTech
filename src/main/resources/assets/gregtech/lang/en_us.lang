@@ -62,7 +62,8 @@ gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
 gregtech.top.transform_input=Input:
 gregtech.top.transform_output=Output:
-gregtech.top.steam_heating_up=Heating up
+gregtech.top.steam_heating_up=Heating Up:
+gregtech.top.steam_cooling_down=Cooling Down
 gregtech.top.steam_no_water=No Water
 
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
