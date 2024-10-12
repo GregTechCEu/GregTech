@@ -39,6 +39,10 @@ death.attack.screwdriver_lv=%s had their screws removed by %s
 
 enchantment.disjunction=Disjunction
 
+gregtech.jei.remove_recipe.tooltip=Copies a %s Snippet to Remove this Recipe
+gregtech.jei.ct_recipe.tooltip=CraftTweaker Recipe
+gregtech.jei.gs_recipe.tooltip=GroovyScript Recipe
+
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
@@ -62,7 +66,8 @@ gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
 gregtech.top.transform_input=Input:
 gregtech.top.transform_output=Output:
-gregtech.top.steam_heating_up=Heating up
+gregtech.top.steam_heating_up=Heating Up:
+gregtech.top.steam_cooling_down=Cooling Down
 gregtech.top.steam_no_water=No Water
 
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
