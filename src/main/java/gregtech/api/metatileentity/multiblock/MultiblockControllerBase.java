@@ -29,10 +29,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.common.blocks.MetaBlocks;
 
-import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-
-import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -58,8 +54,9 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
@@ -80,7 +77,6 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -276,16 +272,18 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 .toArray(IBlockState[]::new))
                         .or(new TraceabilityPredicate(worldState -> {
                             TileEntity tileEntity = worldState.getTileEntity();
-                            if (!(tileEntity instanceof IPipeTile<?, ?> pipeTile)) {
+                            if (!(tileEntity instanceof IPipeTile<?, ?>pipeTile)) {
                                 return PatternError.PLACEHOLDER;
                             }
-                            return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial()) ? null : PatternError.PLACEHOLDER;
+                            return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial()) ? null :
+                                    PatternError.PLACEHOLDER;
                         }));
     }
 
     public static TraceabilityPredicate blocks(Block... block) {
         return new TraceabilityPredicate(
-                worldState -> ArrayUtils.contains(block, worldState.getBlockState().getBlock()) ? null : PatternError.PLACEHOLDER,
+                worldState -> ArrayUtils.contains(block, worldState.getBlockState().getBlock()) ? null :
+                        PatternError.PLACEHOLDER,
                 getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
     }
 
@@ -812,7 +810,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Autobuilds the multiblock, using the {@code substructure} string to select the substructure, or the main structure if invalid.
+     * Autobuilds the multiblock, using the {@code substructure} string to select the substructure, or the main
+     * structure if invalid.
      * Then delegates to {@link IBlockPattern#autoBuild(EntityPlayer, Map)}
      */
     public void autoBuild(EntityPlayer player, Map<String, String> map) {
@@ -825,9 +824,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         autoBuildInternal(player, pattern, predicateMap, directions);
     }
 
-    protected void autoBuildInternal(EntityPlayer player, char[][][] pattern, Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicateMap, RelativeDirection[] directions) {
-
-    }
+    protected void autoBuildInternal(EntityPlayer player, char[][][] pattern,
+                                     Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicateMap,
+                                     RelativeDirection[] directions) {}
 
     @SideOnly(Side.CLIENT)
     public String[] getDescription() {

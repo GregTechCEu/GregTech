@@ -280,7 +280,8 @@ public class BlockPattern implements IBlockPattern {
 
     // todo add support for all aisle strategies
     @Override
-    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, @Nullable RelativeDirection[] directions) {
+    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map,
+                                                                     @Nullable RelativeDirection[] directions) {
         // for each symbol, which simple predicate is being used
         // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
         // preview counts are treated as exactly that many
@@ -403,8 +404,7 @@ public class BlockPattern implements IBlockPattern {
     }
 
     @Override
-    public void autoBuild(EntityPlayer player, Map<String, String> map) {
-    }
+    public void autoBuild(EntityPlayer player, Map<String, String> map) {}
 
     @Override
     public PatternState getPatternState() {

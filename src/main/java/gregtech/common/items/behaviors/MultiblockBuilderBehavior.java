@@ -11,8 +11,6 @@ import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.util.GTUtility;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -39,8 +37,6 @@ import com.cleanroommc.modularui.widgets.SortableListWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.github.bsideup.jabel.Desugar;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -182,8 +178,8 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed("MAIN")) {
-//                multiblock.auto("MAIN", getMap(player.getHeldItem(hand))).get(0).getMap(multiblock,
-//                        new BlockPos(0, 128, 0), new HashMap<>());
+                // multiblock.auto("MAIN", getMap(player.getHeldItem(hand))).get(0).getMap(multiblock,
+                // new BlockPos(0, 128, 0), new HashMap<>());
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;

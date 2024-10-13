@@ -275,7 +275,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @NotNull
     protected TraceabilityPredicate filterPredicate() {
         return new TraceabilityPredicate(
-                worldState -> GregTechAPI.CLEANROOM_FILTERS.containsKey(worldState.getBlockState()) ? null : PatternError.PLACEHOLDER,
+                worldState -> GregTechAPI.CLEANROOM_FILTERS.containsKey(worldState.getBlockState()) ? null :
+                        PatternError.PLACEHOLDER,
                 () -> GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
                         .filter(entry -> entry.getValue().getCleanroomType() != null)
                         .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
@@ -304,7 +305,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @NotNull
     protected static TraceabilityPredicate doorPredicate() {
         return new TraceabilityPredicate(
-                worldState -> worldState.getBlockState().getBlock() instanceof BlockDoor ? null : PatternError.PLACEHOLDER);
+                worldState -> worldState.getBlockState().getBlock() instanceof BlockDoor ? null :
+                        PatternError.PLACEHOLDER);
     }
 
     @NotNull

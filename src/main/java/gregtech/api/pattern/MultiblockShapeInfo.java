@@ -9,8 +9,6 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
-import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -26,6 +24,7 @@ import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.chars.Char2IntMap;
 import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
@@ -301,7 +300,8 @@ public class MultiblockShapeInfo {
         return builder(RelativeDirection.FRONT, RelativeDirection.UP, RelativeDirection.RIGHT);
     }
 
-    public static MultiblockShapeInfo fromShape(RelativeDirection[] directions, char[][][] shape, Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicates) {
+    public static MultiblockShapeInfo fromShape(RelativeDirection[] directions, char[][][] shape,
+                                                Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicates) {
         if (shape == null) return null;
         Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
         for (Char2ObjectMap.Entry<TraceabilityPredicate.SimplePredicate> entry : predicates.char2ObjectEntrySet()) {
@@ -312,7 +312,8 @@ public class MultiblockShapeInfo {
             }
         }
 
-        return new MultiblockShapeInfo(Arrays.stream(shape).map(PatternAisle::new).toArray(PatternAisle[]::new), candidates,
+        return new MultiblockShapeInfo(Arrays.stream(shape).map(PatternAisle::new).toArray(PatternAisle[]::new),
+                candidates,
                 Char2ObjectMaps.emptyMap(), directions);
     }
 

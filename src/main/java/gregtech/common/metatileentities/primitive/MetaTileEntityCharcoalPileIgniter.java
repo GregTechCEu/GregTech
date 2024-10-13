@@ -193,7 +193,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                 worldState -> worldState.getBlockState().getBlock().isWood(worldState.getWorld(),
                         worldState.getPos()) ||
                         worldState.getBlockState().equals(MetaBlocks.BRITTLE_CHARCOAL.getDefaultState()) ? null :
-                PatternError.PLACEHOLDER);
+                                PatternError.PLACEHOLDER);
     }
 
     private void setActive(boolean active) {
