@@ -8,10 +8,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PatternError {
 
+    /**
+     * Return this for your pattern errors if you want them to be a default error with the pos of the BlockWorldState and candidates of the simple predicate's error.
+     */
+    public static final PatternError PLACEHOLDER = new PatternError(BlockPos.ORIGIN, Collections.emptyList());
     protected BlockPos pos;
     protected List<List<ItemStack>> candidates;
 

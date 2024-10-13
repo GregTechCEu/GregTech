@@ -5,6 +5,7 @@ import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.OriginOffset;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
@@ -13,6 +14,7 @@ import gregtech.api.util.function.QuadFunction;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -25,6 +27,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.function.BiFunction;
 
 public class ExpandablePattern implements IBlockPattern {
@@ -162,8 +165,11 @@ public class ExpandablePattern implements IBlockPattern {
                         !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
             }
 
-            boolean result = predicate.test(worldState, state, globalCount, null);
-            if (!result) return false;
+            PatternError result = predicate.test(worldState, globalCount, null);
+            if (result != null) {
+                state.setError(result);
+                return false;
+            }
         }
 
         for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : globalCount.object2IntEntrySet()) {
@@ -177,9 +183,12 @@ public class ExpandablePattern implements IBlockPattern {
 
     @Override
     public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, RelativeDirection[] directions) {
-        // todo undo
+        // todo maybe add this and autobuild
         return null;
     }
+
+    @Override
+    public void autoBuild(EntityPlayer player, Map<String, String> map) {}
 
     @Override
     public PatternState getPatternState() {

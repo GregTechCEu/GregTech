@@ -11,6 +11,8 @@ import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.util.GTUtility;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -41,8 +43,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -60,11 +64,11 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }
 
-    public static Object2IntMap<String> getMap(ItemStack target) {
-        if (!target.hasTagCompound()) return new Object2IntOpenHashMap<>();
+    public static Map<String, String> getMap(ItemStack target) {
+        if (!target.hasTagCompound()) return Collections.emptyMap();
 
         NBTTagCompound tag = target.getTagCompound().getCompoundTag("MultiblockBuilder");
-        Object2IntMap<String> result = new Object2IntOpenHashMap<>();
+        Map<String, String> result = new HashMap<>();
 
         for (String str : tag.getKeySet()) {
             NBTTagCompound entry = tag.getCompoundTag(str);
@@ -72,7 +76,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
             String val = entry.getString("Value");
             if (key.isEmpty() || val.isEmpty()) continue;
 
-            result.put(key, Integer.parseInt(val));
+            result.put(key, val);
         }
 
         return result;
@@ -146,12 +150,10 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
                                 .size(8 * 18, 18)
                                 .child(new TextFieldWidget()
                                         .left(0).width(4 * 18)
-                                        .setValidator(str -> str.replaceAll("\\W", ""))
                                         .value(keyValues[s])
                                         .background(GTGuiTextures.DISPLAY))
                                 .child(new TextFieldWidget()
                                         .left(4 * 18).width(4 * 18)
-                                        .setValidator(str -> str.replaceAll("\\D", ""))
                                         .value(valueValues[s])
                                         .background(GTGuiTextures.DISPLAY))));
 

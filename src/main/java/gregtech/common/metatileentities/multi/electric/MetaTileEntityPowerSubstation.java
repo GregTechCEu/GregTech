@@ -289,7 +289,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     protected static final Supplier<TraceabilityPredicate> BATTERY_PREDICATE = () -> new TraceabilityPredicate(
-            (worldState, patternState) -> GregTechAPI.PSS_BATTERIES.containsKey(worldState.getBlockState()),
+            worldState -> GregTechAPI.PSS_BATTERIES.containsKey(worldState.getBlockState()) ? null : PatternError.PLACEHOLDER,
             () -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
                     .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                     .map(entry -> new BlockInfo(entry.getKey(), null))

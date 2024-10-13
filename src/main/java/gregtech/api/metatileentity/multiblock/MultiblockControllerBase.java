@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.PatternStringError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.IBlockPattern;
@@ -27,6 +28,10 @@ import gregtech.client.renderer.handler.MultiblockPreviewRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.common.blocks.MetaBlocks;
+
+import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
+
+import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -76,6 +81,7 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -216,14 +222,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return getFrontOverlay().getParticleSprite();
     }
 
-    public static TraceabilityPredicate tilePredicate(@NotNull BiFunction<BlockWorldState, MetaTileEntity, Boolean> predicate,
+    public static TraceabilityPredicate tilePredicate(@NotNull BiPredicate<BlockWorldState, MetaTileEntity> predicate,
                                                       @Nullable Supplier<BlockInfo[]> candidates) {
-        return new TraceabilityPredicate((worldState, patternState) -> {
+        return new TraceabilityPredicate(worldState -> {
             TileEntity tileEntity = worldState.getTileEntity();
-            if (!(tileEntity instanceof IGregTechTileEntity))
-                return false;
+            if (!(tileEntity instanceof IGregTechTileEntity)) return PatternError.PLACEHOLDER;
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-            return predicate.apply(worldState, metaTileEntity);
+            return predicate.test(worldState, metaTileEntity) ? null : PatternError.PLACEHOLDER;
         }, candidates);
     }
 
@@ -258,7 +263,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
         return new TraceabilityPredicate(
-                (worldState, patternState) -> ArrayUtils.contains(allowedStates, worldState.getBlockState()),
+                worldState -> ArrayUtils.contains(allowedStates, worldState.getBlockState()) ? null :
+                        PatternError.PLACEHOLDER,
                 getCandidates(allowedStates));
     }
 
@@ -268,18 +274,18 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public static TraceabilityPredicate frames(Material... frameMaterials) {
         return states(Arrays.stream(frameMaterials).map(m -> MetaBlocks.FRAMES.get(m).getBlock(m))
                 .toArray(IBlockState[]::new))
-                        .or(new TraceabilityPredicate((worldState, patternState) -> {
+                        .or(new TraceabilityPredicate(worldState -> {
                             TileEntity tileEntity = worldState.getTileEntity();
-                            if (!(tileEntity instanceof IPipeTile<?, ?>pipeTile)) {
-                                return false;
+                            if (!(tileEntity instanceof IPipeTile<?, ?> pipeTile)) {
+                                return PatternError.PLACEHOLDER;
                             }
-                            return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
+                            return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial()) ? null : PatternError.PLACEHOLDER;
                         }));
     }
 
     public static TraceabilityPredicate blocks(Block... block) {
         return new TraceabilityPredicate(
-                (worldState, patternState) -> ArrayUtils.contains(block, worldState.getBlockState().getBlock()),
+                worldState -> ArrayUtils.contains(block, worldState.getBlockState().getBlock()) ? null : PatternError.PLACEHOLDER,
                 getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
     }
 
@@ -583,6 +589,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return structures.get(name);
     }
 
+    public IBlockPattern getSubstructure(String name, String defult) {
+        return structures.get(structures.containsKey(name) ? name : defult);
+    }
+
     @Override
     public void onRemoval() {
         super.onRemoval();
@@ -799,6 +809,24 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }
 
         return infos;
+    }
+
+    /**
+     * Autobuilds the multiblock, using the {@code substructure} string to select the substructure, or the main structure if invalid.
+     * Then delegates to {@link IBlockPattern#autoBuild(EntityPlayer, Map)}
+     */
+    public void autoBuild(EntityPlayer player, Map<String, String> map) {
+        // todo lang
+        RelativeDirection[] directions = new RelativeDirection[3];
+        Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicateMap = new Char2ObjectOpenHashMap<>();
+        IBlockPattern structure = getSubstructure(map.getOrDefault("substructure", "MAIN"), "MAIN");
+        char[][][] pattern = structure.getDefaultShape(predicateMap, directions);
+        // call another method so that subclasses can override this to handle the map without copying everything
+        autoBuildInternal(player, pattern, predicateMap, directions);
+    }
+
+    protected void autoBuildInternal(EntityPlayer player, char[][][] pattern, Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicateMap, RelativeDirection[] directions) {
+
     }
 
     @SideOnly(Side.CLIENT)

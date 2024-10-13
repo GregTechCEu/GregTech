@@ -4,12 +4,14 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.OriginOffset;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -27,8 +29,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BlockPattern implements IBlockPattern {
 
@@ -249,8 +250,11 @@ public class BlockPattern implements IBlockPattern {
 
                 // GTLog.logger.info("Checked pos at " + charPos + " with flip " + flip);
 
-                boolean result = predicate.test(worldState, state, globalCount, layerCount);
-                if (!result) return false;
+                PatternError result = predicate.test(worldState, globalCount, layerCount);
+                if (result != null) {
+                    state.setError(result);
+                    return false;
+                }
 
                 charPos.offset(absoluteChar);
             }
@@ -274,14 +278,15 @@ public class BlockPattern implements IBlockPattern {
         return aisles[aisleI].actualRepeats;
     }
 
+    // todo add support for all aisle strategies
     @Override
-    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, RelativeDirection[] directions) {
+    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, @Nullable RelativeDirection[] directions) {
         // for each symbol, which simple predicate is being used
         // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
         // preview counts are treated as exactly that many
         Char2IntMap predicateIndex = new Char2IntOpenHashMap();
         // candidates to be passed into MultiblockShapeInfo
-//        Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
+        // Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
         // cache for candidates
         Object2CharMap<TraceabilityPredicate.SimplePredicate> infos = new Object2CharOpenHashMap<>();
         Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCache = new Object2IntOpenHashMap<>();
@@ -294,7 +299,7 @@ public class BlockPattern implements IBlockPattern {
         int aisleOffset = 0;
 
         for (TraceabilityPredicate predicate : predicates.values()) {
-            for (TraceabilityPredicate.SimplePredicate simple : predicate.common) {
+            for (TraceabilityPredicate.SimplePredicate simple : predicate.simple) {
                 if (infos.put(simple, currentChar) == 0) {
                     map.put(currentChar, simple);
                     currentChar++;
@@ -312,8 +317,8 @@ public class BlockPattern implements IBlockPattern {
                         char c = aisles[aisleI].charAt(stringI, charI);
                         TraceabilityPredicate predicate = predicates.get(c);
                         // we used up all the simple predicates, just let the second pass fill them in
-                        if (predicateIndex.get(c) >= predicate.common.size()) continue;
-                        TraceabilityPredicate.SimplePredicate simple = predicate.common.get(predicateIndex.get(c));
+                        if (predicateIndex.get(c) >= predicate.simple.size()) continue;
+                        TraceabilityPredicate.SimplePredicate simple = predicate.simple.get(predicateIndex.get(c));
 
                         if (simple.candidates == null) continue;
 
@@ -333,8 +338,8 @@ public class BlockPattern implements IBlockPattern {
                                 (next.minGlobalCount == -1 || globalCount == next.minGlobalCount)) {
                             // if the current predicate is used, move until the next free one
                             int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
-                            if (newIndex >= predicate.common.size()) break;
-                            next = predicate.common.get(newIndex);
+                            if (newIndex >= predicate.simple.size()) break;
+                            next = predicate.simple.get(newIndex);
                             globalCount = globalCache.getInt(next);
                             layerCount = layerCache.getInt(next);
                         }
@@ -358,7 +363,7 @@ public class BlockPattern implements IBlockPattern {
 
                         char c = aisles[aisleI].charAt(stringI, charI);
                         TraceabilityPredicate predicate = predicates.get(c);
-                        TraceabilityPredicate.SimplePredicate next = predicate.common.get(predicateIndex.get(c));
+                        TraceabilityPredicate.SimplePredicate next = predicate.simple.get(predicateIndex.get(c));
 
                         int layerCount = layerCache.getInt(next);
                         int globalCount = globalCache.getInt(next);
@@ -370,12 +375,12 @@ public class BlockPattern implements IBlockPattern {
                                 (next.maxGlobalCount != -1 && globalCount == next.maxGlobalCount)) {
                             // if the current predicate is used, move until the next free one
                             int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
-                            if (newIndex >= predicate.common.size()) {
+                            if (newIndex >= predicate.simple.size()) {
                                 GTLog.logger.warn("Failed to generate default structure pattern.",
                                         new Throwable());
                                 newIndex = 0;
                             }
-                            next = predicate.common.get(newIndex);
+                            next = predicate.simple.get(newIndex);
                             globalCount = globalCache.getInt(next);
                             layerCount = layerCache.getInt(next);
                         }
@@ -393,8 +398,12 @@ public class BlockPattern implements IBlockPattern {
             }
         }
 
-        System.arraycopy(this.directions, 0, directions, 0, 3);
+        if (directions != null) System.arraycopy(this.directions, 0, directions, 0, 3);
         return pattern.toArray(new char[0][][]);
+    }
+
+    @Override
+    public void autoBuild(EntityPlayer player, Map<String, String> map) {
     }
 
     @Override

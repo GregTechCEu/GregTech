@@ -25,6 +25,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
 import gregtech.api.pattern.pattern.IBlockPattern;
@@ -274,7 +275,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @NotNull
     protected TraceabilityPredicate filterPredicate() {
         return new TraceabilityPredicate(
-                (worldState, patternState) -> GregTechAPI.CLEANROOM_FILTERS.containsKey(worldState.getBlockState()),
+                worldState -> GregTechAPI.CLEANROOM_FILTERS.containsKey(worldState.getBlockState()) ? null : PatternError.PLACEHOLDER,
                 () -> GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
                         .filter(entry -> entry.getValue().getCleanroomType() != null)
                         .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
@@ -303,22 +304,22 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @NotNull
     protected static TraceabilityPredicate doorPredicate() {
         return new TraceabilityPredicate(
-                (worldState, patternState) -> worldState.getBlockState().getBlock() instanceof BlockDoor);
+                worldState -> worldState.getBlockState().getBlock() instanceof BlockDoor ? null : PatternError.PLACEHOLDER);
     }
 
     @NotNull
     protected TraceabilityPredicate innerPredicate() {
-        return new TraceabilityPredicate((worldState, patternState) -> {
+        return new TraceabilityPredicate(worldState -> {
             // all non-MetaTileEntities are allowed inside by default
             TileEntity tileEntity = worldState.getTileEntity();
-            if (!(tileEntity instanceof IGregTechTileEntity)) return true;
+            if (!(tileEntity instanceof IGregTechTileEntity)) return null;
 
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
 
             // always ban other cleanrooms, can cause problems otherwise
-            if (metaTileEntity instanceof ICleanroomProvider) return false;
+            if (metaTileEntity instanceof ICleanroomProvider) return null;
 
-            return !isMachineBanned(metaTileEntity);
+            return isMachineBanned(metaTileEntity) ? PatternError.PLACEHOLDER : null;
         });
     }
 

@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,6 +19,8 @@ import net.minecraft.world.World;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public interface IBlockPattern {
 
@@ -57,10 +60,17 @@ public interface IBlockPattern {
      * not exist.
      * 
      * @param map Pass in an empty map to receive a populated map with the chars in the return mapping to a simpel predicate.
-     * @param directions Pass in an array of length 3 to get the directions for the preview.
+     * @param directions Pass in an array of length 3 to get the directions for the preview, or null if you don't want it.
      */
     // peak nullability, basically the return value can be null but if it is not then no arrays can be null
-    char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, RelativeDirection[] directions);
+    char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map, @Nullable RelativeDirection[] directions);
+
+    /**
+     * Autobuilds a pattern, using the player inventory(and maybe AE soontm) items if in survival.
+     * @param player The player initiating this autobuild.
+     * @param map The map from the multiblock builder.
+     */
+    void autoBuild(EntityPlayer player, Map<String, String> map);
 
 
     /**
@@ -71,7 +81,7 @@ public interface IBlockPattern {
     PatternState getPatternState();
 
     /**
-     * Clears the cache for checkPatternFastAt(...) in case something in the pattern is changed.
+     * Clears the cache for checkPatternFastAt(...) in case something in the pattern is changed. Default impl just getCache and then clears it.
      */
     default void clearCache() {
         getCache().clear();

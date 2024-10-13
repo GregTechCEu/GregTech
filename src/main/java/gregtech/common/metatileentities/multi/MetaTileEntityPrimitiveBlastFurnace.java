@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
@@ -48,7 +49,7 @@ import org.jetbrains.annotations.NotNull;
 public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMultiblockController {
 
     private static final TraceabilityPredicate SNOW_PREDICATE = new TraceabilityPredicate(
-            bws -> GTUtility.isBlockSnow(bws.getBlockState()));
+            bws -> GTUtility.isBlockSnow(bws.getBlockState()) ? null : PatternError.PLACEHOLDER);
 
     public MetaTileEntityPrimitiveBlastFurnace(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES);

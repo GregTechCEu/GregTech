@@ -351,13 +351,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     .get(rayTraceResult.getBlockPos());
             if (predicates != null) {
                 BlockWorldState worldState = new BlockWorldState();
-                PatternState patternState = new PatternState();
 
                 worldState.setWorld(renderer.world);
                 worldState.setPos(rayTraceResult.getBlockPos());
 
-                for (TraceabilityPredicate.SimplePredicate common : predicates.common) {
-                    if (common.testRaw(worldState, patternState)) {
+                for (TraceabilityPredicate.SimplePredicate common : predicates.simple) {
+                    if (common.testRaw(worldState) == null) {
                         predicateTips = common.getToolTips(predicates);
                         break;
                     }
@@ -419,7 +418,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 this.selected = selected;
                 TraceabilityPredicate predicate = patterns[currentRendererPage].predicateMap.get(this.selected);
                 if (predicate != null) {
-                    predicates.addAll(predicate.common);
+                    predicates.addAll(predicate.simple);
                     predicates.removeIf(p -> p.candidates == null);
                     this.father = predicate;
                     setItemStackGroup();

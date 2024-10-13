@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
 import gregtech.api.pattern.pattern.IBlockPattern;
@@ -189,9 +190,10 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @NotNull
     private TraceabilityPredicate logPredicate() {
         return new TraceabilityPredicate(
-                (worldState, patternState) -> worldState.getBlockState().getBlock().isWood(worldState.getWorld(),
+                worldState -> worldState.getBlockState().getBlock().isWood(worldState.getWorld(),
                         worldState.getPos()) ||
-                        worldState.getBlockState().equals(MetaBlocks.BRITTLE_CHARCOAL.getDefaultState()));
+                        worldState.getBlockState().equals(MetaBlocks.BRITTLE_CHARCOAL.getDefaultState()) ? null :
+                PatternError.PLACEHOLDER);
     }
 
     private void setActive(boolean active) {
