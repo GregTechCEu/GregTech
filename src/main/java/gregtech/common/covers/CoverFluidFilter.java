@@ -32,14 +32,19 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +56,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     protected final SimpleOverlayRenderer texture;
     protected final FluidFilterContainer fluidFilterContainer;
     protected FluidFilterMode filterMode;
-    protected FluidHandlerFiltered fluidHandler;
+    protected boolean allowFlow = false;
+    protected FluidHandlerDelegate fluidHandler;
 
     public CoverFluidFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                             @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture) {
@@ -146,7 +152,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         this.fluidFilterContainer.setMaxTransferSize(1);
 
         return getFilter().createPanel(guiSyncManager)
-                .size(176, 194).padding(7)
+                .size(176, 212).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(FluidFilterMode.class)
@@ -154,6 +160,17 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                                 .lang("cover.filter.mode.title")
                                 .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .build())
+                        .child(new Row()
+                                .marginBottom(2)
+                                .widthRel(1f)
+                                .coverChildrenHeight()
+                                .setEnabledIf(b -> getFilterMode() != FluidFilterMode.FILTER_BOTH)
+                                .child(new ToggleButton()
+                                        .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ? "Enabled" : "Disabled")
+                                                .get()).color(Color.WHITE.main).shadow(false))
+                                        .size(72, 18)
+                                        .value(new BooleanSyncValue(() -> allowFlow, b -> allowFlow = b)))
+                                .child(IKey.lang("Allow Flow").asWidget().height(18).alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getFilter().createWidgets(guiSyncManager)))
@@ -207,30 +224,26 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         }
 
         public int fill(FluidStack resource, boolean doFill) {
-            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilterContainer.test(resource)) {
-                return 0;
-            }
-            return super.fill(resource, doFill);
+            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN && allowFlow)
+                return super.fill(resource, doFill);
+
+            // fill or both, or not allow flow
+            return fluidFilterContainer.test(resource) ? super.fill(resource, doFill) : 0;
         }
 
         @Nullable
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (getFilterMode() == FluidFilterMode.FILTER_FILL || !fluidFilterContainer.test(resource)) {
-                return null;
-            }
-            return super.drain(resource, doDrain);
+            if (getFilterMode() == FluidFilterMode.FILTER_FILL && allowFlow)
+                return super.drain(resource, doDrain);
+
+            // drain or both, or not allow flow
+            return fluidFilterContainer.test(resource) ? super.drain(resource, doDrain) : null;
         }
 
         @Nullable
         public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (getFilterMode() != FluidFilterMode.FILTER_FILL) {
-                FluidStack result = super.drain(maxDrain, false);
-                if (result == null || result.amount <= 0 || !fluidFilterContainer.test(result)) {
-                    return null;
-                }
-                return doDrain ? super.drain(maxDrain, true) : result;
-            }
-            return super.drain(maxDrain, doDrain);
+            var f = super.drain(maxDrain, false);
+            return drain(f, doDrain);
         }
     }
 }
