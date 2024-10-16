@@ -31,14 +31,19 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +55,8 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     protected final SimpleOverlayRenderer texture;
     protected final ItemFilterContainer itemFilterContainer;
     protected ItemFilterMode filterMode = ItemFilterMode.FILTER_INSERT;
-    protected ItemHandlerFiltered itemHandler;
+    protected boolean allowFlow = false;
+    protected ItemHandlerDelegate itemHandler;
 
     public CoverItemFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                            @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture) {
@@ -148,7 +154,7 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         guiSyncManager.syncValue("filtering_mode", filteringMode);
 
         return getFilter().createPanel(guiSyncManager)
-                .size(176, 194).padding(7)
+                .size(176, 212).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()).left(4))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
@@ -156,6 +162,19 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                 .lang("cover.filter.mode.title")
                                 .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .build())
+                        .child(new Row()
+                                .marginBottom(2)
+                                .widthRel(1f)
+                                .coverChildrenHeight()
+                                .setEnabledIf(b -> getFilterMode() != ItemFilterMode.FILTER_BOTH)
+                                .child(new ToggleButton()
+                                        .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
+                                                "cover.generic.enabled" :
+                                                "cover.generic.disabled").get())
+                                                .color(Color.WHITE.main).shadow(false))
+                                        .size(72, 18)
+                                        .value(new BooleanSyncValue(() -> allowFlow, b -> allowFlow = b)))
+                                .child(IKey.lang("cover.filter.allow_flow").asWidget().height(18).alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getFilter().createWidgets(guiSyncManager).left(0)))
@@ -212,23 +231,29 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT || !itemFilterContainer.test(stack)) {
-                return stack;
-            }
-            return super.insertItem(slot, stack, simulate);
+            // set to extract, but insertion is allowed
+            if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT && allowFlow)
+                return super.insertItem(slot, stack, simulate);
+
+            // otherwise test
+            if (getFilterMode() != ItemFilterMode.FILTER_EXTRACT && itemFilterContainer.test(stack))
+                return super.insertItem(slot, stack, simulate);
+
+            return stack;
         }
 
         @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (getFilterMode() != ItemFilterMode.FILTER_INSERT) {
-                ItemStack result = super.extractItem(slot, amount, true);
-                if (result.isEmpty() || !itemFilterContainer.test(result)) {
-                    return ItemStack.EMPTY;
-                }
-                return simulate ? result : super.extractItem(slot, amount, false);
-            }
-            return super.extractItem(slot, amount, simulate);
+            // set to insert, but extraction is allowed
+            if (getFilterMode() == ItemFilterMode.FILTER_INSERT && allowFlow)
+                return super.extractItem(slot, amount, simulate);
+
+            // otherwise test
+            if (getFilterMode() != ItemFilterMode.FILTER_EXTRACT && itemFilterContainer.test(getStackInSlot(slot)))
+                return super.extractItem(slot, amount, simulate);
+
+            return ItemStack.EMPTY;
         }
     }
 }
