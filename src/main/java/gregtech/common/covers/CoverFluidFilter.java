@@ -166,11 +166,13 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
                                 .coverChildrenHeight()
                                 .setEnabledIf(b -> getFilterMode() != FluidFilterMode.FILTER_BOTH)
                                 .child(new ToggleButton()
-                                        .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ? "Enabled" : "Disabled")
-                                                .get()).color(Color.WHITE.main).shadow(false))
+                                        .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
+                                                "cover.generic.enabled" :
+                                                "cover.generic.disabled").get())
+                                                .color(Color.WHITE.main).shadow(false))
                                         .size(72, 18)
                                         .value(new BooleanSyncValue(() -> allowFlow, b -> allowFlow = b)))
-                                .child(IKey.lang("Allow Flow").asWidget().height(18).alignX(1f)))
+                                .child(IKey.lang("cover.filter.allow_flow").asWidget().height(18).alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getFilter().createWidgets(guiSyncManager)))
@@ -224,20 +226,28 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         }
 
         public int fill(FluidStack resource, boolean doFill) {
+            // set to drain, but filling is allowed
             if (getFilterMode() == FluidFilterMode.FILTER_DRAIN && allowFlow)
                 return super.fill(resource, doFill);
 
-            // fill or both, or not allow flow
-            return fluidFilterContainer.test(resource) ? super.fill(resource, doFill) : 0;
+            // otherwise test
+            if (getFilterMode() != FluidFilterMode.FILTER_DRAIN && fluidFilterContainer.test(resource))
+                return super.fill(resource, doFill);
+
+            return 0;
         }
 
         @Nullable
         public FluidStack drain(FluidStack resource, boolean doDrain) {
+            // set to fill, draining is allowed
             if (getFilterMode() == FluidFilterMode.FILTER_FILL && allowFlow)
                 return super.drain(resource, doDrain);
 
-            // drain or both, or not allow flow
-            return fluidFilterContainer.test(resource) ? super.drain(resource, doDrain) : null;
+            // otherwise test
+            if (getFilterMode() != FluidFilterMode.FILTER_FILL && fluidFilterContainer.test(resource))
+                return super.drain(resource, doDrain);
+
+            return null;
         }
 
         @Nullable
