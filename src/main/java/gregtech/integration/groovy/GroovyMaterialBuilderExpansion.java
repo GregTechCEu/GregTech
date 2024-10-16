@@ -108,10 +108,16 @@ public class GroovyMaterialBuilderExpansion {
                 materialStacks.add(materialStack);
             } else if (o instanceof Material material) {
                 materialStacks.add(new MaterialStack(material, 1));
+            } else if (o instanceof Integer) {
+                GroovyLog.msg("Error creating GregTech material")
+                        .add("Tried to use old method for material components in the shape of (material1, amount1, material2, amount2)")
+                        .add("Please change this into (material1 * amount1, material2 * amount2)")
+                        .error().post();
             } else {
-                GroovyLog.get()
-                        .error("Material components must be of type Material or MaterialStack, but was of type {}",
-                                o == null ? null : o.getClass());
+                GroovyLog.msg("Error creating GregTech material")
+                        .add("Material components must be of type Material or MaterialStack, but was of type {}",
+                                o == null ? null : o.getClass())
+                        .error().post();
             }
         }
         return builder.components(materialStacks.toArray(new MaterialStack[0]));

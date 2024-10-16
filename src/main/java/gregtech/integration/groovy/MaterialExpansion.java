@@ -53,7 +53,7 @@ public class MaterialExpansion {
 
     public static boolean isGaseous(Material m) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        return prop != null && prop.getStorage().get(FluidStorageKeys.GAS) != null;
+        return prop != null && prop.get(FluidStorageKeys.GAS) != null;
     }
 
     ///////////////////////////////////

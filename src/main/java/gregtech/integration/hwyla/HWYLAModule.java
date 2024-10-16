@@ -40,6 +40,8 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         // one day, if cover provider is ported to waila, register it right here
         BlockOreDataProvider.INSTANCE.register(registrar);
         LampDataProvider.INSTANCE.register(registrar);
+        ActiveTransformerDataProvider.INSTANCE.register(registrar);
+        BatteryBufferDataProvider.INSTANCE.register(registrar);
     }
 
     /** Render an ItemStack. */

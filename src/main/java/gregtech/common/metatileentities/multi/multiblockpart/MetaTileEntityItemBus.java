@@ -41,7 +41,7 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -265,7 +265,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         guiSyncManager.registerSlotGroup("item_inv", rowSize);
 
@@ -278,10 +278,18 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         for (int i = 0; i < rowSize; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < rowSize; j++) {
+                int index = i * rowSize + j;
+                IItemHandlerModifiable handler = isExportHatch ? exportItems : importItems;
                 widgets.get(i)
                         .add(new ItemSlot()
-                                .slot(SyncHandlers.itemSlot(isExportHatch ? exportItems : importItems, i * rowSize + j)
+                                .slot(SyncHandlers.itemSlot(handler, index)
                                         .slotGroup("item_inv")
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            if (onlyAmountChanged &&
+                                                    handler instanceof GTItemStackHandler gtHandler) {
+                                                gtHandler.onContentsChanged(index);
+                                            }
+                                        })
                                         .accessibility(!isExportHatch, true)));
             }
         }

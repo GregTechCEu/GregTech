@@ -97,7 +97,7 @@ public class OrganicChemistryMaterials {
                 .polymer()
                 .liquid(new FluidBuilder().temperature(1450))
                 .color(0x2D2D2D)
-                .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_FOIL)
+                .flags(GENERATE_FOIL)
                 .components(Carbon, 20, Hydrogen, 12, Nitrogen, 4)
                 .fluidPipeProperties(1000, 350, true)
                 .build();

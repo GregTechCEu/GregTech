@@ -4,6 +4,9 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
+  "injectors": {
+    "maxShiftBy": 10
+  },
   "mixins": [
     "BlockConcretePowderMixin",
     "DamageSourceMixin",

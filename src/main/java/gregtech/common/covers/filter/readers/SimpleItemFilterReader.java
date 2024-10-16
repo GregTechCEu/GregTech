@@ -81,6 +81,7 @@ public class SimpleItemFilterReader extends BaseFilterReader implements IItemHan
             }
             NBTTagList list = getInventoryNbt();
             list.set(slot, stack.isEmpty() ? new NBTTagCompound() : stack.serializeNBT());
+            markDirty();
         }
     }
 

@@ -15,7 +15,6 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,23 +80,13 @@ public class CTRecipe {
     }
 
     @ZenGetter("EUt")
-    public int getEUt() {
+    public long getEUt() {
         return this.backingRecipe.getEUt();
     }
 
     @ZenGetter("hidden")
     public boolean isHidden() {
         return this.backingRecipe.isHidden();
-    }
-
-    @ZenGetter("propertyKeys")
-    public List<String> getPropertyKeys() {
-        return new ArrayList<>(this.backingRecipe.getPropertyKeys());
-    }
-
-    @ZenMethod
-    public Object getProperty(String key) {
-        return this.backingRecipe.getPropertyRaw(key);
     }
 
     @ZenMethod

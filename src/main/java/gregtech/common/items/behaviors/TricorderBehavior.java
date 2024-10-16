@@ -1,8 +1,11 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -46,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class TricorderBehavior implements IItemBehaviour {
 
@@ -138,11 +142,28 @@ public class TricorderBehavior implements IItemBehaviour {
 
             // name of the machine
             list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                    new TextComponentTranslation(LocalizationUtils.format(metaTileEntity.getMetaFullName()))
+                    new TextComponentTranslation(metaTileEntity.getMetaFullName())
                             .setStyle(new Style().setColor(TextFormatting.BLUE)),
                     new TextComponentTranslation(TextFormattingUtil
-                            .formatNumbers(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId)))
-                                    .setStyle(new Style().setColor(TextFormatting.BLUE))));
+                            .formatNumbers(
+                                    metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId)))
+                                            .setStyle(new Style().setColor(TextFormatting.BLUE))));
+
+            UUID owner = metaTileEntity.getOwner();
+            if (owner != null) {
+                EntityPlayer ownerEntity = metaTileEntity.getWorld().getPlayerEntityByUUID(owner);
+                if (ownerEntity != null) {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner",
+                            new TextComponentTranslation(ownerEntity.getName())
+                                    .setStyle(new Style().setColor(TextFormatting.AQUA))));
+                } else {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_offline")
+                            .setStyle(new Style().setColor(TextFormatting.YELLOW)));
+                }
+            } else {
+                list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_null")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
 
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 

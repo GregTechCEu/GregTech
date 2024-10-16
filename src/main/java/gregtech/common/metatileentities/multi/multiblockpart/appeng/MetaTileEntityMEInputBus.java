@@ -320,6 +320,7 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
         tooltip.add(I18n.format("gregtech.machine.me.item_import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 

@@ -112,7 +112,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onPostLoad() {
         super.onPostLoad();
-        TerminalRegistry.initTerminalFiles();
         ItemRenderCompat.init();
         FacadeRenderer.init();
     }

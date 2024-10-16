@@ -11,6 +11,8 @@ import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.registry.MTEManager;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.modules.IGregTechModule;
 import gregtech.api.mui.GTGuiTextures;
@@ -18,7 +20,7 @@ import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.TemperatureProperty;
+import gregtech.api.recipes.properties.impl.TemperatureProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
@@ -26,9 +28,10 @@ import gregtech.api.unification.material.event.MaterialRegistryEvent;
 import gregtech.api.unification.material.event.PostMaterialEvent;
 import gregtech.api.unification.material.registry.MarkerMaterialRegistry;
 import gregtech.api.util.CapesRegistry;
-import gregtech.api.util.VirtualTankRegistry;
+import gregtech.api.util.Mods;
 import gregtech.api.util.input.KeyBind;
 import gregtech.api.util.oreglob.OreGlob;
+import gregtech.api.util.virtualregistry.VirtualEnderRegistry;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinSaveData;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -70,6 +73,8 @@ import gregtech.core.network.packets.PacketUIWidgetUpdate;
 import gregtech.core.sound.GTSoundEvents;
 import gregtech.core.sound.internal.SoundManager;
 import gregtech.core.unification.material.internal.MaterialRegistryManager;
+import gregtech.datafix.command.CommandDataFix;
+import gregtech.integration.bq.BQuDataFixer;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import gregtech.modules.GregTechModules;
 
@@ -186,6 +191,12 @@ public class CoreModule implements IGregTechModule {
         managerInternal.freezeRegistries();
         /* End Material Registration */
 
+        // need to do this before MetaBlocks runs, to make sure all addons get their own BlockMachine
+        /* Start MTE Registry Addition */
+        GregTechAPI.mteManager = MTEManager.getInstance();
+        MinecraftForge.EVENT_BUS.post(new MTEManager.MTERegistryEvent());
+        /* End MTE Registry Addition */
+
         OreDictUnifier.init();
 
         MetaBlocks.init();
@@ -193,8 +204,10 @@ public class CoreModule implements IGregTechModule {
         ToolItems.init();
         GTFluidRegistration.INSTANCE.register();
 
-        /* Start MetaTileEntity Registration */
-        MTE_REGISTRY.unfreeze();
+        /* Start CEu MetaTileEntity Registration */
+        for (MTERegistry registry : mteManager.getRegistries()) {
+            registry.unfreeze();
+        }
         logger.info("Registering GTCEu Meta Tile Entities");
         MetaTileEntities.init();
         /* End CEu MetaTileEntity Registration */
@@ -238,7 +251,10 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        MTE_REGISTRY.freeze(); // freeze once addon preInit is finished
+        // freeze once addon preInit is finished
+        for (MTERegistry registry : mteManager.getRegistries()) {
+            registry.freeze();
+        }
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
             logger.fatal("Seems like invalid recipe was found.");
@@ -305,7 +321,12 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.commandManager.addCommand(new CommandHand());
         GregTechAPI.commandManager.addCommand(new CommandRecipeCheck());
         GregTechAPI.commandManager.addCommand(new CommandShaders());
+        GregTechAPI.commandManager.addCommand(new CommandDataFix());
         CapesRegistry.load();
+
+        if (Mods.BetterQuestingUnofficial.isModLoaded()) {
+            BQuDataFixer.onServerStarting(event.getServer());
+        }
     }
 
     @Override
@@ -328,7 +349,7 @@ public class CoreModule implements IGregTechModule {
 
     @Override
     public void serverStopped(FMLServerStoppedEvent event) {
-        VirtualTankRegistry.clearMaps();
+        VirtualEnderRegistry.clearMaps();
         CapesRegistry.clearMaps();
     }
 }

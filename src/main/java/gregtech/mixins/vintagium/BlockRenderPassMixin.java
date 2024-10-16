@@ -30,6 +30,7 @@ public abstract class BlockRenderPassMixin {
     @Shadow(remap = false)
     public static int COUNT;
 
+    @SuppressWarnings("UnresolvedMixinReference")
     @Inject(method = "<clinit>",
             at = @At(value = "TAIL"),
             remap = false)

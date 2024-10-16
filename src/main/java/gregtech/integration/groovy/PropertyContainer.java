@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 
 import com.cleanroommc.groovyscript.GroovyScript;
 import com.cleanroommc.groovyscript.api.GroovyLog;
-import com.cleanroommc.groovyscript.compat.mods.ModPropertyContainer;
+import com.cleanroommc.groovyscript.compat.mods.GroovyPropertyContainer;
 import com.cleanroommc.groovyscript.event.EventBusType;
 import com.cleanroommc.groovyscript.event.GroovyEventManager;
 import com.cleanroommc.groovyscript.sandbox.ClosureHelper;
@@ -15,7 +15,7 @@ import com.cleanroommc.groovyscript.sandbox.LoadStage;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 
-public class PropertyContainer extends ModPropertyContainer {
+public class PropertyContainer extends GroovyPropertyContainer {
 
     public void materialEvent(EventPriority priority, @DelegatesTo(MaterialEvent.class) Closure<?> eventListener) {
         if (GroovyScriptModule.isCurrentlyRunning() &&
@@ -42,6 +42,6 @@ public class PropertyContainer extends ModPropertyContainer {
     }
 
     public void lateMaterialEvent(Closure<?> eventListener) {
-        materialEvent(EventPriority.NORMAL, eventListener);
+        lateMaterialEvent(EventPriority.NORMAL, eventListener);
     }
 }

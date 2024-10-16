@@ -18,7 +18,13 @@ import gregtech.common.items.MetaItems;
 import gregtech.tools.enchants.EnchantmentHardHammer;
 
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockCommandBlock;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockPane;
+import net.minecraft.block.BlockRailBase;
+import net.minecraft.block.BlockStructure;
+import net.minecraft.block.BlockWeb;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -58,7 +64,11 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static gregtech.api.GTValues.LV;
@@ -213,7 +223,7 @@ public final class ToolHelper {
         ItemStack stack = tool.getRaw();
         GTUtility.getOrCreateNbtCompound(stack).setInteger(HIDE_FLAGS, 2);
         NBTTagCompound toolTag = getToolTag(stack);
-        toolTag.setString(MATERIAL_KEY, material.toString());
+        toolTag.setString(MATERIAL_KEY, material.getRegistryName());
         toolTag.setInteger(MAX_DURABILITY_KEY, maxDurability);
         toolTag.setInteger(HARVEST_LEVEL_KEY, harvestLevel);
         toolTag.setFloat(TOOL_SPEED_KEY, toolSpeed);

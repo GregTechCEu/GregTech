@@ -39,6 +39,10 @@ death.attack.screwdriver_lv=%s had their screws removed by %s
 
 enchantment.disjunction=Disjunction
 
+gregtech.jei.remove_recipe.tooltip=Copies a %s Snippet to Remove this Recipe
+gregtech.jei.ct_recipe.tooltip=CraftTweaker Recipe
+gregtech.jei.gs_recipe.tooltip=GroovyScript Recipe
+
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
@@ -62,7 +66,8 @@ gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
 gregtech.top.transform_input=Input:
 gregtech.top.transform_output=Output:
-gregtech.top.steam_heating_up=Heating up
+gregtech.top.steam_heating_up=Heating Up:
+gregtech.top.steam_cooling_down=Cooling Down
 gregtech.top.steam_no_water=No Water
 
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
@@ -119,11 +124,14 @@ option.gregtech.steam_boiler=Steam Boilers
 option.gregtech.transformer=Transformers
 option.gregtech.workable=Workable Machines
 
-gregtech.waila.energy_stored=Energy: %d EU / %d EU
+gregtech.waila.energy_stored=Energy: %s EU / %s EU
+gregtech.waila.energy_input=Input: %s EU/t
+gregtech.waila.energy_output=Output: %s EU/t
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
 gregtech.waila.progress_computation=Computation: %s / %s
+gregtech.waila.active_transformer.average_io=Average I/O: %s EU/t
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -1360,6 +1368,13 @@ cover.ender_fluid_link.iomode.disabled=I/O Disabled
 cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode\nPrivate mode uses the player who originally placed the cover
 cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
+cover.ender_fluid_link.transfer_unit=L/t
+
+cover.generic.ender.known_channels=Known Channels
+cover.generic.ender.open_selector=Open Entry Selector
+cover.generic.ender.set_description.tooltip=Set Description
+cover.generic.ender.set_description.title=Set Description [%s]
+cover.generic.ender.delete_entry=Delete Entry
 
 cover.generic.advanced_detector.latched=Latched
 cover.generic.advanced_detector.continuous=Continuous
@@ -1574,7 +1589,8 @@ gregtech.material.palladium=Palladium
 gregtech.material.phosphorus=Phosphorus
 gregtech.material.polonium=Polonium
 gregtech.material.platinum=Platinum
-gregtech.material.plutonium=Plutonium 239
+gregtech.material.plutonium=Plutonium
+gregtech.material.plutonium_239=Plutonium 239
 gregtech.material.plutonium_241=Plutonium 241
 gregtech.material.potassium=Potassium
 gregtech.material.praseodymium=Praseodymium
@@ -1609,8 +1625,9 @@ gregtech.material.tin=Tin
 gregtech.material.titanium=Titanium
 gregtech.material.tritium=Tritium
 gregtech.material.tungsten=Tungsten
-gregtech.material.uranium=Uranium 238
+gregtech.material.uranium=Uranium
 gregtech.material.uranium_235=Uranium 235
+gregtech.material.uranium_238=Uranium 238
 gregtech.material.vanadium=Vanadium
 gregtech.material.xenon=Xenon
 gregtech.material.ytterbium=Ytterbium
@@ -1830,6 +1847,14 @@ gregtech.material.enriched_naquadah_sulfate=Enriched Naquadah Sulfate
 gregtech.material.naquadria_sulfate=Naquadria Sulfate
 gregtech.material.pyrochlore=Pyrochlore
 gregtech.material.rtm_alloy=RTM Alloy
+gregtech.material.ilmenite_slag=Ilmenite Slag
+gregtech.material.zircon=Zircon
+gregtech.material.zirconia=Zirconia
+gregtech.material.zirconium_tetrachloride=Zirconium Tetrachloride
+gregtech.material.hafnia=Hafnia
+gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
+gregtech.material.zircaloy_4=Zircaloy-4
+gregtech.material.inconel_718=Inconel-718
 
 
 # Organic Chemistry Materials
@@ -2043,6 +2068,11 @@ gregtech.material.acidic_naquadria_solution=Acidic Naquadria Solution
 gregtech.material.naquadria_waste=Naquadria Waste
 gregtech.material.lapotron=Lapotron
 gregtech.material.uu_matter=UU-Matter
+gregtech.material.bauxite_slurry=Bauxite Slurry
+gregtech.material.cracked_bauxite_slurry=Cracked Bauxite Slurry
+gregtech.material.bauxite_sludge=Bauxite Sludge
+gregtech.material.decalcified_bauxite_sludge=Decalcified Bauxite Sludge
+gregtech.material.bauxite_slag=Bauxite Slag
 
 
 # Second Degree Materials
@@ -2453,6 +2483,9 @@ behavior.tricorder.debug_machine_invalid_null=invalid! MetaTileEntity == null!
 behavior.tricorder.debug_cpu_load=Average CPU load of ~%sns over %s ticks with worst time of %sns.
 behavior.tricorder.debug_cpu_load_seconds=This is %s seconds.
 behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking longer than %sms) on the Server.
+behavior.tricorder.mte_owner=Owner: %s
+behavior.tricorder.mte_owner_offline=Owner is Offline or Offworld!
+behavior.tricorder.mte_owner_null=This wasn't placed by a player!
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
@@ -4137,6 +4170,8 @@ gregtech.machine.battery_buffer.max.16.name=Maximum Voltage 16x Battery Buffer
 
 gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
+gregtech.battery_buffer.average_input.top=Input: %s
+gregtech.battery_buffer.average_output.top=Output: %s
 
 # Transformers
 gregtech.machine.transformer.description=Transforms Energy between voltage tiers
@@ -4867,6 +4902,9 @@ gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible di
 gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
 gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
 gregtech.machine.active_transformer.routing=Routing.
+gregtech.multiblock.active_transformer.max_in=Max Input: %s
+gregtech.multiblock.active_transformer.max_out=Max Output: %s
+gregtech.multiblock.active_transformer.average_io=Average I/O: %s
 
 gregtech.machine.research_station.name=Research Station
 gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
@@ -5317,6 +5355,9 @@ gregtech.machine.me.import_copy_settings=Saved settings to Data Stick
 gregtech.machine.me.import_paste_settings=Applied settings from Data Stick
 gregtech.machine.me.item_import.data_stick.name=§oME Input Bus Configuration Data
 gregtech.machine.me.fluid_import.data_stick.name=§oME Input Hatch Configuration Data
+gregtech.machine.me.extra_connections.enabled=Allow connections from all sides
+gregtech.machine.me.extra_connections.disabled=Allow connection only on front face
+gregtech.machine.me.extra_connections.tooltip=Right-click with wire cutters to allow connecting to AE2 on all sides
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§aVoltage IN: §f%,d EU/t (%s§f)
@@ -5755,7 +5796,7 @@ gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
-gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck>
+gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
 gregtech.command.worldgen.reload.success=Worldgen successfully reloaded from config.
@@ -5782,6 +5823,12 @@ gregtech.command.copy.copied_and_click=copied to clipboard. Click to copy again
 gregtech.command.copy.click_to_copy=Click to copy
 gregtech.command.copy.copied_start=Copied [
 gregtech.command.copy.copied_end=] to the clipboard
+gregtech.command.datafix.usage=Usage: /gregtech datafix <bqu>
+gregtech.command.datafix.bqu.usage=Usage: /gregtech datafix bqu [confirm]
+gregtech.command.datafix.bqu.backup=Backup your save and BQu config dir, then rerun with the 'confirm' arg
+gregtech.command.datafix.bqu.start=Started Migrating BQu Quest Database...
+gregtech.command.datafix.bqu.complete=Finished Migrating BQu Quest Database
+gregtech.command.datafix.bqu.failed=Failed Migrating BQu Quest Database. Restore your backups!
 
 gregtech.chat.cape=§5Congrats: you just unlocked a new cape! See the Cape Selector terminal app to use it.§r
 

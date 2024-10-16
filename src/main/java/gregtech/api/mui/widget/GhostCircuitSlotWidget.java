@@ -11,6 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
@@ -123,7 +124,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
             }
         }
 
-        getPanel().getScreen().openPanel(GTGuis.createPopupPanel("circuit_selector", 176, 120)
+        IPanelHandler.simple(getPanel(), (mainPanel, player) -> GTGuis.createPopupPanel("circuit_selector", 176, 120)
                 .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
                 .child(circuitPreview.asIcon().size(16).asWidget()
                         .size(18)
@@ -133,7 +134,8 @@ public class GhostCircuitSlotWidget extends ItemSlot {
                         .left(7).right(7).top(41).height(4 * 18)
                         .matrix(options)
                         .minColWidth(18).minRowHeight(18)
-                        .minElementMargin(0, 0)));
+                        .minElementMargin(0, 0)))
+                .openPanel();
     }
 
     private static class GhostCircuitSyncHandler extends ItemSlotSH {
