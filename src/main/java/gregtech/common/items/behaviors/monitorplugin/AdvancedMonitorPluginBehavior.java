@@ -104,7 +104,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         TrackedDummyWorld dummyWorld = new TrackedDummyWorld(world);
         dummyWorld.setRenderFilter(pos -> validPos.contains(pos));
         worldSceneRenderer = new FBOWorldSceneRenderer(dummyWorld, FBO);
-        worldSceneRenderer.addRenderedBlocks(validPos, null);
+        worldSceneRenderer.addRenderedBlocks(validPos);
         center = new Vector3f((minX + maxX) / 2f + 0.5f, (minY + maxY) / 2f + 0.5f, (minZ + maxZ) / 2f + 0.5f);
         worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rotationPitch),
                 Math.toRadians(rotationYaw));

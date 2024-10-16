@@ -217,7 +217,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         if (renderer != null) {
             TrackedDummyWorld world = ((TrackedDummyWorld) renderer.world);
             resetCenter(world);
-            renderer.renderedBlocksMap.clear();
+            renderer.renderedBlocks.clear();
             int minY = (int) world.getMinPos().getY();
             Collection<BlockPos> renderBlocks;
             if (newLayer == -1) {
@@ -226,7 +226,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 renderBlocks = world.renderedBlocks.stream().filter(pos -> pos.getY() - minY == newLayer)
                         .collect(Collectors.toSet());
             }
-            renderer.addRenderedBlocks(renderBlocks, null);
+            renderer.addRenderedBlocks(renderBlocks);
         }
     }
 
@@ -593,7 +593,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         Vector3f minPos = world.getMinPos();
         center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
 
-        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);
+        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks);
         worldSceneRenderer.setOnLookingAt(ray -> {});
 
         worldSceneRenderer.setAfterWorldRender(renderer -> {
@@ -607,8 +607,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             renderBlockOverLay(selected, 255, 0, 0);
         });
         world.updateEntities();
-        world.setRenderFilter(
-                pos -> worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c -> c.contains(pos)));
+        world.setRenderFilter(worldSceneRenderer.renderedBlocks::contains);
 
         Map<BlockPos, TraceabilityPredicate> predicateMap = new HashMap<>();
         if (controllerBase != null) {
