@@ -39,6 +39,10 @@ death.attack.screwdriver_lv=%s had their screws removed by %s
 
 enchantment.disjunction=Disjunction
 
+gregtech.jei.remove_recipe.tooltip=Copies a %s Snippet to Remove this Recipe
+gregtech.jei.ct_recipe.tooltip=CraftTweaker Recipe
+gregtech.jei.gs_recipe.tooltip=GroovyScript Recipe
+
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
@@ -62,7 +66,8 @@ gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
 gregtech.top.transform_input=Input:
 gregtech.top.transform_output=Output:
-gregtech.top.steam_heating_up=Heating up
+gregtech.top.steam_heating_up=Heating Up:
+gregtech.top.steam_cooling_down=Cooling Down
 gregtech.top.steam_no_water=No Water
 
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
@@ -119,11 +124,14 @@ option.gregtech.steam_boiler=Steam Boilers
 option.gregtech.transformer=Transformers
 option.gregtech.workable=Workable Machines
 
-gregtech.waila.energy_stored=Energy: %d EU / %d EU
+gregtech.waila.energy_stored=Energy: %s EU / %s EU
+gregtech.waila.energy_input=Input: %s EU/t
+gregtech.waila.energy_output=Output: %s EU/t
 gregtech.waila.progress_idle=Idle
 gregtech.waila.progress_tick=Progress: %d t / %d t
 gregtech.waila.progress_sec=Progress: %d s / %d s
 gregtech.waila.progress_computation=Computation: %s / %s
+gregtech.waila.active_transformer.average_io=Average I/O: %s EU/t
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.bronze.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -4160,6 +4168,8 @@ gregtech.machine.battery_buffer.max.16.name=Maximum Voltage 16x Battery Buffer
 
 gregtech.battery_buffer.average_input=Average input: %s EU/t
 gregtech.battery_buffer.average_output=Average output: %s EU/t
+gregtech.battery_buffer.average_input.top=Input: %s
+gregtech.battery_buffer.average_output.top=Output: %s
 
 # Transformers
 gregtech.machine.transformer.description=Transforms Energy between voltage tiers
@@ -4890,6 +4900,9 @@ gregtech.machine.active_transformer.tooltip3=Can transmit power at incredible di
 gregtech.machine.active_transformer.tooltip3.5= Lasers§7.
 gregtech.multiblock.active_transformer.description=The Active Transformer is a multiblock structure that can accept any number or tier of Energy Hatches, and transform them into any number or tier of Dynamo Hatches. They can be chained with Laser Source and Target Hatches, allowing long distance power transportation without any losses. Lasers must be in a straight line, otherwise they will not send energy.
 gregtech.machine.active_transformer.routing=Routing.
+gregtech.multiblock.active_transformer.max_in=Max Input: %s
+gregtech.multiblock.active_transformer.max_out=Max Output: %s
+gregtech.multiblock.active_transformer.average_io=Average I/O: %s
 
 gregtech.machine.research_station.name=Research Station
 gregtech.machine.research_station.tooltip.1=More than just a Multiblock Scanner
