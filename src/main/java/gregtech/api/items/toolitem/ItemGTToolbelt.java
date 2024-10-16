@@ -43,7 +43,7 @@ import net.minecraftforge.oredict.OreIngredient;
 
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
@@ -80,7 +80,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         ToolStackHandler handler = getHandler(guiData.getUsedItemStack());
         ItemStack selected = handler.getSelectedStack();
         if (selected != null && selected.getItem() instanceof ItemUIFactory factory) {
@@ -95,12 +95,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         guiSyncManager.registerSlotGroup(group);
 
         SlotGroupWidget slotGroupWidget = new SlotGroupWidget();
-        slotGroupWidget.flex()
-                .coverChildren()
-                .startDefaultMode()
-                .leftRel(0.5f);
-        slotGroupWidget.flex().top(7);
-        slotGroupWidget.flex().endDefaultMode();
+        slotGroupWidget.flex().coverChildren().leftRel(0.5f).top(7);
         slotGroupWidget.debugName("toolbelt_inventory");
         for (int i = 0; i < handler.getSlots(); i++) {
             int finalI = i;

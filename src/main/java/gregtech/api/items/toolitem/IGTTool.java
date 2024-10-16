@@ -65,7 +65,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.factory.ItemGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -940,7 +940,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Override
-    default ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
+    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 120, 80);
 
         Supplier<NBTTagCompound> tag = () -> getBehaviorsTag(guiData.getUsedItemStack());
@@ -950,8 +950,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         guiSyncManager.syncValue("NBTSync", nbtSyncer);
 
         Column columns = new Column();
-        columns.flex().coverChildren().startDefaultMode()
-                .leftRel(0.07f).bottomRel(0.5f).endDefaultMode();
+        columns.flex().coverChildren().leftRel(0.07f).bottomRel(0.5f);
         columns.child(new TextWidget(IKey.lang("item.gt.tool.aoe.columns")).paddingBottom(5));
         columns.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
                 .disableHoverBackground().onMousePressed(data -> {
@@ -973,8 +972,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         panel.child(columns);
 
         Column rows = new Column();
-        rows.flex().coverChildren().startDefaultMode()
-                .rightRel(0.5f).bottomRel(0.5f).endDefaultMode();
+        rows.flex().coverChildren().rightRel(0.5f).bottomRel(0.5f);
         rows.child(new TextWidget(IKey.lang("item.gt.tool.aoe.rows")).paddingBottom(5));
         rows.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
                 .disableHoverBackground().onMousePressed(data -> {
@@ -996,8 +994,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         panel.child(rows);
 
         Column layers = new Column();
-        layers.flex().coverChildren().startDefaultMode()
-                .rightRel(0.07f).bottomRel(0.5f).endDefaultMode();
+        layers.flex().coverChildren().rightRel(0.07f).bottomRel(0.5f);
         layers.child(new TextWidget(IKey.lang("item.gt.tool.aoe.layers")).paddingBottom(5));
         layers.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
                 .disableHoverBackground().onMousePressed(data -> {
