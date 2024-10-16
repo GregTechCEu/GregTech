@@ -4,10 +4,12 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.api.util.Mods;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
@@ -33,19 +35,24 @@ import gregtech.common.items.ToolItems;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -120,6 +127,14 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
         ToolItems.registerModels();
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void registerBakedModels(ModelBakeEvent event) {
+        GTLog.logger.info("Registering special item models");
+        MetaItems.registerBakedModels(event);
+        ToolItems.registerBakedModels(event);
     }
 
     @SubscribeEvent
@@ -312,5 +327,21 @@ public class ClientProxy extends CommonProxy {
     @Override
     public boolean isFancyGraphics() {
         return Minecraft.getMinecraft().gameSettings.fancyGraphics;
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onMouseEvent(@NotNull MouseEvent event) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (event.getDwheel() != 0 && player.isSneaking()) {
+            ItemStack stack = player.getHeldItemMainhand();
+            Item item = stack.getItem();
+            if (item instanceof ItemGTToolbelt toolbelt) {
+                stack = stack.copy();
+                toolbelt.changeSelectedTool(event.getDwheel(), stack);
+                InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+                inv.mainInventory.set(inv.currentItem, stack);
+                event.setCanceled(true);
+            }
+        }
     }
 }
