@@ -291,6 +291,8 @@ public class GTGuiTextures {
             ColorType.DEFAULT);
 
     public static final UITexture TERMINAL_FRAME = fullImage("textures/gui/terminal/terminal_frame.png");
+    public static final UITexture HOME_BUTTON = fullImage("textures/gui/terminal/home_button.png");
+    public static final UITexture HOME_BUTTON_HOVER = fullImage("textures/gui/terminal/home_button_hover.png");
 
     // todo bronze/steel/primitive fluid slots?
 
