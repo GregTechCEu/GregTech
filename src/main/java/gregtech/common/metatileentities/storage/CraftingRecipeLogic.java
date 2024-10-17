@@ -299,6 +299,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             // cache is not correct
             if (slotStack.isEmpty() || !this.strategy.equals(slotStack, itemStack)) {
                 slotItr.remove();
+                if (!slotItr.hasNext()) stackLookupMap.remove(itemStack);
                 slot = handleCacheMiss(itemStack);
                 if (slot == -1) return false;
                 slotStack = availableHandlers.getStackInSlot(slot);
@@ -389,10 +390,10 @@ public class CraftingRecipeLogic extends SyncHandler {
             if (curStack.isEmpty()) continue;
 
             Set<Integer> slots;
-            if (stackLookupMap.containsKey(stack))
-                slots = stackLookupMap.get(stack);
-            else {
-                stackLookupMap.put(stack.copy(), slots = new IntArraySet());
+            if (stackLookupMap.containsKey(curStack)) {
+                slots = stackLookupMap.get(curStack);
+            } else {
+                stackLookupMap.put(curStack.copy(), slots = new IntArraySet());
             }
             slots.add(i);
 
