@@ -388,14 +388,16 @@ public class CraftingRecipeLogic extends SyncHandler {
             var curStack = this.availableHandlers.getStackInSlot(i);
             if (curStack.isEmpty()) continue;
 
+            Set<Integer> slots;
+            if (stackLookupMap.containsKey(stack))
+                slots = stackLookupMap.get(stack);
+            else {
+                stackLookupMap.put(stack.copy(), slots = new IntArraySet());
+            }
+            slots.add(i);
+
             if (this.strategy.equals(stack, curStack)) {
-                Set<Integer> slots;
-                if (stackLookupMap.containsKey(stack))
-                    slots = stackLookupMap.get(stack);
-                else {
-                    stackLookupMap.put(stack.copy(), slots = new IntArraySet());
-                }
-                if (slots.add(i)) return i;
+                return i;
             }
         }
         return -1;
