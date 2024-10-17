@@ -3,31 +3,46 @@ package gregtech.common.metatileentities.storage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CraftingRecipeMemory {
+import java.io.IOException;
+import java.util.Map;
+
+public class CraftingRecipeMemory extends SyncHandler {
 
     private final MemorizedRecipe[] memorizedRecipes;
+    private final IItemHandlerModifiable craftingMatrix;
 
-    public CraftingRecipeMemory(int memorySize) {
+    public CraftingRecipeMemory(int memorySize, IItemHandlerModifiable craftingMatrix) {
         this.memorizedRecipes = new MemorizedRecipe[memorySize];
+        this.craftingMatrix = craftingMatrix;
     }
 
-    public void loadRecipe(int index, IItemHandlerModifiable craftingGrid) {
+    public void loadRecipe(int index) {
         MemorizedRecipe recipe = memorizedRecipes[index];
         if (recipe != null) {
-            copyInventoryItems(recipe.craftingMatrix, craftingGrid);
+            copyInventoryItems(recipe.craftingMatrix, this.craftingMatrix);
         }
     }
 
     @Nullable
     public MemorizedRecipe getRecipeAtIndex(int index) {
         return memorizedRecipes[index];
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    public @NotNull ItemStack getRecipeOutputAtIndex(int index) {
+        return hasRecipe(index) ? getRecipeAtIndex(index).getRecipeResult() : ItemStack.EMPTY;
     }
 
     @Nullable
@@ -37,7 +52,10 @@ public class CraftingRecipeMemory {
             MemorizedRecipe recipe = memorizedRecipes[i];
             if (recipe != null && recipe.recipeLocked) continue;
             memorizedRecipes[i] = previousRecipe;
-            if (recipe == null) return null;
+            memorizedRecipes[i].index = i;
+            if (recipe == null)
+                return memorizedRecipes[startIndex] = null;
+
             previousRecipe = recipe;
         }
         return previousRecipe;
@@ -56,18 +74,19 @@ public class CraftingRecipeMemory {
         for (int i = 0; i < memorizedRecipes.length; i++) {
             MemorizedRecipe memorizedRecipe;
             if (memorizedRecipes[i] == null) {
-                memorizedRecipe = new MemorizedRecipe();
+                memorizedRecipe = new MemorizedRecipe(i);
             } else if (memorizedRecipes[i].recipeLocked) {
                 continue;
             } else {
                 memorizedRecipe = offsetRecipe(i);
+                final int startIndex = i;
+                syncToClient(5, buffer -> buffer.writeByte(startIndex));
                 if (memorizedRecipe == null) {
-                    memorizedRecipe = new MemorizedRecipe();
+                    memorizedRecipe = new MemorizedRecipe(i);
                 }
             }
             memorizedRecipe.initialize(resultItemStack);
-            memorizedRecipes[i] = memorizedRecipe;
-            return memorizedRecipe;
+            return memorizedRecipes[i] = memorizedRecipe;
         }
         return null;
     }
@@ -75,8 +94,10 @@ public class CraftingRecipeMemory {
     public void notifyRecipePerformed(IItemHandler craftingGrid, ItemStack resultStack) {
         MemorizedRecipe recipe = findOrCreateRecipe(resultStack);
         if (recipe != null) {
+            // notify slot and sync to client
             recipe.updateCraftingMatrix(craftingGrid);
             recipe.timesUsed++;
+            syncToClient(4, recipe::writeToBuffer);
         }
     }
 
@@ -100,7 +121,7 @@ public class CraftingRecipeMemory {
         for (int i = 0; i < resultList.tagCount(); i++) {
             NBTTagCompound entryComponent = resultList.getCompoundTagAt(i);
             int slotIndex = entryComponent.getInteger("Slot");
-            MemorizedRecipe recipe = MemorizedRecipe.deserializeNBT(entryComponent.getCompoundTag("Recipe"));
+            MemorizedRecipe recipe = MemorizedRecipe.deserializeNBT(entryComponent.getCompoundTag("Recipe"), slotIndex);
             this.memorizedRecipes[slotIndex] = recipe;
         }
     }
@@ -112,14 +133,115 @@ public class CraftingRecipeMemory {
         }
     }
 
+    public final void removeRecipe(int index) {
+        if (hasRecipe(index)) {
+            memorizedRecipes[index] = null;
+        }
+    }
+
+    public final boolean hasRecipe(int index) {
+        return memorizedRecipes[index] != null;
+    }
+
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        this.writeRecipes(buf);
+    }
+
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        this.readRecipes(buf);
+    }
+
+    @Override
+    public void readOnClient(int id, PacketBuffer buf) {
+        if (id == 1) {
+            this.readRecipes(buf);
+        } else if (id == 2) {
+            this.removeRecipe(buf.readByte());
+        } else if (id == 3) {
+            int index = buf.readByte();
+            var recipe = memorizedRecipes[index];
+            if (recipe == null) recipe = new MemorizedRecipe(index);
+            recipe.recipeResult = readStackSafe(buf);
+            recipe.index = index;
+            memorizedRecipes[index] = recipe;
+        } else if (id == 4) {
+            var recipe = MemorizedRecipe.fromBuffer(buf);
+            memorizedRecipes[recipe.index] = recipe;
+        } else if (id == 5) {
+            this.offsetRecipe(buf.readByte());
+        }
+    }
+
+    public void writeRecipes(PacketBuffer buf) {
+        Map<Integer, ItemStack> written = new Int2ObjectOpenHashMap<>();
+        for (int i = 0; i < memorizedRecipes.length; i++) {
+            var stack = getRecipeOutputAtIndex(i);
+            if (stack.isEmpty()) continue;
+            written.put(i, stack);
+        }
+        buf.writeByte(written.size());
+        for (var entry : written.entrySet()) {
+            var recipe = memorizedRecipes[entry.getKey()];
+            buf.writeByte(recipe.index);
+            buf.writeItemStack(recipe.recipeResult);
+            buf.writeInt(recipe.timesUsed);
+            buf.writeBoolean(recipe.isRecipeLocked());
+        }
+    }
+
+    public void readRecipes(PacketBuffer buf) {
+        int size = buf.readByte();
+        for (int i = 0; i < size; i++) {
+            int index = buf.readByte();
+            if (!hasRecipe(index))
+                memorizedRecipes[index] = new MemorizedRecipe(index);
+
+            memorizedRecipes[index].recipeResult = readStackSafe(buf);
+            memorizedRecipes[index].timesUsed = buf.readInt();
+            memorizedRecipes[index].recipeLocked = buf.readBoolean();
+        }
+    }
+
+    @Override
+    @SuppressWarnings("DataFlowIssue")
+    public void readOnServer(int id, PacketBuffer buf) {
+        if (id == 1) {
+            syncToClient(1, this::writeRecipes);
+        } else if (id == 2) {
+            // read mouse data
+            int index = buf.readByte();
+            var data = MouseData.readPacket(buf);
+            if (data.shift && data.mouseButton == 0 && hasRecipe(index)) {
+                var recipe = getRecipeAtIndex(index);
+                recipe.setRecipeLocked(!recipe.isRecipeLocked());
+            } else if (data.mouseButton == 0) {
+                loadRecipe(index);
+            } else if (data.mouseButton == 1) {
+                if (hasRecipe(index) && !getRecipeAtIndex(index).isRecipeLocked())
+                    removeRecipe(index);
+            }
+        }
+    }
+
+    private static ItemStack readStackSafe(PacketBuffer buffer) {
+        ItemStack ret = ItemStack.EMPTY;
+        try {
+            ret = buffer.readItemStack();
+        } catch (IOException ignored) {}
+        return ret;
+    }
+
     public static class MemorizedRecipe {
 
         private final ItemStackHandler craftingMatrix = new ItemStackHandler(9);
         private ItemStack recipeResult;
         private boolean recipeLocked = false;
-        private int timesUsed = 0;
+        public int timesUsed = 0;
+        public int index;
 
-        private MemorizedRecipe() {}
+        private MemorizedRecipe(int index) {
+            this.index = index;
+        }
 
         private NBTTagCompound serializeNBT() {
             NBTTagCompound result = new NBTTagCompound();
@@ -130,12 +252,25 @@ public class CraftingRecipeMemory {
             return result;
         }
 
-        private static MemorizedRecipe deserializeNBT(NBTTagCompound tagCompound) {
-            MemorizedRecipe recipe = new MemorizedRecipe();
+        private static MemorizedRecipe deserializeNBT(NBTTagCompound tagCompound, int index) {
+            MemorizedRecipe recipe = new MemorizedRecipe(index);
             recipe.recipeResult = new ItemStack(tagCompound.getCompoundTag("Result"));
             recipe.craftingMatrix.deserializeNBT(tagCompound.getCompoundTag("Matrix"));
             recipe.recipeLocked = tagCompound.getBoolean("Locked");
             recipe.timesUsed = tagCompound.getInteger("TimesUsed");
+            return recipe;
+        }
+
+        private void writeToBuffer(PacketBuffer buffer) {
+            buffer.writeByte(this.index);
+            buffer.writeInt(this.timesUsed);
+            buffer.writeItemStack(this.recipeResult);
+        }
+
+        private static @NotNull MemorizedRecipe fromBuffer(PacketBuffer buffer) {
+            var recipe = new MemorizedRecipe(buffer.readByte());
+            recipe.timesUsed = buffer.readInt();
+            recipe.recipeResult = readStackSafe(buffer);
             return recipe;
         }
 
@@ -165,6 +300,14 @@ public class CraftingRecipeMemory {
 
         public void setRecipeLocked(boolean recipeLocked) {
             this.recipeLocked = recipeLocked;
+        }
+
+        public MemorizedRecipe copy() {
+            var recipe = new MemorizedRecipe(this.index);
+            recipe.initialize(this.recipeResult);
+            recipe.updateCraftingMatrix(this.craftingMatrix);
+            recipe.timesUsed = this.timesUsed;
+            return recipe;
         }
     }
 }
