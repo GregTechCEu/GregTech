@@ -282,7 +282,7 @@ public class ConfigHolder {
         @Config.Comment({
                 "Whether to change the byproducts in Ore Processing from a chanced output for a full dust into a guaranteed output for tiny dusts. For example a 33% chance of getting a full dust would change into a 100% chance of getting 3 tiny dusts.",
                 "Default: false" })
-        public boolean deterministicOreProcessing = true;
+        public boolean deterministicOreProcessing = false;
     }
 
     public static class CompatibilityOptions {
