@@ -172,9 +172,14 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
                                                 "cover.generic.enabled" :
                                                 "cover.generic.disabled").get())
                                                 .color(Color.WHITE.main).shadow(false))
+                                        .tooltip(tooltip -> tooltip
+                                                .addLine(IKey.lang("cover.filter.allow_flow.tooltip")))
                                         .size(72, 18)
                                         .value(new BooleanSyncValue(() -> allowFlow, b -> allowFlow = b)))
-                                .child(IKey.lang("cover.filter.allow_flow").asWidget().height(18).alignX(1f)))
+                                .child(IKey.lang("cover.filter.allow_flow.label")
+                                        .asWidget()
+                                        .height(18)
+                                        .alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getFilter().createWidgets(guiSyncManager).left(0)))
