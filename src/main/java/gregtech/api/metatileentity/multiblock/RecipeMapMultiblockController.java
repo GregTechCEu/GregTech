@@ -10,6 +10,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.interfaces.IRefreshBeforeConsumption;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -32,11 +33,13 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
                                                     ICleanroomReceiver, IDistinctBusController {
@@ -48,6 +51,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IMultipleTankHandler inputFluidInventory;
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
+    protected List<IRefreshBeforeConsumption> refreshBeforeConsumptions;
 
     private boolean isDistinct = false;
 
@@ -82,6 +86,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     public MultiblockRecipeLogic getRecipeMapWorkable() {
         return recipeMapWorkable;
+    }
+
+    public void refreshAllBeforeConsumption() {
+        for (var refresh : refreshBeforeConsumptions) {
+            refresh.refreshBeforeConsumption();
+        }
     }
 
     /**
@@ -129,6 +139,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
         inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.energyContainer = new EnergyContainerList(inputEnergy);
+
+        this.refreshBeforeConsumptions = getMultiblockParts().stream()
+                .filter(p -> p instanceof IRefreshBeforeConsumption)
+                .map(p -> (IRefreshBeforeConsumption) p)
+                .collect(Collectors.toList());
     }
 
     private void resetTileAbilities() {
@@ -137,6 +152,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputInventory = new GTItemStackHandler(this, 0);
         this.outputFluidInventory = new FluidTankList(true);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
+        this.refreshBeforeConsumptions = new ObjectArrayList<>(0);
     }
 
     protected boolean allowSameFluidFillForOutputs() {
