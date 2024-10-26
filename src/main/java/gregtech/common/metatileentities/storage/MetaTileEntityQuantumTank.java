@@ -53,6 +53,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.apache.commons.lang3.ArrayUtils;
@@ -370,8 +371,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeCompoundTag(
-                fluidTank.getFluid() == null ? null : fluidTank.getFluid().writeToNBT(new NBTTagCompound()));
+        NetworkUtils.writeFluidStack(buf, fluidTank.getFluid());
     }
 
     @Override
@@ -385,12 +385,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 this.frontFacing = EnumFacing.NORTH;
             }
         }
-        try {
-            this.fluidTank.setFluid(FluidStack.loadFluidStackFromNBT(buf.readCompoundTag()));
-        } catch (IOException e) {
-            GTLog.logger.warn("Failed to load fluid from NBT in a quantum tank at " + this.getPos() +
-                    " on initial server/client sync");
-        }
+        this.fluidTank.setFluid(NetworkUtils.readFluidStack(buf));
     }
 
     @Override
@@ -452,6 +447,15 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
             return true;
         }
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
+    protected void setLocked(boolean locked) {
+        super.setLocked(locked);
+        if (locked && fluidTank.getFluid() != null) {
+            this.lockedFluid = fluidTank.getFluid().copy();
+            this.lockedFluid.amount = 1;
+        } else this.lockedFluid = null;
     }
 
     @Override
