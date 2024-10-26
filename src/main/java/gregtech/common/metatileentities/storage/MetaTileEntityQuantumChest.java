@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.cover.CoverRayTracer;
@@ -10,7 +9,6 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.widget.QuantumItemRendererWidget;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
@@ -45,12 +43,9 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -63,25 +58,20 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler>
-                                        implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
+                                        implements ITieredMetaTileEntity, IFastRenderMetaTileEntity {
 
     private final int tier;
     protected final long maxStoredItems;
     /** The ItemStack that the Quantum Chest is storing */
     protected ItemStack virtualItemStack = ItemStack.EMPTY;
     protected long itemsStoredInside = 0L;
-    private boolean autoOutputItems;
-    private EnumFacing outputFacing;
-    private boolean allowInputFromOutputSide = false;
     private static final String NBT_ITEMSTACK = "ItemStack";
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";
-    private static final String IS_VOIDING = "IsVoiding";
     protected IItemHandler outputItemInventory;
     private ItemHandlerList combinedInventory;
     protected ItemStack previousStack;
     protected long previousStackSize;
-    protected boolean voiding;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
@@ -106,6 +96,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                         new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
                 this);
         Textures.QUANTUM_CHEST_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
+        var outputFacing = getOutputFacing();
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             if (isAutoOutputItems()) {
@@ -156,7 +147,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 pushItemsIntoNearbyHandlers(currentOutputFacing);
             }
 
-            if (this.voiding && !importItems.getStackInSlot(0).isEmpty()) {
+            if (isVoiding() && !importItems.getStackInSlot(0).isEmpty()) {
                 importItems.setStackInSlot(0, ItemStack.EMPTY);
             }
 
@@ -257,31 +248,21 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         NBTTagCompound tagCompound = super.writeToNBT(data);
-        data.setInteger("OutputFacing", getOutputFacing().getIndex());
-        data.setBoolean("AutoOutputItems", autoOutputItems);
-        data.setBoolean("AllowInputFromOutputSide", allowInputFromOutputSide);
         if (!virtualItemStack.isEmpty() && itemsStoredInside > 0L) {
             tagCompound.setTag(NBT_ITEMSTACK, virtualItemStack.writeToNBT(new NBTTagCompound()));
             tagCompound.setLong(NBT_ITEMCOUNT, itemsStoredInside);
         }
-        data.setBoolean(IS_VOIDING, voiding);
         return tagCompound;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
-        this.autoOutputItems = data.getBoolean("AutoOutputItems");
-        this.allowInputFromOutputSide = data.getBoolean("AllowInputFromOutputSide");
         if (data.hasKey("ItemStack", NBT.TAG_COMPOUND)) {
             this.virtualItemStack = new ItemStack(data.getCompoundTag("ItemStack"));
             if (!virtualItemStack.isEmpty()) {
                 this.itemsStoredInside = data.getLong(NBT_ITEMCOUNT);
             }
-        }
-        if (data.hasKey(IS_VOIDING)) {
-            this.voiding = data.getBoolean(IS_VOIDING);
         }
     }
 
@@ -315,7 +296,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             itemStack.setTag(NBT_PARTIALSTACK, partialStack.writeToNBT(new NBTTagCompound()));
         }
 
-        if (this.voiding) {
+        if (isVoiding()) {
             itemStack.setBoolean(IS_VOIDING, true);
         }
 
@@ -325,39 +306,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     }
 
     @Override
-    public boolean usesMui2() {
-        return true;
-    }
-
-    @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        var autoOutput = new BooleanSyncValue(this::isAutoOutputItems, this::setAutoOutputItems);
-        var isLocked = new BooleanSyncValue(() -> false, b -> {});
-        var isVoiding = new BooleanSyncValue(this::isVoiding, this::setVoiding);
-
-        return GTGuis.createQuantumPanel(this)
-                .child(GTGuis.createQuantumDisplay("gregtech.machine.quantum_chest.items_stored",
+    protected void createWidgets(ModularPanel mainPanel, PanelSyncManager syncManager) {
+        mainPanel
+                .child(createQuantumDisplay("gregtech.machine.quantum_chest.items_stored",
                         () -> IKey.lang(virtualItemStack.getDisplayName()).get(),
                         textWidget -> !virtualItemStack.isEmpty(),
                         () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
-                .child(GTGuis.createQuantumIO(importItems, exportItems))
                 .child(new QuantumItemRendererWidget(itemInventory)
-                        .pos(148, 41))
-                .child(GTGuis.createQuantumButtonRow(false, autoOutput, isLocked, isVoiding))
-                .child(SlotGroupWidget.playerInventory().left(7));
-    }
-
-    public EnumFacing getOutputFacing() {
-        return outputFacing == null ? frontFacing.getOpposite() : outputFacing;
-    }
-
-    public void setOutputFacing(EnumFacing outputFacing) {
-        this.outputFacing = outputFacing;
-        if (!getWorld().isRemote) {
-            notifyBlockUpdate();
-            writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
-            markDirty();
-        }
+                        .pos(148, 41));
     }
 
     @Override
@@ -378,19 +334,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeByte(getOutputFacing().getIndex());
-        buf.writeBoolean(autoOutputItems);
         this.virtualItemStack.setCount(1);
         buf.writeItemStack(virtualItemStack);
         buf.writeLong(itemsStoredInside);
-        buf.writeBoolean(voiding);
     }
 
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.outputFacing = EnumFacing.VALUES[buf.readByte()];
-        this.autoOutputItems = buf.readBoolean();
         try {
             this.virtualItemStack = buf.readItemStack();
         } catch (IOException ignored) {
@@ -398,7 +349,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                     " on initial server/client sync");
         }
         this.itemsStoredInside = buf.readLong();
-        this.voiding = buf.readBoolean();
     }
 
     @Override
@@ -411,13 +361,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == UPDATE_OUTPUT_FACING) {
-            this.outputFacing = EnumFacing.VALUES[buf.readByte()];
-            scheduleRenderUpdate();
-        } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
-            this.autoOutputItems = buf.readBoolean();
-            scheduleRenderUpdate();
-        } else if (dataId == UPDATE_ITEM) {
+        if (dataId == UPDATE_ITEM) {
             try {
                 this.virtualItemStack = buf.readItemStack();
             } catch (IOException e) {
@@ -425,28 +369,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             }
         } else if (dataId == UPDATE_ITEM_COUNT) {
             this.itemsStoredInside = buf.readLong();
-        } else if (dataId == UPDATE_IS_VOIDING) {
-            setVoiding(buf.readBoolean());
-        }
-    }
-
-    public void setAutoOutputItems(boolean autoOutputItems) {
-        this.autoOutputItems = autoOutputItems;
-        if (!getWorld().isRemote) {
-            writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutputItems));
-            markDirty();
-        }
-    }
-
-    protected boolean isVoiding() {
-        return this.voiding;
-    }
-
-    protected void setVoiding(boolean isVoiding) {
-        this.voiding = isVoiding;
-        if (!getWorld().isRemote) {
-            writeCustomData(UPDATE_IS_VOIDING, buf -> buf.writeBoolean(this.voiding));
-            markDirty();
         }
     }
 
@@ -490,25 +412,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         }
     }
 
-    public boolean isAutoOutputItems() {
-        return autoOutputItems;
-    }
-
-    @Override
-    public boolean isAutoOutputFluids() {
-        return false;
-    }
-
-    @Override
-    public boolean isAllowInputFromOutputSideItems() {
-        return allowInputFromOutputSide;
-    }
-
-    @Override
-    public boolean isAllowInputFromOutputSideFluids() {
-        return false;
-    }
-
     @Override
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);
@@ -534,13 +437,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             return true;
         }
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
-    }
-
-    public void setAllowInputFromOutputSide(boolean allowInputFromOutputSide) {
-        this.allowInputFromOutputSide = allowInputFromOutputSide;
-        if (!getWorld().isRemote) {
-            markDirty();
-        }
     }
 
     @Override
