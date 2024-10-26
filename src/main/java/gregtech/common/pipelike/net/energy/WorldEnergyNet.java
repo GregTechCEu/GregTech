@@ -1,25 +1,20 @@
 package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.graphnet.AbstractGroupData;
 import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetFlowEdge;
-import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
+import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-
-public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeNetPath.Provider {
+public final class WorldEnergyNet extends WorldPipeNet {
 
     public static final Capability<?>[] CAPABILITIES = new Capability[] {
             GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER };
@@ -53,13 +48,7 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
 
     @Override
     public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
-        return new IPipeCapabilityObject[] { new EnergyCapabilityObject(this, node) };
-    }
-
-    @Override
-    public Iterator<FlowWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject,
-                                                   @Nullable SimulatorKey simulator, long queryTick) {
-        return backer.getPaths(node, 0, FlowWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
+        return new IPipeCapabilityObject[] { new EnergyCapabilityObject(node) };
     }
 
     @Override
@@ -68,8 +57,8 @@ public final class WorldEnergyNet extends WorldPipeNet implements FlowWorldPipeN
     }
 
     @Override
-    public AbstractGroupData getBlankGroupData() {
-        return new EnergyGroupData();
+    public GroupData getBlankGroupData() {
+        return new EnergyGroupData(NetClosestIterator::new);
     }
 
     @Override

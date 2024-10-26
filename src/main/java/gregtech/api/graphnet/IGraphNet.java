@@ -1,9 +1,8 @@
 package gregtech.api.graphnet;
 
 import gregtech.api.graphnet.edge.NetEdge;
-import gregtech.api.graphnet.graph.GraphEdge;
-import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.graph.INetGraph;
+import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 
@@ -11,9 +10,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jgrapht.traverse.BreadthFirstIterator;
-
-import java.util.Iterator;
 
 public interface IGraphNet {
 
@@ -114,7 +110,7 @@ public interface IGraphNet {
      * @return The correct data variant.
      */
     @Nullable
-    default AbstractGroupData getBlankGroupData() {
+    default GroupData getBlankGroupData() {
         return null;
     }
 
@@ -136,31 +132,6 @@ public interface IGraphNet {
      */
     default boolean containsNode(NetNode node) {
         return getGraph().containsVertex(node.wrapper);
-    }
-
-    /**
-     * Returns a breadth-first iterator through this graph, starting from the passed in node.
-     * 
-     * @param node the node to start from.
-     * @return a breadth-first iterator through this graph.
-     */
-    @NotNull
-    default Iterator<NetNode> breadthIterator(NetNode node) {
-        return new Iterator<>() {
-
-            private final BreadthFirstIterator<GraphVertex, GraphEdge> iterator = new BreadthFirstIterator<>(getGraph(),
-                    node.wrapper);
-
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
-
-            @Override
-            public NetNode next() {
-                return iterator.next().wrapped;
-            }
-        };
     }
 
     /**

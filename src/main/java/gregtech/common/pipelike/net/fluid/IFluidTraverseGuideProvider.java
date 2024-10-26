@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.net.fluid;
 
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.traverse.ITraverseData;

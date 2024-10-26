@@ -3,7 +3,7 @@ package gregtech.api.graphnet.traverse;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.traverse.util.FlowConsumptionStack;
 import gregtech.api.util.GTUtility;
 
@@ -37,7 +37,7 @@ public final class TraverseHelpers {
      * @param flowIn the flow to traverse with.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends NetPath<N, E>,
             D extends ITraverseData<N, P>> long traverseFlood(
                                                               @NotNull D data,
                                                               @NotNull Iterator<P> paths,
@@ -99,7 +99,7 @@ public final class TraverseHelpers {
      * @param flowIn           the flow to traverse with.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends NetEdge, P extends INetPath<N, E>,
+    public static <N extends NetNode, E extends NetEdge, P extends NetPath<N, E>,
             D extends ITraverseData<N, P>> long traverseDumb(
                                                              @NotNull D data,
                                                              @NotNull Iterator<P> paths,
@@ -192,7 +192,7 @@ public final class TraverseHelpers {
      *               not edge restrictions.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends NetPath<N, E>,
             D extends IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
                                                                                      @NotNull D data,
                                                                                      @NotNull Iterator<P> paths,
@@ -312,7 +312,7 @@ public final class TraverseHelpers {
      *                      not edge restrictions.
      * @return the consumed flow.
      */
-    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends INetPath<N, E>,
+    public static <N extends NetNode, E extends AbstractNetFlowEdge, P extends NetPath<N, E>,
             D extends IEqualizableTraverseData<N, P>> long traverseEqualDistribution(
                                                                                      @NotNull D data,
                                                                                      @NotNull Supplier<Iterator<P>> pathsSupplier,
@@ -344,11 +344,11 @@ public final class TraverseHelpers {
      * @return the consumed flow.
      */
     public static <T extends IRoundRobinData<N>, N extends NetNode, E extends AbstractNetFlowEdge,
-            P extends INetPath<N, E>, D extends IRoundRobinTraverseData<T, N, P>> long traverseRoundRobin(
-                                                                                                          @NotNull D data,
-                                                                                                          @NotNull Iterator<P> paths,
-                                                                                                          long flowIn,
-                                                                                                          boolean strict) {
+            P extends NetPath<N, E>, D extends IRoundRobinTraverseData<T, N, P>> long traverseRoundRobin(
+                                                                                                         @NotNull D data,
+                                                                                                         @NotNull Iterator<P> paths,
+                                                                                                         long flowIn,
+                                                                                                         boolean strict) {
         long availableFlow = flowIn;
         Object2ObjectLinkedOpenHashMap<Object, T> cache = data.getTraversalCache();
         Predicate<Object> invalidityCheck = null;
@@ -431,12 +431,12 @@ public final class TraverseHelpers {
     }
 
     private static <T extends IRoundRobinData<N>, N extends NetNode, E extends AbstractNetFlowEdge,
-            P extends INetPath<N, E>, D extends ITraverseData<N, P> & IRoundRobinTraverseData<T, N, P>> long rrTraverse(
-                                                                                                                        @NotNull D data,
-                                                                                                                        @NotNull P path,
-                                                                                                                        @NotNull T rr,
-                                                                                                                        long flowIn,
-                                                                                                                        boolean strict) {
+            P extends NetPath<N, E>, D extends ITraverseData<N, P> & IRoundRobinTraverseData<T, N, P>> long rrTraverse(
+                                                                                                                       @NotNull D data,
+                                                                                                                       @NotNull P path,
+                                                                                                                       @NotNull T rr,
+                                                                                                                       long flowIn,
+                                                                                                                       boolean strict) {
         boolean simulate = data.getSimulatorKey() != null;
         List<Runnable> pathTraverseCalls = simulate ? null : new ObjectArrayList<>();
         long pathFlow = flowIn;

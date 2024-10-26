@@ -2,7 +2,6 @@ package gregtech.common.pipelike.net.item;
 
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.graphnet.traverse.IEqualizableTraverseData;

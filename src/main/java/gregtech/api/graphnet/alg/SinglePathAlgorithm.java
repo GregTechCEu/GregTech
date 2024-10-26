@@ -5,7 +5,7 @@ import gregtech.api.graphnet.alg.iter.IteratorFactory;
 import gregtech.api.graphnet.alg.iter.SimpleIteratorFactories;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -24,8 +24,8 @@ public final class SinglePathAlgorithm implements INetAlgorithm {
     }
 
     @Override
-    public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
-                                                                                       NetPathMapper<Path> remapper) {
+    public <Path extends NetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
+                                                                                      NetPathMapper<Path> remapper) {
         if (recomputeEveryCall) {
             return (graph, testObject, simulator, queryTick) -> {
                 graph.prepareForAlgorithmRun(testObject, simulator, queryTick);

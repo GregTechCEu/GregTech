@@ -27,14 +27,24 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
 
     private @Nullable NetLogicData data;
 
-    protected @Nullable NetNode getSource() {
+    public @Nullable NetNode getSource() {
         if (wrapper == null) return null;
         return wrapper.getSource().wrapped;
     }
 
-    protected @Nullable NetNode getTarget() {
+    public @Nullable NetNode getTarget() {
         if (wrapper == null) return null;
         return wrapper.getTarget().wrapped;
+    }
+
+    public @Nullable NetNode getOppositeNode(@NotNull NetNode node) {
+        if (getSource() == node) return getTarget();
+        else if (getTarget() == node) return getSource();
+        else return null;
+    }
+
+    public double getWeight() {
+        return wrapper == null ? Double.POSITIVE_INFINITY : wrapper.getWeight();
     }
 
     /**

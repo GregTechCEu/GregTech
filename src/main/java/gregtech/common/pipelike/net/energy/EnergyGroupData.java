@@ -1,17 +1,32 @@
 package gregtech.common.pipelike.net.energy;
 
-import gregtech.api.graphnet.AbstractGroupData;
+import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.group.PathCacheGroupData;
+import gregtech.api.graphnet.path.NetPath;
+import gregtech.api.graphnet.path.PathBuilder;
+import gregtech.api.graphnet.traverse.iter.NetIteratorSupplier;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class EnergyGroupData extends AbstractGroupData {
+import java.util.Set;
+
+public class EnergyGroupData extends PathCacheGroupData {
 
     private long lastEnergyInPerSec;
     private long lastEnergyOutPerSec;
     private long energyInPerSec;
     private long energyOutPerSec;
     private long updateTime;
+
+    public EnergyGroupData(NetIteratorSupplier iteratorSupplier) {
+        super(iteratorSupplier);
+    }
+
+    public EnergyGroupData(NetIteratorSupplier iteratorSupplier,
+                           @NotNull Object2ObjectOpenHashMap<NetNode, SecondaryCache> cache) {
+        super(iteratorSupplier, cache);
+    }
 
     public long getEnergyInPerSec(long queryTick) {
         updateCache(queryTick);
@@ -48,14 +63,24 @@ public class EnergyGroupData extends AbstractGroupData {
     }
 
     @Override
-    public boolean mergeAllowed(@NotNull AbstractGroupData other) {
-        return true;
+    protected PathBuilder createBuilder(@NotNull NetNode origin) {
+        return new StandardEnergyPath.Builder(origin);
     }
 
     @Override
-    public @Nullable AbstractGroupData merge(@NotNull AbstractGroupData other) {
-        if (other instanceof EnergyGroupData)
-            return new EnergyGroupData();
-        else return null;
+    protected NetPath buildSingleton(@NotNull NetNode singleton) {
+        return new StandardEnergyPath.SingletonEnergyPath(singleton);
+    }
+
+    @Override
+    protected @NotNull PathCacheGroupData buildFilteredCache(@NotNull Set<NetNode> filterNodes) {
+        Object2ObjectOpenHashMap<NetNode, SecondaryCache> child = new Object2ObjectOpenHashMap<>(this.cache);
+        child.entrySet().removeIf(entry -> {
+            if (!filterNodes.contains(entry.getKey())) return true;
+            SecondaryCache cache = entry.getValue();
+            cache.keySet().retainAll(filterNodes);
+            return cache.isEmpty();
+        });
+        return new EnergyGroupData(iteratorSupplier, child);
     }
 }

@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.net;
 
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.util.TaskScheduler;
@@ -9,6 +9,7 @@ import gregtech.api.util.function.Task;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import com.google.common.collect.ImmutableCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,7 @@ public class SlowActiveWalker implements Task {
 
     private static final int RECENT_WALKER_CUTOFF = 10;
 
-    private static final Map<INetPath<?, ?>, Long> RECENT_DISPATCHES = new WeakHashMap<>();
+    private static final Map<NetPath, Long> RECENT_DISPATCHES = new WeakHashMap<>();
 
     /**
      * Dispatches a slow walker along a path with default parameters.
@@ -29,7 +30,7 @@ public class SlowActiveWalker implements Task {
      * @param path  the path to walk.
      * @param delay the ticks between steps of the walker
      */
-    public static void dispatch(World world, INetPath<? extends WorldPipeNetNode, ?> path, int delay) {
+    public static void dispatch(World world, NetPath path, int delay) {
         dispatch(world, path, delay, 1, 1);
     }
 
@@ -43,7 +44,7 @@ public class SlowActiveWalker implements Task {
      * @param stepSize     the number of nodes within the path that the walker progresses every step
      * @param activeLength the number of tiles that will be left active behind a progressing walker
      */
-    public static void dispatch(World world, INetPath<? extends WorldPipeNetNode, ?> path, int delay,
+    public static void dispatch(World world, NetPath path, int delay,
                                 int stepSize, int activeLength) {
         long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
         RECENT_DISPATCHES.compute(path, (k, v) -> {
@@ -55,7 +56,7 @@ public class SlowActiveWalker implements Task {
         });
     }
 
-    private final INetPath<? extends WorldPipeNetNode, ?> path;
+    private final NetPath path;
     private final int lastStep;
     private int index = 0;
 
@@ -64,7 +65,7 @@ public class SlowActiveWalker implements Task {
     private final int activeLength;
     private int counter;
 
-    protected SlowActiveWalker(INetPath<? extends WorldPipeNetNode, ?> path, int delay, int stepSize,
+    protected SlowActiveWalker(NetPath path, int delay, int stepSize,
                                int activeLength) {
         this.path = path;
         this.delay = delay;
@@ -93,7 +94,11 @@ public class SlowActiveWalker implements Task {
     protected @Nullable WorldPipeNetNode getSafe(int index) {
         if (index >= path.getOrderedNodes().size()) return null;
         else if (index < 0) return null;
-        else return path.getOrderedNodes().get(index);
+        else return getNodes().asList().get(index);
+    }
+
+    protected ImmutableCollection<WorldPipeNetNode> getNodes() {
+        return path.getOrderedNodes();
     }
 
     protected void step(@Nullable WorldPipeNetNode previous, @Nullable WorldPipeNetNode next) {

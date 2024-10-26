@@ -2,7 +2,6 @@ package gregtech.common.pipelike.net.fluid;
 
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;

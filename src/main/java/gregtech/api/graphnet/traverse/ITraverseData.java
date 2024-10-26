@@ -4,7 +4,7 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
 
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ITraverseData<N extends NetNode, P extends INetPath<N, ?>> {
+public interface ITraverseData<N extends NetNode, P extends NetPath<N, ?>> {
 
     IGraphNet getGraphNet();
 

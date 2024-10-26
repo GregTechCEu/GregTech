@@ -2,55 +2,35 @@ package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.graphnet.AbstractGroupData;
-import gregtech.api.graphnet.NetGroup;
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
-import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.logic.ThroughputLogic;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
-import gregtech.api.graphnet.pipenet.WorldPipeNet;
+import gregtech.api.graphnet.group.GroupData;
+import gregtech.api.graphnet.group.NetGroup;
+import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-import gregtech.api.graphnet.traverse.TraverseHelpers;
 import gregtech.api.util.GTLog;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
-import java.util.Iterator;
+import java.util.List;
 
 public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyContainer {
 
-    private final WorldPipeNet net;
     private @Nullable PipeTileEntity tile;
 
-    private final EnumMap<EnumFacing, AbstractNetFlowEdge> internalBuffers = new EnumMap<>(EnumFacing.class);
-    private final WorldPipeNetNode node;
+    private final @NotNull WorldPipeNetNode node;
 
     private boolean transferring = false;
 
-    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> EnergyCapabilityObject(@NotNull N net,
-                                                                                           WorldPipeNetNode node) {
-        this.net = net;
+    public EnergyCapabilityObject(@NotNull WorldPipeNetNode node) {
         this.node = node;
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
-            edge.setData(NetLogicData.union(node.getData(), (NetLogicData) null));
-            internalBuffers.put(facing, edge);
-        }
-    }
-
-    private FlowWorldPipeNetPath.Provider getProvider() {
-        return (FlowWorldPipeNetPath.Provider) net;
     }
 
     private boolean inputDisallowed(EnumFacing side) {
@@ -62,82 +42,69 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         if (tile == null || this.transferring || inputDisallowed(side)) return 0;
+        NetGroup group = node.getGroupSafe();
+        if (!(group.getData() instanceof EnergyGroupData data)) return 0;
+
         this.transferring = true;
 
-        SimulatorKey simulator = null;
-        if (simulate) simulator = SimulatorKey.getNewSimulatorInstance();
-        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        PathCacheGroupData.SecondaryCache cache = data.getOrCreate(node);
+        List<EnergyPath> paths = new ObjectArrayList<>(group.getActiveNodes().size());
+        for (NetNode dest : group.getActiveNodes()) {
+            EnergyPath path = (EnergyPath) cache.getOrCompute(dest);
+            if (path == null) continue;
+            // construct the path list in order of ascending weight
+            int i = 0;
+            while (i < paths.size()) {
+                if (paths.get(i).getWeight() >= path.getWeight()) break;
+                else i++;
+            }
+            paths.add(i, path);
+        }
+        long available = amperage;
+        for (EnergyPath path : paths) {
+            NetNode target = path.getTargetNode();
+            for (var capability : node.getTileEntity().getTargetsWithCapabilities(node).entrySet()) {
+                if (node == target && capability.getKey() == side) continue; // anti insert-to-our-source logic
 
-        AbstractNetFlowEdge internalBuffer = this.internalBuffers.get(side);
-        long bufferOverflowAmperage = 0;
-        if (internalBuffer != null) {
-            long limit = internalBuffer.getFlowLimit(IPredicateTestObject.INSTANCE, net, tick, simulator);
-            if (limit <= 0) {
-                this.transferring = false;
-                return 0;
-            } else if (amperage > limit) {
-                bufferOverflowAmperage = amperage - limit;
+                IEnergyContainer container = capability.getValue().getCapability(
+                        GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, capability.getKey().getOpposite());
+                if (container != null) {
+                    IEnergyTransferController controller = IEnergyTransferController.CONTROL
+                            .get(tile.getCoverHolder().getCoverAtSide(capability.getKey()));
+                    long allowed = controller.insertToHandler(voltage, available, container, capability.getKey(), true);
+                    EnergyPath.PathFlowReport flow = path.traverse(voltage, allowed);
+                    if (flow.euOut() > 0) {
+                        available -= allowed;
+                        if (!simulate) {
+                            flow.report();
+                            controller.insertToHandler(flow.voltageOut(), flow.amperageOut(), container, capability.getKey(), false);
+                        }
+                    }
+                }
             }
         }
-        long availableAmperage = amperage;
 
-        EnergyTraverseData data = new EnergyTraverseData(net, IPredicateTestObject.INSTANCE, simulator, tick, voltage,
-                tile.getPos(), side, bufferOverflowAmperage);
-        availableAmperage -= TraverseHelpers.traverseFlood(data, getPaths(data),
-                availableAmperage - bufferOverflowAmperage);
-        if (availableAmperage > 0) {
-            availableAmperage -= TraverseHelpers.traverseDumb(data, getPaths(data), data::handleOverflow,
-                    availableAmperage);
-        }
-        long accepted = amperage - availableAmperage;
-
-        if (internalBuffer != null) {
-            data.resetPathVoltage();
-            bufferOverflowAmperage = data.calculateActualBufferOverflow(bufferOverflowAmperage);
-            data.consumeFlowLimit(internalBuffer, node, accepted - bufferOverflowAmperage);
-            if (bufferOverflowAmperage > 0) {
-                data.handleOverflow(node, bufferOverflowAmperage);
-                accepted += bufferOverflowAmperage;
-            }
-        }
-        if (!simulate) {
-            EnergyGroupData group = getEnergyData();
-            if (group != null) {
-                group.addEnergyInPerSec(accepted * voltage, data.getQueryTick());
-            }
-        }
         this.transferring = false;
-        return accepted;
-    }
-
-    private Iterator<FlowWorldPipeNetPath> getPaths(EnergyTraverseData data) {
-        assert tile != null;
-        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
-                data.getQueryTick());
+        return amperage - available;
     }
 
     @Nullable
-    private EnergyGroupData getEnergyData() {
-        if (tile == null) return null;
-        NetNode node = net.getNode(tile.getPos());
-        if (node == null) return null;
+    private EnergyGroupData getGroupData() {
         NetGroup group = node.getGroupUnsafe();
         if (group == null) return null;
-        AbstractGroupData data = group.getData();
+        GroupData data = group.getData();
         if (!(data instanceof EnergyGroupData e)) return null;
         return e;
     }
 
     @Override
     public long getInputAmperage() {
-        if (tile == null) return 0;
-        return tile.getNetLogicData(net.getNetworkID()).getLogicEntryDefaultable(ThroughputLogic.TYPE).getValue();
+        return node.getData().getLogicEntryDefaultable(AmperageLimitLogic.TYPE).getValue();
     }
 
     @Override
     public long getInputVoltage() {
-        if (tile == null) return 0;
-        return tile.getNetLogicData(net.getNetworkID()).getLogicEntryDefaultable(VoltageLimitLogic.TYPE).getValue();
+        return node.getData().getLogicEntryDefaultable(VoltageLimitLogic.TYPE).getValue();
     }
 
     @Override
@@ -153,15 +120,14 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     @Override
     public <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
-            return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER
-                    .cast(this);
+            return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
         }
         return null;
     }
 
     @Override
     public long getInputPerSec() {
-        EnergyGroupData data = getEnergyData();
+        EnergyGroupData data = getGroupData();
         if (data == null) return 0;
         else return data
                 .getEnergyInPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
@@ -169,7 +135,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
 
     @Override
     public long getOutputPerSec() {
-        EnergyGroupData data = getEnergyData();
+        EnergyGroupData data = getGroupData();
         if (data == null) return 0;
         else return data
                 .getEnergyOutPerSec(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());

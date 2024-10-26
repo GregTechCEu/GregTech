@@ -5,7 +5,6 @@ import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
@@ -23,6 +22,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.TriConsumer;
 import gregtech.common.pipelike.block.cable.CableStructure;
 import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
+import gregtech.common.pipelike.net.energy.AmperageLimitLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
 import gregtech.common.pipelike.net.energy.VoltageLossLogic;
@@ -186,7 +186,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             float energy = existing == null ? 0 : existing.getThermalEnergy();
             data.setLogicEntry(VoltageLossLogic.TYPE.getWith(loss))
                     .setLogicEntry(WeightFactorLogic.TYPE.getWith(loss + 0.001 / amperage))
-                    .setLogicEntry(ThroughputLogic.TYPE.getWith(amperage))
+                    .setLogicEntry(AmperageLimitLogic.TYPE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.TYPE.getWith(voltageLimit))
                     .setLogicEntry(TemperatureLogic.TYPE
                             .getWith(TemperatureLossFunction.getOrCreateCable(coolingFactor), materialMeltTemperature,
@@ -205,7 +205,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
             float energy = existing == null ? 0 : existing.getThermalEnergy();
             data.setLogicEntry(VoltageLossLogic.TYPE.getWith(loss))
                     .setLogicEntry(WeightFactorLogic.TYPE.getWith(loss + 0.001 / amperage))
-                    .setLogicEntry(ThroughputLogic.TYPE.getWith(amperage))
+                    .setLogicEntry(AmperageLimitLogic.TYPE.getWith(amperage))
                     .setLogicEntry(VoltageLimitLogic.TYPE.getWith(voltageLimit))
                     .setLogicEntry(TemperatureLogic.TYPE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature, 1,

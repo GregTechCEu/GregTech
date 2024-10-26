@@ -3,12 +3,12 @@ package gregtech.api.graphnet.traverse;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractTraverseData<N extends NetNode, P extends INetPath<N, ?>> implements ITraverseData<N, P> {
+public abstract class AbstractTraverseData<N extends NetNode, P extends NetPath<N, ?>> implements ITraverseData<N, P> {
 
     private final IGraphNet net;
     private final IPredicateTestObject testObject;

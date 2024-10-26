@@ -4,7 +4,6 @@ import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;

@@ -1,17 +1,17 @@
 package gregtech.api.graphnet.traverse;
 
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface IEqualizableTraverseData<N extends NetNode, P extends INetPath<N, ?>> extends ITraverseData<N, P> {
+public interface IEqualizableTraverseData<N extends NetNode, P extends NetPath<N, ?>> extends ITraverseData<N, P> {
 
     int getDestinationsAtNode(@NotNull N node);
 
     /**
      * Whether a path should be skipped before running the collection process on it.
-     * The return of {@link ITraverseData#prepareForPathWalk(INetPath, long)} will be ignored during traversal.
+     * The return of {@link ITraverseData#prepareForPathWalk(NetPath, long)} will be ignored during traversal.
      */
     boolean shouldSkipPath(@NotNull P path);
 

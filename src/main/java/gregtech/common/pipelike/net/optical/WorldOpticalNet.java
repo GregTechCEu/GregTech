@@ -2,12 +2,12 @@ package gregtech.common.pipelike.net.optical;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.graphnet.alg.SinglePathAlgorithm;
-import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.BasicWorldPipeNetPath;
+import gregtech.api.graphnet.group.GroupData;
+import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+import gregtech.api.graphnet.traverse.iter.NetBreadthIterator;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -15,9 +15,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-
-public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPath.Provider {
+public class WorldOpticalNet extends WorldPipeNet {
 
     public static final Capability<?>[] CAPABILITIES = new Capability[] {
             GregtechTileCapabilities.CAPABILITY_DATA_ACCESS };
@@ -40,19 +38,18 @@ public class WorldOpticalNet extends WorldPipeNet implements BasicWorldPipeNetPa
     }
 
     @Override
-    public Iterator<BasicWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject,
-                                                    @Nullable SimulatorKey simulator, long queryTick) {
-        return backer.getPaths(node, 0, BasicWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
-    }
-
-    @Override
     public Capability<?>[] getTargetCapabilities() {
         return CAPABILITIES;
     }
 
     @Override
     public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
-        return new IPipeCapabilityObject[] { new DataCapabilityObject(this) };
+        return new IPipeCapabilityObject[] { new DataCapabilityObject(node) };
+    }
+
+    @Override
+    public @Nullable GroupData getBlankGroupData() {
+        return new PathCacheGroupData(NetBreadthIterator::new);
     }
 
     @Override

@@ -4,7 +4,7 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.alg.iter.IteratorFactory;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +33,11 @@ public class NetAlgorithmWrapper {
         this.alg = null;
     }
 
-    public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIterator(GraphVertex source,
-                                                                                NetPathMapper<Path> remapper,
-                                                                                IPredicateTestObject testObject,
-                                                                                @Nullable SimulatorKey simulator,
-                                                                                long queryTick) {
+    public <Path extends NetPath<?, ?>> IteratorFactory<Path> getPathsIterator(GraphVertex source,
+                                                                               NetPathMapper<Path> remapper,
+                                                                               IPredicateTestObject testObject,
+                                                                               @Nullable SimulatorKey simulator,
+                                                                               long queryTick) {
         if (!recomputeEveryCall) net.getGraph().prepareForAlgorithmRun(testObject, simulator, queryTick);
         if (alg == null) alg = builder.build(net, recomputeEveryCall);
         return alg.getPathsIteratorFactory(source, remapper);

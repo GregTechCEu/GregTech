@@ -5,7 +5,7 @@ import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.alg.iter.IteratorFactory;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +31,8 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
     }
 
     @Override
-    public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
-                                                                                       NetPathMapper<Path> remapper) {
+    public <Path extends NetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
+                                                                                      NetPathMapper<Path> remapper) {
         Set<GraphVertex> searchSpace = source.wrapped.getGroupSafe().getNodes().stream().filter(NetNode::isActive)
                 .map(n -> n.wrapper).filter(node -> !(source == node) && graph.containsVertex(node))
                 .collect(Collectors.toSet());
@@ -42,7 +42,7 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
         };
     }
 
-    protected class LimitedIterator<Path extends INetPath<?, ?>> implements Iterator<Path> {
+    protected class LimitedIterator<Path extends NetPath<?, ?>> implements Iterator<Path> {
 
         private static final int MAX_ITERATIONS = 100;
 
@@ -84,7 +84,7 @@ public class DynamicWeightsShortestPathsAlgorithm extends DefaultManyToManyShort
             ManyToManyShortestPaths<GraphVertex, GraphEdge> paths = getManyToManyPaths(Collections.singleton(source),
                     searchSpace);
             Optional<Path> next = searchSpace.stream().map(node -> paths.getPath(source, node)).filter(Objects::nonNull)
-                    .map(remapper::map).filter(this::isUnique).min(Comparator.comparingDouble(INetPath::getWeight));
+                    .map(remapper::map).filter(this::isUnique).min(Comparator.comparingDouble(NetPath::getWeight));
             this.next = next.orElse(null);
             next.ifPresent(this.visited::add);
         }

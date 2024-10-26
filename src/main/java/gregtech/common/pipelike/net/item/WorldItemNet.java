@@ -7,7 +7,6 @@ import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;

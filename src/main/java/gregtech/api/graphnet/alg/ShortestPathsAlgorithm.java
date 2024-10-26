@@ -6,7 +6,7 @@ import gregtech.api.graphnet.alg.iter.IteratorFactory;
 import gregtech.api.graphnet.alg.iter.SimpleIteratorFactories;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 
 import org.jgrapht.alg.shortestpath.CHManyToManyShortestPaths;
 
@@ -26,8 +26,8 @@ public final class ShortestPathsAlgorithm extends CHManyToManyShortestPaths<Grap
     }
 
     @Override
-    public <Path extends INetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
-                                                                                       NetPathMapper<Path> remapper) {
+    public <Path extends NetPath<?, ?>> IteratorFactory<Path> getPathsIteratorFactory(GraphVertex source,
+                                                                                      NetPathMapper<Path> remapper) {
         if (!graph.containsVertex(source)) {
             throw new IllegalArgumentException("Graph must contain the source vertex");
         }
@@ -47,14 +47,14 @@ public final class ShortestPathsAlgorithm extends CHManyToManyShortestPaths<Grap
                 ManyToManyShortestPaths<GraphVertex, GraphEdge> manyToManyPaths = getManyToManyPaths(singleton,
                         searchSpace);
                 return searchSpace.stream().map(node -> manyToManyPaths.getPath(source, node))
-                        .map(remapper::map).sorted(Comparator.comparingDouble(INetPath::getWeight)).iterator();
+                        .map(remapper::map).sorted(Comparator.comparingDouble(NetPath::getWeight)).iterator();
             };
         } else {
             ManyToManyShortestPaths<GraphVertex, GraphEdge> manyToManyPaths = getManyToManyPaths(singleton,
                     searchSpace);
             return SimpleIteratorFactories.fromIterable(searchSpace.stream()
                     .map(node -> manyToManyPaths.getPath(source, node))
-                    .map(remapper::map).sorted(Comparator.comparingDouble(INetPath::getWeight))
+                    .map(remapper::map).sorted(Comparator.comparingDouble(NetPath::getWeight))
                     .collect(Collectors.toList()));
         }
     }

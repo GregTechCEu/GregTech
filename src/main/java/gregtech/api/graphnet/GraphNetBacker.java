@@ -1,16 +1,11 @@
 package gregtech.api.graphnet;
 
-import gregtech.api.graphnet.alg.AlgorithmBuilder;
-import gregtech.api.graphnet.alg.NetAlgorithmWrapper;
-import gregtech.api.graphnet.alg.NetPathMapper;
-import gregtech.api.graphnet.alg.iter.IteratorFactory;
 import gregtech.api.graphnet.edge.NetEdge;
-import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.graph.INetGraph;
-import gregtech.api.graphnet.path.INetPath;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+import gregtech.api.graphnet.group.MergeDirection;
+import gregtech.api.graphnet.group.NetGroup;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,30 +18,20 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Iterator;
-
 /**
  * The bridge between JGraphT graphs and graphnet abstractions.
  * Doesn't do any automatic linking, weighting, predicating, etc. Simply handles storing the JGraphT graph to disk,
- * interfacing with graph algorithms, and interacting with the JGraphT graph.
+ * interacting with the JGraphT graph, and managing NetGroups.
  */
 public final class GraphNetBacker {
 
     private final IGraphNet backedNet;
     private final INetGraph pipeGraph;
     private final Object2ObjectOpenHashMap<Object, GraphVertex> vertexMap;
-    private final NetAlgorithmWrapper[] netAlgorithms;
 
-    public GraphNetBacker(IGraphNet backedNet, INetGraph graph,
-                          AlgorithmBuilder @NotNull... algorithmBuilders) {
+    public GraphNetBacker(IGraphNet backedNet, INetGraph graph) {
         this.backedNet = backedNet;
         this.pipeGraph = graph;
-        this.netAlgorithms = new NetAlgorithmWrapper[algorithmBuilders.length];
-        for (int i = 0; i < algorithmBuilders.length; i++) {
-            this.netAlgorithms[i] = new NetAlgorithmWrapper(backedNet, algorithmBuilders[i],
-                    backedNet.supportsPredication() || backedNet.usesDynamicWeights(i));
-        }
         this.vertexMap = new Object2ObjectOpenHashMap<>();
     }
 
@@ -76,7 +61,6 @@ public final class GraphNetBacker {
                 NetGroup group = node.getGroupUnsafe();
                 if (group != null) group.removeNode(node);
             }
-            if (!this.getGraph().edgesOf(node.wrapper).isEmpty()) this.invalidateAlgs();
             NetGroup group = node.getGroupUnsafe();
             if (group != null) {
                 group.splitNode(node);
@@ -97,11 +81,12 @@ public final class GraphNetBacker {
 
     @Nullable
     public NetEdge addEdge(@NotNull NetNode source, @NotNull NetNode target, double weight) {
-        if (!NetGroup.isEdgeAllowed(source, target)) return null;
+        MergeDirection direction = NetGroup.isEdgeAllowed(source, target);
+        if (!direction.allowsEdgeCreation()) return null;
         GraphEdge graphEdge = getGraph().addEdge(source.wrapper, target.wrapper);
         if (graphEdge != null) {
             getGraph().setEdgeWeight(graphEdge, weight);
-            NetGroup.mergeEdge(source, target);
+            NetGroup.mergeEdge(graphEdge.wrapped, direction);
             backedNet.markDirty();
         }
         return graphEdge == null ? null : graphEdge.wrapped;
@@ -137,38 +122,6 @@ public final class GraphNetBacker {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Note - if an error is thrown with a stacktrace descending from this method,
-     * most likely a bad remapper was passed in. <br>
-     * This method should never be exposed outside the net this backer is backing due to this fragility.
-     */
-    public <Path extends INetPath<?, ?>> Iterator<Path> getPaths(@Nullable NetNode node, int algorithmID,
-                                                                 @NotNull NetPathMapper<Path> remapper,
-                                                                 IPredicateTestObject testObject,
-                                                                 @Nullable SimulatorKey simulator, long queryTick) {
-        if (node == null) return Collections.emptyIterator();
-        this.getGraph().setupInternal(this, backedNet.usesDynamicWeights(algorithmID));
-
-        Iterator<? extends INetPath<?, ?>> cache = node.getPathCache(testObject, simulator, queryTick);
-        if (cache != null) return (Iterator<Path>) cache;
-
-        IteratorFactory<Path> factory = this.netAlgorithms[algorithmID]
-                .getPathsIterator(node.wrapper, remapper, testObject, simulator, queryTick);
-        if (factory.cacheable()) {
-            return (Iterator<Path>) (node.setPathCache(factory).getPathCache(testObject, simulator, queryTick));
-        } else return factory.newIterator(getGraph(), testObject, simulator, queryTick);
-    }
-
-    public void invalidateAlg(int algorithmID) {
-        this.netAlgorithms[algorithmID].invalidate();
-    }
-
-    public void invalidateAlgs() {
-        for (NetAlgorithmWrapper netAlgorithm : this.netAlgorithms) {
-            netAlgorithm.invalidate();
-        }
     }
 
     public INetGraph getGraph() {

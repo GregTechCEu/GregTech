@@ -8,7 +8,6 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.FlowWorldPipeNetPath;
 import gregtech.api.graphnet.pipenet.NodeLossCache;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;

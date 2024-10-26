@@ -1,11 +1,8 @@
 package gregtech.api.graphnet;
 
-import gregtech.api.graphnet.alg.iter.IteratorFactory;
-import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.graph.GraphVertex;
+import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.path.INetPath;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -15,7 +12,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.Objects;
 
 public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
@@ -31,9 +27,6 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     private final @NotNull IGraphNet net;
     private final @NotNull NetLogicData data;
     private @Nullable NetGroup group = null;
-
-    @Nullable
-    private IteratorFactory<? extends INetPath<?, ?>> pathCache = null;
 
     public NetNode(@NotNull IGraphNet net) {
         this.net = net;
@@ -58,8 +51,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
         if (isActive != active) {
             isActive = active;
             NetGroup group = getGroupUnsafe();
-            if (group != null) group.clearPathCaches();
-            else this.clearPathCache();
+            if (group != null) group.notifyActiveChange(this, active);
         }
     }
 
@@ -69,28 +61,6 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
 
     public boolean traverse(long queryTick, boolean simulate) {
         return true;
-    }
-
-    @Nullable
-    public Iterator<? extends INetPath<?, ?>> getPathCache(IPredicateTestObject testObject,
-                                                           @Nullable SimulatorKey simulator, long queryTick) {
-        if (pathCache == null) return null;
-        return pathCache.newIterator(net.getGraph(), testObject, simulator, queryTick);
-    }
-
-    /**
-     * Sets the path cache to the provided iterator factory. Returns itself for convenience.
-     *
-     * @param pathCache The new cache.
-     * @return The new cache.
-     */
-    public NetNode setPathCache(IteratorFactory<? extends INetPath<?, ?>> pathCache) {
-        this.pathCache = pathCache;
-        return this;
-    }
-
-    public void clearPathCache() {
-        this.pathCache = null;
     }
 
     @NotNull
@@ -107,9 +77,8 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
         return this.group;
     }
 
-    public NetGroup setGroup(NetGroup group) {
+    public void setGroup(@NotNull NetGroup group) {
         this.group = group;
-        return group;
     }
 
     /**

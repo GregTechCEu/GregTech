@@ -27,15 +27,13 @@ public abstract class ServerNet extends WorldSavedData implements IGraphNet {
 
     protected final GraphNetBacker backer;
 
-    public ServerNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
-                     AlgorithmBuilder... algorithmBuilders) {
+    public ServerNet(String name, Function<IGraphNet, INetGraph> graphBuilder) {
         super(name);
-        this.backer = new GraphNetBacker(this, graphBuilder.apply(this), algorithmBuilders);
+        this.backer = new GraphNetBacker(this, graphBuilder.apply(this));
     }
 
-    public ServerNet(String name, boolean directed, AlgorithmBuilder... algorithmBuilders) {
-        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(),
-                algorithmBuilders);
+    public ServerNet(String name, boolean directed) {
+        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder());
     }
 
     @Override

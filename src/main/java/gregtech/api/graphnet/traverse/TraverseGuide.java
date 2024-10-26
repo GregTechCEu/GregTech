@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.traverse;
 
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.function.LongConsumer;
 import java.util.function.Supplier;
 
-public class TraverseGuide<N extends NetNode, P extends INetPath<N, ?>, T extends ITraverseData<N, P>> {
+public class TraverseGuide<N extends NetNode, P extends NetPath<N, ?>, T extends ITraverseData<N, P>> {
 
     private final T data;
     private final Supplier<Iterator<P>> pathsSupplier;

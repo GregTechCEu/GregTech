@@ -1,14 +1,14 @@
 package gregtech.api.graphnet.traverse;
 
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.path.INetPath;
+import gregtech.api.graphnet.path.NetPath;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 
-public interface IRoundRobinTraverseData<T extends IRoundRobinData<N>, N extends NetNode, P extends INetPath<N, ?>>
+public interface IRoundRobinTraverseData<T extends IRoundRobinData<N>, N extends NetNode, P extends NetPath<N, ?>>
                                         extends ITraverseData<N, P> {
 
     /**
@@ -25,7 +25,7 @@ public interface IRoundRobinTraverseData<T extends IRoundRobinData<N>, N extends
 
     /**
      * Whether a path should be skipped before checking it against the round robin cache.
-     * The return of {@link ITraverseData#prepareForPathWalk(INetPath, long)} will be ignored during traversal.
+     * The return of {@link ITraverseData#prepareForPathWalk(NetPath, long)} will be ignored during traversal.
      */
     boolean shouldSkipPath(@NotNull P path);
 
