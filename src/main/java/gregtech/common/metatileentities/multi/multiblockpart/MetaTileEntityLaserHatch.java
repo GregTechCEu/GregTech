@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.GTValues.V;
-import static gregtech.api.GTValues.VN;
+import static gregtech.api.GTValues.VNF;
 
 public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
                                       implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
@@ -95,10 +95,10 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
         tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip2"));
 
         if (isOutput) {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", V[tier], VN[tier]));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", V[tier], VNF[tier]));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", amperage));
         } else {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", V[tier], VN[tier]));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", V[tier], VNF[tier]));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", amperage));
         }
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", buffer.getEnergyCapacity()));

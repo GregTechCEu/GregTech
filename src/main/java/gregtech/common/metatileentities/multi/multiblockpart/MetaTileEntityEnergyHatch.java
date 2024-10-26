@@ -177,7 +177,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
     @Override
     public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
         // override here is gross, but keeps things in order despite
-        // IDs being out of order, due to EV 4A hatches being added later
+        // IDs being out of order, due to EV 4A and UEV+ 4A+ hatches being added later
         if (this == MetaTileEntities.ENERGY_INPUT_HATCH[0]) {
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.ENERGY_INPUT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
@@ -203,7 +203,11 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart
             for (MetaTileEntityEnergyHatch hatch : MetaTileEntities.SUBSTATION_ENERGY_OUTPUT_HATCH) {
                 if (hatch != null) subItems.add(hatch.getStackForm());
             }
-        }
+        } else if (this.getClass() != MetaTileEntityEnergyHatch.class &&
+                this.getClass() != MetaTileEntitySubstationEnergyHatch.class) {
+                    // let subclasses fall through this override
+                    super.getSubItems(creativeTab, subItems);
+                }
     }
 
     @Override
