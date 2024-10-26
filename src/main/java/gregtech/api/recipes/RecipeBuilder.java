@@ -85,6 +85,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
     protected RecipePropertyStorage recipePropertyStorage = RecipePropertyStorage.EMPTY;
     protected boolean recipePropertyStorageErrored = false;
+    protected boolean ignoreRecipeMapBuildActions = false;
 
     protected RecipeBuilder() {
         this.inputs = new ArrayList<>();
@@ -887,6 +888,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) new RecipeBuilder<>(this);
     }
 
+    public R ignoreRecipeMapBuildActions() {
+        this.ignoreRecipeMapBuildActions = true;
+        return (R) this;
+    }
+
     public ValidationResult<Recipe> build() {
         EnumValidationResult result = recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
         return ValidationResult.newResult(result, new Recipe(inputs, outputs,
@@ -985,8 +991,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
      */
     @MustBeInvokedByOverriders
     public void buildAndRegister() {
-        for (RecipeBuildAction<R> action : recipeMap.getBuildActions()) {
-            action.accept((R) this);
+        if (!ignoreRecipeMapBuildActions) {
+            for (RecipeBuildAction<R> action : recipeMap.getBuildActions()) {
+                action.accept((R) this);
+            }
         }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
@@ -1045,6 +1053,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public @Nullable CleanroomType getCleanroom() {
         return this.recipePropertyStorage.get(CleanroomProperty.getInstance(), null);
+    }
+
+    public boolean ignoresRecipeMapBuildActions() {
+        return ignoreRecipeMapBuildActions;
     }
 
     @Override
