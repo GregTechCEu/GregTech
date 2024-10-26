@@ -893,6 +893,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) new RecipeBuilder<>(this);
     }
 
+    /**
+     * Only use if you absolutely don't want the recipe to be run through any build actions.
+     * Instead, you should blacklist specific actions with {@link #ignoreBuildAction(ResourceLocation)}
+     */
     public R ignoreAllBuildActions() {
         this.ignoreAllBuildActions = true;
         return (R) this;
