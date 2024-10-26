@@ -43,6 +43,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -71,6 +72,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     protected IItemHandler outputItemInventory;
     private ItemHandlerList combinedInventory;
     protected ItemStack previousStack;
+    protected @NotNull ItemStack lockedStack = ItemStack.EMPTY;
     protected long previousStackSize;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
@@ -252,6 +254,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             tagCompound.setTag(NBT_ITEMSTACK, virtualItemStack.writeToNBT(new NBTTagCompound()));
             tagCompound.setLong(NBT_ITEMCOUNT, itemsStoredInside);
         }
+        if (locked && !lockedStack.isEmpty())
+            data.setTag("LockedStack", lockedStack.serializeNBT());
         return tagCompound;
     }
 
@@ -264,6 +268,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 this.itemsStoredInside = data.getLong(NBT_ITEMCOUNT);
             }
         }
+        if (locked) this.lockedStack = new ItemStack(data.getCompoundTag("LockedStack"));
     }
 
     @Override
@@ -307,11 +312,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
 
     @Override
     protected void createWidgets(ModularPanel mainPanel, PanelSyncManager syncManager) {
-        mainPanel
-                .child(createQuantumDisplay("gregtech.machine.quantum_chest.items_stored",
-                        () -> IKey.lang(virtualItemStack.getDisplayName()).get(),
-                        textWidget -> !virtualItemStack.isEmpty(),
-                        () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
+        mainPanel.child(createQuantumDisplay("gregtech.machine.quantum_chest.items_stored",
+                () -> IKey.lang(virtualItemStack.getDisplayName()).get(),
+                textWidget -> !virtualItemStack.isEmpty(),
+                () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
                 .child(new QuantumItemRendererWidget(itemInventory)
                         .pos(148, 41));
     }
@@ -336,6 +340,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
         super.writeInitialSyncData(buf);
         this.virtualItemStack.setCount(1);
         buf.writeItemStack(virtualItemStack);
+        NetworkUtils.writeItemStack(buf, lockedStack);
         buf.writeLong(itemsStoredInside);
     }
 
@@ -348,6 +353,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             GTLog.logger.warn("Failed to load item from NBT in a quantum chest at " + this.getPos() +
                     " on initial server/client sync");
         }
+        this.lockedStack = NetworkUtils.readItemStack(buf);
         this.itemsStoredInside = buf.readLong();
     }
 
@@ -410,6 +416,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             // set initial output facing as opposite to front
             setOutputFacing(frontFacing.getOpposite());
         }
+    }
+
+    @Override
+    protected void setLocked(boolean locked) {
+        super.setLocked(locked);
+        if (locked && !this.virtualItemStack.isEmpty())
+            this.lockedStack = this.virtualItemStack.copy();
+        else this.lockedStack = ItemStack.EMPTY;
     }
 
     @Override
@@ -508,6 +522,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
             if (insertedStack.isEmpty()) {
                 return ItemStack.EMPTY;
             }
+
+            // check locked and if locked stack matches
+            if (locked && !areItemStackIdentical(lockedStack, insertedStack))
+                return insertedStack;
 
             // If there is a virtualized stack and the stack to insert does not match it, do not insert anything
             if (itemsStoredInside > 0L &&
