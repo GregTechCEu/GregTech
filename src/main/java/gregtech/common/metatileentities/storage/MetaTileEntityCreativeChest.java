@@ -82,7 +82,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return GTGuis.createQuantumPanel(this);
+        return GTGuis.createPanel(this, 176, 166);
     }
 
     @Override
