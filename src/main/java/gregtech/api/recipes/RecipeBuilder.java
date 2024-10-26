@@ -1076,6 +1076,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("dimensions", getDimensionIDs().toString())
                 .append("dimensions_blocked", getBlockedDimensionIDs().toString())
                 .append("recipeStatus", recipeStatus)
+                .append("ignoresRecipeMapBuildActions", ignoreRecipeMapBuildActions)
                 .toString();
     }
 }
