@@ -3,13 +3,16 @@ package gregtech.common.mui.widget;
 import gregtech.api.GTValues;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -18,6 +21,8 @@ import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -35,9 +40,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     private final TextRenderer textRenderer = new TextRenderer();
     private GTFluidSyncHandler syncHandler;
-    private boolean showAmount = true;
     private boolean disableBackground = false;
-    // todo phantom
 
     public GTFluidSlot() {
         tooltip().setAutoUpdate(true);
@@ -48,7 +51,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             if (fluid == null) return;
 
             tooltip.add(fluid.getLocalizedName()).newLine();
-            tooltip.addLine(IKey.lang("gregtech.fluid.amount", fluid.amount, this.syncHandler.getCapacity()));
+            if (this.syncHandler.showAmount())
+                tooltip.addLine(IKey.lang("gregtech.fluid.amount", fluid.amount, this.syncHandler.getCapacity()));
 
             // Add various tooltips from the material
             for (String s : FluidTooltipUtil.getFluidTooltip(fluid)) {
@@ -56,7 +60,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
                 tooltip.add(s).newLine();
             }
 
-            addIngotMolFluidTooltip(fluid, tooltip);
+            if (this.syncHandler.showAmount())
+                addIngotMolFluidTooltip(fluid, tooltip);
         });
     }
 
@@ -69,6 +74,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         this.textRenderer.setShadow(true);
         this.textRenderer.setScale(0.5f);
         this.textRenderer.setColor(Color.WHITE.main);
+        getContext().getJeiSettings().addJeiGhostIngredientSlot(this);
     }
 
     public GTFluidSlot syncHandler(IFluidTank fluidTank) {
@@ -78,11 +84,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     public GTFluidSlot syncHandler(GTFluidSyncHandler syncHandler) {
         setSyncHandler(syncHandler);
         this.syncHandler = syncHandler;
-        return this;
-    }
-
-    public GTFluidSlot showAmount(boolean showAmount) {
-        this.showAmount = showAmount;
         return this;
     }
 
@@ -108,7 +109,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
         GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
 
-        if (content != null && showAmount) {
+        if (content != null && this.syncHandler.showAmount()) {
             String s = NumberFormat.formatWithMaxDigits(getBaseUnitAmount(content.amount)) + getBaseUnit();
             this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - 1f);
             this.textRenderer.setPos(0, 12);
@@ -131,11 +132,10 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         return "kL";
     }
 
-    @NotNull
     @Override
-    public Result onMouseTapped(int mouseButton) {
+    public @NotNull Result onMousePressed(int mouseButton) {
+        var data = MouseData.create(mouseButton);
         if (this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
-            var data = MouseData.create(mouseButton);
             this.syncHandler.syncToServer(GTFluidSyncHandler.TRY_CLICK_CONTAINER, data::writeToPacket);
             Interactable.playButtonClickSound();
             return Result.SUCCESS;
@@ -144,13 +144,20 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     }
 
     @Override
-    protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
-        return theme.getFluidSlotTheme();
+    public boolean onMouseScroll(ModularScreen.UpOrDown scrollDirection, int amount) {
+        if (!this.syncHandler.isPhantom()) return false;
+        if ((scrollDirection.isUp() && !this.syncHandler.canFillSlot()) ||
+                (scrollDirection.isDown() && !this.syncHandler.canDrainSlot())) {
+            return false;
+        }
+        MouseData mouseData = MouseData.create(scrollDirection.modifier);
+        this.syncHandler.syncToServer(GTFluidSyncHandler.PHANTOM_SCROLL, mouseData::writeToPacket);
+        return true;
     }
 
     @Override
-    public @Nullable Object getIngredient() {
-        return this.syncHandler.getFluid();
+    protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
+        return theme.getFluidSlotTheme();
     }
 
     public static void addIngotMolFluidTooltip(FluidStack fluidStack, RichTooltip tooltip) {
@@ -168,11 +175,30 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     @Override
     public void setGhostIngredient(@NotNull FluidStack ingredient) {
-        this.syncHandler.setFluid(ingredient);
+        if (this.syncHandler.isPhantom()) {
+            this.syncHandler.setFluid(ingredient);
+            this.syncHandler.syncToServer(GTFluidSyncHandler.UPDATE_TANK,
+                    buffer -> NetworkUtils.writeFluidStack(buffer, ingredient));
+        } else {
+            this.syncHandler.lockFluid(ingredient);
+        }
     }
 
     @Override
     public @Nullable FluidStack castGhostIngredientIfValid(@NotNull Object ingredient) {
-        return this.syncHandler.isPhantom() && ingredient instanceof FluidStack fluidStack ? fluidStack : null;
+        if (ingredient instanceof FluidStack stack) {
+            return stack;
+        } else if (ingredient instanceof ItemStack stack &&
+                stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                    var handler = GTUtility.copy(1, stack)
+                            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                    return handler == null ? null : handler.drain(Integer.MAX_VALUE, true);
+                }
+        return null;
+    }
+
+    @Override
+    public @Nullable Object getIngredient() {
+        return this.syncHandler.getFluid();
     }
 }
