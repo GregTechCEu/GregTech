@@ -12,9 +12,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.utils.FluidTankHandler;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
@@ -24,16 +26,22 @@ public class GTFluidSyncHandler extends SyncHandler {
     public static final int TRY_CLICK_CONTAINER = 1;
     public static final int UPDATE_TANK = 2;
     public static final int UPDATE_AMOUNT = 3;
+    public static final int PHANTOM_SCROLL = 4;
+    public static final int LOCK_FLUID = 5;
 
     private final IFluidTank tank;
+    private final IFluidHandler handler;
     private FluidStack lastFluid;
     private FluidStack lockedFluid;
+    private FluidStack phantomFluid;
     private boolean canDrainSlot = true;
     private boolean canFillSlot = true;
     private boolean phantom;
+    private boolean showAmount = true;
 
     public GTFluidSyncHandler(IFluidTank tank) {
         this.tank = tank;
+        this.handler = FluidTankHandler.getTankFluidHandler(tank);
     }
 
     @Override
@@ -59,6 +67,15 @@ public class GTFluidSyncHandler extends SyncHandler {
             tank.drain(Integer.MAX_VALUE, true);
             tank.fill(fluid, true);
         }
+        if (!isPhantom() || fluid == null) return;
+        if (this.phantomFluid == null || this.phantomFluid.getFluid() != fluid.getFluid()) {
+            this.phantomFluid = fluid;
+        }
+    }
+
+    public void lockFluid(FluidStack fluid) {
+        this.lockedFluid = fluid;
+        sync(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, fluid));
     }
 
     public void setAmount(int amount) {
@@ -90,11 +107,22 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public GTFluidSyncHandler phantom(boolean phantom) {
         this.phantom = phantom;
+        if (phantom && this.tank.getFluid() != null)
+            this.phantomFluid = this.tank.getFluid().copy();
         return this;
     }
 
     public boolean isPhantom() {
         return phantom;
+    }
+
+    public GTFluidSyncHandler showAmount(boolean showAmount) {
+        this.showAmount = showAmount;
+        return this;
+    }
+
+    public boolean showAmount() {
+        return this.showAmount;
     }
 
     public String getFormattedFluidAmount() {
@@ -111,16 +139,122 @@ public class GTFluidSyncHandler extends SyncHandler {
             case TRY_CLICK_CONTAINER -> replaceCursorItemStack(NetworkUtils.readItemStack(buf));
             case UPDATE_TANK -> setFluid(NetworkUtils.readFluidStack(buf));
             case UPDATE_AMOUNT -> setAmount(buf.readInt());
+            case LOCK_FLUID -> lockFluid(NetworkUtils.readFluidStack(buf));
         }
     }
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) {
-        if (id == TRY_CLICK_CONTAINER) {
-            var data = MouseData.readPacket(buf);
-            var stack = tryClickContainer(data.mouseButton == 0);
-            if (!stack.isEmpty())
-                syncToClient(TRY_CLICK_CONTAINER, buffer -> NetworkUtils.writeItemStack(buffer, stack));
+        switch (id) {
+            case TRY_CLICK_CONTAINER -> {
+                var data = MouseData.readPacket(buf);
+                if (isPhantom()) {
+                    tryClickPhantom(data);
+                } else {
+                    var stack = tryClickContainer(data.mouseButton == 0);
+                    if (!stack.isEmpty())
+                        syncToClient(TRY_CLICK_CONTAINER, buffer -> NetworkUtils.writeItemStack(buffer, stack));
+                }
+            }
+            case UPDATE_TANK -> {
+                var fluid = NetworkUtils.readFluidStack(buf);
+                setFluid(fluid);
+            }
+            case PHANTOM_SCROLL -> tryScrollPhantom(MouseData.readPacket(buf));
+            case LOCK_FLUID -> lockFluid(NetworkUtils.readFluidStack(buf));
+        }
+    }
+
+    public void tryClickPhantom(MouseData data) {
+        EntityPlayer player = getSyncManager().getPlayer();
+        ItemStack currentStack = player.inventory.getItemStack();
+        FluidStack currentFluid = this.tank.getFluid();
+        if (currentStack.getCount() > 1) currentStack = GTUtility.copy(1, currentStack);
+        IFluidHandlerItem fluidHandlerItem = currentStack
+                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+
+        switch (data.mouseButton) {
+            case 0 -> {
+                if (currentStack.isEmpty() || fluidHandlerItem == null) {
+                    if (this.canDrainSlot()) {
+                        this.tank.drain(data.shift ? Integer.MAX_VALUE : 1000, true);
+                    }
+                } else {
+                    FluidStack cellFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
+                    if ((this.showAmount || currentFluid == null) && cellFluid != null) {
+                        if (this.canFillSlot()) {
+                            if (!this.showAmount) {
+                                cellFluid.amount = 1;
+                            }
+                            if (this.tank.fill(cellFluid, true) > 0) {
+                                this.phantomFluid = cellFluid.copy();
+                            }
+                        }
+                    } else {
+                        if (this.canDrainSlot()) {
+                            this.tank.drain(data.shift ? Integer.MAX_VALUE : 1000, true);
+                        }
+                    }
+                }
+            }
+            case 1 -> {
+                if (this.canFillSlot()) {
+                    if (currentFluid != null) {
+                        if (this.showAmount) {
+                            FluidStack toFill = currentFluid.copy();
+                            toFill.amount = 1000;
+                            this.tank.fill(toFill, true);
+                        }
+                    } else if (this.phantomFluid != null) {
+                        FluidStack toFill = this.phantomFluid.copy();
+                        toFill.amount = this.showAmount ? 1 : toFill.amount;
+                        this.tank.fill(toFill, true);
+                    }
+                }
+            }
+            case 2 -> {
+                if (currentFluid != null && canDrainSlot())
+                    this.tank.drain(data.shift ? Integer.MAX_VALUE : 1000, true);
+            }
+        }
+    }
+
+    public void tryScrollPhantom(MouseData mouseData) {
+        FluidStack currentFluid = this.tank.getFluid();
+        int amount = mouseData.mouseButton;
+        if (!this.showAmount()) {
+            int newAmt = amount == 1 ? 1 : 0;
+            if (newAmt == 0) {
+                setFluid(null);
+                return;
+            } else if (currentFluid != null && currentFluid.amount != newAmt) {
+                setAmount(newAmt);
+                return;
+            }
+        }
+        if (mouseData.shift) {
+            amount *= 10;
+        }
+        if (mouseData.ctrl) {
+            amount *= 100;
+        }
+        if (mouseData.alt) {
+            amount *= 1000;
+        }
+        if (currentFluid == null) {
+            if (amount > 0 && this.phantomFluid != null) {
+                FluidStack toFill = this.phantomFluid.copy();
+                toFill.amount = this.showAmount() ? amount : 1;
+                this.tank.fill(toFill, true);
+            }
+            return;
+        }
+        if (amount > 0) {
+            FluidStack toFill = currentFluid.copy();
+            toFill.amount = amount;
+            this.tank.fill(toFill, true);
+        } else if (amount < 0) {
+            this.tank.drain(-amount, true);
         }
     }
 
