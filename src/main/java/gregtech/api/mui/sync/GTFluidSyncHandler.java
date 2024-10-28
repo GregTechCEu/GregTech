@@ -12,14 +12,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
-import com.cleanroommc.modularui.utils.FluidTankHandler;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public class GTFluidSyncHandler extends SyncHandler {
 
@@ -30,9 +30,8 @@ public class GTFluidSyncHandler extends SyncHandler {
     public static final int LOCK_FLUID = 5;
 
     private final IFluidTank tank;
-    private final IFluidHandler handler;
+    private Consumer<FluidStack> onLocked;
     private FluidStack lastFluid;
-    private FluidStack lockedFluid;
     private FluidStack phantomFluid;
     private boolean canDrainSlot = true;
     private boolean canFillSlot = true;
@@ -41,7 +40,6 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public GTFluidSyncHandler(IFluidTank tank) {
         this.tank = tank;
-        this.handler = FluidTankHandler.getTankFluidHandler(tank);
     }
 
     @Override
@@ -56,7 +54,22 @@ public class GTFluidSyncHandler extends SyncHandler {
         }
     }
 
+    public void lockFluid(FluidStack stack) {
+        if (getFluid() != null && getFluid().amount != 0) return;
+        this.onLocked.accept(stack);
+        this.phantomFluid = stack;
+        syncToServer(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, stack));
+    }
+
+    public GTFluidSyncHandler onLockFluid(Consumer<FluidStack> onLocked) {
+        this.onLocked = onLocked;
+        return this;
+    }
+
     public FluidStack getFluid() {
+        if (this.tank.getFluid() == null)
+            return phantomFluid;
+
         return this.tank.getFluid();
     }
 
@@ -71,11 +84,6 @@ public class GTFluidSyncHandler extends SyncHandler {
         if (this.phantomFluid == null || this.phantomFluid.getFluid() != fluid.getFluid()) {
             this.phantomFluid = fluid;
         }
-    }
-
-    public void lockFluid(FluidStack fluid) {
-        this.lockedFluid = fluid;
-        sync(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, fluid));
     }
 
     public void setAmount(int amount) {
@@ -122,15 +130,17 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public boolean showAmount() {
+        if (!isPhantom() && phantomFluid != null)
+            return false;
         return this.showAmount;
     }
 
-    public String getFormattedFluidAmount() {
+    public @NotNull String getFormattedFluidAmount() {
         return String.format("%,d", tank.getFluid() == null ? 0 : tank.getFluid().amount);
     }
 
-    public String getFluidLocalizedName() {
-        return tank.getFluid() == null ? "" : tank.getFluid().getLocalizedName();
+    public @NotNull String getFluidLocalizedName() {
+        return tank.getFluid() == null ? "Empty" : tank.getFluid().getLocalizedName();
     }
 
     @Override
@@ -139,29 +149,29 @@ public class GTFluidSyncHandler extends SyncHandler {
             case TRY_CLICK_CONTAINER -> replaceCursorItemStack(NetworkUtils.readItemStack(buf));
             case UPDATE_TANK -> setFluid(NetworkUtils.readFluidStack(buf));
             case UPDATE_AMOUNT -> setAmount(buf.readInt());
-            case LOCK_FLUID -> lockFluid(NetworkUtils.readFluidStack(buf));
         }
     }
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) {
-        switch (id) {
-            case TRY_CLICK_CONTAINER -> {
-                var data = MouseData.readPacket(buf);
-                if (isPhantom()) {
-                    tryClickPhantom(data);
-                } else {
-                    var stack = tryClickContainer(data.mouseButton == 0);
-                    if (!stack.isEmpty())
-                        syncToClient(TRY_CLICK_CONTAINER, buffer -> NetworkUtils.writeItemStack(buffer, stack));
-                }
+        if (id == TRY_CLICK_CONTAINER) {
+            var data = MouseData.readPacket(buf);
+            if (isPhantom()) {
+                tryClickPhantom(data);
+            } else {
+                var stack = tryClickContainer(data.mouseButton == 0);
+                if (!stack.isEmpty())
+                    syncToClient(TRY_CLICK_CONTAINER, buffer -> NetworkUtils.writeItemStack(buffer, stack));
             }
-            case UPDATE_TANK -> {
-                var fluid = NetworkUtils.readFluidStack(buf);
-                setFluid(fluid);
-            }
-            case PHANTOM_SCROLL -> tryScrollPhantom(MouseData.readPacket(buf));
-            case LOCK_FLUID -> lockFluid(NetworkUtils.readFluidStack(buf));
+        } else if (id == UPDATE_TANK) {
+            var fluid = NetworkUtils.readFluidStack(buf);
+            setFluid(fluid);
+        } else if (id == PHANTOM_SCROLL) {
+            tryScrollPhantom(MouseData.readPacket(buf));
+        } else if (id == LOCK_FLUID) {
+            var f = NetworkUtils.readFluidStack(buf);
+            this.onLocked.accept(f);
+            this.phantomFluid = f;
         }
     }
 
@@ -226,11 +236,10 @@ public class GTFluidSyncHandler extends SyncHandler {
             int newAmt = amount == 1 ? 1 : 0;
             if (newAmt == 0) {
                 setFluid(null);
-                return;
             } else if (currentFluid != null && currentFluid.amount != newAmt) {
                 setAmount(newAmt);
-                return;
             }
+            return;
         }
         if (mouseData.shift) {
             amount *= 10;

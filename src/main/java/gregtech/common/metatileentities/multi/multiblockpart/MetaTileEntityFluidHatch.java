@@ -13,10 +13,14 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,11 +42,22 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
                                       implements IMultiblockAbilityPart<IFluidTank>, IControllable {
@@ -216,6 +231,85 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         return createTankUI(fluidTank, getMetaFullName(), entityPlayer).build(getHolder(), entityPlayer);
     }
 
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
+                .showAmount(false)
+                .onLockFluid(stack -> {
+                    if (!isExportHatch) return;
+
+                    if (stack == null) {
+                        this.setLocked(false);
+                        this.lockedFluid = null;
+                    } else {
+                        this.setLocked(true);
+                        this.lockedFluid = stack.copy();
+                        this.lockedFluid.amount = 1;
+                    }
+                });
+
+        return GTGuis.createPanel(this, 176, 166)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(6, 6))
+
+                // export specific
+                .childIf(isExportHatch, new ItemSlot()
+                        .pos(90, 44)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
+                        .slot(new ModularSlot(exportItems, 0)
+                                .accessibility(false, true)))
+                .childIf(isExportHatch, new ToggleButton()
+                        .pos(7, 64)
+                        .value(new BooleanSyncValue(this::isLocked, this::setLocked))
+                        .addTooltipElement(IKey.lang("gregtech.gui.fluid_lock.tooltip")))
+
+                // import specific
+                .childIf(!isExportHatch, GTGuiTextures.TANK_ICON.asWidget()
+                        .pos(91, 36)
+                        .size(14, 15))
+                .childIf(!isExportHatch, new ItemSlot()
+                        .pos(90, 53)
+                        .slot(new ModularSlot(exportItems, 0)
+                                .accessibility(false, true)))
+
+                // common ui
+                .child(Flow.column()
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
+                        .size(81, isExportHatch ? 46 : 55)
+                        .padding(3, 4)
+                        .background(GTGuiTextures.DISPLAY)
+                        .pos(7, 16)
+                        .child(IKey.lang("gregtech.gui.fluid_amount").asWidget()
+                                .widthRel(1f)
+                                .height(10))
+                        // IKey's do not like empty strings...
+                        .child(IKey.dynamic(getFluidName(fluidSyncHandler))
+                                .asWidget()
+                                .widthRel(1f)
+                                .setEnabledIf(textWidget -> fluidSyncHandler.getFluid() != null)
+                                .height(10))
+                        .child(IKey.dynamic(fluidSyncHandler::getFormattedFluidAmount)
+                                .asWidget()
+                                .setEnabledIf(textWidget -> fluidSyncHandler.showAmount())
+                                .widthRel(1f)
+                                .height(10)))
+                .child(new GTFluidSlot()
+                        .pos(69, 43)
+                        .size(18)
+                        .syncHandler(fluidSyncHandler))
+                .child(new ItemSlot()
+                        .pos(90, 16)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
+                        .slot(new ModularSlot(importItems, 0)
+                                .accessibility(true, true)
+                                .filter(stack -> fluidSyncHandler.getFluid() != null)))
+                .bindPlayerInventory();
+    }
+
     public ModularUI.Builder createTankUI(IFluidTank fluidTank, String title, EntityPlayer entityPlayer) {
         // Create base builder/widget references
         Builder builder = ModularUI.defaultBuilder();
@@ -266,6 +360,14 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 .widget(new FluidContainerSlotWidget(importItems, 0, 90, 16, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
                 .bindPlayerInventory(entityPlayer.inventory);
+    }
+
+    private Supplier<String> getFluidName(GTFluidSyncHandler syncHandler) {
+        return () -> {
+            if (syncHandler.getFluid() == null && lockedFluid != null)
+                return lockedFluid.getLocalizedName();
+            return syncHandler.getFluidLocalizedName();
+        };
     }
 
     protected Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
