@@ -35,6 +35,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -240,6 +241,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmount(false)
+                .canDrainSlot(false)
+                .canFillSlot(false)
                 .onLockFluid(stack -> {
                     if (!isExportHatch) return;
 
@@ -263,9 +266,11 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .slot(new ModularSlot(exportItems, 0)
                                 .accessibility(false, true)))
                 .childIf(isExportHatch, new ToggleButton()
-                        .pos(7, 64)
+                        .pos(7, 63)
+                        // todo lock overlay
                         .value(new BooleanSyncValue(this::isLocked, this::setLocked))
-                        .addTooltipElement(IKey.lang("gregtech.gui.fluid_lock.tooltip")))
+                        // todo tooltip is not working for some reasone
+                        .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.fluid_lock.tooltip"))))
 
                 // import specific
                 .childIf(!isExportHatch, GTGuiTextures.TANK_ICON.asWidget()
@@ -273,6 +278,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .size(14, 15))
                 .childIf(!isExportHatch, new ItemSlot()
                         .pos(90, 53)
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.OUT_SLOT_OVERLAY)
                         .slot(new ModularSlot(exportItems, 0)
                                 .accessibility(false, true)))
 
@@ -290,23 +296,34 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .child(IKey.dynamic(getFluidName(fluidSyncHandler))
                                 .asWidget()
                                 .widthRel(1f)
-                                .setEnabledIf(textWidget -> fluidSyncHandler.getFluid() != null)
+                                .setEnabledIf(textWidget -> {
+                                    var tank = fluidSyncHandler.getFluid();
+                                    if (tank == null) tank = fluidSyncHandler.getLockedFluid();
+                                    return tank != null;
+                                })
                                 .height(10))
                         .child(IKey.dynamic(fluidSyncHandler::getFormattedFluidAmount)
                                 .asWidget()
-                                .setEnabledIf(textWidget -> fluidSyncHandler.showAmount())
+                                .setEnabledIf(textWidget -> fluidSyncHandler.getFluid() != null)
                                 .widthRel(1f)
                                 .height(10)))
                 .child(new GTFluidSlot()
-                        .pos(69, 43)
+                        .disableBackground()
+                        .pos(69, isExportHatch ? 43 : 52)
                         .size(18)
                         .syncHandler(fluidSyncHandler))
                 .child(new ItemSlot()
                         .pos(90, 16)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
                         .slot(new ModularSlot(importItems, 0)
-                                .accessibility(true, true)
-                                .filter(stack -> fluidSyncHandler.getFluid() != null)))
+                                .singletonSlotGroup()
+                                .filter(stack -> {
+                                    if (!isExportHatch) return true;
+                                    var h = FluidUtil.getFluidHandler(stack);
+                                    if (h == null) return false;
+                                    return h.getTankProperties()[0].getContents() == null;
+                                })
+                                .accessibility(true, true)))
                 .bindPlayerInventory();
     }
 
