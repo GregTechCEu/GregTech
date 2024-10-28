@@ -25,6 +25,7 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.theme.WidgetSlotTheme;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
@@ -106,6 +107,8 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         FluidStack content = this.syncHandler.getFluid();
+        if (content == null)
+            content = this.syncHandler.getLockedFluid();
 
         GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
 
@@ -118,8 +121,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2,
-                    getWidgetTheme(context.getTheme()).getColor());
+            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, getSlotHoverColor());
             GlStateManager.colorMask(true, true, true, true);
         }
     }
@@ -137,6 +139,11 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         var data = MouseData.create(mouseButton);
         if (this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
             this.syncHandler.syncToServer(GTFluidSyncHandler.TRY_CLICK_CONTAINER, data::writeToPacket);
+            Interactable.playButtonClickSound();
+            return Result.SUCCESS;
+
+        } else if (this.syncHandler.canLockFluid()) {
+            this.syncHandler.toggleLockFluid();
             Interactable.playButtonClickSound();
             return Result.SUCCESS;
         }
@@ -158,6 +165,14 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     @Override
     protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
         return theme.getFluidSlotTheme();
+    }
+
+    public int getSlotHoverColor() {
+        WidgetTheme theme = getWidgetTheme(getContext().getTheme());
+        if (theme instanceof WidgetSlotTheme slotTheme) {
+            return slotTheme.getSlotHoverColor();
+        }
+        return ITheme.getDefault().getFluidSlotTheme().getSlotHoverColor();
     }
 
     public static void addIngotMolFluidTooltip(FluidStack fluidStack, RichTooltip tooltip) {
@@ -190,8 +205,9 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             return stack;
         } else if (ingredient instanceof ItemStack stack &&
                 stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
-                    var handler = GTUtility.copy(1, stack)
-                            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                    if (stack.getCount() > 1) stack = GTUtility.copy(1, stack);
+
+                    var handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
                     return handler == null ? null : handler.drain(Integer.MAX_VALUE, true);
                 }
         return null;

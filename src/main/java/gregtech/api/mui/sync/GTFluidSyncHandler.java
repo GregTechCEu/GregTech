@@ -10,8 +10,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
@@ -55,10 +55,10 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void lockFluid(FluidStack stack) {
-        if (getFluid() != null && getFluid().amount != 0) return;
-        this.onLocked.accept(stack);
-        this.phantomFluid = stack;
-        syncToServer(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, stack));
+        final var f = stack != null && stack.amount < 1 ? null : stack;
+        this.onLocked.accept(f);
+        this.phantomFluid = f;
+        syncToServer(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, f));
     }
 
     public GTFluidSyncHandler onLockFluid(Consumer<FluidStack> onLocked) {
@@ -67,9 +67,6 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public FluidStack getFluid() {
-        if (this.tank.getFluid() == null)
-            return phantomFluid;
-
         return this.tank.getFluid();
     }
 
@@ -180,8 +177,7 @@ public class GTFluidSyncHandler extends SyncHandler {
         ItemStack currentStack = player.inventory.getItemStack();
         FluidStack currentFluid = this.tank.getFluid();
         if (currentStack.getCount() > 1) currentStack = GTUtility.copy(1, currentStack);
-        IFluidHandlerItem fluidHandlerItem = currentStack
-                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        var fluidHandlerItem = FluidUtil.getFluidHandler(currentStack);
 
         switch (data.mouseButton) {
             case 0 -> {
@@ -273,8 +269,7 @@ public class GTFluidSyncHandler extends SyncHandler {
             return ItemStack.EMPTY;
 
         ItemStack useStack = GTUtility.copy(1, playerHeldStack);
-        IFluidHandlerItem fluidHandlerItem = useStack
-                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        var fluidHandlerItem = FluidUtil.getFluidHandler(useStack);
         if (fluidHandlerItem == null) return ItemStack.EMPTY;
 
         FluidStack tankFluid = tank.getFluid();
@@ -421,5 +416,32 @@ public class GTFluidSyncHandler extends SyncHandler {
         EntityPlayer player = getSyncManager().getPlayer();
         player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
                 soundEvent, SoundCategory.PLAYERS, 1.0F, 1.0F);
+    }
+
+    public FluidStack getPhantomFluid() {
+        return isPhantom() ? phantomFluid : null;
+    }
+
+    public FluidStack getLockedFluid() {
+        return !isPhantom() ? phantomFluid : null;
+    }
+
+    public boolean canLockFluid() {
+        return onLocked != null;
+    }
+
+    public void toggleLockFluid() {
+        if (getLockedFluid() != null) {
+            lockFluid(null);
+            return;
+        }
+        var s = getSyncManager().getCursorItem();
+        if (s.isEmpty()) return;
+        if (s.getCount() > 1) s = GTUtility.copy(1, s);
+        var h = FluidUtil.getFluidHandler(s);
+        if (h == null) return;
+        var f = h.getTankProperties()[0].getContents();
+        if (f == null) return;
+        lockFluid(f.copy());
     }
 }
