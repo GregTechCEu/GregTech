@@ -525,7 +525,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 this::getConveyorMode, this::setConveyorMode);
 
         IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-        throughput.updateCacheFromSource(true);
 
         StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue,
                 throughput::setStringValue);

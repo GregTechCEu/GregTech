@@ -149,6 +149,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected Flow createWidgets(GuiData data, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
+        // todo unneeded cast in mui2 rc3
         var entrySelectorSH = (PanelSyncHandler) syncManager.panel("entry_selector", entrySelector(getType()), true);
 
         return Flow.column().coverChildrenHeight().top(24)

@@ -203,18 +203,13 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
         var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
-        manualIOmode.updateCacheFromSource(true);
 
         var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-        throughput.updateCacheFromSource(true);
 
         var throughputString = new StringSyncValue(
-                throughput::getStringValue,
-                throughput::setStringValue);
-        throughputString.updateCacheFromSource(true);
+                throughput::getStringValue, throughput::setStringValue);
 
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
-        pumpMode.updateCacheFromSource(true);
 
         syncManager.syncValue("manual_io", manualIOmode);
         syncManager.syncValue("pump_mode", pumpMode);
