@@ -241,8 +241,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmount(false)
-                .canDrainSlot(false)
-                .canFillSlot(false)
+                .accessibility(false, false)
                 .onLockFluid(stack -> {
                     if (!isExportHatch) return;
 
@@ -269,7 +268,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .pos(7, 63)
                         // todo lock overlay
                         .value(new BooleanSyncValue(this::isLocked, this::setLocked))
-                        // todo tooltip is not working for some reasone
+                        // todo tooltip is not working for some reason, fixed in rc3
                         .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.fluid_lock.tooltip"))))
 
                 // import specific

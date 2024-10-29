@@ -92,18 +92,14 @@ public class GTFluidSyncHandler extends SyncHandler {
         return this.tank.getCapacity();
     }
 
-    public GTFluidSyncHandler canDrainSlot(boolean canDrainSlot) {
-        this.canDrainSlot = canDrainSlot;
+    public GTFluidSyncHandler accessibility(boolean canDrain, boolean canFill) {
+        this.canDrainSlot = canDrain;
+        this.canFillSlot = canFill;
         return this;
     }
 
     public boolean canDrainSlot() {
         return this.canDrainSlot;
-    }
-
-    public GTFluidSyncHandler canFillSlot(boolean canFillSlot) {
-        this.canFillSlot = canFillSlot;
-        return this;
     }
 
     public boolean canFillSlot() {
