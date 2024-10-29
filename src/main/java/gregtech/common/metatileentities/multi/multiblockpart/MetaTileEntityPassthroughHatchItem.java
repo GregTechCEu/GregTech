@@ -18,6 +18,7 @@ import gregtech.client.renderer.texture.Textures;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -34,7 +35,6 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
@@ -160,9 +160,6 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         }
 
         BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
-        guiSyncManager.syncValue("working_state", workingStateValue);
-
-        // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
@@ -174,8 +171,7 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
                         .matrix(widgets))
                 .child(new ToggleButton()
                         .top(18 * 4).left(18 * 8 + 7)
-                        .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
-                                workingStateValue::setBoolValue))
+                        .value(workingStateValue)
                         .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
                         .tooltipBuilder(t -> t.setAutoUpdate(true)
                                 .addLine(workingStateValue.getBoolValue() ?
@@ -198,8 +194,6 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
         // Passthrough hatches before this change won't have WorkingEnabled at all, so we need to check if it exists
         if (tag.hasKey("WorkingEnabled")) {
             this.workingEnabled = tag.getBoolean("WorkingEnabled");
-        } else {
-            this.workingEnabled = true;
         }
     }
 
@@ -249,5 +243,19 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+
+        buf.writeBoolean(workingEnabled);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+
+        this.workingEnabled = buf.readBoolean();
     }
 }
