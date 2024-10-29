@@ -219,9 +219,6 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
             return filter.createPopupPanel(syncManager);
         }, true);
 
-        var filterButton = new ButtonWidget<>();
-        filterButton.setEnabled(hasFilter());
-
         return Flow.row().coverChildrenHeight()
                 .marginBottom(2).widthRel(1f)
                 .child(new ItemSlot()
@@ -235,7 +232,7 @@ public abstract class BaseFilterContainer extends ItemStackHandler {
                                 }))
                         .size(18).marginRight(2)
                         .background(GTGuiTextures.SLOT, GTGuiTextures.FILTER_SLOT_OVERLAY.asIcon().size(16)))
-                .child(filterButton
+                .child(new ButtonWidget<>()
                         .background(GTGuiTextures.MC_BUTTON, GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
                         .hoverBackground(GuiTextures.MC_BUTTON_HOVERED,
                                 GTGuiTextures.FILTER_SETTINGS_OVERLAY.asIcon().size(16))
