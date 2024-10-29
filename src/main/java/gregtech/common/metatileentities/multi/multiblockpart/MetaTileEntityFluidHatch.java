@@ -4,9 +4,6 @@ import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -16,22 +13,17 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
-import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -57,7 +49,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
@@ -228,11 +219,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return createTankUI(fluidTank, getMetaFullName(), entityPlayer).build(getHolder(), entityPlayer);
-    }
-
-    @Override
     public boolean usesMui2() {
         return true;
     }
@@ -326,96 +312,11 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 .bindPlayerInventory();
     }
 
-    public ModularUI.Builder createTankUI(IFluidTank fluidTank, String title, EntityPlayer entityPlayer) {
-        // Create base builder/widget references
-        Builder builder = ModularUI.defaultBuilder();
-        TankWidget tankWidget;
-
-        // Add input/output-specific widgets
-        if (isExportHatch) {
-            tankWidget = new PhantomTankWidget(fluidTank, 69, 43, 18, 18,
-                    () -> this.lockedFluid,
-                    f -> {
-                        if (this.fluidTank.getFluidAmount() != 0) {
-                            return;
-                        }
-                        if (f == null) {
-                            this.setLocked(false);
-                            this.lockedFluid = null;
-                        } else {
-                            this.setLocked(true);
-                            this.lockedFluid = f.copy();
-                            this.lockedFluid.amount = 1;
-                        }
-                    })
-                            .setAlwaysShowFull(true).setDrawHoveringText(false);
-
-            builder.image(7, 16, 81, 46, GuiTextures.DISPLAY)
-                    .widget(new SlotWidget(exportItems, 0, 90, 44, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-                    .widget(new ToggleButtonWidget(7, 64, 18, 18,
-                            GuiTextures.BUTTON_LOCK, this::isLocked, this::setLocked)
-                                    .setTooltipText("gregtech.gui.fluid_lock.tooltip")
-                                    .shouldUseBaseBackground());
-        } else {
-            tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
-                    .setAlwaysShowFull(true).setDrawHoveringText(false);
-
-            builder.image(7, 16, 81, 55, GuiTextures.DISPLAY)
-                    .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-                    .widget(new SlotWidget(exportItems, 0, 90, 53, true, false)
-                            .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
-        }
-
-        // Add general widgets
-        return builder.label(6, 6, title)
-                .label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF)
-                .widget(new AdvancedTextWidget(11, 30, getFluidAmountText(tankWidget), 0xFFFFFF))
-                .widget(new AdvancedTextWidget(11, 40, getFluidNameText(tankWidget), 0xFFFFFF))
-                .widget(tankWidget)
-                .widget(new FluidContainerSlotWidget(importItems, 0, 90, 16, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-                .bindPlayerInventory(entityPlayer.inventory);
-    }
-
-    private Supplier<String> getFluidName(GTFluidSyncHandler syncHandler) {
+    protected Supplier<String> getFluidName(GTFluidSyncHandler syncHandler) {
         return () -> {
             if (syncHandler.getFluid() == null && lockedFluid != null)
                 return lockedFluid.getLocalizedName();
             return syncHandler.getFluidLocalizedName();
-        };
-    }
-
-    protected Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
-        return (list) -> {
-            TextComponentTranslation translation = tankWidget.getFluidTextComponent();
-            // If there is no fluid in the tank, but there is a locked fluid
-            if (translation == null) {
-                translation = GTUtility.getFluidTranslation(this.lockedFluid);
-            }
-
-            if (translation != null) {
-                list.add(translation);
-            }
-        };
-    }
-
-    protected Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
-        return (list) -> {
-            String fluidAmount = "";
-
-            // Nothing in the tank
-            if (tankWidget.getFormattedFluidAmount().equals("0")) {
-                // Display Zero to show information about the locked fluid
-                if (this.lockedFluid != null) {
-                    fluidAmount = "0";
-                }
-            } else {
-                fluidAmount = tankWidget.getFormattedFluidAmount();
-            }
-            if (!fluidAmount.isEmpty()) {
-                list.add(new TextComponentString(fluidAmount));
-            }
         };
     }
 
