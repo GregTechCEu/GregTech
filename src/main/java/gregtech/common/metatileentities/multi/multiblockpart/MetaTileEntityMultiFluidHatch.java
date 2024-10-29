@@ -223,8 +223,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotif
                         .top(17)
                         .mapTo(rowSize, fluidSlots,
                                 (i, slot) -> slot.syncHandler(GTFluidSlot.sync(fluidTankList.getTankAt(i))
-                                        .canDrainSlot(true)
-                                        .canFillSlot(!isExportHatch)))
+                                        .accessibility(true, !isExportHatch)))
                         .coverChildren())
                 .bindPlayerInventory();
     }

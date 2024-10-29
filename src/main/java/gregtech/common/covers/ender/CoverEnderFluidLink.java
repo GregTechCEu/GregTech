@@ -120,8 +120,7 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     @Override
     protected IWidget createSlotWidget(VirtualTank entry) {
         var fluidTank = GTFluidSlot.sync(entry)
-                .canFillSlot(false)
-                .canDrainSlot(false);
+                .accessibility(false, false);
 
         return new GTFluidSlot()
                 .size(18)
