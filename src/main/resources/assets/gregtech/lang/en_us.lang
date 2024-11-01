@@ -39,6 +39,10 @@ death.attack.screwdriver_lv=%s had their screws removed by %s
 
 enchantment.disjunction=Disjunction
 
+gregtech.jei.remove_recipe.tooltip=Copies a %s Snippet to Remove this Recipe
+gregtech.jei.ct_recipe.tooltip=CraftTweaker Recipe
+gregtech.jei.gs_recipe.tooltip=GroovyScript Recipe
+
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.multiblock.steam.low_steam=Not enough Steam to run!
@@ -53,6 +57,13 @@ gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Req
 gregtech.multiblock.require_steam_parts=Requires Steam Hatches and Buses!
 gregtech.multiblock.steam_.duration_modifier=Takes §f1.5x §7base duration to process, not affected by number of items.
 
+gregtech.top.quantum_status.label=Status:
+gregtech.top.quantum_status.powered=§bOnline
+gregtech.top.quantum_status.connected=§cNo Power
+gregtech.top.quantum_status.disconnected=Not connected
+gregtech.top.quantum_controller.no_hatches=§cNo Energy Hatches Connected
+gregtech.top.quantum_controller.no_power=§cNo Power
+
 gregtech.top.working_disabled=Working Disabled
 
 gregtech.top.energy_consumption=Using
@@ -62,7 +73,8 @@ gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
 gregtech.top.transform_input=Input:
 gregtech.top.transform_output=Output:
-gregtech.top.steam_heating_up=Heating up
+gregtech.top.steam_heating_up=Heating Up:
+gregtech.top.steam_cooling_down=Cooling Down
 gregtech.top.steam_no_water=No Water
 
 gregtech.top.convert_eu=Converting §eEU§r -> §cFE§r
@@ -2479,6 +2491,10 @@ behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking
 behavior.tricorder.mte_owner=Owner: %s
 behavior.tricorder.mte_owner_offline=Owner is Offline or Offworld!
 behavior.tricorder.mte_owner_null=This wasn't placed by a player!
+behavior.tricorder.quantum_controller.usage=Using %s EU/t (%s)
+behavior.tricorder.quantum_controller.connected_items=Connected item storages: %s
+behavior.tricorder.quantum_controller.connected_fluids=Connected fluid storages: %s
+behavior.tricorder.quantum_storage.usage=Contributing %s EU/t to Quantum Controller
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
@@ -4355,6 +4371,7 @@ gregtech.machine.alarm.tooltip=Plays a Sound when given a Redstone signal
 
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
+gregtech.machine.super_chest.ulv.name=Primitive Chest I
 gregtech.machine.super_chest.lv.name=Super Chest I
 gregtech.machine.super_chest.mv.name=Super Chest II
 gregtech.machine.super_chest.hv.name=Super Chest III
@@ -4370,6 +4387,7 @@ gregtech.machine.quantum_chest.items_stored=Item Amount:
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids
 gregtech.machine.quantum_tank.tooltip.voiding_enabled=Excess Fluid Voiding §aEnabled
+gregtech.machine.super_tank.ulv.name=Primitive Tank I
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
 gregtech.machine.super_tank.hv.name=Super Tank III
@@ -4380,6 +4398,16 @@ gregtech.machine.quantum_tank.luv.name=Quantum Tank II
 gregtech.machine.quantum_tank.zpm.name=Quantum Tank III
 gregtech.machine.quantum_tank.uv.name=Quantum Tank IV
 gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
+
+#Quantum Storage Controller
+gregtech.machine.quantum_storage_controller.name=Quantum Storage Controller
+gregtech.machine.quantum_storage_controller.tooltip=Heart of the Quantum Storage Network/nConnect Energy Hatches to power the Quantum Storage Network
+gregtech.machine.quantum_storage_proxy.name=Quantum Storage Proxy
+gregtech.machine.quantum_storage_proxy.tooltip=Proxies the Quantum Storage Network's inventory
+gregtech.machine.quantum_storage_extender.name=Quantum Storage Extender
+gregtech.machine.quantum_storage_extender.tooltip=Extends the Quantum Storage Network to other chests/tanks
+gregtech.machine.quantum_storage.connected=Connected to Quantum Controller at [%d, %d, %d]/n/nClick to highlight the controller
+gregtech.machine.quantum_storage.disconnected=Not Connected
 
 #Buffers
 gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids
