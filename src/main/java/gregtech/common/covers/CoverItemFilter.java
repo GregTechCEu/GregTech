@@ -240,10 +240,11 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
             if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT && allowFlow)
                 return super.insertItem(slot, stack, simulate);
 
-            // otherwise test
+            // if set to insert or both, test the stack
             if (getFilterMode() != ItemFilterMode.FILTER_EXTRACT && itemFilterContainer.test(stack))
                 return super.insertItem(slot, stack, simulate);
 
+            // otherwise fail
             return stack;
         }
 
@@ -254,10 +255,11 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
             if (getFilterMode() == ItemFilterMode.FILTER_INSERT && allowFlow)
                 return super.extractItem(slot, amount, simulate);
 
-            // otherwise test
-            if (getFilterMode() != ItemFilterMode.FILTER_EXTRACT && itemFilterContainer.test(getStackInSlot(slot)))
+            // if set to extract or both, test stack
+            if (getFilterMode() != ItemFilterMode.FILTER_INSERT && itemFilterContainer.test(getStackInSlot(slot)))
                 return super.extractItem(slot, amount, simulate);
 
+            // otherwise fail
             return ItemStack.EMPTY;
         }
     }

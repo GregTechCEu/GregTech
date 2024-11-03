@@ -235,10 +235,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
             if (getFilterMode() == FluidFilterMode.FILTER_DRAIN && allowFlow)
                 return super.fill(resource, doFill);
 
-            // otherwise test
+            // if set to insert or both, test the stack
             if (getFilterMode() != FluidFilterMode.FILTER_DRAIN && fluidFilterContainer.test(resource))
                 return super.fill(resource, doFill);
 
+            // otherwise fail
             return 0;
         }
 
@@ -248,10 +249,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
             if (getFilterMode() == FluidFilterMode.FILTER_FILL && allowFlow)
                 return super.drain(resource, doDrain);
 
-            // otherwise test
+            // if set to extract or both, test stack
             if (getFilterMode() != FluidFilterMode.FILTER_FILL && fluidFilterContainer.test(resource))
                 return super.drain(resource, doDrain);
 
+            // otherwise fail
             return null;
         }
 
