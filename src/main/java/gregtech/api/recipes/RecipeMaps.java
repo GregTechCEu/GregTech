@@ -1454,6 +1454,27 @@ public final class RecipeMaps {
      * Example:
      *
      * <pre>
+     * RecipeMaps.INDUSTRIAL_COOLING_RECIPES.recipeBuilder()
+     *         .fluidInputs(Steam.getFluid(160000))
+     *         .fluidInputs(DistilledWater.getFluid(1000))
+     *         .duration(360).buildAndRegister();
+     * </pre>
+     *
+     * Any Recipe added to Industrial Cooling not specifying an <B>EUt</B> value will default to 1920.
+     */
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> INDUSTRIAL_COOLING_RECIPES = new RecipeMapBuilder<>(
+            "industrial_cooling",
+            new SimpleRecipeBuilder().EUt(VA[EV]))
+                    .fluidInputs(1)
+                    .fluidOutputs(1)
+                    .sound(GTSoundEvents.COOLING)
+                    .build();
+
+    /**
+     * Example:
+     *
+     * <pre>
      * RecipeMap.WIREMILL_RECIPES.recipeBuilder()
      *         .input(OrePrefix.ingot, Materials.Iron)
      *         .output(OrePrefix.wireGtSingle, Materials.Iron, 2)

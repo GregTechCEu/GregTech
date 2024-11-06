@@ -3,9 +3,10 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.MultiMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -21,10 +22,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
+public class MetaTileEntityVacuumFreezer extends MultiMapMultiblockController {
 
     public MetaTileEntityVacuumFreezer(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, RecipeMaps.VACUUM_RECIPES);
+        super(metaTileEntityId, new RecipeMap[] { RecipeMaps.VACUUM_RECIPES, RecipeMaps.INDUSTRIAL_COOLING_RECIPES });
     }
 
     @Override

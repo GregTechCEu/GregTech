@@ -507,5 +507,12 @@ public class MiscRecipeLoader {
                 .input(ring, Steel, 2)
                 .output(STEEL_MINECART_WHEELS)
                 .duration(60).EUt(20).buildAndRegister();
+
+        // Industrial cooling
+
+        INDUSTRIAL_COOLING_RECIPES.recipeBuilder()
+                .fluidInputs(Steam.getFluid(160000))
+                .fluidInputs(DistilledWater.getFluid(1000))
+                .duration(360).buildAndRegister();
     }
 }
