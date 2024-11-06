@@ -146,7 +146,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .bindPlayerInventory();
     }
 
-    protected Flow createWidgets(GuiData data, PanelSyncManager syncManager) {
+    public @NotNull IWidget createUI(ModularPanel panel, PanelSyncManager manager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
         var entrySelectorSH = syncManager.panel("entry_selector", entrySelector(getType()), true);
