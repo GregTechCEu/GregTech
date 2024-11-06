@@ -138,19 +138,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        var panel = GTGuis.createPanel(this, 176, 192);
-
-        return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createWidgets(panel, guiSyncManager))
-                .bindPlayerInventory();
-    }
-
-    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
+    public @NotNull IWidget createUI(ModularPanel panel, PanelSyncManager manager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
         var entrySelectorSH = createEntrySelector(panel);
-        syncManager.syncValue("entry_selector", entrySelectorSH);
+        manager.syncValue("entry_selector", entrySelectorSH);
 
         return new Column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
