@@ -1,0 +1,107 @@
+package gregtech.mixins.mui2;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.ItemHandlerHelper;
+
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.io.IOException;
+
+@Mixin(value = ItemSlotSH.class, remap = false)
+public abstract class ItemSlotSHMixin extends SyncHandler {
+
+    @Shadow
+    protected abstract void phantomScroll(MouseData mouseData);
+
+    @Shadow
+    public abstract void setEnabled(boolean enabled, boolean sync);
+
+    @Shadow
+    public abstract boolean isPhantom();
+
+    @Shadow
+    private ItemStack lastStoredPhantomItem;
+
+    @Shadow
+    public abstract ModularSlot getSlot();
+
+    @Shadow
+    public abstract void incrementStackCount(int amount);
+
+    /**
+     * @author GTCEu - Ghzdude
+     * @reason Implement <a href="https://github.com/CleanroomMC/ModularUI/pull/90">MUI2 PR#90</a>
+     */
+    @Overwrite
+    public void readOnServer(int id, PacketBuffer buf) throws IOException {
+        if (id == 2) {
+            phantomClick(MouseData.readPacket(buf));
+        } else if (id == 3) {
+            phantomScroll(MouseData.readPacket(buf));
+        } else if (id == 4) {
+            setEnabled(buf.readBoolean(), false);
+        } else if (id == 5) {
+            if (!isPhantom()) return;
+            gregTech$phantomClick(MouseData.create(0), buf.readItemStack());
+        }
+    }
+
+    /**
+     * @author GTCEu - Ghzdude
+     * @reason Implement <a href="https://github.com/CleanroomMC/ModularUI/pull/90">MUI2 PR#90</a>
+     */
+    @Overwrite
+    protected void phantomClick(MouseData mouseData) {
+        gregTech$phantomClick(mouseData, getSyncManager().getCursorItem());
+    }
+
+    @Unique
+    protected void gregTech$phantomClick(MouseData mouseData, ItemStack cursorStack) {
+        ItemStack slotStack = getSlot().getStack();
+        ItemStack stackToPut;
+        if (!cursorStack.isEmpty() && !slotStack.isEmpty() &&
+                !ItemHandlerHelper.canItemStacksStack(cursorStack, slotStack)) {
+            stackToPut = cursorStack.copy();
+            if (mouseData.mouseButton == 1) {
+                stackToPut.setCount(1);
+            }
+            stackToPut.setCount(Math.min(stackToPut.getCount(), getSlot().getItemStackLimit(stackToPut)));
+            getSlot().putStack(stackToPut);
+            this.lastStoredPhantomItem = stackToPut.copy();
+        } else if (slotStack.isEmpty()) {
+            if (cursorStack.isEmpty()) {
+                if (mouseData.mouseButton == 1 && !this.lastStoredPhantomItem.isEmpty()) {
+                    stackToPut = this.lastStoredPhantomItem.copy();
+                } else {
+                    return;
+                }
+            } else {
+                stackToPut = cursorStack.copy();
+            }
+            if (mouseData.mouseButton == 1) {
+                stackToPut.setCount(1);
+            }
+            stackToPut.setCount(Math.min(stackToPut.getCount(), getSlot().getItemStackLimit(stackToPut)));
+            getSlot().putStack(stackToPut);
+            this.lastStoredPhantomItem = stackToPut.copy();
+        } else {
+            if (mouseData.mouseButton == 0) {
+                if (mouseData.shift) {
+                    getSlot().putStack(ItemStack.EMPTY);
+                } else {
+                    incrementStackCount(-1);
+                }
+            } else if (mouseData.mouseButton == 1) {
+                incrementStackCount(1);
+            }
+        }
+    }
+}
