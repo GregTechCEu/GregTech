@@ -4,19 +4,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.ItemSlotSH;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
 
 import java.io.IOException;
 
 @Mixin(value = ItemSlotSH.class, remap = false)
 public abstract class ItemSlotSHMixin extends SyncHandler {
+
+    @Unique
+    private boolean gregTech$registered;
 
     @Shadow
     protected abstract void phantomScroll(MouseData mouseData);
@@ -35,6 +42,17 @@ public abstract class ItemSlotSHMixin extends SyncHandler {
 
     @Shadow
     public abstract void incrementStackCount(int amount);
+
+    @WrapOperation(method = "init",
+                   at = @At(value = "INVOKE",
+                            target = "Lcom/cleanroommc/modularui/screen/ModularContainer;registerSlot(Ljava/lang/String;Lcom/cleanroommc/modularui/widgets/slot/ModularSlot;)V"))
+    protected void wrapRegister(ModularContainer instance, String slotGroup, ModularSlot modularSlot,
+                                Operation<Void> original) {
+        if (!gregTech$registered) {
+            original.call(instance, slotGroup, modularSlot);
+            gregTech$registered = true;
+        }
+    }
 
     /**
      * @author GTCEu - Ghzdude

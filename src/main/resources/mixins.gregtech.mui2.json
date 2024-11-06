@@ -9,10 +9,16 @@
   },
   "mixins": [
     "ItemSlotSHMixin",
+    "PanelSyncHandlerMixin",
+    "PanelSyncManagerMixin",
+    "StyledTextMixin",
+    "TextWidgetMixin",
     "ToggleButtonMixin",
     "TooltipMixin",
     "TooltipMixin$RichTextWidgetMixin"
   ],
-  "client": [],
+  "client": [
+    "ClientEventHandlerMixin"
+  ],
   "server": []
 }
