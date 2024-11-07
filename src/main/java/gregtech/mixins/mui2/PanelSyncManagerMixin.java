@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-@Mixin(PanelSyncManager.class)
+@Mixin(value = PanelSyncManager.class, remap = false)
 public abstract class PanelSyncManagerMixin {
 
     @Shadow

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Mixin(PanelSyncHandler.class)
+@Mixin(value = PanelSyncHandler.class, remap = false)
 public abstract class PanelSyncHandlerMixin {
 
     @Shadow
