@@ -62,6 +62,7 @@ import gregtech.common.metatileentities.multi.electric.MetaTileEntityHPCA;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityImplosionCompressor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeChemicalReactor;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityLargeMiner;
+import gregtech.common.metatileentities.multi.electric.MetaTileEntityMechanicalDraftCooler;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityMultiSmelter;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityNetworkSwitch;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
@@ -340,6 +341,8 @@ public class MetaTileEntities {
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
     public static MetaTileEntityNaturalDraftCooler SMALL_NATURAL_DRAFT_COOLER;
+    public static MetaTileEntityMechanicalDraftCooler WET_MECHANICAL_DRAFT_COOLER;
+    public static MetaTileEntityMechanicalDraftCooler DRY_MECHANICAL_DRAFT_COOLER;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -784,6 +787,11 @@ public class MetaTileEntities {
 
         SMALL_NATURAL_DRAFT_COOLER = registerMetaTileEntity(1043,
                 new MetaTileEntityNaturalDraftCooler(gregtechId("natural_draft_cooler.small"), 1));
+        // 1044 and 1045 reserved for medium and large natural draft
+        WET_MECHANICAL_DRAFT_COOLER = registerMetaTileEntity(1046,
+                new MetaTileEntityMechanicalDraftCooler(gregtechId("mechanical_draft_cooler.wet"), false));
+        DRY_MECHANICAL_DRAFT_COOLER = registerMetaTileEntity(1047,
+                new MetaTileEntityMechanicalDraftCooler(gregtechId("mechanical_draft_cooler.dry"), true));
 
         // MISC MTE's START: IDs 1150-2000
 

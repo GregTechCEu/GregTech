@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -20,15 +19,12 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMultiblockCasing;
@@ -40,6 +36,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -66,19 +63,7 @@ public class MetaTileEntityNaturalDraftCooler extends RecipeMapMultiblockControl
     public MetaTileEntityNaturalDraftCooler(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.INDUSTRIAL_COOLING_RECIPES);
         this.tier = tier;
-        this.recipeMapWorkable = new MultiblockRecipeLogic(this) {
-
-            @Override
-            protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
-                ocParams.setDuration((int) Math
-                        .max(ocParams.duration() * getDurationModifier(getWorld().getBiome(getPos()), getPos()), 0));
-            }
-
-            @Override
-            public boolean isAllowOverclocking() {
-                return false;
-            }
-        };
+        this.recipeMapWorkable.setAllowOverclocking(false);
     }
 
     @Override
@@ -107,12 +92,14 @@ public class MetaTileEntityNaturalDraftCooler extends RecipeMapMultiblockControl
             }
         }
         this.recipeMapWorkable.setParallelLimit((int) Math.pow((1 + tier), pow));
+        this.recipeMapWorkable.setSpeedBonus(getDurationModifier(getWorld().getBiome(getPos()), getPos()));
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
         this.recipeMapWorkable.setParallelLimit(1);
+        this.recipeMapWorkable.setSpeedBonus(1);
     }
 
     @Override
@@ -334,21 +321,7 @@ public class MetaTileEntityNaturalDraftCooler extends RecipeMapMultiblockControl
                         "######   ######",
                         "###############",
                         "###############")
-                .aisle("###############",
-                        "###############",
-                        "######   ######",
-                        "####       ####",
-                        "###         ###",
-                        "###         ###",
-                        "##           ##",
-                        "##           ##",
-                        "##           ##",
-                        "###         ###",
-                        "###         ###",
-                        "####       ####",
-                        "######   ######",
-                        "###############",
-                        "###############")
+                .setRepeatable(2)
                 .where('X', selfPredicate())
                 .where('C', states(getConcreteStates()))
                 .where('Z', states(getConcreteStates()).setMinGlobalLimited(200)
@@ -373,12 +346,12 @@ public class MetaTileEntityNaturalDraftCooler extends RecipeMapMultiblockControl
     }
 
     @NotNull
-    protected static IBlockState getBaffleState() {
+    protected IBlockState getBaffleState() {
         return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.PLASTIC_BAFFLES);
     }
 
     @NotNull
-    protected static Material[] getFrameMaterials() {
+    protected Material[] getFrameMaterials() {
         return new Material[] { Materials.Steel };
     }
 
@@ -387,7 +360,39 @@ public class MetaTileEntityNaturalDraftCooler extends RecipeMapMultiblockControl
         super.update();
 
         if (this.isActive() && getWorld().isRemote) {
-            VanillaParticleEffects.NATURAL_DRAFT_EFFECTS.runEffect(this);
+            playParticleEffects();
+        }
+    }
+
+    protected void playParticleEffects() {
+        if (this.getWorld() == null || this.getPos() == null) return;
+        EnumFacing back = RelativeDirection.BACK.getRelativeFacing(this.getFrontFacing(), this.getUpwardsFacing(),
+                this.isFlipped());
+        BlockPos center = this.getPos().offset(back, 7);
+        double xC = center.getX() + 0.5;
+        double zC = center.getZ() + 0.5;
+        double yLow = center.getY() + 4.5;
+        double yHigh = center.getY() + 7;
+
+        for (int i = 0; i < 100; i++) {
+            float x = GTValues.RNG.nextFloat() * 8.8f - 4.4f;
+            float z = GTValues.RNG.nextFloat() * 8.8f - 4.4f;
+            // kill the spawn attempt if it exceeds the baffle range
+            if ((Math.abs(x) > 3.4 && Math.abs(z) > 2.4) || (Math.abs(x) > 2.4 && Math.abs(z) > 3.4)) {
+                continue;
+            }
+            // low particles - continuous water dripping
+            this.getWorld().spawnParticle(EnumParticleTypes.DRIP_WATER, xC + x, yLow + 0.5,
+                    zC + z, 0, 0, 0);
+
+            // high particles - condensation in the updraft
+            // TODO custom particle that fits the application better
+            double dx = GTValues.RNG.nextGaussian() * 0.05;
+            double dy = GTValues.RNG.nextGaussian() * 0.1 + 0.3;
+            double dz = GTValues.RNG.nextGaussian() * 0.05;
+            float yOffset = GTValues.RNG.nextFloat() * 7;
+            this.getWorld().spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, xC + x, yHigh + yOffset,
+                    zC + z, dx, dy, dz);
         }
     }
 

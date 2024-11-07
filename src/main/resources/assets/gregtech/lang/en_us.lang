@@ -4955,10 +4955,17 @@ gregtech.machine.natural_draft_cooler.small.name=Small Natural Draft Cooler
 gregtech.machine.natural_draft_cooler.medium.name=Medium Natural Draft Cooler
 gregtech.machine.natural_draft_cooler.large.name=Large Natural Draft Cooler
 gregtech.machine.natural_draft_cooler.tooltip.1=§bConsumes Water or Distilled Water instead of EU, but cannot overclock. §f1L = 256EU
-gregtech.machine.natural_draft_cooler.tooltip.2=Parallel limit is multiplied by §a%s §7for every tier above %s §7the highest-tier fluid input hatch is.
+gregtech.machine.natural_draft_cooler.tooltip.2=Parallel limit is multiplied by §5%s §7for every tier above %s §7the highest-tier fluid input hatch is, up to four times.
 gregtech.machine.natural_draft_cooler.tooltip.3=§6Works better in warmer, wetter conditions.
 gregtech.machine.draft_cooler.predicted_performance=§cExpected recipe duration modifier based on current location: §f%sx
 gregtech.machine.draft_cooler.actual_performance=§cRecipe duration modifier based on current location: §f%sx
+
+gregtech.machine.mechanical_draft_cooler.wet.name=Wet Mechanical Draft Cooler
+gregtech.machine.mechanical_draft_cooler.dry.name=Dry Mechanical Draft Cooler
+gregtech.machine.mechanical_draft_cooler.tooltip.wet=§bConsumes Water or Distilled Water as well as EU. §f1L per 256EU
+gregtech.machine.mechanical_draft_cooler.tooltip.1=Overclocks §atriple §7energy consumption instead of §aquadrupling §7it.
+gregtech.machine.mechanical_draft_cooler.tooltip.2=§6Works better in hotter, dryer conditions.
+gregtech.machine.mechanical_draft_cooler.tooltip.3=§6Works better in colder conditions.
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
@@ -5028,6 +5035,8 @@ gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
 gregtech.machine.natural_draft_cooler.small.tooltip=The Iconic One
 gregtech.machine.natural_draft_cooler.medium.tooltip=The Extremely Iconic One
 gregtech.machine.natural_draft_cooler.large.tooltip=The Realistically Sized One
+gregtech.machine.mechanical_draft_cooler.wet.tooltip=The Common One
+gregtech.machine.mechanical_draft_cooler.dry.tooltip=The Universal One
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks

@@ -2,8 +2,6 @@ package gregtech.client.particle;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.util.RelativeDirection;
-import gregtech.common.metatileentities.multi.MetaTileEntityNaturalDraftCooler;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -125,43 +123,6 @@ public enum VanillaParticleEffects implements IMachineParticleEffect {
         float z = pos.getZ() + 0.125F + GTValues.RNG.nextFloat() * 0.875F;
 
         mte.getWorld().spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x, y, z, 0, 0, 0);
-    }),
-
-    NATURAL_DRAFT_EFFECTS(mte -> {
-        if (mte.getWorld() == null || mte.getPos() == null) return;
-        if (!(mte instanceof MetaTileEntityNaturalDraftCooler tower)) return;
-        EnumFacing back = RelativeDirection.BACK.getRelativeFacing(tower.getFrontFacing(), tower.getUpwardsFacing(),
-                tower.isFlipped());
-        BlockPos center = mte.getPos().offset(back, 7);
-        double xC = center.getX() + 0.5;
-        double zC = center.getZ() + 0.5;
-        double yLow = center.getY() + 4.5;
-        double yHigh = center.getY() + 7;
-
-        for (int i = 0; i < 100; i++) {
-            float x = GTValues.RNG.nextFloat() * 8.8f - 4.4f;
-            float z = GTValues.RNG.nextFloat() * 8.8f - 4.4f;
-            // kill the spawn attempt if it exceeds the baffle range
-            if ((Math.abs(x) > 3.4 && Math.abs(z) > 2.4) || (Math.abs(x) > 2.4 && Math.abs(z) > 3.4)) {
-                continue;
-            }
-            // low particles - continuous water dripping
-            mte.getWorld().spawnParticle(EnumParticleTypes.DRIP_WATER, xC + x, yLow + 0.5,
-                    zC + z, 0, 0, 0);
-
-            // high particles - condensation in the updraft
-            // TODO custom particle that fits the application better
-            double dx = GTValues.RNG.nextGaussian() * 0.05;
-            double dy = GTValues.RNG.nextGaussian() * 0.1 + 0.3;
-            double dz = GTValues.RNG.nextGaussian() * 0.05;
-            mte.getWorld().spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, xC + x, yHigh,
-                    zC + z, dx, dy, dz);
-            dx = GTValues.RNG.nextGaussian() * 0.05;
-            dy = GTValues.RNG.nextGaussian() * 0.1 + 0.3;
-            dz = GTValues.RNG.nextGaussian() * 0.05;
-            mte.getWorld().spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, xC + x, yHigh + 5,
-                    zC + z, dx, dy, dz);
-        }
     });
 
     // Wrap for client-sided stuff
