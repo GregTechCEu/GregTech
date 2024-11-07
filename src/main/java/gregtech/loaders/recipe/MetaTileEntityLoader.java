@@ -99,6 +99,10 @@ public class MetaTileEntityLoader {
                 MetaBlocks.METAL_CASING.getItemVariant(BRONZE_BRICKS, ConfigHolder.recipes.casingsPerCraft), "PhP",
                 "PBP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'B',
                 new ItemStack(Blocks.BRICK_BLOCK, 1));
+        ModHandler.addShapedRecipe(true, "casing_brass_bricks",
+                MetaBlocks.METAL_CASING.getItemVariant(BRASS_BRICKS, ConfigHolder.recipes.casingsPerCraft), "PhP",
+                "PBP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Brass), 'B',
+                new ItemStack(Blocks.BRICK_BLOCK, 1));
         ModHandler.addShapedRecipe(true, "casing_steel_solid",
                 MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID, ConfigHolder.recipes.casingsPerCraft), "PhP", "PFP",
                 "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'F',

@@ -512,7 +512,7 @@ public class MiscRecipeLoader {
 
         INDUSTRIAL_COOLING_RECIPES.recipeBuilder()
                 .fluidInputs(Steam.getFluid(160000))
-                .fluidInputs(DistilledWater.getFluid(1000))
+                .fluidOutputs(DistilledWater.getFluid(1000))
                 .duration(360).buildAndRegister();
     }
 }

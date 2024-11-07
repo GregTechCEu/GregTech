@@ -46,6 +46,7 @@ import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRASS_BRICKS;
 import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRONZE_BRICKS;
 import static gregtech.common.blocks.MetaBlocks.METAL_CASING;
 import static gregtech.common.items.MetaItems.*;
@@ -686,6 +687,10 @@ public class MachineRecipeLoader {
                 .inputs(new ItemStack(Blocks.BRICK_BLOCK, 1)).circuitMeta(6)
                 .outputs(METAL_CASING.getItemVariant(BRONZE_BRICKS, ConfigHolder.recipes.casingsPerCraft)).duration(50)
                 .buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Brass, 6)
+                .inputs(new ItemStack(Blocks.BRICK_BLOCK, 1)).circuitMeta(6)
+                .outputs(METAL_CASING.getItemVariant(BRASS_BRICKS, ConfigHolder.recipes.casingsPerCraft)).duration(50)
+                .buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Invar, 6)
                 .input(OrePrefix.frameGt, Materials.Invar, 1).circuitMeta(6).outputs(MetaBlocks.METAL_CASING
                         .getItemVariant(MetalCasingType.INVAR_HEATPROOF, ConfigHolder.recipes.casingsPerCraft))
@@ -827,6 +832,13 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Materials.Steel)
                 .input(OrePrefix.plate, Materials.Polyethylene, 6).fluidInputs(Glass.getFluid(L))
                 .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.CLEANROOM_GLASS,
+                        ConfigHolder.recipes.casingsPerCraft))
+                .duration(200).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(48).input(OrePrefix.frameGt, Polytetrafluoroethylene)
+                .input(OrePrefix.plate, PolyvinylChloride, 4).fluidInputs(ConstructionFoam.getFluid(400))
+                .outputs(MetaBlocks.MULTIBLOCK_CASING.getItemVariant(
+                        BlockMultiblockCasing.MultiblockCasingType.PLASTIC_BAFFLES,
                         ConfigHolder.recipes.casingsPerCraft))
                 .duration(200).buildAndRegister();
 

@@ -25,6 +25,7 @@ import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
@@ -61,6 +62,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -919,5 +921,20 @@ public class GTUtility {
      */
     public static int safeCastLongToInt(long v) {
         return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    }
+
+    /**
+     * Fetches the client player entity. Will return null if called on the physical server.
+     * 
+     * @return the client player entity
+     */
+    @UnknownNullability
+    public static EntityPlayer getClientPlayer() {
+        try {
+            Class.forName("net.minecraft.client.Minecraft");
+            return net.minecraft.client.Minecraft.getMinecraft().player;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

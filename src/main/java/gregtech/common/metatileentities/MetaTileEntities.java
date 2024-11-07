@@ -44,6 +44,7 @@ import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOvenHatch;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import gregtech.common.metatileentities.multi.MetaTileEntityMultiblockTank;
+import gregtech.common.metatileentities.multi.MetaTileEntityNaturalDraftCooler;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
 import gregtech.common.metatileentities.multi.MetaTileEntityPumpHatch;
@@ -338,6 +339,7 @@ public class MetaTileEntities {
     public static MetaTileEntityNetworkSwitch NETWORK_SWITCH;
     public static MetaTileEntityPowerSubstation POWER_SUBSTATION;
     public static MetaTileEntityActiveTransformer ACTIVE_TRANSFORMER;
+    public static MetaTileEntityNaturalDraftCooler SMALL_NATURAL_DRAFT_COOLER;
 
     // STORAGE SECTION
     public static MetaTileEntityTankValve WOODEN_TANK_VALVE;
@@ -779,6 +781,9 @@ public class MetaTileEntities {
                 new MetaTileEntityPowerSubstation(gregtechId("power_substation")));
         ACTIVE_TRANSFORMER = registerMetaTileEntity(1042,
                 new MetaTileEntityActiveTransformer(gregtechId("active_transformer")));
+
+        SMALL_NATURAL_DRAFT_COOLER = registerMetaTileEntity(1043,
+                new MetaTileEntityNaturalDraftCooler(gregtechId("natural_draft_cooler.small"), 1));
 
         // MISC MTE's START: IDs 1150-2000
 

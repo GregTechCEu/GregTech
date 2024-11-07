@@ -66,6 +66,8 @@ public class Textures {
     // Simple Cube Renderers
     public static final SimpleOverlayRenderer BRONZE_PLATED_BRICKS = new SimpleOverlayRenderer(
             "casings/solid/machine_bronze_plated_bricks");
+    public static final SimpleOverlayRenderer BRASS_PLATED_BRICKS = new SimpleOverlayRenderer(
+            "casings/solid/machine_brass_plated_bricks");
     public static final SimpleOverlayRenderer PRIMITIVE_BRICKS = new SimpleOverlayRenderer(
             "casings/solid/machine_primitive_bricks");
     public static final SimpleOverlayRenderer COKE_BRICKS = new SimpleOverlayRenderer(
@@ -171,6 +173,10 @@ public class Textures {
             "multiblock/pyrolyse_oven");
     public static final OrientedOverlayRenderer VACUUM_FREEZER_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/vacuum_freezer");
+    public static final OrientedOverlayRenderer NATURAL_DRAFT_COOLER_OVERLAY = new OrientedOverlayRenderer(
+            "multiblock/natural_draft_cooler");
+    public static final OrientedOverlayRenderer MECHANICAL_DRAFT_COOLER_OVERLAY = new OrientedOverlayRenderer(
+            "multiblock/mechanical_draft_cooler");
     public static final OrientedOverlayRenderer DISTILLATION_TOWER_OVERLAY = new OrientedOverlayRenderer(
             "multiblock/distillation_tower");
     public static final OrientedOverlayRenderer CRACKING_UNIT_OVERLAY = new OrientedOverlayRenderer(

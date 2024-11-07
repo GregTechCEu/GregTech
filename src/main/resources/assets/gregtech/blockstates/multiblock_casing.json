@@ -73,6 +73,18 @@
         "bot_all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line",
         "top_all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line_bloom"
       }
+    },
+    "active=false,variant=plastic_baffles": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_plastic_baffles"
+      }
+    },
+    "active=true,variant=plastic_baffles": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_plastic_baffles"
+      }
     }
   }
 }

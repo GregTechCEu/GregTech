@@ -2380,6 +2380,7 @@ recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 recipemap.research_station.name=Research Station
+recipemap.industrial_cooling.name=Industrial Cooling
 
 gregtech.recipe.category.arc_furnace_recycling=Arc Furnace Recycling
 gregtech.recipe.category.macerator_recycling=Macerator Recycling
@@ -2693,6 +2694,7 @@ tile.boiler_casing.tungstensteel_firebox.name=Tungstensteel Firebox Casing
 tile.metal_casing.primitive_bricks.name=Firebricks
 tile.metal_casing.coke_bricks.name=Coke Oven Bricks
 tile.metal_casing.bronze_bricks.name=Bronze Machine Casing
+tile.metal_casing.brass_bricks.name=Brass Machine Casing
 tile.metal_casing.invar_heatproof.name=Heat Proof Invar Machine Casing
 tile.metal_casing.aluminium_frostproof.name=Frost Proof Aluminium Machine Casing
 tile.metal_casing.steel_solid.name=Solid Steel Machine Casing
@@ -2749,6 +2751,7 @@ tile.multiblock_casing.extreme_engine_intake.name=Extreme Engine Intake Casing
 tile.multiblock_casing.grate.name=Grate Machine Casing
 tile.multiblock_casing.assembly_control.name=Assembly Control Casing
 tile.multiblock_casing.assembly_line.name=Assembly Line Casing
+tile.multiblock_casing.plastic_baffles.name=Plastic Baffles
 
 # Fusion casing blocks
 tile.fusion_casing.superconductor_coil.name=Superconducting Coil Block
@@ -4948,6 +4951,15 @@ gregtech.machine.high_performance_computing_array.tooltip.2=Used to generate §f
 gregtech.machine.high_performance_computing_array.tooltip.3=Requires HPCA components to generate §fCWU/t§7 (Compute Work Units).
 gregtech.multiblock.high_performance_computing_array.description=The High Performance Computing Array (HPCA) is a multiblock structure used for creating Compute Work Units (CWU/t) for more complex Assembly Line Research Data. The structure has a flexible 3x3 area which can be filled in any way with HPCA components. Different components can provide different amounts of Computation, Cooling, as well as Energy Cost, Coolant Cost, and Heat Production. When used with a Bridge Component, the HPCA can connect to Network Switches for combining and routing Computation from multiple sources to one or more destinations.
 
+gregtech.machine.natural_draft_cooler.small.name=Small Natural Draft Cooler
+gregtech.machine.natural_draft_cooler.medium.name=Medium Natural Draft Cooler
+gregtech.machine.natural_draft_cooler.large.name=Large Natural Draft Cooler
+gregtech.machine.natural_draft_cooler.tooltip.1=§bConsumes Water or Distilled Water instead of EU, but cannot overclock. §f1L = 256EU
+gregtech.machine.natural_draft_cooler.tooltip.2=Parallel limit is multiplied by §a%s §7for every tier above %s §7the highest-tier fluid input hatch is.
+gregtech.machine.natural_draft_cooler.tooltip.3=§6Works better in warmer, wetter conditions.
+gregtech.machine.draft_cooler.predicted_performance=§cExpected recipe duration modifier based on current location: §f%sx
+gregtech.machine.draft_cooler.actual_performance=§cRecipe duration modifier based on current location: §f%sx
+
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
@@ -5013,6 +5025,9 @@ gregtech.machine.fluid_drilling_rig.hv.tooltip=Does not perform Fracking
 gregtech.machine.fluid_drilling_rig.ev.tooltip=Well Drainer
 gregtech.machine.cleanroom.tooltip=Keeping those pesky particles out
 gregtech.machine.charcoal_pile.tooltip=Underground fuel bakery
+gregtech.machine.natural_draft_cooler.small.tooltip=The Iconic One
+gregtech.machine.natural_draft_cooler.medium.tooltip=The Extremely Iconic One
+gregtech.machine.natural_draft_cooler.large.tooltip=The Realistically Sized One
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
