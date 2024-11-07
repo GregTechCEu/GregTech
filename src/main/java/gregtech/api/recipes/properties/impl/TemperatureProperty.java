@@ -1,9 +1,15 @@
-package gregtech.api.recipes.recipeproperties;
+package gregtech.api.recipes.properties.impl;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class TemperatureProperty extends RecipeProperty<Integer> {
+public final class TemperatureProperty extends RecipeProperty<Integer> {
 
     public static final String KEY = "temperature";
 
@@ -26,11 +32,23 @@ public class TemperatureProperty extends RecipeProperty<Integer> {
     public static TemperatureProperty getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new TemperatureProperty();
+            GregTechAPI.RECIPE_PROPERTIES.register(KEY, INSTANCE);
         }
         return INSTANCE;
     }
 
     @Override
+    public @NotNull NBTBase serialize(@NotNull Object value) {
+        return new NBTTagInt(castValue(value));
+    }
+
+    @Override
+    public @NotNull Object deserialize(@NotNull NBTBase nbt) {
+        return ((NBTTagInt) nbt).getInt();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
     public void drawInfo(Minecraft minecraft, int x, int y, int color, Object value) {
         minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.temperature",
                 value, getMinTierForTemperature(castValue(value))), x, y, color);

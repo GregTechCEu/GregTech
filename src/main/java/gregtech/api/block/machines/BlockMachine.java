@@ -206,6 +206,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return ItemStack.EMPTY;
     }
 
+    @NotNull
+    @Override
+    public ItemStack getItem(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
+        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        if (metaTileEntity == null)
+            return ItemStack.EMPTY;
+        return metaTileEntity.getStackForm();
+    }
+
     @Override
     public void addCollisionBoxToList(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
                                       @NotNull AxisAlignedBB entityBox, @NotNull List<AxisAlignedBB> collidingBoxes,
@@ -262,34 +271,38 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                 Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
 
         MetaTileEntity sampleMetaTileEntity = registry.getObjectById(stack.getItemDamage());
-        if (holder != null && sampleMetaTileEntity != null) {
-            // TODO Fix this
-            if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
-                ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
-            }
-            MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
-            var stackTag = stack.getTagCompound();
-            if (stackTag != null && !stackTag.isEmpty()) {
-                if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
-                    var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
-                    String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
-                    if (!customName.isEmpty())
-                        ((MetaTileEntityHolder) holder).setCustomName(customName);
+        if (holder == null || sampleMetaTileEntity == null)
+            return;
 
-                    var mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
-                    List<String> removed = new ArrayList<>();
-                    for (var key : mteTag.getKeySet()) {
-                        var trait = metaTileEntity.getMTETrait(key);
-                        if (trait == null) continue;
+        // TODO Fix this
+        if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
+            ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
+        }
+        var stackTag = stack.getTagCompound();
+        NBTTagCompound mteTag = null;
+        if (stackTag != null && !stackTag.isEmpty()) {
+            if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
+                var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
+                String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
+                if (!customName.isEmpty())
+                    ((MetaTileEntityHolder) holder).setCustomName(customName);
 
-                        removed.add(key);
-                    }
-                    removed.forEach(mteTag::removeTag);
-                    metaTileEntity.readFromNBT(mteTag);
-                } else {
-                    metaTileEntity.initFromItemStackData(stackTag);
+                mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
+                List<String> removed = new ArrayList<>();
+                for (var key : mteTag.getKeySet()) {
+                    var trait = sampleMetaTileEntity.getMTETrait(key);
+                    if (trait == null) continue;
+
+                    removed.add(key);
                 }
+                removed.forEach(mteTag::removeTag);
             }
+        }
+        MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity, mteTag);
+        if (mteTag == null) {
+            if (stackTag != null && !stackTag.isEmpty())
+                metaTileEntity.initFromItemStackData(stackTag);
+
             if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
@@ -305,26 +318,26 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     }
                 }
             }
-            if (Mods.AppliedEnergistics2.isModLoaded()) {
-                if (metaTileEntity.getProxy() != null) {
-                    metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
-                }
-            }
-
-            // Color machines on place if holding spray can in off-hand
-            if (placer instanceof EntityPlayer) {
-                ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i = 0; i < EnumDyeColor.values().length; i++) {
-                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
-                                pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
-                        break;
-                    }
-                }
-            }
-
-            metaTileEntity.onPlacement();
         }
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
+            if (metaTileEntity.getProxy() != null) {
+                metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
+            }
+        }
+
+        // Color machines on place if holding spray can in off-hand
+        if (placer instanceof EntityPlayer) {
+            ItemStack offhand = placer.getHeldItemOffhand();
+            for (int i = 0; i < EnumDyeColor.values().length; i++) {
+                if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                    MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
+                            pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
+                    break;
+                }
+            }
+        }
+
+        metaTileEntity.onPlacement(placer);
     }
 
     @Override
@@ -332,7 +345,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity != null) {
             if (!metaTileEntity.keepsInventory()) {
-                NonNullList<ItemStack> inventoryContents = NonNullList.create();
+                List<ItemStack> inventoryContents = new ArrayList<>();
                 metaTileEntity.clearMachineInventory(inventoryContents);
                 for (ItemStack itemStack : inventoryContents) {
                     Block.spawnAsEntity(worldIn, pos, itemStack);

@@ -8,8 +8,6 @@ on:
     paths:
       - 'gradle/**'
   pull_request:
-    branches:
-      - '*'
     paths:
       - 'gradle/**'
 
@@ -26,4 +24,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation
+        uses: gradle/actions/wrapper-validation@v3

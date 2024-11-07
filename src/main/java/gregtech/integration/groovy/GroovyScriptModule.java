@@ -61,6 +61,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 @Optional.Interface(modid = Mods.Names.GROOVY_SCRIPT,
                     iface = "com.cleanroommc.groovyscript.api.GroovyPlugin",
@@ -100,7 +101,8 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
     @SubscribeEvent
     public static void onMTERegistries(MTEManager.MTERegistryEvent event) {
         // automatically create a registry for groovyscript to store its MTEs
-        GregTechAPI.mteManager.createRegistry(GroovyScriptModule.getPackId());
+        GregTechAPI.mteManager.createRegistry(getPackId());
+        GregTechAPI.MIGRATIONS.registriesMigrator().migrate(getPackId(), IntStream.rangeClosed(32000, Short.MAX_VALUE));
     }
 
     public static boolean isCurrentlyRunning() {
@@ -312,6 +314,7 @@ public class GroovyScriptModule extends IntegrationSubmodule implements GroovyPl
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "materialBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "toolBuilder");
         ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
+        ExpansionHelper.mixinMethod(MaterialEvent.class, GroovyExpansions.class, "addElement");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "toolBuilder");
         ExpansionHelper.mixinMethod(PostMaterialEvent.class, GroovyExpansions.class, "fluidBuilder");
         ExpansionHelper.mixinMethod(FluidBuilder.class, GroovyExpansions.class, "acidic");

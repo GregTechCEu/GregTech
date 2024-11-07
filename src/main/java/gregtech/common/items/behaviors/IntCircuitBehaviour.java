@@ -24,8 +24,8 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.InteractionSyncHandler;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 
@@ -64,7 +64,7 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     }
 
     @Override
-    public ModularPanel buildUI(HandGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         ItemDrawable circuitPreview = new ItemDrawable(guiData.getUsedItemStack());
         for (int i = 0; i <= 32; i++) {
             int finalI = i;

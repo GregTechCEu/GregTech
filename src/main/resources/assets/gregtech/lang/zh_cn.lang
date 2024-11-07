@@ -301,7 +301,7 @@ metaitem.fluid_cell.empty=空
 metaitem.fluid_cell.name=%s单元
 metaitem.fluid_cell.universal.empty=空
 metaitem.fluid_cell.universal.name=%s通用单元
-metaitem.fluid_cell.glass_vial.name=%s玻璃单元
+metaitem.fluid_cell.glass_vial.name=%s玻璃试管
 metaitem.large_fluid_cell.steel.name=%s钢单元
 metaitem.large_fluid_cell.aluminium.name=%s铝单元
 metaitem.large_fluid_cell.stainless_steel.name=%s不锈钢单元
@@ -1572,7 +1572,8 @@ gregtech.material.palladium=钯
 gregtech.material.phosphorus=磷
 gregtech.material.polonium=钋
 gregtech.material.platinum=铂
-gregtech.material.plutonium=钚-239
+gregtech.material.plutonium=钚
+gregtech.material.plutonium_239=钚-239
 gregtech.material.plutonium_241=钚-241
 gregtech.material.potassium=钾
 gregtech.material.praseodymium=镨
@@ -1607,8 +1608,9 @@ gregtech.material.tin=锡
 gregtech.material.titanium=钛
 gregtech.material.tritium=氚
 gregtech.material.tungsten=钨
-gregtech.material.uranium=铀-238
+gregtech.material.uranium=铀
 gregtech.material.uranium_235=铀-235
+gregtech.material.uranium_238=铀-238
 gregtech.material.vanadium=钒
 gregtech.material.xenon=氙
 gregtech.material.ytterbium=镱
@@ -1828,6 +1830,14 @@ gregtech.material.enriched_naquadah_sulfate=硫酸富集硅岩
 gregtech.material.naquadria_sulfate=硫酸超能硅岩
 gregtech.material.pyrochlore=烧绿石
 gregtech.material.rtm_alloy=钌钨钼合金
+gregtech.material.ilmenite_slag=钛铁矿渣
+gregtech.material.zircon=锆石
+gregtech.material.zirconia=氧化锆
+gregtech.material.zirconium_tetrachloride=四氯化锆
+gregtech.material.hafnia=二氧化铪
+gregtech.material.hafnium_tetrachloride=四氯化铪
+gregtech.material.zircaloy_4=锆-4合金
+gregtech.material.inconel_718=因科镍-718
 
 
 # Organic Chemistry Materials
@@ -2041,6 +2051,11 @@ gregtech.material.acidic_naquadria_solution=酸性超能硅岩溶液
 gregtech.material.naquadria_waste=超能硅岩废液
 gregtech.material.lapotron=兰波顿
 gregtech.material.uu_matter=UU物质
+gregtech.material.bauxite_slurry=铝土浆液
+gregtech.material.cracked_bauxite_slurry=裂化铝土浆液
+gregtech.material.bauxite_sludge=铝土泥渣
+gregtech.material.decalcified_bauxite_sludge=脱钙铝土泥渣
+gregtech.material.bauxite_slag=铝土矿渣
 
 
 # Second Degree Materials
@@ -2395,13 +2410,13 @@ entity.ITNT.name=工业TNT
 
 tile.brittle_charcoal.name=脆木炭块
 tile.brittle_charcoal.tooltip.1=产自木炭堆点火器。
-tile.brittle_charcoal.tooltip.2=采掘可掉落木炭。
+tile.brittle_charcoal.tooltip.2=挖掘可掉落木炭。
 
 tile.optical_pipe_normal.name=光缆
 tile.optical_pipe_normal.tooltip1=传递§f算力§7或§f研究数据§7
 
 tile.laser_pipe_normal.name=激光传导线缆
-tile.laser_pipe_normal.tooltip1=无线损地传递能量，只限直线摆放
+tile.laser_pipe_normal.tooltip1=§f无损§7传递能量，仅限直线摆放
 
 metaitem.prospector.lv.name=电动勘探扫描仪（LV）
 metaitem.prospector.hv.name=电动勘探扫描仪（HV）
@@ -2543,7 +2558,7 @@ tile.warning_sign_1.high_pressure_hazard.name=高压力危害警示方块
 
 # Decorative Metal Sheets
 tile.metal_sheet.white.name=白色金属板方块
-tile.metal_sheet.orange.name=橘色金属板方块
+tile.metal_sheet.orange.name=橙色金属板方块
 tile.metal_sheet.magenta.name=品红色金属板方块
 tile.metal_sheet.light_blue.name=淡蓝色金属板方块
 tile.metal_sheet.yellow.name=黄色金属板方块
@@ -2560,7 +2575,7 @@ tile.metal_sheet.red.name=红色金属板方块
 tile.metal_sheet.black.name=黑色金属板方块
 
 tile.large_metal_sheet.white.name=白色粗纹金属板方块
-tile.large_metal_sheet.orange.name=橘色粗纹金属板方块
+tile.large_metal_sheet.orange.name=橙色粗纹金属板方块
 tile.large_metal_sheet.magenta.name=品红色粗纹金属板方块
 tile.large_metal_sheet.light_blue.name=淡蓝色粗纹金属板方块
 tile.large_metal_sheet.yellow.name=黄色粗纹金属板方块
@@ -2577,7 +2592,7 @@ tile.large_metal_sheet.red.name=红色粗纹金属板方块
 tile.large_metal_sheet.black.name=黑色粗纹金属板方块
 
 tile.studs.white.name=白色橡胶混凝土
-tile.studs.orange.name=橘色橡胶混凝土
+tile.studs.orange.name=橙色橡胶混凝土
 tile.studs.magenta.name=品红色橡胶混凝土
 tile.studs.light_blue.name=淡蓝色橡胶混凝土
 tile.studs.yellow.name=黄色橡胶混凝土
@@ -2788,7 +2803,7 @@ gregtech.machine.tank_valve.steel.name=钢制储罐阀门
 gregtech.machine.tank.steel.name=钢制多方块储罐
 
 gregtech.multiblock.tank.tooltip=通过控制器或储罐阀门进行吞吐。
-gregtech.tank_valve.tooltip=用以吞吐多方块储罐中的流体。正面向下时可自动输出。
+gregtech.tank_valve.tooltip=用于吞吐多方块储罐中的流体。正面向下时可自动输出。
 
 gregtech.machine.clipboard.name=写字板
 
@@ -2970,7 +2985,7 @@ gregtech.machine.steam_rock_breaker_bronze.tooltip=需紧贴侧面放置§b水§
 gregtech.machine.steam_rock_breaker_steel.name=高压蒸汽碎岩机
 gregtech.machine.steam_rock_breaker_steel.tooltip=需紧贴侧面放置§b水§7和§c熔岩
 gregtech.machine.steam_miner.name=蒸汽采矿机
-gregtech.machine.steam_miner.tooltip=采掘机器下方的矿石！
+gregtech.machine.steam_miner.tooltip=挖掘机器下方的矿石！
 
 # Generators
 gregtech.machine.combustion_generator.tooltip=需要可燃液体
@@ -3002,7 +3017,7 @@ gregtech.machine.block_breaker.lv.name=基础方块破坏器
 gregtech.machine.block_breaker.mv.name=进阶方块破坏器
 gregtech.machine.block_breaker.hv.name=进阶方块破坏器 II
 gregtech.machine.block_breaker.ev.name=进阶方块破坏器 III
-gregtech.machine.block_breaker.tooltip=采掘面前的方块并收集掉落物
+gregtech.machine.block_breaker.tooltip=挖掘面前的方块并收集掉落物
 gregtech.machine.block_breaker.speed_bonus=§e速度加成：§f%,d%%
 
 # Electric Furnace
@@ -4352,7 +4367,7 @@ gregtech.machine.quantum_tank.uv.name=量子缸 IV
 gregtech.machine.quantum_tank.uhv.name=量子缸 V
 
 #Buffers
-gregtech.machine.buffer.tooltip=用于存储物品和流体的小小缓冲器
+gregtech.machine.buffer.tooltip=存储物品和流体的小小缓冲器
 gregtech.machine.buffer.lv.name=基础缓存器
 gregtech.machine.buffer.mv.name=进阶缓存器
 gregtech.machine.buffer.hv.name=进阶缓存器 II
@@ -4783,14 +4798,14 @@ gregtech.machine.fusion_reactor.overclocking=超频将使能耗翻倍，处理�
 gregtech.machine.miner.lv.name=基础采矿机
 gregtech.machine.miner.mv.name=进阶采矿机
 gregtech.machine.miner.hv.name=进阶采矿机 II
-gregtech.machine.miner.tooltip=只采掘机器下方的矿石！工作范围默认为§f%sx%s§7。
+gregtech.machine.miner.tooltip=只挖掘机器下方的矿石！工作范围默认为§f%sx%s§7。
 gregtech.machine.miner.per_block=§7每个方块需要§f%d§7秒。
 
 gregtech.machine.large_miner.ev.name=基础采矿场
 gregtech.machine.large_miner.iv.name=进阶采矿场
 gregtech.machine.large_miner.luv.name=进阶采矿场 II
 gregtech.machine.miner.multi.modes=具有精准采集模式与区块对齐模式。
-gregtech.machine.miner.multi.production=产出§f研磨机§7§f3x§7倍的粉碎矿石。
+gregtech.machine.miner.multi.production=它能产出§f三倍§7于§f研磨机§7的粉碎矿石。
 gregtech.machine.miner.fluid_usage=每tick消耗§f%,d L§7的§f%s§7，超频时翻倍。
 gregtech.machine.miner.multi.description=一台工作范围极广的多方块采矿机，能够提供巨量矿石。
 gregtech.machine.miner.multi.needsfluid=钻井液不足！
@@ -4809,7 +4824,7 @@ gregtech.machine.miner.chunkradius=区块半径：%d
 gregtech.machine.fluid_drilling_rig.mv.name=基础流体钻机
 gregtech.machine.fluid_drilling_rig.hv.name=进阶流体钻机
 gregtech.machine.fluid_drilling_rig.ev.name=进阶流体钻机 II
-gregtech.machine.fluid_drilling_rig.description=钻取基岩之下的涓涓流体。
+gregtech.machine.fluid_drilling_rig.description=钻取基岩之下的漫漫流体。
 gregtech.machine.fluid_drilling_rig.production=§e产量倍数：§f%dx，超频时为%fx
 gregtech.machine.fluid_drilling_rig.depletion=§b损耗率：§f%s%%
 gregtech.machine.fluid_drilling_rig.shows_depletion=显示流体矿脉信息
@@ -4831,6 +4846,7 @@ gregtech.multiblock.cleanroom.clean_status=状态：%s
 gregtech.multiblock.cleanroom.clean_state=洁净（%s%%）
 gregtech.multiblock.cleanroom.dirty_state=污染（%s%%）
 gregtech.multiblock.cleanroom.warning_contaminated=被污染！
+gregtech.multiblock.cleanroom.low_tier=能源仓等级过低，最低等级为%s！
 
 gregtech.machine.charcoal_pile.name=木炭堆点火器
 gregtech.machine.charcoal_pile.tooltip.1=§c点火后§7将原木烧制成§a木炭§7。
@@ -4861,7 +4877,7 @@ gregtech.machine.active_transformer.name=有源变压器
 gregtech.machine.active_transformer.tooltip1=变形金刚：伪装的激光
 gregtech.machine.active_transformer.tooltip2=可以将任意数量的能量§f输入§7整合为任意数量的能量§f输出§7。
 gregtech.machine.active_transformer.tooltip3=当你使用§d激光§7进行能量传输时，拥有惊人的传输距离。
-gregtech.machine.active_transformer.tooltip3.5=
+gregtech.machine.active_transformer.tooltip3.5= 
 gregtech.multiblock.active_transformer.description=有源变压器是个多方块变压器，它可以接受任意数量，任意能量等级的能源仓输入，并以任意数量，任意能量等级的动力仓输出。有源变压器允许使用激光仓进行能量传输，这种长距离能量传输没有任何线损，但激光传导线缆必须位于一条直线上，否则不能传递能量。
 gregtech.machine.active_transformer.routing=路由模式
 
@@ -5120,8 +5136,8 @@ gregtech.machine.substation_hatch.output_64a.zpm.name=64安§cZPM§r变电动力
 gregtech.machine.substation_hatch.output_64a.uv.name=64安§3UV§r变电动力仓
 gregtech.machine.substation_hatch.output_64a.uhv.name=64安§4UHV§r变电动力仓
 
-gregtech.machine.rotor_holder.tooltip1=为多方块结构的转子
-gregtech.machine.rotor_holder.tooltip2=提供支撑，固定转子使其不能飞走
+gregtech.machine.rotor_holder.tooltip1=为多方块结构固定转子，
+gregtech.machine.rotor_holder.tooltip2=使其不能飞走
 
 gregtech.machine.rotor_holder.hv.name=§6HV§r转子支架
 gregtech.machine.rotor_holder.ev.name=§5EV§r转子支架
@@ -5131,24 +5147,24 @@ gregtech.machine.rotor_holder.zpm.name=§cZPM§r转子支架
 gregtech.machine.rotor_holder.uv.name=§3UV§r转子支架
 
 gregtech.machine.maintenance_hatch.name=维护仓
-gregtech.machine.maintenance_hatch.tooltip=用以对多方块结构进行维护
+gregtech.machine.maintenance_hatch.tooltip=用于维护多方块结构
 gregtech.machine.maintenance_hatch_configurable.name=可配置维护仓
-gregtech.machine.maintenance_hatch_configurable.tooltip=更精细的维修多方块结构/n起手无需维护！
+gregtech.machine.maintenance_hatch_configurable.tooltip=更精细的维护多方块结构/n起手无需维护！
 gregtech.machine.maintenance_hatch_full_auto.name=自动维护仓
-gregtech.machine.maintenance_hatch_full_auto.tooltip=可以自动维修多方块结构
+gregtech.machine.maintenance_hatch_full_auto.tooltip=可以自动维护多方块结构
 gregtech.machine.maintenance_hatch_cleanroom_auto.name=自动过滤维护仓
-gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=可以自动维修多方块结构，附带清洁功能！
+gregtech.machine.maintenance_hatch_cleanroom_auto.tooltip.1=可以自动维护多方块结构，附带清洁功能！
 gregtech.machine.maintenance_hatch.cleanroom_auto.tooltip.2=清洁方式：
-gregtech.machine.maintenance_hatch_tool_slot.tooltip=所需工具处于物品栏时空手点击该槽位来进行维护
+gregtech.machine.maintenance_hatch_tool_slot.tooltip=所需工具处于物品栏时空手点击该槽位来维护
 gregtech.machine.maintenance_hatch_tape_slot.tooltip=放入胶带以防止发生故障
 
 gregtech.maintenance.configurable_duration=处理耗时：%fx
 gregtech.maintenance.configurable_duration.unchanged_description=配方以正常速度运行。更改配置以更新。
 gregtech.maintenance.configurable_duration.changed_description=配方处理速度现为正常速度（不计超频）的%f倍。
 
-gregtech.maintenance.configurable_time=故障几率：%fx
-gregtech.maintenance.configurable_time.unchanged_description=故障的发生几率为正常值。更改配置以更新。
-gregtech.maintenance.configurable_time.changed_description=故障的发生几率现为正常值的%f倍。
+gregtech.maintenance.configurable_time=故障概率：%fx
+gregtech.maintenance.configurable_time.unchanged_description=故障的发生概率为正常值。更改配置以更新。
+gregtech.maintenance.configurable_time.changed_description=故障的发生概率现为正常值的%f倍。
 
 gregtech.maintenance.configurable.tooltip_basic=以更频繁的维护需求为代价，加快机器的处理速度
 gregtech.maintenance.configurable.tooltip_more_info=按住SHIFT进行特殊交互
@@ -5174,7 +5190,7 @@ gregtech.machine.muffler_hatch.uxv.name=§eUXV§r消声仓
 gregtech.machine.muffler_hatch.opv.name=§9OpV§r消声仓
 gregtech.machine.muffler_hatch.max.name=§c§lMAX§r消声仓
 
-gregtech.muffler.recovery_tooltip=§b收集几率：§f%d%%
+gregtech.muffler.recovery_tooltip=§b收集概率：§f%d%%
 
 gregtech.machine.pump_hatch.name=水泵输出仓
 gregtech.machine.pump_hatch.tooltip=原始水泵专用流体输出口
@@ -5286,7 +5302,7 @@ gregtech.machine.laser_hatch.target.tooltip1=远距离接收能量
 gregtech.machine.laser_hatch.tooltip2=§c激光传导线缆必须直线摆放！§7
 
 gregtech.machine.fluid_tank.max_multiblock=多方块结构最大尺寸：%,dx%,dx%,d
-gregtech.machine.fluid_tank.fluid=含有%s mB%s
+gregtech.machine.fluid_tank.fluid=含有%s L%s
 
 # ME Parts
 gregtech.machine.me_import_item_bus.name=ME输入总线
@@ -5431,6 +5447,8 @@ gregtech.gui.overclock.off=X
 gregtech.gui.sort=分类
 gregtech.gui.fluid_auto_output.tooltip.enabled=流体自动输出已启用
 gregtech.gui.fluid_auto_output.tooltip.disabled=流体自动输出已禁用
+gregtech.gui.item_auto_input.tooltip.enabled=物品自动输入已启用
+gregtech.gui.item_auto_input.tooltip.disabled=物品自动输入已禁用
 gregtech.gui.item_auto_output.tooltip.enabled=物品自动输出已启用
 gregtech.gui.item_auto_output.tooltip.disabled=物品自动输出已禁用
 gregtech.gui.item_auto_collapse.tooltip.enabled=物品堆叠自动合并已启用
@@ -5488,14 +5506,14 @@ fluid.spawnlocation.name=流体矿脉信息
 gregtech.jei.fluid.vein_weight=矿脉权重：%d
 gregtech.jei.fluid.min_yield=最小产量：%d
 gregtech.jei.fluid.max_yield=最大产量：%d
-gregtech.jei.fluid.depletion_chance=消耗几率：%d%%
+gregtech.jei.fluid.depletion_chance=消耗概率：%d%%
 gregtech.jei.fluid.depletion_amount=消耗量：%d
 gregtech.jei.fluid.depleted_rate=殆尽后产量：%d
 gregtech.jei.fluid.dimension=维度：
 gregtech.jei.fluid.weight_hover=流体矿脉的生成权重。鼠标悬于图标可查看该流体在特定生物群系中特殊的生成权重
 gregtech.jei.fluid.min_hover=流体矿脉所能具有的的最小产量
 gregtech.jei.fluid.max_hover=流体矿脉所能具有的的最大产量
-gregtech.jei.fluid.dep_chance_hover=开采流体矿脉时消耗的几率
+gregtech.jei.fluid.dep_chance_hover=开采流体矿脉时消耗的概率
 gregtech.jei.fluid.dep_amount_hover=消耗后消耗的量
 gregtech.jei.fluid.dep_yield_hover=流体矿脉殆尽后能开采的最大流体量
 
@@ -5653,7 +5671,7 @@ gregtech.multiblock.large_combustion_engine.supply_liquid_oxygen_to_boost=提供
 gregtech.multiblock.large_combustion_engine.obstructed=引擎进气口受阻！
 gregtech.multiblock.large_combustion_engine.obstructed.desc=引擎进气口前方必须有一格空气。
 
-gregtech.multiblock.turbine.fuel_amount=燃料量：%s mB（%s）
+gregtech.multiblock.turbine.fuel_amount=燃料量：%s L（%s）
 gregtech.multiblock.turbine.fuel_needed=消耗量：%s / %s ticks
 gregtech.multiblock.turbine.rotor_speed=转子转速：%s
 gregtech.multiblock.turbine.rotor_rpm_unit_name=RPM
@@ -5743,14 +5761,14 @@ gregtech.multiblock.hpca.warning_multiple_bridges=- 多个桥接组件（没有�
 gregtech.multiblock.hpca.warning_no_computation=- 没有计算组件
 gregtech.multiblock.hpca.warning_low_cooling=- 冷却不足
 gregtech.multiblock.hpca.info_max_computation=最大算力：%s
-gregtech.multiblock.hpca.info_max_cooling_demand=冷却液需求：%s
-gregtech.multiblock.hpca.info_max_cooling_available=冷却液可用：%s
-gregtech.multiblock.hpca.info_max_coolant_required=冷却液还需：%s
+gregtech.multiblock.hpca.info_max_cooling_demand=冷却需求：%s
+gregtech.multiblock.hpca.info_max_cooling_available=冷却可用：%s
+gregtech.multiblock.hpca.info_max_coolant_required=冷却液需求：%s L/t
 gregtech.multiblock.hpca.info_coolant_name=多氯联苯冷却液
 gregtech.multiblock.hpca.info_bridging_enabled=桥接已启动
 gregtech.multiblock.hpca.info_bridging_disabled=桥接已关闭
 
-gregtech.command.usage=用法：/gregtech <worldgen/hand/recipecheck>
+gregtech.command.usage=用法：/gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=用法：/gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=用法：/gregtech worldgen reload
 gregtech.command.worldgen.reload.success=已从配置文件中重载世界生成设定。
@@ -5777,6 +5795,12 @@ gregtech.command.copy.copied_and_click=已复制至剪贴板。点击以再次�
 gregtech.command.copy.click_to_copy=点击以复制
 gregtech.command.copy.copied_start=已复制[
 gregtech.command.copy.copied_end=]至剪贴板
+gregtech.command.datafix.usage=用法：/gregtech datafix <bqu>
+gregtech.command.datafix.bqu.usage=用法：/gregtech datafix <bqu> [confirm]
+gregtech.command.datafix.bqu.backup=备份你的存档和BQu配置文件，然后使用“confirm”参数重新运行
+gregtech.command.datafix.bqu.start=开始迁移BQu任务数据库…
+gregtech.command.datafix.bqu.complete=BQu任务数据库迁移完成
+gregtech.command.datafix.bqu.failed=BQu任务数据库迁移失败。恢复你的备份！
 
 gregtech.chat.cape=§5恭喜你：你刚刚解锁了一件新披风！查看终端应用程序“披风选择器”来使用它。§r
 
@@ -6048,31 +6072,31 @@ gregtech.key.armor_charging=启用/禁用盔甲向物品栏充能
 gregtech.key.tool_aoe_change=切换工具范围性效用模式
 
 gregtech.subtitle.tick.forge_hammer=锻造锤：DUANG
-gregtech.subtitle.tick.macerator=研磨机：运行中
+gregtech.subtitle.tick.macerator=研磨机：破碎
 gregtech.subtitle.tick.chemical_reactor=化学反应釜：运行中
 gregtech.subtitle.tick.assembler=组装机：运行中
-gregtech.subtitle.tick.centrifuge=离心机：运行中
-gregtech.subtitle.tick.compressor=压缩机：运行中
-gregtech.subtitle.tick.electrolyzer=电解机：电流滋滋响
-gregtech.subtitle.tick.mixer=搅拌机：运行中
+gregtech.subtitle.tick.centrifuge=离心机：旋转
+gregtech.subtitle.tick.compressor=压缩机：挤压
+gregtech.subtitle.tick.electrolyzer=电解机：爆出火花
+gregtech.subtitle.tick.mixer=搅拌机：搅动
 gregtech.subtitle.tick.replicator=复制机：运行中
-gregtech.subtitle.tick.arc=电弧炉：运行中
+gregtech.subtitle.tick.arc=电弧炉：嗡——
 gregtech.subtitle.tick.boiler=锅炉：液体沸腾
 gregtech.subtitle.tick.furnace=电炉：冶炼
-gregtech.subtitle.tick.cooling=热锭：冷却
-gregtech.subtitle.tick.fire=火：燃烧
-gregtech.subtitle.tick.bath=化学浸洗机：运行中
+gregtech.subtitle.tick.cooling=真空冷冻机：运行中
+gregtech.subtitle.tick.fire=火：爆裂
+gregtech.subtitle.tick.bath=化学浸洗机：嘶嘶
 gregtech.subtitle.tick.motor=马达：转啊转
 gregtech.subtitle.tick.cut=切割机：运行中
-gregtech.subtitle.tick.turbine=涡轮：转子旋转
+gregtech.subtitle.tick.turbine=涡轮：呼啸
 gregtech.subtitle.tick.combustion=燃烧发电机：燃料燃烧
 gregtech.subtitle.tick.miner=采矿机：开采
-gregtech.subtitle.tick.computation=计算机：处理
-gregtech.subtitle.use.wrench=扳手：拧动
+gregtech.subtitle.tick.computation=计算机：哔哔
+gregtech.subtitle.use.wrench=扳手：嘎啦
 gregtech.subtitle.use.soft_hammer=软锤：轻敲
 gregtech.subtitle.use.drill=电钻：嗡嗡
-gregtech.subtitle.use.plunger=搋子：流体被清理
-gregtech.subtitle.use.file=锉：摩擦
+gregtech.subtitle.use.plunger=搋子：清理流体
+gregtech.subtitle.use.file=锉：磨削
 gregtech.subtitle.use.saw=锯：切割
 gregtech.subtitle.use.screwdriver=螺丝刀：拧螺丝
 gregtech.subtitle.use.chainsaw=链锯：拉动油门
@@ -6286,3 +6310,8 @@ gregtech.scanner.forestry.larvae=§o幼体（已扫描）
 gregtech.scanner.forestry.serum=§o血清（已扫描）
 gregtech.scanner.forestry.caterpillar=§o幼虫（已扫描）
 gregtech.scanner.forestry.pollen=§o花粉（已扫描）
+
+# Mutation
+gregtech.mutation.block_of=%s块
+
+record.sus=Leonz - Among Us Drip

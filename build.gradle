@@ -1,4 +1,4 @@
-//version: 1720106721
+//version: 1707682661
 /*
  * DO NOT CHANGE THIS FILE!
  * Also, you may replace this file at any time if there is an update available.
@@ -371,9 +371,9 @@ minecraft {
     extraRunJvmArguments.add("-ea:${modGroup}")
     if (usesMixins.toBoolean()) {
         extraRunJvmArguments.addAll([
-                '-Dmixin.hotSwap=true',
-                '-Dmixin.checks.interfaces=true',
-                '-Dmixin.debug.export=true'
+            '-Dmixin.hotSwap=true',
+            '-Dmixin.checks.interfaces=true',
+            '-Dmixin.debug.export=true'
         ])
     }
 
@@ -1237,6 +1237,30 @@ if (cfApiKey.isPresent() || deploymentDebug.toBoolean()) {
                 additionalFile.changelog = changelogRaw
             }
         }
+        doLast {
+            // No File IDs in Debug Mode
+            if (!deploymentDebug.toBoolean()) {
+                def list = []
+                for (def artifact : tasks.curseforge.getUploadArtifacts()) {
+                    list.add(artifact)
+                    for (def additionalArtifact : artifact.getAdditionalArtifacts()) {
+                        list.add(additionalArtifact)
+                    }
+                }
+                def summary = "## CurseForge Build Summary (Mod ${modName} | Project ID ${curseForgeProjectId})"
+                for (def artifact : list) {
+                    def fileId = artifact.getCurseFileId()
+                    def fileName = artifact.getArtifact().getSingleFile().name
+                    println("Uploaded File ${fileName}, With File ID: ${fileId}")
+                    summary = summary + "\n  - File: ${fileName} | File ID: ${fileId}"
+                }
+                println(summary)
+                def stepSummary = providers.environmentVariable("GITHUB_STEP_SUMMARY")
+                if (stepSummary.isPresent()) {
+                    file(stepSummary.get()).write(summary)
+                }
+            }
+        }
     }
     tasks.curseforge.dependsOn(build)
     tasks.curseforge.dependsOn('generateChangelog')
@@ -1367,7 +1391,7 @@ def getChangelog() {
 
 // Buildscript updating
 
-def buildscriptGradleVersion = '8.5'
+def buildscriptGradleVersion = '8.9'
 
 tasks.named('wrapper', Wrapper).configure {
     gradleVersion = buildscriptGradleVersion

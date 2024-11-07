@@ -21,7 +21,7 @@ import java.util.function.DoubleSupplier;
 public class CrackerUnitUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     public CrackerUnitUI(@NotNull R recipeMap) {
-        super(recipeMap, true, true, false, true);
+        super(recipeMap, true, true, false, true, false);
         setFluidSlotOverlay(GuiTextures.CRACKING_OVERLAY_1, false);
         setFluidSlotOverlay(GuiTextures.CRACKING_OVERLAY_2, true);
         setItemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false);

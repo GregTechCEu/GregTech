@@ -15,6 +15,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.stream.IntStream;
+
 /**
  * Performs migration to an independent MTE registry.
  * <p>
@@ -48,14 +50,28 @@ public final class MTERegistriesMigrator extends AbstractMTEMigrator {
     }
 
     /**
-     * Register a data fix entry for the multiple MTE registry transition.
+     * Register a single data fix entry for the multiple MTE registry transition.
+     * <p>
+     * Callers will probably prefer {@link #migrate(String, IntStream)}.
      *
      * @param modid the registry's modid
      * @param meta  the metadata value to migrate
      */
-    @ApiStatus.Internal
     public void migrate(@NotNull String modid, short meta) {
         metaModidMap.put(meta, modid);
+    }
+
+    /**
+     * Register data fix entries for the multiple MTE registry transition.
+     * <p>
+     * Register the range of values allocated to the modid using {@link IntStream#range(int, int)} or
+     * {@link IntStream#builder()}.
+     *
+     * @param modid      the registry's modid
+     * @param metaValues the metadata values to migrate
+     */
+    public void migrate(@NotNull String modid, @NotNull IntStream metaValues) {
+        metaValues.forEach(i -> metaModidMap.put((short) i, modid));
     }
 
     @Override

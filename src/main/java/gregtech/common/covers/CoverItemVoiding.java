@@ -26,7 +26,7 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
@@ -73,12 +73,12 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         return super.buildUI(guiData, guiSyncManager).height(192 - 22);
     }
 
     @Override
-    protected ParentWidget<Column> createUI(ModularPanel mainPanel, GuiSyncManager guiSyncManager) {
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
         var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
         return super.createUI(mainPanel, guiSyncManager)

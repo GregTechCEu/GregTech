@@ -4,11 +4,15 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
+
+import static gregtech.api.recipes.logic.OverclockingLogic.standardOC;
 
 public class FuelRecipeLogic extends RecipeLogicEnergy {
 
@@ -29,16 +33,15 @@ public class FuelRecipeLogic extends RecipeLogicEnergy {
     }
 
     @Override
-    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
+    protected boolean hasEnoughPower(long eut, int duration) {
         // generators always have enough power to run recipes
         return true;
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
-        super.modifyOverclockPost(overclockResults, storage);
-        // make EUt negative so it is consumed
-        overclockResults[0] = -overclockResults[0];
+    protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
+        standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(), getOverclockingVoltageFactor());
     }
 
     @Override

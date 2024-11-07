@@ -10,7 +10,12 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -425,8 +430,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
         @Override
         public void invalidate() {
-            isOxygenBoosted = false;
             super.invalidate();
+            isOxygenBoosted = false;
         }
     }
 }

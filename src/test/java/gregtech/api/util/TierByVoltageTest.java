@@ -127,7 +127,7 @@ public class TierByVoltageTest {
         expectTier(0L, ULV, ULV);
         expectTier(2L, ULV, ULV);
         expectTier(Integer.MAX_VALUE + 1L, MAX, MAX);
-        expectTier(Long.MAX_VALUE, MAX, MAX);
+        expectTier(Long.MAX_VALUE, MAX, MAX_TRUE);
         expectTier(-1L, ULV, ULV);
     }
 

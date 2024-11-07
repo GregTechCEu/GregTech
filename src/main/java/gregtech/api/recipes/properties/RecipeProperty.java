@@ -1,11 +1,13 @@
-package gregtech.api.recipes.recipeproperties;
+package gregtech.api.recipes.properties;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTBase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
-import java.util.Objects;
 
 public abstract class RecipeProperty<T> {
 
@@ -16,6 +18,18 @@ public abstract class RecipeProperty<T> {
         this.key = key;
         this.type = type;
     }
+
+    /**
+     * @param value the value to serialize
+     * @return the serialized form of the value
+     */
+    public abstract @NotNull NBTBase serialize(@NotNull Object value);
+
+    /**
+     * @param nbt the nbt to deserialize
+     * @return the deserialized property value
+     */
+    public abstract @NotNull Object deserialize(@NotNull NBTBase nbt);
 
     @SideOnly(Side.CLIENT)
     public abstract void drawInfo(Minecraft minecraft, int x, int y, int color, Object value);
@@ -28,19 +42,15 @@ public abstract class RecipeProperty<T> {
     @SideOnly(Side.CLIENT)
     public void getTooltipStrings(List<String> tooltip, int mouseX, int mouseY, Object value) {}
 
-    public int getInfoHeight(Object value) {
+    public int getInfoHeight(@NotNull Object value) {
         return 10; // GTRecipeWrapper#LINE_HEIGHT
     }
 
-    public boolean isOfType(Class<?> otherType) {
-        return this.type == otherType;
-    }
-
-    public String getKey() {
+    public final @NotNull String getKey() {
         return key;
     }
 
-    public T castValue(Object value) {
+    protected final T castValue(@NotNull Object value) {
         return this.type.cast(value);
     }
 
@@ -75,15 +85,20 @@ public abstract class RecipeProperty<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RecipeProperty<?> that = (RecipeProperty<?>) o;
-        return Objects.equals(type, that.type) && Objects.equals(key, that.key);
+        if (!(o instanceof RecipeProperty<?>that)) return false;
+
+        return type.equals(that.type) && getKey().equals(that.getKey());
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(type, key);
+    public final int hashCode() {
+        return 31 * type.hashCode() + getKey().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "RecipeProperty{" + "key='" + key + "'}";
     }
 }

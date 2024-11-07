@@ -85,7 +85,7 @@ public class AbstractRecipeLogicTest {
         arl.setSpeedBonus(0.2);  // 20% faster than normal
 
         queryTestRecipe(arl);
-        MatcherAssert.assertThat(arl.recipeEUt, is((int) Math.round(initialEUt * 0.75)));
+        MatcherAssert.assertThat(arl.recipeEUt, is(Math.round(initialEUt * 0.75)));
         MatcherAssert.assertThat(arl.maxProgressTime, is((int) Math.round(initialDuration * 0.2)));
     }
 
@@ -105,7 +105,7 @@ public class AbstractRecipeLogicTest {
         // be able to parallel 2 times.
         MatcherAssert.assertThat(arl.parallelRecipesPerformed, is(2));
         // Because of the parallel, now the paralleled recipe EU/t should be back to 30 EU/t.
-        MatcherAssert.assertThat(arl.recipeEUt, is(30));
+        MatcherAssert.assertThat(arl.recipeEUt, is(30L));
         // Duration should be static regardless of parallels.
         MatcherAssert.assertThat(arl.maxProgressTime, is((int) Math.round(initialDuration * 0.2)));
     }
@@ -158,7 +158,7 @@ public class AbstractRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -176,7 +176,42 @@ public class AbstractRecipeLogicTest {
     private static void queryTestRecipe(AbstractRecipeLogic arl) {
         // put an item in the inventory that will trigger recipe recheck
         arl.getInputInventory().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
+        // Inputs change. did we detect it ?
         MatcherAssert.assertThat(arl.hasNotifiedInputs(), is(true));
         arl.trySearchNewRecipe();
+        MatcherAssert.assertThat(arl.invalidInputsForRecipes, is(false));
+        MatcherAssert.assertThat(arl.previousRecipe, notNullValue());
+        MatcherAssert.assertThat(arl.isActive, is(true));
+        MatcherAssert.assertThat(arl.getInputInventory().getStackInSlot(0).getCount(), is(15));
+
+        // Save a reference to the old recipe so we can make sure it's getting reused
+        Recipe prev = arl.previousRecipe;
+
+        // Finish the recipe, the output should generate, and the next iteration should begin
+        arl.update();
+        MatcherAssert.assertThat(arl.previousRecipe, is(prev));
+        MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
+                new ItemStack(Blocks.STONE, 1)), is(true));
+        MatcherAssert.assertThat(arl.isActive, is(true));
+
+        // Complete the second iteration, but the machine stops because its output is now full
+        arl.getOutputInventory().setStackInSlot(0, new ItemStack(Blocks.STONE, 63));
+        arl.getOutputInventory().setStackInSlot(1, new ItemStack(Blocks.STONE, 64));
+        arl.update();
+        MatcherAssert.assertThat(arl.isActive, is(false));
+        MatcherAssert.assertThat(arl.isOutputsFull, is(true));
+
+        // Try to process again and get failed out because of full buffer.
+        arl.update();
+        MatcherAssert.assertThat(arl.isActive, is(false));
+        MatcherAssert.assertThat(arl.isOutputsFull, is(true));
+
+        // Some room is freed in the output bus, so we can continue now.
+        arl.getOutputInventory().setStackInSlot(1, ItemStack.EMPTY);
+        arl.update();
+        MatcherAssert.assertThat(arl.isActive, is(true));
+        MatcherAssert.assertThat(arl.isOutputsFull, is(false));
+        MatcherAssert.assertThat(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
+                new ItemStack(Blocks.STONE, 1)), is(true));
     }
 }
