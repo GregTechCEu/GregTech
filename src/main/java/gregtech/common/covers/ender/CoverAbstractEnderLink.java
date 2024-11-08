@@ -48,6 +48,7 @@ import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.input.Keyboard;
 
 import java.util.Objects;
 import java.util.Set;
@@ -303,25 +304,35 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     protected PanelSyncHandler.IPanelBuilder entryDescription(String key, T entry) {
-        return (syncManager, syncHandler) -> GTGuis.createPopupPanel(key, 168, 36 + 6)
-                .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
-                        .color(UI_TITLE_COLOR)
-                        .shadow(false)
-                        .asWidget()
-                        .left(4)
-                        .top(6))
-                .child(new TextFieldWidget()
-                        .setTextColor(Color.WHITE.darker(1))
-                        .widthRel(0.95f)
-                        .height(18)
-                        .value(new StringSyncValue(entry::getDescription, string -> {
-                            entry.setDescription(string);
-                            if (syncHandler.isPanelOpen()) {
-                                syncHandler.closePanel();
+        return (syncManager, syncHandler) -> {
+            var sync = new StringSyncValue(entry::getDescription, entry::setDescription);
+            return GTGuis.createPopupPanel(key, 168, 36 + 6)
+                    .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
+                            .color(UI_TITLE_COLOR)
+                            .asWidget()
+                            .left(4)
+                            .top(6))
+                    .child(new TextFieldWidget() {
+
+                        // todo move this to new class?
+                        @Override
+                        public @NotNull Result onKeyPressed(char character, int keyCode) {
+                            var result = super.onKeyPressed(character, keyCode);
+                            if (result == Result.SUCCESS && keyCode == Keyboard.KEY_RETURN) {
+                                sync.setStringValue(getText());
+                                if (syncHandler.isPanelOpen()) {
+                                    syncHandler.closePanel();
+                                }
                             }
-                        }))
-                        .alignX(0.5f)
-                        .bottom(6));
+                            return result;
+                        }
+                    }.setTextColor(Color.WHITE.darker(1))
+                            .value(sync)
+                            .widthRel(0.95f)
+                            .height(18)
+                            .alignX(0.5f)
+                            .bottom(6));
+        };
     }
 
     protected IWidget createRow(final String name, final PanelSyncManager syncManager, final EntryTypes<T> type) {
@@ -346,7 +357,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         .size(16)
                         .background(GTGuiTextures.SLOT.asIcon().size(18))
                         .top(1))
-                .child(new InteractableText<>(entry, CoverAbstractEnderLink.this::updateColor)
+                .child(new InteractableText<>(entry, this::updateColor)
                         .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                         .tooltipBuilder(tooltip -> {
                             String desc = entry.getDescription();
@@ -361,7 +372,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         .addTooltipLine(IKey.lang("cover.generic.ender.set_description.tooltip"))
                         .onMousePressed(i -> {
                             // open entry settings
-                            // todo this isn't working for some reason
                             if (panelHandler.isPanelOpen()) {
                                 panelHandler.closePanel();
                             } else {
