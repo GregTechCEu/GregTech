@@ -74,6 +74,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         guiSyncManager.registerSlotGroup("item_inv", 1);
 
+        // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 18 + 18 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
