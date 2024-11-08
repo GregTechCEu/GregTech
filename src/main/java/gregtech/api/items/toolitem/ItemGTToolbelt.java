@@ -476,7 +476,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                     toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).getRegistryName());
                 }
                 ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-                return (int) (toolProperty == null ? 5 : toolProperty.getToolHarvestLevel() * 5.4f);
+                return Math.min(8, 3 + (toolProperty == null ? 0 : toolProperty.getToolHarvestLevel()));
             };
         }
 

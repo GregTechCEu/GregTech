@@ -649,7 +649,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
         List<IToolBehavior> behaviors;
         if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
-        else behaviors = getToolStats().getBehaviors();
+        else return EnumActionResult.PASS;
         for (IToolBehavior behavior : behaviors) {
             if (behavior.onItemUseFirst(stack, player, world, pos, facing, hitX, hitY, hitZ, hand) ==
                     EnumActionResult.SUCCESS) {
@@ -669,7 +669,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
         List<IToolBehavior> behaviors;
         if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
-        else behaviors = getToolStats().getBehaviors();
+        else return EnumActionResult.PASS;
 
         for (IToolBehavior behavior : behaviors) {
             if (behavior.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ) ==
@@ -697,7 +697,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
         List<IToolBehavior> behaviors;
         if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
-        else behaviors = getToolStats().getBehaviors();
+        else return ActionResult.newResult(EnumActionResult.PASS, original);
 
         for (IToolBehavior behavior : behaviors) {
             if (behavior.onItemRightClick(stack, world, player, hand).getType() == EnumActionResult.SUCCESS) {

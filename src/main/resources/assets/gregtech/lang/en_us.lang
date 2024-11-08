@@ -1036,7 +1036,7 @@ item.gt.tool.wire_cutter_lv.name=%s Wire Cutter (LV)
 item.gt.tool.wire_cutter_hv.name=%s Wire Cutter (HV)
 item.gt.tool.wire_cutter_iv.name=%s Wire Cutter (IV)
 item.gt.tool.toolbelt.name=%s Toolbelt%s
-item.gt.tool.toolbelt.tooltip=Holds too many tools for too many jobs.
+item.gt.tool.toolbelt.tooltip=Can trigger maintenance repair by clicking on a maintenance hatch
 
 
 item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses
