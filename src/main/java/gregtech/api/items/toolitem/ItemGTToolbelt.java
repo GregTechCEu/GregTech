@@ -11,6 +11,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.common.items.behaviors.ColorSprayBehaviour;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
 import net.minecraft.block.state.IBlockState;
@@ -269,7 +270,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (selected != null) {
             double dis = selected.getItem().getDurabilityForDisplay(selected);
             // vanillaesque tools need to be inverted
-            if (!(selected.getItem() instanceof IGTTool)) dis = 1 - dis;
+            if (selected.getItem() instanceof ItemTool) dis = 1 - dis;
             return dis;
         } else return definition$getDurabilityForDisplay(stack);
     }
@@ -323,17 +324,18 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     @Override
     public @NotNull ItemStack getContainerItem(@NotNull ItemStack stack) {
-        Ingredient nextCraftIngredient = getHandler(stack).nextCraftIngredient;
-        if (nextCraftIngredient != null) {
+        if (getHandler(stack).dealCraftDamageToSelected()) {
             stack = stack.copy();
-            this.craftDamageTools(stack, nextCraftIngredient);
             return stack;
         }
         return super.getContainerItem(stack);
     }
 
     public void setOnCraftIngredient(ItemStack stack, Ingredient ingredient) {
-        getHandler(stack).nextCraftIngredient = ingredient;
+        Integer match = getHandler(stack).checkIngredientAgainstTools(ingredient);
+        if (match != null) {
+            setSelectedTool(match, stack);
+        }
     }
 
     public boolean damageAgainstMaintenanceProblem(ItemStack stack, String toolClass,
@@ -342,15 +344,11 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     public boolean supportsIngredient(ItemStack stack, Ingredient ingredient) {
-        return getHandler(stack).checkIngredientAgainstTools(ingredient, false);
+        return getHandler(stack).checkIngredientAgainstTools(ingredient) != null;
     }
 
     public boolean supportsTool(ItemStack stack, ItemStack tool) {
-        return getHandler(stack).checkToolAgainstTools(tool, false);
-    }
-
-    public void craftDamageTools(ItemStack stack, Ingredient ingredient) {
-        getHandler(stack).checkIngredientAgainstTools(ingredient, true);
+        return getHandler(stack).checkToolAgainstTools(tool) != null;
     }
 
     private ToolStackHandler getHandler(ItemStack stack) {
@@ -401,6 +399,23 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     @Override
+    public @NotNull EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world,
+                                               @NotNull BlockPos pos, @NotNull EnumHand hand,
+                                               @NotNull EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ToolStackHandler handler = getHandler(player.getHeldItem(hand));
+        ItemStack selected = handler.getSelectedStack();
+        if (selected != null) {
+            ColorSprayBehaviour spray = ColorSprayBehaviour.getBehavior(selected);
+            if (spray != null) {
+                EnumActionResult result = spray.useFromToolbelt(player, world, pos, hand, facing, hitX, hitY, hitZ,
+                        selected);
+                if (result != EnumActionResult.PASS) return result;
+            }
+        }
+        return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+    }
+
+    @Override
     public int getColor(ItemStack stack, int tintIndex) {
         if (tintIndex == 0) {
             return this.getColor(stack);
@@ -432,7 +447,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     public static boolean checkToolAgainstToolbelt(@NotNull ItemStack toolbelt, @NotNull ItemStack tool) {
-        if (toolbelt.getItem() instanceof ItemGTToolbelt belt && ToolHelper.isTool(tool)) {
+        if (toolbelt.getItem() instanceof ItemGTToolbelt belt && ToolHelper.isUtilityItem(tool)) {
             return belt.supportsTool(toolbelt, tool);
         }
         return false;
@@ -450,7 +465,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 String string = toolTag.getString(MATERIAL_KEY);
                 Material material = GregTechAPI.materialManager.getMaterial(string);
                 if (material == null) {
-                    toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).toString());
+                    toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).getRegistryName());
                 }
                 ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
                 return (int) (toolProperty == null ? 5 : toolProperty.getToolHarvestLevel() * 5.4f);
@@ -487,6 +502,22 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             if (handler == null || handler.getSlots() != slots) handler = new ToolStackHandler(slots);
             return handler;
         }
+    }
+
+    @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        NBTTagCompound tag = new NBTTagCompound();
+        if (stack.getTagCompound() != null) {
+            tag.setTag("NBT", stack.getTagCompound());
+        }
+        tag.setTag("Cap", getHandler(stack).serializeNBT());
+        return tag;
+    }
+
+    @Override
+    public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
+        // cap syncing is handled separately, we only need it on the share tag so that changes are detected properly.
+        stack.setTagCompound(nbt == null ? null : (nbt.hasKey("NBT") ? nbt.getCompoundTag("NBT") : null));
     }
 
     protected static class ToolStackHandler extends ItemStackHandler {
@@ -561,7 +592,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             Item item = stack.getItem();
             if (item instanceof ItemGTToolbelt) return false;
-            return ToolHelper.isTool(stack);
+            return ToolHelper.isUtilityItem(stack);
         }
 
         @Override
@@ -636,30 +667,38 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             return false;
         }
 
-        public boolean checkIngredientAgainstTools(Ingredient ingredient, boolean doCraftingDamage) {
+        @Nullable
+        public Integer checkIngredientAgainstTools(Ingredient ingredient) {
             for (int i = 0; i < this.getSlots(); i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (ingredient.test(stack)) {
-                    if (doCraftingDamage && stack.getItem().hasContainerItem(stack)) {
-                        this.setStackInSlot(i, stack.getItem().getContainerItem(stack));
-                    }
-                    return true;
+                    return i;
                 }
             }
-            return false;
+            return null;
         }
 
-        public boolean checkToolAgainstTools(ItemStack tool, boolean doCraftingDamage) {
+        public void dealCraftDamageToSlot(int slot) {
+            ItemStack stack = this.getStackInSlot(slot);
+            this.setStackInSlot(slot, stack.getItem().getContainerItem(stack));
+        }
+
+        public boolean dealCraftDamageToSelected() {
+            if (selectedSlot != null) {
+                dealCraftDamageToSlot(selectedSlot);
+                return true;
+            } else return false;
+        }
+
+        @Nullable
+        public Integer checkToolAgainstTools(ItemStack tool) {
             for (int i = 0; i < this.getSlots(); i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (OreDictionary.itemMatches(stack, tool, false)) {
-                    if (doCraftingDamage && stack.getItem().hasContainerItem(stack)) {
-                        this.setStackInSlot(i, stack.getItem().getContainerItem(stack));
-                    }
-                    return true;
+                    return i;
                 }
             }
-            return false;
+            return null;
         }
     }
 }
