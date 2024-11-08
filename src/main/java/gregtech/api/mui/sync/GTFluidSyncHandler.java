@@ -55,7 +55,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void lockFluid(FluidStack stack) {
-        final var f = stack != null && stack.amount < 1 ? null : stack;
+        final var f = stack == null || stack.amount < 1 ? null : stack;
         this.onLocked.accept(f);
         this.phantomFluid = f;
         syncToServer(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, f));
