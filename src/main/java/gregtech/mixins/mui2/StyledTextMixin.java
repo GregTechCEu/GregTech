@@ -1,5 +1,6 @@
 package gregtech.mixins.mui2;
 
+import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.text.AnimatedText;
 import com.cleanroommc.modularui.drawable.text.StyledText;
@@ -35,12 +36,15 @@ public class StyledTextMixin {
      */
     @Overwrite
     public TextWidget asWidget() {
-        int color = this.color == null ? 0 : this.color;
-        boolean shadow = this.shadow == null || this.shadow;
-        return new TextWidget(this.key)
+        var text = new TextWidget(this.key)
                 .alignment(this.alignment)
-                .color(color)
-                .scale(this.scale)
+                .scale(this.scale);
+
+        var theme = ITheme.getDefault().getTextFieldTheme();
+        int color = this.color == null ? theme.getColor() : this.color;
+        boolean shadow = this.shadow == null ? theme.getTextShadow() : this.shadow;
+
+        return text.color(color)
                 .shadow(shadow);
     }
 
@@ -50,12 +54,15 @@ public class StyledTextMixin {
      */
     @Overwrite
     public AnimatedText withAnimation() {
-        int color = this.color == null ? 0 : this.color;
-        boolean shadow = this.shadow == null || this.shadow;
-        return new AnimatedText(this.key)
+        var text = new AnimatedText(this.key)
                 .alignment(this.alignment)
-                .color(color)
-                .scale(this.scale)
+                .scale(this.scale);
+
+        var theme = ITheme.getDefault().getTextFieldTheme();
+        int color = this.color == null ? theme.getColor() : this.color;
+        boolean shadow = this.shadow == null ? theme.getTextShadow() : this.shadow;
+
+        return text.color(color)
                 .shadow(shadow);
     }
 }
