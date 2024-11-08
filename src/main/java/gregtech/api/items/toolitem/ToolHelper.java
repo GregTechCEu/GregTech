@@ -198,7 +198,7 @@ public final class ToolHelper {
 
     public static NBTTagCompound getToolTag(ItemStack stack) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         return stack.getOrCreateSubCompound(TOOL_TAG_KEY);
@@ -206,7 +206,7 @@ public final class ToolHelper {
 
     public static NBTTagCompound getBehaviorsTag(ItemStack stack) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         return stack.getOrCreateSubCompound(BEHAVIOURS_TAG_KEY);
@@ -214,7 +214,7 @@ public final class ToolHelper {
 
     public static void setBehaviorsTag(ItemStack stack, NBTTagCompound tag) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         stack.setTagInfo(BEHAVIOURS_TAG_KEY, tag);
@@ -250,7 +250,7 @@ public final class ToolHelper {
      */
     public static void damageItemWhenCrafting(@NotNull ItemStack stack, @Nullable EntityLivingBase entity) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selectedStack = toolbelt.getSelectedItem(stack);
+            ItemStack selectedStack = toolbelt.getSelectedTool(stack);
             if (selectedStack != null) {
                 damageItemWhenCrafting(selectedStack, entity);
                 return;
@@ -294,7 +294,7 @@ public final class ToolHelper {
             if (entity != null) stack.damageItem(damage, entity);
             return;
         } else if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selectedStack = toolbelt.getSelectedItem(stack);
+            ItemStack selectedStack = toolbelt.getSelectedTool(stack);
             if (selectedStack != null) {
                 damageItem(selectedStack, entity, damage);
                 return;
@@ -362,7 +362,7 @@ public final class ToolHelper {
     public static void onActionDone(@NotNull EntityPlayer player, @NotNull World world, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         IGTTool tool = (IGTTool) stack.getItem();
@@ -431,7 +431,7 @@ public final class ToolHelper {
      */
     public static int getFortuneOrLootingLevel(ItemStack tool) {
         if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(tool);
+            ItemStack selected = toolbelt.getSelectedTool(tool);
             if (selected != null) tool = selected;
         }
         if (tool.getItem() instanceof ItemGTSword) {
@@ -456,7 +456,7 @@ public final class ToolHelper {
      */
     public static boolean areaOfEffectBlockBreakRoutine(ItemStack stack, EntityPlayerMP player) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         int currentDurability = getToolTag(stack).getInteger(DURABILITY_KEY);
@@ -477,7 +477,7 @@ public final class ToolHelper {
                 // If the tool is an electric tool, catch the tool breaking and cancel the remaining AOE
                 ItemStack tool = player.getHeldItemMainhand();
                 if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
-                    ItemStack selected = toolbelt.getSelectedItem(tool);
+                    ItemStack selected = toolbelt.getSelectedTool(tool);
                     if (selected != null) tool = selected;
                 } else if (!tool.isItemEqualIgnoreDurability(stack)) {
                     return true;
@@ -492,7 +492,7 @@ public final class ToolHelper {
                                            EntityPlayer player, RayTraceResult rayTraceResult,
                                            QuintFunction<ItemStack, World, EntityPlayer, BlockPos, BlockPos, Boolean> function) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         if (aoeDefinition != AoESymmetrical.none() && rayTraceResult != null &&
@@ -745,7 +745,7 @@ public final class ToolHelper {
     public static boolean breakBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         // This is *not* a vanilla/forge convention, Forge never added "shears" to ItemShear's tool classes.
         if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(tool);
+            ItemStack selected = toolbelt.getSelectedTool(tool);
             if (selected != null) tool = selected;
         }
         if (isTool(tool, ToolClasses.SHEARS) && shearBlockRoutine(player, tool, pos) == 0) {
@@ -797,7 +797,7 @@ public final class ToolHelper {
     public static int shearBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         if (!player.isCreative()) {
             if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
-                ItemStack selected = toolbelt.getSelectedItem(tool);
+                ItemStack selected = toolbelt.getSelectedTool(tool);
                 if (selected != null) tool = selected;
             }
             World world = player.world;
@@ -859,7 +859,7 @@ public final class ToolHelper {
 
     public static void playToolSound(ItemStack stack, EntityPlayer player) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         if (stack.getItem() instanceof IGTTool) {

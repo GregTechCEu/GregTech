@@ -115,7 +115,7 @@ public final class ToolChargeBarRenderer {
 
     public static void renderBarsTool(IGTTool tool, ItemStack stack, int xPosition, int yPosition) {
         if (tool instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null && selected.getItem() instanceof IGTTool toool) {
                 tool = toool;
                 stack = selected;

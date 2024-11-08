@@ -167,7 +167,7 @@ public class ToolEventHandlers {
                         return false;
                     });
                     if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-                        ItemStack selected = toolbelt.getSelectedItem(stack);
+                        ItemStack selected = toolbelt.getSelectedTool(stack);
                         if (selected != null) stack = selected;
                     }
                     ((IGTTool) stack.getItem()).playSound(player);

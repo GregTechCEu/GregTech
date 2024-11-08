@@ -78,8 +78,22 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 markerItem);
     }
 
-    public @Nullable ItemStack getSelectedItem(@NotNull ItemStack stack) {
-        return getHandler(stack).getSelectedStack();
+    public @Nullable Integer getSelectedSlot(@NotNull ItemStack toolbelt) {
+        return getHandler(toolbelt).getSelectedSlot();
+    }
+
+    public int getSlotCount(@NotNull ItemStack toolbelt) {
+        return getHandler(toolbelt).getSlots();
+    }
+
+    public @Nullable ItemStack getSelectedTool(@NotNull ItemStack toolbelt) {
+        return getHandler(toolbelt).getSelectedStack();
+    }
+
+    public @Nullable ItemStack getToolInSlot(@NotNull ItemStack toolbelt, int slot) {
+        ToolStackHandler handler = getHandler(toolbelt);
+        if (slot < 0 || slot >= handler.getSlots()) return null;
+        return handler.getStackInSlot(slot);
     }
 
     @Override
@@ -372,7 +386,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     public void setSelectedTool(@Nullable Integer slot, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
-        if (slot == null || slot < 0 || slot >= handler.getSlots()) handler.selectedSlot = null;
+        if (slot == null || slot < 0 || slot >= handler.getSlots() || handler.getStackInSlot(slot).isEmpty())
+            handler.selectedSlot = null;
         else handler.selectedSlot = slot;
     }
 
@@ -476,7 +491,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                     toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).getRegistryName());
                 }
                 ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-                return Math.min(8, 3 + (toolProperty == null ? 0 : toolProperty.getToolHarvestLevel()));
+                return Math.min(8, 2 + (toolProperty == null ? 0 : toolProperty.getToolHarvestLevel()));
             };
         }
 

@@ -644,7 +644,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                                                        float hitY, float hitZ, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         List<IToolBehavior> behaviors;
@@ -664,7 +664,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                                                   EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         List<IToolBehavior> behaviors;
@@ -685,7 +685,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         ItemStack stack = player.getHeldItem(hand);
         ItemStack original = stack;
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         if (!world.isRemote) {
@@ -911,7 +911,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     // Sound Playing
     default void playCraftingSound(EntityPlayer player, ItemStack stack) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedItem(stack);
+            ItemStack selected = toolbelt.getSelectedTool(stack);
             if (selected != null) stack = selected;
         }
         // player null check for things like auto-crafters
