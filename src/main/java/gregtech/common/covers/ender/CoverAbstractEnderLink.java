@@ -184,7 +184,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected abstract IWidget createEntrySlot();
 
     protected IWidget createColorIcon() {
-        // todo color selector popup panel
         return new DynamicDrawable(() -> new Rectangle()
                 .setColor(this.activeEntry.getColor())
                 .asIcon().size(16))
@@ -195,10 +194,8 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     }
 
     protected IWidget createPrivateButton() {
-        var isPrivate = new BooleanSyncValue(this::isPrivate, this::setPrivate);
-        isPrivate.updateCacheFromSource(true);
-
         return new ToggleButton()
+                .value(new BooleanSyncValue(this::isPrivate, this::setPrivate))
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .background(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
                 .hoverBackground(GTGuiTextures.PRIVATE_MODE_BUTTON[0])
@@ -207,17 +204,14 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .tooltipBuilder(tooltip -> tooltip.addLine(IKey.lang(this.isPrivate ?
                         "cover.ender_fluid_link.private.tooltip.enabled" :
                         "cover.ender_fluid_link.private.tooltip.disabled")))
-                .marginRight(2)
-                .value(isPrivate);
+                .marginRight(2);
     }
 
     protected IWidget createIoRow() {
-        var ioEnabled = new BooleanSyncValue(this::isIoEnabled, this::setIoEnabled);
-
         return Flow.row().marginBottom(2)
                 .coverChildrenHeight()
                 .child(new ToggleButton()
-                        .value(ioEnabled)
+                        .value(new BooleanSyncValue(this::isIoEnabled, this::setIoEnabled))
                         .overlay(IKey.dynamic(() -> IKey.lang(this.ioEnabled ?
                                 "behaviour.soft_hammer.enabled" :
                                 "behaviour.soft_hammer.disabled").get())
@@ -294,7 +288,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             return GTGuis.createPopupPanel("entry_selector", 168, 112)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR)
-                            .shadow(false)
                             .asWidget()
                             .top(6)
                             .left(4))
@@ -335,7 +328,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         final T entry = VirtualEnderRegistry.getEntry(getOwner(), type, name);
         var key = String.format("entry#%s_description", entry.getColorStr());
         var syncKey = PanelSyncManager.makeSyncKey(key, isPrivate ? 1 : 0);
-        final var entryDescriptionPanelHandler = (PanelSyncHandler) syncManager.panel(syncKey,
+        final var panelHandler = (PanelSyncHandler) syncManager.panel(syncKey,
                 entryDescription(key, entry), true);
         final var syncHandler = new EnderCoverSyncHandler();
         syncManager.syncValue(key + "_handler", syncHandler);
@@ -368,12 +361,12 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                         .addTooltipLine(IKey.lang("cover.generic.ender.set_description.tooltip"))
                         .onMousePressed(i -> {
                             // open entry settings
-                            if (entryDescriptionPanelHandler.isPanelOpen()) {
-                                entryDescriptionPanelHandler.closePanel();
+                            // todo this isn't working for some reason
+                            if (panelHandler.isPanelOpen()) {
+                                panelHandler.closePanel();
                             } else {
-                                entryDescriptionPanelHandler.openPanel();
+                                panelHandler.openPanel();
                             }
-                            Interactable.playButtonClickSound();
                             return true;
                         }))
                 .child(createSlotWidget(entry))
