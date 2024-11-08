@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.items.IDyeableItem;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.material.Material;
@@ -12,6 +13,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.common.items.behaviors.ColorSprayBehaviour;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
 import net.minecraft.block.state.IBlockState;
@@ -393,9 +395,15 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                     @NotNull BlockPos pos, @NotNull EnumFacing side, float hitX,
                                                     float hitY, float hitZ, @NotNull EnumHand hand) {
         EnumActionResult result = IDyeableItem.super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-        if (result == EnumActionResult.PASS)
+        if (result == EnumActionResult.PASS) {
+            ToolStackHandler handler = getHandler(player.getHeldItem(hand));
+            if (handler.getSelectedSlot() == null && world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
+                    holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
+                maintenance.fixMaintenanceProblems(player);
+                return EnumActionResult.SUCCESS;
+            }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
-        else return result;
+        } else return result;
     }
 
     @Override

@@ -197,7 +197,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * 
      * @param entityPlayer the player performing the fixing
      */
-    private void fixMaintenanceProblems(@Nullable EntityPlayer entityPlayer) {
+    public void fixMaintenanceProblems(@Nullable EntityPlayer entityPlayer) {
         if (!(this.getController() instanceof IMaintenance))
             return;
 
