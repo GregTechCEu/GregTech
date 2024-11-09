@@ -59,6 +59,7 @@ import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +67,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
@@ -81,7 +83,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 markerItem);
     }
 
-    public @Nullable Integer getSelectedSlot(@NotNull ItemStack toolbelt) {
+    public int getSelectedSlot(@NotNull ItemStack toolbelt) {
         return getHandler(toolbelt).getSelectedSlot();
     }
 
@@ -91,7 +93,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     // nullable to differentiate between "no tool selected" and "no tool in selected slot" which is theoretically
     // possible
-    public @Nullable ItemStack getSelectedTool(@NotNull ItemStack toolbelt) {
+    public @NotNull ItemStack getSelectedTool(@NotNull ItemStack toolbelt) {
         return getHandler(toolbelt).getSelectedStack();
     }
 
@@ -106,7 +108,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
         ToolStackHandler handler = getHandler(guiData.getUsedItemStack());
         ItemStack selected = handler.getSelectedStack();
-        if (selected != null && selected.getItem() instanceof ItemUIFactory factory) {
+        if (!selected.isEmpty() && selected.getItem() instanceof ItemUIFactory factory) {
             return factory.buildUI(guiData, guiSyncManager);
         }
 
@@ -146,7 +148,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public float getDestroySpeed(@NotNull ItemStack stack, @NotNull IBlockState state) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().getDestroySpeed(selected, state);
         } else return definition$getDestroySpeed(stack, state);
     }
@@ -155,7 +157,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public boolean hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
                              @NotNull EntityLivingBase attacker) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().hitEntity(selected, target, attacker);
         } else return definition$hitEntity(stack, target, attacker);
     }
@@ -164,7 +166,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public boolean onBlockStartBreak(@NotNull ItemStack itemstack, @NotNull BlockPos pos,
                                      @NotNull EntityPlayer player) {
         ItemStack selected = getHandler(itemstack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().onBlockStartBreak(selected, pos, player);
         } else return definition$onBlockStartBreak(itemstack, pos, player);
     }
@@ -173,17 +175,15 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public boolean onBlockDestroyed(@NotNull ItemStack stack, @NotNull World worldIn, @NotNull IBlockState state,
                                     @NotNull BlockPos pos, @NotNull EntityLivingBase entityLiving) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().onBlockDestroyed(selected, worldIn, state, pos, entityLiving);
         } else return definition$onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
     }
 
     @Override
     public boolean getIsRepairable(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
-        // I think this lets repairs go through to the selected tool, in combination with the setDamage passthroughs?
-        // Idk testing required.
         ItemStack selected = getHandler(toRepair).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().getIsRepairable(selected, repair);
         } else return definition$getIsRepairable(toRepair, repair);
     }
@@ -193,7 +193,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public Multimap<String, AttributeModifier> getAttributeModifiers(@NotNull EntityEquipmentSlot slot,
                                                                      @NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().getAttributeModifiers(slot, selected);
         } else return definition$getAttributeModifiers(slot, stack);
     }
@@ -202,7 +202,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public int getHarvestLevel(@NotNull ItemStack stack, @NotNull String toolClass, @Nullable EntityPlayer player,
                                @Nullable IBlockState blockState) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().getHarvestLevel(stack, toolClass, player, blockState);
         } else return super.getHarvestLevel(stack, toolClass, player, blockState);
     }
@@ -217,7 +217,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public boolean canDisableShield(@NotNull ItemStack stack, @NotNull ItemStack shield,
                                     @NotNull EntityLivingBase entity, @NotNull EntityLivingBase attacker) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().canDisableShield(selected, shield, entity, attacker);
         } else return definition$canDisableShield(stack, shield, entity, attacker);
     }
@@ -226,7 +226,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public boolean doesSneakBypassUse(@NotNull ItemStack stack, @NotNull IBlockAccess world, @NotNull BlockPos pos,
                                       @NotNull EntityPlayer player) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().doesSneakBypassUse(selected, world, pos, player);
         } else return definition$doesSneakBypassUse(stack, world, pos, player);
     }
@@ -234,7 +234,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public boolean onEntitySwing(@NotNull EntityLivingBase entityLiving, @NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().onEntitySwing(entityLiving, selected);
         } else return definition$onEntitySwing(entityLiving, stack);
     }
@@ -243,7 +243,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public boolean canDestroyBlockInCreative(@NotNull World world, @NotNull BlockPos pos, @NotNull ItemStack stack,
                                              @NotNull EntityPlayer player) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().canDestroyBlockInCreative(world, pos, selected, player);
         } else return definition$canDestroyBlockInCreative(world, pos, stack, player);
     }
@@ -257,7 +257,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public boolean isDamaged(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().isDamaged(selected);
         } else return definition$isDamaged(stack);
     }
@@ -265,7 +265,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public int getDamage(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().getDamage(selected);
         } else return super.getDamage(stack);
     }
@@ -273,7 +273,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public int getMaxDamage(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().getMaxDamage(selected);
         } else return definition$getMaxDamage(stack);
     }
@@ -281,7 +281,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public void setDamage(@NotNull ItemStack stack, int damage) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             selected.getItem().setDamage(selected, damage);
         } else super.setDamage(stack, damage);
     }
@@ -289,7 +289,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public double getDurabilityForDisplay(@NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             double dis = selected.getItem().getDurabilityForDisplay(selected);
             // vanillaesque tools need to be inverted
             if (selected.getItem() instanceof ItemTool) dis = 1 - dis;
@@ -303,7 +303,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                @NotNull ITooltipFlag flag) {
         ToolStackHandler handler = getHandler(stack);
         ItemStack selected = handler.getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             selected.getItem().addInformation(selected, world, tooltip, flag);
         } else {
             if (stack.getItemDamage() > 0) {
@@ -322,14 +322,23 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 tooltip.add("");
                 tooltip.add(I18n.format("item.gt.tool.toolbelt.maintenance"));
             } else tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
-
         }
+        if (TooltipHelper.isCtrlDown()) {
+            tooltip.add("");
+            for (int i = 0; i < handler.getSlots(); i++) {
+                ItemStack tool = handler.getStackInSlot(i);
+                String name = tool.isEmpty() ? "x" : tool.getDisplayName();
+                tooltip.add(I18n.format(
+                        handler.selectedSlot == i ? "item.gt.tool.toolbelt.selected" : "item.gt.tool.toolbelt.tool",
+                        i + 1, name));
+            }
+        } else tooltip.add(I18n.format("gregtech.tooltip.hold_ctrl"));
     }
 
     @Override
     public boolean canHarvestBlock(@NotNull IBlockState state, @NotNull ItemStack stack) {
         ItemStack selected = getHandler(stack).getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             return selected.getItem().canHarvestBlock(state, selected);
         } else return ToolHelper.isToolEffective(state, getToolClasses(stack), getTotalHarvestLevel(stack));
     }
@@ -337,7 +346,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
         ItemStack selected = getHandler(wrench).getSelectedStack();
-        if (selected != null && selected.getItem() instanceof IGTTool tool) {
+        if (!selected.isEmpty() && selected.getItem() instanceof IGTTool tool) {
             tool.wrenchUsed(player, hand, selected, rayTrace);
         } else super.wrenchUsed(player, hand, wrench, rayTrace);
     }
@@ -345,7 +354,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
         ItemStack selected = getHandler(item).getSelectedStack();
-        if (selected != null && selected.getItem() instanceof IGTTool tool) {
+        if (!selected.isEmpty() && selected.getItem() instanceof IGTTool tool) {
             tool.toolUsed(selected, user, pos);
         } else super.toolUsed(item, user, pos);
     }
@@ -353,7 +362,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public void used(@NotNull EnumHand hand, @NotNull EntityPlayer player, @NotNull BlockPos pos) {
         ItemStack selected = getHandler(player.getHeldItem(hand)).getSelectedStack();
-        if (selected != null && selected.getItem() instanceof IGTTool tool) {
+        if (!selected.isEmpty() && selected.getItem() instanceof IGTTool tool) {
             tool.used(hand, player, pos);
         } else super.used(hand, player, pos);
     }
@@ -373,8 +382,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     public void setOnCraftIngredient(ItemStack stack, Ingredient ingredient) {
-        Integer match = getHandler(stack).checkIngredientAgainstTools(ingredient);
-        if (match != null) {
+        int match = getHandler(stack).checkIngredientAgainstTools(ingredient);
+        if (match != -1) {
             setSelectedTool(match, stack);
         }
     }
@@ -385,11 +394,11 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     public boolean supportsIngredient(ItemStack stack, Ingredient ingredient) {
-        return getHandler(stack).checkIngredientAgainstTools(ingredient) != null;
+        return getHandler(stack).checkIngredientAgainstTools(ingredient) != -1;
     }
 
     public boolean supportsTool(ItemStack stack, ItemStack tool) {
-        return getHandler(stack).checkToolAgainstTools(tool) != null;
+        return getHandler(stack).checkToolAgainstTools(tool) != -1;
     }
 
     private ToolStackHandler getHandler(ItemStack stack) {
@@ -407,23 +416,22 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (direction < 0) handler.incrementSelectedSlot();
         else handler.decrementSelectedSlot();
         GregTechAPI.networkHandler.sendToServer(
-                new PacketToolbeltSelectionChange(handler.selectedSlot == null ? -1 : handler.selectedSlot));
+                new PacketToolbeltSelectionChange(handler.selectedSlot));
     }
 
     @SideOnly(Side.CLIENT)
     public void changeSelectedToolHotkey(int slot, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
-        if (slot < 0 || slot >= handler.getSlots() || handler.getStackInSlot(slot).isEmpty())
-            handler.selectedSlot = null;
+        if (slot < 0 || slot >= handler.getSlots()) handler.selectedSlot = -1;
         else handler.selectedSlot = slot;
         GregTechAPI.networkHandler.sendToServer(
-                new PacketToolbeltSelectionChange(handler.selectedSlot == null ? -1 : handler.selectedSlot));
+                new PacketToolbeltSelectionChange(handler.selectedSlot));
     }
 
-    public void setSelectedTool(@Nullable Integer slot, ItemStack stack) {
+    public void setSelectedTool(int slot, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
-        if (slot == null || slot < 0 || slot >= handler.getSlots() || handler.getStackInSlot(slot).isEmpty())
-            handler.selectedSlot = null;
+        if (slot < 0 || slot >= handler.getSlots())
+            handler.selectedSlot = -1;
         else handler.selectedSlot = slot;
     }
 
@@ -431,7 +439,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     public @NotNull String getItemStackDisplayName(@NotNull ItemStack stack) {
         ItemStack tool = getHandler(stack).getSelectedStack();
         String selectedToolDisplay = "";
-        if (tool != null) {
+        if (!tool.isEmpty()) {
             selectedToolDisplay = " (" + tool.getDisplayName() + ")";
         }
         getHandler(stack).disablePassthrough();
@@ -449,7 +457,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (result == EnumActionResult.PASS) {
             ItemStack stack = player.getHeldItem(hand);
             ToolStackHandler handler = getHandler(stack);
-            if (handler.getSelectedSlot() == null && world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
+            if (handler.getSelectedSlot() == -1 && world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
                     holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
                 maintenance.fixMaintenanceProblemsWithToolbelt(player, this, stack);
                 return EnumActionResult.SUCCESS;
@@ -464,7 +472,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                @NotNull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ToolStackHandler handler = getHandler(player.getHeldItem(hand));
         ItemStack selected = handler.getSelectedStack();
-        if (selected != null) {
+        if (!selected.isEmpty()) {
             ColorSprayBehaviour spray = ColorSprayBehaviour.getBehavior(selected);
             if (spray != null) {
                 EnumActionResult result = spray.useFromToolbelt(player, world, pos, hand, facing, hitX, hitY, hitZ,
@@ -515,7 +523,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     protected static class ToolbeltCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
 
-        protected final Supplier<Integer> slotCountSupplier;
+        protected final IntSupplier slotCountSupplier;
 
         private @Nullable ToolStackHandler handler;
 
@@ -558,7 +566,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         protected ToolStackHandler getHandler(int minsize) {
-            int slots = Math.max(slotCountSupplier.get(), minsize);
+            int slots = Math.max(slotCountSupplier.getAsInt(), minsize);
             if (handler == null || handler.getSlots() != slots) handler = new ToolStackHandler(slots);
             return handler;
         }
@@ -582,11 +590,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     protected static class ToolStackHandler extends ItemStackHandler {
 
-        private Ingredient nextCraftIngredient;
-
         private static final Set<String> EMPTY = ImmutableSet.of();
 
-        private @Nullable Integer selectedSlot = null;
+        private @Range(from = -1, to = 128) int selectedSlot = -1;
 
         protected final ItemTool[] tools = new ItemTool[this.getSlots()];
         protected final IGTTool[] gtTools = new IGTTool[this.getSlots()];
@@ -600,26 +606,20 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         public void incrementSelectedSlot() {
-            for (int slot = (this.selectedSlot == null ? -1 : this.selectedSlot) + 1; slot != this.getSlots(); slot++) {
-                if (this.getStackInSlot(slot).isEmpty()) continue;
-                this.selectedSlot = slot;
-                return;
-            }
-            this.selectedSlot = null;
+            if ((this.selectedSlot += 1) >= this.getSlots()) this.selectedSlot = -1;
         }
 
         public void decrementSelectedSlot() {
-            for (int slot = (this.selectedSlot == null ? this.getSlots() : this.selectedSlot) - 1; slot != -1; slot--) {
-                if (this.getStackInSlot(slot).isEmpty()) continue;
-                this.selectedSlot = slot;
-                return;
-            }
-            this.selectedSlot = null;
+            if ((this.selectedSlot -= 1) < -1) this.selectedSlot = this.getSlots() - 1;
         }
 
-        public @Nullable Integer getSelectedSlot() {
+        public int getSelectedSlot() {
             if (passthrough) return selectedSlot;
-            else return null;
+            else return -1;
+        }
+
+        public void setSelectedSlot(int selectedSlot) {
+            this.selectedSlot = Math.min(getSlots() - 1, Math.max(selectedSlot, -1));
         }
 
         public void enablePassthrough() {
@@ -630,14 +630,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             this.passthrough = false;
         }
 
-        public @Nullable ItemStack getSelectedStack() {
-            if (getSelectedSlot() == null) return null;
+        public @NotNull ItemStack getSelectedStack() {
+            if (getSelectedSlot() == -1) return ItemStack.EMPTY;
             else return this.stacks.get(getSelectedSlot());
         }
 
         public Set<String> getToolClasses(boolean defaultEmpty) {
             ItemStack selectedStack = getSelectedStack();
-            if (selectedStack != null) {
+            if (!selectedStack.isEmpty()) {
                 if (selectedStack.getItem() instanceof ItemTool tool) {
                     return tool.getToolClasses(selectedStack);
                 } else if (selectedStack.getItem() instanceof IGTTool tool) {
@@ -657,7 +657,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         protected void onContentsChanged(int slot) {
-            if (this.selectedSlot != null && this.selectedSlot == slot) this.selectedSlot = null;
+            if (this.selectedSlot == slot) this.selectedSlot = -1;
             this.updateSlot(slot);
             this.update();
 
@@ -667,14 +667,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         @Override
         public NBTTagCompound serializeNBT() {
             NBTTagCompound tag = super.serializeNBT();
-            if (this.selectedSlot != null) tag.setByte("SelectedSlot", this.selectedSlot.byteValue());
+            if (this.selectedSlot != -1) tag.setByte("SelectedSlot", (byte) this.selectedSlot);
             return tag;
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             super.deserializeNBT(nbt);
-            if (nbt.hasKey("SelectedSlot")) this.selectedSlot = (int) nbt.getByte("SelectedSlot");
+            if (nbt.hasKey("SelectedSlot")) this.selectedSlot = nbt.getByte("SelectedSlot");
         }
 
         @Override
@@ -727,15 +727,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             return false;
         }
 
-        @Nullable
-        public Integer checkIngredientAgainstTools(Ingredient ingredient) {
+        public int checkIngredientAgainstTools(Ingredient ingredient) {
             for (int i = 0; i < this.getSlots(); i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (ingredient.test(stack)) {
                     return i;
                 }
             }
-            return null;
+            return -1;
         }
 
         public void dealCraftDamageToSlot(int slot) {
@@ -744,21 +743,20 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         public boolean dealCraftDamageToSelected() {
-            if (selectedSlot != null) {
+            if (selectedSlot != -1) {
                 dealCraftDamageToSlot(selectedSlot);
                 return true;
             } else return false;
         }
 
-        @Nullable
-        public Integer checkToolAgainstTools(ItemStack tool) {
+        public int checkToolAgainstTools(ItemStack tool) {
             for (int i = 0; i < this.getSlots(); i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (OreDictionary.itemMatches(stack, tool, false)) {
                     return i;
                 }
             }
-            return null;
+            return -1;
         }
     }
 }

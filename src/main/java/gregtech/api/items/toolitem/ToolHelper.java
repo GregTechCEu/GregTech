@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -204,7 +205,7 @@ public final class ToolHelper {
     public static ItemStack toolbeltPassthrough(ItemStack stack) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
             ItemStack selected = toolbelt.getSelectedTool(stack);
-            if (selected != null) stack = selected;
+            if (!selected.isEmpty()) stack = selected;
         }
         return stack;
     }
@@ -250,7 +251,7 @@ public final class ToolHelper {
     public static void damageItemWhenCrafting(@NotNull ItemStack stack, @Nullable EntityLivingBase entity) {
         if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
             ItemStack selectedStack = toolbelt.getSelectedTool(stack);
-            if (selectedStack != null) {
+            if (!selectedStack.isEmpty()) {
                 damageItemWhenCrafting(selectedStack, entity);
                 return;
             }
@@ -294,7 +295,7 @@ public final class ToolHelper {
             return;
         } else if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
             ItemStack selectedStack = toolbelt.getSelectedTool(stack);
-            if (selectedStack != null) {
+            if (!selectedStack.isEmpty()) {
                 damageItem(selectedStack, entity, damage);
                 return;
             }
@@ -405,8 +406,12 @@ public final class ToolHelper {
      * @return if the itemstack should be considered a spraycan
      */
     public static boolean isSpraycan(ItemStack spraycan) {
-        return spraycan.getItem() instanceof MetaItem<?>meta &&
-                meta.getBehaviours(spraycan).stream().anyMatch(b -> b instanceof ColorSprayBehaviour);
+        if (spraycan.getItem() instanceof MetaItem<?>meta) {
+            for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
+                if (behaviour instanceof ColorSprayBehaviour) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -466,10 +471,8 @@ public final class ToolHelper {
                 }
                 // If the tool is an electric tool, catch the tool breaking and cancel the remaining AOE
                 ItemStack tool = player.getHeldItemMainhand();
-                if (tool.getItem() instanceof ItemGTToolbelt toolbelt) {
-                    ItemStack selected = toolbelt.getSelectedTool(tool);
-                    if (selected != null) tool = selected;
-                } else if (!tool.isItemEqualIgnoreDurability(stack)) {
+                tool = toolbeltPassthrough(tool);
+                if (!tool.isItemEqualIgnoreDurability(stack)) {
                     return true;
                 }
             }

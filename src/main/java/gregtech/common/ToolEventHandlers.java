@@ -8,7 +8,6 @@ import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -166,10 +165,7 @@ public class ToolEventHandlers {
                         // only try once, so future water placement does not get eaten too
                         return false;
                     });
-                    if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-                        ItemStack selected = toolbelt.getSelectedTool(stack);
-                        if (selected != null) stack = selected;
-                    }
+                    stack = ToolHelper.toolbeltPassthrough(stack);
                     ((IGTTool) stack.getItem()).playSound(player);
                 }
             }

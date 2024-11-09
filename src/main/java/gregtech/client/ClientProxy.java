@@ -399,8 +399,8 @@ public class ClientProxy extends CommonProxy {
             gui.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22 - offset, 0, 0, slots * 20 - 18, 22);
             // draw the endpiece to the hotbar
             gui.drawTexturedModalRect(i - 91 + slots * 20 - 18, sr.getScaledHeight() - 22 - offset, 162, 0, 20, 22);
-            Integer selected = toolbelt.getSelectedSlot(stack);
-            if (selected != null) {
+            int selected = toolbelt.getSelectedSlot(stack);
+            if (selected != -1) {
                 gui.drawTexturedModalRect(i - 91 - 1 + selected * 20, sr.getScaledHeight() - 22 - 1 - offset, 0, 22, 24,
                         24);
             }
