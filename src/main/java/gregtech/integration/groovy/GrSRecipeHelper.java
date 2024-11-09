@@ -1,7 +1,5 @@
 package gregtech.integration.groovy;
 
-import com.cleanroommc.groovyscript.helper.ingredient.GroovyScriptCodeConverter;
-
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
@@ -9,6 +7,7 @@ import gregtech.integration.RecipeCompatUtil;
 
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.groovyscript.helper.ingredient.GroovyScriptCodeConverter;
 import com.cleanroommc.groovyscript.helper.ingredient.NbtHelper;
 
 public class GrSRecipeHelper {
