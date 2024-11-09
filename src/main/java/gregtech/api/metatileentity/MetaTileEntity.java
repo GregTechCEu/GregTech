@@ -35,6 +35,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
@@ -88,7 +89,6 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.IGuiHolder;
@@ -270,7 +270,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+        return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
     }
 
     /**
@@ -296,7 +296,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      */
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
+        TextureAtlasSprite atlasSprite = RenderUtil.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {

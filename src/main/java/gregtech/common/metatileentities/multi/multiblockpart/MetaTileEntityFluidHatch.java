@@ -47,16 +47,16 @@ import java.util.function.Consumer;
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
                                       implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
-    private static final int INITIAL_INVENTORY_SIZE = 8000;
+    public static final int INITIAL_INVENTORY_SIZE = 8000;
 
     // only holding this for convenience
-    private final HatchFluidTank fluidTank;
-    private boolean workingEnabled;
+    protected final HatchFluidTank fluidTank;
+    protected boolean workingEnabled;
 
     // export hatch-only fields
-    private boolean locked;
+    protected boolean locked;
     @Nullable
-    private FluidStack lockedFluid;
+    protected FluidStack lockedFluid;
 
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
@@ -176,7 +176,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
     }
 
-    private int getInventorySize() {
+    protected int getInventorySize() {
         return INITIAL_INVENTORY_SIZE * (1 << Math.min(9, getTier()));
     }
 
@@ -268,7 +268,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 .bindPlayerInventory(entityPlayer.inventory);
     }
 
-    private Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
+    protected Consumer<List<ITextComponent>> getFluidNameText(TankWidget tankWidget) {
         return (list) -> {
             TextComponentTranslation translation = tankWidget.getFluidTextComponent();
             // If there is no fluid in the tank, but there is a locked fluid
@@ -282,7 +282,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         };
     }
 
-    private Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
+    protected Consumer<List<ITextComponent>> getFluidAmountText(TankWidget tankWidget) {
         return (list) -> {
             String fluidAmount = "";
 
@@ -339,7 +339,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         fluidTank.onContentsChanged();
     }
 
-    private class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
+    protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
             super(capacity, entityToNotify, isExport);
