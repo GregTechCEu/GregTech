@@ -8,6 +8,8 @@ import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.ItemRenderCompat;
 
+import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -153,15 +155,10 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
     public static Pair<TextureAtlasSprite, Integer> getParticleTexture(IBlockAccess world, BlockPos pos) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(world, pos);
         if (metaTileEntity == null) {
-            return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+            return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
         } else {
             return metaTileEntity.getParticleTexture();
         }
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return TextureUtils.getMissingSprite();
     }
 
     @Override

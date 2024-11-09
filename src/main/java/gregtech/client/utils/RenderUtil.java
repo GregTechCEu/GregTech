@@ -667,4 +667,11 @@ public class RenderUtil {
         builder.setApplyDiffuseLighting(false);
         return builder.build();
     }
+
+    /**
+     * @return the missing texture atlas sprite
+     */
+    public static @NotNull TextureAtlasSprite getMissingSprite() {
+        return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+    }
 }

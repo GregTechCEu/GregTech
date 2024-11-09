@@ -35,6 +35,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
@@ -270,7 +271,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+        return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
     }
 
     /**
@@ -296,7 +297,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      */
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
+        TextureAtlasSprite atlasSprite = RenderUtil.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {

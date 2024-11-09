@@ -103,11 +103,6 @@ public class CCLBlockRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return TextureUtils.getMissingSprite();
-    }
-
-    @Override
     public void registerTextures(TextureMap map) {}
 
     @Override
