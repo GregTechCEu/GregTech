@@ -20,6 +20,7 @@ import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
@@ -119,6 +120,12 @@ public class ClientProxy extends CommonProxy {
         TextureMap map = event.getMap();
         GTFluidRegistration.INSTANCE.registerSprites(map);
         PipeRenderer.initializeRestrictor(map);
+        Textures.register(map);
+        CableRenderer.INSTANCE.registerIcons(map);
+        FluidPipeRenderer.INSTANCE.registerIcons(map);
+        ItemPipeRenderer.INSTANCE.registerIcons(map);
+        OpticalPipeRenderer.INSTANCE.registerIcons(map);
+        LaserPipeRenderer.INSTANCE.registerIcons(map);
     }
 
     @SubscribeEvent

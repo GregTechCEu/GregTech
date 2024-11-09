@@ -5,6 +5,8 @@ import gregtech.client.renderer.cclop.ColourOperation;
 import gregtech.client.renderer.cclop.LightMapOperation;
 import gregtech.client.renderer.texture.Textures;
 
+import gregtech.client.texture.IconRegistrar;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
@@ -15,12 +17,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 
-public class LargeTurbineRenderer implements IIconRegister {
+public class LargeTurbineRenderer implements IconRegistrar {
 
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite baseRingSprite;
@@ -37,7 +39,7 @@ public class LargeTurbineRenderer implements IIconRegister {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         this.baseRingSprite = textureMap
                 .registerSprite(GTUtility.gregtechId("blocks/multiblock/large_turbine/base_ring"));
         this.baseBackgroundSprite = textureMap

@@ -128,7 +128,6 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         blockRenderType = BlockRenderingRegistry.createRenderType(name);
         BlockRenderingRegistry.registerRenderer(blockRenderType, this);
         MinecraftForge.EVENT_BUS.register(this);
-        TextureUtils.addIconRegister(this::registerIcons);
     }
 
     public ModelResourceLocation getModelLocation() {

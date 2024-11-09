@@ -63,7 +63,6 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         BLOCK_RENDER_TYPE = BlockRenderingRegistry.createRenderType("meta_tile_entity");
         BlockRenderingRegistry.registerRenderer(BLOCK_RENDER_TYPE, INSTANCE);
         MinecraftForge.EVENT_BUS.register(INSTANCE);
-        TextureUtils.addIconRegister(Textures::register);
     }
 
     @SubscribeEvent

@@ -3,6 +3,8 @@ package gregtech.client.renderer.texture.custom;
 import gregtech.api.GTValues;
 import gregtech.client.renderer.texture.Textures;
 
+import gregtech.client.texture.IconRegistrar;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockRenderLayer;
@@ -13,11 +15,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
-public class DrumRenderer implements IIconRegister {
+public class DrumRenderer implements IconRegistrar {
 
     private final String basePath;
 
@@ -31,7 +33,7 @@ public class DrumRenderer implements IIconRegister {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         String formattedBase = GTValues.MODID + ":blocks/" + basePath;
         this.textures = new TextureAtlasSprite[3];
         this.textures[0] = textureMap.registerSprite(new ResourceLocation(formattedBase + "/top"));
