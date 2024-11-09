@@ -36,7 +36,7 @@ public class MinecraftMixin {
         if (inventoryPlayer.player.isSneaking()) {
             ItemStack stack = inventoryPlayer.player.getHeldItemMainhand();
             if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-                toolbelt.setSelectedTool(i, stack);
+                toolbelt.changeSelectedToolHotkey(i, stack);
                 return;
             }
         }

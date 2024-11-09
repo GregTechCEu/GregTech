@@ -342,7 +342,7 @@ public class ClientProxy extends CommonProxy {
             ItemStack stack = player.getHeldItemMainhand();
             if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
                 stack = stack.copy();
-                toolbelt.changeSelectedTool(event.getDwheel(), stack);
+                toolbelt.changeSelectedToolMousewheel(event.getDwheel(), stack);
                 InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
                 inv.mainInventory.set(inv.currentItem, stack);
                 event.setCanceled(true);

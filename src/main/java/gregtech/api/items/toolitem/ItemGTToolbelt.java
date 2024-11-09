@@ -12,11 +12,14 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.TextFormattingUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.items.behaviors.ColorSprayBehaviour;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -295,10 +298,26 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @SideOnly(Side.CLIENT)
     public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                @NotNull ITooltipFlag flag) {
-        ItemStack selected = getHandler(stack).getSelectedStack();
+        ToolStackHandler handler = getHandler(stack);
+        ItemStack selected = handler.getSelectedStack();
         if (selected != null) {
             selected.getItem().addInformation(selected, world, tooltip, flag);
-        } else definition$addInformation(stack, world, tooltip, flag);
+        } else {
+            int damageRemaining = this.getTotalMaxDurability(stack) - stack.getItemDamage() + 1;
+            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses",
+                    TextFormattingUtil.formatNumbers(damageRemaining)));
+            tooltip.add(I18n.format("item.gt.tool.toolbelt.size",
+                    TextFormattingUtil.formatNumbers(handler.getSlots())));
+            tooltip.add("");
+            if (TooltipHelper.isShiftDown()) {
+                tooltip.add(I18n.format("item.gt.tool.toolbelt.tooltip"));
+                tooltip.add("");
+                tooltip.add(I18n.format("item.gt.tool.toolbelt.paint"));
+                tooltip.add("");
+                tooltip.add(I18n.format("item.gt.tool.toolbelt.maintenance"));
+            } else tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
+
+        }
     }
 
     @Override
@@ -376,10 +395,21 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return new ToolbeltCapabilityProvider(stack);
     }
 
-    public void changeSelectedTool(int direction, ItemStack stack) {
+    @SideOnly(Side.CLIENT)
+    public void changeSelectedToolMousewheel(int direction, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
         if (direction > 0) handler.incrementSelectedSlot();
         else handler.decrementSelectedSlot();
+        GregTechAPI.networkHandler.sendToServer(
+                new PacketToolbeltSelectionChange(handler.selectedSlot == null ? -1 : handler.selectedSlot));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void changeSelectedToolHotkey(int slot, ItemStack stack) {
+        ToolStackHandler handler = getHandler(stack);
+        if (slot < 0 || slot >= handler.getSlots() || handler.getStackInSlot(slot).isEmpty())
+            handler.selectedSlot = null;
+        else handler.selectedSlot = slot;
         GregTechAPI.networkHandler.sendToServer(
                 new PacketToolbeltSelectionChange(handler.selectedSlot == null ? -1 : handler.selectedSlot));
     }
@@ -411,10 +441,11 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                                     float hitY, float hitZ, @NotNull EnumHand hand) {
         EnumActionResult result = IDyeableItem.super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
         if (result == EnumActionResult.PASS) {
-            ToolStackHandler handler = getHandler(player.getHeldItem(hand));
+            ItemStack stack = player.getHeldItem(hand);
+            ToolStackHandler handler = getHandler(stack);
             if (handler.getSelectedSlot() == null && world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
                     holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
-                maintenance.fixMaintenanceProblems(player);
+                maintenance.fixMaintenanceProblemsWithToolbelt(player, this, stack);
                 return EnumActionResult.SUCCESS;
             }
             return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);

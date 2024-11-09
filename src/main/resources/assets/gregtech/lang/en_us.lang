@@ -1036,7 +1036,10 @@ item.gt.tool.wire_cutter_lv.name=%s Wire Cutter (LV)
 item.gt.tool.wire_cutter_hv.name=%s Wire Cutter (HV)
 item.gt.tool.wire_cutter_iv.name=%s Wire Cutter (IV)
 item.gt.tool.toolbelt.name=%s Toolbelt%s
-item.gt.tool.toolbelt.tooltip=Can trigger maintenance repair by clicking on a maintenance hatch
+item.gt.tool.toolbelt.size=§a%s Tool Slots
+item.gt.tool.toolbelt.tooltip=Holds GT or vanilla-esque tools that can be manually selected for in-world use, automatically selected for crafting, or stored for maintenance repair.
+item.gt.tool.toolbelt.paint=Also supports Spray Cans.
+item.gt.tool.toolbelt.maintenance=Repairs maintenance problems with only inserted tools upon interacting with a maintenance hatch in-world.
 
 
 item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses

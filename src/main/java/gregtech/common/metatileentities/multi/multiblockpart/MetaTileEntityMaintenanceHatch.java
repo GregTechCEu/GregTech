@@ -46,6 +46,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -197,7 +198,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * 
      * @param entityPlayer the player performing the fixing
      */
-    public void fixMaintenanceProblems(@Nullable EntityPlayer entityPlayer) {
+    private void fixMaintenanceProblems(@Nullable EntityPlayer entityPlayer) {
         if (!(this.getController() instanceof IMaintenance))
             return;
 
@@ -311,6 +312,29 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         }
                         continue mainfor;
                     }
+                }
+            }
+        }
+    }
+
+    @ApiStatus.Internal
+    public void fixMaintenanceProblemsWithToolbelt(@NotNull EntityPlayer entityPlayer, ItemGTToolbelt toolbelt,
+                                                   ItemStack toolbeltStack) {
+        byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
+        for (byte index = 0; index < 6; index++) {
+            if (((problems >> index) & 1) == 0) {
+                String toolToMatch = switch (index) {
+                    case 0 -> ToolClasses.WRENCH;
+                    case 1 -> ToolClasses.SCREWDRIVER;
+                    case 2 -> ToolClasses.SOFT_MALLET;
+                    case 3 -> ToolClasses.HARD_HAMMER;
+                    case 4 -> ToolClasses.WIRE_CUTTER;
+                    case 5 -> ToolClasses.CROWBAR;
+                    default -> null;
+                };
+                if (toolbelt.damageAgainstMaintenanceProblem(toolbeltStack, toolToMatch, entityPlayer)) {
+                    ((IMaintenance) getController()).setMaintenanceFixed(index);
+                    setTaped(false);
                 }
             }
         }
