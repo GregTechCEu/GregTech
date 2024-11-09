@@ -303,9 +303,11 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (selected != null) {
             selected.getItem().addInformation(selected, world, tooltip, flag);
         } else {
-            int damageRemaining = this.getTotalMaxDurability(stack) - stack.getItemDamage() + 1;
-            tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses",
-                    TextFormattingUtil.formatNumbers(damageRemaining)));
+            if (stack.getItemDamage() > 0) {
+                int damageRemaining = this.getTotalMaxDurability(stack) - stack.getItemDamage() + 1;
+                tooltip.add(I18n.format("item.gt.tool.tooltip.general_uses",
+                        TextFormattingUtil.formatNumbers(damageRemaining)));
+            }
             tooltip.add(I18n.format("item.gt.tool.toolbelt.size",
                     TextFormattingUtil.formatNumbers(handler.getSlots())));
             tooltip.add("");
