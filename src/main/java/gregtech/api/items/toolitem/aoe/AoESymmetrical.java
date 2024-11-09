@@ -3,6 +3,7 @@ package gregtech.api.items.toolitem.aoe;
 import gregtech.api.items.toolitem.ToolHelper;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 
 import com.google.common.base.Preconditions;
@@ -73,70 +74,46 @@ public class AoESymmetrical {
         return defaultDefinition.layer;
     }
 
+    public static void setColumn(NBTTagCompound tag, int i, AoESymmetrical defaultDefinition) {
+        tag.setInteger(ToolHelper.AOE_COLUMN_KEY, MathHelper.clamp(i, 0, defaultDefinition.column));
+    }
+
+    public static void setRow(NBTTagCompound tag, int i, AoESymmetrical defaultDefinition) {
+        tag.setInteger(ToolHelper.AOE_ROW_KEY, MathHelper.clamp(i, 0, defaultDefinition.row));
+    }
+
+    public static void setLayer(NBTTagCompound tag, int i, AoESymmetrical defaultDefinition) {
+        tag.setInteger(ToolHelper.AOE_LAYER_KEY, MathHelper.clamp(i, 0, defaultDefinition.layer));
+    }
+
     public static void increaseColumn(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
-        if (!tag.hasKey(ToolHelper.AOE_COLUMN_KEY, Constants.NBT.TAG_INT)) {
-            tag.setInteger(ToolHelper.AOE_COLUMN_KEY, defaultDefinition.column);
-        } else {
-            int currentColumn = tag.getInteger(ToolHelper.AOE_COLUMN_KEY);
-            if (currentColumn < defaultDefinition.column) {
-                tag.setInteger(ToolHelper.AOE_COLUMN_KEY, currentColumn + 1);
-            }
-        }
+        int currentColumn = getColumn(tag, defaultDefinition);
+        setColumn(tag, currentColumn + 1, defaultDefinition);
     }
 
     public static void increaseRow(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
-        if (!tag.hasKey(ToolHelper.AOE_ROW_KEY, Constants.NBT.TAG_INT)) {
-            tag.setInteger(ToolHelper.AOE_ROW_KEY, defaultDefinition.row);
-        } else {
-            int currentRow = tag.getInteger(ToolHelper.AOE_ROW_KEY);
-            if (currentRow < defaultDefinition.row) {
-                tag.setInteger(ToolHelper.AOE_ROW_KEY, currentRow + 1);
-            }
-        }
+        int currentRow = getRow(tag, defaultDefinition);
+        setRow(tag, currentRow + 1, defaultDefinition);
     }
 
     public static void increaseLayer(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
-        if (!tag.hasKey(ToolHelper.AOE_LAYER_KEY, Constants.NBT.TAG_INT)) {
-            tag.setInteger(ToolHelper.AOE_LAYER_KEY, defaultDefinition.layer);
-        } else {
-            int currentLayer = tag.getInteger(ToolHelper.AOE_LAYER_KEY);
-            if (currentLayer < defaultDefinition.layer) {
-                tag.setInteger(ToolHelper.AOE_LAYER_KEY, currentLayer + 1);
-            }
-        }
+        int currentLayer = getLayer(tag, defaultDefinition);
+        setLayer(tag, currentLayer + 1, defaultDefinition);
     }
 
     public static void decreaseColumn(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
-        if (!tag.hasKey(ToolHelper.AOE_COLUMN_KEY, Constants.NBT.TAG_INT)) {
-            tag.setInteger(ToolHelper.AOE_COLUMN_KEY, defaultDefinition.column);
-        } else {
-            int currentColumn = tag.getInteger(ToolHelper.AOE_COLUMN_KEY);
-            if (currentColumn > 0) {
-                tag.setInteger(ToolHelper.AOE_COLUMN_KEY, currentColumn - 1);
-            }
-        }
+        int currentColumn = getColumn(tag, defaultDefinition);
+        setColumn(tag, currentColumn - 1, defaultDefinition);
     }
 
     public static void decreaseRow(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
-        if (!tag.hasKey(ToolHelper.AOE_ROW_KEY, Constants.NBT.TAG_INT)) {
-            tag.setInteger(ToolHelper.AOE_ROW_KEY, defaultDefinition.row);
-        } else {
-            int currentRow = tag.getInteger(ToolHelper.AOE_ROW_KEY);
-            if (currentRow > 0) {
-                tag.setInteger(ToolHelper.AOE_ROW_KEY, currentRow - 1);
-            }
-        }
+        int currentRow = getRow(tag, defaultDefinition);
+        setRow(tag, currentRow + 1, defaultDefinition);
     }
 
     public static void decreaseLayer(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
-        if (!tag.hasKey(ToolHelper.AOE_LAYER_KEY, Constants.NBT.TAG_INT)) {
-            tag.setInteger(ToolHelper.AOE_LAYER_KEY, defaultDefinition.layer);
-        } else {
-            int currentLayer = tag.getInteger(ToolHelper.AOE_LAYER_KEY);
-            if (currentLayer > 0) {
-                tag.setInteger(ToolHelper.AOE_LAYER_KEY, currentLayer - 1);
-            }
-        }
+        int currentLayer = getLayer(tag, defaultDefinition);
+        setLayer(tag, currentLayer + 1, defaultDefinition);
     }
 
     public static AoESymmetrical none() {
