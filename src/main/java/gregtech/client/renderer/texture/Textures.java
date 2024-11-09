@@ -20,7 +20,6 @@ import gregtech.client.renderer.texture.custom.DrumRenderer;
 import gregtech.client.renderer.texture.custom.FireboxActiveRenderer;
 import gregtech.client.renderer.texture.custom.LargeTurbineRenderer;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
-
 import gregtech.client.texture.IconRegistrar;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

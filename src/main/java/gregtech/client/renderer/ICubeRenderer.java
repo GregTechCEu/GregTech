@@ -1,7 +1,6 @@
 package gregtech.client.renderer;
 
 import gregtech.api.gui.resources.ResourceHelper;
-
 import gregtech.client.texture.IconRegistrar;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

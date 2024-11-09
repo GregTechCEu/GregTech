@@ -2,7 +2,6 @@ package gregtech.client.renderer.texture.custom;
 
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-
 import gregtech.client.texture.IconRegistrar;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
