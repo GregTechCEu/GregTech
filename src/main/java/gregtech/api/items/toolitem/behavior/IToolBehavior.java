@@ -79,16 +79,6 @@ public interface IToolBehavior {
     }
 
     /**
-     * Not itemstack sensitive. Use the new override.
-     */
-    @Deprecated
-    default EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                            @NotNull EnumFacing facing, float hitX, float hitY, float hitZ,
-                                            @NotNull EnumHand hand) {
-        return EnumActionResult.PASS;
-    }
-
-    /**
      * Called when a Block is right-clicked with this Item, but before the block is activated
      *
      * @param player the player clicking with the item
@@ -103,17 +93,6 @@ public interface IToolBehavior {
     default EnumActionResult onItemUseFirst(@NotNull ItemStack stack, @NotNull EntityPlayer player,
                                             @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
                                             float hitX, float hitY, float hitZ, @NotNull EnumHand hand) {
-        return onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand);
-    }
-
-    /**
-     * Not itemstack sensitive. Use the new override.
-     */
-    @Deprecated
-    @NotNull
-    default EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
-                                       @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
-                                       float hitZ) {
         return EnumActionResult.PASS;
     }
 
@@ -135,17 +114,7 @@ public interface IToolBehavior {
                                        @NotNull BlockPos pos,
                                        @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
                                        float hitZ) {
-        return onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-    }
-
-    /**
-     * Not itemstack sensitive. Use the new override.
-     */
-    @NotNull
-    @Deprecated
-    default ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
-                                                     @NotNull EnumHand hand) {
-        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+        return EnumActionResult.PASS;
     }
 
     /**
@@ -158,7 +127,7 @@ public interface IToolBehavior {
     @NotNull
     default ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, @NotNull World world,
                                                      @NotNull EntityPlayer player, @NotNull EnumHand hand) {
-        return onItemRightClick(world, player, hand);
+        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
     @SideOnly(Side.CLIENT)

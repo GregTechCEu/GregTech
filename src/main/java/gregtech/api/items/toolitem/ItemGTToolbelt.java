@@ -89,13 +89,16 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return getHandler(toolbelt).getSlots();
     }
 
+    // nullable to differentiate between "no tool selected" and "no tool in selected slot" which is theoretically
+    // possible
     public @Nullable ItemStack getSelectedTool(@NotNull ItemStack toolbelt) {
         return getHandler(toolbelt).getSelectedStack();
     }
 
-    public @Nullable ItemStack getToolInSlot(@NotNull ItemStack toolbelt, int slot) {
+    @NotNull
+    public ItemStack getToolInSlot(@NotNull ItemStack toolbelt, int slot) {
         ToolStackHandler handler = getHandler(toolbelt);
-        if (slot < 0 || slot >= handler.getSlots()) return null;
+        if (slot < 0 || slot >= handler.getSlots()) return ItemStack.EMPTY;
         return handler.getStackInSlot(slot);
     }
 
@@ -315,7 +318,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 tooltip.add(I18n.format("item.gt.tool.toolbelt.tooltip"));
                 tooltip.add("");
                 tooltip.add(I18n.format("item.gt.tool.toolbelt.paint"));
-                tooltip.add("");
                 tooltip.add(I18n.format("item.gt.tool.toolbelt.dye"));
                 tooltip.add("");
                 tooltip.add(I18n.format("item.gt.tool.toolbelt.maintenance"));
@@ -402,7 +404,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @SideOnly(Side.CLIENT)
     public void changeSelectedToolMousewheel(int direction, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
-        if (direction > 0) handler.incrementSelectedSlot();
+        if (direction < 0) handler.incrementSelectedSlot();
         else handler.decrementSelectedSlot();
         GregTechAPI.networkHandler.sendToServer(
                 new PacketToolbeltSelectionChange(handler.selectedSlot == null ? -1 : handler.selectedSlot));
@@ -535,10 +537,10 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
-            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) this.getHandler(0);
+            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.getHandler(0));
             else return null;
         }
 

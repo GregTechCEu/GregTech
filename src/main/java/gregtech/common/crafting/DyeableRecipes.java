@@ -8,12 +8,16 @@ import net.minecraft.item.crafting.RecipesArmorDyes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
-import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Composed almost entirely of code taken from {@link RecipesArmorDyes} and modified to apply to {@link IDyeableItem}
+ * instead of just leather armor. Thus, will be difficult to parse.
+ */
 public final class DyeableRecipes extends RecipesArmorDyes {
 
     @ApiStatus.Internal
@@ -27,7 +31,7 @@ public final class DyeableRecipes extends RecipesArmorDyes {
     @Override
     public boolean matches(InventoryCrafting inv, @NotNull World worldIn) {
         ItemStack itemstack = ItemStack.EMPTY;
-        List<ItemStack> list = Lists.<ItemStack>newArrayList();
+        List<ItemStack> list = new ObjectArrayList<>();
 
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack itemstack1 = inv.getStackInSlot(i);
@@ -121,8 +125,9 @@ public final class DyeableRecipes extends RecipesArmorDyes {
         }
     }
 
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+    @Override
+    public @NotNull NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        NonNullList<ItemStack> nonnulllist = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 
         for (int i = 0; i < nonnulllist.size(); ++i) {
             ItemStack itemstack = inv.getStackInSlot(i);

@@ -643,10 +643,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                                                        @NotNull BlockPos pos, @NotNull EnumFacing facing, float hitX,
                                                        float hitY, float hitZ, @NotNull EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedTool(stack);
-            if (selected != null) stack = selected;
-        }
+        stack = toolbeltPassthrough(stack);
         List<IToolBehavior> behaviors;
         if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
         else return EnumActionResult.PASS;
@@ -663,10 +660,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                                   EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedTool(stack);
-            if (selected != null) stack = selected;
-        }
+        stack = toolbeltPassthrough(stack);
         List<IToolBehavior> behaviors;
         if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
         else return EnumActionResult.PASS;
@@ -684,10 +678,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default ActionResult<ItemStack> definition$onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         ItemStack original = stack;
-        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedTool(stack);
-            if (selected != null) stack = selected;
-        }
+        stack = toolbeltPassthrough(stack);
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
             if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
@@ -910,10 +901,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     // Sound Playing
     default void playCraftingSound(EntityPlayer player, ItemStack stack) {
-        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
-            ItemStack selected = toolbelt.getSelectedTool(stack);
-            if (selected != null) stack = selected;
-        }
+        stack = toolbeltPassthrough(stack);
         // player null check for things like auto-crafters
         if (ConfigHolder.client.toolCraftingSounds && getSound() != null && player != null) {
             if (canPlaySound(stack)) {

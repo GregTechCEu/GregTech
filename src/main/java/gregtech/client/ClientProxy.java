@@ -391,6 +391,10 @@ public class ClientProxy extends CommonProxy {
             int i = sr.getScaledWidth() / 2;
             float f = gui.zLevel;
             gui.zLevel = -90.0F;
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                    GlStateManager.DestFactor.ZERO);
             // draw the left side of the hotbar
             gui.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22 - offset, 0, 0, slots * 20 - 18, 22);
             // draw the endpiece to the hotbar
@@ -398,24 +402,21 @@ public class ClientProxy extends CommonProxy {
             Integer selected = toolbelt.getSelectedSlot(stack);
             if (selected != null) {
                 gui.drawTexturedModalRect(i - 91 - 1 + selected * 20, sr.getScaledHeight() - 22 - 1 - offset, 0, 22, 24,
-                        22);
+                        24);
             }
-
-            gui.zLevel = f;
+            gui.zLevel = -80f;
             GlStateManager.enableRescaleNormal();
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-                    GlStateManager.DestFactor.ZERO);
             RenderHelper.enableGUIStandardItemLighting();
 
             for (int l = 0; l < slots; ++l) {
                 ItemStack stack1 = toolbelt.getToolInSlot(stack, l);
-                if (stack1 == null) continue;
+                if (stack1.isEmpty()) continue;
                 int i1 = i - 90 + l * 20 + 2;
                 int j1 = sr.getScaledHeight() - 16 - 3 - offset;
                 gui.renderHotbarItem(i1, j1, partialTicks, entityplayer, stack1);
             }
+
+            gui.zLevel = f;
 
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
