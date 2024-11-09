@@ -29,7 +29,7 @@ public class GroovyExpansions {
     }
 
     public static Material.Builder materialBuilder(MaterialEvent event, int id, String domain, String path) {
-        return materialBuilder(event, id, domain, path);
+        return materialBuilder(event, id, new ResourceLocation(domain, path));
     }
 
     public static Material.Builder materialBuilder(MaterialEvent event, int id, String s) {
