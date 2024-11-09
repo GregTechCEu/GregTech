@@ -25,7 +25,6 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -392,7 +391,7 @@ public class RenderUtil {
             float r = (color >> 16 & 255) / 255.0f;
             float g = (color >> 8 & 255) / 255.0f;
             float b = (color & 255) / 255.0f;
-            TextureAtlasSprite sprite = TextureUtils.getTexture(fluidStack.getFluid().getStill(fluidStack));
+            TextureAtlasSprite sprite = getTexture(fluidStack.getFluid().getStill(fluidStack));
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
                     GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -530,8 +529,7 @@ public class RenderUtil {
         heightT--;
         Fluid fluid = contents.getFluid();
         ResourceLocation fluidStill = fluid.getStill(contents);
-        TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
-                .getAtlasSprite(fluidStill.toString());
+        TextureAtlasSprite fluidStillSprite = getTexture(fluidStill);
         int fluidColor = fluid.getColor(contents);
         int scaledAmount;
         if (contents.amount == tankCapacity) {
@@ -669,9 +667,29 @@ public class RenderUtil {
     }
 
     /**
+     * @return the block texture map
+     */
+    public static @NotNull TextureMap getTextureMap() {
+        return Minecraft.getMinecraft().getTextureMapBlocks();
+    }
+
+    /**
+     * @param location the location of the texture in the Block Texture Map
+     * @return the texture at the location
+     * @throws IllegalArgumentException if the texture does not exist in the atlas
+     */
+    public static @NotNull TextureAtlasSprite getTexture(@NotNull ResourceLocation location) {
+        TextureAtlasSprite sprite = getTextureMap().getTextureExtry(location.toString());
+        if (sprite == null) {
+            throw new IllegalArgumentException("Texture does not exist at " + location);
+        }
+        return sprite;
+    }
+
+    /**
      * @return the missing texture atlas sprite
      */
     public static @NotNull TextureAtlasSprite getMissingSprite() {
-        return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        return getTextureMap().getMissingSprite();
     }
 }

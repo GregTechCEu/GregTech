@@ -1,5 +1,7 @@
 package gregtech.client.model.modelfactories;
 
+import gregtech.client.utils.RenderUtil;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -15,8 +17,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import codechicken.lib.texture.TextureUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class BakedModelHandler {
             Fluid fluid = ObfuscationReflectionHelper.getPrivateValue(BlockFluidBase.class, fluidBlock, "definedFluid");
             ModelFluid modelFluid = new ModelFluid(fluid);
             IBakedModel bakedModel = modelFluid.bake(modelFluid.getDefaultState(), DefaultVertexFormats.ITEM,
-                    TextureUtils::getTexture);
+                    RenderUtil::getTexture);
             ModelResourceLocation resourceLocation = getSimpleModelLocation(fluidBlock);
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
