@@ -52,7 +52,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
-import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -104,35 +104,39 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     @Override
     public ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
-        ToolStackHandler handler = getHandler(guiData.getUsedItemStack());
-        ItemStack selected = handler.getSelectedStack();
+        final var usedStack = guiData.getUsedItemStack();
+        final var handler = getHandler(usedStack);
+        final var selected = handler.getSelectedStack();
         if (selected != null && selected.getItem() instanceof ItemUIFactory factory) {
             return factory.buildUI(guiData, guiSyncManager);
         }
 
         int heightBonus = (handler.getSlots() / 9) * 18;
 
-        ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 176, 120 + heightBonus);
-
         SlotGroup group = new SlotGroup("toolbelt_inventory", 9);
         guiSyncManager.registerSlotGroup(group);
 
-        SlotGroupWidget slotGroupWidget = new SlotGroupWidget();
-        slotGroupWidget.flex().coverChildren().leftRel(0.5f).top(7);
-        slotGroupWidget.debugName("toolbelt_inventory");
+        List<ItemSlot> slots = new ArrayList<>();
         for (int i = 0; i < handler.getSlots(); i++) {
-            int finalI = i;
-            slotGroupWidget.child(new ItemSlot()
-                    .slot(SyncHandlers.itemSlot(handler, i).slotGroup(group)
-                            .changeListener(
-                                    (newItem, onlyAmountChanged, client, init) -> handler.onContentsChanged(finalI)))
-                    .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
-                    .pos(i % 9 * 18, i / 9 * 18)
-                    .debugName("slot_" + i));
+            slots.add(new ItemSlot());
         }
-        panel.child(slotGroupWidget);
 
-        return panel.bindPlayerInventory();
+        return GTGuis.createPanel(usedStack.getTranslationKey(), 176, 120 + heightBonus)
+                .child(new Grid()
+                        .margin(0)
+                        .leftRel(0.5f)
+                        .top(7)
+                        .coverChildren()
+                        .mapTo(group.getRowSize(), slots, (index, value) -> value
+                                .slot(SyncHandlers.itemSlot(handler, index)
+                                        .slotGroup(group)
+                                        .changeListener(
+                                                (newItem, onlyAmountChanged, client, init) -> handler
+                                                        .onContentsChanged(index)))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
+                                .debugName("slot_" + index))
+                        .debugName("toolbelt_inventory"))
+                .bindPlayerInventory();
     }
 
     public static boolean isToolbeltableOredict(String oredict) {
