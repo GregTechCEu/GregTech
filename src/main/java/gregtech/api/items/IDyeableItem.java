@@ -12,8 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import net.minecraftforge.common.util.Constants;
-
 import org.jetbrains.annotations.NotNull;
 
 public interface IDyeableItem {
