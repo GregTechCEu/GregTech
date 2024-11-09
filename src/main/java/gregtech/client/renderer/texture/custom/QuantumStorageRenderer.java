@@ -5,6 +5,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
+import gregtech.client.texture.IconRegistrar;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
@@ -33,13 +34,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 
-public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
+public class QuantumStorageRenderer implements IconRegistrar {
 
     private static final Cuboid6 glassBox = new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
 
@@ -64,7 +65,7 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     @Override
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         this.glassTexture = textureMap
                 .registerSprite(new ResourceLocation("gregtech:blocks/overlay/machine/overlay_screen_glass"));
     }
