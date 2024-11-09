@@ -1046,6 +1046,7 @@ item.gt.tool.toolbelt.name=%s Toolbelt%s
 item.gt.tool.toolbelt.size=§a%s Tool Slots
 item.gt.tool.toolbelt.tooltip=Holds GT or vanilla-esque tools that can be manually selected for in-world use, automatically selected for crafting, or stored for maintenance repair.
 item.gt.tool.toolbelt.paint=Also supports Spray Cans.
+item.gt.tool.toolbelt.dye=Can be dyed like leather equipment.
 item.gt.tool.toolbelt.maintenance=Repairs maintenance problems with only inserted tools upon interacting with a maintenance hatch in-world.
 
 

@@ -316,6 +316,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 tooltip.add("");
                 tooltip.add(I18n.format("item.gt.tool.toolbelt.paint"));
                 tooltip.add("");
+                tooltip.add(I18n.format("item.gt.tool.toolbelt.dye"));
+                tooltip.add("");
                 tooltip.add(I18n.format("item.gt.tool.toolbelt.maintenance"));
             } else tooltip.add(I18n.format("gregtech.tooltip.hold_shift"));
 

@@ -11,21 +11,23 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 public interface IDyeableItem {
 
     default boolean hasColor(ItemStack stack) {
         NBTTagCompound nbttagcompound = stack.getTagCompound();
-        return nbttagcompound != null && nbttagcompound.hasKey("display", 10) &&
-                nbttagcompound.getCompoundTag("display").hasKey("color", 3);
+        return nbttagcompound != null && nbttagcompound.hasKey("display", Constants.NBT.TAG_COMPOUND) &&
+                nbttagcompound.getCompoundTag("display").hasKey("color", Constants.NBT.TAG_INT);
     }
 
     default int getColor(ItemStack stack) {
         NBTTagCompound nbttagcompound = stack.getTagCompound();
         if (nbttagcompound != null) {
             NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("display");
-            if (nbttagcompound1.hasKey("color", 3)) {
+            if (nbttagcompound1.hasKey("color", Constants.NBT.TAG_INT)) {
                 return nbttagcompound1.getInteger("color");
             }
         }
@@ -53,7 +55,7 @@ public interface IDyeableItem {
             stack.setTagCompound(nbttagcompound);
         }
         NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("display");
-        if (!nbttagcompound.hasKey("display", 10)) {
+        if (!nbttagcompound.hasKey("display", Constants.NBT.TAG_COMPOUND)) {
             nbttagcompound.setTag("display", nbttagcompound1);
         }
         nbttagcompound1.setInteger("color", color);
