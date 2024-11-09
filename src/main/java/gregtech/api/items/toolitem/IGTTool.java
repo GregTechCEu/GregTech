@@ -11,7 +11,6 @@ import gregtech.api.items.toolitem.aoe.AoESymmetrical;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.sync.NBTSyncValue;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -61,14 +60,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.factory.ItemGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -927,83 +932,79 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
     }
 
+    IDrawable PLUS = IKey.str("+").asIcon().marginLeft(1);
+    IDrawable MINUS = IKey.str("-").asIcon().marginLeft(1);
+
     @Override
-    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager guiSyncManager) {
-        ModularPanel panel = GTGuis.createPanel(guiData.getUsedItemStack().getDisplayName(), 120, 80);
+    default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager) {
+        final var usedStack = guiData.getUsedItemStack();
+        final var behaviorsTag = getBehaviorsTag(usedStack);
+        final var defaultDefinition = getMaxAoEDefinition(usedStack);
 
-        Supplier<NBTTagCompound> tag = () -> getBehaviorsTag(guiData.getUsedItemStack());
-        AoESymmetrical defaultDefinition = getMaxAoEDefinition(guiData.getUsedItemStack());
+        var columnValue = new IntSyncValue(
+                () -> AoESymmetrical.getColumn(behaviorsTag, defaultDefinition),
+                i -> AoESymmetrical.setColumn(behaviorsTag, i, defaultDefinition));
+        var rowValue = new IntSyncValue(
+                () -> AoESymmetrical.getRow(behaviorsTag, defaultDefinition),
+                i -> AoESymmetrical.setRow(behaviorsTag, i, defaultDefinition));
+        var layerValue = new IntSyncValue(
+                () -> AoESymmetrical.getLayer(behaviorsTag, defaultDefinition),
+                i -> AoESymmetrical.setLayer(behaviorsTag, i, defaultDefinition));
 
-        NBTSyncValue nbtSyncer = new NBTSyncValue(tag, (nbt) -> setBehaviorsTag(guiData.getUsedItemStack(), nbt));
-        guiSyncManager.syncValue("NBTSync", nbtSyncer);
+        manager.syncValue("row_value", rowValue);
+        manager.syncValue("column_value", columnValue);
+        manager.syncValue("layer_value", layerValue);
 
-        Column columns = new Column();
-        columns.flex().coverChildren().leftRel(0.07f).bottomRel(0.5f);
-        columns.child(new TextWidget(IKey.lang("item.gt.tool.aoe.columns")).paddingBottom(5));
-        columns.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
-                .disableHoverBackground().onMousePressed(data -> {
-                    NBTTagCompound nbt = tag.get();
-                    AoESymmetrical.increaseColumn(nbt, defaultDefinition);
-                    nbtSyncer.setValue(nbt, true);
-                    return true;
-                }));
-        columns.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_MINUS).size(9, 18)
-                .disableHoverBackground().onMousePressed(data -> {
-                    NBTTagCompound nbt = tag.get();
-                    AoESymmetrical.decreaseColumn(nbt, defaultDefinition);
-                    nbtSyncer.setValue(nbt, true);
-                    return true;
-                }));
-        columns.child(new TextWidget(
-                IKey.dynamic(() -> String.valueOf(1 + 2 * AoESymmetrical.getColumn(tag.get(), defaultDefinition))))
-                        .paddingTop(5));
-        panel.child(columns);
+        return GTGuis.createPanel(usedStack.getTranslationKey(), 120, 80)
+                .child(new Row()
+                        .widthRel(1f)
+                        .margin(4, 0)
+                        .alignY(0.5f)
+                        .coverChildrenHeight()
+                        .mainAxisAlignment(Alignment.MainAxis.SPACE_BETWEEN)
+                        .child(createColumn(columnValue, "columns", true))
+                        .child(createColumn(rowValue, "rows", true))
+                        .child(createColumn(layerValue, "layers", false)));
+    }
 
-        Column rows = new Column();
-        rows.flex().coverChildren().rightRel(0.5f).bottomRel(0.5f);
-        rows.child(new TextWidget(IKey.lang("item.gt.tool.aoe.rows")).paddingBottom(5));
-        rows.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
-                .disableHoverBackground().onMousePressed(data -> {
-                    NBTTagCompound nbt = tag.get();
-                    AoESymmetrical.increaseRow(nbt, defaultDefinition);
-                    nbtSyncer.setValue(nbt, true);
-                    return true;
-                }));
-        rows.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_MINUS).size(9, 18)
-                .disableHoverBackground().onMousePressed(data -> {
-                    NBTTagCompound nbt = tag.get();
-                    AoESymmetrical.decreaseRow(nbt, defaultDefinition);
-                    nbtSyncer.setValue(nbt, true);
-                    return true;
-                }));
-        rows.child(new TextWidget(
-                IKey.dynamic(() -> String.valueOf(1 + 2 * AoESymmetrical.getRow(tag.get(), defaultDefinition))))
-                        .paddingTop(5));
-        panel.child(rows);
+    default Column createColumn(IntSyncValue syncValue, String lang, boolean shouldDouble) {
+        final var display = IKey.dynamic(
+                () -> String.valueOf(1 + (shouldDouble ? 2 * syncValue.getIntValue() : syncValue.getIntValue())));
 
-        Column layers = new Column();
-        layers.flex().coverChildren().rightRel(0.07f).bottomRel(0.5f);
-        layers.child(new TextWidget(IKey.lang("item.gt.tool.aoe.layers")).paddingBottom(5));
-        layers.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_PLUS).size(9, 18)
-                .disableHoverBackground().onMousePressed(data -> {
-                    NBTTagCompound nbt = tag.get();
-                    AoESymmetrical.increaseLayer(nbt, defaultDefinition);
-                    nbtSyncer.setValue(nbt, true);
+        IWidget increaseButton = new ButtonWidget<>()
+                .size(9, 18)
+                .background(GTGuiTextures.MC_BUTTON)
+                .overlay(PLUS)
+                .disableHoverBackground()
+                .onMousePressed(data -> {
+                    syncValue.setIntValue(syncValue.getIntValue() + 1, true, true);
+                    Interactable.playButtonClickSound();
                     return true;
-                }));
-        layers.child(new ButtonWidget<>().background(GTGuiTextures.BUTTON_THROTTLE_MINUS).size(9, 18)
-                .disableHoverBackground().onMousePressed(data -> {
-                    NBTTagCompound nbt = tag.get();
-                    AoESymmetrical.decreaseLayer(nbt, defaultDefinition);
-                    nbtSyncer.setValue(nbt, true);
-                    return true;
-                }));
-        layers.child(new TextWidget(
-                IKey.dynamic(() -> String.valueOf(1 + AoESymmetrical.getLayer(tag.get(), defaultDefinition))))
-                        .paddingTop(5));
-        panel.child(layers);
+                });
 
-        return panel;
+        IWidget decreaseButton = new ButtonWidget<>()
+                .size(9, 18)
+                .background(GTGuiTextures.MC_BUTTON)
+                .overlay(MINUS)
+                .disableHoverBackground()
+                .onMousePressed(data -> {
+                    syncValue.setIntValue(syncValue.getIntValue() - 1, true, true);
+                    Interactable.playButtonClickSound();
+                    return true;
+                });
+
+        return new Column()
+                .coverChildren()
+                .child(new TextWidget(IKey.lang("item.gt.tool.aoe." + lang))
+                        .marginBottom(5))
+                .child(new Row()
+                        .coverChildren()
+                        .marginBottom(5)
+                        .child(increaseButton)
+                        .child(decreaseButton))
+                .child(new TextWidget(display)
+                        .alignment(Alignment.Center)
+                        .widthRel(1f));
     }
 
     Set<String> getToolClasses(ItemStack stack);
