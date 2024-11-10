@@ -911,6 +911,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GTLog.logger.error("Recipe map {} does not contain build action {}!", recipeMap, buildActionName,
                     new Throwable());
             return (R) this;
+        } else if (ignoredBuildActions.containsKey(buildActionName)) {
+            return (R) this;
         }
 
         ignoredBuildActions.put(buildActionName, recipeMap.getBuildActions().get(buildActionName));
