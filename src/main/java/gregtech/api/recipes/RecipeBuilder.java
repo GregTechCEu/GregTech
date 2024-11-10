@@ -133,7 +133,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.category = recipeBuilder.category;
         this.recipePropertyStorage = recipeBuilder.recipePropertyStorage.copy();
         this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
-        this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
+        if (recipeBuilder.ignoredBuildActions != null) {
+            this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
+        }
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
