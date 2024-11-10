@@ -55,7 +55,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -132,6 +132,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.hidden = recipeBuilder.hidden;
         this.category = recipeBuilder.category;
         this.recipePropertyStorage = recipeBuilder.recipePropertyStorage.copy();
+        this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
+        this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
@@ -909,9 +911,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GTLog.logger.error("Recipe map {} does not contain build action {}!", recipeMap, buildActionName,
                     new Throwable());
             return (R) this;
-        } else if (ignoredBuildActions.containsKey(buildActionName)) {
-            GTLog.logger.error("Builder already ignores {}!", buildActionName, new Throwable());
-            return (R) this;
         }
 
         ignoredBuildActions.put(buildActionName, recipeMap.getBuildActions().get(buildActionName));
@@ -1091,7 +1090,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     /**
      * Get all ignored build actions for the recipe map.
-     * Will return an empty map if none are ignored.
+     * 
+     * @return A map of ignored build actions.
      */
     public @NotNull Map<ResourceLocation, RecipeBuildAction<R>> getIgnoredBuildActions() {
         if (ignoreAllBuildActions) {
@@ -1099,7 +1099,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
 
         if (ignoredBuildActions == null) {
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
 
         return ignoredBuildActions;
