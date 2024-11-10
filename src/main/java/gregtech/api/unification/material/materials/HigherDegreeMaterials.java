@@ -34,24 +34,24 @@ public class HigherDegreeMaterials {
                 .components(Flint, 8, BandedIron, 1, Sapphire, 1)
                 .build();
 
-        RedSteel = new Material.Builder(2510, gregtechId("red_steel"))
-                .ingot(3).fluid()
-                .color(0x8C6464).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_GEAR)
-                .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
-                .toolStats(ToolProperty.Builder.of(7.0F, 6.0F, 2560, 3)
-                        .attackSpeed(0.1F).enchantability(21).build())
-                .blast(b -> b.temp(1300, GasTier.LOW).blastStats(VA[HV], 1000))
-                .build();
-
-        BlueSteel = new Material.Builder(2511, gregtechId("blue_steel"))
+        BlueSteel = new Material.Builder(2510, gregtechId("blue_steel"))
                 .ingot(3).fluid()
                 .color(0x64648C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FRAME, GENERATE_GEAR)
-                .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
+                .components(SterlingSilver, 1, BismuthBronze, 1, Steel, 2, BlackSteel, 4)
                 .toolStats(ToolProperty.Builder.of(15.0F, 6.0F, 1024, 3)
                         .attackSpeed(0.1F).enchantability(33).build())
-                .blast(b -> b.temp(1400, GasTier.LOW).blastStats(VA[HV], 1000))
+                .blast(b -> b.temp(1813, GasTier.LOW).blastStats(VA[HV], 1000))
+                .build();
+
+        RedSteel = new Material.Builder(2511, gregtechId("red_steel"))
+                .ingot(3).fluid()
+                .color(0x8C6464).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_GEAR)
+                .components(RoseGold, 1, Brass, 1, Steel, 2, BlackSteel, 4)
+                .toolStats(ToolProperty.Builder.of(7.0F, 6.0F, 2560, 3)
+                        .attackSpeed(0.1F).enchantability(21).build())
+                .blast(b -> b.temp(1813, GasTier.LOW).blastStats(VA[HV], 1000))
                 .build();
 
         Basalt = new Material.Builder(2512, gregtechId("basalt"))
