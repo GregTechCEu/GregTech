@@ -742,7 +742,6 @@ public class IParallelableRecipeLogicTest {
         exportItemBus.getExportItems().insertItem(0, new ItemStack(Blocks.BONE_BLOCK, 16), false);
         exportItemBus.getExportItems().insertItem(1, new ItemStack(Blocks.BONE_BLOCK, 16), false);
         exportItemBus.getExportItems().insertItem(2, new ItemStack(Blocks.BONE_BLOCK, 16), false);
-        // exportItemBus.getExportItems().insertItem(3, new ItemStack(Blocks.BONE_BLOCK, 16), false);
 
         RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe,
                 importItemBus.getImportItems(), importFluidBus.getImportFluids(),
