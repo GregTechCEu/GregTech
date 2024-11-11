@@ -39,8 +39,8 @@ public abstract class TooltipMixin {
     @Overwrite
     public void buildTooltip() {
         this.dirty = false;
-        this.text.clearText();
         if (this.tooltipBuilder != null) {
+            this.text.clearText();
             this.tooltipBuilder.accept(getThis());
         }
     }
