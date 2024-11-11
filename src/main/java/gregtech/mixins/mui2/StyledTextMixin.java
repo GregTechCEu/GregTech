@@ -1,18 +1,24 @@
 package gregtech.mixins.mui2;
 
-import com.cleanroommc.modularui.api.ITheme;
+import gregtech.api.mui.UnboxFix;
+
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.text.AnimatedText;
 import com.cleanroommc.modularui.drawable.text.StyledText;
+import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.TextWidget;
+import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(value = StyledText.class, remap = false)
-public class StyledTextMixin {
+public abstract class StyledTextMixin implements UnboxFix {
 
     @Shadow
     @Final
@@ -30,6 +36,22 @@ public class StyledTextMixin {
     @Shadow
     private Boolean shadow;
 
+    @Unique
+    private boolean gregTech$defaultTextColor = true;
+
+    @Unique
+    private boolean gregTech$defaultShadow = true;
+
+    @Override
+    public void gregTech$useDefaultTextColor(boolean b) {
+        gregTech$defaultTextColor = b;
+    }
+
+    @Override
+    public void gregTech$useDefaultShadow(boolean b) {
+        gregTech$defaultShadow = b;
+    }
+
     /**
      * @author GTCEu - Ghzdude
      * @reason Implement <a href="https://github.com/CleanroomMC/ModularUI/pull/86">MUI2 PR#86</a>
@@ -40,12 +62,11 @@ public class StyledTextMixin {
                 .alignment(this.alignment)
                 .scale(this.scale);
 
-        var theme = ITheme.getDefault().getTextFieldTheme();
-        int color = this.color == null ? theme.getColor() : this.color;
-        boolean shadow = this.shadow == null ? theme.getTextShadow() : this.shadow;
+        ((UnboxFix) text).gregTech$useDefaultTextColor(this.color == null);
+        ((UnboxFix) text).gregTech$useDefaultShadow(this.shadow == null);
 
-        return text.color(color)
-                .shadow(shadow);
+        return text.color(color == null ? 0 : color)
+                .shadow(shadow != null && shadow);
     }
 
     /**
@@ -58,11 +79,24 @@ public class StyledTextMixin {
                 .alignment(this.alignment)
                 .scale(this.scale);
 
-        var theme = ITheme.getDefault().getTextFieldTheme();
-        int color = this.color == null ? theme.getColor() : this.color;
-        boolean shadow = this.shadow == null ? theme.getTextShadow() : this.shadow;
+        ((UnboxFix) text).gregTech$useDefaultTextColor(this.color == null);
+        ((UnboxFix) text).gregTech$useDefaultShadow(this.shadow == null);
 
-        return text.color(color)
-                .shadow(shadow);
+        return text.color(color == null ? 0 : color)
+                .shadow(shadow != null && shadow);
+    }
+
+    @ModifyArg(method = "draw",
+               at = @At(value = "INVOKE",
+                        target = "Lcom/cleanroommc/modularui/drawable/text/TextRenderer;setColor(I)V"))
+    public int fixColor(int color, @Local(argsOnly = true) WidgetTheme theme) {
+        return gregTech$defaultTextColor ? theme.getTextColor() : color;
+    }
+
+    @ModifyArg(method = "draw",
+               at = @At(value = "INVOKE",
+                        target = "Lcom/cleanroommc/modularui/drawable/text/TextRenderer;setShadow(Z)V"))
+    public boolean fixShadow(boolean shadow, @Local(argsOnly = true) WidgetTheme theme) {
+        return gregTech$defaultShadow ? theme.getTextShadow() : shadow;
     }
 }
