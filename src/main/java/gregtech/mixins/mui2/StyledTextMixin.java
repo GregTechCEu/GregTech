@@ -15,7 +15,9 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = StyledText.class, remap = false)
 public abstract class StyledTextMixin implements UnboxFix {
@@ -50,6 +52,16 @@ public abstract class StyledTextMixin implements UnboxFix {
     @Override
     public void gregTech$useDefaultShadow(boolean b) {
         gregTech$defaultShadow = b;
+    }
+
+    @Inject(method = "color", at = @At("HEAD"))
+    private void setDefault(int color, CallbackInfoReturnable<StyledText> cir) {
+        gregTech$useDefaultTextColor(false);
+    }
+
+    @Inject(method = "shadow", at = @At("HEAD"))
+    private void setDefault(boolean shadow, CallbackInfoReturnable<StyledText> cir) {
+        gregTech$useDefaultShadow(false);
     }
 
     /**

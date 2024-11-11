@@ -106,6 +106,12 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+        if (widgetTheme instanceof WidgetSlotTheme slotTheme) {
+            draw(context, slotTheme);
+        }
+    }
+
+    public void draw(ModularGuiContext context, WidgetSlotTheme widgetTheme) {
         FluidStack content = this.syncHandler.getFluid();
         if (content == null && this.syncHandler.canLockFluid())
             content = this.syncHandler.getLockedFluid();
@@ -121,7 +127,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
 
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);
-            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, getSlotHoverColor());
+            GuiDraw.drawRect(1, 1, getArea().w() - 2, getArea().h() - 2, widgetTheme.getSlotHoverColor());
             GlStateManager.colorMask(true, true, true, true);
         }
     }
@@ -165,14 +171,6 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     @Override
     protected WidgetTheme getWidgetThemeInternal(ITheme theme) {
         return theme.getFluidSlotTheme();
-    }
-
-    public int getSlotHoverColor() {
-        WidgetTheme theme = getWidgetTheme(getContext().getTheme());
-        if (theme instanceof WidgetSlotTheme slotTheme) {
-            return slotTheme.getSlotHoverColor();
-        }
-        return ITheme.getDefault().getFluidSlotTheme().getSlotHoverColor();
     }
 
     public static void addIngotMolFluidTooltip(FluidStack fluidStack, RichTooltip tooltip) {
