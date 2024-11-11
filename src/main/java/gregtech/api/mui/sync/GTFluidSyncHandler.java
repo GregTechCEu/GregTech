@@ -427,17 +427,19 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void toggleLockFluid() {
-        if (getLockedFluid() != null) {
+        if (getLockedFluid() == null) {
+            var cursorItem = getSyncManager().getCursorItem();
+            if (cursorItem.isEmpty()) return;
+            if (cursorItem.getCount() > 1) cursorItem = GTUtility.copy(1, cursorItem);
+
+            var fluidHandler = FluidUtil.getFluidHandler(cursorItem);
+            if (fluidHandler == null) return;
+
+            var fluidStack = fluidHandler.getTankProperties()[0].getContents();
+            if (fluidStack == null) return;
+            lockFluid(fluidStack.copy());
+        } else {
             lockFluid(null);
-            return;
         }
-        var s = getSyncManager().getCursorItem();
-        if (s.isEmpty()) return;
-        if (s.getCount() > 1) s = GTUtility.copy(1, s);
-        var h = FluidUtil.getFluidHandler(s);
-        if (h == null) return;
-        var f = h.getTankProperties()[0].getContents();
-        if (f == null) return;
-        lockFluid(f.copy());
     }
 }

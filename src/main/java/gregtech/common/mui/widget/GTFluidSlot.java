@@ -107,7 +107,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         FluidStack content = this.syncHandler.getFluid();
-        if (content == null)
+        if (content == null && this.syncHandler.canLockFluid())
             content = this.syncHandler.getLockedFluid();
 
         GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
