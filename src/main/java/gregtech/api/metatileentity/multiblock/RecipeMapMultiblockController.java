@@ -61,6 +61,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
         this.recipeMapWorkable = new MultiblockRecipeLogic(this);
+        this.refreshBeforeConsumptions = new ArrayList<>();
         resetTileAbilities();
     }
 
@@ -140,10 +141,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.energyContainer = new EnergyContainerList(inputEnergy);
 
-        this.refreshBeforeConsumptions = getMultiblockParts().stream()
-                .filter(p -> p instanceof IRefreshBeforeConsumption)
-                .map(p -> (IRefreshBeforeConsumption) p)
-                .collect(Collectors.toList());
+        for (IMultiblockPart part : getMultiblockParts()) {
+            if (part instanceof IRefreshBeforeConsumption refresh) {
+                refreshBeforeConsumptions.add(refresh);
+            }
+        }
     }
 
     private void resetTileAbilities() {
@@ -152,7 +154,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputInventory = new GTItemStackHandler(this, 0);
         this.outputFluidInventory = new FluidTankList(true);
         this.energyContainer = new EnergyContainerList(Lists.newArrayList());
-        this.refreshBeforeConsumptions = new ObjectArrayList<>(0);
+        this.refreshBeforeConsumptions.clear();
     }
 
     protected boolean allowSameFluidFillForOutputs() {

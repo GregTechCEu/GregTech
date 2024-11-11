@@ -297,8 +297,8 @@ public class MetaTileEntityMEStockingHatch extends MetaTileEntityMEInputHatch im
 
     @Override
     public void refreshBeforeConsumption() {
-        if (isWorkingEnabled() && autoPull) {
-            refreshList();
+        if (isWorkingEnabled() && updateMEStatus()) {
+            if (autoPull) refreshList();
             syncME();
         }
     }
