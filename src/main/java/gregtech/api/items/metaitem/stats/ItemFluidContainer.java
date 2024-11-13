@@ -74,11 +74,11 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
                 return pass(stack);
 
             blockHandler = createHandler(cellFluid, world, pos.offset(facing));
-            success = transfer(cellHandler, blockHandler, player);
+            success = transfer(cellHandler, blockHandler);
             isFill = true;
         } else {
             soundFluid = blockHandler.drain(Integer.MAX_VALUE, false);
-            success = transfer(blockHandler, cellHandler, player);
+            success = transfer(blockHandler, cellHandler);
             isFill = false;
         }
 
@@ -91,7 +91,7 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
         return pass(stack);
     }
 
-    private boolean transfer(IFluidHandler source, IFluidHandler dest, EntityPlayer player) {
+    private boolean transfer(IFluidHandler source, IFluidHandler dest) {
         var fluid = source.drain(Integer.MAX_VALUE, false);
         int filled = dest.fill(fluid, false);
         if (fluid == null || fluid.amount == 0 || filled == 0)
