@@ -38,7 +38,7 @@ public interface IItemBehaviour extends IItemComponent {
 
     default ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                               EnumFacing facing, float hitX, float hitY, float hitZ) {
-        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+        return pass(player.getHeldItem(hand));
     }
 
     default void addInformation(ItemStack itemStack, List<String> lines) {}
@@ -50,8 +50,20 @@ public interface IItemBehaviour extends IItemComponent {
     }
 
     default ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+        return pass(player.getHeldItem(hand));
     }
 
     default void addPropertyOverride(@NotNull Item item) {}
+
+    default ActionResult<ItemStack> pass(ItemStack stack) {
+        return ActionResult.newResult(EnumActionResult.PASS, stack);
+    }
+
+    default ActionResult<ItemStack> success(ItemStack stack) {
+        return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+    }
+
+    default ActionResult<ItemStack> fail(ItemStack stack) {
+        return ActionResult.newResult(EnumActionResult.FAIL, stack);
+    }
 }

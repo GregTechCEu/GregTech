@@ -2,12 +2,11 @@ package gregtech.api.items.metaitem.stats;
 
 import gregtech.api.util.GTUtility;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -20,7 +19,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
@@ -43,7 +41,7 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
 
     @Override
     public ItemStack getContainerItem(ItemStack itemStack) {
-        IFluidHandlerItem handler = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+        IFluidHandlerItem handler = FluidUtil.getFluidHandler(itemStack);
         if (handler != null) {
             FluidStack drained = handler.drain(1000, false);
             if (drained == null || drained.amount != 1000) return ItemStack.EMPTY;
@@ -62,23 +60,35 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
         var result = rayTrace(world, player);
         if (result == null) return pass(stack);
 
-        var thisHandler = getHandler(stack);
-        if (thisHandler == null) return pass(stack);
+        ItemStack cellStack = GTUtility.copy(1, stack);
+        var cellHandler = FluidUtil.getFluidHandler(cellStack);
+        if (cellHandler == null) return pass(stack);
 
-        var fluid = thisHandler.drain(Integer.MAX_VALUE, false);
+        var cellFluid = cellHandler.drain(Integer.MAX_VALUE, false);
         var blockHandler = FluidUtil.getFluidHandler(world, result.getBlockPos(), result.sideHit);
-        boolean success;
+        FluidStack soundFluid = cellFluid;
+        boolean success, isFill;
+
         if (blockHandler == null) {
-            if (fluid == null || !fluid.getFluid().canBePlacedInWorld())
+            if (cellFluid == null || !cellFluid.getFluid().canBePlacedInWorld())
                 return pass(stack);
 
-            blockHandler = createHandler(fluid.getFluid().getBlock(), world, pos.offset(facing));
-            success = transfer(thisHandler, blockHandler, player);
+            blockHandler = createHandler(cellFluid, world, pos.offset(facing));
+            success = transfer(cellHandler, blockHandler, player);
+            isFill = true;
         } else {
-            success = transfer(blockHandler, thisHandler, player);
+            soundFluid = blockHandler.drain(Integer.MAX_VALUE, false);
+            success = transfer(blockHandler, cellHandler, player);
+            isFill = false;
         }
 
-        return success ? success(stack) : pass(stack);
+        if (success) {
+            playSound(soundFluid, isFill, player);
+            addToPlayerInventory(stack, cellHandler.getContainer(), player, hand);
+            return success(stack);
+        }
+
+        return pass(stack);
     }
 
     private boolean transfer(IFluidHandler source, IFluidHandler dest, EntityPlayer player) {
@@ -87,28 +97,14 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
         if (fluid == null || fluid.amount == 0 || filled == 0)
             return false;
 
-        playSound(fluid, true, player);
         source.drain(filled, true);
         dest.fill(fluid, true);
         return true;
     }
 
-    private static <T> ActionResult<T> pass(T t) {
-        return ActionResult.newResult(EnumActionResult.PASS, t);
-    }
-
-    private static <T> ActionResult<T> success(T t) {
-        return ActionResult.newResult(EnumActionResult.SUCCESS, t);
-    }
-
+    // copied from Item.java
     @Nullable
-    private static IFluidHandlerItem getHandler(ItemStack stack) {
-        if (stack.getCount() > 1) stack = GTUtility.copy(1, stack);
-        return FluidUtil.getFluidHandler(stack);
-    }
-
-    @Nullable
-    private RayTraceResult rayTrace(World worldIn, EntityPlayer playerIn) {
+    private static RayTraceResult rayTrace(World worldIn, EntityPlayer playerIn) {
         float f = playerIn.rotationPitch;
         float f1 = playerIn.rotationYaw;
         double d0 = playerIn.posX;
@@ -127,7 +123,8 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
     }
 
     @NotNull
-    private IFluidHandler createHandler(Block block, World world, BlockPos pos) {
+    private IFluidHandler createHandler(FluidStack stack, World world, BlockPos pos) {
+        var block = stack.getFluid().getBlock();
         if (block instanceof IFluidBlock fluidBlock) {
             return new FluidBlockWrapper(fluidBlock, world, pos);
         } else if (block instanceof BlockLiquid blockLiquid) {
@@ -136,12 +133,25 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
         throw new IllegalArgumentException("Block must be a liquid!");
     }
 
+    private void addToPlayerInventory(ItemStack playerStack, ItemStack resultStack, EntityPlayer player,
+                                      EnumHand hand) {
+        if (playerStack.getCount() > resultStack.getCount()) {
+            playerStack.shrink(resultStack.getCount());
+            if (!player.inventory.addItemStackToInventory(resultStack) && !player.world.isRemote) {
+                EntityItem dropItem = player.entityDropItem(resultStack, 0);
+                if (dropItem != null) dropItem.setPickupDelay(0);
+            }
+        } else {
+            player.setHeldItem(hand, resultStack);
+        }
+    }
+
     /**
      * Play the appropriate fluid interaction sound for the fluid. <br />
      * Must be called on server to work correctly
      **/
     private void playSound(FluidStack fluid, boolean fill, EntityPlayer player) {
-        if (fluid == null) return;
+        if (fluid == null || player.world.isRemote) return;
         SoundEvent soundEvent;
         if (fill) {
             soundEvent = fluid.getFluid().getFillSound(fluid);
