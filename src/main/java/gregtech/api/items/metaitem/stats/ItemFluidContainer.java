@@ -92,17 +92,6 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
         return pass(stack);
     }
 
-    private boolean transfer(IFluidHandler source, IFluidHandler dest) {
-        var fluid = source.drain(Integer.MAX_VALUE, false);
-        int filled = dest.fill(fluid, false);
-        if (fluid == null || fluid.amount == 0 || filled == 0)
-            return false;
-
-        source.drain(filled, true);
-        dest.fill(fluid, true);
-        return true;
-    }
-
     // copied from Item.java
     @Nullable
     private static RayTraceResult rayTrace(World worldIn, EntityPlayer playerIn) {
