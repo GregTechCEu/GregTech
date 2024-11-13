@@ -1,5 +1,6 @@
 package gregtech.api.items.metaitem.stats;
 
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.block.BlockLiquid;
@@ -74,11 +75,11 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
                 return pass(stack);
 
             blockHandler = createHandler(cellFluid, world, pos.offset(facing));
-            success = transfer(cellHandler, blockHandler);
+            success = GTTransferUtils.transferFluids(cellHandler, blockHandler) > 0;
             isFill = true;
         } else {
             soundFluid = blockHandler.drain(Integer.MAX_VALUE, false);
-            success = transfer(blockHandler, cellHandler);
+            success = GTTransferUtils.transferFluids(blockHandler, cellHandler) > 0;
             isFill = false;
         }
 
