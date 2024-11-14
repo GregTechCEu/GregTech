@@ -1,11 +1,9 @@
 package gregtech.api.recipes.ingredients.match;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-import org.jgrapht.graph.DefaultWeightedEdge;
 
 public abstract class AbstractMatchCalculation<T> implements MatchCalculation<T> {
 
@@ -40,6 +38,7 @@ public abstract class AbstractMatchCalculation<T> implements MatchCalculation<T>
 
     /**
      * Used to notify descendants of a rescale event, if they need to rescale.
+     * 
      * @param oldScale the old scale, also equivalent to {@link #scaling}
      * @param newScale the new scale, {@link #scaling} will be subsequently set to this.
      */
@@ -48,6 +47,7 @@ public abstract class AbstractMatchCalculation<T> implements MatchCalculation<T>
     /**
      * Used to get the match results for a given scaling. Caching and automatic invalidation is handled by
      * {@link AbstractMatchCalculation}. The desired scale can be found through the {@link #scaling} field.
+     * 
      * @return the match results, or null if no match was found.
      */
     protected abstract long @Nullable [] attemptScaleInternal();

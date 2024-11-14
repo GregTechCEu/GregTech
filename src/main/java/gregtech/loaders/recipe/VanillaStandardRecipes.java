@@ -91,7 +91,8 @@ public class VanillaStandardRecipes {
 
         COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, GTValues.W))
                 .outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().inputItem(OrePrefix.dust, Materials.Ice, 1).outputs(new ItemStack(Blocks.ICE))
+        COMPRESSOR_RECIPES.recipeBuilder().inputItem(OrePrefix.dust, Materials.Ice, 1)
+                .outputs(new ItemStack(Blocks.ICE))
                 .buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()
@@ -1060,7 +1061,8 @@ public class VanillaStandardRecipes {
                     .inputs(new ItemStack(Items.BOOK)).outputs(new ItemStack(Blocks.ENCHANTING_TABLE)).duration(100)
                     .EUt(VA[ULV]).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).circuitMeta(1)
-                    .inputs(new ItemStack(Blocks.COBBLESTONE, 7)).inputs(new ItemStack(Items.BOW)).inputItem(dust, Redstone)
+                    .inputs(new ItemStack(Blocks.COBBLESTONE, 7)).inputs(new ItemStack(Items.BOW))
+                    .inputItem(dust, Redstone)
                     .outputs(new ItemStack(Blocks.DISPENSER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV]).circuitMeta(2)
                     .inputs(new ItemStack(Blocks.COBBLESTONE, 7)).inputItem(dust, Redstone)
@@ -1102,7 +1104,8 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Items.STICK, 8)).outputs(new ItemStack(Items.PAINTING)).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputs(new ItemStack(Items.LEATHER))
                 .inputs(new ItemStack(Items.STICK, 8)).outputs(new ItemStack(Items.ITEM_FRAME)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputItem("plankWood", 6).inputs(new ItemStack(Items.STICK))
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputItem("plankWood", 6)
+                .inputs(new ItemStack(Items.STICK))
                 .circuitMeta(9).outputs(new ItemStack(Items.SIGN, 3)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(10).EUt(2).inputs(new ItemStack(Items.BRICK, 3))

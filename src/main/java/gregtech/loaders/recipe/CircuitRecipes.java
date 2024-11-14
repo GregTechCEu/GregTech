@@ -115,7 +115,8 @@ public class CircuitRecipes {
                 .cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).inputItem(SILICON_WAFER)
-                .notConsumable(craftingLens, Color.LightBlue).outputItem(CENTRAL_PROCESSING_UNIT_WAFER).buildAndRegister();
+                .notConsumable(craftingLens, Color.LightBlue).outputItem(CENTRAL_PROCESSING_UNIT_WAFER)
+                .buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(VA[HV]).inputItem(PHOSPHORUS_WAFER)
                 .notConsumable(craftingLens, Color.LightBlue).outputItem(CENTRAL_PROCESSING_UNIT_WAFER, 4)
                 .cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
@@ -262,7 +263,8 @@ public class CircuitRecipes {
                 .outputItem(HIGHLY_ADVANCED_SOC, 6).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         CUTTER_RECIPES.recipeBuilder().duration(900).EUt(VA[EV]).inputItem(ADVANCED_SYSTEM_ON_CHIP_WAFER)
                 .outputItem(ADVANCED_SYSTEM_ON_CHIP, 6).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).inputItem(SYSTEM_ON_CHIP_WAFER).outputItem(SYSTEM_ON_CHIP, 6)
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(VA[HV]).inputItem(SYSTEM_ON_CHIP_WAFER)
+                .outputItem(SYSTEM_ON_CHIP, 6)
                 .cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64).inputItem(SIMPLE_SYSTEM_ON_CHIP_WAFER)
                 .outputItem(SIMPLE_SYSTEM_ON_CHIP, 6).buildAndRegister();
@@ -279,10 +281,13 @@ public class CircuitRecipes {
         CUTTER_RECIPES.recipeBuilder().duration(900).EUt(VA[IV]).inputItem(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER)
                 .outputItem(HIGH_POWER_INTEGRATED_CIRCUIT, 2).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         CUTTER_RECIPES.recipeBuilder().duration(900).EUt(VA[LuV]).inputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT_WAFER)
-                .outputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2).cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192).inputItem(NOR_MEMORY_CHIP_WAFER).outputItem(NOR_MEMORY_CHIP, 16)
+                .outputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2).cleanroom(CleanroomType.CLEANROOM)
+                .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192).inputItem(NOR_MEMORY_CHIP_WAFER)
+                .outputItem(NOR_MEMORY_CHIP, 16)
                 .cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192).inputItem(NAND_MEMORY_CHIP_WAFER).outputItem(NAND_MEMORY_CHIP, 32)
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192).inputItem(NAND_MEMORY_CHIP_WAFER)
+                .outputItem(NAND_MEMORY_CHIP, 32)
                 .cleanroom(CleanroomType.CLEANROOM).buildAndRegister();
         CUTTER_RECIPES.recipeBuilder().duration(900).EUt(VA[MV]).inputItem(CENTRAL_PROCESSING_UNIT_WAFER)
                 .outputItem(CENTRAL_PROCESSING_UNIT, 8).buildAndRegister();
@@ -1052,7 +1057,7 @@ public class CircuitRecipes {
         // HV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[LV]).duration(800)
                 .inputItem(INTEGRATED_CIRCUIT_MV, outputAmount) // a little generous for this first HV if harder recipes
-                                                            // enabled
+                // enabled
                 .inputItem(INTEGRATED_LOGIC_CIRCUIT, 2)
                 .inputItem(RANDOM_ACCESS_MEMORY, 2)
                 .inputItem(component, Component.Transistor, 4)

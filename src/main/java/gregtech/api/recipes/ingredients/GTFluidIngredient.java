@@ -4,13 +4,9 @@ import gregtech.api.recipes.ingredients.match.Matcher;
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.FluidStackMatchingContext;
 
-import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

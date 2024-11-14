@@ -5,12 +5,9 @@ import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
-import gregtech.api.util.GTUtility;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

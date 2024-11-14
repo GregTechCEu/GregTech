@@ -4,24 +4,20 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.RecipeLookup;
 import gregtech.api.recipes.lookup.flag.ItemStackApplicatorMap;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 import gregtech.api.recipes.lookup.flag.SingleFlagApplicator;
-
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.api.unification.OreDictUnifier;
-
 import gregtech.core.sound.GTSoundEvents;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -113,7 +109,7 @@ public final class RecipeLookupFurnace extends RecipeLookup {
 
         @Override
         public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(
-                @NotNull ItemStackMatchingContext context) {
+                                                                             @NotNull ItemStackMatchingContext context) {
             if (context == this.context) return Collections.singletonList(stack);
             return Collections.emptyList();
         }

@@ -6,10 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Function;
 import java.util.function.ToLongFunction;
 
 @Unmodifiable
@@ -93,11 +91,13 @@ public final class ListWithRollInformation<T> extends AbstractList<T> {
     }
 
     public long @NotNull [] roll(int boostStrength, int trimLimit) {
-        return interpreter.interpretAndRoll(maxYields(trimLimit), rollValues(trimLimit), rollBoosts(trimLimit), boostStrength);
+        return interpreter.interpretAndRoll(maxYields(trimLimit), rollValues(trimLimit), rollBoosts(trimLimit),
+                boostStrength);
     }
 
     public long @NotNull [] roll(@NotNull RollInterpreter interpreterOverride, int boostStrength, int trimLimit) {
-        return interpreterOverride.interpretAndRoll(maxYields(trimLimit), rollValues(trimLimit), rollBoosts(trimLimit), boostStrength);
+        return interpreterOverride.interpretAndRoll(maxYields(trimLimit), rollValues(trimLimit), rollBoosts(trimLimit),
+                boostStrength);
     }
 
     @Override
@@ -122,10 +122,11 @@ public final class ListWithRollInformation<T> extends AbstractList<T> {
         return rolled.length > 0;
     }
 
-    private static final ListWithRollInformation<Object> EMPTY = new ListWithRollInformation<>(o -> 0, Collections.emptyList(), Collections.emptyList(), RollInterpreter.DEFAULT);
+    private static final ListWithRollInformation<Object> EMPTY = new ListWithRollInformation<>(o -> 0,
+            Collections.emptyList(), Collections.emptyList(), RollInterpreter.DEFAULT);
 
     public static <T> ListWithRollInformation<T> empty() {
-        //noinspection unchecked
+        // noinspection unchecked
         return (ListWithRollInformation<T>) EMPTY;
     }
 }

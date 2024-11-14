@@ -140,8 +140,8 @@ public class MultiblockRecipeLogic extends DistributedRecipeLogic {
     @NotNull
     protected MaintenanceValues getMaintenanceValues() {
         MultiblockWithDisplayBase displayBase = getMetaTileEntity();
-        int numMaintenanceProblems =
-                !displayBase.hasMaintenanceMechanics() || !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
+        int numMaintenanceProblems = !displayBase.hasMaintenanceMechanics() ||
+                !ConfigHolder.machines.enableMaintenance ? 0 : displayBase.getNumMaintenanceProblems();
         double durationMultiplier = 1.0D;
         if (displayBase.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) {
             durationMultiplier = displayBase.getMaintenanceDurationMultiplier();

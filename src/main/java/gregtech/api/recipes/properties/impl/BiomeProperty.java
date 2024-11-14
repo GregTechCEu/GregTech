@@ -5,13 +5,6 @@ import gregtech.api.recipes.lookup.property.BiomeInhabitedProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
 import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
-import gregtech.api.worldgen.config.WorldGenRegistry;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.IntList;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -27,12 +20,13 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
 import java.util.List;
-import java.util.Set;
 
 // TODO add to RecipeBuilder
 public final class BiomeProperty extends RecipePropertyWithFilter<BiomeProperty.BiomePropertyList> {

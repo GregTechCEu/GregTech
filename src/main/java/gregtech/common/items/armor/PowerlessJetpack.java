@@ -9,7 +9,6 @@ import gregtech.api.items.armor.ISpecialArmorLogic;
 import gregtech.api.items.metaitem.stats.*;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GradientUtil;

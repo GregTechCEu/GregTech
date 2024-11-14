@@ -338,8 +338,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
         if (recipeMapWorkable.getBaseParallelLimit() > 1) {
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_parallel",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getBaseParallelLimit()))
-                            .setStyle(new Style().setColor(TextFormatting.GREEN))));
+                    new TextComponentTranslation(
+                            TextFormattingUtil.formatNumbers(recipeMapWorkable.getBaseParallelLimit()))
+                                    .setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
 
         return list;

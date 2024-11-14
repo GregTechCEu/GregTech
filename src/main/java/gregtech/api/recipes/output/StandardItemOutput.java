@@ -1,13 +1,8 @@
 package gregtech.api.recipes.output;
 
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
-import gregtech.api.recipes.chance.output.ChancedOutputList;
-import gregtech.api.recipes.chance.output.ChancedOutputLogic;
-import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.lookup.property.PropertySet;
-
 import gregtech.api.recipes.roll.ListWithRollInformation;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.init.Items;
@@ -16,13 +11,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.Collections;
 import java.util.List;
 
 public final class StandardItemOutput implements ItemOutputProvider {
@@ -90,7 +82,8 @@ public final class StandardItemOutput implements ItemOutputProvider {
 
     @Override
     public @Range(from = 0, to = Integer.MAX_VALUE) int getMaximumOutputs(
-            @Range(from = 1, to = Integer.MAX_VALUE) int parallel) {
+                                                                          @Range(from = 1,
+                                                                                 to = Integer.MAX_VALUE) int parallel) {
         return this.outputs.size() * parallel;
     }
 

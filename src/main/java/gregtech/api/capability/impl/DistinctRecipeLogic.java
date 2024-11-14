@@ -141,7 +141,6 @@ public abstract class DistinctRecipeLogic extends AbstractRecipeLogic {
         boolean areItemInputsInvalid();
 
         boolean areFluidInputsInvalid();
-
     }
 
     public static final class DefaultInputGroup implements DistinctInputGroup {
@@ -204,7 +203,6 @@ public abstract class DistinctRecipeLogic extends AbstractRecipeLogic {
         public boolean areFluidInputsInvalid() {
             return invalidFluid;
         }
-
     }
 
     private final class FullInputGroup implements DistinctInputGroup {
@@ -248,6 +246,5 @@ public abstract class DistinctRecipeLogic extends AbstractRecipeLogic {
         public boolean areFluidInputsInvalid() {
             return hasInvalidFluidInputs();
         }
-
     }
 }

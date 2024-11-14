@@ -3,7 +3,6 @@ package gregtech.api.recipes;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;

@@ -447,9 +447,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     protected @NotNull PropertySet computePropertySet() {
-        PropertySet set = PropertySet.comprehensive(getMaxVoltageIn(), getMaxAmperageIn(), getMaxVoltageOut(), getMaxAmperageOut());
+        PropertySet set = PropertySet.comprehensive(getMaxVoltageIn(), getMaxAmperageIn(), getMaxVoltageOut(),
+                getMaxAmperageOut());
         set.add(new DimensionInhabitedProperty(this.getMetaTileEntity().getWorld().provider.getDimension()));
-        set.add(new BiomeInhabitedProperty(this.getMetaTileEntity().getWorld().getBiomeForCoordsBody(this.getMetaTileEntity().getPos())));
+        set.add(new BiomeInhabitedProperty(
+                this.getMetaTileEntity().getWorld().getBiomeForCoordsBody(this.getMetaTileEntity().getPos())));
         set.add(new CleanroomFulfilmentProperty(getCleanroomPredicate()));
         return set;
     }
@@ -512,7 +514,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     @Nullable
     public Pair<RecipeRun, Recipe> matchRecipe(@NotNull Recipe recipe, @NotNull List<ItemStack> items,
-                                 @NotNull List<FluidStack> fluids, @NotNull PropertySet properties) {
+                                               @NotNull List<FluidStack> fluids, @NotNull PropertySet properties) {
         if (!checkRecipe(recipe)) return null;
         MatchCalculation<ItemStack> itemMatch = getItemMatch(recipe, items);
         if (!itemMatch.attemptScale(1)) {
@@ -545,7 +547,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected MatchCalculation<FluidStack> getFluidMatch(@NotNull Recipe recipe, @NotNull List<FluidStack> fluids) {
         return IngredientMatchHelper.matchFluids(recipe.getFluidIngredients(), fluids);
     }
-
 
     /**
      * Take match information and return a recipe view, suitably modified from parallel.
@@ -582,12 +583,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected int determineParallel(@NotNull RecipeView recipeView) {
         if (recipeView.getActualEUt() == 0) return getParallelLimit(recipeView.getRecipe());
-        return (int) Math.min(getParallelLimit(recipeView.getRecipe()), getMaxParallelAmperage(recipeView.getActualVoltage(), recipeView.getRecipe().isGenerating()) / recipeView.getActualAmperage());
+        return (int) Math.min(getParallelLimit(recipeView.getRecipe()),
+                getMaxParallelAmperage(recipeView.getActualVoltage(), recipeView.getRecipe().isGenerating()) /
+                        recipeView.getActualAmperage());
     }
 
     @NotNull
-    protected StandardRecipeView getTrimmedRecipeView(@NotNull Recipe recipe, @NotNull MatchCalculation<ItemStack> itemMatch,
-                                              @NotNull MatchCalculation<FluidStack> fluidMatch) {
+    protected StandardRecipeView getTrimmedRecipeView(@NotNull Recipe recipe,
+                                                      @NotNull MatchCalculation<ItemStack> itemMatch,
+                                                      @NotNull MatchCalculation<FluidStack> fluidMatch) {
         if (recipe.getAllItemOutputs().size() <= metaTileEntity.getItemOutputLimit() &&
                 recipe.getAllFluidOutputs().size() <= metaTileEntity.getFluidOutputLimit())
             return new StandardRecipeView(recipe, itemMatch, fluidMatch, getEUtDiscount(), 1);
@@ -602,10 +606,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     @Nullable
     protected RecipeRun applyOverclocking(@NotNull RecipeView recipeView, @NotNull PropertySet properties) {
-        if (recipeView.getActualEUt() == 0) return new PrimitiveRecipeRun(recipeView, properties, computeDuration(recipeView, 0));
+        if (recipeView.getActualEUt() == 0)
+            return new PrimitiveRecipeRun(recipeView, properties, computeDuration(recipeView, 0));
         // the recipe's tier for chance boosting is not affected by discount
         int recipeVoltageTier = GTUtility.getTierByVoltage(recipeView.getRecipe().getVoltage());
-        int machineVoltageTier = GTUtility.getFloorTierByVoltage(getMaxOverclockVoltage(recipeView.getRecipe().isGenerating()));
+        int machineVoltageTier = GTUtility
+                .getFloorTierByVoltage(getMaxOverclockVoltage(recipeView.getRecipe().isGenerating()));
         int overclocks = computeOverclockCount(recipeView, properties, machineVoltageTier);
         float multiplier = computeVoltageMultiplier(recipeView, overclocks);
         // ensure that we can still support our amperage requirements at overclock
@@ -616,7 +622,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             multiplier = computeVoltageMultiplier(recipeView, overclocks);
         }
         assert getRecipeMap() != null;
-        return new SingleRecipeRun(recipeView, recipeVoltageTier, machineVoltageTier, getRecipeMap().getChanceFunction(),
+        return new SingleRecipeRun(recipeView, recipeVoltageTier, machineVoltageTier,
+                getRecipeMap().getChanceFunction(),
                 properties, multiplier, computeDuration(recipeView, overclocks));
     }
 
@@ -886,12 +893,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected boolean outputRecipeOutputs(@NotNull RecipeRun run) {
         if (GTTransferUtils.addItemsToItemHandler(getOutputInventory(), true, run.getItemsOut()) &&
-        GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), true, run.getFluidsOut())) {
+                GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), true, run.getFluidsOut())) {
             GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, run.getItemsOut());
             GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, run.getFluidsOut());
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     /**

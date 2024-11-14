@@ -1,8 +1,6 @@
 package gregtech.api.recipes;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.category.GTRecipeCategory;
-import gregtech.api.recipes.chance.BaseChanceEntry;
 import gregtech.api.recipes.chance.output.ChancedOutputList;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
@@ -22,12 +20,9 @@ import gregtech.integration.groovy.GroovyScriptModule;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

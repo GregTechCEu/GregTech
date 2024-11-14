@@ -276,7 +276,6 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
             return true;
         }
 
-
         // "replace" the items in the slots rather than outputting elsewhere
         // unlock the object holder
         @Override

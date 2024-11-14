@@ -8,7 +8,6 @@ import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 

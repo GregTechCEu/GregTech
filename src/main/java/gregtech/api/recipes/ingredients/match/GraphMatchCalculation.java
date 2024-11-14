@@ -1,10 +1,8 @@
 package gregtech.api.recipes.ingredients.match;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 import org.jgrapht.alg.flow.PushRelabelMFImpl;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -26,7 +24,7 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
 
     GraphMatchCalculation(MatcherGraph graph, DefaultWeightedEdge[] matcherEdges, DefaultWeightedEdge[] matchableEdges,
                           List<? extends Matcher<? super T>> matchers, List<T> matchables, Counter<T> counter,
-                     long required) {
+                          long required) {
         this.graph = graph;
         flow = new PushRelabelMFImpl<>(graph);
         this.matcherEdges = matcherEdges;
@@ -80,7 +78,7 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
         long[] results = getMatchResultsForScale(scale);
         if (results == null) return Collections.emptyList();
 
-        if (matchers instanceof MatchRollController<?> controller) {
+        if (matchers instanceof MatchRollController<?>controller) {
             // roll for actual consumptions and match
             required = 0;
             long[] roll = controller.getConsumptionRollResults(scale);
@@ -91,7 +89,8 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
             }
             scaling = scale;
             if (flow.calculateMaximumFlow(IngredientMatchHelper.source, IngredientMatchHelper.sink) < required) {
-                return Collections.emptyList(); // should never happen unless some idiot matcher is requiring more after roll than before.
+                return Collections.emptyList(); // should never happen unless some idiot matcher is requiring more after
+                                                // roll than before.
             }
             var map = flow.getFlowMap();
             for (int i = 0; i < matchableEdges.length; i++) {

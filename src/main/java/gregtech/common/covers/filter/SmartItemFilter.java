@@ -8,7 +8,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.unification.stack.ItemAndMetadata;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.readers.SmartItemFilterReader;
@@ -67,7 +66,8 @@ public class SmartItemFilter extends BaseFilter {
                 cachedTransferRateValue = 0;
             } else {
                 GTItemIngredient inputIngredient = recipe.getItemIngredients().iterator().next();
-                filterMode.transferStackSizesCache.put(itemAndMetadata, GTUtility.safeCastLongToInt(inputIngredient.getRequiredCount()));
+                filterMode.transferStackSizesCache.put(itemAndMetadata,
+                        GTUtility.safeCastLongToInt(inputIngredient.getRequiredCount()));
                 cachedTransferRateValue = GTUtility.safeCastLongToInt(inputIngredient.getRequiredCount());
             }
         }

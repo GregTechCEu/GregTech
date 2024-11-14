@@ -175,14 +175,12 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
         @Override
         protected boolean outputRecipeOutputs(@NotNull RecipeRun run) {
-
             if (GTTransferUtils.addItemsToItemHandler(getOutputInventory(), true, run.getItemsOut()) &&
                     handler.applyFluidToOutputs(run.getFluidsOut(), false)) {
                 GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, run.getItemsOut());
                 handler.applyFluidToOutputs(run.getFluidsOut(), true);
                 return true;
-            }
-            else return false;
+            } else return false;
         }
 
         @Override

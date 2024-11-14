@@ -1,7 +1,5 @@
 package gregtech.api.recipes.ingredients.match;
 
-import gregtech.api.recipes.ingredients.GTItemIngredient;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 

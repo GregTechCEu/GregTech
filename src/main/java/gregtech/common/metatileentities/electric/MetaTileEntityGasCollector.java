@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.electric;
 
-import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;

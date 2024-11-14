@@ -1,6 +1,5 @@
 package gregtech.api.recipes.ingredients.nbt;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

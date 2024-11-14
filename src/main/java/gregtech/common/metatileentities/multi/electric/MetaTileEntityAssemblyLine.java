@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import com.github.bsideup.jabel.Desugar;
-
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -25,7 +22,6 @@ import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.match.AbstractMatchCalculation;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.ingredients.match.MatchRollController;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.properties.impl.ResearchProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
@@ -38,12 +34,9 @@ import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiFluidHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.core.sound.GTSoundEvents;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -66,17 +59,15 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -359,7 +350,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         if (orderedFluidHatchesCache != null) return orderedFluidHatchesCache;
         List<IMultipleTankHandler> orderedHandlerList = new ObjectArrayList<>();
         this.getMultiblockParts().stream()
-                .filter(iMultiblockPart -> iMultiblockPart instanceof IMultiblockAbilityPart<?> abilityPart &&
+                .filter(iMultiblockPart -> iMultiblockPart instanceof IMultiblockAbilityPart<?>abilityPart &&
                         abilityPart.getAbility() == MultiblockAbility.EXPORT_FLUIDS &&
                         abilityPart instanceof MetaTileEntityMultiblockPart)
                 .map(iMultiblockPart -> (MetaTileEntityMultiblockPart) iMultiblockPart)
@@ -388,7 +379,8 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
         if (consumeIfSuccess) return true; // don't check twice
         if (getOrderedItemBuses().size() < recipe.getItemIngredients().size() ||
-                getOrderedFluidHatches().size() < recipe.getFluidIngredients().size()) return false;
+                getOrderedFluidHatches().size() < recipe.getFluidIngredients().size())
+            return false;
         if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
             return super.checkRecipe(recipe, false);
         } else {
@@ -451,7 +443,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         protected @NotNull MatchCalculation<FluidStack> getFluidMatch(@NotNull Recipe recipe,
                                                                       @NotNull List<FluidStack> fluids) {
             if (ConfigHolder.machines.orderedFluidAssembly) return new OrderedFluidMatch(recipe.getFluidIngredients(),
-                        getMetaTileEntity().getOrderedFluidHatches(), fluids);
+                    getMetaTileEntity().getOrderedFluidHatches(), fluids);
             else return super.getFluidMatch(recipe, fluids);
         }
 
@@ -579,7 +571,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             public boolean areFluidInputsInvalid() {
                 return hasInvalidFluidInputs();
             }
-
         }
     }
 
@@ -629,7 +620,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             // fail if we could not match at this scale
             long[] results = getMatchResultsForScale(scale);
             if (results == null) return Collections.emptyList();
-            //noinspection rawtypes
+            // noinspection rawtypes
             if (ingredients instanceof MatchRollController controller) {
                 int offset = 0;
                 long[] roll = controller.getConsumptionRollResults(scale);
@@ -707,7 +698,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             long[] results = getMatchResultsForScale(scale);
             if (results == null) return Collections.emptyList();
 
-            //noinspection rawtypes
+            // noinspection rawtypes
             if (ingredients instanceof MatchRollController controller) {
                 int offset = 0;
                 long[] roll = controller.getConsumptionRollResults(scale);

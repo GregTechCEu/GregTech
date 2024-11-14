@@ -9,7 +9,6 @@ import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

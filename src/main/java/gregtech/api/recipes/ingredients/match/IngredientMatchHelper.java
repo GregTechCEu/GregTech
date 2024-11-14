@@ -103,7 +103,8 @@ public final class IngredientMatchHelper {
                     graph.setEdgeWeight(graph.addEdge(cacheMatchables[i], cacheMatchers[j]), required);
             }
         }
-        return new GraphMatchCalculation<>(graph, matcherEdges, matchableEdges, matchers, matchables, counter, required);
+        return new GraphMatchCalculation<>(graph, matcherEdges, matchableEdges, matchers, matchables, counter,
+                required);
     }
 
     private static void ensureCacheSize(int matchers, int matchables) {

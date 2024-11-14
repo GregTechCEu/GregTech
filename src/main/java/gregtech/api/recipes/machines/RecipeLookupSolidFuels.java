@@ -1,10 +1,7 @@
 package gregtech.api.recipes.machines;
 
-import com.github.bsideup.jabel.Desugar;
-
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMapBuilder;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
@@ -12,16 +9,13 @@ import gregtech.api.recipes.lookup.CompactibleIterator;
 import gregtech.api.recipes.lookup.RecipeLookup;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 import gregtech.api.recipes.lookup.property.PropertySet;
-import gregtech.api.recipes.ui.RecipeMapUIFunction;
-import gregtech.core.sound.GTSoundEvents;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -148,31 +142,31 @@ public final class RecipeLookupSolidFuels extends RecipeLookup {
     @Desugar
     private record ExactMatchItemIngredient(ItemStack stack, int count) implements GTItemIngredient {
 
-            private ExactMatchItemIngredient(@NotNull ItemStack stack, int count) {
-                this.stack = stack;
-                this.count = count;
-            }
-
-            @Override
-            public boolean matches(ItemStack stack) {
-                return ItemStack.areItemStacksEqual(this.stack, stack);
-            }
-
-            @Override
-            public @Range(from = 1, to = Long.MAX_VALUE) long getRequiredCount() {
-                return count;
-            }
-
-            @Override
-            public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(
-                    @NotNull ItemStackMatchingContext context) {
-                if (context == ItemStackMatchingContext.ITEM_DAMAGE_NBT) return Collections.singletonList(stack);
-                return Collections.emptyList();
-            }
-
-            @Override
-            public @Nullable NBTMatcher getMatcher() {
-                return null;
-            }
+        private ExactMatchItemIngredient(@NotNull ItemStack stack, int count) {
+            this.stack = stack;
+            this.count = count;
         }
+
+        @Override
+        public boolean matches(ItemStack stack) {
+            return ItemStack.areItemStacksEqual(this.stack, stack);
+        }
+
+        @Override
+        public @Range(from = 1, to = Long.MAX_VALUE) long getRequiredCount() {
+            return count;
+        }
+
+        @Override
+        public @NotNull Collection<ItemStack> getMatchingStacksWithinContext(
+                                                                             @NotNull ItemStackMatchingContext context) {
+            if (context == ItemStackMatchingContext.ITEM_DAMAGE_NBT) return Collections.singletonList(stack);
+            return Collections.emptyList();
+        }
+
+        @Override
+        public @Nullable NBTMatcher getMatcher() {
+            return null;
+        }
+    }
 }

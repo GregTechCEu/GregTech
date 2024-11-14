@@ -13,7 +13,8 @@ public interface CompactibleIterator<T> extends Iterator<T> {
      * 
      * @return an equivalent iterator that takes up less memory
      */
-    @NotNull Iterator<T> compact();
+    @NotNull
+    Iterator<T> compact();
 
     CompactibleIterator<Object> EMPTY = new CompactibleIterator<>() {
 

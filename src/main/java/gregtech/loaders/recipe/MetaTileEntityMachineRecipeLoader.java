@@ -1051,7 +1051,8 @@ public class MetaTileEntityMachineRecipeLoader {
                                                Object extraInput) {
         GTItemIngredient extra;
         if (extraInput instanceof ItemStack stack) {
-            extra = StandardItemIngredient.builder().setCount(stack.getCount()).addStack(stack).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT);
+            extra = StandardItemIngredient.builder().setCount(stack.getCount()).addStack(stack)
+                    .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT);
         } else if (extraInput instanceof String oreName) {
             extra = OreItemIngredient.of(oreName);
         } else {

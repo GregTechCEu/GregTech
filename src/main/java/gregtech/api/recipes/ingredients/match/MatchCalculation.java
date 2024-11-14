@@ -1,14 +1,9 @@
 package gregtech.api.recipes.ingredients.match;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-import org.jgrapht.alg.flow.PushRelabelMFImpl;
-import org.jgrapht.graph.DefaultWeightedEdge;
 
-import java.util.Collections;
 import java.util.List;
 
 public interface MatchCalculation<T> {
@@ -38,6 +33,7 @@ public interface MatchCalculation<T> {
 
     /**
      * Get the list of consumed, based on matchables and match results.
+     * 
      * @return the list of consumed.
      */
     @NotNull

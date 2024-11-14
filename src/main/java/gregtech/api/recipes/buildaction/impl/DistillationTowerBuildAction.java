@@ -3,7 +3,6 @@ package gregtech.api.recipes.buildaction.impl;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.buildaction.RecipeBuildAction;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
@@ -26,19 +25,23 @@ public final class DistillationTowerBuildAction implements RecipeBuildAction<Sim
             SimpleRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy()
                     .volts(Math.max(1, prototype.getVoltage() / 4)).circuitMeta(i + 1);
 
-            int ratio = getRatioForDistillery(prototype.getFluidInputs().get(0).getAllMatchingStacks().get(0), prototype.getFluidOutputs().get(i),
+            int ratio = getRatioForDistillery(prototype.getFluidInputs().get(0).getAllMatchingStacks().get(0),
+                    prototype.getFluidOutputs().get(i),
                     !prototype.getItemOutputs().isEmpty() ? prototype.getItemOutputs().get(0) : null);
 
             int recipeDuration = (int) (prototype.getDuration() * STD_DURATION_FACTOR_INV);
 
             boolean shouldDivide = ratio != 1;
 
-            boolean fluidsDivisible = isFluidStackDivisibleForDistillery(prototype.getFluidInputs().get(0).getAllMatchingStacks().get(0),
+            boolean fluidsDivisible = isFluidStackDivisibleForDistillery(
+                    prototype.getFluidInputs().get(0).getAllMatchingStacks().get(0),
                     ratio) &&
                     isFluidStackDivisibleForDistillery(prototype.getFluidOutputs().get(i), ratio);
 
-            FluidStack dividedInputFluid = new FluidStack(prototype.getFluidInputs().get(0).getAllMatchingStacks().get(0),
-                    GTUtility.safeCastLongToInt(Math.max(1, prototype.getFluidInputs().get(0).getRequiredCount() / ratio)));
+            FluidStack dividedInputFluid = new FluidStack(
+                    prototype.getFluidInputs().get(0).getAllMatchingStacks().get(0),
+                    GTUtility.safeCastLongToInt(
+                            Math.max(1, prototype.getFluidInputs().get(0).getRequiredCount() / ratio)));
             FluidStack dividedOutputFluid = new FluidStack(prototype.getFluidOutputs().get(i),
                     Math.max(1, prototype.getFluidOutputs().get(i).amount / ratio));
 

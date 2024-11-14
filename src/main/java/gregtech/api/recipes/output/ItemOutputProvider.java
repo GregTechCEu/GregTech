@@ -1,13 +1,11 @@
 package gregtech.api.recipes.output;
 
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
-import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -25,15 +23,16 @@ public interface ItemOutputProvider {
      * @param recipeTier    the recipe tier, for use in chanced outputs.
      * @param machineTier   the machine tier, for use in chanced outputs.
      * @param boostFunction the boost function, for use in chanced outputs.
-     * @param parallel the parallel level of this recipe run.
+     * @param parallel      the parallel level of this recipe run.
      * @return the item outputs for this recipe run.
      */
     @NotNull
     default List<ItemStack> computeOutputs(@UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                   @UnmodifiableView @NotNull List<FluidStack> inputFluids,
-                                   @UnmodifiableView @NotNull PropertySet propertySet, int recipeTier,
-                                   int machineTier, @NotNull ChanceBoostFunction boostFunction, int parallel) {
-        return computeOutputs(inputItems, inputFluids, propertySet, recipeTier, machineTier, boostFunction, parallel, Integer.MAX_VALUE);
+                                           @UnmodifiableView @NotNull List<FluidStack> inputFluids,
+                                           @UnmodifiableView @NotNull PropertySet propertySet, int recipeTier,
+                                           int machineTier, @NotNull ChanceBoostFunction boostFunction, int parallel) {
+        return computeOutputs(inputItems, inputFluids, propertySet, recipeTier, machineTier, boostFunction, parallel,
+                Integer.MAX_VALUE);
     }
 
     /**
@@ -45,8 +44,8 @@ public interface ItemOutputProvider {
      * @param recipeTier    the recipe tier, for use in chanced outputs.
      * @param machineTier   the machine tier, for use in chanced outputs.
      * @param boostFunction the boost function, for use in chanced outputs.
-     * @param parallel the parallel level of this recipe run.
-     * @param trimLimit the most outputs allowed, before parallel.
+     * @param parallel      the parallel level of this recipe run.
+     * @param trimLimit     the most outputs allowed, before parallel.
      * @return the item outputs for this recipe run.
      */
     @NotNull
@@ -59,16 +58,17 @@ public interface ItemOutputProvider {
      * Called to gather information about what this recipe can output.
      * Used for JEI display, output bus fit calculations, etc.
      *
-     * @param parallel the parallel level for this simulated run.
-     * @param trimLimit the most outputs allowed, before parallel.
+     * @param parallel    the parallel level for this simulated run.
+     * @param trimLimit   the most outputs allowed, before parallel.
      * @param inputItems  input items for this simulated run.
      * @param inputFluids input fluids for this simulated run.
      * @return the maximum possible outputs of this provider.
      */
     @NotNull
-    @UnmodifiableView List<ItemStack> getCompleteOutputs(int parallel, int trimLimit,
-            @UnmodifiableView @NotNull List<ItemStack> inputItems,
-            @UnmodifiableView @NotNull List<FluidStack> inputFluids);
+    @UnmodifiableView
+    List<ItemStack> getCompleteOutputs(int parallel, int trimLimit,
+                                       @UnmodifiableView @NotNull List<ItemStack> inputItems,
+                                       @UnmodifiableView @NotNull List<FluidStack> inputFluids);
 
     /**
      * @return the most ItemStacks {@link #computeOutputs(List, List, PropertySet, int, int, ChanceBoostFunction, int)}

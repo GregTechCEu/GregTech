@@ -5,7 +5,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;

@@ -3,7 +3,6 @@ package gregtech.api.recipes.machines;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.ingredients.old.GTRecipeItemInput;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.core.sound.GTSoundEvents;
 

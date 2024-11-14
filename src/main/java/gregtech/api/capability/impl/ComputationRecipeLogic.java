@@ -13,7 +13,6 @@ import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.fluids.FluidStack;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,7 +40,8 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     private boolean hasNotEnoughComputation;
     private int currentDrawnCWUt;
 
-    public <T extends RecipeMapMultiblockController & IOpticalComputationReceiver> ComputationRecipeLogic(T metaTileEntity, ComputationType type) {
+    public <T extends RecipeMapMultiblockController & IOpticalComputationReceiver> ComputationRecipeLogic(T metaTileEntity,
+                                                                                                          ComputationType type) {
         super(metaTileEntity, false);
         this.type = type;
     }

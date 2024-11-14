@@ -156,7 +156,6 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         @Override
         protected float computeVoltageMultiplier(RecipeView recipe,
                                                  @Range(from = 0, to = Integer.MAX_VALUE) int overclocks) {
-
             int coilTier = getMetaTileEntity().getCoilTier();
             // each coil above cupronickel (coilTier = 0) uses 10% less energy
             return super.computeVoltageMultiplier(recipe, overclocks) * (1 - coilTier * 0.1f);

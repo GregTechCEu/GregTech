@@ -29,7 +29,7 @@ public class SingleRecipeRun implements RecipeRun {
     private final double duration;
     private final long requiredVoltage;
     private final long requiredAmperage;
-    private final  boolean generating;
+    private final boolean generating;
 
     public SingleRecipeRun(RecipeView view, int recipeTier, int machineTier, ChanceBoostFunction boostFunction,
                            PropertySet properties, float overclockVoltageMultiplier, double duration) {

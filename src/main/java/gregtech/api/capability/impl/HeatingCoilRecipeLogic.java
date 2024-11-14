@@ -21,7 +21,6 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
 
     public static final int COIL_PERFECT_OVERCLOCK_TEMPERATURE = 1800;
 
-
     public <T extends RecipeMapMultiblockController & IHeatingCoil> HeatingCoilRecipeLogic(T metaTileEntity) {
         super(metaTileEntity);
     }
@@ -55,11 +54,13 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
                 Math.pow(getOverclockingDurationFactor(), overclocks - perfects));
     }
 
-    protected @Range(from = 0, to = Integer.MAX_VALUE) int calculateAmountCoilEUtDiscount(int providedTemp, int requiredTemp) {
+    protected @Range(from = 0, to = Integer.MAX_VALUE) int calculateAmountCoilEUtDiscount(int providedTemp,
+                                                                                          int requiredTemp) {
         return Math.max(0, (providedTemp - requiredTemp) / COIL_EUT_DISCOUNT_TEMPERATURE);
     }
 
-    protected @Range(from = 0, to = Integer.MAX_VALUE) int calculateAmountCoilPerfectOverclocks(int providedTemp, int requiredTemp) {
+    protected @Range(from = 0, to = Integer.MAX_VALUE) int calculateAmountCoilPerfectOverclocks(int providedTemp,
+                                                                                                int requiredTemp) {
         return Math.max(0, (providedTemp - requiredTemp) / COIL_PERFECT_OVERCLOCK_TEMPERATURE);
     }
 }

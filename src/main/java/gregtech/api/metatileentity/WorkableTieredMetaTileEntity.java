@@ -1,7 +1,6 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
@@ -187,20 +186,22 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
             if (current != null) {
                 if (current.isGenerating()) {
                     list.add(new TextComponentTranslation("behavior.tricorder.workable_production",
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
-                                    .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(
+                                    TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
+                                            .setStyle(new Style().setColor(TextFormatting.RED)),
                             new TextComponentTranslation(
                                     TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 :
                                             current.getRequiredAmperage()))
-                                    .setStyle(new Style().setColor(TextFormatting.RED))));
+                                                    .setStyle(new Style().setColor(TextFormatting.RED))));
                 } else {
                     list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
-                            new TextComponentTranslation(TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
-                                    .setStyle(new Style().setColor(TextFormatting.RED)),
+                            new TextComponentTranslation(
+                                    TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt()))
+                                            .setStyle(new Style().setColor(TextFormatting.RED)),
                             new TextComponentTranslation(
                                     TextFormattingUtil.formatNumbers(workable.getInfoProviderEUt() == 0 ? 0 :
                                             current.getRequiredAmperage()))
-                                    .setStyle(new Style().setColor(TextFormatting.RED))));
+                                                    .setStyle(new Style().setColor(TextFormatting.RED))));
                 }
             }
         }

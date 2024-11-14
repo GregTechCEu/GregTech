@@ -17,9 +17,6 @@ import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.chance.ChanceEntry;
-import gregtech.api.recipes.chance.output.ChancedOutput;
-import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 
@@ -451,6 +448,7 @@ public class GTUtility {
 
     /**
      * Deep copies a list of item stacks.
+     * 
      * @param itemStacks the list of item stacks
      * @return a deep copy of the list
      */
@@ -464,6 +462,7 @@ public class GTUtility {
 
     /**
      * Deep copies a list of fluid stacks.
+     * 
      * @param fluidStacks the list of fluid stacks
      * @return a deep copy of the list
      */

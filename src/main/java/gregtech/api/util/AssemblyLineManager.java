@@ -7,8 +7,6 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
-import gregtech.api.recipes.ingredients.old.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.old.nbtmatch.NBTMatcher;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.recipes.properties.impl.ScanProperty;

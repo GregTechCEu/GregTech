@@ -48,14 +48,15 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     }
 
     /**
-     * @param voltageIn  the voltage supply
-     * @param amperageIn the amperage supply
-     * @param voltageOut the voltage capacity
+     * @param voltageIn   the voltage supply
+     * @param amperageIn  the amperage supply
+     * @param voltageOut  the voltage capacity
      * @param amperageOut the amperage capacity
      * @return a new {@link PropertySet} with power supply and capacity set.
      */
     @Contract("_, _, _, _ -> new")
-    public static @NotNull PropertySet comprehensive(long voltageIn, long amperageIn, long voltageOut, long amperageOut) {
+    public static @NotNull PropertySet comprehensive(long voltageIn, long amperageIn, long voltageOut,
+                                                     long amperageOut) {
         PropertySet set = new PropertySet();
         set.add(new PowerSupplyProperty(voltageIn, amperageIn));
         set.add(new PowerCapacityProperty(voltageOut, voltageOut));

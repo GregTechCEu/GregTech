@@ -50,7 +50,7 @@ public class ChancedOutputList<I, T extends ChancedOutput<I>> {
      * @param boostFunction the function used to boost the outputs
      * @param baseTier      the base tier of the recipe
      * @param machineTier   the tier the recipe is run at
-     * @param trimLimit the trim limit for chance entries
+     * @param trimLimit     the trim limit for chance entries
      * @return a list of the rolled outputs
      */
     public @Nullable @Unmodifiable List<T> roll(@NotNull ChanceBoostFunction boostFunction, int baseTier,

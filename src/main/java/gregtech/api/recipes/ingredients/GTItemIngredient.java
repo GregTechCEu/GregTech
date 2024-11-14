@@ -4,11 +4,10 @@ import gregtech.api.recipes.ingredients.match.Matcher;
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -6,17 +6,13 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.recipes.lookup.property.PropertySet;
-import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -108,7 +104,8 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             PropertySet set = computePropertySet();
             blockConsumption = true;
             for (DistinctInputGroup group : getInputGroups()) {
-                Pair<RecipeRun, Recipe> pair = findRecipeRun(group.itemInventoryView(), group.fluidInventoryView(), set);
+                Pair<RecipeRun, Recipe> pair = findRecipeRun(group.itemInventoryView(), group.fluidInventoryView(),
+                        set);
                 if (pair != null) {
                     recipe = pair.getRight();
                     break;
@@ -139,11 +136,13 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         for (DistinctInputGroup group : getInputGroups()) {
             RecipeRun recipe = null;
             if (previousRecipe != null) {
-                Pair<RecipeRun, Recipe> pair = matchRecipe(previousRecipe, group.itemInventoryView(), group.fluidInventoryView(), set);
+                Pair<RecipeRun, Recipe> pair = matchRecipe(previousRecipe, group.itemInventoryView(),
+                        group.fluidInventoryView(), set);
                 if (pair != null) recipe = pair.getLeft();
             }
             if (recipe == null) {
-                Pair<RecipeRun, Recipe> pair = findRecipeRun(group.itemInventoryView(), group.fluidInventoryView(), set);
+                Pair<RecipeRun, Recipe> pair = findRecipeRun(group.itemInventoryView(), group.fluidInventoryView(),
+                        set);
                 if (pair != null) recipe = pair.getLeft();
             }
             if (recipe == null) continue;

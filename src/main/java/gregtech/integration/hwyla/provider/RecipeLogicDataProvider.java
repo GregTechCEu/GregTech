@@ -47,7 +47,8 @@ public class RecipeLogicDataProvider extends CapabilityDataProvider<AbstractReci
     protected NBTTagCompound getNBTData(AbstractRecipeLogic capability, NBTTagCompound tag) {
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Working", capability.isWorking());
-        if (capability.isWorking() && capability.getCurrent() != null && !(capability instanceof PrimitiveRecipeLogic)) {
+        if (capability.isWorking() && capability.getCurrent() != null &&
+                !(capability instanceof PrimitiveRecipeLogic)) {
             subTag.setLong("RecipeEUt", capability.getInfoProviderEUt());
             subTag.setBoolean("Generating", capability.getCurrent().isGenerating());
         }

@@ -451,7 +451,8 @@ public class MinerLogic {
         Recipe recipe = map.find(Collections.singletonList(itemStack), Collections.emptyList(), Objects::nonNull);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
-            for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getVoltage()), tier,
+            for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getVoltage()),
+                    tier,
                     map)) {
                 outputStack = outputStack.copy();
                 if (OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {

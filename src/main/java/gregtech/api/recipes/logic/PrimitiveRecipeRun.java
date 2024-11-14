@@ -3,16 +3,14 @@ package gregtech.api.recipes.logic;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
 import java.util.List;
 

@@ -179,7 +179,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     /**
-     * @param voltage the voltage of the recipe
+     * @param voltage  the voltage of the recipe
      * @param discount the voltage discount
      * @return the voltage after discount
      */

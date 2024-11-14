@@ -18,7 +18,8 @@ public interface RecipeView {
     /**
      * Use sparingly. If the recipe view has an available method for what you need, use that whenever possible.
      */
-    @NotNull Recipe getRecipe();
+    @NotNull
+    Recipe getRecipe();
 
     default int getActualDuration() {
         return getRecipe().getDuration();
@@ -36,13 +37,17 @@ public interface RecipeView {
         return getActualAmperage() * getActualVoltage();
     }
 
-    @NotNull List<ItemStack> getConsumedItems();
+    @NotNull
+    List<ItemStack> getConsumedItems();
 
-    @NotNull List<FluidStack> getConsumedFluids();
+    @NotNull
+    List<FluidStack> getConsumedFluids();
 
-    @NotNull List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier,
+    @NotNull
+    List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier,
                               ChanceBoostFunction boostFunction);
 
-    @NotNull List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier,
+    @NotNull
+    List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier,
                                 ChanceBoostFunction boostFunction);
 }

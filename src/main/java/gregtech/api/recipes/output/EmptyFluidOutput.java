@@ -1,13 +1,11 @@
 package gregtech.api.recipes.output;
 
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
-import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -35,7 +33,8 @@ public class EmptyFluidOutput implements FluidOutputProvider {
 
     @Override
     public @Range(from = 0, to = Integer.MAX_VALUE) int getMaximumOutputs(
-            @Range(from = 1, to = Integer.MAX_VALUE) int parallel) {
+                                                                          @Range(from = 1,
+                                                                                 to = Integer.MAX_VALUE) int parallel) {
         return 0;
     }
 

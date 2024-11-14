@@ -165,7 +165,8 @@ public final class RecipeMaps {
                         if (recipeBuilder.isWithRecycling()) {
                             // ignore input fluids for recycling
                             ItemStack outputStack = recipeBuilder.getItemOutputs().get(0);
-                            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(recipeBuilder.getItemInputs(),
+                            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(
+                                    recipeBuilder.getItemInputs(),
                                     outputStack.getCount());
                             if (info != null) {
                                 OreDictUnifier.registerOre(outputStack, info);
@@ -931,7 +932,8 @@ public final class RecipeMaps {
      * Recipe List, so any recipes added will be exclusive to the GTCEu Furnaces.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = RecipeLookupFurnace.createMap("electric_furnace",
+    public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = RecipeLookupFurnace.createMap(
+            "electric_furnace",
             new SimpleRecipeBuilder(), recipeMap -> {
                 RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
                 ui.setItemSlotOverlay(GuiTextures.FURNACE_OVERLAY_1, false);

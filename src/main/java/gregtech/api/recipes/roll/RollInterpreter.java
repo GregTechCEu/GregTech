@@ -1,9 +1,6 @@
 package gregtech.api.recipes.roll;
 
 import gregtech.api.GTValues;
-import gregtech.api.util.GTUtility;
-
-import net.minecraft.util.math.MathHelper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -34,8 +31,10 @@ public interface RollInterpreter {
 
     /**
      * Interprets roll data as weights, determining their relative likelihood of being picked.
-     * Every roll attempt, if it succeeds based on chance per roll, a random roll will be selected and yielded based on weights, and then removed from consideration for future selections.
-     * Maximum roll attempts will be bounded to be less than or equal to the number of rolls passed in before any rolls are performed.
+     * Every roll attempt, if it succeeds based on chance per roll, a random roll will be selected and yielded based on
+     * weights, and then removed from consideration for future selections.
+     * Maximum roll attempts will be bounded to be less than or equal to the number of rolls passed in before any rolls
+     * are performed.
      */
     static @NotNull RollInterpreter chanceWeighted(@Range(from = 1, to = Integer.MAX_VALUE) int maximumRollAttempts,
                                                    @Range(from = 1, to = 10_000) int chancePerRoll) {
@@ -45,7 +44,8 @@ public interface RollInterpreter {
 
     /**
      * Interprets roll data as min yield.
-     * The boosted min yield is found and clamped between 0 and max yield, then a value is uniformly selected between min and max yield.
+     * The boosted min yield is found and clamped between 0 and max yield, then a value is uniformly selected between
+     * min and max yield.
      */
     static @NotNull RollInterpreter ranged() {
         return RangedInterpreter.INSTANCE;
@@ -53,8 +53,11 @@ public interface RollInterpreter {
 
     /**
      * Interprets roll data as min yield.
-     * The boosted min yield is found and clamped between 0 and max yield, then a value is selected by using the provided distribution.
-     * @param distribution must be a double supplier from 0 (inclusive) to 1 (exclusive), preferably from a random source. See {@link GTValues#RNG}.
+     * The boosted min yield is found and clamped between 0 and max yield, then a value is selected by using the
+     * provided distribution.
+     * 
+     * @param distribution must be a double supplier from 0 (inclusive) to 1 (exclusive), preferably from a random
+     *                     source. See {@link GTValues#RNG}.
      */
     static @NotNull RollInterpreter ranged(@NotNull DoubleSupplier distribution) {
         return new RangedInterpreter(distribution);
@@ -95,11 +98,16 @@ public interface RollInterpreter {
 
     /**
      * Should interpret the roll data arrays and return the results of rolling. All arrays should be the same size.
-     * @param maxYield the maximum yield array. Values in the return array should not exceed their respective value in the maxYield array.
-     * @param rollValue the roll value array. Values of {@link Long#MIN_VALUE} should be interpreted as not consumable, and thus should always return 0 after rolling.
-     * @param rollBoost the roll boost array. Should be multiplied or otherwise scale by boost strength.
+     * 
+     * @param maxYield      the maximum yield array. Values in the return array should not exceed their respective value
+     *                      in the maxYield array.
+     * @param rollValue     the roll value array. Values of {@link Long#MIN_VALUE} should be interpreted as not
+     *                      consumable, and thus should always return 0 after rolling.
+     * @param rollBoost     the roll boost array. Should be multiplied or otherwise scale by boost strength.
      * @param boostStrength the boost strength. Should affect roll boost.
-     * @return the rolled values. Values in the return array should not exceed their respective value in the maxYield array.
+     * @return the rolled values. Values in the return array should not exceed their respective value in the maxYield
+     *         array.
      */
-    long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue, long @NotNull [] rollBoost, int boostStrength);
+    long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue, long @NotNull [] rollBoost,
+                                      int boostStrength);
 }

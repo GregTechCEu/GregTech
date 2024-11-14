@@ -42,8 +42,6 @@ import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.groovy.GroovyScriptModule;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -57,6 +55,7 @@ import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -141,7 +140,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         // we can unfold a standard output, but otherwise we have to set the override
         if (fluidProvider instanceof StandardFluidOutput standard) {
             ListWithRollInformation<FluidStack> fluidOut = standard.getOutputs();
-            this.fluidOutputs = Arrays.stream(fluidOut.getUnrolled()).map(FluidStack::copy).collect(Collectors.toList());
+            this.fluidOutputs = Arrays.stream(fluidOut.getUnrolled()).map(FluidStack::copy)
+                    .collect(Collectors.toList());
             this.rolledFluidOutputs = fluidOut.recomposeRolled();
             this.fluidOutputInterpreter = fluidOut.getInterpreter();
         } else {
@@ -314,7 +314,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return ingredient(OreItemIngredient.of(oredict, count, nbtMatcher));
     }
 
-    public R inputItemRoll(@NotNull String oredict, int count, long rollValue, long rollBoost, @Nullable NBTMatcher nbtMatcher) {
+    public R inputItemRoll(@NotNull String oredict, int count, long rollValue, long rollBoost,
+                           @Nullable NBTMatcher nbtMatcher) {
         return ingredient(OreItemIngredient.of(oredict, count, nbtMatcher), rollValue, rollBoost);
     }
 
@@ -338,8 +339,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputItem(new UnificationEntry(orePrefix, material).toString(), count, nbtMatcher);
     }
 
-    public R inputItemRoll(OrePrefix orePrefix, Material material, int count, long rollValue, long rollBoost, @Nullable NBTMatcher nbtMatcher) {
-        return inputItemRoll(new UnificationEntry(orePrefix, material).toString(), count, rollValue, rollBoost, nbtMatcher);
+    public R inputItemRoll(OrePrefix orePrefix, Material material, int count, long rollValue, long rollBoost,
+                           @Nullable NBTMatcher nbtMatcher) {
+        return inputItemRoll(new UnificationEntry(orePrefix, material).toString(), count, rollValue, rollBoost,
+                nbtMatcher);
     }
 
     public R inputItem(Item item) {
@@ -403,81 +406,97 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     /**
-     * Use {@link #inputItem(Item)} or {@link #inputItem(Item, int)} if all possible meta values should be matched instead.
+     * Use {@link #inputItem(Item)} or {@link #inputItem(Item, int)} if all possible meta values should be matched
+     * instead.
      */
     public R inputItem(Item item, int count, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addItem(item, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
     }
 
     /**
-     * Use {@link #inputItemRoll(Item, long, long)} or {@link #inputItemRoll(Item, int, long, long)} if all possible meta values should be matched instead.
+     * Use {@link #inputItemRoll(Item, long, long)} or {@link #inputItemRoll(Item, int, long, long)} if all possible
+     * meta values should be matched instead.
      */
     public R inputItemRoll(Item item, int count, long rollValue, long rollBoost, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addItem(item, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE), rollValue, rollBoost);
     }
 
     /**
-     * Use {@link #inputItem(Item, NBTMatcher)} or {@link #inputItem(Item, int, NBTMatcher)} if all possible meta values should be matched instead.
+     * Use {@link #inputItem(Item, NBTMatcher)} or {@link #inputItem(Item, int, NBTMatcher)} if all possible meta values
+     * should be matched instead.
      */
     public R inputItem(Item item, int count, NBTMatcher matcher, int... meta) {
         if (meta.length == 0) return (R) this;
-        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count).setMatcher(matcher);
+        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count)
+                .setMatcher(matcher);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addItem(item, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
     }
 
     /**
-     * Use {@link #inputItemRoll(Item, long, long, NBTMatcher)} or {@link #inputItemRoll(Item, int, long, long, NBTMatcher)} if all possible meta values should be matched instead.
+     * Use {@link #inputItemRoll(Item, long, long, NBTMatcher)} or
+     * {@link #inputItemRoll(Item, int, long, long, NBTMatcher)} if all possible meta values should be matched instead.
      */
     public R inputItemRoll(Item item, int count, long rollValue, long rollBoost, NBTMatcher matcher, int... meta) {
         if (meta.length == 0) return (R) this;
-        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count).setMatcher(matcher);
+        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count)
+                .setMatcher(matcher);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addItem(item, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE), rollValue, rollBoost);
     }
 
     /**
-     * Use {@link #inputItem(Item, NBTTagCompound)} or {@link #inputItem(Item, int, NBTTagCompound)} if all possible meta values should be matched instead.
+     * Use {@link #inputItem(Item, NBTTagCompound)} or {@link #inputItem(Item, int, NBTTagCompound)} if all possible
+     * meta values should be matched instead.
      */
     public R inputItem(Item item, int count, NBTTagCompound tag, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addItem(item, m, tag);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
     }
 
     /**
-     * Use {@link #inputItemRoll(Item, long, long, NBTTagCompound)} or {@link #inputItemRoll(Item, int, long, long, NBTTagCompound)} if all possible meta values should be matched instead.
+     * Use {@link #inputItemRoll(Item, long, long, NBTTagCompound)} or
+     * {@link #inputItemRoll(Item, int, long, long, NBTTagCompound)} if all possible meta values should be matched
+     * instead.
      */
     public R inputItemRoll(Item item, int count, long rollValue, long rollBoost, NBTTagCompound tag, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addItem(item, m, tag);
         }
-        return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
+        return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue,
+                rollBoost);
     }
 
     public R inputItem(Block block) {
@@ -507,7 +526,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputItemRoll(Block block, long rollValue, long rollBoost, NBTTagCompound tag) {
         return ingredient(StandardItemIngredient.builder()
-                .addBlock(block, 0, tag).clearToContextAndBuild(ItemStackMatchingContext.ITEM_NBT), rollValue, rollBoost);
+                .addBlock(block, 0, tag).clearToContextAndBuild(ItemStackMatchingContext.ITEM_NBT), rollValue,
+                rollBoost);
     }
 
     public R inputItem(Block block, int count) {
@@ -537,85 +557,102 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputItemRoll(Block block, int count, long rollValue, long rollBoost, NBTTagCompound tag) {
         return ingredient(StandardItemIngredient.builder().setCount(count)
-                .addBlock(block, 0, tag).clearToContextAndBuild(ItemStackMatchingContext.ITEM_NBT), rollValue, rollBoost);
+                .addBlock(block, 0, tag).clearToContextAndBuild(ItemStackMatchingContext.ITEM_NBT), rollValue,
+                rollBoost);
     }
 
     /**
-     * Use {@link #inputItem(Block)} or {@link #inputItem(Block, int)} if all possible meta values should be matched instead.
+     * Use {@link #inputItem(Block)} or {@link #inputItem(Block, int)} if all possible meta values should be matched
+     * instead.
      */
     public R inputItem(Block block, int count, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addBlock(block, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
     }
 
     /**
-     * Use {@link #inputItemRoll(Block, long, long)} or {@link #inputItemRoll(Block, int, long, long)} if all possible meta values should be matched instead.
+     * Use {@link #inputItemRoll(Block, long, long)} or {@link #inputItemRoll(Block, int, long, long)} if all possible
+     * meta values should be matched instead.
      */
     public R inputItemRoll(Block block, int count, long rollValue, long rollBoost, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addBlock(block, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE), rollValue, rollBoost);
     }
 
     /**
-     * Use {@link #inputItem(Block, NBTMatcher)} or {@link #inputItem(Block, int, NBTMatcher)} if all possible meta values should be matched instead.
+     * Use {@link #inputItem(Block, NBTMatcher)} or {@link #inputItem(Block, int, NBTMatcher)} if all possible meta
+     * values should be matched instead.
      */
     public R inputItem(Block block, int count, NBTMatcher matcher, int... meta) {
         if (meta.length == 0) return (R) this;
-        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count).setMatcher(matcher);
+        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count)
+                .setMatcher(matcher);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addBlock(block, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
     }
 
     /**
-     * Use {@link #inputItemRoll(Block, long, long, NBTMatcher)} or {@link #inputItemRoll(Block, int, long, long, NBTMatcher)} if all possible meta values should be matched instead.
+     * Use {@link #inputItemRoll(Block, long, long, NBTMatcher)} or
+     * {@link #inputItemRoll(Block, int, long, long, NBTMatcher)} if all possible meta values should be matched instead.
      */
     public R inputItemRoll(Block block, int count, long rollValue, long rollBoost, NBTMatcher matcher, int... meta) {
         if (meta.length == 0) return (R) this;
-        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count).setMatcher(matcher);
+        StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count)
+                .setMatcher(matcher);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addBlock(block, m);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE), rollValue, rollBoost);
     }
 
     /**
-     * Use {@link #inputItem(Block, NBTTagCompound)} or {@link #inputItem(Block, int, NBTTagCompound)} if all possible meta values should be matched instead.
+     * Use {@link #inputItem(Block, NBTTagCompound)} or {@link #inputItem(Block, int, NBTTagCompound)} if all possible
+     * meta values should be matched instead.
      */
     public R inputItem(Block block, int count, NBTTagCompound tag, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addBlock(block, m, tag);
         }
         return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
     }
 
     /**
-     * Use {@link #inputItemRoll(Block, long, long, NBTTagCompound)} or {@link #inputItemRoll(Block, int, long, long, NBTTagCompound)} if all possible meta values should be matched instead.
+     * Use {@link #inputItemRoll(Block, long, long, NBTTagCompound)} or
+     * {@link #inputItemRoll(Block, int, long, long, NBTTagCompound)} if all possible meta values should be matched
+     * instead.
      */
     public R inputItemRoll(Block block, int count, long rollValue, long rollBoost, NBTTagCompound tag, int... meta) {
         if (meta.length == 0) return (R) this;
         StandardItemIngredient.ItemIngredientBuilder builder = StandardItemIngredient.builder().setCount(count);
         for (int m : meta) {
-            if (m == GTValues.W) throw new IllegalArgumentException("A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
+            if (m == GTValues.W) throw new IllegalArgumentException(
+                    "A wild meta value matcher should not be explicitly specified! Do not specify meta if you want to match all meta values.");
             builder.addBlock(block, m, tag);
         }
-        return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
+        return ingredient(builder.clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue,
+                rollBoost);
     }
 
     public R inputItem(IHasStackForm stackForm) {
@@ -643,31 +680,38 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R inputItem(IHasStackForm stackForm, int count) {
-        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stackForm.getStackForm(count)).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
+        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stackForm.getStackForm(count))
+                .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
     }
 
     public R inputItemRoll(IHasStackForm stackForm, int count, long rollValue, long rollBoost) {
-        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stackForm.getStackForm(count)).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE), rollValue, rollBoost);
+        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stackForm.getStackForm(count))
+                .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE), rollValue, rollBoost);
     }
 
     public R inputItem(IHasStackForm stackForm, int count, NBTMatcher matcher) {
-        return ingredient(StandardItemIngredient.builder().setCount(count).setMatcher(matcher).addStack(stackForm.getStackForm(count)).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
+        return ingredient(StandardItemIngredient.builder().setCount(count).setMatcher(matcher)
+                .addStack(stackForm.getStackForm(count)).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE));
     }
 
     public R inputItemRoll(IHasStackForm stackForm, int count, long rollValue, long rollBoost, NBTMatcher matcher) {
-        return ingredient(StandardItemIngredient.builder().setCount(count).setMatcher(matcher).addStack(stackForm.getStackForm(count)).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE), rollValue, rollBoost);
+        return ingredient(StandardItemIngredient.builder().setCount(count).setMatcher(matcher)
+                .addStack(stackForm.getStackForm(count)).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE),
+                rollValue, rollBoost);
     }
 
     public R inputItem(IHasStackForm stackForm, int count, NBTTagCompound tag) {
         ItemStack stack = stackForm.getStackForm(count);
         stack.setTagCompound(tag);
-        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stack).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
+        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stack)
+                .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
     }
 
     public R inputItemRoll(IHasStackForm stackForm, int count, long rollValue, long rollBoost, NBTTagCompound tag) {
         ItemStack stack = stackForm.getStackForm(count);
         stack.setTagCompound(tag);
-        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stack).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
+        return ingredient(StandardItemIngredient.builder().setCount(count).addStack(stack)
+                .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
     }
 
     public R inputs(ItemStack input) {
@@ -675,7 +719,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GTLog.logger.error("Input cannot be null or empty. Input: {}", input, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         } else {
-            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
+            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input)
+                    .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
         }
         return (R) this;
     }
@@ -685,7 +730,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             GTLog.logger.error("Input cannot be null or empty. Input: {}", input, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         } else {
-            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
+            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input)
+                    .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
         }
         return (R) this;
     }
@@ -698,7 +744,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
-            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
+            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input)
+                    .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
         }
         return (R) this;
     }
@@ -711,7 +758,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
-            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
+            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input)
+                    .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
         }
         return (R) this;
     }
@@ -723,7 +771,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
-            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
+            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input)
+                    .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT));
         }
         return (R) this;
     }
@@ -735,7 +784,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
-            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
+            ingredient(StandardItemIngredient.builder().setCount(input.getCount()).addStack(input)
+                    .clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT), rollValue, rollBoost);
         }
         return (R) this;
     }
@@ -807,32 +857,39 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     ///////////////////////
 
     public R inputFluid(Fluid fluid, int amount) {
-        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID));
+        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount)
+                .clearToContextAndBuild(FluidStackMatchingContext.FLUID));
     }
 
     public R inputFluidRoll(Fluid fluid, int amount, long rollValue, long rollBoost) {
-        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID), rollValue, rollBoost);
+        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount)
+                .clearToContextAndBuild(FluidStackMatchingContext.FLUID), rollValue, rollBoost);
     }
 
     public R inputFluid(Fluid fluid, int amount, NBTMatcher matcher) {
-        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount).setMatcher(matcher).clearToContextAndBuild(FluidStackMatchingContext.FLUID));
+        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount).setMatcher(matcher)
+                .clearToContextAndBuild(FluidStackMatchingContext.FLUID));
     }
 
     public R inputFluidRoll(Fluid fluid, int amount, long rollValue, long rollBoost, NBTMatcher matcher) {
-        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount).setMatcher(matcher).clearToContextAndBuild(FluidStackMatchingContext.FLUID), rollValue, rollBoost);
+        return ingredient(StandardFluidIngredient.builder().addFluid(fluid).setCount(amount).setMatcher(matcher)
+                .clearToContextAndBuild(FluidStackMatchingContext.FLUID), rollValue, rollBoost);
     }
 
     public R inputFluid(Fluid fluid, int amount, NBTTagCompound tag) {
-        return ingredient(StandardFluidIngredient.builder().addFluid(fluid, tag).setCount(amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT));
+        return ingredient(StandardFluidIngredient.builder().addFluid(fluid, tag).setCount(amount)
+                .clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT));
     }
 
     public R inputFluidRoll(Fluid fluid, int amount, long rollValue, long rollBoost, NBTTagCompound tag) {
-        return ingredient(StandardFluidIngredient.builder().addFluid(fluid, tag).setCount(amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT), rollValue, rollBoost);
+        return ingredient(StandardFluidIngredient.builder().addFluid(fluid, tag).setCount(amount)
+                .clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT), rollValue, rollBoost);
     }
 
     public R fluidInputs(FluidStack input) {
         if (input != null && input.amount > 0) {
-            ingredient(StandardFluidIngredient.builder().addStack(input).setCount(input.amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT));
+            ingredient(StandardFluidIngredient.builder().addStack(input).setCount(input.amount)
+                    .clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT));
         } else if (input != null) {
             GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", input.amount, new Throwable());
         } else {
@@ -843,7 +900,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R fluidInputsRolled(long rollValue, long rollBoost, FluidStack input) {
         if (input != null && input.amount > 0) {
-            ingredient(StandardFluidIngredient.builder().addStack(input).setCount(input.amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT), rollValue, rollBoost);
+            ingredient(StandardFluidIngredient.builder().addStack(input).setCount(input.amount)
+                    .clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT), rollValue, rollBoost);
         } else if (input != null) {
             GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", input.amount, new Throwable());
         } else {
@@ -855,7 +913,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R fluidInputs(FluidStack... fluidStacks) {
         for (FluidStack fluidStack : fluidStacks) {
             if (fluidStack != null && fluidStack.amount > 0) {
-                ingredient(StandardFluidIngredient.builder().addStack(fluidStack).setCount(fluidStack.amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT));
+                ingredient(StandardFluidIngredient.builder().addStack(fluidStack).setCount(fluidStack.amount)
+                        .clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT));
             } else if (fluidStack != null) {
                 GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount,
                         new Throwable());
@@ -869,7 +928,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R fluidInputsRolled(long rollValue, long rollBoost, FluidStack... fluidStacks) {
         for (FluidStack fluidStack : fluidStacks) {
             if (fluidStack != null && fluidStack.amount > 0) {
-                ingredient(StandardFluidIngredient.builder().addStack(fluidStack).setCount(fluidStack.amount).clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT), rollValue, rollBoost);
+                ingredient(StandardFluidIngredient.builder().addStack(fluidStack).setCount(fluidStack.amount)
+                        .clearToContextAndBuild(FluidStackMatchingContext.FLUID_NBT), rollValue, rollBoost);
             } else if (fluidStack != null) {
                 GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount,
                         new Throwable());
@@ -1148,7 +1208,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (ingredient instanceof OreDictIngredient dict) {
             return inputItem(dict.getOreDict(), dict.getAmount());
         }
-        //noinspection ConstantValue
+        // noinspection ConstantValue
         if ((Object) ingredient instanceof ItemStack s) {
             return inputs(s);
         } else if (ingredient instanceof FluidStack s) {
@@ -1178,7 +1238,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (ingredient instanceof OreDictIngredient dict) {
             return inputItemRoll(dict.getOreDict(), dict.getAmount(), Long.MIN_VALUE, 0);
         }
-        //noinspection ConstantValue
+        // noinspection ConstantValue
         if ((Object) ingredient instanceof ItemStack s) {
             return inputsRolled(Long.MIN_VALUE, 0, s);
         } else if (ingredient instanceof FluidStack s) {
@@ -1267,21 +1327,27 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public ValidationResult<Recipe> build() {
-        EnumValidationResult result = recipePropertyStorage == RecipePropertyStorage.EMPTY ? EnumValidationResult.INVALID : validate();
+        EnumValidationResult result = recipePropertyStorage == RecipePropertyStorage.EMPTY ?
+                EnumValidationResult.INVALID : validate();
         return ValidationResult.newResult(result, new Recipe(
-                new ListWithRollInformation<>(GTItemIngredient::getRequiredCount, itemInputs, rolledItemInputs, itemInputInterpreter),
-                new ListWithRollInformation<>(GTFluidIngredient::getRequiredCount, fluidInputs, rolledFluidInputs, fluidInputInterpreter),
+                new ListWithRollInformation<>(GTItemIngredient::getRequiredCount, itemInputs, rolledItemInputs,
+                        itemInputInterpreter),
+                new ListWithRollInformation<>(GTFluidIngredient::getRequiredCount, fluidInputs, rolledFluidInputs,
+                        fluidInputInterpreter),
                 resolveItemOutputProvider(),
                 resolveFluidOutputProvider(),
                 recipePropertyStorage, duration, hidden, isCTRecipe, category));
     }
 
     protected ItemOutputProvider resolveItemOutputProvider() {
-        return itemOutputOverride != null ? itemOutputOverride : new StandardItemOutput(new ListWithRollInformation<>(ItemStack::getCount, itemOutputs, rolledItemOutputs, itemOutputInterpreter));
+        return itemOutputOverride != null ? itemOutputOverride :
+                new StandardItemOutput(new ListWithRollInformation<>(ItemStack::getCount, itemOutputs,
+                        rolledItemOutputs, itemOutputInterpreter));
     }
 
     protected FluidOutputProvider resolveFluidOutputProvider() {
-        return fluidOutputOverride != null ? fluidOutputOverride : new StandardFluidOutput(new ListWithRollInformation<>(f -> f.amount, fluidOutputs, rolledFluidOutputs, fluidOutputInterpreter));
+        return fluidOutputOverride != null ? fluidOutputOverride : new StandardFluidOutput(
+                new ListWithRollInformation<>(f -> f.amount, fluidOutputs, rolledFluidOutputs, fluidOutputInterpreter));
     }
 
     protected EnumValidationResult validate() {

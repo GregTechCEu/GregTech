@@ -3,10 +3,7 @@ package gregtech.api.recipes.logic;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
-
 import gregtech.api.recipes.lookup.property.PropertySet;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -41,7 +38,6 @@ public class TrimmedRecipeView extends StandardRecipeView {
         return recipe.getFluidOutputProvider().computeOutputs(items, fluids, properties, recipeTier, machineTier,
                 boostFunction, parallel, maxFluids);
     }
-
 
     @Override
     public List<ItemStack> getMaximumItems() {

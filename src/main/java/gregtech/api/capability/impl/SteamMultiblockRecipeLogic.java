@@ -2,8 +2,6 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -23,10 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SteamMultiblockRecipeLogic extends DistributedRecipeLogic {
 

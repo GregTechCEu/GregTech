@@ -18,7 +18,6 @@ import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -171,7 +170,8 @@ public abstract class DistributedRecipeLogic extends DistinctRecipeLogic {
 
     @Override
     public @Nullable Pair<RecipeRun, Recipe> matchRecipe(@NotNull Recipe recipe, @NotNull List<ItemStack> items,
-                                                         @NotNull List<FluidStack> fluids, @NotNull PropertySet properties) {
+                                                         @NotNull List<FluidStack> fluids,
+                                                         @NotNull PropertySet properties) {
         if (getParallelLimit(recipe) <= 0) return null;
         return super.matchRecipe(recipe, items, fluids, properties);
     }
