@@ -533,7 +533,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         RecipeRun returnable = applyOverclocking(recipeView, properties);
         if (returnable == null) return null;
 
-        if (!performConsumption(itemMatch, fluidMatch, recipeView, returnable, items, fluids)) return null;
+        if (!performConsumption(recipeView, returnable, items, fluids)) return null;
 
         return Pair.of(returnable, recipe);
     }
@@ -623,7 +623,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         }
         assert getRecipeMap() != null;
         return new SingleRecipeRun(recipeView, recipeVoltageTier, machineVoltageTier,
-                getRecipeMap().getChanceFunction(),
                 properties, multiplier, computeDuration(recipeView, overclocks));
     }
 
@@ -633,11 +632,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return Math.max(0, machineVoltageTier - GTUtility.getTierByVoltage(recipeView.getActualVoltage()));
     }
 
-    protected boolean performConsumption(@NotNull MatchCalculation<ItemStack> itemMatch,
-                                         @NotNull MatchCalculation<FluidStack> fluidMatch,
-                                         @NotNull RecipeView view, @NotNull RecipeRun run,
+    protected boolean performConsumption(@NotNull RecipeView view, @NotNull RecipeRun run,
                                          @NotNull List<ItemStack> items, @NotNull List<FluidStack> fluids) {
-        long[] consumption = itemMatch.getMatchResultsForScale(view.getParallel());
+        long[] consumption = run.getItemArrayConsumption();
         if (consumption == null) return false; // shouldn't happen
         for (int i = 0; i < consumption.length; i++) {
             int used = (int) consumption[i];
@@ -647,7 +644,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             items.set(i, stack);
         }
 
-        consumption = fluidMatch.getMatchResultsForScale(view.getParallel());
+        consumption = run.getFluidArrayConsumption();
         if (consumption == null) return false; // shouldn't happen
         for (int i = 0; i < consumption.length; i++) {
             int used = (int) consumption[i];

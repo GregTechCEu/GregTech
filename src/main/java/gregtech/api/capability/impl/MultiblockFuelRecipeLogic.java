@@ -5,7 +5,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.recipes.lookup.property.PropertySet;
@@ -81,11 +80,10 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected boolean performConsumption(@NotNull MatchCalculation<ItemStack> itemMatch,
-                                         @NotNull MatchCalculation<FluidStack> fluidMatch, @NotNull RecipeView view,
+    protected boolean performConsumption(@NotNull RecipeView view,
                                          @NotNull RecipeRun run, @NotNull List<ItemStack> items,
                                          @NotNull List<FluidStack> fluids) {
-        if (!blockConsumption) return super.performConsumption(itemMatch, fluidMatch, view, run, items, fluids);
+        if (!blockConsumption) return super.performConsumption(view, run, items, fluids);
         else return true;
     }
 

@@ -1,7 +1,6 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
@@ -22,6 +21,8 @@ public class StandardRecipeView implements RecipeView {
     protected final @NotNull MatchCalculation<ItemStack> itemMatch;
     protected final @NotNull MatchCalculation<FluidStack> fluidMatch;
     protected int parallel;
+    protected @Unmodifiable List<ItemStack> matchedItems;
+    protected @Unmodifiable List<FluidStack> matchedFluids;
     protected @Unmodifiable List<ItemStack> items;
     protected @Unmodifiable List<FluidStack> fluids;
     protected @Unmodifiable @Nullable List<ItemStack> iOut;
@@ -40,12 +41,28 @@ public class StandardRecipeView implements RecipeView {
     @Contract("_ -> this")
     public StandardRecipeView setParallel(int parallel) {
         if (parallel == this.parallel) return this;
-        items = itemMatch.getConsumed(parallel);
-        fluids = fluidMatch.getConsumed(parallel);
+        matchedItems = null;
+        matchedFluids = null;
+        items = null;
+        fluids = null;
         iOut = null;
         fOut = null;
         this.parallel = parallel;
         return this;
+    }
+
+    protected void computeMatches() {
+        if (matchedItems == null || matchedFluids == null) {
+            matchedItems = itemMatch.getMatched(parallel);
+            matchedFluids = fluidMatch.getMatched(parallel);
+        }
+    }
+
+    protected void computeConsumptions(int rollBoost) {
+        if (items == null || fluids == null) {
+            items = itemMatch.getConsumed(parallel, rollBoost);
+            fluids = fluidMatch.getConsumed(parallel, rollBoost);
+        }
     }
 
     @Override
@@ -72,38 +89,54 @@ public class StandardRecipeView implements RecipeView {
     }
 
     @Override
-    public @NotNull List<ItemStack> getConsumedItems() {
+    public @NotNull List<ItemStack> getConsumedItems(int rollBoost) {
+        computeConsumptions(rollBoost);
         return items;
     }
 
     @Override
-    public @NotNull List<FluidStack> getConsumedFluids() {
+    public long @NotNull [] getItemArrayConsumption(int rollBoost) {
+        long[] arr = itemMatch.getConsumeResultsForScaleAndBoost(parallel, rollBoost);
+        return arr == null ? new long[0] : arr;
+    }
+
+    @Override
+    public @NotNull List<FluidStack> getConsumedFluids(int rollBoost) {
+        computeConsumptions(rollBoost);
         return fluids;
     }
 
     @Override
-    public @NotNull List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier,
-                                              ChanceBoostFunction boostFunction) {
+    public long @NotNull [] getFluidArrayConsumption(int rollBoost) {
+        long[] arr = fluidMatch.getConsumeResultsForScaleAndBoost(parallel, rollBoost);
+        return arr == null ? new long[0] : arr;
+    }
+
+    @Override
+    public @NotNull List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier) {
+        computeConsumptions(machineTier - recipeTier);
         return recipe.getItemOutputProvider().computeOutputs(items, fluids, properties, recipeTier, machineTier,
-                boostFunction,
                 parallel);
     }
 
     @Override
-    public @NotNull List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier,
-                                                ChanceBoostFunction boostFunction) {
+    public @NotNull List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier) {
+        computeConsumptions(machineTier - recipeTier);
         return recipe.getFluidOutputProvider().computeOutputs(items, fluids, properties, recipeTier, machineTier,
-                boostFunction,
                 parallel);
     }
 
     public List<ItemStack> getMaximumItems() {
         if (iOut != null) return iOut;
-        return (iOut = recipe.getItemOutputProvider().getCompleteOutputs(parallel, Integer.MAX_VALUE, items, fluids));
+        computeMatches();
+        return (iOut = recipe.getItemOutputProvider().getCompleteOutputs(parallel, Integer.MAX_VALUE, matchedItems,
+                matchedFluids));
     }
 
     public List<FluidStack> getMaximumFluids() {
         if (fOut != null) return fOut;
-        return (fOut = recipe.getFluidOutputProvider().getCompleteOutputs(parallel, Integer.MAX_VALUE, items, fluids));
+        computeMatches();
+        return (fOut = recipe.getFluidOutputProvider().getCompleteOutputs(parallel, Integer.MAX_VALUE, matchedItems,
+                matchedFluids));
     }
 }

@@ -7,7 +7,6 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.buildaction.RecipeBuildAction;
 import gregtech.api.recipes.category.GTRecipeCategory;
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.match.IngredientMatchHelper;
 import gregtech.api.recipes.lookup.AbstractRecipeLookup;
 import gregtech.api.recipes.lookup.CompactibleIterator;
@@ -69,10 +68,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static boolean foundInvalidRecipe = false;
 
-    public static final ChanceBoostFunction DEFAULT_CHANCE_FUNCTION = ChanceBoostFunction.OVERCLOCK;
     protected RecipeMapUI<?> recipeMapUI;
-
-    public ChanceBoostFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
 
     public final String unlocalizedName;
 
@@ -236,11 +232,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return lookup;
     }
 
-    @ZenMethod
-    public ChanceBoostFunction getChanceFunction() {
-        return chanceFunction;
-    }
-
     public static boolean isFoundInvalidRecipe() {
         return foundInvalidRecipe;
     }
@@ -295,11 +286,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSound(SoundEvent sound) {
         this.sound = sound;
-        return this;
-    }
-
-    public RecipeMap<R> setChanceFunction(@NotNull ChanceBoostFunction function) {
-        chanceFunction = function;
         return this;
     }
 

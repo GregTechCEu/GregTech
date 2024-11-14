@@ -1,9 +1,7 @@
 package gregtech.api.recipes.output;
 
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.roll.ListWithRollInformation;
-import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -31,19 +29,17 @@ public final class StandardFluidOutput implements FluidOutputProvider {
     public @NotNull List<FluidStack> computeOutputs(@UnmodifiableView @NotNull List<ItemStack> inputItems,
                                                     @UnmodifiableView @NotNull List<FluidStack> inputFluids,
                                                     @UnmodifiableView @NotNull PropertySet propertySet, int recipeTier,
-                                                    int machineTier, @NotNull ChanceBoostFunction boostFunction,
+                                                    int machineTier,
                                                     int parallel, int trimLimit) {
         List<FluidStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size() * parallel / 2));
-        for (int i = 0; i < parallel; i++) {
-            long[] roll = this.outputs.comprehensiveRoll(machineTier - recipeTier, trimLimit);
-            for (int j = 0; j < roll.length; j++) {
-                addStackToList(outputs, this.outputs.get(j), GTUtility.safeCastLongToInt(roll[j]));
-            }
+        long[] roll = this.outputs.comprehensiveRoll(machineTier - recipeTier, trimLimit, parallel);
+        for (int j = 0; j < roll.length; j++) {
+            addStackToList(outputs, this.outputs.get(j), roll[j]);
         }
         return outputs;
     }
 
-    public static void addStackToList(List<FluidStack> list, FluidStack stack, int amount) {
+    public static void addStackToList(List<FluidStack> list, FluidStack stack, long amount) {
         for (FluidStack stackInList : list) {
             int insertable = Integer.MAX_VALUE - stackInList.amount;
             if (insertable > 0 && stack.isFluidEqual(stackInList)) {
@@ -57,9 +53,13 @@ public final class StandardFluidOutput implements FluidOutputProvider {
             }
         }
         if (amount > 0) {
-            stack = stack.copy();
-            stack.amount = amount;
-            list.add(stack);
+            while (amount > 0) {
+                FluidStack s = stack.copy();
+                int c = (int) Math.min(Integer.MAX_VALUE, amount);
+                s.amount = c;
+                list.add(s);
+                amount -= c;
+            }
         }
     }
 
@@ -69,11 +69,9 @@ public final class StandardFluidOutput implements FluidOutputProvider {
                                                                           @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
         List<FluidStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size()) * parallel / 2);
         int limit = Math.min(this.outputs.size(), trimLimit);
-        for (int i = 0; i < parallel; i++) {
-            for (int j = 0; j < limit; j++) {
-                FluidStack stack = this.outputs.get(j);
-                addStackToList(outputs, stack, stack.amount);
-            }
+        for (int j = 0; j < limit; j++) {
+            FluidStack stack = this.outputs.get(j);
+            addStackToList(outputs, stack, (long) stack.amount * parallel);
         }
         return outputs;
     }

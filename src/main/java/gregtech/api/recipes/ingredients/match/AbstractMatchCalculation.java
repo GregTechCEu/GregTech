@@ -1,13 +1,20 @@
 package gregtech.api.recipes.ingredients.match;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractMatchCalculation<T> implements MatchCalculation<T> {
 
     protected Int2ObjectAVLTreeMap<long[]> cache;
+    protected Long2ObjectOpenHashMap<long[]> cacheRolled;
     protected int scaling = 1;
 
     /**
@@ -92,5 +99,37 @@ public abstract class AbstractMatchCalculation<T> implements MatchCalculation<T>
         if (scaling == 0) return null;
         if (!cache.containsKey(scale)) attemptScale(scale);
         return cache.get(scale);
+    }
+
+    @Override
+    public long @Nullable [] getConsumeResultsForScaleAndBoost(int scale, int rollBoost) {
+        if (scaling == 0) return null;
+        if (!cache.containsKey(scale)) attemptScale(scale);
+        long[] arr = cache.get(scale);
+        if (arr == null) return null;
+        long key = (((long) scale) << 32) | (rollBoost & 0xFFFFFFFFL);
+        if (!cacheRolled.containsKey(key)) cacheRolled.put(key, convertToConsumeResults(arr, scale, rollBoost));
+        return cacheRolled.get(scale);
+    }
+
+    protected abstract long @NotNull [] convertToConsumeResults(long @NotNull @Unmodifiable [] matchResults, int scale,
+                                                                int rollBoost);
+
+    protected abstract List<T> mapResults(long @NotNull [] results);
+
+    @Override
+    public @NotNull List<T> getMatched(int scale) {
+        // fail if we could not match at this scale
+        long[] results = getMatchResultsForScale(scale);
+        if (results == null) return Collections.emptyList();
+        else return mapResults(results);
+    }
+
+    @Override
+    public @NotNull List<T> getConsumed(int scale, int rollBoost) {
+        // fail if we could not match at this scale
+        long[] results = getConsumeResultsForScaleAndBoost(scale, rollBoost);
+        if (results == null) return Collections.emptyList();
+        else return mapResults(results);
     }
 }

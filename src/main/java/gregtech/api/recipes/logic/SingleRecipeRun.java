@@ -1,6 +1,5 @@
 package gregtech.api.recipes.logic;
 
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
 import net.minecraft.item.ItemStack;
@@ -11,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -31,19 +31,24 @@ public class SingleRecipeRun implements RecipeRun {
     private final long requiredAmperage;
     private final boolean generating;
 
-    public SingleRecipeRun(RecipeView view, int recipeTier, int machineTier, ChanceBoostFunction boostFunction,
+    private final long @Nullable [] itemArray;
+    private final long @Nullable [] fluidArray;
+
+    public SingleRecipeRun(RecipeView view, int recipeTier, int machineTier,
                            PropertySet properties, float overclockVoltageMultiplier, double duration) {
         overclocks = machineTier - recipeTier;
         assert overclocks >= 0;
         this.parallel = view.getParallel();
         this.duration = duration;
-        itemsIn = view.getConsumedItems();
-        fluidsIn = view.getConsumedFluids();
-        itemsOut = view.rollItems(properties, recipeTier, machineTier, boostFunction);
-        fluidsOut = view.rollFluids(properties, recipeTier, machineTier, boostFunction);
+        itemsIn = view.getConsumedItems(overclocks);
+        fluidsIn = view.getConsumedFluids(overclocks);
+        itemsOut = view.rollItems(properties, recipeTier, machineTier);
+        fluidsOut = view.rollFluids(properties, recipeTier, machineTier);
         requiredVoltage = (long) (view.getActualVoltage() * overclockVoltageMultiplier);
         requiredAmperage = view.getActualAmperage();
         generating = view.getRecipe().isGenerating();
+        itemArray = view.getItemArrayConsumption(overclocks);
+        fluidArray = view.getFluidArrayConsumption(overclocks);
     }
 
     public SingleRecipeRun(NBTTagCompound compound) {
@@ -73,6 +78,8 @@ public class SingleRecipeRun implements RecipeRun {
         for (int i = 0; i < list.tagCount(); i++) {
             this.fluidsOut.add(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
         }
+        itemArray = null;
+        fluidArray = null;
     }
 
     @Override
@@ -91,8 +98,18 @@ public class SingleRecipeRun implements RecipeRun {
     }
 
     @Override
+    public long @Nullable [] getItemArrayConsumption() {
+        return itemArray;
+    }
+
+    @Override
     public @NotNull List<FluidStack> getFluidsConsumed() {
         return fluidsIn;
+    }
+
+    @Override
+    public long @Nullable [] getFluidArrayConsumption() {
+        return fluidArray;
     }
 
     @Override

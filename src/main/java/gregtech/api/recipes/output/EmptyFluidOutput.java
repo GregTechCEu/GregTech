@@ -1,6 +1,5 @@
 package gregtech.api.recipes.output;
 
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
 import net.minecraft.item.ItemStack;
@@ -19,7 +18,7 @@ public class EmptyFluidOutput implements FluidOutputProvider {
     public @NotNull List<FluidStack> computeOutputs(@UnmodifiableView @NotNull List<ItemStack> inputItems,
                                                     @UnmodifiableView @NotNull List<FluidStack> inputFluids,
                                                     @UnmodifiableView @NotNull PropertySet propertySet, int recipeTier,
-                                                    int machineTier, @NotNull ChanceBoostFunction boostFunction,
+                                                    int machineTier,
                                                     int parallel, int trimLimit) {
         return Collections.emptyList();
     }

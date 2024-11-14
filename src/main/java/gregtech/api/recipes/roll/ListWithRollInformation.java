@@ -76,28 +76,29 @@ public final class ListWithRollInformation<T> extends AbstractList<T> {
         return list;
     }
 
-    public long @NotNull [] comprehensiveRoll(int boostStrength, int trimLimit) {
+    public long @NotNull [] comprehensiveRoll(int boostStrength, int trimLimit, int parallel) {
         trimLimit = Math.min(trimLimit, size());
         long[] yield = new long[trimLimit];
         int m = Math.min(trimLimit, unrolled.length);
         for (int i = 0; i < m; i++) {
-            yield[i] = yieldCounter.applyAsLong(unrolled[i]);
+            yield[i] = yieldCounter.applyAsLong(unrolled[i]) * parallel;
         }
         trimLimit -= m;
         if (trimLimit == 0) return yield;
-        long[] roll = roll(boostStrength, trimLimit);
+        long[] roll = roll(boostStrength, trimLimit, parallel);
         System.arraycopy(roll, 0, yield, m, roll.length);
         return yield;
     }
 
-    public long @NotNull [] roll(int boostStrength, int trimLimit) {
+    public long @NotNull [] roll(int boostStrength, int trimLimit, int parallel) {
         return interpreter.interpretAndRoll(maxYields(trimLimit), rollValues(trimLimit), rollBoosts(trimLimit),
-                boostStrength);
+                boostStrength, parallel);
     }
 
-    public long @NotNull [] roll(@NotNull RollInterpreter interpreterOverride, int boostStrength, int trimLimit) {
+    public long @NotNull [] roll(@NotNull RollInterpreter interpreterOverride, int boostStrength, int trimLimit,
+                                 int parallel) {
         return interpreterOverride.interpretAndRoll(maxYields(trimLimit), rollValues(trimLimit), rollBoosts(trimLimit),
-                boostStrength);
+                boostStrength, parallel);
     }
 
     @Override

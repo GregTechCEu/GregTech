@@ -1,12 +1,14 @@
 package gregtech.api.recipes.ingredients.match;
 
+import gregtech.api.recipes.roll.ListWithRollInformation;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jgrapht.alg.flow.PushRelabelMFImpl;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import java.util.Collections;
 import java.util.List;
 
 final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
@@ -71,17 +73,13 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
         counter = null;
     }
 
-    @NotNull
     @Override
-    public List<T> getConsumed(int scale) {
-        // fail if we could not match at this scale
-        long[] results = getMatchResultsForScale(scale);
-        if (results == null) return Collections.emptyList();
-
-        if (matchers instanceof MatchRollController<?>controller) {
+    protected long @NotNull [] convertToConsumeResults(long @NotNull @Unmodifiable [] matchResults, int scale,
+                                                       int rollBoost) {
+        if (matchers instanceof ListWithRollInformation<?>roller) {
             // roll for actual consumptions and match
             required = 0;
-            long[] roll = controller.getConsumptionRollResults(scale);
+            long[] roll = roller.comprehensiveRoll(rollBoost, Integer.MAX_VALUE, scale);
             for (int i = 0; i < matcherEdges.length; i++) {
                 DefaultWeightedEdge edge = matcherEdges[i];
                 graph.setEdgeWeight(edge, roll[i]);
@@ -89,14 +87,21 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
             }
             scaling = scale;
             if (flow.calculateMaximumFlow(IngredientMatchHelper.source, IngredientMatchHelper.sink) < required) {
-                return Collections.emptyList(); // should never happen unless some idiot matcher is requiring more after
-                                                // roll than before.
+                return matchResults; // should never happen unless some idiot roller is requiring more after
+                // roll than before.
             }
             var map = flow.getFlowMap();
+            matchResults = new long[matchableEdges.length];
             for (int i = 0; i < matchableEdges.length; i++) {
-                results[i] = map.get(matchableEdges[i]).longValue();
+                matchResults[i] = map.get(matchableEdges[i]).longValue();
             }
         }
+
+        return matchResults;
+    }
+
+    @Override
+    protected List<T> mapResults(long @NotNull [] results) {
         List<T> list = new ObjectArrayList<>(matchables.size());
         for (int i = 0; i < matchables.size(); i++) {
             list.add(counter.withCount(matchables.get(i), results[i]));

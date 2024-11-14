@@ -1,7 +1,6 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
@@ -26,28 +25,32 @@ public class TrimmedRecipeView extends StandardRecipeView {
     }
 
     @Override
-    public @NotNull List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier,
-                                              ChanceBoostFunction boostFunction) {
+    public @NotNull List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier) {
+        computeConsumptions(machineTier - recipeTier);
         return recipe.getItemOutputProvider().computeOutputs(items, fluids, properties, recipeTier, machineTier,
-                boostFunction, parallel, maxItems);
+                parallel, maxItems);
     }
 
     @Override
-    public @NotNull List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier,
-                                                ChanceBoostFunction boostFunction) {
+    public @NotNull List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier) {
+        computeConsumptions(machineTier - recipeTier);
         return recipe.getFluidOutputProvider().computeOutputs(items, fluids, properties, recipeTier, machineTier,
-                boostFunction, parallel, maxFluids);
+                parallel, maxFluids);
     }
 
     @Override
     public List<ItemStack> getMaximumItems() {
         if (iOut != null) return iOut;
-        return (iOut = recipe.getItemOutputProvider().getCompleteOutputs(parallel, maxItems, items, fluids));
+        computeMatches();
+        return (iOut = recipe.getItemOutputProvider().getCompleteOutputs(parallel, maxItems, matchedItems,
+                matchedFluids));
     }
 
     @Override
     public List<FluidStack> getMaximumFluids() {
         if (fOut != null) return fOut;
-        return (fOut = recipe.getFluidOutputProvider().getCompleteOutputs(parallel, maxFluids, items, fluids));
+        computeMatches();
+        return (fOut = recipe.getFluidOutputProvider().getCompleteOutputs(parallel, maxFluids, matchedItems,
+                matchedFluids));
     }
 }

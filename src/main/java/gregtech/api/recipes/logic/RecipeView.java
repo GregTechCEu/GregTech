@@ -1,7 +1,6 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
 import net.minecraft.item.ItemStack;
@@ -38,16 +37,18 @@ public interface RecipeView {
     }
 
     @NotNull
-    List<ItemStack> getConsumedItems();
+    List<ItemStack> getConsumedItems(int rollBoost);
+
+    long @NotNull [] getItemArrayConsumption(int rollBoost);
 
     @NotNull
-    List<FluidStack> getConsumedFluids();
+    List<FluidStack> getConsumedFluids(int rollBoost);
+
+    long @NotNull [] getFluidArrayConsumption(int rollBoost);
 
     @NotNull
-    List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier,
-                              ChanceBoostFunction boostFunction);
+    List<ItemStack> rollItems(PropertySet properties, int recipeTier, int machineTier);
 
     @NotNull
-    List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier,
-                                ChanceBoostFunction boostFunction);
+    List<FluidStack> rollFluids(PropertySet properties, int recipeTier, int machineTier);
 }

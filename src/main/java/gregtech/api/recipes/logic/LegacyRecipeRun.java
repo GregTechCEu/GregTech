@@ -61,8 +61,18 @@ public final class LegacyRecipeRun implements RecipeRun {
     }
 
     @Override
+    public long[] getItemArrayConsumption() {
+        return null;
+    }
+
+    @Override
     public @NotNull List<FluidStack> getFluidsConsumed() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public long[] getFluidArrayConsumption() {
+        return null;
     }
 
     @Override

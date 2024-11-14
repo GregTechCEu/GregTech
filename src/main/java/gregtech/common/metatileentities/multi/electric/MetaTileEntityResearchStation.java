@@ -18,7 +18,6 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.util.GTUtility;
@@ -266,8 +265,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         }
 
         @Override
-        protected boolean performConsumption(@NotNull MatchCalculation<ItemStack> itemMatch,
-                                             @NotNull MatchCalculation<FluidStack> fluidMatch, @NotNull RecipeView view,
+        protected boolean performConsumption(@NotNull RecipeView view,
                                              @NotNull RecipeRun run, @NotNull List<ItemStack> items,
                                              @NotNull List<FluidStack> fluids) {
             // we do not consume at this stage, but instead lock the object holder.

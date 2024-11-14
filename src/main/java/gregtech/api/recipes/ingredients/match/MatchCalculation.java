@@ -25,17 +25,35 @@ public interface MatchCalculation<T> {
     int largestSucceedingScale(int maximum);
 
     /**
-     * Match results are an indexed map of match quantity of matchables.
+     * Match results are an indexed map of match quantity of matchables, pre rolling.
      * 
      * @return the match results for this scale, or null if could not match at this scale.
      */
     long @Nullable [] getMatchResultsForScale(int scale);
 
     /**
-     * Get the list of consumed, based on matchables and match results.
+     * Consume results are an indexed map of consume quantity of matchables, post rolling.
+     *
+     * @return the consume results for this scale, or null if could not match at this scale.
+     */
+    long @Nullable [] getConsumeResultsForScaleAndBoost(int scale, int rollBoost);
+
+    /**
+     * Get the list of matched, before rolling, based on matchables and match results.
+     * Should be consistent with the results of {@link #getMatchResultsForScale(int)}; caching is recommended.
+     *
+     * @return the list of consumed.
+     */
+    @NotNull
+    List<T> getMatched(int scale);
+
+    /**
+     * Get the list of consumed, after rolling, based on matchables and match results.
+     * Should be consistent with the results of {@link #getConsumeResultsForScaleAndBoost(int, int)}; caching is
+     * recommended.
      * 
      * @return the list of consumed.
      */
     @NotNull
-    List<T> getConsumed(int scale);
+    List<T> getConsumed(int scale, int rollBoost);
 }

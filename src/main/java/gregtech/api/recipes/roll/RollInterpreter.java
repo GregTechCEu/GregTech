@@ -67,12 +67,14 @@ public interface RollInterpreter {
 
         @Override
         public long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue,
-                                                 long @NotNull [] rollBoost, int boostStrength) {
+                                                 long @NotNull [] rollBoost, int boostStrength, int parallel) {
             long[] roll = new long[maxYield.length];
             for (int i = 0; i < maxYield.length; i++) {
                 if (rollValue[i] == Long.MIN_VALUE) continue;
                 long chance = rollValue[i] + rollBoost[i] * boostStrength;
-                roll[i] = GTValues.RNG.nextInt(10_000) < chance ? maxYield[i] : 0;
+                for (int j = 0; j < parallel; j++) {
+                    roll[i] += GTValues.RNG.nextInt(10_000) < chance ? maxYield[i] : 0;
+                }
             }
             return roll;
         }
@@ -82,14 +84,16 @@ public interface RollInterpreter {
 
         @Override
         public long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue,
-                                                 long @NotNull [] rollBoost, int boostStrength) {
+                                                 long @NotNull [] rollBoost, int boostStrength, int parallel) {
             long[] roll = new long[maxYield.length];
             if (maxYield.length == 0) return roll;
             long chance = rollValue[0] + rollBoost[0] * boostStrength;
-            if (GTValues.RNG.nextInt(10_000) < chance) {
-                for (int i = 0; i < maxYield.length; i++) {
-                    if (rollValue[i] == Long.MIN_VALUE) continue;
-                    roll[i] = maxYield[i];
+            for (int p = 0; p < parallel; p++) {
+                if (GTValues.RNG.nextInt(10_000) < chance) {
+                    for (int i = 0; i < maxYield.length; i++) {
+                        if (rollValue[i] == Long.MIN_VALUE) continue;
+                        roll[i] += maxYield[i];
+                    }
                 }
             }
             return roll;
@@ -100,14 +104,15 @@ public interface RollInterpreter {
      * Should interpret the roll data arrays and return the results of rolling. All arrays should be the same size.
      * 
      * @param maxYield      the maximum yield array. Values in the return array should not exceed their respective value
-     *                      in the maxYield array.
+     *                      in the maxYield array times parallel.
      * @param rollValue     the roll value array. Values of {@link Long#MIN_VALUE} should be interpreted as not
      *                      consumable, and thus should always return 0 after rolling.
      * @param rollBoost     the roll boost array. Should be multiplied or otherwise scale by boost strength.
      * @param boostStrength the boost strength. Should affect roll boost.
+     * @param parallel      the parallel of the roll.
      * @return the rolled values. Values in the return array should not exceed their respective value in the maxYield
-     *         array.
+     *         array multiplied by parallel.
      */
     long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue, long @NotNull [] rollBoost,
-                                      int boostStrength);
+                                      int boostStrength, int parallel);
 }

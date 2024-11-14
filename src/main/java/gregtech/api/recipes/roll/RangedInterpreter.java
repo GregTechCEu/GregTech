@@ -18,7 +18,7 @@ public final class RangedInterpreter implements RollInterpreter {
 
     @Override
     public long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue,
-                                             long @NotNull [] rollBoost, int boostStrength) {
+                                             long @NotNull [] rollBoost, int boostStrength, int parallel) {
         long[] roll = new long[maxYield.length];
         if (maxYield.length == 0) return roll;
         for (int i = 0; i < maxYield.length; i++) {
@@ -27,7 +27,8 @@ public final class RangedInterpreter implements RollInterpreter {
             if (minYield >= maxYield[i]) roll[i] = maxYield[i];
             else {
                 minYield = Math.max(minYield, 0);
-                roll[i] = Math.round((maxYield[i] - minYield) * distribution.getAsDouble()) + minYield;
+                roll[i] = Math.round(parallel * (maxYield[i] - minYield) * distribution.getAsDouble()) +
+                        minYield * parallel;
             }
         }
         return roll;

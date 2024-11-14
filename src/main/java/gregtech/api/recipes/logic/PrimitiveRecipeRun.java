@@ -1,6 +1,5 @@
 package gregtech.api.recipes.logic;
 
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.lookup.property.PropertySet;
 
 import net.minecraft.item.ItemStack;
@@ -11,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,13 +27,18 @@ public class PrimitiveRecipeRun implements RecipeRun {
 
     private final double duration;
 
+    private final long @Nullable [] itemArray;
+    private final long @Nullable [] fluidArray;
+
     public PrimitiveRecipeRun(RecipeView view, PropertySet properties, double duration) {
         this.parallel = view.getParallel();
         this.duration = duration;
-        itemsIn = view.getConsumedItems();
-        fluidsIn = view.getConsumedFluids();
-        itemsOut = view.rollItems(properties, 0, 0, ChanceBoostFunction.NONE);
-        fluidsOut = view.rollFluids(properties, 0, 0, ChanceBoostFunction.NONE);
+        itemsIn = view.getConsumedItems(0);
+        fluidsIn = view.getConsumedFluids(0);
+        itemsOut = view.rollItems(properties, 0, 0);
+        fluidsOut = view.rollFluids(properties, 0, 0);
+        itemArray = view.getItemArrayConsumption(0);
+        fluidArray = view.getFluidArrayConsumption(0);
     }
 
     public PrimitiveRecipeRun(NBTTagCompound compound) {
@@ -59,6 +64,8 @@ public class PrimitiveRecipeRun implements RecipeRun {
         for (int i = 0; i < list.tagCount(); i++) {
             this.fluidsOut.add(FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(i)));
         }
+        itemArray = null;
+        fluidArray = null;
     }
 
     @Override
@@ -77,8 +84,18 @@ public class PrimitiveRecipeRun implements RecipeRun {
     }
 
     @Override
+    public long @Nullable [] getItemArrayConsumption() {
+        return itemArray;
+    }
+
+    @Override
     public @NotNull List<FluidStack> getFluidsConsumed() {
         return fluidsIn;
+    }
+
+    @Override
+    public long @Nullable [] getFluidArrayConsumption() {
+        return fluidArray;
     }
 
     @Override

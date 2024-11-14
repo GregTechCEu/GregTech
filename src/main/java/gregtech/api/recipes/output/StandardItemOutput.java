@@ -1,9 +1,7 @@
 package gregtech.api.recipes.output;
 
-import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.roll.ListWithRollInformation;
-import gregtech.api.util.GTUtility;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -33,24 +31,22 @@ public final class StandardItemOutput implements ItemOutputProvider {
     public @NotNull List<ItemStack> computeOutputs(@UnmodifiableView @NotNull List<ItemStack> inputItems,
                                                    @UnmodifiableView @NotNull List<FluidStack> inputFluids,
                                                    @UnmodifiableView @NotNull PropertySet propertySet, int recipeTier,
-                                                   int machineTier, @NotNull ChanceBoostFunction boostFunction,
+                                                   int machineTier,
                                                    int parallel, int trimLimit) {
         List<ItemStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size()) * parallel / 2);
-        for (int i = 0; i < parallel; i++) {
-            long[] roll = this.outputs.comprehensiveRoll(machineTier - recipeTier, trimLimit);
-            for (int j = 0; j < roll.length; j++) {
-                addStackToList(outputs, this.outputs.get(j), GTUtility.safeCastLongToInt(roll[j]));
-            }
+        long[] roll = this.outputs.comprehensiveRoll(machineTier - recipeTier, trimLimit, parallel);
+        for (int j = 0; j < roll.length; j++) {
+            addStackToList(outputs, this.outputs.get(j), roll[j]);
         }
         return outputs;
     }
 
-    public static void addStackToList(List<ItemStack> list, ItemStack stack, int count) {
+    public static void addStackToList(List<ItemStack> list, ItemStack stack, long count) {
         for (ItemStack stackInList : list) {
             int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
             if (insertable > 0 && ItemHandlerHelper.canItemStacksStack(stackInList, stack)) {
                 if (insertable >= count) {
-                    stackInList.grow(count);
+                    stackInList.grow((int) count);
                     return;
                 } else {
                     stackInList.grow(insertable);
@@ -59,9 +55,14 @@ public final class StandardItemOutput implements ItemOutputProvider {
             }
         }
         if (count > 0) {
-            stack = stack.copy();
-            stack.setCount(count);
-            list.add(stack);
+            int max = stack.getMaxStackSize();
+            while (count > 0) {
+                ItemStack s = stack.copy();
+                int c = (int) Math.min(max, count);
+                s.setCount(c);
+                list.add(s);
+                count -= c;
+            }
         }
     }
 
@@ -71,11 +72,9 @@ public final class StandardItemOutput implements ItemOutputProvider {
                                                                          @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
         List<ItemStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size()) * parallel / 2);
         int limit = Math.min(this.outputs.size(), trimLimit);
-        for (int i = 0; i < parallel; i++) {
-            for (int j = 0; j < limit; j++) {
-                ItemStack stack = this.outputs.get(j);
-                addStackToList(outputs, stack, stack.getCount());
-            }
+        for (int j = 0; j < limit; j++) {
+            ItemStack stack = this.outputs.get(j);
+            addStackToList(outputs, stack, (long) stack.getCount() * parallel);
         }
         return outputs;
     }
