@@ -339,8 +339,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @return the build actions for this RecipeMap's default RecipeBuilder
      */
     @ApiStatus.Internal
-    protected @UnmodifiableView @NotNull Collection<@NotNull RecipeBuildAction<R>> getBuildActions() {
-        return this.recipeBuildActions.values();
+    protected @UnmodifiableView @NotNull Map<ResourceLocation, RecipeBuildAction<R>> getBuildActions() {
+        return this.recipeBuildActions;
     }
 
     public RecipeMap<R> allowEmptyOutput() {

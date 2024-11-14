@@ -7,8 +7,6 @@ import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.lookup.property.TemperatureMaximumProperty;
 import gregtech.api.recipes.properties.impl.TemperatureProperty;
-import gregtech.api.recipes.properties.RecipePropertyStorage;
-import gregtech.api.recipes.properties.impl.TemperatureProperty;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;

@@ -5,7 +5,6 @@ import gregtech.api.recipes.lookup.property.DimensionInhabitedProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
 import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
-import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 
 import net.minecraft.client.Minecraft;

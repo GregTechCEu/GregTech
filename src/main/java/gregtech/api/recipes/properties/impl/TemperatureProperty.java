@@ -7,7 +7,6 @@ import gregtech.api.recipes.lookup.property.filter.FilterEqualityBehavior;
 import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
 import gregtech.api.recipes.lookup.property.filter.IntAVLFilter;
 import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
-import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.unification.material.Material;
 
 import net.minecraft.client.Minecraft;

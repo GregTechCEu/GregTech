@@ -42,10 +42,13 @@ import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.groovy.GroovyScriptModule;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
@@ -66,7 +69,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -102,6 +107,9 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean isCTRecipe = false;
 
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
+
+    protected boolean ignoreAllBuildActions = false;
+    protected Object2ObjectOpenHashMap<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
 
     protected RecipeBuilder() {
         this.itemInputs = new ArrayList<>();
@@ -180,6 +188,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         category = recipeBuilder.category;
         isCTRecipe = recipeBuilder.isCTRecipe;
         recipeStatus = recipeBuilder.recipeStatus;
+        this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
+        if (recipeBuilder.ignoredBuildActions != null) {
+            this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
+        }
     }
 
     public R read(@NotNull RecipeBuilder<R> recipeBuilder) {
@@ -1302,6 +1314,51 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    /**
+     * Only use if you absolutely don't want the recipe to be run through any build actions.
+     * Instead, you should blacklist specific actions with {@link #ignoreBuildAction(ResourceLocation)}
+     */
+    public R ignoreAllBuildActions() {
+        this.ignoreAllBuildActions = true;
+        return (R) this;
+    }
+
+    public R ignoreBuildAction(ResourceLocation buildActionName) {
+        if (ignoredBuildActions == null) {
+            ignoredBuildActions = new Object2ObjectOpenHashMap<>();
+        } else if (!recipeMap.getBuildActions().containsKey(buildActionName)) {
+            GTLog.logger.error("Recipe map {} does not contain build action {}!", recipeMap, buildActionName,
+                    new Throwable());
+            return (R) this;
+        } else if (ignoredBuildActions.containsKey(buildActionName)) {
+            return (R) this;
+        }
+
+        ignoredBuildActions.put(buildActionName, recipeMap.getBuildActions().get(buildActionName));
+
+        return (R) this;
+    }
+    public boolean ignoresAllBuildActions() {
+        return ignoreAllBuildActions;
+    }
+
+    /**
+     * Get all ignored build actions for the recipe map.
+     *
+     * @return A map of ignored build actions.
+     */
+    public @NotNull Map<ResourceLocation, RecipeBuildAction<R>> getIgnoredBuildActions() {
+        if (ignoreAllBuildActions) {
+            return recipeMap.getBuildActions();
+        }
+
+        if (ignoredBuildActions == null) {
+            return Collections.emptyMap();
+        }
+
+        return ignoredBuildActions;
+    }
+
     public R hidden() {
         this.hidden = true;
         return (R) this;
@@ -1421,10 +1478,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
      * </strong>
      */
     @MustBeInvokedByOverriders
-    public void buildAndRegister() {
-        for (RecipeBuildAction<R> action : recipeMap.getBuildActions()) {
-            action.accept((R) this);
+    public void buildAndRegister() {if (!ignoreAllBuildActions) {
+        for (var buildAction : recipeMap.getBuildActions().entrySet()) {
+            if (ignoredBuildActions != null && ignoredBuildActions.containsKey(buildAction.getKey())) {
+                continue;
+            }
+            buildAction.getValue().accept((R) this);
         }
+    }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }
@@ -1510,6 +1571,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("dimensions", getDimensionIDs().toString())
                 .append("dimensions_blocked", getBlockedDimensionIDs().toString())
                 .append("recipeStatus", recipeStatus)
+                .append("ignoresBuildActions", ignoresAllBuildActions())
+                .append("ignoredBuildActions", getIgnoredBuildActions())
                 .toString();
     }
 }

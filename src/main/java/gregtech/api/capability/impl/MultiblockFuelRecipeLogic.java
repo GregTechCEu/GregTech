@@ -9,9 +9,6 @@ import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.recipes.lookup.property.PropertySet;
-import gregtech.api.recipes.logic.OCParams;
-import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 

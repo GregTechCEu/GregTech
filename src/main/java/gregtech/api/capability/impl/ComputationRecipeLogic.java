@@ -10,8 +10,6 @@ import gregtech.api.recipes.lookup.property.MaxCWUtProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.properties.impl.ComputationProperty;
 import gregtech.api.recipes.properties.impl.TotalComputationProperty;
-import gregtech.api.recipes.properties.impl.ComputationProperty;
-import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
