@@ -20,9 +20,7 @@ public class GrowthMediumRecipes {
         MACERATOR_RECIPES.recipeBuilder().duration(200)
                 .inputItem(PLANT_BALL, 2)
                 .outputItem(BIO_CHAFF)
-                .outputItem(BIO_CHAFF)
-                .chancedOutput(BIO_CHAFF, 5000, 0)
-                .chancedOutput(BIO_CHAFF, 2500, 0)
+                .outputItem(BIO_CHAFF).outputItemRoll(BIO_CHAFF, 5000, 0).outputItemRoll(BIO_CHAFF, 2500, 0)
                 .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder().duration(300)
@@ -31,7 +29,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Bacteria
-        BREWING_RECIPES.recipeBuilder().EUt(VA[HV]).duration(300)
+        BREWING_RECIPES.recipeBuilder().volts(VA[HV]).duration(300)
                 .inputItem(BIO_CHAFF, 4)
                 .fluidInputs(DistilledWater.getFluid(1000))
                 .fluidOutputs(Bacteria.getFluid(1000))
@@ -39,7 +37,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Bacterial Sludge
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(600)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[EV]).duration(600)
                 .fluidInputs(Biomass.getFluid(1000))
                 .fluidInputs(Bacteria.getFluid(1000))
                 .fluidOutputs(BacterialSludge.getFluid(1000))
@@ -47,21 +45,21 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Enriched Bacterial Sludge
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
+        BREWING_RECIPES.recipeBuilder().volts(4).duration(128)
                 .inputItem(dust, Uranium238)
                 .fluidInputs(BacterialSludge.getFluid(1000))
                 .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
+        BREWING_RECIPES.recipeBuilder().volts(4).duration(128)
                 .inputItem(dustTiny, Uranium235)
                 .fluidInputs(BacterialSludge.getFluid(1000))
                 .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
+        BREWING_RECIPES.recipeBuilder().volts(4).duration(128)
                 .inputItem(dustTiny, Naquadria)
                 .fluidInputs(BacterialSludge.getFluid(1000))
                 .fluidOutputs(EnrichedBacterialSludge.getFluid(2000))
@@ -69,7 +67,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Mutagen
-        DISTILLERY_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
+        DISTILLERY_RECIPES.recipeBuilder().volts(VA[IV]).duration(100)
                 .fluidInputs(EnrichedBacterialSludge.getFluid(1000))
                 .circuitMeta(1)
                 .fluidOutputs(Mutagen.getFluid(100))
@@ -77,7 +75,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Collagen
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(800)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[HV]).duration(800)
                 .inputItem(dust, Meat)
                 .inputs(new ItemStack(Items.DYE, 1, 15))
                 .fluidInputs(SulfuricAcid.getFluid(500))
@@ -86,7 +84,7 @@ public class GrowthMediumRecipes {
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(1600)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[HV]).duration(1600)
                 .inputItem(dust, Meat, 2)
                 .inputs(new ItemStack(Items.BONE))
                 .fluidInputs(SulfuricAcid.getFluid(1000))
@@ -96,7 +94,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Gelatin
-        MIXER_RECIPES.recipeBuilder().EUt(VA[HV]).duration(1600)
+        MIXER_RECIPES.recipeBuilder().volts(VA[HV]).duration(1600)
                 .inputItem(dust, Collagen, 4)
                 .fluidInputs(PhosphoricAcid.getFluid(1000))
                 .fluidInputs(Water.getFluid(3000))
@@ -104,7 +102,7 @@ public class GrowthMediumRecipes {
                 .cleanroom(CleanroomType.STERILE_CLEANROOM)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[HV]).duration(2400)
+        CENTRIFUGE_RECIPES.recipeBuilder().volts(VA[HV]).duration(2400)
                 .fluidInputs(GelatinMixture.getFluid(6000))
                 .outputItem(dust, Phosphorus)
                 .outputItem(dust, Gelatin, 4)
@@ -112,7 +110,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Agar
-        AUTOCLAVE_RECIPES.recipeBuilder().EUt(VA[HV]).duration(600)
+        AUTOCLAVE_RECIPES.recipeBuilder().volts(VA[HV]).duration(600)
                 .inputItem(dust, Gelatin)
                 .fluidInputs(DistilledWater.getFluid(1000))
                 .outputItem(dust, Agar)
@@ -120,7 +118,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Raw Growth Medium
-        MIXER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(1200)
+        MIXER_RECIPES.recipeBuilder().volts(VA[IV]).duration(1200)
                 .inputItem(dust, Meat, 4)
                 .inputItem(dust, Salt, 4)
                 .inputItem(dust, Calcium, 4)
@@ -131,7 +129,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Sterile Growth Medium
-        FLUID_HEATER_RECIPES.recipeBuilder().EUt(VA[IV]).duration(20)
+        FLUID_HEATER_RECIPES.recipeBuilder().volts(VA[IV]).duration(20)
                 .circuitMeta(1)
                 .fluidInputs(RawGrowthMedium.getFluid(100))
                 .fluidOutputs(SterileGrowthMedium.getFluid(100))
@@ -139,7 +137,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Stem Cells
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LuV]).duration(300)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[LuV]).duration(300)
                 .inputItem(dust, Osmiridium)
                 .fluidInputs(Bacteria.getFluid(500))
                 .fluidInputs(SterileGrowthMedium.getFluid(500))

@@ -10,7 +10,7 @@ public class NuclearRecipes {
 
     public static void init() {
         // uranium isotopes
-        CHEMICAL_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(200).volts(VA[LV])
                 .inputItem(dust, Uraninite, 3)
                 .fluidInputs(HydrofluoricAcid.getFluid(4000))
                 .fluidInputs(Fluorine.getFluid(2000))
@@ -18,25 +18,25 @@ public class NuclearRecipes {
                 .fluidOutputs(Water.getFluid(2000))
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(VA[HV])
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(160).volts(VA[HV])
                 .fluidInputs(UraniumHexafluoride.getFluid(1000))
                 .fluidOutputs(EnrichedUraniumHexafluoride.getFluid(100))
                 .fluidOutputs(DepletedUraniumHexafluoride.getFluid(900))
                 .buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).volts(VA[MV])
                 .fluidInputs(UraniumHexafluoride.getFluid(1000))
                 .outputItem(dust, Uranium)
                 .fluidOutputs(Fluorine.getFluid(6000))
                 .buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).volts(VA[MV])
                 .fluidInputs(EnrichedUraniumHexafluoride.getFluid(1000))
                 .outputItem(dust, Uranium235)
                 .fluidOutputs(Fluorine.getFluid(6000))
                 .buildAndRegister();
 
-        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).EUt(VA[MV])
+        ELECTROLYZER_RECIPES.recipeBuilder().duration(160).volts(VA[MV])
                 .fluidInputs(DepletedUraniumHexafluoride.getFluid(1000))
                 .outputItem(dust, Uranium238)
                 .fluidOutputs(Fluorine.getFluid(6000))
@@ -44,15 +44,14 @@ public class NuclearRecipes {
 
         // zirconium and hafnium
         // ZrSiO4 -> ZrO2 + SiO2
-        BLAST_RECIPES.recipeBuilder().duration(200).EUt(VA[MV]).blastFurnaceTemp(3073)
+        BLAST_RECIPES.recipeBuilder().duration(200).volts(VA[MV]).blastFurnaceTemp(3073)
                 .inputItem(dust, Zircon, 6)
                 .outputItem(dust, SiliconDioxide, 3)
-                .outputItem(dust, Zirconia, 3)
-                .chancedOutput(dust, Hafnia, 3333, 0)
+                .outputItem(dust, Zirconia, 3).outputItemRoll(dust, Hafnia, 3333, 0)
                 .buildAndRegister();
 
         // ZrO2 + C + 4Cl -> ZrCl4 + CO2
-        CHEMICAL_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(400).volts(VA[HV])
                 .inputItem(dust, Zirconia, 3)
                 .inputItem(dust, Carbon)
                 .fluidInputs(Chlorine.getFluid(4000))
@@ -61,7 +60,7 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         // ZrCl4 + 2Mg -> Zr + 2MgCl2
-        BLAST_RECIPES.recipeBuilder().duration(800).EUt(VA[EV]).blastFurnaceTemp(2125)
+        BLAST_RECIPES.recipeBuilder().duration(800).volts(VA[EV]).blastFurnaceTemp(2125)
                 .inputItem(dust, ZirconiumTetrachloride, 5)
                 .inputItem(dust, Magnesium, 2)
                 .outputItem(ingotHot, Zirconium)
@@ -69,7 +68,7 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         // HfO2 + C + 4Cl -> HfCl4 + CO2
-        CHEMICAL_RECIPES.recipeBuilder().duration(400).EUt(VA[HV])
+        CHEMICAL_RECIPES.recipeBuilder().duration(400).volts(VA[HV])
                 .inputItem(dust, Hafnia, 3)
                 .inputItem(dust, Carbon)
                 .fluidInputs(Chlorine.getFluid(4000))
@@ -78,7 +77,7 @@ public class NuclearRecipes {
                 .buildAndRegister();
 
         // HfCl4 + 2Mg -> Hf + 2MgCl2
-        BLAST_RECIPES.recipeBuilder().duration(2000).EUt(VA[EV]).blastFurnaceTemp(2227)
+        BLAST_RECIPES.recipeBuilder().duration(2000).volts(VA[EV]).blastFurnaceTemp(2227)
                 .inputItem(dust, HafniumTetrachloride, 5)
                 .inputItem(dust, Magnesium, 2)
                 .outputItem(ingotHot, Hafnium)

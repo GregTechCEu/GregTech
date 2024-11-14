@@ -19,40 +19,40 @@ public class BrewingRecipes {
                     .inputItem(dust, material)
                     .fluidInputs(Oil.getFluid(1000))
                     .fluidOutputs(Lubricant.getFluid(1000))
-                    .duration(128).EUt(4).buildAndRegister();
+                    .duration(128).volts(4).buildAndRegister();
 
             BREWING_RECIPES.recipeBuilder()
                     .inputItem(dust, material)
                     .fluidInputs(Creosote.getFluid(1000))
                     .fluidOutputs(Lubricant.getFluid(1000))
-                    .duration(128).EUt(4).buildAndRegister();
+                    .duration(128).volts(4).buildAndRegister();
 
             BREWING_RECIPES.recipeBuilder()
                     .inputItem(dust, material)
                     .fluidInputs(SeedOil.getFluid(1000))
                     .fluidOutputs(Lubricant.getFluid(1000))
-                    .duration(128).EUt(4).buildAndRegister();
+                    .duration(128).volts(4).buildAndRegister();
         }
 
         // Biomass
-        BREWING_RECIPES.recipeBuilder().duration(800).EUt(3).inputItem("treeSapling", 1)
+        BREWING_RECIPES.recipeBuilder().duration(800).volts(3).inputItem("treeSapling", 1)
                 .fluidInputs(Water.getFluid(100))
                 .fluidOutputs(Biomass.getFluid(100)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().duration(160).EUt(3).inputs(new ItemStack(Items.POTATO))
+        BREWING_RECIPES.recipeBuilder().duration(160).volts(3).inputs(new ItemStack(Items.POTATO))
                 .fluidInputs(Water.getFluid(20)).fluidOutputs(Biomass.getFluid(20)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().duration(160).EUt(3).inputs(new ItemStack(Items.CARROT))
+        BREWING_RECIPES.recipeBuilder().duration(160).volts(3).inputs(new ItemStack(Items.CARROT))
                 .fluidInputs(Water.getFluid(20)).fluidOutputs(Biomass.getFluid(20)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().duration(160).EUt(3).inputs(new ItemStack(Blocks.CACTUS))
+        BREWING_RECIPES.recipeBuilder().duration(160).volts(3).inputs(new ItemStack(Blocks.CACTUS))
                 .fluidInputs(Water.getFluid(20)).fluidOutputs(Biomass.getFluid(20)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().duration(160).EUt(3).inputs(new ItemStack(Items.REEDS))
+        BREWING_RECIPES.recipeBuilder().duration(160).volts(3).inputs(new ItemStack(Items.REEDS))
                 .fluidInputs(Water.getFluid(20)).fluidOutputs(Biomass.getFluid(20)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().duration(160).EUt(3).inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
+        BREWING_RECIPES.recipeBuilder().duration(160).volts(3).inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
                 .fluidInputs(Water.getFluid(20)).fluidOutputs(Biomass.getFluid(20)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().duration(160).EUt(3).inputs(new ItemStack(Blocks.RED_MUSHROOM))
+        BREWING_RECIPES.recipeBuilder().duration(160).volts(3).inputs(new ItemStack(Blocks.RED_MUSHROOM))
                 .fluidInputs(Water.getFluid(20)).fluidOutputs(Biomass.getFluid(20)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().duration(160).EUt(3).inputs(new ItemStack(Items.BEETROOT))
+        BREWING_RECIPES.recipeBuilder().duration(160).volts(3).inputs(new ItemStack(Items.BEETROOT))
                 .fluidInputs(Water.getFluid(20)).fluidOutputs(Biomass.getFluid(20)).buildAndRegister();
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128).inputItem(BIO_CHAFF).fluidInputs(Water.getFluid(750))
+        BREWING_RECIPES.recipeBuilder().volts(4).duration(128).inputItem(BIO_CHAFF).fluidInputs(Water.getFluid(750))
                 .fluidOutputs(Biomass.getFluid(750)).buildAndRegister();
     }
 }

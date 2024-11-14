@@ -31,7 +31,7 @@ public class AssemblyLineLoader {
                         .researchStack(OreDictUnifier.get(wireGtSingle, IndiumTinBariumTitaniumCuprate))
                         .duration(1200)
                         .EUt(VA[IV]))
-                .duration(800).EUt(VA[LuV]).buildAndRegister();
+                .duration(800).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputs(FUSION_CASING.getItemVariant(FUSION_COIL))
@@ -49,7 +49,7 @@ public class AssemblyLineLoader {
                         .researchStack(FUSION_REACTOR[0].getStackForm())
                         .CWUt(16)
                         .EUt(VA[ZPM]))
-                .duration(1000).EUt(61440).buildAndRegister();
+                .duration(1000).volts(61440).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputs(FUSION_CASING.getItemVariant(FUSION_COIL))
@@ -67,6 +67,6 @@ public class AssemblyLineLoader {
                         .researchStack(FUSION_REACTOR[1].getStackForm())
                         .CWUt(96)
                         .EUt(VA[UV]))
-                .duration(1000).EUt(VA[ZPM]).buildAndRegister();
+                .duration(1000).volts(VA[ZPM]).buildAndRegister();
     }
 }

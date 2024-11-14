@@ -156,12 +156,12 @@ public class ForestryExtractorRecipes {
 
         if (extraOutput != ItemStack.EMPTY) {
             if (chance > 0) {
-                builder.chancedOutput(extraOutput, chance, 0);
+                builder.outputsRolled(chance, 0, extraOutput);
             } else {
                 builder.outputs(extraOutput);
             }
         }
 
-        builder.duration(32).EUt(7).buildAndRegister();
+        builder.duration(32).volts(7).buildAndRegister();
     }
 }

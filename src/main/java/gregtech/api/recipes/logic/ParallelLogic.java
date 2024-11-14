@@ -490,7 +490,7 @@ public abstract class ParallelLogic {
         // for the EUt (for example, x2 recipes but x3 EUt) if the original
         // recipe builder already has a cost applied. Don't also zero the
         // duration as it doesn't get multiplied.
-        RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder().EUt(0);
+        RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder().volts(0);
 
         boolean voidItems = voidable.canVoidRecipeItemOutputs();
         boolean voidFluids = voidable.canVoidRecipeFluidOutputs();
@@ -562,7 +562,7 @@ public abstract class ParallelLogic {
                     // not zeroing means there is a base cost of 1 recipe EUt while doing parallel recipes
                     // for example running 2 parallel recipes would cost the EUt of doing 3 recipes.
                     // same should apply for the recipe map duration
-                    recipeBuilder = recipeMap.recipeBuilder().EUt(0).duration(0);
+                    recipeBuilder = recipeMap.recipeBuilder().volts(0).duration(0);
 
                 }
             } else continue;

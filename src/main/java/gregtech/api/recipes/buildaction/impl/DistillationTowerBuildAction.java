@@ -6,6 +6,7 @@ import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,7 @@ import static gregtech.api.recipes.logic.OverclockingLogic.STD_DURATION_FACTOR_I
 public final class DistillationTowerBuildAction implements RecipeBuildAction<SimpleRecipeBuilder> {
 
     public static final DistillationTowerBuildAction INSTANCE = new DistillationTowerBuildAction();
+    public static final ResourceLocation LOC = GTUtility.gregtechId("distillation_universal");
 
     private DistillationTowerBuildAction() {}
 

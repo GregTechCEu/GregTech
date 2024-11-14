@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.recipes.buildaction.impl.DistillationTowerBuildAction;
 import gregtech.common.items.MetaItems;
 
 import static gregtech.api.GTValues.*;
@@ -13,28 +14,27 @@ public class DistillationRecipes {
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(Creosote.getFluid(24))
                 .fluidOutputs(Lubricant.getFluid(12))
-                .duration(16).EUt(96).buildAndRegister();
+                .duration(16).volts(96).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(DilutedHydrochloricAcid.getFluid(2000))
                 .fluidOutputs(Water.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
-                .duration(600).EUt(64).buildAndRegister();
+                .duration(600).volts(64).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(DilutedSulfuricAcid.getFluid(3000))
                 .fluidOutputs(SulfuricAcid.getFluid(2000))
                 .fluidOutputs(Water.getFluid(1000))
-                .duration(600).EUt(VA[MV]).buildAndRegister();
+                .duration(600).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(CharcoalByproducts.getFluid(1000))
-                .chancedOutput(dust, Charcoal, 2500, 0)
+                .fluidInputs(CharcoalByproducts.getFluid(1000)).outputItemRoll(dust, Charcoal, 2500, 0)
                 .fluidOutputs(WoodTar.getFluid(250))
                 .fluidOutputs(WoodVinegar.getFluid(400))
                 .fluidOutputs(WoodGas.getFluid(250))
                 .fluidOutputs(Dimethylbenzene.getFluid(100))
-                .duration(40).EUt(256).buildAndRegister();
+                .duration(40).volts(256).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(WoodTar.getFluid(1000))
@@ -43,7 +43,7 @@ public class DistillationRecipes {
                 .fluidOutputs(Benzene.getFluid(350))
                 .fluidOutputs(Toluene.getFluid(75))
                 .fluidOutputs(Dimethylbenzene.getFluid(200))
-                .duration(40).EUt(256).buildAndRegister();
+                .duration(40).volts(256).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(WoodVinegar.getFluid(1000))
@@ -53,7 +53,7 @@ public class DistillationRecipes {
                 .fluidOutputs(Methanol.getFluid(300))
                 .fluidOutputs(Acetone.getFluid(50))
                 .fluidOutputs(MethylAcetate.getFluid(10))
-                .duration(40).EUt(256).buildAndRegister();
+                .duration(40).volts(256).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(WoodGas.getFluid(1000))
@@ -62,18 +62,18 @@ public class DistillationRecipes {
                 .fluidOutputs(Methane.getFluid(130))
                 .fluidOutputs(CarbonMonoxide.getFluid(340))
                 .fluidOutputs(Hydrogen.getFluid(20))
-                .duration(40).EUt(256).buildAndRegister();
+                .duration(40).volts(256).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(Water.getFluid(576))
                 .fluidOutputs(DistilledWater.getFluid(520))
-                .duration(160).EUt(VA[MV]).buildAndRegister();
+                .duration(160).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(Acetone.getFluid(1000))
                 .fluidOutputs(Ethenone.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(1000))
-                .duration(80).EUt(640).buildAndRegister();
+                .duration(80).volts(640).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(DissolvedCalciumAcetate.getFluid(1000))
@@ -81,17 +81,17 @@ public class DistillationRecipes {
                 .fluidOutputs(Acetone.getFluid(1000))
                 .fluidOutputs(CarbonDioxide.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
-                .duration(80).EUt(VA[MV]).buildAndRegister();
+                .duration(80).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SeedOil.getFluid(24))
                 .fluidOutputs(Lubricant.getFluid(12))
-                .duration(16).EUt(96).buildAndRegister();
+                .duration(16).volts(96).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(FishOil.getFluid(1200))
                 .fluidOutputs(Lubricant.getFluid(500))
-                .duration(16).EUt(96).buildAndRegister();
+                .duration(16).volts(96).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(FermentedBiomass.getFluid(1000))
@@ -103,33 +103,30 @@ public class DistillationRecipes {
                 .fluidOutputs(Ammonia.getFluid(100))
                 .fluidOutputs(CarbonDioxide.getFluid(400))
                 .fluidOutputs(Methane.getFluid(600))
-                .duration(75).EUt(180).buildAndRegister();
+                .duration(75).volts(180).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(Biomass.getFluid(1000))
-                .chancedOutput(dust, Wood, 5000, 0)
+                .fluidInputs(Biomass.getFluid(1000)).outputItemRoll(dust, Wood, 5000, 0)
                 .fluidOutputs(Ethanol.getFluid(600))
                 .fluidOutputs(Water.getFluid(300))
-                .duration(32).EUt(400).buildAndRegister();
+                .duration(32).volts(400).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(CoalGas.getFluid(1000))
-                .chancedOutput(dust, Coke, 2500, 0)
+                .fluidInputs(CoalGas.getFluid(1000)).outputItemRoll(dust, Coke, 2500, 0)
                 .fluidOutputs(CoalTar.getFluid(200))
                 .fluidOutputs(Ammonia.getFluid(300))
                 .fluidOutputs(Ethylbenzene.getFluid(250))
                 .fluidOutputs(CarbonDioxide.getFluid(250))
-                .duration(80).EUt(VA[MV])
+                .duration(80).volts(VA[MV])
                 .buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(CoalTar.getFluid(1000))
-                .chancedOutput(dust, Coke, 2500, 0)
+                .fluidInputs(CoalTar.getFluid(1000)).outputItemRoll(dust, Coke, 2500, 0)
                 .fluidOutputs(Naphthalene.getFluid(400))
                 .fluidOutputs(HydrogenSulfide.getFluid(300))
                 .fluidOutputs(Creosote.getFluid(200))
                 .fluidOutputs(Phenol.getFluid(100))
-                .duration(80).EUt(VA[MV])
+                .duration(80).volts(VA[MV])
                 .buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
@@ -139,9 +136,9 @@ public class DistillationRecipes {
                 .fluidOutputs(CarbonDioxide.getFluid(2500))
                 .fluidOutputs(Helium.getFluid(1000))
                 .fluidOutputs(Argon.getFluid(500))
-                .chancedOutput(dust, Ice, 9000, 0)
-                .disableDistilleryRecipes()
-                .duration(2000).EUt(VA[HV]).buildAndRegister();
+                .outputItemRoll(dust, Ice, 9000, 0)
+                .ignoreBuildAction(DistillationTowerBuildAction.LOC)
+                .duration(2000).volts(VA[HV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(LiquidNetherAir.getFluid(100000))
@@ -151,9 +148,9 @@ public class DistillationRecipes {
                 .fluidOutputs(SulfurDioxide.getFluid(7500))
                 .fluidOutputs(Helium3.getFluid(2500))
                 .fluidOutputs(Neon.getFluid(500))
-                .chancedOutput(dust, Ash, 2250, 0)
-                .disableDistilleryRecipes()
-                .duration(2000).EUt(VA[EV]).buildAndRegister();
+                .outputItemRoll(dust, Ash, 2250, 0)
+                .ignoreBuildAction(DistillationTowerBuildAction.LOC)
+                .duration(2000).volts(VA[EV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(LiquidEnderAir.getFluid(200000))
@@ -164,8 +161,8 @@ public class DistillationRecipes {
                 .fluidOutputs(Krypton.getFluid(1000))
                 .fluidOutputs(Xenon.getFluid(1000))
                 .fluidOutputs(Radon.getFluid(1000))
-                .chancedOutput(dust, EnderPearl, 1000, 0)
-                .disableDistilleryRecipes()
-                .duration(2000).EUt(VA[IV]).buildAndRegister();
+                .outputItemRoll(dust, EnderPearl, 1000, 0)
+                .ignoreBuildAction(DistillationTowerBuildAction.LOC)
+                .duration(2000).volts(VA[IV]).buildAndRegister();
     }
 }

@@ -56,13 +56,13 @@ public class MultiblockRecipeLogicTest {
                 3,
                 1,
                 1,
-                new BlastRecipeBuilder().EUt(32),
+                new BlastRecipeBuilder().volts(32),
                 false);
 
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1)
+                .volts(1).duration(1)
                 .blastFurnaceTemp(1)
                 .buildAndRegister();
 
@@ -291,13 +291,13 @@ public class MultiblockRecipeLogicTest {
                 3,
                 1,
                 1,
-                new BlastRecipeBuilder().EUt(32),
+                new BlastRecipeBuilder().volts(32),
                 false);
 
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1)
+                .volts(1).duration(1)
                 .blastFurnaceTemp(1)
                 .buildAndRegister();
 
@@ -710,7 +710,7 @@ public class MultiblockRecipeLogicTest {
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.CRAFTING_TABLE))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(10).duration(10)
+                .volts(10).duration(10)
                 .blastFurnaceTemp(1)
                 .buildAndRegister();
 

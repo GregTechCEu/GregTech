@@ -42,8 +42,6 @@ import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.groovy.GroovyScriptModule;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -58,6 +56,7 @@ import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
@@ -1183,31 +1182,54 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     // Deprecated chance methods //
 
+    /**
+     * @deprecated use {@link #outputsRolled(long, long, ItemStack)} instead, and refer to changes in how chance works.
+     */
     @Deprecated
     public R chancedOutput(ItemStack stack, int chance, int tierChanceBoost) {
         return outputsRolled(chance, tierChanceBoost, stack);
     }
 
+    /**
+     * @deprecated use {@link #outputItemRoll(OrePrefix, Material, int, long, long)} instead, and refer to changes in
+     *             how chance works.
+     */
     @Deprecated
     public R chancedOutput(OrePrefix prefix, Material material, int count, int chance, int tierChanceBoost) {
-        return chancedOutput(OreDictUnifier.get(prefix, material, count), chance, tierChanceBoost);
+        return outputItemRoll(prefix, material, count, chance, tierChanceBoost);
     }
 
+    /**
+     * @deprecated use {@link #outputItemRoll(OrePrefix, Material, long, long)} instead, and refer to changes in how
+     *             chance works.
+     */
     @Deprecated
     public R chancedOutput(OrePrefix prefix, Material material, int chance, int tierChanceBoost) {
-        return chancedOutput(prefix, material, 1, chance, tierChanceBoost);
+        return outputItemRoll(prefix, material, chance, tierChanceBoost);
     }
 
+    /**
+     * @deprecated use {@link #outputItemRoll(IHasStackForm, int, long, long)} instead, and refer to changes in how
+     *             chance works.
+     */
     @Deprecated
     public R chancedOutput(MetaItem<?>.MetaValueItem item, int count, int chance, int tierChanceBoost) {
-        return chancedOutput(item.getStackForm(count), chance, tierChanceBoost);
+        return outputItemRoll(item, count, chance, tierChanceBoost);
     }
 
+    /**
+     * @deprecated use {@link #outputItemRoll(IHasStackForm, long, long)} instead, and refer to changes in how chance
+     *             works.
+     */
     @Deprecated
     public R chancedOutput(MetaItem<?>.MetaValueItem item, int chance, int tierChanceBoost) {
-        return chancedOutput(item, 1, chance, tierChanceBoost);
+        return outputItemRoll(item, chance, tierChanceBoost);
     }
 
+    /**
+     * @deprecated use {@link #fluidOutputsRolled(long, long, FluidStack)} instead, and refer to changes in how chance
+     *             works.
+     */
     @Deprecated
     public R chancedFluidOutput(FluidStack stack, int chance, int tierChanceBoost) {
         return fluidOutputsRolled(chance, tierChanceBoost, stack);
@@ -1338,6 +1360,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
         return (R) this;
     }
+
     public boolean ignoresAllBuildActions() {
         return ignoreAllBuildActions;
     }
@@ -1478,14 +1501,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
      * </strong>
      */
     @MustBeInvokedByOverriders
-    public void buildAndRegister() {if (!ignoreAllBuildActions) {
-        for (var buildAction : recipeMap.getBuildActions().entrySet()) {
-            if (ignoredBuildActions != null && ignoredBuildActions.containsKey(buildAction.getKey())) {
-                continue;
+    public void buildAndRegister() {
+        if (!ignoreAllBuildActions) {
+            for (var buildAction : recipeMap.getBuildActions().entrySet()) {
+                if (ignoredBuildActions != null && ignoredBuildActions.containsKey(buildAction.getKey())) {
+                    continue;
+                }
+                buildAction.getValue().accept((R) this);
             }
-            buildAction.getValue().accept((R) this);
         }
-    }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }

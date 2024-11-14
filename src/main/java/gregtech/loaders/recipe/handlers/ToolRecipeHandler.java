@@ -284,7 +284,7 @@ public class ToolRecipeHandler {
                         .inputItem(OrePrefix.gear, material)
                         .outputItem(toolPrefix, material)
                         .duration((int) material.getMass() * 4)
-                        .EUt(8 * voltageMultiplier)
+                        .volts(8 * voltageMultiplier)
                         .buildAndRegister();
             }
 

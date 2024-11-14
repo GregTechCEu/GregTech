@@ -38,7 +38,7 @@ public class PolarizingRecipeHandler {
                     .outputs(magneticStack)
                     .duration((int) ((int) material.getMass() * polarizingPrefix.getMaterialAmount(material) /
                             GTValues.M))
-                    .EUt(getVoltageMultiplier(material))
+                    .volts(getVoltageMultiplier(material))
                     .buildAndRegister();
 
             ModHandler.addSmeltingRecipe(new UnificationEntry(polarizingPrefix, magneticMaterial),

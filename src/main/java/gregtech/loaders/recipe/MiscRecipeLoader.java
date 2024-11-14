@@ -71,12 +71,9 @@ public class MiscRecipeLoader {
 
         SIFTER_RECIPES.recipeBuilder().duration(100).volts(16)
                 .inputs(new ItemStack(Blocks.GRAVEL))
-                .outputItem(gem, Flint)
-                .chancedOutput(gem, Flint, 9000, 0)
-                .chancedOutput(gem, Flint, 8000, 0)
-                .chancedOutput(gem, Flint, 6000, 0)
-                .chancedOutput(gem, Flint, 3300, 0)
-                .chancedOutput(gem, Flint, 2500, 0)
+                .outputItem(gem, Flint).outputItemRoll(gem, Flint, 9000, 0).outputItemRoll(gem, Flint, 8000, 0)
+                .outputItemRoll(gem, Flint, 6000, 0).outputItemRoll(gem, Flint, 3300, 0)
+                .outputItemRoll(gem, Flint, 2500, 0)
                 .buildAndRegister();
 
         PACKER_RECIPES.recipeBuilder()

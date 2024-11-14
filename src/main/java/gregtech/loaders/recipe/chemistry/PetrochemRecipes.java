@@ -33,7 +33,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(SulfuricLightFuel.getFluid(50))
                 .fluidOutputs(SulfuricNaphtha.getFluid(20))
                 .fluidOutputs(SulfuricGas.getFluid(60))
-                .duration(20).EUt(96).buildAndRegister();
+                .duration(20).volts(96).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(OilLight.getFluid(150))
@@ -41,7 +41,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(SulfuricLightFuel.getFluid(20))
                 .fluidOutputs(SulfuricNaphtha.getFluid(30))
                 .fluidOutputs(SulfuricGas.getFluid(240))
-                .duration(20).EUt(96).buildAndRegister();
+                .duration(20).volts(96).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(OilHeavy.getFluid(100))
@@ -49,7 +49,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(SulfuricLightFuel.getFluid(45))
                 .fluidOutputs(SulfuricNaphtha.getFluid(15))
                 .fluidOutputs(SulfuricGas.getFluid(60))
-                .duration(20).EUt(288).buildAndRegister();
+                .duration(20).volts(288).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(RawOil.getFluid(100))
@@ -57,7 +57,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(SulfuricLightFuel.getFluid(50))
                 .fluidOutputs(SulfuricNaphtha.getFluid(150))
                 .fluidOutputs(SulfuricGas.getFluid(60))
-                .duration(20).EUt(96).buildAndRegister();
+                .duration(20).volts(96).buildAndRegister();
 
         desulfurizationRecipes();
         distillationRecipes();
@@ -70,35 +70,35 @@ public class PetrochemRecipes {
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .fluidOutputs(HeavyFuel.getFluid(8000))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
+                .duration(160).volts(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(SulfuricLightFuel.getFluid(12000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .fluidOutputs(LightFuel.getFluid(12000))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
+                .duration(160).volts(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(SulfuricNaphtha.getFluid(12000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .fluidOutputs(Naphtha.getFluid(12000))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
+                .duration(160).volts(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(SulfuricGas.getFluid(16000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .fluidOutputs(RefineryGas.getFluid(16000))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
+                .duration(160).volts(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(NaturalGas.getFluid(16000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .fluidOutputs(RefineryGas.getFluid(16000))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
+                .duration(160).volts(VA[LV]).buildAndRegister();
     }
 
     private static void distillationRecipes() {
@@ -109,74 +109,70 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(100))
                 .fluidOutputs(Methane.getFluid(750))
                 .fluidOutputs(Helium.getFluid(20))
-                .duration(240).EUt(VA[MV]).buildAndRegister();
+                .duration(240).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(HydroCrackedEthane.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(2000))
                 .fluidOutputs(Hydrogen.getFluid(2000))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SteamCrackedEthane.getFluid(1000))
-                .chancedOutput(dust, Carbon, 2500, 0)
+                .fluidInputs(SteamCrackedEthane.getFluid(1000)).outputItemRoll(dust, Carbon, 2500, 0)
                 .fluidOutputs(Ethylene.getFluid(250))
                 .fluidOutputs(Methane.getFluid(1250))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(HydroCrackedEthylene.getFluid(1000))
                 .fluidOutputs(Ethane.getFluid(1000))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SteamCrackedEthylene.getFluid(1000))
                 .outputItem(dust, Carbon)
                 .fluidOutputs(Methane.getFluid(1000))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(HydroCrackedPropene.getFluid(1000))
                 .fluidOutputs(Propane.getFluid(500))
                 .fluidOutputs(Ethylene.getFluid(500))
                 .fluidOutputs(Methane.getFluid(500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SteamCrackedPropene.getFluid(1000))
-                .chancedOutput(dust, Carbon, 5000, 0)
+                .fluidInputs(SteamCrackedPropene.getFluid(1000)).outputItemRoll(dust, Carbon, 5000, 0)
                 .fluidOutputs(Ethylene.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(HydroCrackedPropane.getFluid(1000))
                 .fluidOutputs(Ethane.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(1000))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SteamCrackedPropane.getFluid(1000))
-                .chancedOutput(dust, Carbon, 2500, 0)
+                .fluidInputs(SteamCrackedPropane.getFluid(1000)).outputItemRoll(dust, Carbon, 2500, 0)
                 .fluidOutputs(Ethylene.getFluid(750))
                 .fluidOutputs(Methane.getFluid(1250))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(HydroCrackedButane.getFluid(1000))
                 .fluidOutputs(Propane.getFluid(750))
                 .fluidOutputs(Ethane.getFluid(750))
                 .fluidOutputs(Methane.getFluid(500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SteamCrackedButane.getFluid(1000))
-                .chancedOutput(dust, Carbon, 2500, 0)
+                .fluidInputs(SteamCrackedButane.getFluid(1000)).outputItemRoll(dust, Carbon, 2500, 0)
                 .fluidOutputs(Propane.getFluid(125))
                 .fluidOutputs(Ethane.getFluid(750))
                 .fluidOutputs(Ethylene.getFluid(750))
                 .fluidOutputs(Methane.getFluid(500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(HydroCrackedButene.getFluid(750))
@@ -185,29 +181,27 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(250))
                 .fluidOutputs(Ethylene.getFluid(250))
                 .fluidOutputs(Methane.getFluid(250))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SteamCrackedButene.getFluid(1000))
-                .chancedOutput(dust, Carbon, 2500, 0)
+                .fluidInputs(SteamCrackedButene.getFluid(1000)).outputItemRoll(dust, Carbon, 2500, 0)
                 .fluidOutputs(Propene.getFluid(250))
                 .fluidOutputs(Ethylene.getFluid(1500))
                 .fluidOutputs(Methane.getFluid(250))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(HydroCrackedButadiene.getFluid(1000))
                 .fluidOutputs(Butene.getFluid(750))
                 .fluidOutputs(Ethylene.getFluid(500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SteamCrackedButadiene.getFluid(1000))
-                .chancedOutput(dust, Carbon, 5000, 0)
+                .fluidInputs(SteamCrackedButadiene.getFluid(1000)).outputItemRoll(dust, Carbon, 5000, 0)
                 .fluidOutputs(Propene.getFluid(125))
                 .fluidOutputs(Ethylene.getFluid(250))
                 .fluidOutputs(Methane.getFluid(1125))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(LightlyHydroCrackedHeavyFuel.getFluid(1000))
@@ -217,7 +211,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(Propane.getFluid(100))
                 .fluidOutputs(Ethane.getFluid(75))
                 .fluidOutputs(Methane.getFluid(75))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SeverelyHydroCrackedHeavyFuel.getFluid(1000))
@@ -227,11 +221,10 @@ public class PetrochemRecipes {
                 .fluidOutputs(Propane.getFluid(300))
                 .fluidOutputs(Ethane.getFluid(175))
                 .fluidOutputs(Methane.getFluid(175))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(LightlySteamCrackedHeavyFuel.getFluid(1000))
-                .chancedOutput(dust, Carbon, 1111, 0)
+                .fluidInputs(LightlySteamCrackedHeavyFuel.getFluid(1000)).outputItemRoll(dust, Carbon, 1111, 0)
                 .fluidOutputs(LightFuel.getFluid(300))
                 .fluidOutputs(Naphtha.getFluid(50))
                 .fluidOutputs(Toluene.getFluid(25))
@@ -243,11 +236,10 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(5))
                 .fluidOutputs(Ethylene.getFluid(50))
                 .fluidOutputs(Methane.getFluid(50))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SeverelySteamCrackedHeavyFuel.getFluid(1000))
-                .chancedOutput(dust, Carbon, 3333, 0)
+                .fluidInputs(SeverelySteamCrackedHeavyFuel.getFluid(1000)).outputItemRoll(dust, Carbon, 3333, 0)
                 .fluidOutputs(LightFuel.getFluid(100))
                 .fluidOutputs(Naphtha.getFluid(125))
                 .fluidOutputs(Toluene.getFluid(80))
@@ -259,7 +251,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(15))
                 .fluidOutputs(Ethylene.getFluid(150))
                 .fluidOutputs(Methane.getFluid(150))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(LightlyHydroCrackedLightFuel.getFluid(1000))
@@ -269,7 +261,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(Propane.getFluid(200))
                 .fluidOutputs(Ethane.getFluid(125))
                 .fluidOutputs(Methane.getFluid(125))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SeverelyHydroCrackedLightFuel.getFluid(1000))
@@ -279,11 +271,10 @@ public class PetrochemRecipes {
                 .fluidOutputs(Propane.getFluid(125))
                 .fluidOutputs(Ethane.getFluid(1500))
                 .fluidOutputs(Methane.getFluid(1500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(LightlySteamCrackedLightFuel.getFluid(1000))
-                .chancedOutput(dust, Carbon, 1111, 0)
+                .fluidInputs(LightlySteamCrackedLightFuel.getFluid(1000)).outputItemRoll(dust, Carbon, 1111, 0)
                 .fluidOutputs(HeavyFuel.getFluid(150))
                 .fluidOutputs(Naphtha.getFluid(400))
                 .fluidOutputs(Toluene.getFluid(40))
@@ -295,11 +286,10 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(10))
                 .fluidOutputs(Ethylene.getFluid(50))
                 .fluidOutputs(Methane.getFluid(50))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SeverelySteamCrackedLightFuel.getFluid(1000))
-                .chancedOutput(dust, Carbon, 3333, 0)
+                .fluidInputs(SeverelySteamCrackedLightFuel.getFluid(1000)).outputItemRoll(dust, Carbon, 3333, 0)
                 .fluidOutputs(HeavyFuel.getFluid(50))
                 .fluidOutputs(Naphtha.getFluid(100))
                 .fluidOutputs(Toluene.getFluid(30))
@@ -311,7 +301,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(50))
                 .fluidOutputs(Ethylene.getFluid(250))
                 .fluidOutputs(Methane.getFluid(250))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(LightlyHydroCrackedNaphtha.getFluid(1000))
@@ -319,7 +309,7 @@ public class PetrochemRecipes {
                 .fluidOutputs(Propane.getFluid(300))
                 .fluidOutputs(Ethane.getFluid(250))
                 .fluidOutputs(Methane.getFluid(250))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SeverelyHydroCrackedNaphtha.getFluid(1000))
@@ -327,11 +317,10 @@ public class PetrochemRecipes {
                 .fluidOutputs(Propane.getFluid(125))
                 .fluidOutputs(Ethane.getFluid(1500))
                 .fluidOutputs(Methane.getFluid(1500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(LightlySteamCrackedNaphtha.getFluid(1000))
-                .chancedOutput(dust, Carbon, 1111, 0)
+                .fluidInputs(LightlySteamCrackedNaphtha.getFluid(1000)).outputItemRoll(dust, Carbon, 1111, 0)
                 .fluidOutputs(HeavyFuel.getFluid(75))
                 .fluidOutputs(LightFuel.getFluid(150))
                 .fluidOutputs(Toluene.getFluid(40))
@@ -343,11 +332,10 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(35))
                 .fluidOutputs(Ethylene.getFluid(200))
                 .fluidOutputs(Methane.getFluid(200))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SeverelySteamCrackedNaphtha.getFluid(1000))
-                .chancedOutput(dust, Carbon, 3333, 0)
+                .fluidInputs(SeverelySteamCrackedNaphtha.getFluid(1000)).outputItemRoll(dust, Carbon, 3333, 0)
                 .fluidOutputs(HeavyFuel.getFluid(25))
                 .fluidOutputs(LightFuel.getFluid(50))
                 .fluidOutputs(Toluene.getFluid(20))
@@ -359,41 +347,39 @@ public class PetrochemRecipes {
                 .fluidOutputs(Ethane.getFluid(65))
                 .fluidOutputs(Ethylene.getFluid(500))
                 .fluidOutputs(Methane.getFluid(500))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(LightlyHydroCrackedGas.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(1400))
                 .fluidOutputs(Hydrogen.getFluid(1340))
                 .fluidOutputs(Helium.getFluid(20))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SeverelyHydroCrackedGas.getFluid(1000))
                 .fluidOutputs(Methane.getFluid(1400))
                 .fluidOutputs(Hydrogen.getFluid(4340))
                 .fluidOutputs(Helium.getFluid(20))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(LightlySteamCrackedGas.getFluid(1000))
-                .chancedOutput(dust, Carbon, 1111, 0)
+                .fluidInputs(LightlySteamCrackedGas.getFluid(1000)).outputItemRoll(dust, Carbon, 1111, 0)
                 .fluidOutputs(Propene.getFluid(45))
                 .fluidOutputs(Ethane.getFluid(8))
                 .fluidOutputs(Ethylene.getFluid(85))
                 .fluidOutputs(Methane.getFluid(1026))
                 .fluidOutputs(Helium.getFluid(20))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-                .fluidInputs(SeverelySteamCrackedGas.getFluid(1000))
-                .chancedOutput(dust, Carbon, 1111, 0)
+                .fluidInputs(SeverelySteamCrackedGas.getFluid(1000)).outputItemRoll(dust, Carbon, 1111, 0)
                 .fluidOutputs(Propene.getFluid(8))
                 .fluidOutputs(Ethane.getFluid(45))
                 .fluidOutputs(Ethylene.getFluid(92))
                 .fluidOutputs(Methane.getFluid(1018))
                 .fluidOutputs(Helium.getFluid(20))
-                .duration(120).EUt(VA[MV]).buildAndRegister();
+                .duration(120).volts(VA[MV]).buildAndRegister();
     }
 
     private static void distilleryRecipes() {
@@ -401,25 +387,25 @@ public class PetrochemRecipes {
                 .circuitMeta(1)
                 .fluidInputs(Toluene.getFluid(30))
                 .fluidOutputs(LightFuel.getFluid(30))
-                .duration(160).EUt(24).buildAndRegister();
+                .duration(160).volts(24).buildAndRegister();
 
         DISTILLERY_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(HeavyFuel.getFluid(10))
                 .fluidOutputs(Toluene.getFluid(4))
-                .duration(16).EUt(24).buildAndRegister();
+                .duration(16).volts(24).buildAndRegister();
 
         DISTILLERY_RECIPES.recipeBuilder()
                 .circuitMeta(2)
                 .fluidInputs(HeavyFuel.getFluid(10))
                 .fluidOutputs(Benzene.getFluid(4))
-                .duration(16).EUt(24).buildAndRegister();
+                .duration(16).volts(24).buildAndRegister();
 
         DISTILLERY_RECIPES.recipeBuilder()
                 .circuitMeta(3)
                 .fluidInputs(HeavyFuel.getFluid(20))
                 .fluidOutputs(Phenol.getFluid(5))
-                .duration(32).EUt(24).buildAndRegister();
+                .duration(32).volts(24).buildAndRegister();
     }
 
     private static void lightlyCrack(Material raw, Material hydroCracked, Material steamCracked) {
@@ -428,21 +414,21 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
-                .duration(80).EUt(VA[MV]).buildAndRegister();
+                .duration(80).volts(VA[MV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(raw.getFluid(500))
                 .fluidInputs(Hydrogen.getFluid(1000))
                 .fluidOutputs(hydroCracked.getFluid(250))
-                .duration(80).EUt(30).buildAndRegister();
+                .duration(80).volts(30).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
-                .duration(80).EUt(240).buildAndRegister();
+                .duration(80).volts(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
@@ -458,28 +444,28 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(4000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
-                .duration(120).EUt(180).buildAndRegister();
+                .duration(120).volts(180).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)
                 .fluidInputs(raw.getFluid(500))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(hydroCracked.getFluid(250))
-                .duration(60).EUt(VA[LV]).buildAndRegister();
+                .duration(60).volts(VA[LV]).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
                 .circuitMeta(2)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
-                .duration(120).EUt(360).buildAndRegister();
+                .duration(120).volts(360).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(500))
-                .duration(240).EUt(VA[LV]).buildAndRegister();
+                .duration(240).volts(VA[LV]).buildAndRegister();
     }
 
     private static void severelyCrack(Material raw, Material hydroCracked, Material steamCracked) {
@@ -488,27 +474,27 @@ public class PetrochemRecipes {
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Hydrogen.getFluid(6000))
                 .fluidOutputs(hydroCracked.getFluid(1000))
-                .duration(160).EUt(240).buildAndRegister();
+                .duration(160).volts(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)
                 .fluidInputs(raw.getFluid(500))
                 .fluidInputs(Hydrogen.getFluid(3000))
                 .fluidOutputs(hydroCracked.getFluid(250))
-                .duration(160).EUt(VA[LV]).buildAndRegister();
+                .duration(160).volts(VA[LV]).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
                 .circuitMeta(3)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(1000))
-                .duration(160).EUt(VA[HV]).buildAndRegister();
+                .duration(160).volts(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(3)
                 .fluidInputs(raw.getFluid(1000))
                 .fluidInputs(Steam.getFluid(1000))
                 .fluidOutputs(steamCracked.getFluid(500))
-                .duration(240).EUt(VA[LV]).buildAndRegister();
+                .duration(240).volts(VA[LV]).buildAndRegister();
     }
 }

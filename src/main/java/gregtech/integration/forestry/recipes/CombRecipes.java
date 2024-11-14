@@ -46,13 +46,13 @@ public class CombRecipes {
             if (combStack.getItem() instanceof GTCombItem) continue;
             RecipeBuilder<?> builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                     .inputs(combStack.copy())
-                    .duration(Voltage.ULV.getCentrifugeTime()).EUt(Voltage.ULV.getCentrifugeEnergy());
+                    .duration(Voltage.ULV.getCentrifugeTime()).volts(Voltage.ULV.getCentrifugeEnergy());
 
             for (Map.Entry<ItemStack, Float> entry : recipe.getAllProducts().entrySet()) {
                 if (entry.getValue() >= 1.0f) {
                     builder.outputs(entry.getKey());
                 } else {
-                    builder.chancedOutput(entry.getKey(), Math.max(1, Math.round(entry.getValue() * 10000)), 0);
+                    builder.outputsRolled(Math.max(1, Math.round(entry.getValue() * 10000)), 0, entry.getKey());
                 }
             }
             builder.buildAndRegister();
@@ -220,7 +220,7 @@ public class CombRecipes {
                 .outputItem(OrePrefix.nugget, Materials.Iridium)
                 .outputItem(OrePrefix.dust, Materials.IridiumMetalResidue, 5)
                 .cleanroom(CleanroomType.CLEANROOM)
-                .duration(1000).EUt(Voltage.IV.getChemicalEnergy())
+                .duration(1000).volts(Voltage.IV.getChemicalEnergy())
                 .buildAndRegister();
 
         // Special Osmium Recipe
@@ -230,7 +230,7 @@ public class CombRecipes {
                 .outputItem(OrePrefix.nugget, Materials.Osmium)
                 .fluidOutputs(Materials.AcidicOsmiumSolution.getFluid(2000))
                 .cleanroom(CleanroomType.CLEANROOM)
-                .duration(1000).EUt(Voltage.IV.getChemicalEnergy())
+                .duration(1000).volts(Voltage.IV.getChemicalEnergy())
                 .buildAndRegister();
 
         // Special Indium Recipe
@@ -241,7 +241,7 @@ public class CombRecipes {
                 .outputItem(OrePrefix.dustSmall, Materials.Indium, 2)
                 .outputItem(OrePrefix.dust, Materials.AluminiumSulfite, 4)
                 .fluidOutputs(Materials.LeadZincSolution.getFluid(1000))
-                .duration(50).EUt(600).buildAndRegister();
+                .duration(50).volts(600).buildAndRegister();
 
         // Radioactive
         addProcessGT(GTCombType.ALMANDINE,
@@ -268,7 +268,7 @@ public class CombRecipes {
                 .outputItem(OrePrefix.nugget, Materials.Neutronium)
                 .fluidOutputs(Materials.Neutronium.getFluid(GTValues.L * 4))
                 .cleanroom(CleanroomType.CLEANROOM)
-                .duration(3000).EUt(Voltage.UV.getChemicalEnergy()).buildAndRegister();
+                .duration(3000).volts(Voltage.UV.getChemicalEnergy()).buildAndRegister();
 
         if (Mods.MagicBees.isModLoaded()) {
             addProcessGT(GTCombType.SPARKLING, new Material[] { Materials.NetherStar }, Voltage.EV);
@@ -312,8 +312,7 @@ public class CombRecipes {
                 .inputItem(OrePrefix.crushed, inMaterial)
                 .fluidInputs(volt.getFluid())
                 .outputItem(OrePrefix.crushedPurified, outMaterial, 4)
-                .duration(volt.getChemicalTime())
-                .EUt(volt.getChemicalEnergy());
+                .duration(volt.getChemicalTime()).volts(volt.getChemicalEnergy());
 
         OreProperty property = inMaterial.getProperty(PropertyKey.ORE);
         if (property != null && !property.getOreByProducts().isEmpty()) {
@@ -345,8 +344,7 @@ public class CombRecipes {
                 .fluidInputs(
                         Materials.Mutagen.getFluid((int) Math.max(1, material.getMass() + volt.getMutagenAmount())))
                 .outputItem(OrePrefix.crushedPurified, material, 4)
-                .duration((int) (material.getMass() * 128))
-                .EUt(volt.getAutoclaveEnergy());
+                .duration((int) (material.getMass() * 128)).volts(volt.getAutoclaveEnergy());
 
         if (volt.compareTo(Voltage.HV) > 0) {
             builder.cleanroom(CleanroomType.CLEANROOM);
@@ -358,8 +356,7 @@ public class CombRecipes {
         RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(ForestryUtil.getCombStack(comb))
                 .fluidOutputs(fluidStack)
-                .duration(duration)
-                .EUt(volt.getCentrifugeEnergy() / 2)
+                .duration(duration).volts(volt.getCentrifugeEnergy() / 2)
                 .buildAndRegister();
     }
 
@@ -444,8 +441,7 @@ public class CombRecipes {
         // Start of the GregTech Map
         RecipeBuilder<?> builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(combStack)
-                .duration(duration)
-                .EUt(volt.getCentrifugeEnergy());
+                .duration(duration).volts(volt.getCentrifugeEnergy());
 
         int numGTOutputs = 0;
         for (int i = 0; i < item.length; i++) {
@@ -457,7 +453,7 @@ public class CombRecipes {
                 if (chance[i] >= 10000) {
                     builder.outputs(item[i]);
                 } else {
-                    builder.chancedOutput(item[i], chance[i], 0);
+                    builder.outputsRolled(chance[i], 0, item[i]);
                 }
                 numGTOutputs++;
             }

@@ -48,7 +48,7 @@ public class ComponentRecipes {
                 .inputItem(stick, IronMagnetic)
                 .inputItem(wireGtSingle, Copper, 4)
                 .outputs(ELECTRIC_MOTOR_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtSingle, Tin, 2)
@@ -56,7 +56,7 @@ public class ComponentRecipes {
                 .inputItem(stick, SteelMagnetic)
                 .inputItem(wireGtSingle, Copper, 4)
                 .outputs(ELECTRIC_MOTOR_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtSingle, Copper, 2)
@@ -64,7 +64,7 @@ public class ComponentRecipes {
                 .inputItem(stick, SteelMagnetic)
                 .inputItem(wireGtDouble, Cupronickel, 4)
                 .outputs(ELECTRIC_MOTOR_MV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtDouble, Silver, 2)
@@ -72,7 +72,7 @@ public class ComponentRecipes {
                 .inputItem(stick, SteelMagnetic)
                 .inputItem(wireGtDouble, Electrum, 4)
                 .outputs(ELECTRIC_MOTOR_HV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtDouble, Aluminium, 2)
@@ -80,7 +80,7 @@ public class ComponentRecipes {
                 .inputItem(stick, NeodymiumMagnetic)
                 .inputItem(wireGtDouble, Kanthal, 4)
                 .outputs(ELECTRIC_MOTOR_EV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtDouble, Tungsten, 2)
@@ -88,7 +88,7 @@ public class ComponentRecipes {
                 .inputItem(stick, NeodymiumMagnetic)
                 .inputItem(wireGtDouble, Graphene, 4)
                 .outputs(ELECTRIC_MOTOR_IV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(stickLong, SamariumMagnetic)
@@ -101,7 +101,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(250))
                 .outputItem(ELECTRIC_MOTOR_LuV)
                 .scannerResearch(ELECTRIC_MOTOR_IV.getStackForm())
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(stickLong, SamariumMagnetic)
@@ -118,7 +118,7 @@ public class ComponentRecipes {
                         .researchStack(ELECTRIC_MOTOR_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(stickLong, SamariumMagnetic)
@@ -136,7 +136,7 @@ public class ComponentRecipes {
                         .researchStack(ELECTRIC_MOTOR_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
 
         // Conveyors
         // Start-----------------------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ public class ComponentRecipes {
                     .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_LV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputItem(cableGtSingle, Copper)
@@ -182,7 +182,7 @@ public class ComponentRecipes {
                     .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_MV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputItem(cableGtSingle, Gold)
@@ -190,7 +190,7 @@ public class ComponentRecipes {
                     .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_HV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputItem(cableGtSingle, Aluminium)
@@ -198,7 +198,7 @@ public class ComponentRecipes {
                     .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                     .circuitMeta(1)
                     .outputs(CONVEYOR_MODULE_EV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             if (!materialEntry.getValue().equals(Rubber))
                 ASSEMBLER_RECIPES.recipeBuilder()
@@ -207,7 +207,7 @@ public class ComponentRecipes {
                         .fluidInputs(materialEntry.getValue().getFluid(L * 6))
                         .circuitMeta(1)
                         .outputs(CONVEYOR_MODULE_IV.getStackForm())
-                        .duration(100).EUt(VA[LV]).buildAndRegister();
+                        .duration(100).volts(VA[LV]).buildAndRegister();
 
             // Pumps
             // Start---------------------------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ public class ComponentRecipes {
                     .inputItem(ring, materialEntry.getValue(), 2)
                     .inputs(ELECTRIC_MOTOR_LV.getStackForm())
                     .outputs(ELECTRIC_PUMP_LV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputItem(cableGtSingle, Copper)
@@ -257,7 +257,7 @@ public class ComponentRecipes {
                     .inputItem(ring, materialEntry.getValue(), 2)
                     .inputs(ELECTRIC_MOTOR_MV.getStackForm())
                     .outputs(ELECTRIC_PUMP_MV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputItem(cableGtSingle, Gold)
@@ -267,7 +267,7 @@ public class ComponentRecipes {
                     .inputItem(ring, materialEntry.getValue(), 2)
                     .inputs(ELECTRIC_MOTOR_HV.getStackForm())
                     .outputs(ELECTRIC_PUMP_HV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputItem(cableGtSingle, Aluminium)
@@ -277,7 +277,7 @@ public class ComponentRecipes {
                     .inputItem(ring, materialEntry.getValue(), 2)
                     .inputs(ELECTRIC_MOTOR_EV.getStackForm())
                     .outputs(ELECTRIC_PUMP_EV.getStackForm())
-                    .duration(100).EUt(VA[LV]).buildAndRegister();
+                    .duration(100).volts(VA[LV]).buildAndRegister();
 
             if (!materialEntry.getValue().equals(Rubber))
                 ASSEMBLER_RECIPES.recipeBuilder()
@@ -288,7 +288,7 @@ public class ComponentRecipes {
                         .inputItem(ring, materialEntry.getValue(), 2)
                         .inputs(ELECTRIC_MOTOR_IV.getStackForm())
                         .outputs(ELECTRIC_PUMP_IV.getStackForm())
-                        .duration(100).EUt(VA[LV]).buildAndRegister();
+                        .duration(100).volts(VA[LV]).buildAndRegister();
         }
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -303,7 +303,7 @@ public class ComponentRecipes {
                 .fluidInputs(StyreneButadieneRubber.getFluid(L * 8))
                 .outputItem(CONVEYOR_MODULE_LuV)
                 .scannerResearch(CONVEYOR_MODULE_IV.getStackForm())
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_ZPM, 2)
@@ -320,7 +320,7 @@ public class ComponentRecipes {
                         .researchStack(CONVEYOR_MODULE_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_UV, 2)
@@ -338,7 +338,7 @@ public class ComponentRecipes {
                         .researchStack(CONVEYOR_MODULE_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_LuV)
@@ -352,7 +352,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(250))
                 .outputItem(ELECTRIC_PUMP_LuV)
                 .scannerResearch(ELECTRIC_PUMP_IV.getStackForm())
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_ZPM)
@@ -369,7 +369,7 @@ public class ComponentRecipes {
                         .researchStack(ELECTRIC_PUMP_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_UV)
@@ -387,7 +387,7 @@ public class ComponentRecipes {
                         .researchStack(ELECTRIC_PUMP_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
 
         // Fluid
         // Regulators----------------------------------------------------------------------------------------------
@@ -396,8 +396,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_LV.getStackForm())
                 .inputItem(circuit, Tier.LV, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_LV.getStackForm())
-                .EUt(VA[LV])
+                .outputs(FLUID_REGULATOR_LV.getStackForm()).volts(VA[LV])
                 .duration(400)
                 .withRecycling()
                 .buildAndRegister();
@@ -406,8 +405,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_MV.getStackForm())
                 .inputItem(circuit, Tier.MV, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_MV.getStackForm())
-                .EUt(VA[MV])
+                .outputs(FLUID_REGULATOR_MV.getStackForm()).volts(VA[MV])
                 .duration(350)
                 .withRecycling()
                 .buildAndRegister();
@@ -416,8 +414,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_HV.getStackForm())
                 .inputItem(circuit, Tier.HV, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_HV.getStackForm())
-                .EUt(VA[HV])
+                .outputs(FLUID_REGULATOR_HV.getStackForm()).volts(VA[HV])
                 .duration(300)
                 .withRecycling()
                 .buildAndRegister();
@@ -426,8 +423,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_EV.getStackForm())
                 .inputItem(circuit, Tier.EV, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_EV.getStackForm())
-                .EUt(VA[EV])
+                .outputs(FLUID_REGULATOR_EV.getStackForm()).volts(VA[EV])
                 .duration(250)
                 .withRecycling()
                 .buildAndRegister();
@@ -436,8 +432,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_IV.getStackForm())
                 .inputItem(circuit, Tier.IV, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_IV.getStackForm())
-                .EUt(VA[IV])
+                .outputs(FLUID_REGULATOR_IV.getStackForm()).volts(VA[IV])
                 .duration(200)
                 .withRecycling()
                 .buildAndRegister();
@@ -446,8 +441,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_LuV.getStackForm())
                 .inputItem(circuit, Tier.LuV, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_LUV.getStackForm())
-                .EUt(VA[LuV])
+                .outputs(FLUID_REGULATOR_LUV.getStackForm()).volts(VA[LuV])
                 .duration(150)
                 .buildAndRegister();
 
@@ -455,8 +449,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_ZPM.getStackForm())
                 .inputItem(circuit, Tier.ZPM, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_ZPM.getStackForm())
-                .EUt(VA[ZPM])
+                .outputs(FLUID_REGULATOR_ZPM.getStackForm()).volts(VA[ZPM])
                 .duration(100)
                 .buildAndRegister();
 
@@ -464,8 +457,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PUMP_UV.getStackForm())
                 .inputItem(circuit, Tier.UV, 2)
                 .circuitMeta(1)
-                .outputs(FLUID_REGULATOR_UV.getStackForm())
-                .EUt(VA[UV])
+                .outputs(FLUID_REGULATOR_UV.getStackForm()).volts(VA[UV])
                 .duration(50)
                 .buildAndRegister();
 
@@ -481,13 +473,13 @@ public class ComponentRecipes {
                 .inputItem(pipeNormalItem, Brass)
                 .inputItem(Items.ENDER_PEARL)
                 .outputs(COVER_ITEM_VOIDING.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(COVER_ITEM_VOIDING)
                 .inputItem(circuit, Tier.MV, 1)
                 .outputs(COVER_ITEM_VOIDING_ADVANCED.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "cover_fluid_voiding", COVER_FLUID_VOIDING.getStackForm(), "SDS", "dPw", " E ",
                 'S', new UnificationEntry(screw, Steel), 'D', COVER_FLUID_DETECTOR.getStackForm(), 'P',
@@ -499,13 +491,13 @@ public class ComponentRecipes {
                 .inputItem(pipeNormalFluid, Bronze)
                 .inputItem(Items.ENDER_PEARL)
                 .outputs(COVER_FLUID_VOIDING.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(COVER_FLUID_VOIDING)
                 .inputItem(circuit, Tier.MV, 1)
                 .outputs(COVER_FLUID_VOIDING_ADVANCED.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         // Pistons
         // Start-------------------------------------------------------------------------------------------------
@@ -537,7 +529,7 @@ public class ComponentRecipes {
                 .inputItem(gearSmall, Steel)
                 .inputs(ELECTRIC_MOTOR_LV.getStackForm())
                 .outputs(ELECTRIC_PISTON_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Aluminium, 2)
@@ -546,7 +538,7 @@ public class ComponentRecipes {
                 .inputItem(gearSmall, Aluminium)
                 .inputs(ELECTRIC_MOTOR_MV.getStackForm())
                 .outputs(ELECTRIC_PISTON_MV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, StainlessSteel, 2)
@@ -555,7 +547,7 @@ public class ComponentRecipes {
                 .inputItem(gearSmall, StainlessSteel)
                 .inputs(ELECTRIC_MOTOR_HV.getStackForm())
                 .outputs(ELECTRIC_PISTON_HV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Titanium, 2)
@@ -564,7 +556,7 @@ public class ComponentRecipes {
                 .inputItem(gearSmall, Titanium)
                 .inputs(ELECTRIC_MOTOR_EV.getStackForm())
                 .outputs(ELECTRIC_PISTON_EV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, TungstenSteel, 2)
@@ -573,7 +565,7 @@ public class ComponentRecipes {
                 .inputItem(gearSmall, TungstenSteel)
                 .inputs(ELECTRIC_MOTOR_IV.getStackForm())
                 .outputs(ELECTRIC_PISTON_IV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_LuV)
@@ -588,7 +580,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(250))
                 .outputItem(ELECTRIC_PISTON_LUV)
                 .scannerResearch(ELECTRIC_PISTON_IV.getStackForm())
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_ZPM)
@@ -606,7 +598,7 @@ public class ComponentRecipes {
                         .researchStack(ELECTRIC_PISTON_LUV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(ELECTRIC_MOTOR_UV)
@@ -625,7 +617,7 @@ public class ComponentRecipes {
                         .researchStack(ELECTRIC_PISTON_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
 
         // Robot Arms Start
         // ---------------------------------------------------------------------------------------------
@@ -657,7 +649,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PISTON_LV.getStackForm())
                 .inputItem(circuit, Tier.LV)
                 .outputs(ROBOT_ARM_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtSingle, Copper, 3)
@@ -666,7 +658,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PISTON_MV.getStackForm())
                 .inputItem(circuit, Tier.MV)
                 .outputs(ROBOT_ARM_MV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtSingle, Gold, 3)
@@ -675,7 +667,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PISTON_HV.getStackForm())
                 .inputItem(circuit, Tier.HV)
                 .outputs(ROBOT_ARM_HV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtSingle, Aluminium, 3)
@@ -684,7 +676,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PISTON_EV.getStackForm())
                 .inputItem(circuit, Tier.EV)
                 .outputs(ROBOT_ARM_EV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(cableGtSingle, Tungsten, 3)
@@ -693,7 +685,7 @@ public class ComponentRecipes {
                 .inputs(ELECTRIC_PISTON_IV.getStackForm())
                 .inputItem(circuit, Tier.IV)
                 .outputs(ROBOT_ARM_IV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(stickLong, HSSS, 4)
@@ -709,7 +701,7 @@ public class ComponentRecipes {
                 .fluidInputs(Lubricant.getFluid(250))
                 .outputItem(ROBOT_ARM_LuV)
                 .scannerResearch(ROBOT_ARM_IV.getStackForm())
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(stickLong, Osmiridium, 4)
@@ -728,7 +720,7 @@ public class ComponentRecipes {
                         .researchStack(ROBOT_ARM_LuV.getStackForm())
                         .duration(1200)
                         .EUt(VA[IV]))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(stickLong, Tritanium, 4)
@@ -748,7 +740,7 @@ public class ComponentRecipes {
                         .researchStack(ROBOT_ARM_ZPM.getStackForm())
                         .CWUt(32)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
 
         // Field Generators Start
         // ---------------------------------------------------------------------------------------
@@ -778,7 +770,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.LV, 2)
                 .inputItem(wireGtQuadruple, ManganesePhosphide, 4)
                 .outputs(FIELD_GENERATOR_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(gem, EnderEye)
@@ -786,7 +778,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.MV, 2)
                 .inputItem(wireGtQuadruple, MagnesiumDiboride, 4)
                 .outputs(FIELD_GENERATOR_MV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(QUANTUM_EYE)
@@ -794,7 +786,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.HV, 2)
                 .inputItem(wireGtQuadruple, MercuryBariumCalciumCuprate, 4)
                 .outputs(FIELD_GENERATOR_HV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(gem, NetherStar)
@@ -802,7 +794,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.EV, 2)
                 .inputItem(wireGtQuadruple, UraniumTriplatinum, 4)
                 .outputs(FIELD_GENERATOR_EV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(QUANTUM_STAR)
@@ -810,7 +802,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.IV, 2)
                 .inputItem(wireGtQuadruple, SamariumIronArsenicOxide, 4)
                 .outputs(FIELD_GENERATOR_IV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, HSSS)
@@ -826,7 +818,7 @@ public class ComponentRecipes {
                 .scannerResearch(b -> b
                         .researchStack(FIELD_GENERATOR_IV.getStackForm())
                         .duration(2400))
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, NaquadahAlloy)
@@ -842,7 +834,7 @@ public class ComponentRecipes {
                 .stationResearch(b -> b
                         .researchStack(FIELD_GENERATOR_LuV.getStackForm())
                         .CWUt(4))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, Tritanium)
@@ -860,7 +852,7 @@ public class ComponentRecipes {
                         .researchStack(FIELD_GENERATOR_ZPM.getStackForm())
                         .CWUt(48)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
 
         // Sensors
         // Start-------------------------------------------------------------------------------------------------
@@ -886,7 +878,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.LV)
                 .inputItem(gem, Quartzite)
                 .outputs(SENSOR_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Electrum)
@@ -894,7 +886,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.MV)
                 .inputItem(gemFlawless, Emerald)
                 .outputs(SENSOR_MV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Chrome)
@@ -902,7 +894,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.HV)
                 .inputItem(gem, EnderEye)
                 .outputs(SENSOR_HV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Platinum)
@@ -910,7 +902,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.EV)
                 .inputItem(QUANTUM_EYE)
                 .outputs(SENSOR_EV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Iridium)
@@ -918,7 +910,7 @@ public class ComponentRecipes {
                 .inputItem(circuit, Tier.IV)
                 .inputItem(QUANTUM_STAR)
                 .outputs(SENSOR_IV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, HSSS)
@@ -934,7 +926,7 @@ public class ComponentRecipes {
                 .scannerResearch(b -> b
                         .researchStack(SENSOR_IV.getStackForm())
                         .duration(2400))
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, NaquadahAlloy)
@@ -950,7 +942,7 @@ public class ComponentRecipes {
                 .stationResearch(b -> b
                         .researchStack(SENSOR_LuV.getStackForm())
                         .CWUt(4))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, Tritanium)
@@ -968,7 +960,7 @@ public class ComponentRecipes {
                         .researchStack(SENSOR_ZPM.getStackForm())
                         .CWUt(48)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
 
         // Emitters
         // Start------------------------------------------------------------------------------------------------
@@ -995,7 +987,7 @@ public class ComponentRecipes {
                 .inputItem(gem, Quartzite)
                 .circuitMeta(1)
                 .outputs(EMITTER_LV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Electrum, 4)
@@ -1004,7 +996,7 @@ public class ComponentRecipes {
                 .inputItem(gemFlawless, Emerald)
                 .circuitMeta(1)
                 .outputs(EMITTER_MV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Chrome, 4)
@@ -1013,7 +1005,7 @@ public class ComponentRecipes {
                 .inputItem(gem, EnderEye)
                 .circuitMeta(1)
                 .outputs(EMITTER_HV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Platinum, 4)
@@ -1022,7 +1014,7 @@ public class ComponentRecipes {
                 .inputItem(QUANTUM_EYE)
                 .circuitMeta(1)
                 .outputs(EMITTER_EV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(stick, Iridium, 4)
@@ -1031,7 +1023,7 @@ public class ComponentRecipes {
                 .inputItem(QUANTUM_STAR)
                 .circuitMeta(1)
                 .outputs(EMITTER_IV.getStackForm())
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, HSSS)
@@ -1047,7 +1039,7 @@ public class ComponentRecipes {
                 .scannerResearch(b -> b
                         .researchStack(EMITTER_IV.getStackForm())
                         .duration(2400))
-                .duration(600).EUt(6000).buildAndRegister();
+                .duration(600).volts(6000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, NaquadahAlloy)
@@ -1063,7 +1055,7 @@ public class ComponentRecipes {
                 .stationResearch(b -> b
                         .researchStack(EMITTER_LuV.getStackForm())
                         .CWUt(8))
-                .duration(600).EUt(24000).buildAndRegister();
+                .duration(600).volts(24000).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .inputItem(frameGt, Tritanium)
@@ -1081,6 +1073,6 @@ public class ComponentRecipes {
                         .researchStack(EMITTER_ZPM.getStackForm())
                         .CWUt(48)
                         .EUt(VA[ZPM]))
-                .duration(600).EUt(100000).buildAndRegister();
+                .duration(600).volts(100000).buildAndRegister();
     }
 }

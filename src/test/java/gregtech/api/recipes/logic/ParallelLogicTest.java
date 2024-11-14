@@ -66,7 +66,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 3), false);
@@ -97,7 +97,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(4000))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -128,7 +128,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(1000))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.STONE, 16), false);
@@ -159,7 +159,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.STONE, 16), false);
@@ -190,7 +190,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -221,7 +221,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -252,7 +252,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -287,7 +287,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -322,7 +322,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -358,7 +358,7 @@ public class ParallelLogicTest {
                 .fluidOutputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -388,7 +388,7 @@ public class ParallelLogicTest {
                 .fluidOutputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -419,7 +419,7 @@ public class ParallelLogicTest {
                 .fluidOutputs(Materials.Acetone.getFluid(100))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
@@ -450,7 +450,7 @@ public class ParallelLogicTest {
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         // Test less than maximum limit
@@ -497,7 +497,7 @@ public class ParallelLogicTest {
                 .notConsumable(new ItemStack(Blocks.STONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 4), false);
@@ -527,7 +527,7 @@ public class ParallelLogicTest {
                 .notConsumable(new ItemStack(Blocks.STONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.STONE, 1), false);
@@ -556,7 +556,7 @@ public class ParallelLogicTest {
                 .notConsumable(new ItemStack(Blocks.STONE, 2))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         // Test Parallel Limit with not enough Non-consumed items
@@ -603,7 +603,7 @@ public class ParallelLogicTest {
                 .fluidInputs(Materials.Water.getFluid(1000))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         // Test Not enough fluid for 1 parallel
@@ -652,7 +652,7 @@ public class ParallelLogicTest {
                 .notConsumable(Materials.Water.getFluid())
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         // Test Not enough fluid for 1 parallel
@@ -710,7 +710,7 @@ public class ParallelLogicTest {
                 .notConsumable(Materials.Acetone.getFluid())
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         // Test Not enough fluid for 1 parallel
@@ -769,7 +769,7 @@ public class ParallelLogicTest {
                 .notConsumable(Materials.Acetone.getFluid())
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         // Test Not enough fluid for 1 parallel
@@ -818,7 +818,7 @@ public class ParallelLogicTest {
                 .notConsumable(Materials.Acetone.getFluid(1000))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         // Test Not enough fluid for 1 parallel

@@ -9,7 +9,7 @@ public class FuelRecipeChains {
 
     public static void init() {
         // High Octane Gasoline
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().volts(VA[HV]).duration(100)
                 .fluidInputs(Naphtha.getFluid(16000))
                 .fluidInputs(RefineryGas.getFluid(2000))
                 .fluidInputs(Methanol.getFluid(1000))
@@ -18,14 +18,14 @@ public class FuelRecipeChains {
                 .fluidOutputs(RawGasoline.getFluid(20000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(10)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[HV]).duration(10)
                 .fluidInputs(RawGasoline.getFluid(10000))
                 .fluidInputs(Toluene.getFluid(1000))
                 .fluidOutputs(Gasoline.getFluid(11000))
                 .buildAndRegister();
 
         // Nitrous Oxide
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(100)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[LV]).duration(100)
                 .fluidInputs(Nitrogen.getFluid(2000))
                 .fluidInputs(Oxygen.getFluid(1000))
                 .circuitMeta(4)
@@ -33,13 +33,13 @@ public class FuelRecipeChains {
                 .buildAndRegister();
 
         // Ethyl Tert-Butyl Ether
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(400)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[HV]).duration(400)
                 .fluidInputs(Butene.getFluid(1000))
                 .fluidInputs(Ethanol.getFluid(1000))
                 .fluidOutputs(EthylTertButylEther.getFluid(1000))
                 .buildAndRegister();
 
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(50)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().volts(VA[EV]).duration(50)
                 .fluidInputs(Gasoline.getFluid(20000))
                 .fluidInputs(Octane.getFluid(2000))
                 .fluidInputs(NitrousOxide.getFluid(2000))
@@ -50,7 +50,7 @@ public class FuelRecipeChains {
                 .buildAndRegister();
 
         // Nitrobenzene
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(160)
+        CHEMICAL_RECIPES.recipeBuilder().volts(VA[HV]).duration(160)
                 .fluidInputs(Benzene.getFluid(5000))
                 .fluidInputs(NitrationMixture.getFluid(2000))
                 .fluidInputs(DistilledWater.getFluid(2000))

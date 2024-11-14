@@ -27,7 +27,7 @@ public class AssemblerRecipeLoader {
                 .inputItem(frameGt, Bronze)
                 .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(BRONZE_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
-                .duration(50).EUt(16).buildAndRegister();
+                .duration(50).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(plate, Steel, 4)
@@ -35,7 +35,7 @@ public class AssemblerRecipeLoader {
                 .inputItem(frameGt, Steel)
                 .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(STEEL_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
-                .duration(50).EUt(16).buildAndRegister();
+                .duration(50).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(plate, StainlessSteel, 4)
@@ -43,7 +43,7 @@ public class AssemblerRecipeLoader {
                 .inputItem(frameGt, StainlessSteel)
                 .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(STAINLESS_STEEL_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
-                .duration(50).EUt(16).buildAndRegister();
+                .duration(50).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(plate, Titanium, 4)
@@ -51,7 +51,7 @@ public class AssemblerRecipeLoader {
                 .inputItem(frameGt, Titanium)
                 .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
-                .duration(50).EUt(16).buildAndRegister();
+                .duration(50).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(plate, TungstenSteel, 4)
@@ -59,7 +59,7 @@ public class AssemblerRecipeLoader {
                 .inputItem(frameGt, TungstenSteel)
                 .circuitMeta(4)
                 .outputs(TURBINE_CASING.getItemVariant(TUNGSTENSTEEL_GEARBOX, ConfigHolder.recipes.casingsPerCraft))
-                .duration(50).EUt(16).buildAndRegister();
+                .duration(50).volts(16).buildAndRegister();
 
         // Other
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -67,7 +67,7 @@ public class AssemblerRecipeLoader {
                 .inputItem(pipeNormalFluid, Titanium, 4)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, ConfigHolder.recipes.casingsPerCraft))
-                .duration(50).EUt(16).buildAndRegister();
+                .duration(50).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(rotor, TungstenSteel, 2)
@@ -75,116 +75,116 @@ public class AssemblerRecipeLoader {
                 .inputs(METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING,
                         ConfigHolder.recipes.casingsPerCraft))
-                .duration(50).EUt(16).buildAndRegister();
+                .duration(50).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(plate, Invar, 2)
                 .inputs(new ItemStack(Items.FLINT))
                 .outputItem(TOOL_LIGHTER_INVAR)
-                .duration(256).EUt(16).buildAndRegister();
+                .duration(256).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(plate, Platinum, 2)
                 .inputs(new ItemStack(Items.FLINT))
                 .outputItem(TOOL_LIGHTER_PLATINUM)
-                .duration(256).EUt(256).buildAndRegister();
+                .duration(256).volts(256).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(dust, Redstone)
                 .inputItem(FLUID_CELL)
                 .outputItem(SPRAY_EMPTY)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
+                .duration(200).volts(VA[ULV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(plate, Tin, 6)
                 .inputItem(SPRAY_EMPTY)
                 .inputItem(paneGlass.name(), 1)
                 .outputItem(FOAM_SPRAYER)
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
+                .duration(200).volts(VA[ULV]).buildAndRegister();
 
         // Matches/lighters recipes
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(bolt, Wood)
                 .inputItem(dustSmall, Phosphorus)
                 .outputItem(TOOL_MATCHES)
-                .duration(16).EUt(16).buildAndRegister();
+                .duration(16).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(bolt, Wood)
                 .inputItem(dustSmall, TricalciumPhosphate)
                 .outputItem(TOOL_MATCHES)
-                .duration(16).EUt(16).buildAndRegister();
+                .duration(16).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(bolt, Wood, 4)
                 .inputItem(dust, Phosphorus)
                 .outputItem(TOOL_MATCHES, 4)
-                .duration(64).EUt(16).buildAndRegister();
+                .duration(64).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(bolt, Wood, 4)
                 .inputItem(dust, TricalciumPhosphate)
                 .outputItem(TOOL_MATCHES, 4)
-                .duration(64).EUt(16).buildAndRegister();
+                .duration(64).volts(16).buildAndRegister();
 
         // Voltage Coils
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ULV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[ULV])
                 .inputItem(stick, IronMagnetic)
                 .inputItem(wireFine, Lead, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_ULV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[LV])
                 .inputItem(stick, IronMagnetic)
                 .inputItem(wireFine, Steel, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_LV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[MV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[MV])
                 .inputItem(stick, SteelMagnetic)
                 .inputItem(wireFine, Aluminium, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_MV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[HV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[HV])
                 .inputItem(stick, SteelMagnetic)
                 .inputItem(wireFine, BlackSteel, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_HV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[EV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[EV])
                 .inputItem(stick, NeodymiumMagnetic)
                 .inputItem(wireFine, Platinum, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_EV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[IV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[IV])
                 .inputItem(stick, NeodymiumMagnetic)
                 .inputItem(wireFine, Iridium, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_IV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LuV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[LuV])
                 .inputItem(stick, SamariumMagnetic)
                 .inputItem(wireFine, Osmiridium, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_LuV.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[ZPM])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[ZPM])
                 .inputItem(stick, SamariumMagnetic)
                 .inputItem(wireFine, Europium, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_ZPM.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[UV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[UV])
                 .inputItem(stick, SamariumMagnetic)
                 .inputItem(wireFine, Tritanium, 16)
                 .circuitMeta(1)
@@ -192,7 +192,7 @@ public class AssemblerRecipeLoader {
                 .buildAndRegister();
 
         // Neutron Reflector
-        ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(VA[MV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(4000).volts(VA[MV])
                 .inputItem(plate, Ruridit)
                 .inputItem(plateDouble, Beryllium, 4)
                 .inputItem(plateDouble, TungstenCarbide, 2)

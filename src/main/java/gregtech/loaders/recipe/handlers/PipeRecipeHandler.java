@@ -67,7 +67,7 @@ public class PipeRecipeHandler {
                 .inputItem(OrePrefix.ring, Materials.Iron, 2)
                 .outputItem(pipePrefix, material)
                 .duration(20)
-                .EUt(VA[ULV])
+                .volts(VA[ULV])
                 .buildAndRegister();
 
         ModHandler.addShapedRecipe(
@@ -88,7 +88,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
                     .outputs(GTUtility.copy(2, pipeStack))
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         }
 
@@ -98,7 +98,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
                     .outputs(GTUtility.copy(2, pipeStack))
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
@@ -106,7 +106,7 @@ public class PipeRecipeHandler {
                         GTUtility.copy(2, pipeStack), " s ", "rXw",
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[LV])
                         .inputItem(plate, material)
                         .circuitMeta(18)
                         .fluidInputs(Glue.getFluid(10))
@@ -129,7 +129,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
                     .outputs(pipeStack)
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         }
 
@@ -139,7 +139,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
                     .outputs(pipeStack)
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
@@ -147,7 +147,7 @@ public class PipeRecipeHandler {
                         pipeStack, "sXr",
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[LV])
                         .inputItem(plate, material)
                         .circuitMeta(12)
                         .fluidInputs(Glue.getFluid(10))
@@ -171,7 +171,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         }
 
@@ -181,7 +181,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
@@ -189,7 +189,7 @@ public class PipeRecipeHandler {
                         pipeStack, "XXX", "s r",
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(VA[LV])
                         .inputItem(plate, material, 3)
                         .circuitMeta(6)
                         .fluidInputs(Glue.getFluid(20))
@@ -213,7 +213,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 6)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         }
 
@@ -223,7 +223,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 6)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
@@ -231,7 +231,7 @@ public class PipeRecipeHandler {
                         pipeStack, "XXX", "s r", "XXX",
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder().duration(100).volts(VA[LV])
                         .inputItem(plate, material, 6)
                         .circuitMeta(2)
                         .fluidInputs(Glue.getFluid(50))
@@ -254,7 +254,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 24)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         }
 
@@ -264,7 +264,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 24)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .volts(6 * getVoltageMultiplier(material))
                     .buildAndRegister();
         } else if (OrePrefix.plateDouble.doGenerateItem(material)) {
             if (ModHandler.isMaterialWood(material)) {
@@ -272,7 +272,7 @@ public class PipeRecipeHandler {
                         pipeStack, "XXX", "s r", "XXX",
                         'X', new UnificationEntry(OrePrefix.plateDouble, material));
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder().duration(100).volts(VA[LV])
                         .inputItem(plateDouble, material, 6)
                         .circuitMeta(24)
                         .fluidInputs(Glue.getFluid(100))
@@ -298,7 +298,7 @@ public class PipeRecipeHandler {
                 .circuitMeta(4)
                 .outputs(quadPipe)
                 .duration(30)
-                .EUt(VA[ULV])
+                .volts(VA[ULV])
                 .buildAndRegister();
     }
 
@@ -314,7 +314,7 @@ public class PipeRecipeHandler {
                 .circuitMeta(9)
                 .outputs(nonuplePipe)
                 .duration(40)
-                .EUt(VA[ULV])
+                .volts(VA[ULV])
                 .buildAndRegister();
     }
 

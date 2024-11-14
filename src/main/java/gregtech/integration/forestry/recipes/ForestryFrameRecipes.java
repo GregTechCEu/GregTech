@@ -87,7 +87,7 @@ public class ForestryFrameRecipes {
                 .inputs(OreDictUnifier.get(centerItem))
                 .fluidInputs(fluid)
                 .outputs(output)
-                .duration(300).EUt(GTValues.VA[GTValues.LV]).buildAndRegister();
+                .duration(300).volts(GTValues.VA[GTValues.LV]).buildAndRegister();
 
         if (ModuleFactory.machineEnabled(MachineUIDs.CARPENTER)) {
             RecipeManagers.carpenterManager.addRecipe(15, fluid.copy(), frame.copy(), output.copy(),

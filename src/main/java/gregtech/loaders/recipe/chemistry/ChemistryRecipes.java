@@ -36,77 +36,77 @@ public class ChemistryRecipes {
                 .circuitMeta(1)
                 .fluidInputs(Acetone.getFluid(100))
                 .fluidOutputs(Ethenone.getFluid(100))
-                .duration(16).EUt(VA[LV]).buildAndRegister();
+                .duration(16).volts(VA[LV]).buildAndRegister();
 
         FLUID_HEATER_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidInputs(DissolvedCalciumAcetate.getFluid(200))
                 .fluidOutputs(Acetone.getFluid(200))
-                .duration(16).EUt(VA[LV]).buildAndRegister();
+                .duration(16).volts(VA[LV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Water.getFluid(1000))
                 .fluidOutputs(Ice.getFluid(1000))
-                .duration(50).EUt(VA[LV]).buildAndRegister();
+                .duration(50).volts(VA[LV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Air.getFluid(4000))
                 .fluidOutputs(LiquidAir.getFluid(4000))
-                .duration(80).EUt(VA[HV]).buildAndRegister();
+                .duration(80).volts(VA[HV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(NetherAir.getFluid(4000))
                 .fluidOutputs(LiquidNetherAir.getFluid(4000))
-                .duration(80).EUt(VA[EV]).buildAndRegister();
+                .duration(80).volts(VA[EV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(EnderAir.getFluid(4000))
                 .fluidOutputs(LiquidEnderAir.getFluid(4000))
-                .duration(80).EUt(VA[IV]).buildAndRegister();
+                .duration(80).volts(VA[IV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Oxygen.getFluid(1000))
                 .fluidOutputs(Oxygen.getFluid(FluidStorageKeys.LIQUID, 1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
+                .duration(240).volts(VA[EV]).buildAndRegister();
 
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Helium.getFluid(1000))
                 .fluidOutputs(Helium.getFluid(FluidStorageKeys.LIQUID, 1000))
-                .duration(240).EUt(VA[EV]).buildAndRegister();
+                .duration(240).volts(VA[EV]).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
                 .inputItem(dust, FerriteMixture)
                 .fluidInputs(Oxygen.getFluid(2000))
                 .outputItem(ingot, NickelZincFerrite)
                 .blastFurnaceTemp(1500)
-                .duration(400).EUt(VA[MV]).buildAndRegister();
+                .duration(400).volts(VA[MV]).buildAndRegister();
 
         FERMENTING_RECIPES.recipeBuilder()
                 .fluidInputs(Biomass.getFluid(100))
                 .fluidOutputs(FermentedBiomass.getFluid(100))
-                .duration(150).EUt(2).buildAndRegister();
+                .duration(150).volts(2).buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
                 .inputItem(ingot, Polycaprolactam)
                 .outputItem(Items.STRING, 32)
-                .duration(80).EUt(48).buildAndRegister();
+                .duration(80).volts(48).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .circuitMeta(1)
                 .fluidOutputs(Air.getFluid(10000))
                 .dimension(0)
-                .duration(200).EUt(16).buildAndRegister();
+                .duration(200).volts(16).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .circuitMeta(2)
                 .fluidOutputs(NetherAir.getFluid(10000))
                 .dimension(-1)
-                .duration(200).EUt(64).buildAndRegister();
+                .duration(200).volts(64).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .circuitMeta(3)
                 .fluidOutputs(EnderAir.getFluid(10000))
                 .dimension(1)
-                .duration(200).EUt(256).buildAndRegister();
+                .duration(200).volts(256).buildAndRegister();
     }
 }

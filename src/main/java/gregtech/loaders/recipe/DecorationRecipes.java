@@ -22,24 +22,21 @@ public class DecorationRecipes {
                 .inputItem(OrePrefix.block, Materials.Concrete, 5)
                 .inputItem(OrePrefix.plate, Materials.Iron, 2)
                 .circuitMeta(8)
-                .outputs(MetaBlocks.METAL_SHEET.getItemVariant(EnumDyeColor.WHITE, 32))
-                .EUt(4).duration(20)
+                .outputs(MetaBlocks.METAL_SHEET.getItemVariant(EnumDyeColor.WHITE, 32)).volts(4).duration(20)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(OrePrefix.block, Materials.Concrete, 5)
                 .inputItem(OrePrefix.plate, Materials.Iron, 4)
                 .circuitMeta(9)
-                .outputs(MetaBlocks.LARGE_METAL_SHEET.getItemVariant(EnumDyeColor.WHITE, 32))
-                .EUt(4).duration(20)
+                .outputs(MetaBlocks.LARGE_METAL_SHEET.getItemVariant(EnumDyeColor.WHITE, 32)).volts(4).duration(20)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .inputItem(OrePrefix.block, Materials.Concrete, 3)
                 .inputItem(OrePrefix.plate, Materials.Rubber, 3)
                 .circuitMeta(8)
-                .outputs(MetaBlocks.STUDS.getItemVariant(EnumDyeColor.BLACK, 32))
-                .EUt(4).duration(20)
+                .outputs(MetaBlocks.STUDS.getItemVariant(EnumDyeColor.BLACK, 32)).volts(4).duration(20)
                 .buildAndRegister();
     }
 
@@ -48,22 +45,20 @@ public class DecorationRecipes {
             CHEMICAL_BATH_RECIPES.recipeBuilder()
                     .inputs(MetaBlocks.METAL_SHEET.getItemVariant(EnumDyeColor.WHITE))
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(9))
-                    .outputs(MetaBlocks.METAL_SHEET.getItemVariant(EnumDyeColor.values()[i]))
-                    .EUt(2).duration(10)
+                    .outputs(MetaBlocks.METAL_SHEET.getItemVariant(EnumDyeColor.values()[i])).volts(2).duration(10)
                     .buildAndRegister();
 
             CHEMICAL_BATH_RECIPES.recipeBuilder()
                     .inputs(MetaBlocks.LARGE_METAL_SHEET.getItemVariant(EnumDyeColor.WHITE))
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(9))
-                    .outputs(MetaBlocks.LARGE_METAL_SHEET.getItemVariant(EnumDyeColor.values()[i]))
-                    .EUt(2).duration(10)
+                    .outputs(MetaBlocks.LARGE_METAL_SHEET.getItemVariant(EnumDyeColor.values()[i])).volts(2)
+                    .duration(10)
                     .buildAndRegister();
 
             CHEMICAL_BATH_RECIPES.recipeBuilder()
                     .inputs(MetaBlocks.STUDS.getItemVariant(EnumDyeColor.BLACK))
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(9))
-                    .outputs(MetaBlocks.STUDS.getItemVariant(EnumDyeColor.values()[i]))
-                    .EUt(2).duration(10)
+                    .outputs(MetaBlocks.STUDS.getItemVariant(EnumDyeColor.values()[i])).volts(2).duration(10)
                     .buildAndRegister();
         }
     }

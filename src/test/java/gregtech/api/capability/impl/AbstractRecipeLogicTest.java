@@ -121,7 +121,7 @@ public class AbstractRecipeLogicTest {
                 2,
                 3,
                 2,
-                new SimpleRecipeBuilder().EUt(30),
+                new SimpleRecipeBuilder().volts(30),
                 false);
 
         MetaTileEntity at = MetaTileEntities.registerMetaTileEntity(TEST_ID,
@@ -135,7 +135,7 @@ public class AbstractRecipeLogicTest {
         map.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(testRecipeEUt).duration(testRecipeDuration)
+                .volts(testRecipeEUt).duration(testRecipeDuration)
                 .buildAndRegister();
 
         TEST_ID++;

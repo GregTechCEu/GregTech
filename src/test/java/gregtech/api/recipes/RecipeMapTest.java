@@ -45,32 +45,32 @@ public class RecipeMapTest {
                 2,
                 3,
                 2,
-                new SimpleRecipeBuilder().EUt(30),
+                new SimpleRecipeBuilder().volts(30),
                 false);
 
         map.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1)
+                .volts(1).duration(1)
                 .buildAndRegister();
 
         map.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1)
+                .volts(1).duration(1)
                 .buildAndRegister();
 
         map.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(2).duration(1)
+                .volts(2).duration(1)
                 .buildAndRegister();
 
         map.recipeBuilder()
                 .inputs(new ItemStack(Blocks.STONE))
                 .notConsumable(FluidRegistry.WATER)
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1)
+                .volts(1).duration(1)
                 .buildAndRegister();
 
         map.recipeBuilder()
@@ -78,7 +78,7 @@ public class RecipeMapTest {
                 .fluidInputs(Naphtha.getFluid(3000))
                 .fluidInputs(NitrogenDioxide.getFluid(1000))
                 .fluidOutputs(Epoxy.getFluid(288))
-                .duration(240).EUt(30).buildAndRegister();
+                .duration(240).volts(30).buildAndRegister();
     }
 
     @Test
@@ -136,7 +136,7 @@ public class RecipeMapTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1);
+                .volts(1).duration(1);
         Recipe rec = (Recipe) r.build().getResult();
 
         MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(
@@ -159,7 +159,7 @@ public class RecipeMapTest {
                 .fluidInputs(new FluidStack(FluidRegistry.getFluid("water"), 1000))
                 .fluidInputs(new FluidStack(FluidRegistry.getFluid("water"), 1001))
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1);
+                .volts(1).duration(1);
         Recipe rec = (Recipe) r.build().getResult();
 
         MapFluidIngredient ing0FromGTRecipeInput = new MapFluidIngredient(rec.getFluidIngredients().get(0));
@@ -178,7 +178,7 @@ public class RecipeMapTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .inputItem("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1);
+                .volts(1).duration(1);
 
         MatcherAssert.assertThat(r.itemInputs.get(0), new IsNot<>(equalTo(r.itemInputs.get(1))));
         MatcherAssert.assertThat(r.itemInputs.get(1), new IsNot<>(equalTo(r.itemInputs.get(2))));
@@ -191,7 +191,7 @@ public class RecipeMapTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .inputItem("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1);
+                .volts(1).duration(1);
         Recipe rec = (Recipe) r.build().getResult();
 
         MapItemStackIngredient ing0FromGTRecipeInput = new MapItemStackIngredient(
@@ -215,7 +215,7 @@ public class RecipeMapTest {
                 .inputs(new ItemStack(Blocks.STONE, 2))
                 .inputItem("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
-                .EUt(1).duration(1);
+                .volts(1).duration(1);
 
         Recipe rec = (Recipe) r.build().getResult();
 
@@ -263,7 +263,7 @@ public class RecipeMapTest {
         recipeMap.recipeBuilder()
                 .inputs(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, GTValues.W))
                 .outputs(new ItemStack(Blocks.COBBLESTONE, 1))
-                .EUt(1).duration(1)
+                .volts(1).duration(1)
                 .buildAndRegister();
 
         for (int i = 0; i < 16; i++) { // Blocks.STAINED_HARDENED_CLAY has 16 variants

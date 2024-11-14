@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+// TODO
 @ApiStatus.Internal
 public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
 
@@ -70,7 +71,7 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
                                                                          // matches
                         .inputs(GTUtility.copy(1, itemStack))
                         .outputs(output)
-                        .duration(40).EUt(4)
+                        .duration(40).volts(4)
                         .build().getResult();
             }
             return null;

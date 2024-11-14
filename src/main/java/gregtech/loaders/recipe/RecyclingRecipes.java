@@ -113,8 +113,7 @@ public class RecyclingRecipes {
         RecipeBuilder<SimpleRecipeBuilder> recipe = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
-                .duration(calculateDuration(outputs))
-                .EUt(2 * multiplier)
+                .duration(calculateDuration(outputs)).volts(2L * multiplier)
                 .category(RecipeCategories.MACERATOR_RECYCLING);
 
         cleanInputNBT(input, recipe);
@@ -144,7 +143,7 @@ public class RecyclingRecipes {
                     .inputs(input.copy())
                     .fluidOutputs(m.getFluid((int) (ms.amount * L / M)))
                     .duration((int) Math.max(1, ms.amount * ms.material.getMass() / M))
-                    .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                    .volts(GTValues.VA[GTValues.LV] * multiplier)
                     .category(RecipeCategories.EXTRACTOR_RECYCLING)
                     .buildAndRegister();
 
@@ -175,8 +174,7 @@ public class RecyclingRecipes {
         RecipeBuilder<?> extractorBuilder = RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .fluidOutputs(fluidMs.material.getFluid((int) (fluidMs.amount * L / M)))
-                .duration((int) duration)
-                .EUt(GTValues.VA[GTValues.LV] * multiplier)
+                .duration((int) duration).volts(GTValues.VA[GTValues.LV] * multiplier)
                 .category(RecipeCategories.EXTRACTOR_RECYCLING);
 
         // Null check the Item before adding it to the Builder.
@@ -215,7 +213,7 @@ public class RecyclingRecipes {
                             .inputs(input.copy())
                             .outputs(output)
                             .duration(calculateDuration(Collections.singletonList(output)))
-                            .EUt(GTValues.VA[GTValues.LV]);
+                            .volts(GTValues.VA[GTValues.LV]);
                 } else {
                     // Finalize the output List
                     List<ItemStack> outputs = finalizeOutputs(
@@ -226,8 +224,7 @@ public class RecyclingRecipes {
                     builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                             .inputs(input.copy())
                             .outputs(outputs)
-                            .duration(calculateDuration(outputs))
-                            .EUt(GTValues.VA[GTValues.LV]);
+                            .duration(calculateDuration(outputs)).volts(GTValues.VA[GTValues.LV]);
                 }
 
                 // separate special arc smelting recipes into the regular category
@@ -261,8 +258,7 @@ public class RecyclingRecipes {
         RecipeBuilder<SimpleRecipeBuilder> builder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                 .inputs(input.copy())
                 .outputs(outputs)
-                .duration(calculateDuration(outputs))
-                .EUt(GTValues.VA[GTValues.LV]);
+                .duration(calculateDuration(outputs)).volts(GTValues.VA[GTValues.LV]);
 
         if (needsRecyclingCategory(prefix, ms, outputs)) {
             // all other recipes are recycling here

@@ -46,7 +46,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                                 .inputs(stack)
                                 .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                                 .outputs(outputStack)
-                                .duration(DURATION).EUt(EUT).build().getResult();
+                                .duration(DURATION).volts(EUT).build().getResult();
                     }
                 }
             }
@@ -68,7 +68,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleApiculture.getItems().beeDroneGE.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
 
             outputStack = ModuleApiculture.getItems().beePrincessGE.getItemStack();
             outputStack.setTagCompound(BeeDefinition.COMMON.getIndividual().writeToNBT(new NBTTagCompound()));
@@ -77,7 +77,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleApiculture.getItems().beePrincessGE.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
 
             outputStack = ModuleApiculture.getItems().beeQueenGE.getItemStack();
             outputStack.setTagCompound(BeeDefinition.COMMON.getIndividual().writeToNBT(new NBTTagCompound()));
@@ -86,7 +86,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleApiculture.getItems().beeQueenGE.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
 
             outputStack = ModuleApiculture.getItems().beeLarvaeGE.getItemStack();
             outputStack.setTagCompound(BeeDefinition.COMMON.getIndividual().writeToNBT(new NBTTagCompound()));
@@ -95,7 +95,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleApiculture.getItems().beeLarvaeGE.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
         }
 
         if (Mods.ForestryArboriculture.isModLoaded()) {
@@ -106,7 +106,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleArboriculture.getItems().sapling.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
 
             outputStack = ModuleArboriculture.getItems().pollenFertile.getItemStack();
             outputStack.setTagCompound(TreeDefinition.Oak.getIndividual().writeToNBT(new NBTTagCompound()));
@@ -115,7 +115,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleArboriculture.getItems().pollenFertile.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
         }
 
         if (Mods.ForestryLepidopterology.isModLoaded()) {
@@ -127,7 +127,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleLepidopterology.getItems().butterflyGE.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
 
             outputStack = ModuleLepidopterology.getItems().serumGE.getItemStack();
             outputStack
@@ -137,7 +137,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleLepidopterology.getItems().serumGE.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
 
             outputStack = ModuleLepidopterology.getItems().caterpillarGE.getItemStack();
             outputStack
@@ -147,7 +147,7 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
                     .inputs(ModuleLepidopterology.getItems().caterpillarGE.getWildcard())
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))
                     .outputs(outputStack)
-                    .duration(DURATION).EUt(EUT).build().getResult());
+                    .duration(DURATION).volts(EUT).build().getResult());
         }
         return recipes;
     }

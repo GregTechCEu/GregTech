@@ -12,8 +12,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Deuterium.getFluid(125))
                 .fluidInputs(Materials.Tritium.getFluid(125))
                 .fluidOutputs(Materials.Helium.getPlasma(125))
-                .duration(16)
-                .EUt(4096)
+                .duration(16).volts(4096)
                 .EUToStart(40_000_000)
                 .buildAndRegister();
 
@@ -21,8 +20,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Carbon.getFluid(16))
                 .fluidInputs(Materials.Helium3.getFluid(125))
                 .fluidOutputs(Materials.Oxygen.getPlasma(125))
-                .duration(32)
-                .EUt(4096)
+                .duration(32).volts(4096)
                 .EUToStart(180_000_000)
                 .buildAndRegister();
 
@@ -30,8 +28,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Beryllium.getFluid(16))
                 .fluidInputs(Materials.Deuterium.getFluid(375))
                 .fluidOutputs(Materials.Nitrogen.getPlasma(125))
-                .duration(16)
-                .EUt(16384)
+                .duration(16).volts(16384)
                 .EUToStart(280_000_000)
                 .buildAndRegister();
 
@@ -39,8 +36,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Silicon.getFluid(16))
                 .fluidInputs(Materials.Magnesium.getFluid(16))
                 .fluidOutputs(Materials.Iron.getPlasma(144))
-                .duration(32)
-                .EUt(VA[IV])
+                .duration(32).volts(VA[IV])
                 .EUToStart(300_000_000)
                 .buildAndRegister();
 
@@ -48,8 +44,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Potassium.getFluid(16))
                 .fluidInputs(Materials.Fluorine.getFluid(125))
                 .fluidOutputs(Materials.Nickel.getPlasma(144))
-                .duration(16)
-                .EUt(VA[LuV])
+                .duration(16).volts(VA[LuV])
                 .EUToStart(480_000_000)
                 .buildAndRegister();
 
@@ -57,8 +52,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Carbon.getFluid(16))
                 .fluidInputs(Materials.Magnesium.getFluid(16))
                 .fluidOutputs(Materials.Argon.getPlasma(125))
-                .duration(32)
-                .EUt(24576)
+                .duration(32).volts(24576)
                 .EUToStart(180_000_000)
                 .buildAndRegister();
 
@@ -66,8 +60,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Plutonium241.getFluid(144))
                 .fluidInputs(Materials.Hydrogen.getFluid(2000))
                 .fluidOutputs(Materials.Americium.getPlasma(144))
-                .duration(64)
-                .EUt(98304)
+                .duration(64).volts(98304)
                 .EUToStart(500_000_000)
                 .buildAndRegister();
 
@@ -75,8 +68,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Silver.getFluid(144))
                 .fluidInputs(Materials.Helium3.getFluid(375))
                 .fluidOutputs(Materials.Tin.getPlasma(144))
-                .duration(16)
-                .EUt(49152)
+                .duration(16).volts(49152)
                 .EUToStart(280_000_000)
                 .buildAndRegister();
 
@@ -84,8 +76,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Neodymium.getFluid(16))
                 .fluidInputs(Materials.Hydrogen.getFluid(375))
                 .fluidOutputs(Materials.Europium.getFluid(16))
-                .duration(64)
-                .EUt(24576)
+                .duration(64).volts(24576)
                 .EUToStart(150_000_000)
                 .buildAndRegister();
 
@@ -93,8 +84,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Lutetium.getFluid(16))
                 .fluidInputs(Materials.Chrome.getFluid(16))
                 .fluidOutputs(Materials.Americium.getFluid(16))
-                .duration(64)
-                .EUt(49152)
+                .duration(64).volts(49152)
                 .EUToStart(200_000_000)
                 .buildAndRegister();
 
@@ -102,8 +92,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Americium.getFluid(128))
                 .fluidInputs(Materials.Naquadria.getFluid(128))
                 .fluidOutputs(Materials.Neutronium.getFluid(32))
-                .duration(200)
-                .EUt(98304)
+                .duration(200).volts(98304)
                 .EUToStart(600_000_000)
                 .buildAndRegister();
 
@@ -111,8 +100,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Silver.getFluid(16))
                 .fluidInputs(Materials.Copper.getFluid(16))
                 .fluidOutputs(Materials.Osmium.getFluid(16))
-                .duration(64)
-                .EUt(24578)
+                .duration(64).volts(24578)
                 .EUToStart(150_000_000)
                 .buildAndRegister();
 
@@ -120,8 +108,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Mercury.getFluid(125))
                 .fluidInputs(Materials.Magnesium.getFluid(16))
                 .fluidOutputs(Materials.Uranium235.getFluid(16))
-                .duration(128)
-                .EUt(24576)
+                .duration(128).volts(24576)
                 .EUToStart(140_000_000)
                 .buildAndRegister();
 
@@ -129,8 +116,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Gold.getFluid(16))
                 .fluidInputs(Materials.Aluminium.getFluid(16))
                 .fluidOutputs(Materials.Uranium.getFluid(16))
-                .duration(128)
-                .EUt(24576)
+                .duration(128).volts(24576)
                 .EUToStart(140_000_000)
                 .buildAndRegister();
 
@@ -138,8 +124,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Xenon.getFluid(125))
                 .fluidInputs(Materials.Zinc.getFluid(16))
                 .fluidOutputs(Materials.Plutonium239.getFluid(16))
-                .duration(128)
-                .EUt(49152)
+                .duration(128).volts(49152)
                 .EUToStart(120_000_000)
                 .buildAndRegister();
 
@@ -147,8 +132,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Krypton.getFluid(125))
                 .fluidInputs(Materials.Cerium.getFluid(16))
                 .fluidOutputs(Materials.Plutonium241.getFluid(16))
-                .duration(128)
-                .EUt(49152)
+                .duration(128).volts(49152)
                 .EUToStart(240_000_000)
                 .buildAndRegister();
 
@@ -156,8 +140,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Hydrogen.getFluid(125))
                 .fluidInputs(Materials.Vanadium.getFluid(16))
                 .fluidOutputs(Materials.Chrome.getFluid(16))
-                .duration(64)
-                .EUt(24576)
+                .duration(64).volts(24576)
                 .EUToStart(140_000_000)
                 .buildAndRegister();
 
@@ -165,8 +148,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Gallium.getFluid(16))
                 .fluidInputs(Materials.Radon.getFluid(125))
                 .fluidOutputs(Materials.Duranium.getFluid(16))
-                .duration(32)
-                .EUt(16384)
+                .duration(32).volts(16384)
                 .EUToStart(140_000_000)
                 .buildAndRegister();
 
@@ -174,8 +156,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Titanium.getFluid(48))
                 .fluidInputs(Materials.Duranium.getFluid(32))
                 .fluidOutputs(Materials.Tritanium.getFluid(16))
-                .duration(16)
-                .EUt(VA[LuV])
+                .duration(16).volts(VA[LuV])
                 .EUToStart(200_000_000)
                 .buildAndRegister();
 
@@ -183,8 +164,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Gold.getFluid(16))
                 .fluidInputs(Materials.Mercury.getFluid(16))
                 .fluidOutputs(Materials.Radon.getFluid(125))
-                .duration(64)
-                .EUt(VA[LuV])
+                .duration(64).volts(VA[LuV])
                 .EUToStart(200_000_000)
                 .buildAndRegister();
 
@@ -192,8 +172,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Silver.getFluid(144))
                 .fluidInputs(Materials.Lithium.getFluid(144))
                 .fluidOutputs(Materials.Indium.getFluid(144))
-                .duration(16)
-                .EUt(24576)
+                .duration(16).volts(24576)
                 .EUToStart(280_000_000)
                 .buildAndRegister();
 
@@ -201,8 +180,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.NaquadahEnriched.getFluid(16))
                 .fluidInputs(Materials.Radon.getFluid(125))
                 .fluidOutputs(Materials.Naquadria.getFluid(4))
-                .duration(64)
-                .EUt(49152)
+                .duration(64).volts(49152)
                 .EUToStart(400_000_000)
                 .buildAndRegister();
 
@@ -210,8 +188,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Lanthanum.getFluid(16))
                 .fluidInputs(Materials.Silicon.getFluid(16))
                 .fluidOutputs(Materials.Lutetium.getFluid(16))
-                .duration(16)
-                .EUt(VA[IV])
+                .duration(16).volts(VA[IV])
                 .EUToStart(80_000_000)
                 .buildAndRegister();
 
@@ -219,8 +196,7 @@ public class FusionLoader {
                 .fluidInputs(Materials.Arsenic.getFluid(32))
                 .fluidInputs(Materials.Ruthenium.getFluid(16))
                 .fluidOutputs(Materials.Darmstadtium.getFluid(16))
-                .duration(32)
-                .EUt(VA[LuV])
+                .duration(32).volts(VA[LuV])
                 .EUToStart(200_000_000)
                 .buildAndRegister();
     }

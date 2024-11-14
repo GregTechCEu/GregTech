@@ -303,7 +303,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> BREWING_RECIPES = new RecipeMapBuilder<>("brewery",
-            new SimpleRecipeBuilder().duration(128).EUt(4))
+            new SimpleRecipeBuilder().duration(128).volts(4))
                     .itemInputs(1)
                     .fluidInputs(1)
                     .fluidOutputs(1)
@@ -364,7 +364,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CENTRIFUGE_RECIPES = new RecipeMapBuilder<>("centrifuge",
-            new SimpleRecipeBuilder().EUt(5))
+            new SimpleRecipeBuilder().volts(5))
                     .itemInputs(2)
                     .itemOutputs(6)
                     .fluidInputs(1)
@@ -426,7 +426,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMapBuilder<>("chemical_reactor",
-            new SimpleRecipeBuilder().EUt(VA[LV]))
+            new SimpleRecipeBuilder().volts(VA[LV]))
                     .itemInputs(2)
                     .itemOutputs(2)
                     .fluidInputs(3)
@@ -537,7 +537,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> COMPRESSOR_RECIPES = new RecipeMapBuilder<>("compressor",
-            new SimpleRecipeBuilder().duration(200).EUt(2))
+            new SimpleRecipeBuilder().duration(200).volts(2))
                     .itemInputs(1)
                     .itemOutputs(1)
                     .itemSlotOverlay(GuiTextures.COMPRESSOR_OVERLAY, false)
@@ -605,7 +605,7 @@ public final class RecipeMaps {
                     .onBuild(gregtechId("cutter_fluid"), recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
                             int duration = recipeBuilder.getDuration();
-                            long eut = recipeBuilder.getEUt();
+                            long eut = recipeBuilder.getVoltage();
                             recipeBuilder
                                     .copy()
                                     .fluidInputs(Materials.Water.getFluid(GTUtility.safeCastLongToInt(Math.max(4,
@@ -666,7 +666,7 @@ public final class RecipeMaps {
                     .fluidInputs(1)
                     .fluidOutputs(12)
                     .ui(DistillationTowerUI::new)
-                    .onBuild(GTUtility.gregtechId("distillation_universal"), DistillationTowerBuildAction.INSTANCE)
+                    .onBuild(DistillationTowerBuildAction.LOC, DistillationTowerBuildAction.INSTANCE)
                     .sound(GTSoundEvents.CHEMICAL_REACTOR)
                     .build();
 
@@ -767,7 +767,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> EXTRACTOR_RECIPES = new RecipeMapBuilder<>("extractor",
-            new SimpleRecipeBuilder().duration(400).EUt(2))
+            new SimpleRecipeBuilder().duration(400).volts(2))
                     .itemInputs(1)
                     .itemOutputs(1)
                     .fluidOutputs(1)
@@ -814,7 +814,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FERMENTING_RECIPES = new RecipeMapBuilder<>("fermenter",
-            new SimpleRecipeBuilder().EUt(2))
+            new SimpleRecipeBuilder().volts(2))
                     .itemInputs(1)
                     .itemOutputs(1)
                     .fluidInputs(1)
@@ -1020,7 +1020,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<ImplosionRecipeBuilder> IMPLOSION_RECIPES = new RecipeMapBuilder<>(
-            "implosion_compressor", new ImplosionRecipeBuilder().duration(20).EUt(VA[LV]))
+            "implosion_compressor", new ImplosionRecipeBuilder().duration(20).volts(VA[LV]))
                     .itemInputs(3)
                     .itemOutputs(2)
                     .itemSlotOverlay(GuiTextures.IMPLOSION_OVERLAY_1, false, true)
@@ -1051,7 +1051,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMapBuilder<>(
-            "large_chemical_reactor", new SimpleRecipeBuilder().EUt(VA[LV]))
+            "large_chemical_reactor", new SimpleRecipeBuilder().volts(VA[LV]))
                     .itemInputs(3)
                     .itemOutputs(3)
                     .fluidInputs(5)
@@ -1130,7 +1130,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMapBuilder<>("macerator",
-            new SimpleRecipeBuilder().duration(150).EUt(2))
+            new SimpleRecipeBuilder().duration(150).volts(2))
                     .itemInputs(1)
                     .itemOutputs(4)
                     .itemSlotOverlay(GuiTextures.CRUSHED_ORE_OVERLAY, false)
@@ -1200,7 +1200,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMapBuilder<>("ore_washer",
-            new SimpleRecipeBuilder().duration(400).EUt(16))
+            new SimpleRecipeBuilder().duration(400).volts(16))
                     .itemInputs(2)
                     .itemOutputs(3)
                     .fluidInputs(1)
@@ -1227,7 +1227,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMapBuilder<>("packer",
-            new SimpleRecipeBuilder().EUt(12).duration(10))
+            new SimpleRecipeBuilder().volts(12).duration(10))
                     .itemInputs(2)
                     .itemOutputs(2)
                     .itemSlotOverlay(GuiTextures.BOX_OVERLAY, false, true)
@@ -1412,7 +1412,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> THERMAL_CENTRIFUGE_RECIPES = new RecipeMapBuilder<>(
-            "thermal_centrifuge", new SimpleRecipeBuilder().duration(400).EUt(30))
+            "thermal_centrifuge", new SimpleRecipeBuilder().duration(400).volts(30))
                     .itemInputs(1)
                     .itemOutputs(3)
                     .itemSlotOverlay(GuiTextures.CRUSHED_ORE_OVERLAY, false)
@@ -1436,7 +1436,7 @@ public final class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> VACUUM_RECIPES = new RecipeMapBuilder<>("vacuum_freezer",
-            new SimpleRecipeBuilder().EUt(VA[MV]))
+            new SimpleRecipeBuilder().volts(VA[MV]))
                     .itemInputs(1)
                     .itemOutputs(1)
                     .fluidInputs(2)

@@ -220,7 +220,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
@@ -273,7 +273,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
@@ -325,7 +325,7 @@ public class IParallelableRecipeLogicTest {
                 .blastFurnaceTemp(1000)
                 .fluidInputs(Materials.Toluene.getFluid(1000), Materials.RawGasoline.getFluid(10000))
                 .fluidOutputs(Materials.Gasoline.getFluid(11000))
-                .EUt(480).duration(10)
+                .volts(480).duration(10)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
@@ -378,7 +378,7 @@ public class IParallelableRecipeLogicTest {
                 .blastFurnaceTemp(1000)
                 .fluidInputs(Materials.Toluene.getFluid(1000), Materials.RawGasoline.getFluid(10000))
                 .fluidOutputs(Materials.Gasoline.getFluid(11000))
-                .EUt(480).duration(10)
+                .volts(480).duration(10)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
@@ -431,7 +431,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .buildAndRegister();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.APPEND_ITEMS);
@@ -478,7 +478,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .buildAndRegister();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.APPEND_ITEMS);
@@ -555,7 +555,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
@@ -630,7 +630,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
@@ -695,7 +695,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY, true);
@@ -762,7 +762,7 @@ public class IParallelableRecipeLogicTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .blastFurnaceTemp(1000)
-                .EUt(30).duration(100)
+                .volts(30).duration(100)
                 .build().getResult();
 
         IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY, true);
@@ -836,7 +836,7 @@ public class IParallelableRecipeLogicTest {
         @Override
         public void applyParallelBonus(@NotNull RecipeBuilder<?> builder) {
             if (enableBonusOverride) {
-                builder.EUt(1).duration(50);
+                builder.volts(1).duration(50);
             }
         }
     }

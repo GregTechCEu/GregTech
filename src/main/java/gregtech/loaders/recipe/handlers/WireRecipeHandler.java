@@ -72,7 +72,7 @@ public class WireRecipeHandler {
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
                 .outputItem(wireGtSingle, material, 2)
                 .duration((int) material.getMass() * 2)
-                .EUt(6 * getVoltageMultiplier(material))
+                .volts(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
@@ -80,7 +80,7 @@ public class WireRecipeHandler {
                 .circuitMeta(1)
                 .outputItem(wireGtSingle, material, 2)
                 .duration((int) material.getMass())
-                .EUt(getVoltageMultiplier(material))
+                .volts(getVoltageMultiplier(material))
                 .buildAndRegister();
 
         for (OrePrefix wireSize : wireSizes) {
@@ -90,7 +90,7 @@ public class WireRecipeHandler {
                     .circuitMeta(multiplier * 2)
                     .outputItem(wireSize, material)
                     .duration((int) (material.getMass() * multiplier))
-                    .EUt(getVoltageMultiplier(material))
+                    .volts(getVoltageMultiplier(material))
                     .buildAndRegister();
         }
 
@@ -117,7 +117,7 @@ public class WireRecipeHandler {
 
         // Rubber Recipe (ULV-EV cables)
         if (voltageTier <= GTValues.EV) {
-            AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+            AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().volts(VA[ULV]).duration(100)
                     .inputItem(wirePrefix, material)
                     .outputItem(cablePrefix, material)
                     .fluidInputs(Rubber.getFluid(GTValues.L * insulationAmount));
@@ -129,7 +129,7 @@ public class WireRecipeHandler {
         }
 
         // Silicone Rubber Recipe (all cables)
-        AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+        AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().volts(VA[ULV]).duration(100)
                 .inputItem(wirePrefix, material)
                 .outputItem(cablePrefix, material);
 
@@ -147,7 +147,7 @@ public class WireRecipeHandler {
                 .buildAndRegister();
 
         // Styrene Butadiene Rubber Recipe (all cables)
-        builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
+        builder = ASSEMBLER_RECIPES.recipeBuilder().volts(VA[ULV]).duration(100)
                 .inputItem(wirePrefix, material)
                 .outputItem(cablePrefix, material);
 
@@ -181,7 +181,7 @@ public class WireRecipeHandler {
                 .inputItem(wirePrefix, material)
                 .inputItem(plate, Rubber, insulationAmount)
                 .outputItem(cablePrefix, material)
-                .duration(100).EUt(VA[ULV])
+                .duration(100).volts(VA[ULV])
                 .buildAndRegister();
     }
 
