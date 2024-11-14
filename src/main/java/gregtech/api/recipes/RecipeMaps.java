@@ -14,11 +14,11 @@ import gregtech.api.recipes.builders.FuelRecipeBuilder;
 import gregtech.api.recipes.builders.FusionRecipeBuilder;
 import gregtech.api.recipes.builders.ImplosionRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.machines.RecipeLookupFluidCanner;
+import gregtech.api.recipes.machines.RecipeLookupFormingPress;
 import gregtech.api.recipes.machines.RecipeLookupFurnace;
 import gregtech.api.recipes.machines.RecipeLookupSolidFuels;
 import gregtech.api.recipes.machines.RecipeMapAssemblyLine;
-import gregtech.api.recipes.machines.RecipeMapFluidCanner;
-import gregtech.api.recipes.machines.RecipeMapFormingPress;
 import gregtech.api.recipes.machines.RecipeMapResearchStation;
 import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.recipes.ui.RecipeMapUI;
@@ -330,7 +330,7 @@ public final class RecipeMaps {
      * It will empty or fill any fluid handler, so there is no need to add explicit recipes for the fluid handlers.
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CANNER_RECIPES = new RecipeMapFluidCanner("canner",
+    public static final RecipeMap<SimpleRecipeBuilder> CANNER_RECIPES = RecipeLookupFluidCanner.createMap("canner",
             new SimpleRecipeBuilder(), recipeMap -> {
 
                 RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, true, true, true, true, false);
@@ -908,7 +908,7 @@ public final class RecipeMaps {
      * </pre>
      */
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FORMING_PRESS_RECIPES = new RecipeMapFormingPress(
+    public static final RecipeMap<SimpleRecipeBuilder> FORMING_PRESS_RECIPES = RecipeLookupFormingPress.createMap(
             "forming_press", new SimpleRecipeBuilder(), FormingPressUI::new);
 
     /**

@@ -2,6 +2,8 @@ package gregtech.integration.forestry.bees;
 
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.lookup.property.PowerSupplyProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.util.Mods;
 
@@ -30,8 +32,9 @@ public class ForestryScannerLogic implements IScannerRecipeMap.ICustomScannerLog
     private static final int HONEY_AMOUNT = 100;
 
     @Override
-    public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
-                                     boolean exactVoltage) {
+    public @Nullable Recipe createCustomRecipe(@Nullable PropertySet properties, List<ItemStack> inputs,
+                                               List<FluidStack> fluidInputs) {
+        if (properties != null && properties.getDefaultable(PowerSupplyProperty.EMPTY).voltage() < EUT) return null;
         FluidStack fluidStack = fluidInputs.get(0);
         if (fluidStack != null && fluidStack.containsFluid(Fluids.FOR_HONEY.getFluid(HONEY_AMOUNT))) {
             for (ItemStack stack : inputs) {

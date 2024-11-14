@@ -271,6 +271,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     public @NotNull RecipeMapBuilder<B> lookup(AbstractRecipeLookup lookup) {
         this.lookup = lookup;
+        return this;
     }
 
     /**

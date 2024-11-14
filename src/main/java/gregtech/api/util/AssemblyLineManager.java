@@ -7,6 +7,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
+import gregtech.api.recipes.lookup.property.PowerSupplyProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapScanner;
 import gregtech.api.recipes.properties.impl.ScanProperty;
@@ -178,9 +180,10 @@ public final class AssemblyLineManager {
         private static final int DURATION = 100;
 
         @Override
-        public Recipe createCustomRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs,
-                                         boolean exactVoltage) {
-            if (inputs.size() > 1) {
+        public @Nullable Recipe createCustomRecipe(@Nullable PropertySet properties, List<ItemStack> inputs,
+                                                   List<FluidStack> fluidInputs) {
+            if (inputs.size() > 1 &&
+                    (properties == null || properties.getDefaultable(PowerSupplyProperty.EMPTY).voltage() >= EUT)) {
                 // try the data recipe both ways, prioritizing overwriting the first
                 Recipe recipe = createDataRecipe(inputs.get(0), inputs.get(1));
                 if (recipe != null) return recipe;

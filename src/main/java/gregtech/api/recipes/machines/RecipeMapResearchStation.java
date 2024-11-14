@@ -15,6 +15,6 @@ public class RecipeMapResearchStation<R extends RecipeBuilder<R>> extends Recipe
     public RecipeMapResearchStation(@NotNull String unlocalizedName, @NotNull R defaultRecipeBuilder,
                                     @NotNull RecipeMapUIFunction recipeMapUI) {
         super(unlocalizedName, defaultRecipeBuilder, recipeMapUI, 2, 1, 0, 0);
-        setSound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.COMPUTATION);
+        setSound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.COMPUTATION); // you just lost the game
     }
 }
