@@ -6,7 +6,9 @@ import gregtech.api.recipes.RecipeMap;
 
 public class FuelRecipeBuilder extends RecipeBuilder<FuelRecipeBuilder> {
 
-    public FuelRecipeBuilder() {}
+    public FuelRecipeBuilder() {
+        setGenerating();
+    }
 
     public FuelRecipeBuilder(Recipe recipe, RecipeMap<FuelRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);

@@ -281,8 +281,8 @@ public class ToolRecipeHandler {
 
             if (material.hasFlag(GENERATE_GEAR)) {
                 LATHE_RECIPES.recipeBuilder()
-                        .input(OrePrefix.gear, material)
-                        .output(toolPrefix, material)
+                        .inputItem(OrePrefix.gear, material)
+                        .outputItem(toolPrefix, material)
                         .duration((int) material.getMass() * 4)
                         .EUt(8 * voltageMultiplier)
                         .buildAndRegister();

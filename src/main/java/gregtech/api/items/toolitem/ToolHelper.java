@@ -629,11 +629,10 @@ public final class ToolHelper {
             ItemStack silktouchDrop = getSilkTouchDrop(state);
             if (!silktouchDrop.isEmpty()) {
                 // Stack lists can be immutable going into Recipe#matches barring no rewrites
-                List<ItemStack> dropAsList = Collections.singletonList(silktouchDrop);
                 // Search for forge hammer recipes from all drops individually (only LV or under)
-                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(V[LV], dropAsList,
+                Recipe hammerRecipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(V[LV], Collections.singletonList(silktouchDrop),
                         Collections.emptyList(), false);
-                if (hammerRecipe != null && hammerRecipe.matches(true, dropAsList, Collections.emptyList())) {
+                if (hammerRecipe != null && hammerRecipe.getItemIngredients().stream().anyMatch(i -> i.matches(silktouchDrop))) {
                     drops.clear();
                     OrePrefix prefix = OreDictUnifier.getPrefix(silktouchDrop);
                     if (prefix == null) {

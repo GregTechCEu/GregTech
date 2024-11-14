@@ -26,6 +26,18 @@ public final class OreItemIngredient implements GTItemIngredient {
     private final NBTMatcher matcher;
     private final long count;
 
+    public static OreItemIngredient of(String ore) {
+        return IngredientCache.getOreIngredient(ore, 1);
+    }
+
+    public static OreItemIngredient of(String ore, long count) {
+        return IngredientCache.getOreIngredient(ore, count);
+    }
+
+    public static OreItemIngredient of(String ore, long count, @Nullable NBTMatcher matcher) {
+        return IngredientCache.getOreIngredient(ore, count, matcher);
+    }
+
     OreItemIngredient(OreItemIngredientBacker backer, @Nullable NBTMatcher matcher,
                       @Range(from = 1, to = Long.MAX_VALUE) long count) {
         this.backer = backer;

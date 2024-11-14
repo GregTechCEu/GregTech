@@ -75,9 +75,9 @@ public class ChemistryRecipes {
                 .duration(240).EUt(VA[EV]).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
-                .input(dust, FerriteMixture)
+                .inputItem(dust, FerriteMixture)
                 .fluidInputs(Oxygen.getFluid(2000))
-                .output(ingot, NickelZincFerrite)
+                .outputItem(ingot, NickelZincFerrite)
                 .blastFurnaceTemp(1500)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
@@ -87,8 +87,8 @@ public class ChemistryRecipes {
                 .duration(150).EUt(2).buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
-                .input(ingot, Polycaprolactam)
-                .output(Items.STRING, 32)
+                .inputItem(ingot, Polycaprolactam)
+                .outputItem(Items.STRING, 32)
                 .duration(80).EUt(48).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()

@@ -18,7 +18,7 @@ public class AcidRecipes {
     private static void sulfuricAcidRecipes() {
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(2)
-                .input(dust, Sulfur)
+                .inputItem(dust, Sulfur)
                 .fluidInputs(Oxygen.getFluid(2000))
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
                 .duration(60).EUt(VA[ULV]).buildAndRegister();
@@ -52,7 +52,7 @@ public class AcidRecipes {
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(24)
-                .input(dust, Sulfur)
+                .inputItem(dust, Sulfur)
                 .fluidInputs(Water.getFluid(4000))
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .EUt(VA[HV])
@@ -127,29 +127,29 @@ public class AcidRecipes {
     private static void phosphoricAcidRecipes() {
         CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(1)
-                .input(dust, Phosphorus, 4)
+                .inputItem(dust, Phosphorus, 4)
                 .fluidInputs(Oxygen.getFluid(10000))
-                .output(dust, PhosphorusPentoxide, 14)
+                .outputItem(dust, PhosphorusPentoxide, 14)
                 .duration(40).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, PhosphorusPentoxide, 14)
+                .inputItem(dust, PhosphorusPentoxide, 14)
                 .fluidInputs(Water.getFluid(6000))
                 .fluidOutputs(PhosphoricAcid.getFluid(4000))
                 .duration(40).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Apatite, 9)
+                .inputItem(dust, Apatite, 9)
                 .fluidInputs(SulfuricAcid.getFluid(5000))
                 .fluidInputs(Water.getFluid(10000))
-                .output(dust, Gypsum, 40)
+                .outputItem(dust, Gypsum, 40)
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(PhosphoricAcid.getFluid(3000))
                 .duration(320).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
                 .circuitMeta(24)
-                .input(dust, Phosphorus, 2)
+                .inputItem(dust, Phosphorus, 2)
                 .fluidInputs(Water.getFluid(3000))
                 .fluidInputs(Oxygen.getFluid(5000))
                 .fluidOutputs(PhosphoricAcid.getFluid(2000))

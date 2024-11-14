@@ -266,7 +266,7 @@ public class WoodRecipeLoader {
             CUTTER_RECIPES.recipeBuilder()
                     .inputs(entry.log.copy())
                     .outputs(GTUtility.copy(6, entry.planks))
-                    .output(dust, Wood, 2)
+                    .outputItem(dust, Wood, 2)
                     .duration(200)
                     .EUt(VA[ULV])
                     .buildAndRegister();
@@ -429,7 +429,7 @@ public class WoodRecipeLoader {
             // plank -> fence gate assembling
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputs(GTUtility.copy(2, entry.planks))
-                    .input(entry.getStick().toString(), 2)
+                    .inputItem(entry.getStick().toString(), 2)
                     .outputs(entry.fenceGate.copy())
                     .circuitMeta(2)
                     .duration(100).EUt(4).buildAndRegister();
@@ -497,7 +497,7 @@ public class WoodRecipeLoader {
 
         // Charcoal Byproducts
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(4)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(CharcoalByproducts.getFluid(4000))
@@ -506,14 +506,14 @@ public class WoodRecipeLoader {
 
         // Wood Tar
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(9)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(WoodTar.getFluid(1500))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(10)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(WoodTar.getFluid(1500))
@@ -522,14 +522,14 @@ public class WoodRecipeLoader {
 
         // Wood Gas
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(5)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(WoodGas.getFluid(1500))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(6)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(WoodGas.getFluid(1500))
@@ -538,14 +538,14 @@ public class WoodRecipeLoader {
 
         // Wood Vinegar
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(7)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(WoodVinegar.getFluid(3000))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(WoodVinegar.getFluid(3000))
@@ -554,14 +554,14 @@ public class WoodRecipeLoader {
 
         // Creosote
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(Creosote.getFluid(4000))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .fluidInputs(Nitrogen.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(Creosote.getFluid(4000))
@@ -570,53 +570,53 @@ public class WoodRecipeLoader {
 
         // Heavy Oil
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(3)
-                .input(log, Wood, 16)
-                .output(dust, Ash, 4)
+                .inputItem(log, Wood, 16)
+                .outputItem(dust, Ash, 4)
                 .fluidOutputs(OilHeavy.getFluid(200))
                 .duration(320).EUt(192)
                 .buildAndRegister();
 
         // Creosote
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(gem, Coal, 16)
-                .output(gem, Coke, 16)
+                .inputItem(gem, Coal, 16)
+                .outputItem(gem, Coke, 16)
                 .fluidOutputs(Creosote.getFluid(8000))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(gem, Coal, 16)
+                .inputItem(gem, Coal, 16)
                 .fluidInputs(Nitrogen.getFluid(1000))
-                .output(gem, Coke, 16)
+                .outputItem(gem, Coke, 16)
                 .fluidOutputs(Creosote.getFluid(8000))
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(block, Coal, 8)
-                .output(block, Coke, 8)
+                .inputItem(block, Coal, 8)
+                .outputItem(block, Coke, 8)
                 .fluidOutputs(Creosote.getFluid(32000))
                 .duration(2560).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(block, Coal, 8)
+                .inputItem(block, Coal, 8)
                 .fluidInputs(Nitrogen.getFluid(1000))
-                .output(block, Coke, 8)
+                .outputItem(block, Coke, 8)
                 .fluidOutputs(Creosote.getFluid(32000))
                 .duration(1280).EUt(96)
                 .buildAndRegister();
 
         // Biomass
         PYROLYSE_RECIPES.recipeBuilder().EUt(10).duration(200)
-                .input(BIO_CHAFF)
+                .inputItem(BIO_CHAFF)
                 .circuitMeta(2)
                 .fluidInputs(Water.getFluid(1500))
                 .fluidOutputs(FermentedBiomass.getFluid(1500))
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().EUt(10).duration(900)
-                .input(BIO_CHAFF, 4)
+                .inputItem(BIO_CHAFF, 4)
                 .circuitMeta(1)
                 .fluidInputs(Water.getFluid(4000))
                 .fluidOutputs(Biomass.getFluid(5000))
@@ -624,16 +624,16 @@ public class WoodRecipeLoader {
 
         // Sugar to Charcoal
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(dust, Sugar, 23)
-                .output(dust, Charcoal, 12)
+                .inputItem(dust, Sugar, 23)
+                .outputItem(dust, Charcoal, 12)
                 .fluidOutputs(Water.getFluid(1500))
                 .duration(320).EUt(64)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(dust, Sugar, 23)
+                .inputItem(dust, Sugar, 23)
                 .fluidInputs(Nitrogen.getFluid(500))
-                .output(dust, Charcoal, 12)
+                .outputItem(dust, Charcoal, 12)
                 .fluidOutputs(Water.getFluid(1500))
                 .duration(160).EUt(96)
                 .buildAndRegister();
@@ -642,7 +642,7 @@ public class WoodRecipeLoader {
 
         // From Log
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(20)
-                .input(log, Wood, 16)
+                .inputItem(log, Wood, 16)
                 .fluidInputs(Steam.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(CoalGas.getFluid(2000))
@@ -651,17 +651,17 @@ public class WoodRecipeLoader {
 
         // From Coal
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(22)
-                .input(gem, Coal, 16)
+                .inputItem(gem, Coal, 16)
                 .fluidInputs(Steam.getFluid(1000))
-                .output(gem, Coke, 16)
+                .outputItem(gem, Coke, 16)
                 .fluidOutputs(CoalGas.getFluid(4000))
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(22)
-                .input(block, Coal, 8)
+                .inputItem(block, Coal, 8)
                 .fluidInputs(Steam.getFluid(4000))
-                .output(block, Coke, 8)
+                .outputItem(block, Coke, 8)
                 .fluidOutputs(CoalGas.getFluid(16000))
                 .duration(1280).EUt(96)
                 .buildAndRegister();
@@ -682,7 +682,7 @@ public class WoodRecipeLoader {
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
-                .input(gem, Coke, 8)
+                .inputItem(gem, Coke, 8)
                 .chancedOutput(dust, Ash, 7500, 0)
                 .fluidOutputs(CoalTar.getFluid(4000))
                 .duration(320).EUt(96)

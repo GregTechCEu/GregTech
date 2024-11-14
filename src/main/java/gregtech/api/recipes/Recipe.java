@@ -17,6 +17,7 @@ import gregtech.api.recipes.properties.impl.CircuitProperty;
 import gregtech.api.recipes.properties.impl.PowerGenerationProperty;
 import gregtech.api.recipes.properties.impl.PowerPropertyData;
 import gregtech.api.recipes.properties.impl.PowerUsageProperty;
+import gregtech.api.recipes.roll.ListWithRollInformation;
 import gregtech.integration.groovy.GroovyScriptModule;
 
 import net.minecraft.item.ItemStack;
@@ -56,13 +57,11 @@ import java.util.List;
  */
 public class Recipe {
 
-    private final List<GTItemIngredient> itemIngredients;
-    private final Object2ByteOpenHashMap<GTItemIngredient> equalityItemFrequencyMap;
-    private final List<GTFluidIngredient> fluidIngredients;
-    private final Object2ByteOpenHashMap<GTFluidIngredient> equalityFluidFrequencyMap;
+    private final @NotNull ListWithRollInformation<GTItemIngredient> itemIngredients;
+    private final @NotNull ListWithRollInformation<GTFluidIngredient> fluidIngredients;
     public final long ingredientFlags;
-    private final ItemOutputProvider itemOutputProvider;
-    private final FluidOutputProvider fluidOutputProvider;
+    private final @NotNull ItemOutputProvider itemOutputProvider;
+    private final @NotNull FluidOutputProvider fluidOutputProvider;
 
     private final int duration;
 
@@ -80,21 +79,22 @@ public class Recipe {
     private final boolean groovyRecipe;
     private final RecipePropertyStorage recipePropertyStorage;
 
+    // equals() and hashCode() helpers //
+    private final Object2ByteOpenHashMap<GTItemIngredient> equalityItemFrequencyMap;
+    private final Object2ByteOpenHashMap<GTFluidIngredient> equalityFluidFrequencyMap;
     private final int hashCode;
 
-    public Recipe(@NotNull List<GTItemIngredient> itemIngredients,
-                  @NotNull List<GTFluidIngredient> fluidIngredients,
+    public Recipe(@NotNull ListWithRollInformation<GTItemIngredient> itemIngredients,
+                  @NotNull ListWithRollInformation<GTFluidIngredient> fluidIngredients,
                   @NotNull ItemOutputProvider itemOutputProvider,
                   @NotNull FluidOutputProvider fluidOutputProvider,
-                  int duration,
-                  boolean hidden,
-                  boolean isCTRecipe,
                   @NotNull RecipePropertyStorage recipePropertyStorage,
+                  int duration, boolean hidden, boolean isCTRecipe,
                   @NotNull GTRecipeCategory recipeCategory) {
         int ingredients = itemIngredients.size() + fluidIngredients.size();
         if (ingredients > 64) throw new IllegalArgumentException(
                 "Recipe Search cannot support more than 64 item and fluid inputs to a recipe!");
-        else this.ingredientFlags = 1L << ingredients;
+        else this.ingredientFlags = (1L << ingredients) - 1;
         this.recipePropertyStorage = recipePropertyStorage;
         this.itemIngredients = itemIngredients;
         this.fluidIngredients = fluidIngredients;
@@ -119,7 +119,7 @@ public class Recipe {
     @NotNull
     public Recipe copy() {
         return new Recipe(this.itemIngredients, this.fluidIngredients, this.itemOutputProvider,
-                this.fluidOutputProvider, this.duration, this.hidden, this.isCTRecipe, this.recipePropertyStorage,
+                this.fluidOutputProvider, this.recipePropertyStorage, this.duration, this.hidden, this.isCTRecipe,
                 this.recipeCategory);
     }
 
@@ -176,46 +176,20 @@ public class Recipe {
     // Getters //
     ///////////////////
 
-    public List<GTItemIngredient> getItemIngredients() {
+    public @NotNull ListWithRollInformation<GTItemIngredient> getItemIngredients() {
         return itemIngredients;
     }
 
-    public List<GTFluidIngredient> getFluidIngredients() {
+    public @NotNull ListWithRollInformation<GTFluidIngredient> getFluidIngredients() {
         return fluidIngredients;
     }
 
-    public ItemOutputProvider getItemOutputProvider() {
+    public @NotNull ItemOutputProvider getItemOutputProvider() {
         return itemOutputProvider;
     }
 
-    public FluidOutputProvider getFluidOutputProvider() {
+    public @NotNull FluidOutputProvider getFluidOutputProvider() {
         return fluidOutputProvider;
-    }
-
-    /**
-     * Returns a list of every possible ItemStack output from a recipe, including all possible chanced outputs.
-     *
-     * @return A List of ItemStack outputs from the recipe, including all chanced outputs
-     */
-    public List<ItemStack> getMaximumItemOutputs(List<ItemStack> inputItems, List<FluidStack> inputFluids) {
-        var complete = getItemOutputProvider().getCompleteOutputs(inputItems, inputFluids);
-        List<ItemStack> list = new ObjectArrayList<>(complete.getLeft().size() + complete.getRight().size());
-        list.addAll(complete.getLeft());
-        complete.getRight().stream().map(BaseChanceEntry::getIngredient).forEach(list::add);
-        return list;
-    }
-
-    /**
-     * Returns a list of every possible FluidStack output from a recipe, including all possible chanced outputs.
-     *
-     * @return A List of FluidStack outputs from the recipe, including all chanced outputs
-     */
-    public List<FluidStack> getMaximumFluidOutputs(List<ItemStack> inputItems, List<FluidStack> inputFluids) {
-        var complete = getFluidOutputProvider().getCompleteOutputs(inputItems, inputFluids);
-        List<FluidStack> list = new ObjectArrayList<>(complete.getLeft().size() + complete.getRight().size());
-        list.addAll(complete.getLeft());
-        complete.getRight().stream().map(BaseChanceEntry::getIngredient).forEach(list::add);
-        return list;
     }
 
     public int getDuration() {
@@ -327,37 +301,6 @@ public class Recipe {
         return null;
     }
 
-    /**
-     * Trims the recipe outputs, chanced outputs, and fluid outputs based on the performing MetaTileEntity's trim limit.
-     *
-     * @param currentRecipe  The recipe to perform the output trimming upon
-     * @param recipeMap      The RecipeMap that the recipe is from
-     * @param itemTrimLimit  The Limit to which item outputs should be trimmed to, -1 for no trimming
-     * @param fluidTrimLimit The Limit to which fluid outputs should be trimmed to, -1 for no trimming
-     * @return A new Recipe whose outputs have been trimmed.
-     */
-    public static Recipe trimRecipeOutputs(Recipe currentRecipe, RecipeMap<?> recipeMap, int itemTrimLimit,
-                                           int fluidTrimLimit) {
-        return null;
-    }
-
-    public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs,
-                                 IMultipleTankHandler fluidInputs) {
-        return false;
-    }
-
-    /**
-     * This methods aim to verify if the current recipe matches the given inputs according to matchingMode mode.
-     *
-     * @param consumeIfSuccessful if true will consume the inputs of the recipe.
-     * @param inputs              Items input or Collections.emptyList() if none.
-     * @param fluidInputs         Fluids input or Collections.emptyList() if none.
-     * @return true if the recipe matches the given inputs false otherwise.
-     */
-    public boolean matches(boolean consumeIfSuccessful, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        return false;
-    }
-
     public List<ItemStack> getOutputs() {
         return null;
     }
@@ -377,18 +320,6 @@ public class Recipe {
         return null;
     }
 
-    /**
-     * Returns the maximum possible recipe outputs from a recipe, divided into regular and chanced outputs
-     * Takes into account any specific output limiters, ie macerator slots, to trim down the output list
-     * Trims from chanced outputs first, then regular outputs
-     *
-     * @param outputLimit The limit on the number of outputs, -1 for disabled.
-     * @return A Pair of recipe outputs and chanced outputs, limited by some factor
-     */
-    public Pair<List<ItemStack>, List<ChancedItemOutput>> getItemAndChanceOutputs(int outputLimit) {
-        return null;
-    }
-
     public ChancedOutputList<ItemStack, ChancedItemOutput> getChancedOutputs() {
         return null;
     }
@@ -398,33 +329,6 @@ public class Recipe {
     }
 
     public List<FluidStack> getFluidOutputs() {
-        return null;
-    }
-
-    /**
-     * Returns the maximum possible recipe outputs from a recipe, divided into regular and chanced outputs
-     * Takes into account any specific output limiters, ie macerator slots, to trim down the output list
-     * Trims from chanced outputs first, then regular outputs
-     *
-     * @param outputLimit The limit on the number of outputs, -1 for disabled.
-     * @return A Pair of recipe outputs and chanced outputs, limited by some factor
-     */
-    public Pair<List<FluidStack>, List<ChancedFluidOutput>> getFluidAndChanceOutputs(int outputLimit) {
-        return null;
-    }
-
-    /**
-     * Returns all outputs from the recipe.
-     * This is where Chanced Outputs for the recipe are calculated.
-     * The Recipe should be trimmed by calling {@link Recipe#getFluidAndChanceOutputs(int)} before calling this method,
-     * if trimming is required.
-     *
-     * @param recipeTier  The Voltage Tier of the Recipe, used for chanced output calculation
-     * @param machineTier The Voltage Tier of the Machine, used for chanced output calculation
-     * @param recipeMap   The RecipeMap that the recipe is being performed upon, used for chanced output calculation
-     * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
-     */
-    public List<FluidStack> getResultFluidOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
         return null;
     }
 }

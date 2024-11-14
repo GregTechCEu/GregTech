@@ -176,12 +176,12 @@ public class RecipeMapTest {
         RecipeBuilder r = new RecipeBuilder<>()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
-                .input("cobblestone", 2)
+                .inputItem("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(1).duration(1);
 
-        MatcherAssert.assertThat(r.inputs.get(0), new IsNot<>(equalTo(r.inputs.get(1))));
-        MatcherAssert.assertThat(r.inputs.get(1), new IsNot<>(equalTo(r.inputs.get(2))));
+        MatcherAssert.assertThat(r.itemInputs.get(0), new IsNot<>(equalTo(r.itemInputs.get(1))));
+        MatcherAssert.assertThat(r.itemInputs.get(1), new IsNot<>(equalTo(r.itemInputs.get(2))));
     }
 
     @Test
@@ -189,7 +189,7 @@ public class RecipeMapTest {
         RecipeBuilder r = new RecipeBuilder<>()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
-                .input("cobblestone", 2)
+                .inputItem("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(1).duration(1);
         Recipe rec = (Recipe) r.build().getResult();
@@ -213,7 +213,7 @@ public class RecipeMapTest {
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
                 .inputs(new ItemStack(Blocks.STONE, 2))
-                .input("cobblestone", 2)
+                .inputItem("cobblestone", 2)
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(1).duration(1);
 

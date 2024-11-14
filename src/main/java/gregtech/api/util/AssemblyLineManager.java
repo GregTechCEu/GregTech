@@ -143,15 +143,14 @@ public final class AssemblyLineManager {
 
         if (CWUt > 0) {
             RecipeBuilder<?> researchBuilder = RecipeMaps.RESEARCH_STATION_RECIPES.recipeBuilder()
-                    .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
+                    .inputItem(dataItem.getItem(), 1, dataItem.getMetadata())
                     .outputs(dataItem)
-                    .EUt(EUt)
+                    .volts(EUt)
                     .CWUt(CWUt)
                     .totalCWU(duration);
 
             if (ignoreNBT) {
-                researchBuilder.inputNBT(researchItem.getItem(), 1, researchItem.getMetadata(), NBTMatcher.ANY,
-                        NBTCondition.ANY);
+                researchBuilder.inputItem(researchItem.getItem(), 1, researchItem.getMetadata());
             } else {
                 researchBuilder.inputs(researchItem);
             }
@@ -159,14 +158,13 @@ public final class AssemblyLineManager {
             researchBuilder.buildAndRegister();
         } else {
             RecipeBuilder<?> builder = RecipeMaps.SCANNER_RECIPES.recipeBuilder()
-                    .inputNBT(dataItem.getItem(), 1, dataItem.getMetadata(), NBTMatcher.ANY, NBTCondition.ANY)
+                    .inputItem(dataItem.getItem(), 1, dataItem.getMetadata())
                     .outputs(dataItem)
                     .duration(duration)
-                    .EUt(EUt);
+                    .volts(EUt);
 
             if (ignoreNBT) {
-                builder.inputNBT(researchItem.getItem(), 1, researchItem.getMetadata(), NBTMatcher.ANY,
-                        NBTCondition.ANY);
+                builder.inputItem(researchItem.getItem(), 1, researchItem.getMetadata());
             } else {
                 builder.inputs(researchItem);
             }
@@ -209,7 +207,7 @@ public final class AssemblyLineManager {
                     .inputs(first)
                     .notConsumable(second)
                     .outputs(output)
-                    .duration(DURATION).EUt(EUT).build().getResult();
+                    .duration(DURATION).volts(EUT).build().getResult();
         }
 
         @Nullable
@@ -226,7 +224,7 @@ public final class AssemblyLineManager {
                             .inputs(emptyStick)
                             .notConsumable(copiedStick)
                             .outputs(resultStick)
-                            .duration(DURATION).EUt(EUT)
+                            .duration(DURATION).volts(EUT)
                             .build().getResult());
         }
     }

@@ -17,9 +17,6 @@ import java.util.List;
 
 public class EmptyItemOutput implements ItemOutputProvider {
 
-    private static final Pair<List<ItemStack>, List<ChancedItemOutput>> EMPTY = Pair.of(Collections.emptyList(),
-            Collections.emptyList());
-
     @Override
     public @NotNull List<ItemStack> computeOutputs(@UnmodifiableView @NotNull List<ItemStack> inputItems,
                                                    @UnmodifiableView @NotNull List<FluidStack> inputFluids,
@@ -30,14 +27,15 @@ public class EmptyItemOutput implements ItemOutputProvider {
     }
 
     @Override
-    public @NotNull Pair<@UnmodifiableView @NotNull List<ItemStack>, @UnmodifiableView @NotNull List<ChancedItemOutput>> getCompleteOutputs(
-                                                                                                                                            @UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                                                                                                                            @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
-        return EMPTY;
+    public @NotNull @UnmodifiableView List<ItemStack> getCompleteOutputs(int parallel, int trimLimit,
+                                                                         @UnmodifiableView @NotNull List<ItemStack> inputItems,
+                                                                         @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
+        return Collections.emptyList();
     }
 
     @Override
-    public @Range(from = 0, to = Integer.MAX_VALUE) int getMaximumOutputs() {
+    public @Range(from = 0, to = Integer.MAX_VALUE) int getMaximumOutputs(
+            @Range(from = 1, to = Integer.MAX_VALUE) int parallel) {
         return 0;
     }
 

@@ -76,7 +76,7 @@ public final class RecipeLookupFurnace extends RecipeLookup {
         for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
             boolean wildcard = entry.getKey().getItemDamage() == GTValues.W;
             Recipe recipe = furnaceBuilder.copy()
-                    .inputs(new FurnaceRecipeIngredient(entry.getKey(), 1,
+                    .ingredient(new FurnaceRecipeIngredient(entry.getKey(), 1,
                             wildcard ? ItemStackMatchingContext.ITEM : ItemStackMatchingContext.ITEM_DAMAGE))
                     .outputs(OreDictUnifier.getUnificated(entry.getValue()))
                     .duration(RecipeLookupFurnace.STANDARD_DURATION).volts(RecipeLookupFurnace.STANDARD_VOLTAGE)

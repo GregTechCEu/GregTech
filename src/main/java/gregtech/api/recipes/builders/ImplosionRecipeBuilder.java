@@ -32,20 +32,6 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
         return new ImplosionRecipeBuilder(this);
     }
 
-    @Override
-    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
-        if (key.equals(ImplosionExplosiveProperty.KEY)) {
-            if (value instanceof ItemStack stack) {
-                return this.applyProperty(ImplosionExplosiveProperty.getInstance(), stack);
-            } else if (value instanceof Number number) {
-                return this.applyProperty(ImplosionExplosiveProperty.getInstance(),
-                        new ItemStack(Blocks.TNT, number.intValue()));
-            }
-            return false;
-        }
-        return super.applyPropertyCT(key, value);
-    }
-
     @ZenMethod
     public ImplosionRecipeBuilder explosives(int amount) {
         return explosives(new ItemStack(Blocks.TNT, amount));
@@ -66,7 +52,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
             return this;
         }
         if (this.applyProperty(ImplosionExplosiveProperty.getInstance(), explosive)) {
-            this.inputs.add(new GTRecipeItemInput(explosive));
+            inputs(explosive);
         }
         return this;
     }

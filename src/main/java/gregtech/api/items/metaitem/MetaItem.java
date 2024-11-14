@@ -29,6 +29,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.IHasStackForm;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
 import gregtech.client.utils.ToolChargeBarRenderer;
@@ -764,7 +765,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         ToolChargeBarRenderer.renderBarsItem(this, stack, xPosition, yPosition);
     }
 
-    public class MetaValueItem {
+    public class MetaValueItem implements IHasStackForm {
 
         public MetaItem<T> getMetaItem() {
             return MetaItem.this;
@@ -1006,7 +1007,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return rarity;
         }
 
-        public ItemStack getStackForm(int amount) {
+        public @NotNull ItemStack getStackForm(int amount) {
             return new ItemStack(MetaItem.this, amount, metaItemOffset + metaValue);
         }
 
@@ -1014,7 +1015,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return itemStack.getItem() == MetaItem.this && itemStack.getItemDamage() == (metaItemOffset + metaValue);
         }
 
-        public ItemStack getStackForm() {
+        public @NotNull ItemStack getStackForm() {
             return getStackForm(1);
         }
 

@@ -68,17 +68,17 @@ public class WireRecipeHandler {
                 material.hasProperty(PropertyKey.GEM) ? gem : dust;
 
         EXTRUDER_RECIPES.recipeBuilder()
-                .input(prefix, material)
+                .inputItem(prefix, material)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
-                .output(wireGtSingle, material, 2)
+                .outputItem(wireGtSingle, material, 2)
                 .duration((int) material.getMass() * 2)
                 .EUt(6 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
         WIREMILL_RECIPES.recipeBuilder()
-                .input(prefix, material)
+                .inputItem(prefix, material)
                 .circuitMeta(1)
-                .output(wireGtSingle, material, 2)
+                .outputItem(wireGtSingle, material, 2)
                 .duration((int) material.getMass())
                 .EUt(getVoltageMultiplier(material))
                 .buildAndRegister();
@@ -86,9 +86,9 @@ public class WireRecipeHandler {
         for (OrePrefix wireSize : wireSizes) {
             final int multiplier = (int) (wireSize.getMaterialAmount(material) / GTValues.M);
             WIREMILL_RECIPES.recipeBuilder()
-                    .input(prefix, material, multiplier)
+                    .inputItem(prefix, material, multiplier)
                     .circuitMeta(multiplier * 2)
-                    .output(wireSize, material)
+                    .outputItem(wireSize, material)
                     .duration((int) (material.getMass() * multiplier))
                     .EUt(getVoltageMultiplier(material))
                     .buildAndRegister();
@@ -118,29 +118,29 @@ public class WireRecipeHandler {
         // Rubber Recipe (ULV-EV cables)
         if (voltageTier <= GTValues.EV) {
             AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
-                    .input(wirePrefix, material)
-                    .output(cablePrefix, material)
+                    .inputItem(wirePrefix, material)
+                    .outputItem(cablePrefix, material)
                     .fluidInputs(Rubber.getFluid(GTValues.L * insulationAmount));
 
             if (voltageTier == GTValues.EV) {
-                builder.input(foil, PolyvinylChloride, insulationAmount);
+                builder.inputItem(foil, PolyvinylChloride, insulationAmount);
             }
             builder.buildAndRegister();
         }
 
         // Silicone Rubber Recipe (all cables)
         AssemblerRecipeBuilder builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
-                .input(wirePrefix, material)
-                .output(cablePrefix, material);
+                .inputItem(wirePrefix, material)
+                .outputItem(cablePrefix, material);
 
         // Apply a Polyphenylene Sulfate Foil if LuV or above.
         if (voltageTier >= GTValues.LuV) {
-            builder.input(foil, PolyphenyleneSulfide, insulationAmount);
+            builder.inputItem(foil, PolyphenyleneSulfide, insulationAmount);
         }
 
         // Apply a PVC Foil if EV or above.
         if (voltageTier >= GTValues.EV) {
-            builder.input(foil, PolyvinylChloride, insulationAmount);
+            builder.inputItem(foil, PolyvinylChloride, insulationAmount);
         }
 
         builder.fluidInputs(SiliconeRubber.getFluid(GTValues.L * insulationAmount / 2))
@@ -148,17 +148,17 @@ public class WireRecipeHandler {
 
         // Styrene Butadiene Rubber Recipe (all cables)
         builder = ASSEMBLER_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(100)
-                .input(wirePrefix, material)
-                .output(cablePrefix, material);
+                .inputItem(wirePrefix, material)
+                .outputItem(cablePrefix, material);
 
         // Apply a Polyphenylene Sulfate Foil if LuV or above.
         if (voltageTier >= GTValues.LuV) {
-            builder.input(foil, PolyphenyleneSulfide, insulationAmount);
+            builder.inputItem(foil, PolyphenyleneSulfide, insulationAmount);
         }
 
         // Apply a PVC Foil if EV or above.
         if (voltageTier >= GTValues.EV) {
-            builder.input(foil, PolyvinylChloride, insulationAmount);
+            builder.inputItem(foil, PolyvinylChloride, insulationAmount);
         }
 
         builder.fluidInputs(StyreneButadieneRubber.getFluid(GTValues.L * insulationAmount / 4))
@@ -178,9 +178,9 @@ public class WireRecipeHandler {
                 ingredients);
 
         PACKER_RECIPES.recipeBuilder()
-                .input(wirePrefix, material)
-                .input(plate, Rubber, insulationAmount)
-                .output(cablePrefix, material)
+                .inputItem(wirePrefix, material)
+                .inputItem(plate, Rubber, insulationAmount)
+                .outputItem(cablePrefix, material)
                 .duration(100).EUt(VA[ULV])
                 .buildAndRegister();
     }

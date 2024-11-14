@@ -855,8 +855,8 @@ public class ParallelLogicTest {
 
         // Do not specify the EUt or duration to test how they are taken into account
         Recipe maceratorRecipe = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .input(Blocks.STONE)
-                .output(Items.CARROT)
+                .inputItem(Blocks.STONE)
+                .outputItem(Items.CARROT)
                 .build().getResult();
 
         SimpleMachineMetaTileEntityResizable macerator = MetaTileEntities.registerMetaTileEntity(1,

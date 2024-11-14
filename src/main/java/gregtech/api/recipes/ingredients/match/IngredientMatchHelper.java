@@ -88,7 +88,6 @@ public final class IngredientMatchHelper {
             matcherEdges[i] = graph.addEdge(cacheMatchers[i], sink);
             long r = matchers.get(i).getRequiredCount();
             required += r;
-            graph.setEdgeWeight(matcherEdges[i], r);
         }
         DefaultWeightedEdge[] matchableEdges = new DefaultWeightedEdge[matchables.size()];
         for (int i = 0; i < matchables.size(); i++) {
@@ -104,7 +103,7 @@ public final class IngredientMatchHelper {
                     graph.setEdgeWeight(graph.addEdge(cacheMatchables[i], cacheMatchers[j]), required);
             }
         }
-        return new GraphMatchCalculation<>(graph, matcherEdges, matchableEdges, matchables, counter, required);
+        return new GraphMatchCalculation<>(graph, matcherEdges, matchableEdges, matchers, matchables, counter, required);
     }
 
     private static void ensureCacheSize(int matchers, int matchables) {

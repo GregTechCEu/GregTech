@@ -243,10 +243,10 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
 
         // Check the recipe outputs
-        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
+        MatcherAssert.assertThat(parallelRecipe.getItemOutputs().isEmpty(), is(false));
 
         MatcherAssert.assertThat(
-                hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getItemOutputs().get(0)), is(true));
 
         // Check the recipe inputs
         // assertEquals(CountableIngredient.from(new ItemStack(Blocks.COBBLESTONE), 4),
@@ -296,13 +296,13 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
 
         // Check the recipe outputs
-        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
+        MatcherAssert.assertThat(parallelRecipe.getItemOutputs().isEmpty(), is(false));
 
         MatcherAssert.assertThat(
-                hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getItemOutputs().get(0)), is(true));
 
         // Check the recipe inputs
-        MatcherAssert.assertThat(parallelRecipe.getInputs().get(0).getAmount(), is(2));
+        MatcherAssert.assertThat(parallelRecipe.getItemInputs().get(0).getAmount(), is(2));
     }
 
     @Test
@@ -452,10 +452,10 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(400));
 
         // Check the recipe outputs
-        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
+        MatcherAssert.assertThat(parallelRecipe.getItemOutputs().isEmpty(), is(false));
 
         MatcherAssert.assertThat(
-                hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getOutputs().get(0)), is(true));
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 4), parallelRecipe.getItemOutputs().get(0)), is(true));
     }
 
     @Test
@@ -499,10 +499,10 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(200));
 
         // Check the recipe outputs
-        MatcherAssert.assertThat(parallelRecipe.getOutputs().isEmpty(), is(false));
+        MatcherAssert.assertThat(parallelRecipe.getItemOutputs().isEmpty(), is(false));
 
         MatcherAssert.assertThat(
-                hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getOutputs().get(0)), is(true));
+                hashStrategy.equals(new ItemStack(Blocks.STONE, 2), parallelRecipe.getItemOutputs().get(0)), is(true));
     }
 
     // An end-to-end test for finding parallel recipes

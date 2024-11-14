@@ -53,8 +53,8 @@ public class LCRCombined {
                 .circuitMeta(24)
                 .fluidInputs(Benzene.getFluid(2000))
                 .fluidInputs(Chlorine.getFluid(4000))
-                .input(dust, SodiumHydroxide, 6)
-                .output(dust, Salt, 4)
+                .inputItem(dust, SodiumHydroxide, 6)
+                .outputItem(dust, Salt, 4)
                 .fluidOutputs(Phenol.getFluid(2000))
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .duration(1120).EUt(VA[LV]).buildAndRegister();

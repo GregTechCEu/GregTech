@@ -102,21 +102,11 @@ public class StandardRecipeView implements RecipeView {
 
     public List<ItemStack> getMaximumItems() {
         if (iOut != null) return iOut;
-        List<ItemStack> add = recipe.getMaximumItemOutputs(items, fluids);
-        List<ItemStack> list = new ObjectArrayList<>(add.size() * parallel);
-        for (int i = 0; i < parallel; i++) {
-            list.addAll(add);
-        }
-        return (iOut = list);
+        return (iOut = recipe.getItemOutputProvider().getCompleteOutputs(parallel, Integer.MAX_VALUE, items, fluids));
     }
 
     public List<FluidStack> getMaximumFluids() {
         if (fOut != null) return fOut;
-        List<FluidStack> add = recipe.getMaximumFluidOutputs(items, fluids);
-        List<FluidStack> list = new ObjectArrayList<>(add.size() * parallel);
-        for (int i = 0; i < parallel; i++) {
-            list.addAll(add);
-        }
-        return (fOut = list);
+        return (fOut = recipe.getFluidOutputProvider().getCompleteOutputs(parallel, Integer.MAX_VALUE, items, fluids));
     }
 }

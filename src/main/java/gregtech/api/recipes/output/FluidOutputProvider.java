@@ -46,7 +46,7 @@ public interface FluidOutputProvider {
      * @param machineTier   the machine tier, for use in chanced outputs.
      * @param boostFunction the boost function, for use in chanced outputs.
      * @param parallel the parallel level of this recipe run.
-     * @param trimLimit the trim limit for the outputs.
+     * @param trimLimit the most outputs allowed, before parallel.
      * @return the fluid outputs for this recipe run.
      */
     @NotNull
@@ -58,22 +58,24 @@ public interface FluidOutputProvider {
     /**
      * Called to gather information about what this recipe can output.
      * Used for JEI display, output hatch fit calculations, etc.
-     * 
-     * @param inputItems  input items for this simulated run
-     * @param inputFluids input fluids for this simulated run
-     * @return the outputs of this provider, represented as fluid stacks and chanced outputs.
+     *
+     * @param parallel the parallel level for this simulated run.
+     * @param trimLimit the most outputs allowed, before parallel.
+     * @param inputItems  input items for this simulated run.
+     * @param inputFluids input fluids for this simulated run.
+     * @return the maximum possible outputs of this provider.
      */
     @NotNull
-    Pair<@UnmodifiableView @NotNull List<FluidStack>, @UnmodifiableView @NotNull List<ChancedFluidOutput>> getCompleteOutputs(
-                                                                                                                              @UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                                                                                                              @UnmodifiableView @NotNull List<FluidStack> inputFluids);
+    @UnmodifiableView List<FluidStack> getCompleteOutputs(int parallel, int trimLimit,
+            @UnmodifiableView @NotNull List<ItemStack> inputItems,
+            @UnmodifiableView @NotNull List<FluidStack> inputFluids);
 
     /**
      * @return the most FluidStacks {@link #computeOutputs(List, List, PropertySet, int, int, ChanceBoostFunction, int)}
      *         will ever return.
      */
     @Range(from = 0, to = Integer.MAX_VALUE)
-    int getMaximumOutputs();
+    int getMaximumOutputs(@Range(from = 1, to = Integer.MAX_VALUE) int parallel);
 
     /**
      * should conduct an internal poll as to the validness of this output provider;

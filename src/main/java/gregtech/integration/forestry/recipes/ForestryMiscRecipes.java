@@ -89,55 +89,55 @@ public class ForestryMiscRecipes {
         if (Config.isFluidEnabled(Fluids.FOR_HONEY)) {
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(MetaItems.PLANT_BALL)
+                    .inputItem(MetaItems.PLANT_BALL)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(180))
                     .fluidOutputs(Materials.Biomass.getFluid(270))
                     .duration(1440).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input("treeSapling", 1)
+                    .inputItem("treeSapling", 1)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(100))
                     .fluidOutputs(Materials.Biomass.getFluid(150))
                     .duration(600).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.POTATO)
+                    .inputItem(Items.POTATO)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.CARROT)
+                    .inputItem(Items.CARROT)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Blocks.CACTUS)
+                    .inputItem(Blocks.CACTUS)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.REEDS)
+                    .inputItem(Items.REEDS)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Blocks.BROWN_MUSHROOM)
+                    .inputItem(Blocks.BROWN_MUSHROOM)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Blocks.RED_MUSHROOM)
+                    .inputItem(Blocks.RED_MUSHROOM)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.BEETROOT)
+                    .inputItem(Items.BEETROOT)
                     .fluidInputs(Fluids.FOR_HONEY.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
@@ -146,55 +146,55 @@ public class ForestryMiscRecipes {
         if (Config.isFluidEnabled(Fluids.JUICE)) {
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(MetaItems.PLANT_BALL)
+                    .inputItem(MetaItems.PLANT_BALL)
                     .fluidInputs(Fluids.JUICE.getFluid(180))
                     .fluidOutputs(Materials.Biomass.getFluid(270))
                     .duration(1440).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input("treeSapling", 1)
+                    .inputItem("treeSapling", 1)
                     .fluidInputs(Fluids.JUICE.getFluid(100))
                     .fluidOutputs(Materials.Biomass.getFluid(150))
                     .duration(600).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.POTATO)
+                    .inputItem(Items.POTATO)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.CARROT)
+                    .inputItem(Items.CARROT)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Blocks.CACTUS)
+                    .inputItem(Blocks.CACTUS)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.REEDS)
+                    .inputItem(Items.REEDS)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Blocks.BROWN_MUSHROOM)
+                    .inputItem(Blocks.BROWN_MUSHROOM)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Blocks.RED_MUSHROOM)
+                    .inputItem(Blocks.RED_MUSHROOM)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
 
             RecipeMaps.BREWING_RECIPES.recipeBuilder()
-                    .input(Items.BEETROOT)
+                    .inputItem(Items.BEETROOT)
                     .fluidInputs(Fluids.JUICE.getFluid(20))
                     .fluidOutputs(Materials.Biomass.getFluid(30))
                     .duration(160).EUt(3).buildAndRegister();
@@ -203,22 +203,22 @@ public class ForestryMiscRecipes {
         // Fertilizer
         ItemStack fertilizer = Mods.Forestry.getItem("fertilizer_compound");
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                .input("sand", 2)
-                .input(OrePrefix.dust, Materials.Apatite)
+                .inputItem("sand", 2)
+                .inputItem(OrePrefix.dust, Materials.Apatite)
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(GTUtility.copy(5, fertilizer))
                 .duration(100).EUt(16).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                .input(OrePrefix.dust, Materials.Ash, 8)
-                .input(OrePrefix.dust, Materials.Apatite)
+                .inputItem(OrePrefix.dust, Materials.Ash, 8)
+                .inputItem(OrePrefix.dust, Materials.Apatite)
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(GTUtility.copy(10, fertilizer))
                 .duration(100).EUt(16).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                .input(MetaItems.FERTILIZER, 8)
-                .input(OrePrefix.dust, Materials.Apatite)
+                .inputItem(MetaItems.FERTILIZER, 8)
+                .inputItem(OrePrefix.dust, Materials.Apatite)
                 .fluidInputs(Materials.Water.getFluid(1000))
                 .outputs(GTUtility.copy(30, fertilizer))
                 .duration(100).EUt(16).buildAndRegister();
@@ -226,21 +226,21 @@ public class ForestryMiscRecipes {
         if (Mods.MagicBees.isModLoaded()) {
             ItemStack concentratedCompound = Mods.MagicBees.getItem("resource", 2);
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                    .input("sand", 2)
+                    .inputItem("sand", 2)
                     .inputs(GTUtility.copy(concentratedCompound))
                     .fluidInputs(Materials.Water.getFluid(100))
                     .outputs(GTUtility.copy(6, fertilizer))
                     .duration(100).EUt(16).buildAndRegister();
 
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, Materials.Ash, 8)
+                    .inputItem(OrePrefix.dust, Materials.Ash, 8)
                     .inputs(GTUtility.copy(concentratedCompound))
                     .fluidInputs(Materials.Water.getFluid(100))
                     .outputs(GTUtility.copy(12, fertilizer))
                     .duration(100).EUt(16).buildAndRegister();
 
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                    .input(MetaItems.FERTILIZER, 8)
+                    .inputItem(MetaItems.FERTILIZER, 8)
                     .inputs(GTUtility.copy(concentratedCompound))
                     .fluidInputs(Materials.Water.getFluid(1000))
                     .outputs(GTUtility.copy(32, fertilizer))
@@ -250,15 +250,15 @@ public class ForestryMiscRecipes {
         // Compost
         ItemStack compost = Mods.Forestry.getItem("fertilizer_bio");
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                .input(Blocks.DIRT, 1, true)
-                .input(Items.WHEAT, 4)
+                .inputItem(Blocks.DIRT, 1, true)
+                .inputItem(Items.WHEAT, 4)
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(GTUtility.copy(4, compost))
                 .duration(200).EUt(16).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                .input(Blocks.DIRT, 1, true)
-                .input(OrePrefix.dust, Materials.Ash, 4)
+                .inputItem(Blocks.DIRT, 1, true)
+                .inputItem(OrePrefix.dust, Materials.Ash, 4)
                 .fluidInputs(Materials.Water.getFluid(100))
                 .outputs(GTUtility.copy(4, compost))
                 .duration(200).EUt(16).buildAndRegister();
@@ -286,13 +286,13 @@ public class ForestryMiscRecipes {
         // Ice Shard
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
                 .inputs(Mods.Forestry.getItem("crafting_material", 5))
-                .output(OrePrefix.dust, Materials.Ice)
+                .outputItem(OrePrefix.dust, Materials.Ice)
                 .duration(16).EUt(4).buildAndRegister();
 
         // Mulch
         ItemStack mulch = Mods.Forestry.getItem("mulch");
         RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(MetaItems.BIO_CHAFF)
+                .inputItem(MetaItems.BIO_CHAFF)
                 .fluidInputs(Materials.Water.getFluid(750))
                 .outputs(GTUtility.copy(8, mulch))
                 .chancedOutput(GTUtility.copy(4, mulch), 3300, 0)
@@ -330,36 +330,36 @@ public class ForestryMiscRecipes {
         ItemStack humus = Mods.Forestry.getItem("humus");
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(2, mulch))
-                .input(Blocks.DIRT, 2, true)
+                .inputItem(Blocks.DIRT, 2, true)
                 .fluidInputs(Materials.Water.getFluid(250))
                 .outputs(GTUtility.copy(2, humus))
                 .duration(16).EUt(16).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(compost))
-                .input(Blocks.DIRT, 8, true)
+                .inputItem(Blocks.DIRT, 8, true)
                 .fluidInputs(Materials.Water.getFluid(1000))
                 .outputs(GTUtility.copy(8, humus))
                 .duration(64).EUt(16).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(fertilizer))
-                .input(Blocks.DIRT, 8, true)
+                .inputItem(Blocks.DIRT, 8, true)
                 .fluidInputs(Materials.Water.getFluid(1000))
                 .outputs(GTUtility.copy(8, humus))
                 .duration(64).EUt(16).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                .input(MetaItems.FERTILIZER)
-                .input(Blocks.DIRT, 8, true)
+                .inputItem(MetaItems.FERTILIZER)
+                .inputItem(Blocks.DIRT, 8, true)
                 .fluidInputs(Materials.Water.getFluid(1000))
                 .outputs(GTUtility.copy(8, humus))
                 .duration(64).EUt(16).buildAndRegister();
 
         // Cans, Capsules, etc
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Tin, 2)
-                .input(Blocks.GLASS_PANE)
+                .inputItem(OrePrefix.plate, Materials.Tin, 2)
+                .inputItem(Blocks.GLASS_PANE)
                 .circuitMeta(1)
                 .outputs(Mods.Forestry.getItem("can"))
                 .duration(120).EUt(7).buildAndRegister();
@@ -379,31 +379,31 @@ public class ForestryMiscRecipes {
         // Propolis
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(Mods.Forestry.getItem("propolis"))
-                .output(MetaItems.STICKY_RESIN)
+                .outputItem(MetaItems.STICKY_RESIN)
                 .duration(128).EUt(5).buildAndRegister();
 
         if (Mods.Genetics.isModLoaded()) {
 
             // DNA Dye
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, Materials.Glowstone)
-                    .input("dyePurple")
-                    .input("dyeBlue")
+                    .inputItem(OrePrefix.dust, Materials.Glowstone)
+                    .inputItem("dyePurple")
+                    .inputItem("dyeBlue")
                     .outputs(Mods.Genetics.getItem("misc", 1, 8))
                     .duration(100).EUt(GTValues.VA[GTValues.LV]).buildAndRegister();
 
             // Fluorescent Dye
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, Materials.Glowstone)
-                    .input("dyeOrange")
-                    .input("dyeYellow")
+                    .inputItem(OrePrefix.dust, Materials.Glowstone)
+                    .inputItem("dyeOrange")
+                    .inputItem("dyeYellow")
                     .outputs(Mods.Genetics.getItem("misc", 2, 2))
                     .duration(100).EUt(GTValues.VA[GTValues.LV]).buildAndRegister();
 
             // Growth Medium
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, Materials.Sugar)
-                    .input(OrePrefix.dust, Materials.Bone)
+                    .inputItem(OrePrefix.dust, Materials.Sugar)
+                    .inputItem(OrePrefix.dust, Materials.Bone)
                     .outputs(Mods.Genetics.getItem("misc", 4, 2))
                     .duration(400).EUt(16).buildAndRegister();
         }
@@ -417,7 +417,7 @@ public class ForestryMiscRecipes {
 
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
                 .fluidInputs(Fluids.FOR_HONEY.getFluid(1000))
-                .output(OrePrefix.dust, Materials.Sugar, 9)
+                .outputItem(OrePrefix.dust, Materials.Sugar, 9)
                 .duration(1020).EUt(7).buildAndRegister();
     }
 

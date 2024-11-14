@@ -27,15 +27,6 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
         return new BlastRecipeBuilder(this);
     }
 
-    @Override
-    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
-        if (key.equals(TemperatureProperty.KEY)) {
-            this.blastFurnaceTemp(((Number) value).intValue());
-            return true;
-        }
-        return super.applyPropertyCT(key, value);
-    }
-
     public BlastRecipeBuilder blastFurnaceTemp(int blastFurnaceTemp) {
         if (blastFurnaceTemp <= 0) {
             GTLog.logger.error("Blast Furnace Temperature cannot be less than or equal to 0",

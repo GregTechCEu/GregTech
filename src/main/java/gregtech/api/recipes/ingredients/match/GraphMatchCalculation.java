@@ -17,6 +17,7 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
     private PushRelabelMFImpl<MatcherNode, DefaultWeightedEdge> flow;
 
     private DefaultWeightedEdge[] matcherEdges;
+    private final List<? extends Matcher<? super T>> matchers;
     private DefaultWeightedEdge[] matchableEdges;
     private final List<T> matchables;
     private Counter<T> counter;
@@ -24,11 +25,12 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
     private double required;
 
     GraphMatchCalculation(MatcherGraph graph, DefaultWeightedEdge[] matcherEdges, DefaultWeightedEdge[] matchableEdges,
-                     List<T> matchables, Counter<T> counter,
+                          List<? extends Matcher<? super T>> matchers, List<T> matchables, Counter<T> counter,
                      long required) {
         this.graph = graph;
         flow = new PushRelabelMFImpl<>(graph);
         this.matcherEdges = matcherEdges;
+        this.matchers = matchers;
         this.matchableEdges = matchableEdges;
         this.required = required;
         this.matchables = matchables;
@@ -37,10 +39,14 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
 
     @Override
     protected void rescale(int oldScale, int newScale) {
-        for (DefaultWeightedEdge edge : matcherEdges) {
-            graph.setEdgeWeight(edge, graph.getEdgeWeight(edge) * newScale / oldScale);
+        required = 0;
+        for (int i = 0; i < matcherEdges.length; i++) {
+            DefaultWeightedEdge edge = matcherEdges[i];
+            Matcher<? super T> matcher = matchers.get(i);
+            long req = matcher.getRequiredCount() * newScale;
+            graph.setEdgeWeight(edge, req);
+            required += req;
         }
-        required *= (double) newScale / oldScale;
     }
 
     @Override
@@ -70,8 +76,28 @@ final class GraphMatchCalculation<T> extends AbstractMatchCalculation<T> {
     @NotNull
     @Override
     public List<T> getConsumed(int scale) {
+        // fail if we could not match at this scale
         long[] results = getMatchResultsForScale(scale);
         if (results == null) return Collections.emptyList();
+
+        if (matchers instanceof MatchRollController<?> controller) {
+            // roll for actual consumptions and match
+            required = 0;
+            long[] roll = controller.getConsumptionRollResults(scale);
+            for (int i = 0; i < matcherEdges.length; i++) {
+                DefaultWeightedEdge edge = matcherEdges[i];
+                graph.setEdgeWeight(edge, roll[i]);
+                required += roll[i];
+            }
+            scaling = scale;
+            if (flow.calculateMaximumFlow(IngredientMatchHelper.source, IngredientMatchHelper.sink) < required) {
+                return Collections.emptyList(); // should never happen unless some idiot matcher is requiring more after roll than before.
+            }
+            var map = flow.getFlowMap();
+            for (int i = 0; i < matchableEdges.length; i++) {
+                results[i] = map.get(matchableEdges[i]).longValue();
+            }
+        }
         List<T> list = new ObjectArrayList<>(matchables.size());
         for (int i = 0; i < matchables.size(); i++) {
             list.add(counter.withCount(matchables.get(i), results[i]));

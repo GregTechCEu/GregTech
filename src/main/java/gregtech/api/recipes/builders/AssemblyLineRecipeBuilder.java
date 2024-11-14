@@ -43,18 +43,6 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
         return new AssemblyLineRecipeBuilder(this);
     }
 
-    @Override
-    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
-        if (key.equals(ResearchProperty.KEY)) {
-            if (value instanceof ItemStack itemStack) {
-                scannerResearch(itemStack);
-                return true;
-            }
-            return false;
-        }
-        return super.applyPropertyCT(key, value);
-    }
-
     private boolean applyResearchProperty(ResearchPropertyData.ResearchEntry researchEntry) {
         if (!ConfigHolder.machines.enableResearch) return false;
         if (researchEntry == null) {

@@ -24,6 +24,7 @@ import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.match.AbstractMatchCalculation;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
+import gregtech.api.recipes.ingredients.match.MatchRollController;
 import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.properties.impl.ResearchProperty;
 import gregtech.api.util.GTUtility;
@@ -625,8 +626,31 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
         @Override
         public @NotNull List<ItemStack> getConsumed(int scale) {
+            // fail if we could not match at this scale
             long[] results = getMatchResultsForScale(scale);
             if (results == null) return Collections.emptyList();
+            //noinspection rawtypes
+            if (ingredients instanceof MatchRollController controller) {
+                int offset = 0;
+                long[] roll = controller.getConsumptionRollResults(scale);
+                for (int i = 0; i < ingredients.size(); i++) {
+                    GTItemIngredient ingredient = ingredients.get(i);
+                    int size = orderedItemInputs.get(i).getSlots();
+                    long desired = roll[i];
+                    for (int j = offset; j < offset + size; j++) {
+                        ItemStack stack = itemView.get(j);
+                        if (ingredient.matches(stack)) {
+                            int count = (int) Math.min(stack.getCount(), desired);
+                            results[j] = count;
+                            desired -= count;
+                            if (desired == 0) break;
+                        }
+                    }
+                    // should never happen unless some idiot matcher is requiring more after roll than before.
+                    if (desired > 0) return Collections.emptyList();
+                    offset += size;
+                }
+            }
             List<ItemStack> list = new ObjectArrayList<>(itemView.size());
             for (int i = 0; i < itemView.size(); i++) {
                 ItemStack stack = itemView.get(i).copy();
@@ -679,8 +703,32 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
         @Override
         public @NotNull List<FluidStack> getConsumed(int scale) {
+            // fail if we could not match at this scale
             long[] results = getMatchResultsForScale(scale);
             if (results == null) return Collections.emptyList();
+
+            //noinspection rawtypes
+            if (ingredients instanceof MatchRollController controller) {
+                int offset = 0;
+                long[] roll = controller.getConsumptionRollResults(scale);
+                for (int i = 0; i < ingredients.size(); i++) {
+                    GTFluidIngredient ingredient = ingredients.get(i);
+                    int size = orderedFluidInputs.get(i).getTanks();
+                    long desired = roll[i];
+                    for (int j = offset; j < offset + size; j++) {
+                        FluidStack stack = fluidView.get(j);
+                        if (ingredient.matches(stack)) {
+                            long count = Math.min(stack.amount, desired);
+                            results[j] = count;
+                            desired -= count;
+                            if (desired == 0) break;
+                        }
+                    }
+                    // should never happen unless some idiot matcher is requiring more after roll than before.
+                    if (desired > 0) return Collections.emptyList();
+                    offset += size;
+                }
+            }
             List<FluidStack> list = new ObjectArrayList<>(fluidView.size());
             for (int i = 0; i < fluidView.size(); i++) {
                 FluidStack stack = fluidView.get(i).copy();

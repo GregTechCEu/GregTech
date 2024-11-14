@@ -77,7 +77,7 @@ public class DistillationRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(DissolvedCalciumAcetate.getFluid(1000))
-                .output(dust, Quicklime, 2)
+                .outputItem(dust, Quicklime, 2)
                 .fluidOutputs(Acetone.getFluid(1000))
                 .fluidOutputs(CarbonDioxide.getFluid(1000))
                 .fluidOutputs(Water.getFluid(1000))
@@ -95,7 +95,7 @@ public class DistillationRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(FermentedBiomass.getFluid(1000))
-                .output(MetaItems.FERTILIZER)
+                .outputItem(MetaItems.FERTILIZER)
                 .fluidOutputs(AceticAcid.getFluid(25))
                 .fluidOutputs(Water.getFluid(375))
                 .fluidOutputs(Ethanol.getFluid(150))

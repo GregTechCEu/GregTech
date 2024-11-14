@@ -61,7 +61,7 @@ public final class RecipeLookupSolidFuels extends RecipeLookup {
         int burntime = TileEntityFurnace.getItemBurnTime(burnable);
         if (burntime <= 0) return null;
         RecipeBuilder<?> builder = builderPrototype.copy()
-                .inputs(new ExactMatchItemIngredient(burnable, 1));
+                .ingredient(new ExactMatchItemIngredient(burnable, 1));
         ItemStack output = burnable.getItem().getContainerItem(burnable);
         if (output.getCount() > 0) {
             builder.outputs(output);

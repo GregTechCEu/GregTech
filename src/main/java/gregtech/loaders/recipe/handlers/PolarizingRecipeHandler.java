@@ -34,7 +34,7 @@ public class PolarizingRecipeHandler {
         if (magneticMaterial != null && polarizingPrefix.doGenerateItem(magneticMaterial)) {
             ItemStack magneticStack = OreDictUnifier.get(polarizingPrefix, magneticMaterial);
             RecipeMaps.POLARIZER_RECIPES.recipeBuilder() // polarizing
-                    .input(polarizingPrefix, material)
+                    .inputItem(polarizingPrefix, material)
                     .outputs(magneticStack)
                     .duration((int) ((int) material.getMass() * polarizingPrefix.getMaterialAmount(material) /
                             GTValues.M))

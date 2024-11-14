@@ -42,31 +42,16 @@ public class TrimmedRecipeView extends StandardRecipeView {
                 boostFunction, parallel, maxFluids);
     }
 
+
     @Override
     public List<ItemStack> getMaximumItems() {
         if (iOut != null) return iOut;
-        List<ItemStack> add = recipe.getMaximumItemOutputs(items, fluids);
-        int count = Math.min(add.size(), maxItems);
-        List<ItemStack> list = new ObjectArrayList<>(count * parallel);
-        for (int i = 0; i < parallel; i++) {
-            for (int j = 0; j < count; j++) {
-                list.add(add.get(j));
-            }
-        }
-        return (iOut = list);
+        return (iOut = recipe.getItemOutputProvider().getCompleteOutputs(parallel, maxItems, items, fluids));
     }
 
     @Override
     public List<FluidStack> getMaximumFluids() {
         if (fOut != null) return fOut;
-        List<FluidStack> add = recipe.getMaximumFluidOutputs(items, fluids);
-        int count = Math.min(add.size(), maxFluids);
-        List<FluidStack> list = new ObjectArrayList<>(count * parallel);
-        for (int i = 0; i < parallel; i++) {
-            for (int j = 0; j < count; j++) {
-                list.add(add.get(j));
-            }
-        }
-        return (fOut = list);
+        return (fOut = recipe.getFluidOutputProvider().getCompleteOutputs(parallel, maxFluids, items, fluids));
     }
 }

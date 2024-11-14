@@ -25,20 +25,20 @@ public class NaquadahRecipes {
         // FLUOROANTIMONIC ACID
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[ULV]).duration(60)
-                .input(dust, Antimony, 2)
+                .inputItem(dust, Antimony, 2)
                 .fluidInputs(Oxygen.getFluid(3000))
-                .output(dust, AntimonyTrioxide, 5)
+                .outputItem(dust, AntimonyTrioxide, 5)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(60)
-                .input(dust, AntimonyTrioxide, 5)
+                .inputItem(dust, AntimonyTrioxide, 5)
                 .fluidInputs(HydrofluoricAcid.getFluid(6000))
-                .output(dust, AntimonyTrifluoride, 8)
+                .outputItem(dust, AntimonyTrifluoride, 8)
                 .fluidOutputs(Water.getFluid(3000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(300)
-                .input(dust, AntimonyTrifluoride, 4)
+                .inputItem(dust, AntimonyTrifluoride, 4)
                 .fluidInputs(HydrofluoricAcid.getFluid(4000))
                 .fluidOutputs(FluoroantimonicAcid.getFluid(1000))
                 .fluidOutputs(Hydrogen.getFluid(2000))
@@ -48,18 +48,18 @@ public class NaquadahRecipes {
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LuV]).duration(600)
                 .fluidInputs(FluoroantimonicAcid.getFluid(1000))
-                .input(dust, Naquadah, 6)
+                .inputItem(dust, Naquadah, 6)
                 .fluidOutputs(ImpureEnrichedNaquadahSolution.getFluid(2000))
                 .fluidOutputs(ImpureNaquadriaSolution.getFluid(2000))
-                .output(dust, TitaniumTrifluoride, 4)
+                .outputItem(dust, TitaniumTrifluoride, 4)
                 .buildAndRegister();
 
         // ENRICHED NAQUADAH PROCESS
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[EV]).duration(400)
                 .fluidInputs(ImpureEnrichedNaquadahSolution.getFluid(2000))
-                .output(dust, TriniumSulfide)
-                .output(dust, AntimonyTrifluoride, 2)
+                .outputItem(dust, TriniumSulfide)
+                .outputItem(dust, AntimonyTrifluoride, 2)
                 .fluidOutputs(EnrichedNaquadahSolution.getFluid(1000))
                 .buildAndRegister();
 
@@ -73,13 +73,13 @@ public class NaquadahRecipes {
                 .fluidInputs(AcidicEnrichedNaquadahSolution.getFluid(3000))
                 .fluidOutputs(EnrichedNaquadahWaste.getFluid(2000))
                 .fluidOutputs(Fluorine.getFluid(250))
-                .output(dust, EnrichedNaquadahSulfate, 6) // Nq+SO4
+                .outputItem(dust, EnrichedNaquadahSulfate, 6) // Nq+SO4
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().EUt(VA[IV]).duration(500).blastFurnaceTemp(7000)
-                .input(dust, EnrichedNaquadahSulfate, 6)
+                .inputItem(dust, EnrichedNaquadahSulfate, 6)
                 .fluidInputs(Hydrogen.getFluid(2000))
-                .output(ingotHot, NaquadahEnriched)
+                .outputItem(ingotHot, NaquadahEnriched)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
@@ -95,8 +95,8 @@ public class NaquadahRecipes {
 
         CENTRIFUGE_RECIPES.recipeBuilder().EUt(VA[EV]).duration(400)
                 .fluidInputs(ImpureNaquadriaSolution.getFluid(2000))
-                .output(dust, IndiumPhosphide)
-                .output(dust, AntimonyTrifluoride, 2)
+                .outputItem(dust, IndiumPhosphide)
+                .outputItem(dust, AntimonyTrifluoride, 2)
                 .fluidOutputs(NaquadriaSolution.getFluid(1000))
                 .buildAndRegister();
 
@@ -110,13 +110,13 @@ public class NaquadahRecipes {
                 .fluidInputs(AcidicNaquadriaSolution.getFluid(3000))
                 .fluidOutputs(NaquadriaWaste.getFluid(2000))
                 .fluidOutputs(Fluorine.getFluid(250))
-                .output(dust, NaquadriaSulfate, 6)
+                .outputItem(dust, NaquadriaSulfate, 6)
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().EUt(VA[ZPM]).duration(600).blastFurnaceTemp(9000)
-                .input(dust, NaquadriaSulfate, 6)
+                .inputItem(dust, NaquadriaSulfate, 6)
                 .fluidInputs(Hydrogen.getFluid(2000))
-                .output(ingotHot, Naquadria)
+                .outputItem(ingotHot, Naquadria)
                 .fluidOutputs(SulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
@@ -131,28 +131,28 @@ public class NaquadahRecipes {
         // TRINIUM
 
         BLAST_RECIPES.recipeBuilder().duration(750).EUt(VA[LuV]).blastFurnaceTemp(Trinium.getBlastTemperature())
-                .input(dust, TriniumSulfide, 2)
-                .input(dust, Zinc)
-                .output(ingotHot, Trinium)
-                .output(dust, ZincSulfide, 2)
+                .inputItem(dust, TriniumSulfide, 2)
+                .inputItem(dust, Zinc)
+                .outputItem(ingotHot, Trinium)
+                .outputItem(dust, ZincSulfide, 2)
                 .buildAndRegister();
 
         // BYPRODUCT PROCESSING
 
         // Titanium Trifluoride
         BLAST_RECIPES.recipeBuilder().EUt(VA[HV]).duration(900).blastFurnaceTemp(1941)
-                .input(dust, TitaniumTrifluoride, 4)
+                .inputItem(dust, TitaniumTrifluoride, 4)
                 .fluidInputs(Hydrogen.getFluid(3000))
-                .output(ingotHot, Titanium)
+                .outputItem(ingotHot, Titanium)
                 .fluidOutputs(HydrofluoricAcid.getFluid(3000))
                 .buildAndRegister();
 
         // Indium Phosphide
         CHEMICAL_RECIPES.recipeBuilder().duration(30).EUt(VA[ULV])
-                .input(dust, IndiumPhosphide, 2)
-                .input(dust, Calcium)
-                .output(dust, Indium)
-                .output(dust, CalciumPhosphide, 2)
+                .inputItem(dust, IndiumPhosphide, 2)
+                .inputItem(dust, Calcium)
+                .outputItem(dust, Indium)
+                .outputItem(dust, CalciumPhosphide, 2)
                 .buildAndRegister();
     }
 }

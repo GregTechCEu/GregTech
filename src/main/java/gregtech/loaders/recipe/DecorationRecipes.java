@@ -19,24 +19,24 @@ public class DecorationRecipes {
 
     private static void assemblerRecipes() {
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.block, Materials.Concrete, 5)
-                .input(OrePrefix.plate, Materials.Iron, 2)
+                .inputItem(OrePrefix.block, Materials.Concrete, 5)
+                .inputItem(OrePrefix.plate, Materials.Iron, 2)
                 .circuitMeta(8)
                 .outputs(MetaBlocks.METAL_SHEET.getItemVariant(EnumDyeColor.WHITE, 32))
                 .EUt(4).duration(20)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.block, Materials.Concrete, 5)
-                .input(OrePrefix.plate, Materials.Iron, 4)
+                .inputItem(OrePrefix.block, Materials.Concrete, 5)
+                .inputItem(OrePrefix.plate, Materials.Iron, 4)
                 .circuitMeta(9)
                 .outputs(MetaBlocks.LARGE_METAL_SHEET.getItemVariant(EnumDyeColor.WHITE, 32))
                 .EUt(4).duration(20)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.block, Materials.Concrete, 3)
-                .input(OrePrefix.plate, Materials.Rubber, 3)
+                .inputItem(OrePrefix.block, Materials.Concrete, 3)
+                .inputItem(OrePrefix.plate, Materials.Rubber, 3)
                 .circuitMeta(8)
                 .outputs(MetaBlocks.STUDS.getItemVariant(EnumDyeColor.BLACK, 32))
                 .EUt(4).duration(20)

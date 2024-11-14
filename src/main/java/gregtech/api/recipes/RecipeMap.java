@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.recipes.buildaction.RecipeBuildAction;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.match.IngredientMatchHelper;
@@ -23,7 +24,6 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
 import gregtech.api.util.ValidationResult;
 import gregtech.integration.crafttweaker.recipe.CTRecipe;
-import gregtech.integration.crafttweaker.recipe.CTRecipeBuilder;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.integration.groovy.VirtualizedRecipeMap;
 import gregtech.modules.GregTechModules;
@@ -439,8 +439,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
-        boolean emptyOutputs = !this.allowEmptyOutput && recipe.getItemOutputProvider().getMaximumOutputs() == 0 &&
-                recipe.getFluidOutputProvider().getMaximumOutputs() == 0;
+        boolean emptyOutputs = !this.allowEmptyOutput && recipe.getItemOutputProvider().getMaximumOutputs(1) == 0 &&
+                recipe.getFluidOutputProvider().getMaximumOutputs(1) == 0;
         if (emptyOutputs) {
             GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.", new Throwable());
             if (recipe.getIsCTRecipe()) {
@@ -462,7 +462,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
         }
 
-        amount = recipe.getItemOutputProvider().getMaximumOutputs();
+        amount = recipe.getItemOutputProvider().getMaximumOutputs(1);
         if (amount > getMaxOutputs()) {
             GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount,
                     getMaxOutputs(), new Throwable());
@@ -487,7 +487,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
         }
 
-        amount = recipe.getFluidOutputProvider().getMaximumOutputs();
+        amount = recipe.getFluidOutputProvider().getMaximumOutputs(1);
         if (amount > getMaxFluidOutputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount,
                     getMaxFluidOutputs(), new Throwable());
@@ -652,12 +652,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public R recipeBuilder() {
         return recipeBuilderSample.copy();
-    }
-
-    @ZenMethod("recipeBuilder")
-    @Method(modid = Mods.Names.CRAFT_TWEAKER)
-    public CTRecipeBuilder ctRecipeBuilder() {
-        return new CTRecipeBuilder(recipeBuilder());
     }
 
     @ZenGetter("maxInputs")

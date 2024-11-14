@@ -2,8 +2,13 @@ package gregtech.api.recipes.output;
 
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.chance.output.ChancedOutputList;
+import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.lookup.property.PropertySet;
+
+import gregtech.api.recipes.roll.ListWithRollInformation;
+
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -22,28 +27,14 @@ import java.util.List;
 
 public final class StandardItemOutput implements ItemOutputProvider {
 
-    private final @NotNull List<ItemStack> outputs;
-    private final @Nullable ChancedOutputList<ItemStack, ChancedItemOutput> chanced;
+    private final @NotNull ListWithRollInformation<ItemStack> outputs;
 
-    private final @NotNull Pair<List<ItemStack>, List<ChancedItemOutput>> pair;
-
-    public StandardItemOutput(@Nullable List<ItemStack> outputs,
-                              @Nullable ChancedOutputList<ItemStack, ChancedItemOutput> chanced) {
-        this.outputs = outputs == null ? Collections.emptyList() : outputs;
-        this.chanced = chanced;
-        this.pair = Pair.of(this.outputs, chanced == null ? Collections.emptyList() : chanced.getChancedEntries());
+    public StandardItemOutput(@NotNull ListWithRollInformation<ItemStack> outputs) {
+        this.outputs = outputs;
     }
 
-    public @NotNull List<ItemStack> getOutputs() {
+    public @NotNull ListWithRollInformation<ItemStack> getOutputs() {
         return outputs;
-    }
-
-    public @Nullable ChancedOutputList<ItemStack, ChancedItemOutput> getChanced() {
-        return chanced;
-    }
-
-    public @NotNull List<ChancedItemOutput> getChancedEntries() {
-        return pair.getRight();
     }
 
     @Override
@@ -52,67 +43,61 @@ public final class StandardItemOutput implements ItemOutputProvider {
                                                    @UnmodifiableView @NotNull PropertySet propertySet, int recipeTier,
                                                    int machineTier, @NotNull ChanceBoostFunction boostFunction,
                                                    int parallel, int trimLimit) {
-        List<ItemStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size() + this.getChancedEntries().size()) * (parallel + 1) / 2);
-        int items = Math.min(this.outputs.size(), trimLimit);
-        int chanceds = Math.min(this.getChancedEntries().size(), trimLimit - items);
+        List<ItemStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size()) * parallel / 2);
         for (int i = 0; i < parallel; i++) {
-            for (int j = 0; j < items; j++) {
-                ItemStack stack = this.outputs.get(j);
-                addStackToList(outputs, stack);
-            }
-            if (chanced != null && chanceds > 0) {
-                List<ChancedItemOutput> out = chanced.roll(boostFunction, recipeTier, machineTier, chanceds);
-                if (out != null) {
-                    for (ChancedItemOutput chance : out) {
-                        addStackToList(outputs, chance.getIngredient());
-                    }
-                }
+            long[] roll = this.outputs.comprehensiveRoll(machineTier - recipeTier, trimLimit);
+            for (int j = 0; j < roll.length; j++) {
+                addStackToList(outputs, this.outputs.get(j), GTUtility.safeCastLongToInt(roll[j]));
             }
         }
         return outputs;
     }
 
-    public static void addStackToList(List<ItemStack> list, ItemStack stack) {
-        int stackCount = stack.getCount();
+    public static void addStackToList(List<ItemStack> list, ItemStack stack, int count) {
         for (ItemStack stackInList : list) {
             int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
             if (insertable > 0 && ItemHandlerHelper.canItemStacksStack(stackInList, stack)) {
-                if (insertable >= stackCount) {
-                    stackInList.grow(stackCount);
+                if (insertable >= count) {
+                    stackInList.grow(count);
                     return;
                 } else {
                     stackInList.grow(insertable);
-                    stackCount -= insertable;
+                    count -= insertable;
                 }
             }
         }
-        if (stackCount > 0) {
+        if (count > 0) {
             stack = stack.copy();
-            stack.setCount(stackCount);
+            stack.setCount(count);
             list.add(stack);
         }
     }
 
     @Override
-    public @NotNull Pair<@UnmodifiableView @NotNull List<ItemStack>, @UnmodifiableView @NotNull List<ChancedItemOutput>> getCompleteOutputs(
-                                                                                                                                            @UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                                                                                                                            @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
-        return pair;
+    public @NotNull @UnmodifiableView List<ItemStack> getCompleteOutputs(int parallel, int trimLimit,
+                                                                         @UnmodifiableView @NotNull List<ItemStack> inputItems,
+                                                                         @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
+        List<ItemStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size()) * parallel / 2);
+        int limit = Math.min(this.outputs.size(), trimLimit);
+        for (int i = 0; i < parallel; i++) {
+            for (int j = 0; j < limit; j++) {
+                ItemStack stack = this.outputs.get(j);
+                addStackToList(outputs, stack, stack.getCount());
+            }
+        }
+        return outputs;
     }
 
     @Override
-    public @Range(from = 0, to = Integer.MAX_VALUE) int getMaximumOutputs() {
-        return pair.getLeft().size() + pair.getRight().size();
+    public @Range(from = 0, to = Integer.MAX_VALUE) int getMaximumOutputs(
+            @Range(from = 1, to = Integer.MAX_VALUE) int parallel) {
+        return this.outputs.size() * parallel;
     }
 
     @Override
     public boolean isValid() {
         for (ItemStack stack : getOutputs()) {
             if (stack == null || stack.getItem() == Items.AIR || stack.isEmpty()) return false;
-        }
-        for (ChancedItemOutput output : getChancedEntries()) {
-            if (output == null || output.getIngredient().getItem() == Items.AIR || output.getIngredient().isEmpty())
-                return false;
         }
         return true;
     }

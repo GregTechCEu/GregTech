@@ -5,15 +5,10 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.category.RecipeCategories;
-import gregtech.api.recipes.ingredients.old.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.old.nbtmatch.NBTMatcher;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Color;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -60,23 +55,23 @@ public class MiscRecipeLoader {
                 new UnificationEntry(dust, Tin),
                 new UnificationEntry(dust, Lead));
 
-        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
-                .input(dust, Sugar)
+        MIXER_RECIPES.recipeBuilder().duration(100).volts(VA[ULV])
+                .inputItem(dust, Sugar)
                 .inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
                 .inputs(new ItemStack(Items.SPIDER_EYE))
                 .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
                 .buildAndRegister();
 
-        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(VA[ULV])
-                .input(dust, Sugar)
+        MIXER_RECIPES.recipeBuilder().duration(100).volts(VA[ULV])
+                .inputItem(dust, Sugar)
                 .inputs(new ItemStack(Blocks.RED_MUSHROOM))
                 .inputs(new ItemStack(Items.SPIDER_EYE))
                 .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
                 .buildAndRegister();
 
-        RecipeMaps.SIFTER_RECIPES.recipeBuilder().duration(100).EUt(16)
+        SIFTER_RECIPES.recipeBuilder().duration(100).volts(16)
                 .inputs(new ItemStack(Blocks.GRAVEL))
-                .output(gem, Flint)
+                .outputItem(gem, Flint)
                 .chancedOutput(gem, Flint, 9000, 0)
                 .chancedOutput(gem, Flint, 8000, 0)
                 .chancedOutput(gem, Flint, 6000, 0)
@@ -84,280 +79,269 @@ public class MiscRecipeLoader {
                 .chancedOutput(gem, Flint, 2500, 0)
                 .buildAndRegister();
 
-        RecipeMaps.PACKER_RECIPES.recipeBuilder()
+        PACKER_RECIPES.recipeBuilder()
                 .inputs(TOOL_MATCHES.getStackForm(16))
-                .input(OrePrefix.plate, Materials.Paper)
+                .inputItem(plate, Paper)
                 .outputs(TOOL_MATCHBOX.getStackForm())
-                .duration(64)
-                .EUt(16)
+                .duration(64).volts(16)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.COBBLESTONE))
-                .duration(16)
-                .EUt(VA[ULV])
+                .duration(16).volts(VA[ULV])
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.STONE, 1, 0))
                 .outputs(new ItemStack(Blocks.STONE, 1, 0))
-                .duration(16)
-                .EUt(VA[ULV])
+                .duration(16).volts(VA[ULV])
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Andesite)
-                .output(stone, Andesite)
-                .duration(16)
-                .EUt(60)
+                .outputItem(stone, Andesite)
+                .duration(16).volts(60)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Granite)
-                .output(stone, Granite)
-                .duration(16)
-                .EUt(60)
+                .outputItem(stone, Granite)
+                .duration(16).volts(60)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Diorite)
-                .output(stone, Diorite)
-                .duration(16)
-                .EUt(60)
+                .outputItem(stone, Diorite)
+                .duration(16).volts(60)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(dust, Redstone)
                 .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
-                .duration(16)
-                .EUt(240)
+                .duration(16).volts(240)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Marble)
-                .output(stone, Marble)
-                .duration(16)
-                .EUt(240)
+                .outputItem(stone, Marble)
+                .duration(16).volts(240)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, Basalt)
-                .output(stone, Basalt)
-                .duration(16)
-                .EUt(240)
+                .outputItem(stone, Basalt)
+                .duration(16).volts(240)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteRed)
-                .output(stone, GraniteRed)
-                .duration(16)
-                .EUt(960)
+                .outputItem(stone, GraniteRed)
+                .duration(16).volts(960)
                 .buildAndRegister();
 
-        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+        ROCK_BREAKER_RECIPES.recipeBuilder()
                 .notConsumable(stone, GraniteBlack)
-                .output(stone, GraniteBlack)
-                .duration(16)
-                .EUt(960)
+                .outputItem(stone, GraniteBlack)
+                .duration(16).volts(960)
                 .buildAndRegister();
 
         // Jetpacks
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(30)
                 .inputs(ELECTRIC_MOTOR_MV.getStackForm())
-                .input(ring, Aluminium, 2)
-                .input(stick, Aluminium)
-                .input(rotor, Steel)
-                .input(cableGtSingle, Copper, 2)
+                .inputItem(ring, Aluminium, 2)
+                .inputItem(stick, Aluminium)
+                .inputItem(rotor, Steel)
+                .inputItem(cableGtSingle, Copper, 2)
                 .outputs(POWER_THRUSTER.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).volts(30)
                 .inputs(ELECTRIC_MOTOR_HV.getStackForm())
-                .input(ring, StainlessSteel, 2)
-                .input(stick, StainlessSteel)
-                .input(rotor, Chrome)
-                .input(cableGtSingle, Gold, 2)
+                .inputItem(ring, StainlessSteel, 2)
+                .inputItem(stick, StainlessSteel)
+                .inputItem(rotor, Chrome)
+                .inputItem(cableGtSingle, Gold, 2)
                 .outputs(POWER_THRUSTER_ADVANCED.getStackForm())
                 .buildAndRegister();
 
         // QuarkTech Suite
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, MarkerMaterials.Tier.LuV, 2)
-                .input(wireGtQuadruple, Tungsten, 5)
-                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).volts(GTValues.VA[GTValues.IV])
+                .inputItem(circuit, MarkerMaterials.Tier.LuV, 2)
+                .inputItem(wireGtQuadruple, Tungsten, 5)
+                .inputItem(ENERGY_LAPOTRONIC_ORB)
                 .inputs(SENSOR_IV.getStackForm())
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
-                .input(screw, TungstenSteel, 4)
-                .input(plate, Iridium, 5)
-                .input(foil, Ruthenium, 20)
-                .input(wireFine, Rhodium, 32)
+                .inputItem(screw, TungstenSteel, 4)
+                .inputItem(plate, Iridium, 5)
+                .inputItem(foil, Ruthenium, 20)
+                .inputItem(wireFine, Rhodium, 32)
                 .fluidInputs(Titanium.getFluid(L * 10))
                 .outputs(QUANTUM_HELMET.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, MarkerMaterials.Tier.LuV, 2)
-                .input(wireGtQuadruple, Tungsten, 8)
-                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).volts(GTValues.VA[GTValues.IV])
+                .inputItem(circuit, MarkerMaterials.Tier.LuV, 2)
+                .inputItem(wireGtQuadruple, Tungsten, 8)
+                .inputItem(ENERGY_LAPOTRONIC_ORB)
                 .inputs(EMITTER_IV.getStackForm(2))
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
-                .input(screw, TungstenSteel, 4)
-                .input(plate, Iridium, 8)
-                .input(foil, Ruthenium, 32)
-                .input(wireFine, Rhodium, 48)
+                .inputItem(screw, TungstenSteel, 4)
+                .inputItem(plate, Iridium, 8)
+                .inputItem(foil, Ruthenium, 32)
+                .inputItem(wireFine, Rhodium, 48)
                 .fluidInputs(Titanium.getFluid(L * 16))
                 .outputs(QUANTUM_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, MarkerMaterials.Tier.LuV, 2)
-                .input(wireGtQuadruple, Tungsten, 7)
-                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).volts(GTValues.VA[GTValues.IV])
+                .inputItem(circuit, MarkerMaterials.Tier.LuV, 2)
+                .inputItem(wireGtQuadruple, Tungsten, 7)
+                .inputItem(ENERGY_LAPOTRONIC_ORB)
                 .inputs(ELECTRIC_MOTOR_IV.getStackForm(4))
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
-                .input(screw, TungstenSteel, 4)
-                .input(plate, Iridium, 7)
-                .input(foil, Ruthenium, 28)
-                .input(wireFine, Rhodium, 40)
+                .inputItem(screw, TungstenSteel, 4)
+                .inputItem(plate, Iridium, 7)
+                .inputItem(foil, Ruthenium, 28)
+                .inputItem(wireFine, Rhodium, 40)
                 .fluidInputs(Titanium.getFluid(L * 14))
                 .outputs(QUANTUM_LEGGINGS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).EUt(GTValues.VA[GTValues.IV])
-                .input(circuit, MarkerMaterials.Tier.LuV, 2)
-                .input(wireGtQuadruple, Tungsten, 4)
-                .inputNBT(ENERGY_LAPOTRONIC_ORB, NBTMatcher.ANY, NBTCondition.ANY)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(1500).volts(GTValues.VA[GTValues.IV])
+                .inputItem(circuit, MarkerMaterials.Tier.LuV, 2)
+                .inputItem(wireGtQuadruple, Tungsten, 4)
+                .inputItem(ENERGY_LAPOTRONIC_ORB)
                 .inputs(ELECTRIC_PISTON_IV.getStackForm(2))
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
-                .input(screw, TungstenSteel, 4)
-                .input(plate, Iridium, 4)
-                .input(foil, Ruthenium, 16)
-                .input(wireFine, Rhodium, 16)
+                .inputItem(screw, TungstenSteel, 4)
+                .inputItem(plate, Iridium, 4)
+                .inputItem(foil, Ruthenium, 16)
+                .inputItem(wireFine, Rhodium, 16)
                 .fluidInputs(Titanium.getFluid(L * 8))
                 .outputs(QUANTUM_BOOTS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).EUt(GTValues.VA[GTValues.LuV])
-                .inputNBT(((ArmorMetaItem<?>) QUANTUM_CHESTPLATE.getStackForm().getItem())
-                        .getItem(QUANTUM_CHESTPLATE.getStackForm()), NBTMatcher.ANY, NBTCondition.ANY)
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1000).volts(GTValues.VA[GTValues.LuV])
+                .inputItem(((ArmorMetaItem<?>) QUANTUM_CHESTPLATE.getStackForm().getItem())
+                        .getItem(QUANTUM_CHESTPLATE.getStackForm()))
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(2))
-                .input(wireFine, NiobiumTitanium, 64)
-                .input(wireGtQuadruple, Osmium, 6)
-                .input(plateDouble, Iridium, 4)
+                .inputItem(wireFine, NiobiumTitanium, 64)
+                .inputItem(wireGtQuadruple, Osmium, 6)
+                .inputItem(plateDouble, Iridium, 4)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(circuit, MarkerMaterials.Tier.ZPM)
-                .input(plateDense, RhodiumPlatedPalladium, 2)
-                .inputNBT(ENERGY_LAPOTRONIC_ORB_CLUSTER, NBTMatcher.ANY, NBTCondition.ANY)
+                .inputItem(circuit, MarkerMaterials.Tier.ZPM)
+                .inputItem(plateDense, RhodiumPlatedPalladium, 2)
+                .inputItem(ENERGY_LAPOTRONIC_ORB_CLUSTER)
                 .inputs(FIELD_GENERATOR_LuV.getStackForm(2))
                 .inputs(ELECTRIC_MOTOR_LuV.getStackForm(2))
-                .input(screw, HSSS, 8)
+                .inputItem(screw, HSSS, 8)
                 .outputs(QUANTUM_CHESTPLATE_ADVANCED.getStackForm())
                 .scannerResearch(GRAVITATION_ENGINE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(VA[HV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).volts(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
                 .inputs((ItemStack) CraftingComponent.HULL.getIngredient(1))
-                .input(wireFine, AnnealedCopper, 8)
+                .inputItem(wireFine, AnnealedCopper, 8)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(MetaTileEntities.MONITOR_SCREEN.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).volts(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
                 .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
-                .input(circuit, MarkerMaterials.Tier.HV, 2)
+                .inputItem(circuit, MarkerMaterials.Tier.HV, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(MetaTileEntities.CENTRAL_MONITOR.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).volts(VA[HV])
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(plate, Aluminium)
-                .input(circuit, MarkerMaterials.Tier.MV)
-                .input(screw, StainlessSteel, 4)
+                .inputItem(plate, Aluminium)
+                .inputItem(circuit, MarkerMaterials.Tier.MV)
+                .inputItem(screw, StainlessSteel, 4)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(COVER_DIGITAL_INTERFACE.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).volts(VA[HV])
                 .inputs(COVER_DIGITAL_INTERFACE.getStackForm())
                 .inputs(WIRELESS.getStackForm())
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(COVER_DIGITAL_INTERFACE_WIRELESS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).volts(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.LV)
-                .input(wireFine, Copper, 2)
+                .inputItem(circuit, MarkerMaterials.Tier.LV)
+                .inputItem(wireFine, Copper, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_TEXT.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).volts(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.LV)
-                .input(wireFine, Silver, 2)
+                .inputItem(circuit, MarkerMaterials.Tier.LV)
+                .inputItem(wireFine, Silver, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_ONLINE_PIC.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).volts(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.LV)
-                .input(wireFine, Gold, 2)
+                .inputItem(circuit, MarkerMaterials.Tier.LV)
+                .inputItem(wireFine, Gold, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_FAKE_GUI.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).volts(400)
                 .inputs(MetaItems.COVER_SCREEN.getStackForm())
-                .input(circuit, MarkerMaterials.Tier.HV)
-                .input(wireFine, Aluminium, 2)
+                .inputItem(circuit, MarkerMaterials.Tier.HV)
+                .inputItem(wireFine, Aluminium, 2)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(PLUGIN_ADVANCED_MONITOR.getStackForm())
                 .buildAndRegister();
 
         // terminal
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[MV])
-                .input(circuit, MarkerMaterials.Tier.MV, 4)
-                .input(EMITTER_MV, 2)
-                .input(SENSOR_MV, 2)
-                .input(plate, StainlessSteel)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).volts(VA[MV])
+                .inputItem(circuit, MarkerMaterials.Tier.MV, 4)
+                .inputItem(EMITTER_MV, 2)
+                .inputItem(SENSOR_MV, 2)
+                .inputItem(plate, StainlessSteel)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .outputs(WIRELESS.getStackForm())
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                .input(ELECTRIC_PISTON_LV, 2)
-                .input(EMITTER_LV)
-                .input(lens, Glass)
-                .input(lens, Diamond)
-                .input(circuit, MarkerMaterials.Tier.LV, 4)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).volts(VA[LV])
+                .inputItem(ELECTRIC_PISTON_LV, 2)
+                .inputItem(EMITTER_LV)
+                .inputItem(lens, Glass)
+                .inputItem(lens, Diamond)
+                .inputItem(circuit, MarkerMaterials.Tier.LV, 4)
                 .fluidInputs(SolderingAlloy.getFluid(L))
                 .outputs(CAMERA.getStackForm())
                 .buildAndRegister();
 
         // Tempered Glass in Arc Furnace
-        ARC_FURNACE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])
-                .input(block, Glass)
+        ARC_FURNACE_RECIPES.recipeBuilder().duration(60).volts(VA[LV])
+                .inputItem(block, Glass)
                 .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(
                         BlockGlassCasing.CasingType.TEMPERED_GLASS))
                 .buildAndRegister();
 
         // Dyed Lens Decomposition
         for (MetaValueItem item : GLASS_LENSES.values()) {
-            EXTRACTOR_RECIPES.recipeBuilder().EUt(VA[LV]).duration(15)
-                    .input(item)
+            EXTRACTOR_RECIPES.recipeBuilder().volts(VA[LV]).duration(15)
+                    .inputItem(item)
                     .fluidOutputs(Glass.getFluid(108))
                     .category(RecipeCategories.EXTRACTOR_RECYCLING)
                     .buildAndRegister();
 
             MACERATOR_RECIPES.recipeBuilder().duration(15)
-                    .input(item)
-                    .output(dustSmall, Glass, 3)
+                    .inputItem(item)
+                    .outputItem(dustSmall, Glass, 3)
                     .category(RecipeCategories.MACERATOR_RECYCLING)
                     .buildAndRegister();
         }
@@ -366,146 +350,158 @@ public class MiscRecipeLoader {
         EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.GLASS))
                 .fluidOutputs(Glass.getFluid(L))
-                .duration(20).EUt(30).buildAndRegister();
+                .duration(20).volts(30).buildAndRegister();
 
         // Glass Plate in Alloy Smelter
         ALLOY_SMELTER_RECIPES.recipeBuilder()
-                .input(dust, Glass, 2)
+                .inputItem(dust, Glass, 2)
                 .notConsumable(SHAPE_MOLD_PLATE.getStackForm())
-                .output(plate, Glass)
-                .duration(40).EUt(6).buildAndRegister();
+                .outputItem(plate, Glass)
+                .duration(40).volts(6).buildAndRegister();
 
         // Dyed Lens Recipes
-        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200).input(craftingLens,
+        RecipeBuilder<?> builder = CHEMICAL_BATH_RECIPES.recipeBuilder().volts(VA[HV]).duration(200).inputItem(craftingLens,
                 Glass);
         final int dyeAmount = 288;
 
-        builder.copy().fluidInputs(DyeWhite.getFluid(dyeAmount)).output(lens, Glass).buildAndRegister();
-        builder.copy().fluidInputs(DyeOrange.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Orange))
+        builder.copy().fluidInputs(DyeWhite.getFluid(dyeAmount)).outputItem(lens, Glass).buildAndRegister();
+        builder.copy().fluidInputs(DyeOrange.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Orange))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeMagenta.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Magenta))
+        builder.copy().fluidInputs(DyeMagenta.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Magenta))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeLightBlue.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightBlue))
+        builder.copy().fluidInputs(DyeLightBlue.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.LightBlue))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeYellow.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Yellow))
+        builder.copy().fluidInputs(DyeYellow.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Yellow))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeLime.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Lime)).buildAndRegister();
-        builder.copy().fluidInputs(DyePink.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Pink)).buildAndRegister();
-        builder.copy().fluidInputs(DyeGray.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Gray)).buildAndRegister();
-        builder.copy().fluidInputs(DyeLightGray.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.LightGray))
+        builder.copy().fluidInputs(DyeLime.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Lime)).buildAndRegister();
+        builder.copy().fluidInputs(DyePink.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Pink)).buildAndRegister();
+        builder.copy().fluidInputs(DyeGray.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Gray)).buildAndRegister();
+        builder.copy().fluidInputs(DyeLightGray.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.LightGray))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeCyan.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Cyan)).buildAndRegister();
-        builder.copy().fluidInputs(DyePurple.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Purple))
+        builder.copy().fluidInputs(DyeCyan.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Cyan)).buildAndRegister();
+        builder.copy().fluidInputs(DyePurple.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Purple))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeBlue.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Blue)).buildAndRegister();
-        builder.copy().fluidInputs(DyeBrown.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Brown))
+        builder.copy().fluidInputs(DyeBlue.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Blue)).buildAndRegister();
+        builder.copy().fluidInputs(DyeBrown.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Brown))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Green))
+        builder.copy().fluidInputs(DyeGreen.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Green))
                 .buildAndRegister();
-        builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Red)).buildAndRegister();
-        builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount)).output(GLASS_LENSES.get(Color.Black))
+        builder.copy().fluidInputs(DyeRed.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Red)).buildAndRegister();
+        builder.copy().fluidInputs(DyeBlack.getFluid(dyeAmount)).outputItem(GLASS_LENSES.get(Color.Black))
                 .buildAndRegister();
 
         // NAN Certificate
         EXTRUDER_RECIPES.recipeBuilder()
-                .input(block, Neutronium, 64)
-                .input(block, Neutronium, 64)
-                .output(NAN_CERTIFICATE)
-                .duration(Integer.MAX_VALUE).EUt(VA[ULV]).buildAndRegister();
+                .inputItem(block, Neutronium, 64)
+                .inputItem(block, Neutronium, 64)
+                .outputItem(NAN_CERTIFICATE)
+                .duration(Integer.MAX_VALUE).volts(VA[ULV]).buildAndRegister();
 
         // Fertilizer
         MIXER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.DIRT))
-                .input(dust, Wood, 2)
+                .inputItem(dust, Wood, 2)
                 .inputs(new ItemStack(Blocks.SAND, 4))
                 .fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 4)
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .outputItem(FERTILIZER, 4)
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, Sulfur).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, TricalciumPhosphate)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, Phosphate).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, Ash, 3).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcite).input(dust, DarkAsh).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 1).duration(100).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, Sulfur).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, TricalciumPhosphate)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, Phosphate).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, Ash, 3).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Calcium).input(dust, DarkAsh).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, Sulfur).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, TricalciumPhosphate)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, Phosphate).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, Ash, 3).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, Apatite).input(dust, DarkAsh).fluidInputs(Water.getFluid(1000))
-                .output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Sulfur)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, TricalciumPhosphate)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 4).duration(400).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Phosphate)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 3).duration(300).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, Ash, 3)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
-        CHEMICAL_RECIPES.recipeBuilder().input(dust, GlauconiteSand).input(dust, DarkAsh)
-                .fluidInputs(Water.getFluid(1000)).output(FERTILIZER, 2).duration(200).EUt(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcite).inputItem(dust, Sulfur)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcite).inputItem(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 3).duration(300).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcite).inputItem(dust, Phosphate)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcite).inputItem(dust, Ash, 3)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 1).duration(100).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcite).inputItem(dust, DarkAsh)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 1).duration(100).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcium).inputItem(dust, Sulfur)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 3).duration(300).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcium).inputItem(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 4).duration(400).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcium).inputItem(dust, Phosphate)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 3).duration(300).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcium).inputItem(dust, Ash, 3)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Calcium).inputItem(dust, DarkAsh)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Apatite).inputItem(dust, Sulfur)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 3).duration(300).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Apatite).inputItem(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 4).duration(400).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Apatite).inputItem(dust, Phosphate)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 3).duration(300).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Apatite).inputItem(dust, Ash, 3)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, Apatite).inputItem(dust, DarkAsh)
+                .fluidInputs(Water.getFluid(1000))
+                .outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, GlauconiteSand).inputItem(dust, Sulfur)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 3).duration(300).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, GlauconiteSand).inputItem(dust, TricalciumPhosphate)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 4).duration(400).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, GlauconiteSand).inputItem(dust, Phosphate)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 3).duration(300).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, GlauconiteSand).inputItem(dust, Ash, 3)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
+        CHEMICAL_RECIPES.recipeBuilder().inputItem(dust, GlauconiteSand).inputItem(dust, DarkAsh)
+                .fluidInputs(Water.getFluid(1000)).outputItem(FERTILIZER, 2).duration(200).volts(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(FERTILIZER)
-                .output(dust, Calcite)
-                .output(dust, Carbon)
+                .inputItem(FERTILIZER)
+                .outputItem(dust, Calcite)
+                .outputItem(dust, Carbon)
                 .fluidOutputs(Water.getFluid(1000))
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder()
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.TEMPERED_GLASS, 2))
-                .input(plate, PolyvinylButyral)
+                .inputItem(plate, PolyvinylButyral)
                 .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockGlassCasing.CasingType.LAMINATED_GLASS))
-                .duration(200).EUt(VA[HV]).buildAndRegister();
+                .duration(200).volts(VA[HV]).buildAndRegister();
 
         LATHE_RECIPES.recipeBuilder()
-                .input(plank, TreatedWood)
-                .output(stick, TreatedWood, 2)
-                .duration(10).EUt(VA[ULV])
+                .inputItem(plank, TreatedWood)
+                .outputItem(stick, TreatedWood, 2)
+                .duration(10).volts(VA[ULV])
                 .buildAndRegister();
 
         // Coke Brick and Firebrick decomposition
         EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.COKE_BRICKS))
-                .output(COKE_OVEN_BRICK, 4)
-                .duration(300).EUt(2)
+                .outputItem(COKE_OVEN_BRICK, 4)
+                .duration(300).volts(2)
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PRIMITIVE_BRICKS))
-                .output(FIRECLAY_BRICK, 4)
-                .duration(300).EUt(2)
+                .outputItem(FIRECLAY_BRICK, 4)
+                .duration(300).volts(2)
                 .buildAndRegister();
 
         // Minecart wheels
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(stick, Iron)
-                .input(ring, Iron, 2)
-                .output(IRON_MINECART_WHEELS)
-                .duration(100).EUt(20).buildAndRegister();
+                .inputItem(stick, Iron)
+                .inputItem(ring, Iron, 2)
+                .outputItem(IRON_MINECART_WHEELS)
+                .duration(100).volts(20).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(stick, Steel)
-                .input(ring, Steel, 2)
-                .output(STEEL_MINECART_WHEELS)
-                .duration(60).EUt(20).buildAndRegister();
+                .inputItem(stick, Steel)
+                .inputItem(ring, Steel, 2)
+                .outputItem(STEEL_MINECART_WHEELS)
+                .duration(60).volts(20).buildAndRegister();
     }
 }

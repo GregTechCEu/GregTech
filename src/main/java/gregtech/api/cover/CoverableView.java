@@ -1,5 +1,7 @@
 package gregtech.api.cover;
 
+import gregtech.api.util.IHasStackForm;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.function.Consumer;
 
-public interface CoverableView extends ICapabilityProvider {
+public interface CoverableView extends ICapabilityProvider, IHasStackForm {
 
     /**
      * @return the world containing the CoverableView
@@ -93,5 +95,13 @@ public interface CoverableView extends ICapabilityProvider {
      * @return an ItemStack representation of the CoverableView, or {@link ItemStack#EMPTY} if not possible.
      */
     @NotNull
-    ItemStack getStackForm();
+    default ItemStack getStackForm() {
+        return getStackForm(1);
+    }
+
+    /**
+     * @return an ItemStack representation of the CoverableView, or {@link ItemStack#EMPTY} if not possible.
+     */
+    @NotNull
+    ItemStack getStackForm(int count);
 }

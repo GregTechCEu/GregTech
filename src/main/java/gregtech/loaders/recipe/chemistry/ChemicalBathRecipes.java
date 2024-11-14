@@ -16,43 +16,43 @@ public class ChemicalBathRecipes {
 
     public static void init() {
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Wood)
+                .inputItem(dust, Wood)
                 .fluidInputs(Water.getFluid(100))
-                .output(Items.PAPER)
+                .outputItem(Items.PAPER)
                 .duration(200).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Paper)
+                .inputItem(dust, Paper)
                 .fluidInputs(Water.getFluid(100))
-                .output(Items.PAPER)
+                .outputItem(Items.PAPER)
                 .duration(100).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(Items.REEDS, 1, true)
+                .inputItem(Items.REEDS, 1, true)
                 .fluidInputs(Water.getFluid(100))
-                .output(Items.PAPER)
+                .outputItem(Items.PAPER)
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Wood)
+                .inputItem(dust, Wood)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(Items.PAPER)
+                .outputItem(Items.PAPER)
                 .duration(200).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Paper)
+                .inputItem(dust, Paper)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(Items.PAPER)
+                .outputItem(Items.PAPER)
                 .duration(100).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(Items.REEDS, 1, true)
+                .inputItem(Items.REEDS, 1, true)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(Items.PAPER)
+                .outputItem(Items.PAPER)
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input("plankWood", 1)
+                .inputItem("plankWood", 1)
                 .fluidInputs(Creosote.getFluid(100))
                 .outputs(MetaBlocks.PLANKS.getItemVariant(BlockGregPlanks.BlockType.TREATED_PLANK))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
@@ -66,41 +66,41 @@ public class ChemicalBathRecipes {
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Scheelite, 6)
+                .inputItem(dust, Scheelite, 6)
                 .fluidInputs(HydrochloricAcid.getFluid(2000))
-                .output(dust, TungsticAcid, 7)
-                .output(dust, CalciumChloride, 3)
+                .outputItem(dust, TungsticAcid, 7)
+                .outputItem(dust, CalciumChloride, 3)
                 .duration(210).EUt(960).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(dust, Tungstate, 7)
+                .inputItem(dust, Tungstate, 7)
                 .fluidInputs(HydrochloricAcid.getFluid(2000))
-                .output(dust, TungsticAcid, 7)
-                .output(dust, LithiumChloride, 4)
+                .outputItem(dust, TungsticAcid, 7)
+                .outputItem(dust, LithiumChloride, 4)
                 .duration(210).EUt(960).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Kanthal)
+                .inputItem(ingotHot, Kanthal)
                 .fluidInputs(Water.getFluid(100))
-                .output(ingot, Kanthal)
+                .outputItem(ingot, Kanthal)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Kanthal)
+                .inputItem(ingotHot, Kanthal)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(ingot, Kanthal)
+                .outputItem(ingot, Kanthal)
                 .duration(250).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Silicon)
+                .inputItem(ingotHot, Silicon)
                 .fluidInputs(Water.getFluid(100))
-                .output(ingot, Silicon)
+                .outputItem(ingot, Silicon)
                 .duration(200).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, Silicon)
+                .inputItem(ingotHot, Silicon)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(ingot, Silicon)
+                .outputItem(ingot, Silicon)
                 .duration(125).EUt(VA[MV]).buildAndRegister();
     }
 }

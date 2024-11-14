@@ -125,10 +125,10 @@ public class VanillaOverrideRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 2))
-                .input(OrePrefix.ring, Materials.Iron)
-                .input(OrePrefix.spring, Materials.Iron, 2)
-                .input(OrePrefix.gearSmall, Materials.Iron, 2)
-                .input(OrePrefix.stick, Materials.RedAlloy)
+                .inputItem(OrePrefix.ring, Materials.Iron)
+                .inputItem(OrePrefix.spring, Materials.Iron, 2)
+                .inputItem(OrePrefix.gearSmall, Materials.Iron, 2)
+                .inputItem(OrePrefix.stick, Materials.RedAlloy)
                 .inputs(new ItemStack(Items.STRING))
                 .outputs(new ItemStack(Blocks.DISPENSER))
                 .buildAndRegister();
@@ -148,46 +148,46 @@ public class VanillaOverrideRecipes {
                 'F', OreDictNames.fenceWood);
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Iron)
-                .input(OrePrefix.gearSmall, Materials.Iron)
-                .input(slab, Wood, 1)
-                .input("cobblestone", 1)
+                .inputItem(OrePrefix.stick, Materials.Iron)
+                .inputItem(OrePrefix.gearSmall, Materials.Iron)
+                .inputItem(slab, Wood, 1)
+                .inputItem("cobblestone", 1)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L))
                 .outputs(new ItemStack(Blocks.PISTON))
                 .duration(240).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Steel)
-                .input(OrePrefix.gearSmall, Materials.Steel)
-                .input(slab, Wood, 2)
-                .input("cobblestone", 2)
+                .inputItem(OrePrefix.stick, Materials.Steel)
+                .inputItem(OrePrefix.gearSmall, Materials.Steel)
+                .inputItem(slab, Wood, 2)
+                .inputItem("cobblestone", 2)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 2))
                 .outputs(new ItemStack(Blocks.PISTON, 2))
                 .duration(240).EUt(16).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Aluminium)
-                .input(OrePrefix.gearSmall, Materials.Aluminium)
-                .input(slab, Wood, 4)
-                .input("cobblestone", 4)
+                .inputItem(OrePrefix.stick, Materials.Aluminium)
+                .inputItem(OrePrefix.gearSmall, Materials.Aluminium)
+                .inputItem(slab, Wood, 4)
+                .inputItem("cobblestone", 4)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 3))
                 .outputs(new ItemStack(Blocks.PISTON, 4))
                 .duration(240).EUt(VA[LV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.StainlessSteel)
-                .input(OrePrefix.gearSmall, Materials.StainlessSteel)
-                .input(slab, Wood, 8)
-                .input("cobblestone", 8)
+                .inputItem(OrePrefix.stick, Materials.StainlessSteel)
+                .inputItem(OrePrefix.gearSmall, Materials.StainlessSteel)
+                .inputItem(slab, Wood, 8)
+                .inputItem("cobblestone", 8)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 4))
                 .outputs(new ItemStack(Blocks.PISTON, 8))
                 .duration(600).EUt(VA[LV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Titanium)
-                .input(OrePrefix.gearSmall, Materials.Titanium)
-                .input(slab, Wood, 16)
-                .input("cobblestone", 16)
+                .inputItem(OrePrefix.stick, Materials.Titanium)
+                .inputItem(OrePrefix.gearSmall, Materials.Titanium)
+                .inputItem(slab, Wood, 16)
+                .inputItem("cobblestone", 16)
                 .fluidInputs(Materials.RedAlloy.getFluid(GTValues.L * 8))
                 .outputs(new ItemStack(Blocks.PISTON, 16))
                 .duration(800).EUt(VA[LV]).buildAndRegister();
@@ -222,26 +222,26 @@ public class VanillaOverrideRecipes {
                 'C', new UnificationEntry(OrePrefix.spring, Materials.Steel));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.spring, Materials.Iron)
+                .inputItem(OrePrefix.spring, Materials.Iron)
                 .inputs(new ItemStack(Blocks.STONE_SLAB, 2))
                 .outputs(new ItemStack(Blocks.STONE_PRESSURE_PLATE, 2))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.spring, Materials.Iron)
-                .input(OrePrefix.plank, Materials.Wood, 2)
+                .inputItem(OrePrefix.spring, Materials.Iron)
+                .inputItem(OrePrefix.plank, Materials.Wood, 2)
                 .outputs(new ItemStack(Blocks.WOODEN_PRESSURE_PLATE, 2))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.spring, Materials.Steel)
-                .input(OrePrefix.plate, Materials.Gold)
+                .inputItem(OrePrefix.spring, Materials.Steel)
+                .inputItem(OrePrefix.plate, Materials.Gold)
                 .outputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
                 .duration(200).EUt(16).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.spring, Materials.Steel)
-                .input(OrePrefix.plate, Materials.Iron)
+                .inputItem(OrePrefix.spring, Materials.Steel)
+                .inputItem(OrePrefix.plate, Materials.Iron)
                 .outputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
                 .duration(200).EUt(16).buildAndRegister();
 
@@ -427,7 +427,7 @@ public class VanillaOverrideRecipes {
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel),
                 'S', new UnificationEntry(OrePrefix.screw, Materials.Steel));
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron, 4)
+                .inputItem(OrePrefix.plate, Materials.Iron, 4)
                 .inputs(new ItemStack(Blocks.IRON_BARS))
                 .fluidInputs(Materials.Steel.getFluid(L / 9))
                 .outputs(new ItemStack(Items.IRON_DOOR))
@@ -525,10 +525,10 @@ public class VanillaOverrideRecipes {
                 'G', new UnificationEntry(OrePrefix.gear, Materials.Iron));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.bolt, Materials.Diamond)
-                .input(OrePrefix.gear, Materials.Iron)
-                .input(OrePrefix.ring, Materials.Iron)
-                .input(OrePrefix.plate, Materials.Wood, 4)
+                .inputItem(OrePrefix.bolt, Materials.Diamond)
+                .inputItem(OrePrefix.gear, Materials.Iron)
+                .inputItem(OrePrefix.ring, Materials.Iron)
+                .inputItem(OrePrefix.plate, Materials.Wood, 4)
                 .inputs(new ItemStack(Blocks.NOTEBLOCK, 2))
                 .outputs(new ItemStack(Blocks.JUKEBOX))
                 .duration(100).EUt(16).buildAndRegister();
@@ -541,9 +541,9 @@ public class VanillaOverrideRecipes {
                 'R', new UnificationEntry(OrePrefix.stick, Materials.RedAlloy));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Wood, 4)
-                .input(OrePrefix.gear, Materials.Wood)
-                .input(OrePrefix.stick, Materials.RedAlloy)
+                .inputItem(OrePrefix.plate, Materials.Wood, 4)
+                .inputItem(OrePrefix.gear, Materials.Wood)
+                .inputItem(OrePrefix.stick, Materials.RedAlloy)
                 .inputs(new ItemStack(Blocks.IRON_BARS, 2))
                 .outputs(new ItemStack(Blocks.NOTEBLOCK))
                 .duration(100).EUt(16).buildAndRegister();
@@ -555,7 +555,7 @@ public class VanillaOverrideRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .circuitMeta(8)
-                .input(OreDictNames.stoneCobble.name(), 8)
+                .inputItem(OreDictNames.stoneCobble.name(), 8)
                 .inputs(new ItemStack(Items.FLINT))
                 .outputs(new ItemStack(Blocks.FURNACE))
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
@@ -563,7 +563,7 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:crafting_table"));
         ModHandler.addShapedRecipe("crafting_table", new ItemStack(Blocks.CRAFTING_TABLE), "FF", "WW", 'F',
                 new ItemStack(Items.FLINT), 'W', new UnificationEntry(OrePrefix.log, Materials.Wood));
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(6).input("logWood", 1)
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(6).inputItem("logWood", 1)
                 .inputs(new ItemStack(Items.FLINT)).outputs(new ItemStack(Blocks.CRAFTING_TABLE)).buildAndRegister();
 
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.STONEBRICK));
@@ -620,10 +620,10 @@ public class VanillaOverrideRecipes {
                 'I', new UnificationEntry(OrePrefix.plate, Materials.Iron),
                 'P', new ItemStack(Blocks.STONE_PRESSURE_PLATE));
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(Blocks.STONE_PRESSURE_PLATE)
-                .input(OrePrefix.plate, Materials.Iron, 2)
-                .input(OrePrefix.stick, Materials.Wood, 2)
-                .output(Items.ARMOR_STAND)
+                .inputItem(Blocks.STONE_PRESSURE_PLATE)
+                .inputItem(OrePrefix.plate, Materials.Iron, 2)
+                .inputItem(OrePrefix.stick, Materials.Wood, 2)
+                .outputItem(Items.ARMOR_STAND)
                 .duration(100).EUt(VA[ULV]).buildAndRegister();
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:trapped_chest"));
@@ -634,10 +634,10 @@ public class VanillaOverrideRecipes {
 
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:ender_chest"));
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OreDictNames.chestWood.name())
-                .input(OrePrefix.plateDense, Materials.Obsidian, 6)
-                .input(OrePrefix.plate, Materials.EnderEye)
-                .output(Blocks.ENDER_CHEST)
+                .inputItem(OreDictNames.chestWood.name())
+                .inputItem(OrePrefix.plateDense, Materials.Obsidian, 6)
+                .inputItem(OrePrefix.plate, Materials.EnderEye)
+                .outputItem(Blocks.ENDER_CHEST)
                 .duration(200).EUt(VA[MV]).buildAndRegister();
 
         for (int i = 0; i <= 15; i++) {
@@ -827,11 +827,11 @@ public class VanillaOverrideRecipes {
                 'A', new UnificationEntry(OrePrefix.bolt, Materials.RedAlloy));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Iron)
-                .input(OrePrefix.ring, Materials.Zinc)
-                .input(OrePrefix.bolt, Materials.RedAlloy)
-                .input(OrePrefix.bolt, Materials.IronMagnetic)
-                .input(OrePrefix.screw, Materials.Iron, 2)
+                .inputItem(OrePrefix.plate, Materials.Iron)
+                .inputItem(OrePrefix.ring, Materials.Zinc)
+                .inputItem(OrePrefix.bolt, Materials.RedAlloy)
+                .inputItem(OrePrefix.bolt, Materials.IronMagnetic)
+                .inputItem(OrePrefix.screw, Materials.Iron, 2)
                 .outputs(new ItemStack(Items.COMPASS))
                 .duration(100).EUt(16).buildAndRegister();
 
@@ -850,10 +850,10 @@ public class VanillaOverrideRecipes {
                 'S', new UnificationEntry(OrePrefix.screw, Materials.Gold));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.Gold)
-                .input(OrePrefix.ring, Materials.Gold)
-                .input(OrePrefix.bolt, Materials.Gold, 2)
-                .input(OrePrefix.screw, Materials.Gold)
+                .inputItem(OrePrefix.plate, Materials.Gold)
+                .inputItem(OrePrefix.ring, Materials.Gold)
+                .inputItem(OrePrefix.bolt, Materials.Gold, 2)
+                .inputItem(OrePrefix.screw, Materials.Gold)
                 .inputs(new ItemStack(Items.COMPARATOR))
                 .outputs(new ItemStack(Items.CLOCK))
                 .duration(100).EUt(16).buildAndRegister();

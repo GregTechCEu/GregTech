@@ -91,6 +91,11 @@ public class PipeCoverableImplementation implements CoverHolder {
         return pipeBlock.getDropItem(holder);
     }
 
+    @Override
+    public @NotNull ItemStack getStackForm(int count) {
+        return getStackForm();
+    }
+
     public void onLoad() {
         for (EnumFacing side : EnumFacing.VALUES) {
             this.sidedRedstoneInput[side.getIndex()] = GTUtility.getRedstonePower(getWorld(), getPos(), side);

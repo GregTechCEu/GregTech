@@ -27,15 +27,6 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
         return new FusionRecipeBuilder(this);
     }
 
-    @Override
-    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
-        if (key.equals(FusionEUToStartProperty.KEY)) {
-            this.EUToStart(((Number) value).longValue());
-            return true;
-        }
-        return super.applyPropertyCT(key, value);
-    }
-
     public FusionRecipeBuilder EUToStart(long EUToStart) {
         if (EUToStart <= 0) {
             GTLog.logger.error("EU to start cannot be less than or equal to 0", new Throwable());

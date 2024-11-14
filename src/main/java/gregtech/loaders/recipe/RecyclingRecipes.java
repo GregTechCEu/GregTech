@@ -6,9 +6,6 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.category.RecipeCategories;
-import gregtech.api.recipes.ingredients.old.nbtmatch.NBTCondition;
-import gregtech.api.recipes.ingredients.old.nbtmatch.NBTMatcher;
-import gregtech.api.recipes.ingredients.old.nbtmatch.NBTTagType;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -38,9 +35,6 @@ import static gregtech.api.GTValues.M;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class RecyclingRecipes {
-
-    private static final NBTCondition RENAMED_NBT = NBTCondition.create(NBTTagType.COMPOUND, "display", "");
-    private static final NBTCondition REPAIRCOST_NBT = NBTCondition.create(NBTTagType.INT, "RepairCost", "");
 
     // TODO - Fix recipe order with some things (noticed Hermetic Casings)
     // TODO - Figure out solution to LuV+ components
@@ -586,17 +580,16 @@ public class RecyclingRecipes {
         // Ignore String tag from naming machines
         MetaTileEntity mte = GTUtility.getMetaTileEntity(input);
         if (mte != null) {
-            builder.clearInputs();
-            // Don't use ANY to avoid issues with Drums, Super Chests, and other MTEs that hold an inventory
-            builder.inputNBT(mte, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, RENAMED_NBT);
+            builder.clearItemInputs();
+            builder.inputItem(mte, t -> t == null || t.hasKey("display"));
         }
 
         Item inputItem = input.getItem();
         // Check to see if we can recycle tools. Only allow Tools at full durability
         if (inputItem.isDamageable()) {
             if (inputItem.getDamage(input) == 0) {
-                builder.clearInputs();
-                builder.inputNBT(inputItem, NBTMatcher.NOT_PRESENT_OR_HAS_KEY, REPAIRCOST_NBT);
+                builder.clearItemInputs();
+                builder.inputItem(inputItem, t -> t == null || t.hasKey("RepairCost"));
             }
         }
     }

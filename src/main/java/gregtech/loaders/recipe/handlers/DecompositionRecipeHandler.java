@@ -107,7 +107,7 @@ public class DecompositionRecipeHandler {
 
         // finish builder
         if (decomposePrefix != null) {
-            builder.input(decomposePrefix, material, totalInputAmount);
+            builder.inputItem(decomposePrefix, material, totalInputAmount);
         } else {
             builder.fluidInputs(material.getFluid(1000));
         }

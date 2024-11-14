@@ -176,7 +176,7 @@ public class PolymerRecipes {
 
     private static void epoxyProcess() {
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dustTiny, SodiumHydroxide)
+                .inputItem(dustTiny, SodiumHydroxide)
                 .fluidInputs(SeedOil.getFluid(6000))
                 .fluidInputs(Methanol.getFluid(1000))
                 .fluidOutputs(Glycerol.getFluid(1000))
@@ -184,7 +184,7 @@ public class PolymerRecipes {
                 .duration(600).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dustTiny, SodiumHydroxide)
+                .inputItem(dustTiny, SodiumHydroxide)
                 .fluidInputs(SeedOil.getFluid(6000))
                 .fluidInputs(Ethanol.getFluid(1000))
                 .fluidOutputs(Glycerol.getFluid(1000))
@@ -192,7 +192,7 @@ public class PolymerRecipes {
                 .duration(600).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dustTiny, SodiumHydroxide)
+                .inputItem(dustTiny, SodiumHydroxide)
                 .fluidInputs(FishOil.getFluid(6000))
                 .fluidInputs(Methanol.getFluid(1000))
                 .fluidOutputs(Glycerol.getFluid(1000))
@@ -200,7 +200,7 @@ public class PolymerRecipes {
                 .duration(600).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dustTiny, SodiumHydroxide)
+                .inputItem(dustTiny, SodiumHydroxide)
                 .fluidInputs(FishOil.getFluid(6000))
                 .fluidInputs(Ethanol.getFluid(1000))
                 .fluidOutputs(Glycerol.getFluid(1000))
@@ -208,7 +208,7 @@ public class PolymerRecipes {
                 .duration(600).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide)
+                .inputItem(dust, SodiumHydroxide)
                 .fluidInputs(SeedOil.getFluid(54000))
                 .fluidInputs(Methanol.getFluid(9000))
                 .fluidOutputs(Glycerol.getFluid(9000))
@@ -216,7 +216,7 @@ public class PolymerRecipes {
                 .duration(5400).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide)
+                .inputItem(dust, SodiumHydroxide)
                 .fluidInputs(SeedOil.getFluid(54000))
                 .fluidInputs(Ethanol.getFluid(9000))
                 .fluidOutputs(Glycerol.getFluid(9000))
@@ -224,7 +224,7 @@ public class PolymerRecipes {
                 .duration(5400).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide)
+                .inputItem(dust, SodiumHydroxide)
                 .fluidInputs(FishOil.getFluid(54000))
                 .fluidInputs(Methanol.getFluid(9000))
                 .fluidOutputs(Glycerol.getFluid(9000))
@@ -232,7 +232,7 @@ public class PolymerRecipes {
                 .duration(5400).EUt(VA[LV]).buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide)
+                .inputItem(dust, SodiumHydroxide)
                 .fluidInputs(FishOil.getFluid(54000))
                 .fluidInputs(Ethanol.getFluid(9000))
                 .fluidOutputs(Glycerol.getFluid(9000))
@@ -255,7 +255,7 @@ public class PolymerRecipes {
                 .duration(480).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 3)
+                .inputItem(dust, SodiumHydroxide, 3)
                 .fluidInputs(AllylChloride.getFluid(1000))
                 .fluidInputs(HypochlorousAcid.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
@@ -267,7 +267,7 @@ public class PolymerRecipes {
                 .fluidInputs(Chlorine.getFluid(4000))
                 .fluidInputs(Propene.getFluid(1000))
                 .fluidInputs(Water.getFluid(1000))
-                .input(dust, SodiumHydroxide, 3)
+                .inputItem(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Epichlorohydrin.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .fluidOutputs(SaltWater.getFluid(1000))
@@ -278,7 +278,7 @@ public class PolymerRecipes {
                 .fluidInputs(Chlorine.getFluid(2000))
                 .fluidInputs(Propene.getFluid(1000))
                 .fluidInputs(HypochlorousAcid.getFluid(1000))
-                .input(dust, SodiumHydroxide, 3)
+                .inputItem(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Epichlorohydrin.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
@@ -301,7 +301,7 @@ public class PolymerRecipes {
                 .duration(160).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 3)
+                .inputItem(dust, SodiumHydroxide, 3)
                 .fluidInputs(Epichlorohydrin.getFluid(1000))
                 .fluidInputs(BisphenolA.getFluid(1000))
                 .fluidOutputs(Epoxy.getFluid(1000))
@@ -314,7 +314,7 @@ public class PolymerRecipes {
                 .fluidInputs(Phenol.getFluid(2000))
                 .fluidInputs(Acetone.getFluid(1000))
                 .fluidInputs(HydrochloricAcid.getFluid(1000))
-                .input(dust, SodiumHydroxide, 3)
+                .inputItem(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Epoxy.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
                 .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
@@ -340,19 +340,19 @@ public class PolymerRecipes {
                 .fluidInputs(Butadiene.getFluid(3000))
                 .fluidInputs(Styrene.getFluid(1000))
                 .fluidInputs(Air.getFluid(15000))
-                .output(dust, RawStyreneButadieneRubber, 27)
+                .outputItem(dust, RawStyreneButadieneRubber, 27)
                 .duration(480).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Butadiene.getFluid(3000))
                 .fluidInputs(Styrene.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(15000))
-                .output(dust, RawStyreneButadieneRubber, 41)
+                .outputItem(dust, RawStyreneButadieneRubber, 41)
                 .duration(480).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, RawStyreneButadieneRubber, 9)
-                .input(dust, Sulfur)
+                .inputItem(dust, RawStyreneButadieneRubber, 9)
+                .inputItem(dust, Sulfur)
                 .fluidOutputs(StyreneButadieneRubber.getFluid(1296))
                 .duration(600).EUt(VA[LV]).buildAndRegister();
     }
@@ -375,14 +375,14 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(200)
-                .input(dustTiny, Copper)
+                .inputItem(dustTiny, Copper)
                 .fluidInputs(Nitrochlorobenzene.getFluid(2000))
                 .fluidInputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Dichlorobenzidine.getFluid(1000))
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
-                .input(dust, Copper)
+                .inputItem(dust, Copper)
                 .fluidInputs(Nitrochlorobenzene.getFluid(18000))
                 .fluidInputs(Hydrogen.getFluid(18000))
                 .fluidOutputs(Dichlorobenzidine.getFluid(9000))
@@ -413,7 +413,7 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(100)
-                .input(dustTiny, PotassiumDichromate)
+                .inputItem(dustTiny, PotassiumDichromate)
                 .fluidInputs(Dimethylbenzene.getFluid(1000))
                 .fluidInputs(Oxygen.getFluid(2000))
                 .fluidOutputs(PhthalicAcid.getFluid(1000))
@@ -421,7 +421,7 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(900)
-                .input(dust, PotassiumDichromate)
+                .inputItem(dust, PotassiumDichromate)
                 .fluidInputs(Dimethylbenzene.getFluid(9000))
                 .fluidInputs(Oxygen.getFluid(18000))
                 .fluidOutputs(PhthalicAcid.getFluid(9000))
@@ -431,7 +431,7 @@ public class PolymerRecipes {
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(125)
                 .fluidInputs(Naphthalene.getFluid(2000))
                 .fluidInputs(SulfuricAcid.getFluid(1000))
-                .input(dustTiny, Potassium)
+                .inputItem(dustTiny, Potassium)
                 .fluidOutputs(PhthalicAcid.getFluid(2500))
                 .fluidOutputs(HydrogenSulfide.getFluid(1000))
                 .buildAndRegister();
@@ -439,7 +439,7 @@ public class PolymerRecipes {
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[LV]).duration(1125)
                 .fluidInputs(Naphthalene.getFluid(18000))
                 .fluidInputs(SulfuricAcid.getFluid(9000))
-                .input(dust, Potassium)
+                .inputItem(dust, Potassium)
                 .fluidOutputs(PhthalicAcid.getFluid(22500))
                 .fluidOutputs(HydrogenSulfide.getFluid(9000))
                 .buildAndRegister();
@@ -452,16 +452,16 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
-                .input(dust, Saltpeter, 10)
-                .input(dust, ChromiumTrioxide, 8)
-                .output(dust, PotassiumDichromate, 11)
+                .inputItem(dust, Saltpeter, 10)
+                .inputItem(dust, ChromiumTrioxide, 8)
+                .outputItem(dust, PotassiumDichromate, 11)
                 .fluidOutputs(NitrogenDioxide.getFluid(2000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(60).duration(100)
-                .input(dust, Chrome)
+                .inputItem(dust, Chrome)
                 .fluidInputs(Oxygen.getFluid(3000))
-                .output(dust, ChromiumTrioxide, 4)
+                .outputItem(dust, ChromiumTrioxide, 4)
                 .buildAndRegister();
     }
 
@@ -482,21 +482,21 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[MV]).duration(100)
                 .fluidInputs(Cyclohexane.getFluid(1000))
                 .fluidInputs(NitrosylChloride.getFluid(1000))
-                .output(dust, CyclohexanoneOxime, 19)
+                .outputItem(dust, CyclohexanoneOxime, 19)
                 .fluidOutputs(HydrochloricAcid.getFluid(1000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(200)
-                .input(dust, CyclohexanoneOxime, 19)
+                .inputItem(dust, CyclohexanoneOxime, 19)
                 .fluidInputs(SulfuricAcid.getFluid(1000))
-                .output(dust, Caprolactam, 19)
+                .outputItem(dust, Caprolactam, 19)
                 .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().EUt(VA[MV]).duration(150).blastFurnaceTemp(533)
-                .input(dust, Caprolactam, 1)
+                .inputItem(dust, Caprolactam, 1)
                 .fluidInputs(Nitrogen.getFluid(1000))
-                .output(ingot, Polycaprolactam, 1)
+                .outputItem(ingot, Polycaprolactam, 1)
                 .buildAndRegister();
     }
 }

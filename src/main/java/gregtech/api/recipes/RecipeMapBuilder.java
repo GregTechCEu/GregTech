@@ -2,8 +2,8 @@ package gregtech.api.recipes;
 
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.recipes.buildaction.RecipeBuildAction;
 import gregtech.api.recipes.lookup.AbstractRecipeLookup;
-import gregtech.api.recipes.lookup.RecipeLookup;
 import gregtech.api.recipes.ui.RecipeMapUI;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 

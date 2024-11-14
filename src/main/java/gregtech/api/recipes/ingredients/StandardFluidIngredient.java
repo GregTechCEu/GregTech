@@ -132,7 +132,7 @@ public final class StandardFluidIngredient implements GTFluidIngredient {
             return this;
         }
 
-        public FluidIngredientBuilder addFluid(FluidStack fluid) {
+        public FluidIngredientBuilder addStack(FluidStack fluid) {
             stacks.add(fluid);
             return this;
         }

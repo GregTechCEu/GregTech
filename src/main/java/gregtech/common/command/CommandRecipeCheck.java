@@ -204,7 +204,7 @@ public class CommandRecipeCheck extends CommandBase {
 
         ItemOutputProvider itemProvider = recipe.getItemOutputProvider();
 
-        if (itemProvider.getMaximumOutputs() > 0) {
+        if (itemProvider.getMaximumOutputs(1) > 0) {
             if (itemProvider instanceof StandardItemOutput standard) {
                 if (!standard.getOutputs().isEmpty()) {
                     output.append("Item outputs:\n");
@@ -234,7 +234,7 @@ public class CommandRecipeCheck extends CommandBase {
 
         FluidOutputProvider fluidProvider = recipe.getFluidOutputProvider();
 
-        if (fluidProvider.getMaximumOutputs() > 0) {
+        if (fluidProvider.getMaximumOutputs(1) > 0) {
             if (fluidProvider instanceof StandardFluidOutput standard) {
                 if (!standard.getOutputs().isEmpty()) {
                     output.append("Fluid outputs:\n");

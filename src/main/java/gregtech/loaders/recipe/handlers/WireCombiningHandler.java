@@ -94,9 +94,9 @@ public class WireCombiningHandler {
 
     private static void processCableStripping(OrePrefix prefix, Material material, WireProperties property) {
         PACKER_RECIPES.recipeBuilder()
-                .input(prefix, material)
-                .output(cableToWireMap.get(prefix), material)
-                .output(plate, Materials.Rubber, (int) (prefix.secondaryMaterials.get(0).amount / GTValues.M))
+                .inputItem(prefix, material)
+                .outputItem(cableToWireMap.get(prefix), material)
+                .outputItem(plate, Materials.Rubber, (int) (prefix.secondaryMaterials.get(0).amount / GTValues.M))
                 .duration(100).EUt(GTValues.VA[GTValues.ULV])
                 .buildAndRegister();
     }

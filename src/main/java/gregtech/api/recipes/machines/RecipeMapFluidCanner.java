@@ -53,7 +53,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
                     // if we actually drained something, then it's draining recipe
                     return recipeBuilder()
                             // we can reuse recipe as long as input container stack fully matches our one
-                            .inputs(new GTRecipeItemInput(inputStack, 1))
+                            .inputs(inputStack)
                             .outputs(fluidHandlerItem.getContainer())
                             .fluidOutputs(containerFluid)
                             .duration(Math.max(16, containerFluid.amount / 64)).EUt(4)
@@ -71,7 +71,7 @@ public class RecipeMapFluidCanner extends RecipeMap<SimpleRecipeBuilder> {
                         if (inputFluid.amount > 0) {
                             return recipeBuilder()
                                     // we can reuse recipe as long as input container stack fully matches our one
-                                    .inputs(new GTRecipeItemInput(inputStack, 1))
+                                    .inputs(inputStack)
                                     .fluidInputs(inputFluid)
                                     .outputs(fluidHandlerItem.getContainer())
                                     .duration(Math.max(16, inputFluid.amount / 64)).EUt(4)

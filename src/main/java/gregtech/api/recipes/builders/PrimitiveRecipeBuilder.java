@@ -6,6 +6,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.properties.impl.PrimitiveProperty;
 import gregtech.api.util.ValidationResult;
 
+@Deprecated
 public class PrimitiveRecipeBuilder extends RecipeBuilder<PrimitiveRecipeBuilder> {
 
     public PrimitiveRecipeBuilder() {}
@@ -21,12 +22,5 @@ public class PrimitiveRecipeBuilder extends RecipeBuilder<PrimitiveRecipeBuilder
     @Override
     public PrimitiveRecipeBuilder copy() {
         return new PrimitiveRecipeBuilder(this);
-    }
-
-    @Override
-    public ValidationResult<Recipe> build() {
-        this.EUt(1); // secretly force to 1 to allow recipe matching to work properly
-        applyProperty(PrimitiveProperty.getInstance(), true);
-        return super.build();
     }
 }

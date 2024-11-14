@@ -28,6 +28,10 @@ public interface GTFluidIngredient extends Matcher<FluidStack> {
     @Override
     boolean matches(FluidStack stack);
 
+    default boolean consumes() {
+        return true;
+    }
+
     /**
      * Return a list of all matching stacks within the given context. Try to operate on the lowest context possible
      * to avoid returning massive arrays. Note that custom NBT conditions should <i>not</i>

@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
@@ -80,13 +81,13 @@ public class RecyclingHandler {
                 .collect(Collectors.toList()));
     }
 
-    public static @Nullable ItemMaterialInfo getRecyclingIngredients(List<GTRecipeInput> inputs, int outputCount) {
+    public static @Nullable ItemMaterialInfo getRecyclingIngredients(List<GTItemIngredient> inputs, int outputCount) {
         Object2LongMap<Material> materialStacksExploded = new Object2LongOpenHashMap<>();
-        for (GTRecipeInput input : inputs) {
-            if (input == null || input.isNonConsumable()) continue;
-            ItemStack[] inputStacks = input.getInputStacks();
-            if (inputStacks == null || inputStacks.length == 0) continue;
-            ItemStack inputStack = inputStacks[0];
+        for (GTItemIngredient input : inputs) {
+            if (input == null) continue;
+            List<ItemStack> inputStacks = input.getAllMatchingStacks();
+            if (inputStacks.isEmpty()) continue;
+            ItemStack inputStack = inputStacks.get(0);
             addItemStackToMaterialStacks(inputStack, materialStacksExploded, inputStack.getCount());
         }
 

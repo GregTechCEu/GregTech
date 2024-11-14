@@ -36,185 +36,185 @@ public class ForestryElectrodeRecipes {
 
     public static void addGregTechMachineRecipes() {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_APATITE)
+                .inputItem(ForestryModule.ELECTRODE_APATITE)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.APATITE, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Apatite, 4)
-                .input(bolt, Apatite, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_APATITE, 2)
+                .inputItem(stick, Apatite, 4)
+                .inputItem(bolt, Apatite, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_APATITE, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_BLAZE)
+                .inputItem(ForestryModule.ELECTRODE_BLAZE)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.BLAZE, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
-                .input(dust, Blaze, 5)
-                .input(dust, Redstone, 2)
-                .output(ForestryModule.ELECTRODE_BLAZE, 4)
+                .inputItem(dust, Blaze, 5)
+                .inputItem(dust, Redstone, 2)
+                .outputItem(ForestryModule.ELECTRODE_BLAZE, 4)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_BRONZE)
+                .inputItem(ForestryModule.ELECTRODE_BRONZE)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.BRONZE, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Bronze, 4).input(bolt, Bronze, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_BRONZE, 2)
+                .inputItem(stick, Bronze, 4).inputItem(bolt, Bronze, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_BRONZE, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_COPPER)
+                .inputItem(ForestryModule.ELECTRODE_COPPER)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.COPPER, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Copper, 4)
-                .input(bolt, Copper, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_COPPER, 2)
+                .inputItem(stick, Copper, 4)
+                .inputItem(bolt, Copper, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_COPPER, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_DIAMOND)
+                .inputItem(ForestryModule.ELECTRODE_DIAMOND)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.DIAMOND, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Diamond, 4)
-                .input(bolt, Diamond, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_DIAMOND, 2)
+                .inputItem(stick, Diamond, 4)
+                .inputItem(bolt, Diamond, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_DIAMOND, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_EMERALD)
+                .inputItem(ForestryModule.ELECTRODE_EMERALD)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.EMERALD, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Emerald, 4)
-                .input(bolt, Emerald, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_EMERALD, 2)
+                .inputItem(stick, Emerald, 4)
+                .inputItem(bolt, Emerald, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_EMERALD, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_ENDER)
+                .inputItem(ForestryModule.ELECTRODE_ENDER)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.ENDER, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
-                .input(dust, Endstone, 5)
-                .input(dust, EnderEye, 2)
-                .output(ForestryModule.ELECTRODE_ENDER, 4)
+                .inputItem(dust, Endstone, 5)
+                .inputItem(dust, EnderEye, 2)
+                .outputItem(ForestryModule.ELECTRODE_ENDER, 4)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_GOLD)
+                .inputItem(ForestryModule.ELECTRODE_GOLD)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.GOLD, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Gold, 4)
-                .input(bolt, Gold, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_GOLD, 2)
+                .inputItem(stick, Gold, 4)
+                .inputItem(bolt, Gold, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_GOLD, 2)
                 .buildAndRegister();
 
         if (Mods.IndustrialCraft2.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                    .input(ForestryModule.ELECTRODE_IRON)
+                    .inputItem(ForestryModule.ELECTRODE_IRON)
                     .fluidInputs(Glass.getFluid(100))
                     .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.IRON, 1))
                     .buildAndRegister();
 
             FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                    .input(stick, Iron, 4).input(bolt, Iron, 2)
-                    .input(dust, Redstone)
-                    .output(ForestryModule.ELECTRODE_IRON, 2)
+                    .inputItem(stick, Iron, 4).inputItem(bolt, Iron, 2)
+                    .inputItem(dust, Redstone)
+                    .outputItem(ForestryModule.ELECTRODE_IRON, 2)
                     .buildAndRegister();
 
         }
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_LAPIS)
+                .inputItem(ForestryModule.ELECTRODE_LAPIS)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.LAPIS, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Lapis, 4)
-                .input(bolt, Lapis, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_LAPIS, 2)
+                .inputItem(stick, Lapis, 4)
+                .inputItem(bolt, Lapis, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_LAPIS, 2)
                 .buildAndRegister();
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_OBSIDIAN)
+                .inputItem(ForestryModule.ELECTRODE_OBSIDIAN)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.OBSIDIAN, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
-                .input(dust, Obsidian, 5)
-                .input(dust, Redstone, 2)
-                .output(ForestryModule.ELECTRODE_OBSIDIAN, 4)
+                .inputItem(dust, Obsidian, 5)
+                .inputItem(dust, Redstone, 2)
+                .outputItem(ForestryModule.ELECTRODE_OBSIDIAN, 4)
                 .buildAndRegister();
 
         if (Mods.ExtraUtilities2.isModLoaded()) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                    .input(ForestryModule.ELECTRODE_ORCHID)
+                    .inputItem(ForestryModule.ELECTRODE_ORCHID)
                     .fluidInputs(Glass.getFluid(100))
                     .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.ORCHID, 1))
                     .buildAndRegister();
 
             FORMING_PRESS_RECIPES.recipeBuilder().duration(400).EUt(24)
                     .inputs(new ItemStack(Blocks.REDSTONE_ORE, 5))
-                    .input(dust, Redstone)
-                    .output(ForestryModule.ELECTRODE_ORCHID, 4)
+                    .inputItem(dust, Redstone)
+                    .outputItem(ForestryModule.ELECTRODE_ORCHID, 4)
                     .buildAndRegister();
         }
 
         // todo mixin forestry to allow this tube always, since we have rubber (once mixin port is done)
         if (Mods.IndustrialCraft2.isModLoaded() || Mods.TechReborn.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
             CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                    .input(ForestryModule.ELECTRODE_RUBBER)
+                    .inputItem(ForestryModule.ELECTRODE_RUBBER)
                     .fluidInputs(Glass.getFluid(100))
                     .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.RUBBER, 1))
                     .buildAndRegister();
 
             FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                    .input(stick, Rubber, 4)
-                    .input(bolt, Rubber, 2)
-                    .input(dust, Redstone)
-                    .output(ForestryModule.ELECTRODE_RUBBER, 2)
+                    .inputItem(stick, Rubber, 4)
+                    .inputItem(bolt, Rubber, 2)
+                    .inputItem(dust, Redstone)
+                    .outputItem(ForestryModule.ELECTRODE_RUBBER, 2)
                     .buildAndRegister();
         }
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(16)
-                .input(ForestryModule.ELECTRODE_TIN)
+                .inputItem(ForestryModule.ELECTRODE_TIN)
                 .fluidInputs(Glass.getFluid(100))
                 .outputs(ModuleCore.getItems().tubes.get(EnumElectronTube.TIN, 1))
                 .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder().duration(200).EUt(24)
-                .input(stick, Tin, 4)
-                .input(bolt, Tin, 2)
-                .input(dust, Redstone)
-                .output(ForestryModule.ELECTRODE_TIN, 2)
+                .inputItem(stick, Tin, 4)
+                .inputItem(bolt, Tin, 2)
+                .inputItem(dust, Redstone)
+                .outputItem(ForestryModule.ELECTRODE_TIN, 2)
                 .buildAndRegister();
     }
 

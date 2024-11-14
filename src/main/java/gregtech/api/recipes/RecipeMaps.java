@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.recipes.buildaction.impl.DistillationTowerBuildAction;
 import gregtech.api.recipes.builders.AssemblerRecipeBuilder;
 import gregtech.api.recipes.builders.AssemblyLineRecipeBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
@@ -12,10 +13,7 @@ import gregtech.api.recipes.builders.ComputationRecipeBuilder;
 import gregtech.api.recipes.builders.FuelRecipeBuilder;
 import gregtech.api.recipes.builders.FusionRecipeBuilder;
 import gregtech.api.recipes.builders.ImplosionRecipeBuilder;
-import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
 import gregtech.api.recipes.machines.RecipeLookupFurnace;
 import gregtech.api.recipes.machines.RecipeLookupSolidFuels;
 import gregtech.api.recipes.machines.RecipeMapAssemblyLine;
@@ -155,9 +153,9 @@ public final class RecipeMaps {
                     .sound(GTSoundEvents.ASSEMBLER)
                     .onBuild(gregtechId("assembler_solder"), recipeBuilder -> {
                         var fluidInputs = recipeBuilder.getFluidInputs();
-                        if (fluidInputs.size() == 1 && fluidInputs.get(0).getInputFluidStack().getFluid() ==
+                        if (fluidInputs.size() == 1 && fluidInputs.get(0).getAllMatchingStacks().get(0).getFluid() ==
                                 Materials.SolderingAlloy.getFluid()) {
-                            int amount = fluidInputs.get(0).getInputFluidStack().amount;
+                            int amount = GTUtility.safeCastLongToInt(fluidInputs.get(0).getRequiredCount());
 
                             recipeBuilder.copy().clearFluidInputs().fluidInputs(Materials.Tin.getFluid(amount * 2))
                                     .buildAndRegister();
@@ -166,8 +164,8 @@ public final class RecipeMaps {
                     .onBuild(gregtechId("assembler_recycling"), recipeBuilder -> {
                         if (recipeBuilder.isWithRecycling()) {
                             // ignore input fluids for recycling
-                            ItemStack outputStack = recipeBuilder.getOutputs().get(0);
-                            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(recipeBuilder.getInputs(),
+                            ItemStack outputStack = recipeBuilder.getItemOutputs().get(0);
+                            ItemMaterialInfo info = RecyclingHandler.getRecyclingIngredients(recipeBuilder.getItemInputs(),
                                     outputStack.getCount());
                             if (info != null) {
                                 OreDictUnifier.registerOre(outputStack, info);
@@ -441,15 +439,7 @@ public final class RecipeMaps {
                     .progressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE)
                     .sound(GTValues.FOOLS.get() ? GTSoundEvents.SCIENCE : GTSoundEvents.CHEMICAL_REACTOR)
                     .onBuild(gregtechId("lcr_copy"), recipeBuilder -> RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
-                            .inputs(recipeBuilder.getInputs().toArray(new GTRecipeInput[0]))
-                            .fluidInputs(recipeBuilder.getFluidInputs())
-                            .outputs(recipeBuilder.getOutputs())
-                            .chancedOutputs(recipeBuilder.getChancedOutputs())
-                            .fluidOutputs(recipeBuilder.getFluidOutputs())
-                            .chancedFluidOutputs(recipeBuilder.getChancedFluidOutputs())
-                            .cleanroom(recipeBuilder.getCleanroom())
-                            .duration(recipeBuilder.getDuration())
-                            .EUt(recipeBuilder.getEUt())
+                            .read(recipeBuilder)
                             .buildAndRegister())
                     .build();
 
@@ -520,8 +510,8 @@ public final class RecipeMaps {
      * As a Primitive Machine, the Coke Oven does not need an <B>EUt</B> parameter specified for the Recipe Builder.
      */
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapBuilder<>("coke_oven",
-            new PrimitiveRecipeBuilder())
+    public static final RecipeMap<SimpleRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMapBuilder<>("coke_oven",
+            new SimpleRecipeBuilder())
                     .itemInputs(1)
                     .itemOutputs(1)
                     .fluidOutputs(1)
@@ -669,12 +659,13 @@ public final class RecipeMaps {
      * This behavior can be disabled by adding a <B>.disableDistilleryRecipes()</B> onto the recipe builder.
      */
     @ZenProperty
-    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapBuilder<>(
-            "distillation_tower", new UniversalDistillationRecipeBuilder())
+    public static final RecipeMap<SimpleRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapBuilder<>(
+            "distillation_tower", new SimpleRecipeBuilder())
                     .itemOutputs(1)
                     .fluidInputs(1)
                     .fluidOutputs(12)
                     .ui(DistillationTowerUI::new)
+                    .onBuild(GTUtility.gregtechId("distillation_universal"), DistillationTowerBuildAction.INSTANCE)
                     .sound(GTSoundEvents.CHEMICAL_REACTOR)
                     .build();
 
@@ -1281,8 +1272,8 @@ public final class RecipeMaps {
      * Recipe Builder.
      */
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMapBuilder<>(
-            "primitive_blast_furnace", new PrimitiveRecipeBuilder())
+    public static final RecipeMap<SimpleRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMapBuilder<>(
+            "primitive_blast_furnace", new SimpleRecipeBuilder())
                     .itemInputs(3)
                     .modifyItemInputs(false)
                     .itemOutputs(3)

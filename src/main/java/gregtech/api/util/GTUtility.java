@@ -17,6 +17,9 @@ import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.chance.ChanceEntry;
+import gregtech.api.recipes.chance.output.ChancedOutput;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 
@@ -446,6 +449,11 @@ public class GTUtility {
         return compound;
     }
 
+    /**
+     * Deep copies a list of item stacks.
+     * @param itemStacks the list of item stacks
+     * @return a deep copy of the list
+     */
     public static @NotNull List<@NotNull ItemStack> copyStackList(@NotNull List<@NotNull ItemStack> itemStacks) {
         List<ItemStack> list = new ObjectArrayList<>(itemStacks.size());
         for (ItemStack itemStack : itemStacks) {
@@ -454,6 +462,11 @@ public class GTUtility {
         return list;
     }
 
+    /**
+     * Deep copies a list of fluid stacks.
+     * @param fluidStacks the list of fluid stacks
+     * @return a deep copy of the list
+     */
     public static @NotNull List<@NotNull FluidStack> copyFluidList(@NotNull List<@NotNull FluidStack> fluidStacks) {
         List<FluidStack> list = new ObjectArrayList<>(fluidStacks.size());
         for (FluidStack stack : fluidStacks) {

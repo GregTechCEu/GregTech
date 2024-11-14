@@ -26,7 +26,7 @@ public interface RecipePropertyStorage {
      * @param recipeProperty the property to remove
      * @return the removed property, if it existed.
      */
-    <T> T remove(@NotNull RecipeProperty<T> recipeProperty);
+    <T> @Nullable T remove(@NotNull RecipeProperty<T> recipeProperty);
 
     /**
      * @return a copy of this property storage
@@ -80,7 +80,7 @@ public interface RecipePropertyStorage {
         }
 
         @Override
-        public <T> T remove(@NotNull RecipeProperty<T> recipeProperty) {
+        public <T> @Nullable T remove(@NotNull RecipeProperty<T> recipeProperty) {
             throw new UnsupportedOperationException("empty");
         }
 
@@ -123,6 +123,62 @@ public interface RecipePropertyStorage {
         public void deserializeNBT(@NotNull NBTTagCompound nbt) {
             if (!nbt.isEmpty()) {
                 GTLog.logger.warn("Tried to deserialize non-empty tag in RecipePropertyStorage.EMPTY: {}", nbt,
+                        new Throwable());
+            }
+        }
+    };
+
+    RecipePropertyStorage ERRORED = new RecipePropertyStorage() {
+
+        @Override
+        public <T> boolean store(@NotNull RecipeProperty<T> recipeProperty, @NotNull T value) {
+            return true;
+        }
+
+        @Override
+        public <T> @Nullable T remove(@NotNull RecipeProperty<T> recipeProperty) {
+            return null;
+        }
+
+        @Override
+        public @NotNull RecipePropertyStorage copy() {
+            return this;
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public @NotNull Set<Map.Entry<RecipeProperty<?>, Object>> entrySet() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public <T> @Nullable T get(@NotNull RecipeProperty<T> recipeProperty, @Nullable T defaultValue) {
+            return defaultValue;
+        }
+
+        @Override
+        public boolean contains(@NotNull RecipeProperty<?> recipeProperty) {
+            return false;
+        }
+
+        @Override
+        public @UnmodifiableView @NotNull Set<@NotNull RecipeProperty<?>> values() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public @NotNull NBTTagCompound serializeNBT() {
+            return new NBTTagCompound();
+        }
+
+        @Override
+        public void deserializeNBT(@NotNull NBTTagCompound nbt) {
+            if (!nbt.isEmpty()) {
+                GTLog.logger.warn("Tried to deserialize non-empty tag in RecipePropertyStorage.ERRORED: {}", nbt,
                         new Throwable());
             }
         }

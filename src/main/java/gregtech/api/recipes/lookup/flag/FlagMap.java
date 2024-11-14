@@ -43,7 +43,7 @@ public final class FlagMap extends Short2LongArrayMap {
         public boolean hasNext() {
             while (next == null && movePointer()) {
                 Recipe recipe = lookup.getRecipeByIndex(pointer);
-                if (recipe.ingredientFlags >= get((short) pointer)) next = recipe;
+                if (recipe.ingredientFlags == get((short) pointer)) next = recipe;
             }
             return next != null;
         }
@@ -68,7 +68,7 @@ public final class FlagMap extends Short2LongArrayMap {
             int pointer = this.pointer + 1;
             while (pointer < lookup.getRecipeCount()) {
                 // pre-emptively calculate all the matches to pass on to the compacted iterator
-                if (lookup.getRecipeByIndex(pointer).ingredientFlags < get((short) pointer)) fullmatch.set(pointer);
+                if (lookup.getRecipeByIndex(pointer).ingredientFlags != get((short) pointer)) fullmatch.set(pointer);
                 pointer = filter.nextClearBit(pointer + 1);
             }
             return new CompactedIterator(lookup, fullmatch, this.pointer);

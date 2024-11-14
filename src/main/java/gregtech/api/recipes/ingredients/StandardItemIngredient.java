@@ -4,6 +4,7 @@ import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.ItemStackApplicatorMap;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -121,7 +122,7 @@ public final class StandardItemIngredient implements GTItemIngredient {
         private Set<ItemStack> stacks = new ObjectOpenCustomHashSet<>(ItemStackApplicatorMap.ITEM_DAMAGE_NBT);
         private @Nullable NBTMatcher matcher = null;
 
-        private long count;
+        private long count = 1;
 
         public ItemIngredientBuilder setCount(long count) {
             this.count = count;
@@ -133,13 +134,30 @@ public final class StandardItemIngredient implements GTItemIngredient {
             return this;
         }
 
-        public ItemIngredientBuilder addItem(ItemStack item) {
+        public ItemIngredientBuilder addStack(ItemStack item) {
             stacks.add(item);
             return this;
         }
 
         public ItemIngredientBuilder addItem(Item item) {
             stacks.add(new ItemStack(item));
+            return this;
+        }
+
+        public ItemIngredientBuilder addBlock(Block block) {
+            stacks.add(new ItemStack(block));
+            return this;
+        }
+
+        public ItemIngredientBuilder addBlock(Block block, int damage) {
+            stacks.add(new ItemStack(block, damage));
+            return this;
+        }
+
+        public ItemIngredientBuilder addBlock(Block block, int damage, NBTTagCompound tag) {
+            ItemStack stack = new ItemStack(block, 1, damage);
+            stack.setTagCompound(tag);
+            stacks.add(stack);
             return this;
         }
 

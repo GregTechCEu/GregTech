@@ -217,8 +217,8 @@ public class CombRecipes {
         RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
                 .inputs(ForestryUtil.getCombStack(GTCombType.IRIDIUM, 4))
                 .fluidInputs(Voltage.IV.getFluid())
-                .output(OrePrefix.nugget, Materials.Iridium)
-                .output(OrePrefix.dust, Materials.IridiumMetalResidue, 5)
+                .outputItem(OrePrefix.nugget, Materials.Iridium)
+                .outputItem(OrePrefix.dust, Materials.IridiumMetalResidue, 5)
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(1000).EUt(Voltage.IV.getChemicalEnergy())
                 .buildAndRegister();
@@ -227,7 +227,7 @@ public class CombRecipes {
         RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
                 .inputs(ForestryUtil.getCombStack(GTCombType.OSMIUM, 4))
                 .fluidInputs(Voltage.IV.getFluid())
-                .output(OrePrefix.nugget, Materials.Osmium)
+                .outputItem(OrePrefix.nugget, Materials.Osmium)
                 .fluidOutputs(Materials.AcidicOsmiumSolution.getFluid(2000))
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(1000).EUt(Voltage.IV.getChemicalEnergy())
@@ -235,11 +235,11 @@ public class CombRecipes {
 
         // Special Indium Recipe
         RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
-                .input(OrePrefix.dust, Materials.Aluminium, 4)
+                .inputItem(OrePrefix.dust, Materials.Aluminium, 4)
                 .inputs(ForestryUtil.getCombStack(GTCombType.INDIUM))
                 .fluidInputs(Materials.IndiumConcentrate.getFluid(1000))
-                .output(OrePrefix.dustSmall, Materials.Indium, 2)
-                .output(OrePrefix.dust, Materials.AluminiumSulfite, 4)
+                .outputItem(OrePrefix.dustSmall, Materials.Indium, 2)
+                .outputItem(OrePrefix.dust, Materials.AluminiumSulfite, 4)
                 .fluidOutputs(Materials.LeadZincSolution.getFluid(1000))
                 .duration(50).EUt(600).buildAndRegister();
 
@@ -265,7 +265,7 @@ public class CombRecipes {
         RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
                 .inputs(ForestryUtil.getCombStack(GTCombType.NEUTRONIUM, 4))
                 .fluidInputs(Voltage.UV.getFluid())
-                .output(OrePrefix.nugget, Materials.Neutronium)
+                .outputItem(OrePrefix.nugget, Materials.Neutronium)
                 .fluidOutputs(Materials.Neutronium.getFluid(GTValues.L * 4))
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(3000).EUt(Voltage.UV.getChemicalEnergy()).buildAndRegister();
@@ -309,9 +309,9 @@ public class CombRecipes {
 
         RecipeBuilder<?> builder = RecipeMaps.CHEMICAL_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(9, ForestryUtil.getCombStack(comb)))
-                .input(OrePrefix.crushed, inMaterial)
+                .inputItem(OrePrefix.crushed, inMaterial)
                 .fluidInputs(volt.getFluid())
-                .output(OrePrefix.crushedPurified, outMaterial, 4)
+                .outputItem(OrePrefix.crushedPurified, outMaterial, 4)
                 .duration(volt.getChemicalTime())
                 .EUt(volt.getChemicalEnergy());
 
@@ -344,7 +344,7 @@ public class CombRecipes {
                 .circuitMeta(circuitNumber)
                 .fluidInputs(
                         Materials.Mutagen.getFluid((int) Math.max(1, material.getMass() + volt.getMutagenAmount())))
-                .output(OrePrefix.crushedPurified, material, 4)
+                .outputItem(OrePrefix.crushedPurified, material, 4)
                 .duration((int) (material.getMass() * 128))
                 .EUt(volt.getAutoclaveEnergy());
 

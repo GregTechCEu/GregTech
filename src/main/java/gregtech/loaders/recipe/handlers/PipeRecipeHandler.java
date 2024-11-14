@@ -63,9 +63,9 @@ public class PipeRecipeHandler {
         else return;
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(unrestrictive, material)
-                .input(OrePrefix.ring, Materials.Iron, 2)
-                .output(pipePrefix, material)
+                .inputItem(unrestrictive, material)
+                .inputItem(OrePrefix.ring, Materials.Iron, 2)
+                .outputItem(pipePrefix, material)
                 .duration(20)
                 .EUt(VA[ULV])
                 .buildAndRegister();
@@ -84,7 +84,7 @@ public class PipeRecipeHandler {
         // Some pipes like wood do not have an ingot
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 1)
+                    .inputItem(OrePrefix.ingot, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
                     .outputs(GTUtility.copy(2, pipeStack))
                     .duration((int) (material.getMass()))
@@ -94,7 +94,7 @@ public class PipeRecipeHandler {
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, material, 1)
+                    .inputItem(OrePrefix.dust, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
                     .outputs(GTUtility.copy(2, pipeStack))
                     .duration((int) (material.getMass()))
@@ -107,10 +107,10 @@ public class PipeRecipeHandler {
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                        .input(plate, material)
+                        .inputItem(plate, material)
                         .circuitMeta(18)
                         .fluidInputs(Glue.getFluid(10))
-                        .output(pipePrefix, material, 2)
+                        .outputItem(pipePrefix, material, 2)
                         .buildAndRegister();
             } else {
                 ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
@@ -125,7 +125,7 @@ public class PipeRecipeHandler {
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 1)
+                    .inputItem(OrePrefix.ingot, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
                     .outputs(pipeStack)
                     .duration((int) (material.getMass()))
@@ -135,7 +135,7 @@ public class PipeRecipeHandler {
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, material, 1)
+                    .inputItem(OrePrefix.dust, material, 1)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
                     .outputs(pipeStack)
                     .duration((int) (material.getMass()))
@@ -148,10 +148,10 @@ public class PipeRecipeHandler {
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                        .input(plate, material)
+                        .inputItem(plate, material)
                         .circuitMeta(12)
                         .fluidInputs(Glue.getFluid(10))
-                        .output(pipePrefix, material)
+                        .outputItem(pipePrefix, material)
                         .buildAndRegister();
 
             } else {
@@ -167,7 +167,7 @@ public class PipeRecipeHandler {
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 3)
+                    .inputItem(OrePrefix.ingot, material, 3)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
@@ -177,7 +177,7 @@ public class PipeRecipeHandler {
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, material, 3)
+                    .inputItem(OrePrefix.dust, material, 3)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
@@ -190,10 +190,10 @@ public class PipeRecipeHandler {
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
-                        .input(plate, material, 3)
+                        .inputItem(plate, material, 3)
                         .circuitMeta(6)
                         .fluidInputs(Glue.getFluid(20))
-                        .output(pipePrefix, material)
+                        .outputItem(pipePrefix, material)
                         .buildAndRegister();
 
             } else {
@@ -209,7 +209,7 @@ public class PipeRecipeHandler {
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 6)
+                    .inputItem(OrePrefix.ingot, material, 6)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 6)
@@ -219,7 +219,7 @@ public class PipeRecipeHandler {
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, material, 6)
+                    .inputItem(OrePrefix.dust, material, 6)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 6)
@@ -232,10 +232,10 @@ public class PipeRecipeHandler {
                         'X', new UnificationEntry(OrePrefix.plank, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                        .input(plate, material, 6)
+                        .inputItem(plate, material, 6)
                         .circuitMeta(2)
                         .fluidInputs(Glue.getFluid(50))
-                        .output(pipePrefix, material)
+                        .outputItem(pipePrefix, material)
                         .buildAndRegister();
             } else {
                 ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
@@ -250,7 +250,7 @@ public class PipeRecipeHandler {
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, material, 12)
+                    .inputItem(OrePrefix.ingot, material, 12)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 24)
@@ -260,7 +260,7 @@ public class PipeRecipeHandler {
 
         if (material.hasFlag(NO_SMASHING)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.dust, material, 12)
+                    .inputItem(OrePrefix.dust, material, 12)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 24)
@@ -273,10 +273,10 @@ public class PipeRecipeHandler {
                         'X', new UnificationEntry(OrePrefix.plateDouble, material));
 
                 ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
-                        .input(plateDouble, material, 6)
+                        .inputItem(plateDouble, material, 6)
                         .circuitMeta(24)
                         .fluidInputs(Glue.getFluid(100))
-                        .output(pipePrefix, material)
+                        .outputItem(pipePrefix, material)
                         .buildAndRegister();
             } else {
                 ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),

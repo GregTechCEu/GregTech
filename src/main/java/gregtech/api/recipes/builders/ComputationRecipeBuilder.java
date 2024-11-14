@@ -27,19 +27,6 @@ public class ComputationRecipeBuilder extends RecipeBuilder<ComputationRecipeBui
         return new ComputationRecipeBuilder(this);
     }
 
-    @Override
-    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
-        if (key.equals(ComputationProperty.KEY)) {
-            this.CWUt(((Number) value).intValue());
-            return true;
-        }
-        if (key.equals(TotalComputationProperty.KEY)) {
-            this.totalCWU(((Number) value).intValue());
-            return true;
-        }
-        return super.applyPropertyCT(key, value);
-    }
-
     public ComputationRecipeBuilder CWUt(int cwut) {
         if (cwut < 0) {
             GTLog.logger.error("CWU/t cannot be less than 0", new Throwable());

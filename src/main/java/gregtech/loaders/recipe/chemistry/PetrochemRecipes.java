@@ -131,7 +131,7 @@ public class PetrochemRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(SteamCrackedEthylene.getFluid(1000))
-                .output(dust, Carbon)
+                .outputItem(dust, Carbon)
                 .fluidOutputs(Methane.getFluid(1000))
                 .duration(120).EUt(VA[MV]).buildAndRegister();
 

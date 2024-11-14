@@ -7,8 +7,14 @@ import java.util.function.Predicate;
 
 public interface Matcher<T> {
 
+    /**
+     * @return Whether an object matches, independent of count.
+     */
     boolean matches(T t);
 
+    /**
+     * @return the count required to match
+     */
     @Range(from = 1, to = Long.MAX_VALUE)
     long getRequiredCount();
 

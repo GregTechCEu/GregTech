@@ -54,18 +54,18 @@ public class SeparationRecipes {
                 .duration(192).EUt(VA[LV]).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder()
-                .input(dust, ReinforcedEpoxyResin)
-                .output(dust, Epoxy)
+                .inputItem(dust, ReinforcedEpoxyResin)
+                .outputItem(dust, Epoxy)
                 .duration(24).EUt(5).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder()
-                .input(ore, Oilsands)
+                .inputItem(ore, Oilsands)
                 .chancedOutput(new ItemStack(Blocks.SAND), 5000, 5000)
                 .fluidOutputs(OilHeavy.getFluid(2000))
                 .duration(200).EUt(30).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(200).EUt(7)
-                .input(dust, Oilsands)
+                .inputItem(dust, Oilsands)
                 .fluidOutputs(OilHeavy.getFluid(1000))
                 .buildAndRegister();
 
@@ -110,8 +110,8 @@ public class SeparationRecipes {
         }
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(400).EUt(5)
-                .input(STICKY_RESIN)
-                .output(dust, RawRubber, 3)
+                .inputItem(STICKY_RESIN)
+                .outputItem(dust, RawRubber, 3)
                 .chancedOutput(PLANT_BALL, 1000, 850)
                 .fluidOutputs(Glue.getFluid(100))
                 .buildAndRegister();
@@ -148,7 +148,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(240).EUt(VA[LV])
-                .input(dust, Ash)
+                .inputItem(dust, Ash)
                 .chancedOutput(dust, Quicklime, 4950, 0)
                 .chancedOutput(dust, Potash, 1600, 0)
                 .chancedOutput(dust, Magnesia, 1500, 0)
@@ -158,24 +158,24 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(250).EUt(6)
-                .input(dust, DarkAsh)
-                .output(dust, Ash)
-                .output(dust, Carbon)
+                .inputItem(dust, DarkAsh)
+                .outputItem(dust, Ash)
+                .outputItem(dust, Carbon)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(976).EUt(80)
-                .input(dust, Glowstone, 2)
-                .output(dust, Redstone)
-                .output(dust, Gold)
+                .inputItem(dust, Glowstone, 2)
+                .outputItem(dust, Redstone)
+                .outputItem(dust, Gold)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(36).EUt(VA[LV])
-                .input(dust, Coal)
-                .output(dust, Carbon, 2)
+                .inputItem(dust, Coal)
+                .outputItem(dust, Carbon, 2)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(320).EUt(20)
-                .input(dust, Endstone)
+                .inputItem(dust, Endstone)
                 .chancedOutput(new ItemStack(Blocks.SAND), 9000, 300)
                 .chancedOutput(dust, Tungstate, 315, 110)
                 .chancedOutput(dust, Platinum, 70, 15)
@@ -183,7 +183,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(160).EUt(20)
-                .input(dust, Netherrack)
+                .inputItem(dust, Netherrack)
                 .chancedOutput(dust, Redstone, 625, 95)
                 .chancedOutput(dust, Gold, 70, 15)
                 .chancedOutput(dust, Sulfur, 2475, 25)
@@ -209,7 +209,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(64).EUt(20)
-                .input(dust, RareEarth)
+                .inputItem(dust, RareEarth)
                 .chancedOutput(dustSmall, Cadmium, 2500, 400)
                 .chancedOutput(dustSmall, Neodymium, 2500, 400)
                 .chancedOutput(dustSmall, Samarium, 2500, 400)
@@ -260,7 +260,7 @@ public class SeparationRecipes {
 
         // Stone Dust
         CENTRIFUGE_RECIPES.recipeBuilder().duration(480).EUt(VA[MV])
-                .input(dust, Stone)
+                .inputItem(dust, Stone)
                 .chancedOutput(dust, Quartzite, 2500, 0)
                 .chancedOutput(dust, PotassiumFeldspar, 2500, 0)
                 .chancedOutput(dust, Marble, 2222, 0)
@@ -270,7 +270,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1000).EUt(900)
-                .input(dust, MetalMixture)
+                .inputItem(dust, MetalMixture)
                 .chancedOutput(dust, BandedIron, 2500, 0)
                 .chancedOutput(dust, Bauxite, 2500, 0)
                 .chancedOutput(dust, Pyrolusite, 2222, 0)
@@ -280,53 +280,53 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(60).EUt(VA[LV])
-                .input(dust, QuartzSand, 2)
-                .output(dust, Quartzite)
+                .inputItem(dust, QuartzSand, 2)
+                .outputItem(dust, Quartzite)
                 .chancedOutput(dust, CertusQuartz, 2000, 200)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(900).EUt(VA[LV])
-                .input(dust, RedAlloy)
-                .output(dust, Redstone, 4)
-                .output(dust, Copper)
+                .inputItem(dust, RedAlloy)
+                .outputItem(dust, Redstone, 4)
+                .outputItem(dust, Copper)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(1200).EUt(VA[LV])
-                .input(dust, BlueAlloy)
-                .output(dust, Electrotine, 4)
-                .output(dust, Silver)
+                .inputItem(dust, BlueAlloy)
+                .outputItem(dust, Electrotine, 4)
+                .outputItem(dust, Silver)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(VA[LV])
-                .input(dust, Electrotine, 8)
-                .output(dust, Redstone)
-                .output(dust, Electrum)
+                .inputItem(dust, Electrotine, 8)
+                .outputItem(dust, Redstone)
+                .outputItem(dust, Electrum)
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(51).EUt(VA[LV])
                 .fluidInputs(SaltWater.getFluid(1000))
-                .output(dust, Salt, 2)
+                .outputItem(dust, Salt, 2)
                 .fluidOutputs(Water.getFluid(1000))
                 .buildAndRegister();
 
         // Electrolyzer
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, SodiumBisulfate, 7)
+                .inputItem(dust, SodiumBisulfate, 7)
                 .fluidOutputs(SodiumPersulfate.getFluid(500))
                 .fluidOutputs(Hydrogen.getFluid(1000))
                 .duration(150).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(SaltWater.getFluid(1000))
-                .output(dust, SodiumHydroxide, 3)
+                .outputItem(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Chlorine.getFluid(1000))
                 .fluidOutputs(Hydrogen.getFluid(1000))
                 .duration(720).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Sphalerite, 2)
-                .output(dust, Zinc)
-                .output(dust, Sulfur)
+                .inputItem(dust, Sphalerite, 2)
+                .outputItem(dust, Zinc)
+                .outputItem(dust, Sulfur)
                 .chancedOutput(dust, Gallium, 500, 250)
                 .duration(200).EUt(VA[LV]).buildAndRegister();
 
@@ -344,178 +344,178 @@ public class SeparationRecipes {
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Items.DYE, 3))
-                .output(dust, Calcium)
+                .outputItem(dust, Calcium)
                 .duration(96).EUt(26).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.SAND, 8))
-                .output(dust, SiliconDioxide)
+                .outputItem(dust, SiliconDioxide)
                 .duration(500).EUt(25).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Graphite)
-                .output(dust, Carbon, 4)
+                .inputItem(dust, Graphite)
+                .outputItem(dust, Carbon, 4)
                 .duration(100).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Diamond)
-                .output(dust, Carbon, 64)
+                .inputItem(dust, Diamond)
+                .outputItem(dust, Carbon, 64)
                 .duration(768).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Trona, 16)
-                .output(dust, SodaAsh, 6)
-                .output(dust, SodiumBicarbonate, 6)
+                .inputItem(dust, Trona, 16)
+                .outputItem(dust, SodaAsh, 6)
+                .outputItem(dust, SodiumBicarbonate, 6)
                 .fluidOutputs(Water.getFluid(2000))
                 .duration(784).EUt(VA[LV] * 2).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Bauxite, 15)
-                .output(dust, Aluminium, 6)
-                .output(dust, Rutile)
+                .inputItem(dust, Bauxite, 15)
+                .outputItem(dust, Aluminium, 6)
+                .outputItem(dust, Rutile)
                 .fluidOutputs(Oxygen.getFluid(9000))
                 .duration(270).EUt(VA[LV] * 2).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Zeolite, 41)
-                .output(dust, Sodium)
-                .output(dust, Calcium, 4)
-                .output(dust, Silicon, 27)
-                .output(dust, Aluminium, 9)
+                .inputItem(dust, Zeolite, 41)
+                .outputItem(dust, Sodium)
+                .outputItem(dust, Calcium, 4)
+                .outputItem(dust, Silicon, 27)
+                .outputItem(dust, Aluminium, 9)
                 .duration(656).EUt(VA[MV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Bentonite, 30)
-                .output(dust, Sodium)
-                .output(dust, Magnesium, 6)
-                .output(dust, Silicon, 12)
+                .inputItem(dust, Bentonite, 30)
+                .outputItem(dust, Sodium)
+                .outputItem(dust, Magnesium, 6)
+                .outputItem(dust, Silicon, 12)
                 .fluidOutputs(Water.getFluid(5000))
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(480).EUt(VA[MV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, TungsticAcid, 7)
-                .output(dust, Tungsten)
+                .inputItem(dust, TungsticAcid, 7)
+                .outputItem(dust, Tungsten)
                 .fluidOutputs(Hydrogen.getFluid(2000))
                 .fluidOutputs(Oxygen.getFluid(4000))
                 .duration(210).EUt(960).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, SodiumHydroxide, 3)
-                .output(dust, Sodium)
+                .inputItem(dust, SodiumHydroxide, 3)
+                .outputItem(dust, Sodium)
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .fluidOutputs(Hydrogen.getFluid(1000))
                 .duration(150).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Sugar, 3)
-                .output(dust, Carbon)
+                .inputItem(dust, Sugar, 3)
+                .outputItem(dust, Carbon)
                 .fluidOutputs(Water.getFluid(1000))
                 .duration(64).EUt(VA[LV]).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, Apatite, 9)
-                .output(dust, Calcium, 5)
-                .output(dust, Phosphorus, 3)
+                .inputItem(dust, Apatite, 9)
+                .outputItem(dust, Calcium, 5)
+                .outputItem(dust, Phosphorus, 3)
                 .fluidOutputs(Chlorine.getFluid(1000))
                 .duration(288).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Propane.getFluid(1000))
-                .output(dust, Carbon, 3)
+                .outputItem(dust, Carbon, 3)
                 .fluidOutputs(Hydrogen.getFluid(8000))
                 .duration(176).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Butene.getFluid(1000))
-                .output(dust, Carbon, 4)
+                .outputItem(dust, Carbon, 4)
                 .fluidOutputs(Hydrogen.getFluid(8000))
                 .duration(192).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Butane.getFluid(1000))
-                .output(dust, Carbon, 4)
+                .outputItem(dust, Carbon, 4)
                 .fluidOutputs(Hydrogen.getFluid(10000))
                 .duration(224).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Styrene.getFluid(1000))
-                .output(dust, Carbon, 8)
+                .outputItem(dust, Carbon, 8)
                 .fluidOutputs(Hydrogen.getFluid(8000))
                 .duration(384).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Butadiene.getFluid(1000))
-                .output(dust, Carbon, 4)
+                .outputItem(dust, Carbon, 4)
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(240).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Phenol.getFluid(1000))
-                .output(dust, Carbon, 6)
+                .outputItem(dust, Carbon, 6)
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(312).EUt(90).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Ethylene.getFluid(1000))
-                .output(dust, Carbon, 2)
+                .outputItem(dust, Carbon, 2)
                 .fluidOutputs(Hydrogen.getFluid(4000))
                 .duration(96).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Benzene.getFluid(1000))
-                .output(dust, Carbon, 6)
+                .outputItem(dust, Carbon, 6)
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(288).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Ethanol.getFluid(1000))
-                .output(dust, Carbon, 2)
+                .outputItem(dust, Carbon, 2)
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .duration(144).EUt(90).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Toluene.getFluid(1000))
-                .output(dust, Carbon, 7)
+                .outputItem(dust, Carbon, 7)
                 .fluidOutputs(Hydrogen.getFluid(8000))
                 .duration(360).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Dimethylbenzene.getFluid(1000))
-                .output(dust, Carbon, 8)
+                .outputItem(dust, Carbon, 8)
                 .fluidOutputs(Hydrogen.getFluid(10000))
                 .duration(432).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Octane.getFluid(1000))
-                .output(dust, Carbon, 8)
+                .outputItem(dust, Carbon, 8)
                 .fluidOutputs(Hydrogen.getFluid(18000))
                 .duration(624).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Propene.getFluid(1000))
-                .output(dust, Carbon, 3)
+                .outputItem(dust, Carbon, 3)
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(144).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Ethane.getFluid(1000))
-                .output(dust, Carbon, 2)
+                .outputItem(dust, Carbon, 2)
                 .fluidOutputs(Hydrogen.getFluid(6000))
                 .duration(128).EUt(60).buildAndRegister();
 
         // Thermal Centrifuge
         THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
-                .output(dust, Stone)
+                .outputItem(dust, Stone)
                 .duration(500).EUt(48).buildAndRegister();
 
         // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()
-                .input(dust, Monazite)
-                .output(dustSmall, RareEarth)
+                .inputItem(dust, Monazite)
+                .outputItem(dustSmall, RareEarth)
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
@@ -563,7 +563,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(600).EUt(28)
-                .input(dust, Quartzite)
+                .inputItem(dust, Quartzite)
                 .fluidOutputs(Glass.getFluid(L / 2))
                 .buildAndRegister();
 
@@ -573,7 +573,7 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
-                .input(dust, Wood)
+                .inputItem(dust, Wood)
                 .chancedOutput(PLANT_BALL, 200, 30)
                 .fluidOutputs(Creosote.getFluid(5))
                 .buildAndRegister();

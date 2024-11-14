@@ -1,4 +1,6 @@
-package gregtech.api.recipes;
+package gregtech.api.recipes.buildaction;
+
+import gregtech.api.recipes.RecipeBuilder;
 
 import org.jetbrains.annotations.NotNull;
 

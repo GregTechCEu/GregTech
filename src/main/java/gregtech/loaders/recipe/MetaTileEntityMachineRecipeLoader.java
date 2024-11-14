@@ -4,9 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
-import gregtech.api.recipes.ingredients.old.GTRecipeItemInput;
-import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
+import gregtech.api.recipes.ingredients.OreItemIngredient;
+import gregtech.api.recipes.ingredients.StandardItemIngredient;
+import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
@@ -43,207 +44,207 @@ public class MetaTileEntityMachineRecipeLoader {
 
         // Quadruple Fluid Input Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[EV])
-                .input(pipeQuadrupleFluid, Titanium)
+                .inputItem(FLUID_IMPORT_HATCH[EV])
+                .inputItem(pipeQuadrupleFluid, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_IMPORT_HATCH[0])
-                .duration(300).EUt(VA[EV]).buildAndRegister();
+                .outputItem(QUADRUPLE_IMPORT_HATCH[0])
+                .duration(300).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[IV])
-                .input(pipeQuadrupleFluid, TungstenSteel)
+                .inputItem(FLUID_IMPORT_HATCH[IV])
+                .inputItem(pipeQuadrupleFluid, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_IMPORT_HATCH[1])
-                .duration(300).EUt(VA[IV]).buildAndRegister();
+                .outputItem(QUADRUPLE_IMPORT_HATCH[1])
+                .duration(300).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[LuV])
-                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .inputItem(FLUID_IMPORT_HATCH[LuV])
+                .inputItem(pipeQuadrupleFluid, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_IMPORT_HATCH[2])
-                .duration(300).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(QUADRUPLE_IMPORT_HATCH[2])
+                .duration(300).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[ZPM])
-                .input(pipeQuadrupleFluid, Iridium)
+                .inputItem(FLUID_IMPORT_HATCH[ZPM])
+                .inputItem(pipeQuadrupleFluid, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_IMPORT_HATCH[3])
-                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(QUADRUPLE_IMPORT_HATCH[3])
+                .duration(300).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[UV])
-                .input(pipeQuadrupleFluid, Naquadah)
+                .inputItem(FLUID_IMPORT_HATCH[UV])
+                .inputItem(pipeQuadrupleFluid, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_IMPORT_HATCH[4])
-                .duration(300).EUt(VA[UV]).buildAndRegister();
+                .outputItem(QUADRUPLE_IMPORT_HATCH[4])
+                .duration(300).volts(VA[UV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[UHV])
-                .input(pipeQuadrupleFluid, Neutronium)
+                .inputItem(FLUID_IMPORT_HATCH[UHV])
+                .inputItem(pipeQuadrupleFluid, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_IMPORT_HATCH[5])
-                .duration(300).EUt(VA[UV]).buildAndRegister();
+                .outputItem(QUADRUPLE_IMPORT_HATCH[5])
+                .duration(300).volts(VA[UV]).buildAndRegister();
 
         // Nonuple Fluid Input Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[EV])
-                .input(pipeNonupleFluid, Titanium)
+                .inputItem(FLUID_IMPORT_HATCH[EV])
+                .inputItem(pipeNonupleFluid, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_IMPORT_HATCH[0])
-                .duration(600).EUt(VA[EV]).buildAndRegister();
+                .outputItem(NONUPLE_IMPORT_HATCH[0])
+                .duration(600).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[IV])
-                .input(pipeNonupleFluid, TungstenSteel)
+                .inputItem(FLUID_IMPORT_HATCH[IV])
+                .inputItem(pipeNonupleFluid, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_IMPORT_HATCH[1])
-                .duration(600).EUt(VA[IV]).buildAndRegister();
+                .outputItem(NONUPLE_IMPORT_HATCH[1])
+                .duration(600).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[LuV])
-                .input(pipeNonupleFluid, NiobiumTitanium)
+                .inputItem(FLUID_IMPORT_HATCH[LuV])
+                .inputItem(pipeNonupleFluid, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_IMPORT_HATCH[2])
-                .duration(600).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(NONUPLE_IMPORT_HATCH[2])
+                .duration(600).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[ZPM])
-                .input(pipeNonupleFluid, Iridium)
+                .inputItem(FLUID_IMPORT_HATCH[ZPM])
+                .inputItem(pipeNonupleFluid, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_IMPORT_HATCH[3])
-                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(NONUPLE_IMPORT_HATCH[3])
+                .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[UV])
-                .input(pipeNonupleFluid, Naquadah)
+                .inputItem(FLUID_IMPORT_HATCH[UV])
+                .inputItem(pipeNonupleFluid, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_IMPORT_HATCH[4])
-                .duration(600).EUt(VA[UV]).buildAndRegister();
+                .outputItem(NONUPLE_IMPORT_HATCH[4])
+                .duration(600).volts(VA[UV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_IMPORT_HATCH[UHV])
-                .input(pipeNonupleFluid, Neutronium)
+                .inputItem(FLUID_IMPORT_HATCH[UHV])
+                .inputItem(pipeNonupleFluid, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_IMPORT_HATCH[5])
-                .duration(600).EUt(VA[UV]).buildAndRegister();
+                .outputItem(NONUPLE_IMPORT_HATCH[5])
+                .duration(600).volts(VA[UV]).buildAndRegister();
 
         // Quadruple Fluid Output Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[EV])
-                .input(pipeQuadrupleFluid, Titanium)
+                .inputItem(FLUID_EXPORT_HATCH[EV])
+                .inputItem(pipeQuadrupleFluid, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_EXPORT_HATCH[0])
-                .duration(300).EUt(VA[EV]).buildAndRegister();
+                .outputItem(QUADRUPLE_EXPORT_HATCH[0])
+                .duration(300).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[IV])
-                .input(pipeQuadrupleFluid, TungstenSteel)
+                .inputItem(FLUID_EXPORT_HATCH[IV])
+                .inputItem(pipeQuadrupleFluid, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_EXPORT_HATCH[1])
-                .duration(300).EUt(VA[IV]).buildAndRegister();
+                .outputItem(QUADRUPLE_EXPORT_HATCH[1])
+                .duration(300).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[LuV])
-                .input(pipeQuadrupleFluid, NiobiumTitanium)
+                .inputItem(FLUID_EXPORT_HATCH[LuV])
+                .inputItem(pipeQuadrupleFluid, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_EXPORT_HATCH[2])
-                .duration(300).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(QUADRUPLE_EXPORT_HATCH[2])
+                .duration(300).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[ZPM])
-                .input(pipeQuadrupleFluid, Iridium)
+                .inputItem(FLUID_EXPORT_HATCH[ZPM])
+                .inputItem(pipeQuadrupleFluid, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_EXPORT_HATCH[3])
-                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(QUADRUPLE_EXPORT_HATCH[3])
+                .duration(300).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[UV])
-                .input(pipeQuadrupleFluid, Naquadah)
+                .inputItem(FLUID_EXPORT_HATCH[UV])
+                .inputItem(pipeQuadrupleFluid, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_EXPORT_HATCH[4])
-                .duration(300).EUt(VA[UV]).buildAndRegister();
+                .outputItem(QUADRUPLE_EXPORT_HATCH[4])
+                .duration(300).volts(VA[UV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[UHV])
-                .input(pipeQuadrupleFluid, Neutronium)
+                .inputItem(FLUID_EXPORT_HATCH[UHV])
+                .inputItem(pipeQuadrupleFluid, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 4))
                 .circuitMeta(4)
-                .output(QUADRUPLE_EXPORT_HATCH[5])
-                .duration(300).EUt(VA[UV]).buildAndRegister();
+                .outputItem(QUADRUPLE_EXPORT_HATCH[5])
+                .duration(300).volts(VA[UV]).buildAndRegister();
 
         // Nonuple Fluid Output Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[EV])
-                .input(pipeNonupleFluid, Titanium)
+                .inputItem(FLUID_EXPORT_HATCH[EV])
+                .inputItem(pipeNonupleFluid, Titanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_EXPORT_HATCH[0])
-                .duration(600).EUt(VA[EV]).buildAndRegister();
+                .outputItem(NONUPLE_EXPORT_HATCH[0])
+                .duration(600).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[IV])
-                .input(pipeNonupleFluid, TungstenSteel)
+                .inputItem(FLUID_EXPORT_HATCH[IV])
+                .inputItem(pipeNonupleFluid, TungstenSteel)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_EXPORT_HATCH[1])
-                .duration(600).EUt(VA[IV]).buildAndRegister();
+                .outputItem(NONUPLE_EXPORT_HATCH[1])
+                .duration(600).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[LuV])
-                .input(pipeNonupleFluid, NiobiumTitanium)
+                .inputItem(FLUID_EXPORT_HATCH[LuV])
+                .inputItem(pipeNonupleFluid, NiobiumTitanium)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_EXPORT_HATCH[2])
-                .duration(600).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(NONUPLE_EXPORT_HATCH[2])
+                .duration(600).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[ZPM])
-                .input(pipeNonupleFluid, Iridium)
+                .inputItem(FLUID_EXPORT_HATCH[ZPM])
+                .inputItem(pipeNonupleFluid, Iridium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_EXPORT_HATCH[3])
-                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(NONUPLE_EXPORT_HATCH[3])
+                .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[UV])
-                .input(pipeNonupleFluid, Naquadah)
+                .inputItem(FLUID_EXPORT_HATCH[UV])
+                .inputItem(pipeNonupleFluid, Naquadah)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_EXPORT_HATCH[4])
-                .duration(600).EUt(VA[UV]).buildAndRegister();
+                .outputItem(NONUPLE_EXPORT_HATCH[4])
+                .duration(600).volts(VA[UV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(FLUID_EXPORT_HATCH[UHV])
-                .input(pipeNonupleFluid, Neutronium)
+                .inputItem(FLUID_EXPORT_HATCH[UHV])
+                .inputItem(pipeNonupleFluid, Neutronium)
                 .fluidInputs(Polybenzimidazole.getFluid(L * 9))
                 .circuitMeta(9)
-                .output(NONUPLE_EXPORT_HATCH[5])
-                .duration(600).EUt(VA[UV]).buildAndRegister();
+                .outputItem(NONUPLE_EXPORT_HATCH[5])
+                .duration(600).volts(VA[UV]).buildAndRegister();
 
         // Reservoir Hatch
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(COVER_INFINITE_WATER)
-                .input(FLUID_IMPORT_HATCH[EV])
-                .input(ELECTRIC_PUMP_EV)
-                .output(RESERVOIR_HATCH)
-                .duration(300).EUt(VA[EV]).buildAndRegister();
+                .inputItem(COVER_INFINITE_WATER)
+                .inputItem(FLUID_IMPORT_HATCH[EV])
+                .inputItem(ELECTRIC_PUMP_EV)
+                .outputItem(RESERVOIR_HATCH)
+                .duration(300).volts(VA[EV]).buildAndRegister();
 
         // Item Buses
         registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], OreDictNames.chestWood.toString());
@@ -269,11 +270,11 @@ public class MetaTileEntityMachineRecipeLoader {
                 'H', HULL[ULV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ULV])
-                .input(spring, Lead, 2)
-                .input(VOLTAGE_COIL_ULV)
-                .output(ENERGY_OUTPUT_HATCH[ULV])
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
+                .inputItem(HULL[ULV])
+                .inputItem(spring, Lead, 2)
+                .inputItem(VOLTAGE_COIL_ULV)
+                .outputItem(ENERGY_OUTPUT_HATCH[ULV])
+                .duration(200).volts(VA[ULV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "dynamo_hatch.lv", ENERGY_OUTPUT_HATCH[LV].getStackForm(),
                 " V ", "SHS", "   ",
@@ -282,11 +283,11 @@ public class MetaTileEntityMachineRecipeLoader {
                 'H', HULL[LV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LV])
-                .input(spring, Tin, 2)
-                .input(VOLTAGE_COIL_LV)
-                .output(ENERGY_OUTPUT_HATCH[LV])
-                .duration(200).EUt(VA[LV]).buildAndRegister();
+                .inputItem(HULL[LV])
+                .inputItem(spring, Tin, 2)
+                .inputItem(VOLTAGE_COIL_LV)
+                .outputItem(ENERGY_OUTPUT_HATCH[LV])
+                .duration(200).volts(VA[LV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "dynamo_hatch.mv", ENERGY_OUTPUT_HATCH[MV].getStackForm(),
                 " V ", "SHS", " P ",
@@ -296,97 +297,97 @@ public class MetaTileEntityMachineRecipeLoader {
                 'H', HULL[MV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[MV])
-                .input(spring, Copper, 2)
-                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
-                .input(VOLTAGE_COIL_MV)
-                .output(ENERGY_OUTPUT_HATCH[MV])
-                .duration(200).EUt(VA[MV]).buildAndRegister();
+                .inputItem(HULL[MV])
+                .inputItem(spring, Copper, 2)
+                .inputItem(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
+                .inputItem(VOLTAGE_COIL_MV)
+                .outputItem(ENERGY_OUTPUT_HATCH[MV])
+                .duration(200).volts(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[HV])
-                .input(spring, Gold, 2)
-                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(VOLTAGE_COIL_HV)
+                .inputItem(HULL[HV])
+                .inputItem(spring, Gold, 2)
+                .inputItem(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(VOLTAGE_COIL_HV)
                 .fluidInputs(SodiumPotassium.getFluid(1000))
-                .output(ENERGY_OUTPUT_HATCH[HV])
-                .duration(200).EUt(VA[HV]).buildAndRegister();
+                .outputItem(ENERGY_OUTPUT_HATCH[HV])
+                .duration(200).volts(VA[HV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[EV])
-                .input(spring, Aluminium, 2)
-                .input(POWER_INTEGRATED_CIRCUIT, 2)
-                .input(VOLTAGE_COIL_EV)
+                .inputItem(HULL[EV])
+                .inputItem(spring, Aluminium, 2)
+                .inputItem(POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(VOLTAGE_COIL_EV)
                 .fluidInputs(SodiumPotassium.getFluid(2000))
-                .output(ENERGY_OUTPUT_HATCH[EV])
-                .duration(200).EUt(VA[EV]).buildAndRegister();
+                .outputItem(ENERGY_OUTPUT_HATCH[EV])
+                .duration(200).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(spring, Tungsten, 2)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(VOLTAGE_COIL_IV)
+                .inputItem(HULL[IV])
+                .inputItem(spring, Tungsten, 2)
+                .inputItem(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(VOLTAGE_COIL_IV)
                 .fluidInputs(SodiumPotassium.getFluid(3000))
-                .output(ENERGY_OUTPUT_HATCH[IV])
-                .duration(200).EUt(VA[IV]).buildAndRegister();
+                .outputItem(ENERGY_OUTPUT_HATCH[IV])
+                .duration(200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(spring, NiobiumTitanium, 4)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.LuV)
-                .input(VOLTAGE_COIL_LuV, 2)
+                .inputItem(HULL[LuV])
+                .inputItem(spring, NiobiumTitanium, 4)
+                .inputItem(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.LuV)
+                .inputItem(VOLTAGE_COIL_LuV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
-                .output(ENERGY_OUTPUT_HATCH[LuV])
+                .outputItem(ENERGY_OUTPUT_HATCH[LuV])
                 .scannerResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[IV].getStackForm())
                         .EUt(VA[EV]))
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
+                .duration(400).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(spring, VanadiumGallium, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.ZPM)
-                .input(VOLTAGE_COIL_ZPM, 2)
+                .inputItem(HULL[ZPM])
+                .inputItem(spring, VanadiumGallium, 4)
+                .inputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.ZPM)
+                .inputItem(VOLTAGE_COIL_ZPM, 2)
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
-                .output(ENERGY_OUTPUT_HATCH[ZPM])
+                .outputItem(ENERGY_OUTPUT_HATCH[ZPM])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[LuV].getStackForm())
                         .CWUt(8))
-                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+                .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(spring, YttriumBariumCuprate, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.UV)
-                .input(VOLTAGE_COIL_UV, 2)
+                .inputItem(HULL[UV])
+                .inputItem(spring, YttriumBariumCuprate, 4)
+                .inputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.UV)
+                .inputItem(VOLTAGE_COIL_UV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
-                .output(ENERGY_OUTPUT_HATCH[UV])
+                .outputItem(ENERGY_OUTPUT_HATCH[UV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[ZPM].getStackForm())
                         .CWUt(64)
                         .EUt(VA[ZPM]))
-                .duration(800).EUt(VA[UV]).buildAndRegister();
+                .duration(800).volts(VA[UV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[UHV])
-                .input(spring, Europium, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.UHV)
-                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
+                .inputItem(HULL[UHV])
+                .inputItem(spring, Europium, 4)
+                .inputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.UHV)
+                .inputItem(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
-                .output(ENERGY_OUTPUT_HATCH[UHV])
+                .outputItem(ENERGY_OUTPUT_HATCH[UHV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_OUTPUT_HATCH[UV].getStackForm())
                         .CWUt(128)
                         .EUt(VA[UV]))
-                .duration(1000).EUt(VA[UHV]).buildAndRegister();
+                .duration(1000).volts(VA[UHV]).buildAndRegister();
 
         // Energy Input Hatches
 
@@ -397,11 +398,11 @@ public class MetaTileEntityMachineRecipeLoader {
                 'H', HULL[ULV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ULV])
-                .input(cableGtSingle, RedAlloy, 2)
-                .input(VOLTAGE_COIL_ULV)
-                .output(ENERGY_INPUT_HATCH[ULV])
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
+                .inputItem(HULL[ULV])
+                .inputItem(cableGtSingle, RedAlloy, 2)
+                .inputItem(VOLTAGE_COIL_ULV)
+                .outputItem(ENERGY_INPUT_HATCH[ULV])
+                .duration(200).volts(VA[ULV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "energy_hatch.lv", ENERGY_INPUT_HATCH[LV].getStackForm(),
                 " V ", "CHC", "   ",
@@ -410,11 +411,11 @@ public class MetaTileEntityMachineRecipeLoader {
                 'H', HULL[LV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LV])
-                .input(cableGtSingle, Tin, 2)
-                .input(VOLTAGE_COIL_LV)
-                .output(ENERGY_INPUT_HATCH[LV])
-                .duration(200).EUt(VA[LV]).buildAndRegister();
+                .inputItem(HULL[LV])
+                .inputItem(cableGtSingle, Tin, 2)
+                .inputItem(VOLTAGE_COIL_LV)
+                .outputItem(ENERGY_INPUT_HATCH[LV])
+                .duration(200).volts(VA[LV]).buildAndRegister();
 
         ModHandler.addShapedRecipe(true, "energy_hatch.mv", ENERGY_INPUT_HATCH[MV].getStackForm(),
                 " V ", "CHC", " P ",
@@ -424,571 +425,571 @@ public class MetaTileEntityMachineRecipeLoader {
                 'H', HULL[MV].getStackForm());
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[MV])
-                .input(cableGtSingle, Copper, 2)
-                .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
-                .input(VOLTAGE_COIL_MV)
-                .output(ENERGY_INPUT_HATCH[MV])
-                .duration(200).EUt(VA[MV]).buildAndRegister();
+                .inputItem(HULL[MV])
+                .inputItem(cableGtSingle, Copper, 2)
+                .inputItem(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT)
+                .inputItem(VOLTAGE_COIL_MV)
+                .outputItem(ENERGY_INPUT_HATCH[MV])
+                .duration(200).volts(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[HV])
-                .input(cableGtSingle, Gold, 2)
-                .input(LOW_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(VOLTAGE_COIL_HV)
+                .inputItem(HULL[HV])
+                .inputItem(cableGtSingle, Gold, 2)
+                .inputItem(LOW_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(VOLTAGE_COIL_HV)
                 .fluidInputs(SodiumPotassium.getFluid(1000))
-                .output(ENERGY_INPUT_HATCH[HV])
-                .duration(200).EUt(VA[HV]).buildAndRegister();
+                .outputItem(ENERGY_INPUT_HATCH[HV])
+                .duration(200).volts(VA[HV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[EV])
-                .input(cableGtSingle, Aluminium, 2)
-                .input(POWER_INTEGRATED_CIRCUIT, 2)
-                .input(VOLTAGE_COIL_EV)
+                .inputItem(HULL[EV])
+                .inputItem(cableGtSingle, Aluminium, 2)
+                .inputItem(POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(VOLTAGE_COIL_EV)
                 .fluidInputs(SodiumPotassium.getFluid(2000))
-                .output(ENERGY_INPUT_HATCH[EV])
-                .duration(200).EUt(VA[EV]).buildAndRegister();
+                .outputItem(ENERGY_INPUT_HATCH[EV])
+                .duration(200).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(cableGtSingle, Tungsten, 2)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(VOLTAGE_COIL_IV)
+                .inputItem(HULL[IV])
+                .inputItem(cableGtSingle, Tungsten, 2)
+                .inputItem(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(VOLTAGE_COIL_IV)
                 .fluidInputs(SodiumPotassium.getFluid(3000))
-                .output(ENERGY_INPUT_HATCH[IV])
-                .duration(200).EUt(VA[IV]).buildAndRegister();
+                .outputItem(ENERGY_INPUT_HATCH[IV])
+                .duration(200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(cableGtSingle, NiobiumTitanium, 4)
-                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.LuV)
-                .input(VOLTAGE_COIL_LuV, 2)
+                .inputItem(HULL[LuV])
+                .inputItem(cableGtSingle, NiobiumTitanium, 4)
+                .inputItem(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.LuV)
+                .inputItem(VOLTAGE_COIL_LuV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(6000))
                 .fluidInputs(SolderingAlloy.getFluid(720))
-                .output(ENERGY_INPUT_HATCH[LuV])
+                .outputItem(ENERGY_INPUT_HATCH[LuV])
                 .scannerResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[IV].getStackForm())
                         .EUt(VA[EV]))
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
+                .duration(400).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(cableGtSingle, VanadiumGallium, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.ZPM)
-                .input(VOLTAGE_COIL_ZPM, 2)
+                .inputItem(HULL[ZPM])
+                .inputItem(cableGtSingle, VanadiumGallium, 4)
+                .inputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.ZPM)
+                .inputItem(VOLTAGE_COIL_ZPM, 2)
                 .fluidInputs(SodiumPotassium.getFluid(8000))
                 .fluidInputs(SolderingAlloy.getFluid(1440))
-                .output(ENERGY_INPUT_HATCH[ZPM])
+                .outputItem(ENERGY_INPUT_HATCH[ZPM])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[LuV].getStackForm())
                         .CWUt(8))
-                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+                .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(cableGtSingle, YttriumBariumCuprate, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.UV)
-                .input(VOLTAGE_COIL_UV, 2)
+                .inputItem(HULL[UV])
+                .inputItem(cableGtSingle, YttriumBariumCuprate, 4)
+                .inputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.UV)
+                .inputItem(VOLTAGE_COIL_UV, 2)
                 .fluidInputs(SodiumPotassium.getFluid(10000))
                 .fluidInputs(SolderingAlloy.getFluid(2880))
-                .output(ENERGY_INPUT_HATCH[UV])
+                .outputItem(ENERGY_INPUT_HATCH[UV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[ZPM].getStackForm())
                         .CWUt(64)
                         .EUt(VA[ZPM]))
-                .duration(800).EUt(VA[UV]).buildAndRegister();
+                .duration(800).volts(VA[UV]).buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(HULL[UHV])
-                .input(cableGtSingle, Europium, 4)
-                .input(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
-                .input(circuit, Tier.UHV)
-                .input(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
+                .inputItem(HULL[UHV])
+                .inputItem(cableGtSingle, Europium, 4)
+                .inputItem(ULTRA_HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .inputItem(circuit, Tier.UHV)
+                .inputItem(wireGtDouble, RutheniumTriniumAmericiumNeutronate, 2)
                 .fluidInputs(SodiumPotassium.getFluid(12000))
                 .fluidInputs(SolderingAlloy.getFluid(5760))
-                .output(ENERGY_INPUT_HATCH[UHV])
+                .outputItem(ENERGY_INPUT_HATCH[UHV])
                 .stationResearch(b -> b
                         .researchStack(ENERGY_INPUT_HATCH[UV].getStackForm())
                         .CWUt(128)
                         .EUt(VA[UV]))
-                .duration(1000).EUt(VA[UHV]).buildAndRegister();
+                .duration(1000).volts(VA[UHV]).buildAndRegister();
 
         // Power Transformers
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[ULV])
-                .input(ELECTRIC_PUMP_LV)
-                .input(cableGtOctal, Tin)
-                .input(cableGtHex, Lead, 2)
-                .input(springSmall, Lead)
-                .input(spring, Tin)
+                .inputItem(HI_AMP_TRANSFORMER[ULV])
+                .inputItem(ELECTRIC_PUMP_LV)
+                .inputItem(cableGtOctal, Tin)
+                .inputItem(cableGtHex, Lead, 2)
+                .inputItem(springSmall, Lead)
+                .inputItem(spring, Tin)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[ULV])
-                .duration(200).EUt(VA[ULV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[ULV])
+                .duration(200).volts(VA[ULV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[LV])
-                .input(ELECTRIC_PUMP_LV)
-                .input(cableGtOctal, Copper)
-                .input(cableGtHex, Tin, 2)
-                .input(springSmall, Tin)
-                .input(spring, Copper)
+                .inputItem(HI_AMP_TRANSFORMER[LV])
+                .inputItem(ELECTRIC_PUMP_LV)
+                .inputItem(cableGtOctal, Copper)
+                .inputItem(cableGtHex, Tin, 2)
+                .inputItem(springSmall, Tin)
+                .inputItem(spring, Copper)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[LV])
-                .duration(200).EUt(VA[LV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[LV])
+                .duration(200).volts(VA[LV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[MV])
-                .input(ELECTRIC_PUMP_MV)
-                .input(cableGtOctal, Gold)
-                .input(cableGtHex, Copper, 2)
-                .input(springSmall, Copper)
-                .input(spring, Gold)
+                .inputItem(HI_AMP_TRANSFORMER[MV])
+                .inputItem(ELECTRIC_PUMP_MV)
+                .inputItem(cableGtOctal, Gold)
+                .inputItem(cableGtHex, Copper, 2)
+                .inputItem(springSmall, Copper)
+                .inputItem(spring, Gold)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[MV])
-                .duration(200).EUt(VA[MV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[MV])
+                .duration(200).volts(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[HV])
-                .input(ELECTRIC_PUMP_MV)
-                .input(cableGtOctal, Aluminium)
-                .input(cableGtHex, Gold, 2)
-                .input(springSmall, Gold)
-                .input(spring, Aluminium)
+                .inputItem(HI_AMP_TRANSFORMER[HV])
+                .inputItem(ELECTRIC_PUMP_MV)
+                .inputItem(cableGtOctal, Aluminium)
+                .inputItem(cableGtHex, Gold, 2)
+                .inputItem(springSmall, Gold)
+                .inputItem(spring, Aluminium)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[HV])
-                .duration(200).EUt(VA[HV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[HV])
+                .duration(200).volts(VA[HV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[EV])
-                .input(ELECTRIC_PUMP_HV)
-                .input(cableGtOctal, Tungsten)
-                .input(cableGtHex, Aluminium, 2)
-                .input(springSmall, Aluminium)
-                .input(spring, Tungsten)
+                .inputItem(HI_AMP_TRANSFORMER[EV])
+                .inputItem(ELECTRIC_PUMP_HV)
+                .inputItem(cableGtOctal, Tungsten)
+                .inputItem(cableGtHex, Aluminium, 2)
+                .inputItem(springSmall, Aluminium)
+                .inputItem(spring, Tungsten)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[EV])
-                .duration(200).EUt(VA[EV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[EV])
+                .duration(200).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[IV])
-                .input(ELECTRIC_PUMP_HV)
-                .input(cableGtOctal, NiobiumTitanium)
-                .input(cableGtHex, Tungsten, 2)
-                .input(springSmall, Tungsten)
-                .input(spring, NiobiumTitanium)
+                .inputItem(HI_AMP_TRANSFORMER[IV])
+                .inputItem(ELECTRIC_PUMP_HV)
+                .inputItem(cableGtOctal, NiobiumTitanium)
+                .inputItem(cableGtHex, Tungsten, 2)
+                .inputItem(springSmall, Tungsten)
+                .inputItem(spring, NiobiumTitanium)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[IV])
-                .duration(200).EUt(VA[IV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[IV])
+                .duration(200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[LuV])
-                .input(ELECTRIC_PUMP_EV)
-                .input(cableGtOctal, VanadiumGallium)
-                .input(cableGtHex, NiobiumTitanium, 2)
-                .input(springSmall, NiobiumTitanium)
-                .input(spring, VanadiumGallium)
+                .inputItem(HI_AMP_TRANSFORMER[LuV])
+                .inputItem(ELECTRIC_PUMP_EV)
+                .inputItem(cableGtOctal, VanadiumGallium)
+                .inputItem(cableGtHex, NiobiumTitanium, 2)
+                .inputItem(springSmall, NiobiumTitanium)
+                .inputItem(spring, VanadiumGallium)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[LuV])
-                .duration(200).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[LuV])
+                .duration(200).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[ZPM])
-                .input(ELECTRIC_PUMP_EV)
-                .input(cableGtOctal, YttriumBariumCuprate)
-                .input(cableGtHex, VanadiumGallium, 2)
-                .input(springSmall, VanadiumGallium)
-                .input(spring, YttriumBariumCuprate)
+                .inputItem(HI_AMP_TRANSFORMER[ZPM])
+                .inputItem(ELECTRIC_PUMP_EV)
+                .inputItem(cableGtOctal, YttriumBariumCuprate)
+                .inputItem(cableGtHex, VanadiumGallium, 2)
+                .inputItem(springSmall, VanadiumGallium)
+                .inputItem(spring, YttriumBariumCuprate)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[ZPM])
-                .duration(200).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[ZPM])
+                .duration(200).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[UV])
-                .input(ELECTRIC_PUMP_IV)
-                .input(cableGtOctal, Europium)
-                .input(cableGtHex, YttriumBariumCuprate, 2)
-                .input(springSmall, YttriumBariumCuprate)
-                .input(spring, Europium)
+                .inputItem(HI_AMP_TRANSFORMER[UV])
+                .inputItem(ELECTRIC_PUMP_IV)
+                .inputItem(cableGtOctal, Europium)
+                .inputItem(cableGtHex, YttriumBariumCuprate, 2)
+                .inputItem(springSmall, YttriumBariumCuprate)
+                .inputItem(spring, Europium)
                 .fluidInputs(Lubricant.getFluid(2000))
-                .output(POWER_TRANSFORMER[UV])
-                .duration(200).EUt(VA[UV]).buildAndRegister();
+                .outputItem(POWER_TRANSFORMER[UV])
+                .duration(200).volts(VA[UV]).buildAndRegister();
 
         // 4A Energy Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[EV])
-                .input(wireGtQuadruple, Aluminium, 2)
-                .input(plate, Titanium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[0])
-                .duration(100).EUt(VA[HV]).buildAndRegister();
+                .inputItem(ENERGY_INPUT_HATCH[EV])
+                .inputItem(wireGtQuadruple, Aluminium, 2)
+                .inputItem(plate, Titanium, 2)
+                .outputItem(ENERGY_INPUT_HATCH_4A[0])
+                .duration(100).volts(VA[HV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[IV])
-                .input(wireGtQuadruple, Tungsten, 2)
-                .input(plate, TungstenSteel, 2)
-                .output(ENERGY_INPUT_HATCH_4A[1])
-                .duration(100).EUt(VA[EV]).buildAndRegister();
+                .inputItem(ENERGY_INPUT_HATCH[IV])
+                .inputItem(wireGtQuadruple, Tungsten, 2)
+                .inputItem(plate, TungstenSteel, 2)
+                .outputItem(ENERGY_INPUT_HATCH_4A[1])
+                .duration(100).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[LuV])
-                .input(wireGtQuadruple, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[2])
-                .duration(100).EUt(VA[IV]).buildAndRegister();
+                .inputItem(ENERGY_INPUT_HATCH[LuV])
+                .inputItem(wireGtQuadruple, NiobiumTitanium, 2)
+                .inputItem(plate, RhodiumPlatedPalladium, 2)
+                .outputItem(ENERGY_INPUT_HATCH_4A[2])
+                .duration(100).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[ZPM])
-                .input(wireGtQuadruple, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 2)
-                .output(ENERGY_INPUT_HATCH_4A[3])
-                .duration(100).EUt(VA[LuV]).buildAndRegister();
+                .inputItem(ENERGY_INPUT_HATCH[ZPM])
+                .inputItem(wireGtQuadruple, VanadiumGallium, 2)
+                .inputItem(plate, NaquadahAlloy, 2)
+                .outputItem(ENERGY_INPUT_HATCH_4A[3])
+                .duration(100).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[UV])
-                .input(wireGtQuadruple, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[4])
-                .duration(100).EUt(VA[ZPM]).buildAndRegister();
+                .inputItem(ENERGY_INPUT_HATCH[UV])
+                .inputItem(wireGtQuadruple, YttriumBariumCuprate, 2)
+                .inputItem(plate, Darmstadtium, 2)
+                .outputItem(ENERGY_INPUT_HATCH_4A[4])
+                .duration(100).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_INPUT_HATCH[UHV])
-                .input(wireGtQuadruple, Europium, 2)
-                .input(plate, Neutronium, 2)
-                .output(ENERGY_INPUT_HATCH_4A[5])
-                .duration(100).EUt(VA[UV]).buildAndRegister();
+                .inputItem(ENERGY_INPUT_HATCH[UHV])
+                .inputItem(wireGtQuadruple, Europium, 2)
+                .inputItem(plate, Neutronium, 2)
+                .outputItem(ENERGY_INPUT_HATCH_4A[5])
+                .duration(100).volts(VA[UV]).buildAndRegister();
 
         // 16A Energy Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[IV])
-                .input(ENERGY_INPUT_HATCH_4A[1])
-                .input(wireGtOctal, Tungsten, 2)
-                .input(plate, TungstenSteel, 4)
-                .output(ENERGY_INPUT_HATCH_16A[0])
-                .duration(200).EUt(VA[EV]).buildAndRegister();
+                .inputItem(TRANSFORMER[IV])
+                .inputItem(ENERGY_INPUT_HATCH_4A[1])
+                .inputItem(wireGtOctal, Tungsten, 2)
+                .inputItem(plate, TungstenSteel, 4)
+                .outputItem(ENERGY_INPUT_HATCH_16A[0])
+                .duration(200).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[LuV])
-                .input(ENERGY_INPUT_HATCH_4A[2])
-                .input(wireGtOctal, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 4)
-                .output(ENERGY_INPUT_HATCH_16A[1])
-                .duration(200).EUt(VA[IV]).buildAndRegister();
+                .inputItem(TRANSFORMER[LuV])
+                .inputItem(ENERGY_INPUT_HATCH_4A[2])
+                .inputItem(wireGtOctal, NiobiumTitanium, 2)
+                .inputItem(plate, RhodiumPlatedPalladium, 4)
+                .outputItem(ENERGY_INPUT_HATCH_16A[1])
+                .duration(200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[ZPM])
-                .input(ENERGY_INPUT_HATCH_4A[3])
-                .input(wireGtOctal, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 4)
-                .output(ENERGY_INPUT_HATCH_16A[2])
-                .duration(200).EUt(VA[LuV]).buildAndRegister();
+                .inputItem(TRANSFORMER[ZPM])
+                .inputItem(ENERGY_INPUT_HATCH_4A[3])
+                .inputItem(wireGtOctal, VanadiumGallium, 2)
+                .inputItem(plate, NaquadahAlloy, 4)
+                .outputItem(ENERGY_INPUT_HATCH_16A[2])
+                .duration(200).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_4A[4])
-                .input(wireGtOctal, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 4)
-                .output(ENERGY_INPUT_HATCH_16A[3])
-                .duration(200).EUt(VA[ZPM]).buildAndRegister();
+                .inputItem(TRANSFORMER[UV])
+                .inputItem(ENERGY_INPUT_HATCH_4A[4])
+                .inputItem(wireGtOctal, YttriumBariumCuprate, 2)
+                .inputItem(plate, Darmstadtium, 4)
+                .outputItem(ENERGY_INPUT_HATCH_16A[3])
+                .duration(200).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_4A[5], 2)
-                .input(wireGtOctal, Europium, 2)
-                .input(plate, Neutronium, 4)
-                .output(ENERGY_INPUT_HATCH_16A[4])
-                .duration(200).EUt(VA[UV]).buildAndRegister();
+                .inputItem(HI_AMP_TRANSFORMER[UV])
+                .inputItem(ENERGY_INPUT_HATCH_4A[5], 2)
+                .inputItem(wireGtOctal, Europium, 2)
+                .inputItem(plate, Neutronium, 4)
+                .outputItem(ENERGY_INPUT_HATCH_16A[4])
+                .duration(200).volts(VA[UV]).buildAndRegister();
 
         // 64A Substation Energy Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[IV])
-                .input(ENERGY_INPUT_HATCH_16A[0])
-                .input(wireGtHex, Tungsten, 2)
-                .input(plate, TungstenSteel, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[0])
-                .duration(400).EUt(VA[EV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[IV])
+                .inputItem(ENERGY_INPUT_HATCH_16A[0])
+                .inputItem(wireGtHex, Tungsten, 2)
+                .inputItem(plate, TungstenSteel, 6)
+                .outputItem(SUBSTATION_ENERGY_INPUT_HATCH[0])
+                .duration(400).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[LuV])
-                .input(ENERGY_INPUT_HATCH_16A[1])
-                .input(wireGtHex, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[1])
-                .duration(400).EUt(VA[IV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[LuV])
+                .inputItem(ENERGY_INPUT_HATCH_16A[1])
+                .inputItem(wireGtHex, NiobiumTitanium, 2)
+                .inputItem(plate, RhodiumPlatedPalladium, 6)
+                .outputItem(SUBSTATION_ENERGY_INPUT_HATCH[1])
+                .duration(400).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[ZPM])
-                .input(ENERGY_INPUT_HATCH_16A[2])
-                .input(wireGtHex, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[2])
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[ZPM])
+                .inputItem(ENERGY_INPUT_HATCH_16A[2])
+                .inputItem(wireGtHex, VanadiumGallium, 2)
+                .inputItem(plate, NaquadahAlloy, 6)
+                .outputItem(SUBSTATION_ENERGY_INPUT_HATCH[2])
+                .duration(400).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_16A[3])
-                .input(wireGtHex, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[3])
-                .duration(400).EUt(VA[ZPM]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[UV])
+                .inputItem(ENERGY_INPUT_HATCH_16A[3])
+                .inputItem(wireGtHex, YttriumBariumCuprate, 2)
+                .inputItem(plate, Darmstadtium, 6)
+                .outputItem(SUBSTATION_ENERGY_INPUT_HATCH[3])
+                .duration(400).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_INPUT_HATCH_16A[4])
-                .input(wireGtHex, Europium, 2)
-                .input(plate, Neutronium, 6)
-                .output(SUBSTATION_ENERGY_INPUT_HATCH[4])
-                .duration(400).EUt(VA[UV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[UV])
+                .inputItem(ENERGY_INPUT_HATCH_16A[4])
+                .inputItem(wireGtHex, Europium, 2)
+                .inputItem(plate, Neutronium, 6)
+                .outputItem(SUBSTATION_ENERGY_INPUT_HATCH[4])
+                .duration(400).volts(VA[UV]).buildAndRegister();
 
         // 4A Dynamo Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[EV])
-                .input(wireGtQuadruple, Aluminium, 2)
-                .input(plate, Titanium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[0])
-                .duration(100).EUt(VA[HV]).buildAndRegister();
+                .inputItem(ENERGY_OUTPUT_HATCH[EV])
+                .inputItem(wireGtQuadruple, Aluminium, 2)
+                .inputItem(plate, Titanium, 2)
+                .outputItem(ENERGY_OUTPUT_HATCH_4A[0])
+                .duration(100).volts(VA[HV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[IV])
-                .input(wireGtQuadruple, Tungsten, 2)
-                .input(plate, TungstenSteel, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[1])
-                .duration(100).EUt(VA[EV]).buildAndRegister();
+                .inputItem(ENERGY_OUTPUT_HATCH[IV])
+                .inputItem(wireGtQuadruple, Tungsten, 2)
+                .inputItem(plate, TungstenSteel, 2)
+                .outputItem(ENERGY_OUTPUT_HATCH_4A[1])
+                .duration(100).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[LuV])
-                .input(wireGtQuadruple, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[2])
-                .duration(100).EUt(VA[IV]).buildAndRegister();
+                .inputItem(ENERGY_OUTPUT_HATCH[LuV])
+                .inputItem(wireGtQuadruple, NiobiumTitanium, 2)
+                .inputItem(plate, RhodiumPlatedPalladium, 2)
+                .outputItem(ENERGY_OUTPUT_HATCH_4A[2])
+                .duration(100).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[ZPM])
-                .input(ENERGY_OUTPUT_HATCH[ZPM])
-                .input(wireGtQuadruple, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[3])
-                .duration(100).EUt(VA[LuV]).buildAndRegister();
+                .inputItem(TRANSFORMER[ZPM])
+                .inputItem(ENERGY_OUTPUT_HATCH[ZPM])
+                .inputItem(wireGtQuadruple, VanadiumGallium, 2)
+                .inputItem(plate, NaquadahAlloy, 2)
+                .outputItem(ENERGY_OUTPUT_HATCH_4A[3])
+                .duration(100).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[UV])
-                .input(wireGtQuadruple, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[4])
-                .duration(100).EUt(VA[ZPM]).buildAndRegister();
+                .inputItem(ENERGY_OUTPUT_HATCH[UV])
+                .inputItem(wireGtQuadruple, YttriumBariumCuprate, 2)
+                .inputItem(plate, Darmstadtium, 2)
+                .outputItem(ENERGY_OUTPUT_HATCH_4A[4])
+                .duration(100).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(ENERGY_OUTPUT_HATCH[UHV])
-                .input(wireGtQuadruple, Europium, 2)
-                .input(plate, Neutronium, 2)
-                .output(ENERGY_OUTPUT_HATCH_4A[5])
-                .duration(100).EUt(VA[UV]).buildAndRegister();
+                .inputItem(ENERGY_OUTPUT_HATCH[UHV])
+                .inputItem(wireGtQuadruple, Europium, 2)
+                .inputItem(plate, Neutronium, 2)
+                .outputItem(ENERGY_OUTPUT_HATCH_4A[5])
+                .duration(100).volts(VA[UV]).buildAndRegister();
 
         // 16A Dynamo Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[IV])
-                .input(ENERGY_OUTPUT_HATCH_4A[1])
-                .input(wireGtOctal, Tungsten, 2)
-                .input(plate, TungstenSteel, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[0])
-                .duration(200).EUt(VA[EV]).buildAndRegister();
+                .inputItem(TRANSFORMER[IV])
+                .inputItem(ENERGY_OUTPUT_HATCH_4A[1])
+                .inputItem(wireGtOctal, Tungsten, 2)
+                .inputItem(plate, TungstenSteel, 4)
+                .outputItem(ENERGY_OUTPUT_HATCH_16A[0])
+                .duration(200).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[LuV])
-                .input(ENERGY_OUTPUT_HATCH_4A[2])
-                .input(wireGtOctal, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[1])
-                .duration(200).EUt(VA[IV]).buildAndRegister();
+                .inputItem(TRANSFORMER[LuV])
+                .inputItem(ENERGY_OUTPUT_HATCH_4A[2])
+                .inputItem(wireGtOctal, NiobiumTitanium, 2)
+                .inputItem(plate, RhodiumPlatedPalladium, 4)
+                .outputItem(ENERGY_OUTPUT_HATCH_16A[1])
+                .duration(200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[ZPM])
-                .input(ENERGY_OUTPUT_HATCH_4A[3])
-                .input(wireGtOctal, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[2])
-                .duration(200).EUt(VA[LuV]).buildAndRegister();
+                .inputItem(TRANSFORMER[ZPM])
+                .inputItem(ENERGY_OUTPUT_HATCH_4A[3])
+                .inputItem(wireGtOctal, VanadiumGallium, 2)
+                .inputItem(plate, NaquadahAlloy, 4)
+                .outputItem(ENERGY_OUTPUT_HATCH_16A[2])
+                .duration(200).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_4A[4])
-                .input(wireGtOctal, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[3])
-                .duration(200).EUt(VA[ZPM]).buildAndRegister();
+                .inputItem(TRANSFORMER[UV])
+                .inputItem(ENERGY_OUTPUT_HATCH_4A[4])
+                .inputItem(wireGtOctal, YttriumBariumCuprate, 2)
+                .inputItem(plate, Darmstadtium, 4)
+                .outputItem(ENERGY_OUTPUT_HATCH_16A[3])
+                .duration(200).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HI_AMP_TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_4A[5])
-                .input(wireGtOctal, Europium, 2)
-                .input(plate, Neutronium, 4)
-                .output(ENERGY_OUTPUT_HATCH_16A[4])
-                .duration(200).EUt(VA[UV]).buildAndRegister();
+                .inputItem(HI_AMP_TRANSFORMER[UV])
+                .inputItem(ENERGY_OUTPUT_HATCH_4A[5])
+                .inputItem(wireGtOctal, Europium, 2)
+                .inputItem(plate, Neutronium, 4)
+                .outputItem(ENERGY_OUTPUT_HATCH_16A[4])
+                .duration(200).volts(VA[UV]).buildAndRegister();
 
         // 64A Substation Dynamo Hatches
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[IV])
-                .input(ENERGY_OUTPUT_HATCH_16A[0])
-                .input(wireGtHex, Tungsten, 2)
-                .input(plate, TungstenSteel, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[0])
-                .duration(400).EUt(VA[EV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[IV])
+                .inputItem(ENERGY_OUTPUT_HATCH_16A[0])
+                .inputItem(wireGtHex, Tungsten, 2)
+                .inputItem(plate, TungstenSteel, 6)
+                .outputItem(SUBSTATION_ENERGY_OUTPUT_HATCH[0])
+                .duration(400).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[LuV])
-                .input(ENERGY_OUTPUT_HATCH_16A[1])
-                .input(wireGtHex, NiobiumTitanium, 2)
-                .input(plate, RhodiumPlatedPalladium, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[1])
-                .duration(400).EUt(VA[IV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[LuV])
+                .inputItem(ENERGY_OUTPUT_HATCH_16A[1])
+                .inputItem(wireGtHex, NiobiumTitanium, 2)
+                .inputItem(plate, RhodiumPlatedPalladium, 6)
+                .outputItem(SUBSTATION_ENERGY_OUTPUT_HATCH[1])
+                .duration(400).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[ZPM])
-                .input(ENERGY_OUTPUT_HATCH_16A[2])
-                .input(wireGtHex, VanadiumGallium, 2)
-                .input(plate, NaquadahAlloy, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[2])
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[ZPM])
+                .inputItem(ENERGY_OUTPUT_HATCH_16A[2])
+                .inputItem(wireGtHex, VanadiumGallium, 2)
+                .inputItem(plate, NaquadahAlloy, 6)
+                .outputItem(SUBSTATION_ENERGY_OUTPUT_HATCH[2])
+                .duration(400).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_16A[3])
-                .input(wireGtHex, YttriumBariumCuprate, 2)
-                .input(plate, Darmstadtium, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[3])
-                .duration(400).EUt(VA[ZPM]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[UV])
+                .inputItem(ENERGY_OUTPUT_HATCH_16A[3])
+                .inputItem(wireGtHex, YttriumBariumCuprate, 2)
+                .inputItem(plate, Darmstadtium, 6)
+                .outputItem(SUBSTATION_ENERGY_OUTPUT_HATCH[3])
+                .duration(400).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(POWER_TRANSFORMER[UV])
-                .input(ENERGY_OUTPUT_HATCH_16A[4])
-                .input(wireGtHex, Europium, 2)
-                .input(plate, Neutronium, 6)
-                .output(SUBSTATION_ENERGY_OUTPUT_HATCH[4])
-                .duration(400).EUt(VA[UV]).buildAndRegister();
+                .inputItem(POWER_TRANSFORMER[UV])
+                .inputItem(ENERGY_OUTPUT_HATCH_16A[4])
+                .inputItem(wireGtHex, Europium, 2)
+                .inputItem(plate, Neutronium, 6)
+                .outputItem(SUBSTATION_ENERGY_OUTPUT_HATCH[4])
+                .duration(400).volts(VA[UV]).buildAndRegister();
 
         // Maintenance Hatch
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LV])
+                .inputItem(HULL[LV])
                 .circuitMeta(8)
-                .output(MAINTENANCE_HATCH)
-                .duration(100).EUt(VA[LV]).buildAndRegister();
+                .outputItem(MAINTENANCE_HATCH)
+                .duration(100).volts(VA[LV]).buildAndRegister();
 
         // Multiblock Miners
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[EV])
-                .input(frameGt, Titanium, 4)
-                .input(circuit, Tier.EV, 4)
-                .input(ELECTRIC_MOTOR_EV, 4)
-                .input(ELECTRIC_PUMP_EV, 4)
-                .input(CONVEYOR_MODULE_EV, 4)
-                .input(gear, Tungsten, 4)
+                .inputItem(HULL[EV])
+                .inputItem(frameGt, Titanium, 4)
+                .inputItem(circuit, Tier.EV, 4)
+                .inputItem(ELECTRIC_MOTOR_EV, 4)
+                .inputItem(ELECTRIC_PUMP_EV, 4)
+                .inputItem(CONVEYOR_MODULE_EV, 4)
+                .inputItem(gear, Tungsten, 4)
                 .circuitMeta(2)
-                .output(BASIC_LARGE_MINER)
-                .duration(400).EUt(VA[EV]).buildAndRegister();
+                .outputItem(BASIC_LARGE_MINER)
+                .duration(400).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(frameGt, TungstenSteel, 4)
-                .input(circuit, Tier.IV, 4)
-                .input(ELECTRIC_MOTOR_IV, 4)
-                .input(ELECTRIC_PUMP_IV, 4)
-                .input(CONVEYOR_MODULE_IV, 4)
-                .input(gear, Iridium, 4)
+                .inputItem(HULL[IV])
+                .inputItem(frameGt, TungstenSteel, 4)
+                .inputItem(circuit, Tier.IV, 4)
+                .inputItem(ELECTRIC_MOTOR_IV, 4)
+                .inputItem(ELECTRIC_PUMP_IV, 4)
+                .inputItem(CONVEYOR_MODULE_IV, 4)
+                .inputItem(gear, Iridium, 4)
                 .circuitMeta(2)
-                .output(LARGE_MINER)
-                .duration(400).EUt(VA[IV]).buildAndRegister();
+                .outputItem(LARGE_MINER)
+                .duration(400).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(frameGt, HSSS, 4)
-                .input(circuit, Tier.LuV, 4)
-                .input(ELECTRIC_MOTOR_LuV, 4)
-                .input(ELECTRIC_PUMP_LuV, 4)
-                .input(CONVEYOR_MODULE_LuV, 4)
-                .input(gear, Ruridit, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(frameGt, HSSS, 4)
+                .inputItem(circuit, Tier.LuV, 4)
+                .inputItem(ELECTRIC_MOTOR_LuV, 4)
+                .inputItem(ELECTRIC_PUMP_LuV, 4)
+                .inputItem(CONVEYOR_MODULE_LuV, 4)
+                .inputItem(gear, Ruridit, 4)
                 .circuitMeta(2)
-                .output(ADVANCED_LARGE_MINER)
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(ADVANCED_LARGE_MINER)
+                .duration(400).volts(VA[LuV]).buildAndRegister();
 
         // Multiblock Fluid Drills
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[MV])
-                .input(frameGt, Steel, 4)
-                .input(circuit, Tier.MV, 4)
-                .input(ELECTRIC_MOTOR_MV, 4)
-                .input(ELECTRIC_PUMP_MV, 4)
-                .input(gear, VanadiumSteel, 4)
+                .inputItem(HULL[MV])
+                .inputItem(frameGt, Steel, 4)
+                .inputItem(circuit, Tier.MV, 4)
+                .inputItem(ELECTRIC_MOTOR_MV, 4)
+                .inputItem(ELECTRIC_PUMP_MV, 4)
+                .inputItem(gear, VanadiumSteel, 4)
                 .circuitMeta(2)
-                .output(BASIC_FLUID_DRILLING_RIG)
-                .duration(400).EUt(VA[MV]).buildAndRegister();
+                .outputItem(BASIC_FLUID_DRILLING_RIG)
+                .duration(400).volts(VA[MV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[EV])
-                .input(frameGt, Titanium, 4)
-                .input(circuit, Tier.EV, 4)
-                .input(ELECTRIC_MOTOR_EV, 4)
-                .input(ELECTRIC_PUMP_EV, 4)
-                .input(gear, TungstenCarbide, 4)
+                .inputItem(HULL[EV])
+                .inputItem(frameGt, Titanium, 4)
+                .inputItem(circuit, Tier.EV, 4)
+                .inputItem(ELECTRIC_MOTOR_EV, 4)
+                .inputItem(ELECTRIC_PUMP_EV, 4)
+                .inputItem(gear, TungstenCarbide, 4)
                 .circuitMeta(2)
-                .output(FLUID_DRILLING_RIG)
-                .duration(400).EUt(VA[EV]).buildAndRegister();
+                .outputItem(FLUID_DRILLING_RIG)
+                .duration(400).volts(VA[EV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(frameGt, TungstenSteel, 4)
-                .input(circuit, Tier.LuV, 4)
-                .input(ELECTRIC_MOTOR_LuV, 4)
-                .input(ELECTRIC_PUMP_LuV, 4)
-                .input(gear, Osmiridium, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(frameGt, TungstenSteel, 4)
+                .inputItem(circuit, Tier.LuV, 4)
+                .inputItem(ELECTRIC_MOTOR_LuV, 4)
+                .inputItem(ELECTRIC_PUMP_LuV, 4)
+                .inputItem(gear, Osmiridium, 4)
                 .circuitMeta(2)
-                .output(ADVANCED_FLUID_DRILLING_RIG)
-                .duration(400).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(ADVANCED_FLUID_DRILLING_RIG)
+                .duration(400).volts(VA[LuV]).buildAndRegister();
 
         // Long Distance Pipes
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeItem, Tin, 2)
-                .input(plate, Steel, 8)
-                .input(gear, Steel, 2)
+                .inputItem(pipeLargeItem, Tin, 2)
+                .inputItem(plate, Steel, 8)
+                .inputItem(gear, Steel, 2)
                 .circuitMeta(1)
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))
-                .output(LONG_DIST_ITEM_ENDPOINT, 2)
-                .duration(400).EUt(16).buildAndRegister();
+                .outputItem(LONG_DIST_ITEM_ENDPOINT, 2)
+                .duration(400).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeFluid, Bronze, 2)
-                .input(plate, Steel, 8)
-                .input(gear, Steel, 2)
+                .inputItem(pipeLargeFluid, Bronze, 2)
+                .inputItem(plate, Steel, 8)
+                .inputItem(gear, Steel, 2)
                 .circuitMeta(1)
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))
-                .output(LONG_DIST_FLUID_ENDPOINT, 2)
-                .duration(400).EUt(16).buildAndRegister();
+                .outputItem(LONG_DIST_FLUID_ENDPOINT, 2)
+                .duration(400).volts(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeItem, Tin, 2)
-                .input(plate, Steel, 8)
+                .inputItem(pipeLargeItem, Tin, 2)
+                .inputItem(plate, Steel, 8)
                 .circuitMeta(2)
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))
-                .output(LD_ITEM_PIPE, 64)
-                .duration(600).EUt(24).buildAndRegister();
+                .outputItem(LD_ITEM_PIPE, 64)
+                .duration(600).volts(24).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(pipeLargeFluid, Bronze, 2)
-                .input(plate, Steel, 8)
+                .inputItem(pipeLargeFluid, Bronze, 2)
+                .inputItem(plate, Steel, 8)
                 .circuitMeta(2)
                 .fluidInputs(SolderingAlloy.getFluid(L / 2))
-                .output(LD_FLUID_PIPE, 64)
-                .duration(600).EUt(24).buildAndRegister();
+                .outputItem(LD_FLUID_PIPE, 64)
+                .duration(600).volts(24).buildAndRegister();
 
         // ME Parts
 
@@ -999,62 +1000,62 @@ public class MetaTileEntityMachineRecipeLoader {
             ItemStack accelerationCard = Mods.AppliedEnergistics2.getItem("material", 30, 2);
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(FLUID_EXPORT_HATCH[EV])
+                    .inputItem(FLUID_EXPORT_HATCH[EV])
                     .inputs(fluidInterface.copy())
                     .inputs(accelerationCard.copy())
-                    .output(FLUID_EXPORT_HATCH_ME)
-                    .duration(300).EUt(VA[HV]).buildAndRegister();
+                    .outputItem(FLUID_EXPORT_HATCH_ME)
+                    .duration(300).volts(VA[HV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(FLUID_IMPORT_HATCH[EV])
+                    .inputItem(FLUID_IMPORT_HATCH[EV])
                     .inputs(fluidInterface.copy())
                     .inputs(accelerationCard.copy())
-                    .output(FLUID_IMPORT_HATCH_ME)
-                    .duration(300).EUt(VA[HV]).buildAndRegister();
+                    .outputItem(FLUID_IMPORT_HATCH_ME)
+                    .duration(300).volts(VA[HV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(ITEM_EXPORT_BUS[EV])
+                    .inputItem(ITEM_EXPORT_BUS[EV])
                     .inputs(normalInterface.copy())
                     .inputs(accelerationCard.copy())
-                    .output(ITEM_EXPORT_BUS_ME)
-                    .duration(300).EUt(VA[HV]).buildAndRegister();
+                    .outputItem(ITEM_EXPORT_BUS_ME)
+                    .duration(300).volts(VA[HV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(ITEM_IMPORT_BUS[EV])
+                    .inputItem(ITEM_IMPORT_BUS[EV])
                     .inputs(normalInterface.copy())
                     .inputs(accelerationCard.copy())
-                    .output(ITEM_IMPORT_BUS_ME)
-                    .duration(300).EUt(VA[HV]).buildAndRegister();
+                    .outputItem(ITEM_IMPORT_BUS_ME)
+                    .duration(300).volts(VA[HV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(ITEM_IMPORT_BUS[IV])
+                    .inputItem(ITEM_IMPORT_BUS[IV])
                     .inputs(normalInterface.copy())
-                    .input(CONVEYOR_MODULE_IV)
-                    .input(SENSOR_IV)
+                    .inputItem(CONVEYOR_MODULE_IV)
+                    .inputItem(SENSOR_IV)
                     .inputs(GTUtility.copy(4, accelerationCard))
-                    .output(STOCKING_BUS_ME)
-                    .duration(300).EUt(VA[IV]).buildAndRegister();
+                    .outputItem(STOCKING_BUS_ME)
+                    .duration(300).volts(VA[IV]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(FLUID_IMPORT_HATCH[IV])
+                    .inputItem(FLUID_IMPORT_HATCH[IV])
                     .inputs(fluidInterface.copy())
-                    .input(ELECTRIC_PUMP_IV)
-                    .input(SENSOR_IV)
+                    .inputItem(ELECTRIC_PUMP_IV)
+                    .inputItem(SENSOR_IV)
                     .inputs(GTUtility.copy(4, accelerationCard))
-                    .output(STOCKING_HATCH_ME)
-                    .duration(300).EUt(VA[IV]).buildAndRegister();
+                    .outputItem(STOCKING_HATCH_ME)
+                    .duration(300).volts(VA[IV]).buildAndRegister();
         }
     }
 
     private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus,
                                                Object extraInput) {
-        GTRecipeInput extra;
+        GTItemIngredient extra;
         if (extraInput instanceof ItemStack stack) {
-            extra = new GTRecipeItemInput(stack);
+            extra = StandardItemIngredient.builder().setCount(stack.getCount()).addStack(stack).clearToContextAndBuild(ItemStackMatchingContext.ITEM_DAMAGE_NBT);
         } else if (extraInput instanceof String oreName) {
-            extra = new GTRecipeOreInput(oreName);
+            extra = OreItemIngredient.of(oreName);
         } else {
-            throw new IllegalArgumentException("extraInput must be ItemStack or GTRecipeInput");
+            throw new IllegalArgumentException("extraInput must be ItemStack or String (for oredict)");
         }
 
         // Glue recipe for ULV and LV
@@ -1062,20 +1063,20 @@ public class MetaTileEntityMachineRecipeLoader {
         if (tier <= GTValues.LV) {
             int fluidAmount = tier == GTValues.ULV ? 250 : 500;
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[tier])
-                    .inputs(extra)
+                    .inputItem(HULL[tier])
+                    .ingredient(extra)
                     .fluidInputs(Glue.getFluid(fluidAmount))
                     .circuitMeta(1)
-                    .output(inputBus)
-                    .duration(300).EUt(VA[tier]).buildAndRegister();
+                    .outputItem(inputBus)
+                    .duration(300).volts(VA[tier]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[tier])
-                    .inputs(extra)
+                    .inputItem(HULL[tier])
+                    .ingredient(extra)
                     .fluidInputs(Glue.getFluid(fluidAmount))
                     .circuitMeta(2)
-                    .output(outputBus)
-                    .duration(300).EUt(VA[tier]).buildAndRegister();
+                    .outputItem(outputBus)
+                    .duration(300).volts(VA[tier]).buildAndRegister();
         }
 
         // Polyethylene recipe for HV and below
@@ -1083,20 +1084,20 @@ public class MetaTileEntityMachineRecipeLoader {
         if (tier <= GTValues.HV) {
             int peAmount = getFluidAmount(tier + 4);
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[tier])
-                    .inputs(extra)
+                    .inputItem(HULL[tier])
+                    .ingredient(extra)
                     .fluidInputs(Polyethylene.getFluid(peAmount))
                     .circuitMeta(1)
-                    .output(inputBus)
-                    .duration(300).EUt(VA[tier]).buildAndRegister();
+                    .outputItem(inputBus)
+                    .duration(300).volts(VA[tier]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[tier])
-                    .inputs(extra)
+                    .inputItem(HULL[tier])
+                    .ingredient(extra)
                     .fluidInputs(Polyethylene.getFluid(peAmount))
                     .circuitMeta(2)
-                    .output(outputBus)
-                    .duration(300).EUt(VA[tier]).buildAndRegister();
+                    .outputItem(outputBus)
+                    .duration(300).volts(VA[tier]).buildAndRegister();
         }
 
         // Polytetrafluoroethylene recipe for LuV and below
@@ -1104,20 +1105,20 @@ public class MetaTileEntityMachineRecipeLoader {
         if (tier <= GTValues.LuV) {
             int ptfeAmount = getFluidAmount(tier + 3);
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[tier])
-                    .inputs(extra)
+                    .inputItem(HULL[tier])
+                    .ingredient(extra)
                     .fluidInputs(Polytetrafluoroethylene.getFluid(ptfeAmount))
                     .circuitMeta(1)
-                    .output(inputBus)
-                    .duration(300).EUt(VA[tier]).buildAndRegister();
+                    .outputItem(inputBus)
+                    .duration(300).volts(VA[tier]).buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(HULL[tier])
-                    .inputs(extra)
+                    .inputItem(HULL[tier])
+                    .ingredient(extra)
                     .fluidInputs(Polytetrafluoroethylene.getFluid(ptfeAmount))
                     .circuitMeta(2)
-                    .output(outputBus)
-                    .duration(300).EUt(VA[tier]).buildAndRegister();
+                    .outputItem(outputBus)
+                    .duration(300).volts(VA[tier]).buildAndRegister();
         }
 
         // PBI recipe for all
@@ -1126,22 +1127,22 @@ public class MetaTileEntityMachineRecipeLoader {
         // Use a Math.min() call on tier so that UHV hatches are still UV voltage
         int pbiAmount = getFluidAmount(tier);
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[tier])
-                .inputs(extra)
+                .inputItem(HULL[tier])
+                .ingredient(extra)
                 .fluidInputs(Polybenzimidazole.getFluid(pbiAmount))
                 .circuitMeta(1)
-                .output(inputBus)
+                .outputItem(inputBus)
                 .withRecycling()
-                .duration(300).EUt(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
+                .duration(300).volts(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[tier])
-                .inputs(extra)
+                .inputItem(HULL[tier])
+                .ingredient(extra)
                 .fluidInputs(Polybenzimidazole.getFluid(pbiAmount))
                 .circuitMeta(2)
-                .output(outputBus)
+                .outputItem(outputBus)
                 .withRecycling()
-                .duration(300).EUt(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
+                .duration(300).volts(VA[Math.min(GTValues.UV, tier)]).buildAndRegister();
     }
 
     private static int getFluidAmount(int offsetTier) {
@@ -1163,248 +1164,248 @@ public class MetaTileEntityMachineRecipeLoader {
     private static void registerLaserRecipes() {
         // 256A Laser Source Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(lens, Diamond)
-                .input(EMITTER_IV)
-                .input(ELECTRIC_PUMP_IV)
-                .input(cableGtSingle, Platinum, 4)
+                .inputItem(HULL[IV])
+                .inputItem(lens, Diamond)
+                .inputItem(EMITTER_IV)
+                .inputItem(ELECTRIC_PUMP_IV)
+                .inputItem(cableGtSingle, Platinum, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[0])
-                .duration(300).EUt(VA[IV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_256[0])
+                .duration(300).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond)
-                .input(EMITTER_LuV)
-                .input(ELECTRIC_PUMP_LuV)
-                .input(cableGtSingle, NiobiumTitanium, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(lens, Diamond)
+                .inputItem(EMITTER_LuV)
+                .inputItem(ELECTRIC_PUMP_LuV)
+                .inputItem(cableGtSingle, NiobiumTitanium, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[1])
-                .duration(300).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_256[1])
+                .duration(300).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(lens, Diamond)
-                .input(EMITTER_ZPM)
-                .input(ELECTRIC_PUMP_ZPM)
-                .input(cableGtSingle, VanadiumGallium, 4)
+                .inputItem(HULL[ZPM])
+                .inputItem(lens, Diamond)
+                .inputItem(EMITTER_ZPM)
+                .inputItem(ELECTRIC_PUMP_ZPM)
+                .inputItem(cableGtSingle, VanadiumGallium, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[2])
-                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_256[2])
+                .duration(300).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(lens, Diamond)
-                .input(EMITTER_UV)
-                .input(ELECTRIC_PUMP_UV)
-                .input(cableGtSingle, YttriumBariumCuprate, 4)
+                .inputItem(HULL[UV])
+                .inputItem(lens, Diamond)
+                .inputItem(EMITTER_UV)
+                .inputItem(ELECTRIC_PUMP_UV)
+                .inputItem(cableGtSingle, YttriumBariumCuprate, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[3])
-                .duration(300).EUt(VA[UV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_256[3])
+                .duration(300).volts(VA[UV]).buildAndRegister();
 
         // 256A Laser Target Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(lens, Diamond)
-                .input(SENSOR_IV)
-                .input(ELECTRIC_PUMP_IV)
-                .input(cableGtSingle, Platinum, 4)
+                .inputItem(HULL[IV])
+                .inputItem(lens, Diamond)
+                .inputItem(SENSOR_IV)
+                .inputItem(ELECTRIC_PUMP_IV)
+                .inputItem(cableGtSingle, Platinum, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[0])
-                .duration(300).EUt(VA[IV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_256[0])
+                .duration(300).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond)
-                .input(SENSOR_LuV)
-                .input(ELECTRIC_PUMP_LuV)
-                .input(cableGtSingle, NiobiumTitanium, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(lens, Diamond)
+                .inputItem(SENSOR_LuV)
+                .inputItem(ELECTRIC_PUMP_LuV)
+                .inputItem(cableGtSingle, NiobiumTitanium, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[1])
-                .duration(300).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_256[1])
+                .duration(300).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(lens, Diamond)
-                .input(SENSOR_ZPM)
-                .input(ELECTRIC_PUMP_ZPM)
-                .input(cableGtSingle, VanadiumGallium, 4)
+                .inputItem(HULL[ZPM])
+                .inputItem(lens, Diamond)
+                .inputItem(SENSOR_ZPM)
+                .inputItem(ELECTRIC_PUMP_ZPM)
+                .inputItem(cableGtSingle, VanadiumGallium, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[2])
-                .duration(300).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_256[2])
+                .duration(300).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(lens, Diamond)
-                .input(SENSOR_UV)
-                .input(ELECTRIC_PUMP_UV)
-                .input(cableGtSingle, YttriumBariumCuprate, 4)
+                .inputItem(HULL[UV])
+                .inputItem(lens, Diamond)
+                .inputItem(SENSOR_UV)
+                .inputItem(ELECTRIC_PUMP_UV)
+                .inputItem(cableGtSingle, YttriumBariumCuprate, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[3])
-                .duration(300).EUt(VA[UV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_256[3])
+                .duration(300).volts(VA[UV]).buildAndRegister();
 
         // 1024A Laser Source Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(lens, Diamond, 2)
-                .input(EMITTER_IV, 2)
-                .input(ELECTRIC_PUMP_IV, 2)
-                .input(cableGtDouble, Platinum, 4)
+                .inputItem(HULL[IV])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(EMITTER_IV, 2)
+                .inputItem(ELECTRIC_PUMP_IV, 2)
+                .inputItem(cableGtDouble, Platinum, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[0])
-                .duration(600).EUt(VA[IV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_1024[0])
+                .duration(600).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond, 2)
-                .input(EMITTER_LuV, 2)
-                .input(ELECTRIC_PUMP_LuV, 2)
-                .input(cableGtDouble, NiobiumTitanium, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(EMITTER_LuV, 2)
+                .inputItem(ELECTRIC_PUMP_LuV, 2)
+                .inputItem(cableGtDouble, NiobiumTitanium, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[1])
-                .duration(600).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_1024[1])
+                .duration(600).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(lens, Diamond, 2)
-                .input(EMITTER_ZPM, 2)
-                .input(ELECTRIC_PUMP_ZPM, 2)
-                .input(cableGtDouble, VanadiumGallium, 4)
+                .inputItem(HULL[ZPM])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(EMITTER_ZPM, 2)
+                .inputItem(ELECTRIC_PUMP_ZPM, 2)
+                .inputItem(cableGtDouble, VanadiumGallium, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[2])
-                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_1024[2])
+                .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(lens, Diamond, 2)
-                .input(EMITTER_UV, 2)
-                .input(ELECTRIC_PUMP_UV, 2)
-                .input(cableGtDouble, YttriumBariumCuprate, 4)
+                .inputItem(HULL[UV])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(EMITTER_UV, 2)
+                .inputItem(ELECTRIC_PUMP_UV, 2)
+                .inputItem(cableGtDouble, YttriumBariumCuprate, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[3])
-                .duration(600).EUt(VA[UV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_1024[3])
+                .duration(600).volts(VA[UV]).buildAndRegister();
 
         // 1024A Laser Target Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(lens, Diamond, 2)
-                .input(SENSOR_IV, 2)
-                .input(ELECTRIC_PUMP_IV, 2)
-                .input(cableGtDouble, Platinum, 4)
+                .inputItem(HULL[IV])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(SENSOR_IV, 2)
+                .inputItem(ELECTRIC_PUMP_IV, 2)
+                .inputItem(cableGtDouble, Platinum, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[0])
-                .duration(600).EUt(VA[IV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_1024[0])
+                .duration(600).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond, 2)
-                .input(SENSOR_LuV, 2)
-                .input(ELECTRIC_PUMP_LuV, 2)
-                .input(cableGtDouble, NiobiumTitanium, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(SENSOR_LuV, 2)
+                .inputItem(ELECTRIC_PUMP_LuV, 2)
+                .inputItem(cableGtDouble, NiobiumTitanium, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[1])
-                .duration(600).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_1024[1])
+                .duration(600).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(lens, Diamond, 2)
-                .input(SENSOR_ZPM, 2)
-                .input(ELECTRIC_PUMP_ZPM, 2)
-                .input(cableGtDouble, VanadiumGallium, 4)
+                .inputItem(HULL[ZPM])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(SENSOR_ZPM, 2)
+                .inputItem(ELECTRIC_PUMP_ZPM, 2)
+                .inputItem(cableGtDouble, VanadiumGallium, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[2])
-                .duration(600).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_1024[2])
+                .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(lens, Diamond, 2)
-                .input(SENSOR_UV, 2)
-                .input(ELECTRIC_PUMP_UV, 2)
-                .input(cableGtDouble, YttriumBariumCuprate, 4)
+                .inputItem(HULL[UV])
+                .inputItem(lens, Diamond, 2)
+                .inputItem(SENSOR_UV, 2)
+                .inputItem(ELECTRIC_PUMP_UV, 2)
+                .inputItem(cableGtDouble, YttriumBariumCuprate, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[3])
-                .duration(600).EUt(VA[UV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_1024[3])
+                .duration(600).volts(VA[UV]).buildAndRegister();
 
         // 4096A Laser Source Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(lens, Diamond, 4)
-                .input(EMITTER_IV, 4)
-                .input(ELECTRIC_PUMP_IV, 4)
-                .input(cableGtQuadruple, Platinum, 4)
+                .inputItem(HULL[IV])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(EMITTER_IV, 4)
+                .inputItem(ELECTRIC_PUMP_IV, 4)
+                .inputItem(cableGtQuadruple, Platinum, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[0])
-                .duration(1200).EUt(VA[IV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_4096[0])
+                .duration(1200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond, 4)
-                .input(EMITTER_LuV, 4)
-                .input(ELECTRIC_PUMP_LuV, 4)
-                .input(cableGtQuadruple, NiobiumTitanium, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(EMITTER_LuV, 4)
+                .inputItem(ELECTRIC_PUMP_LuV, 4)
+                .inputItem(cableGtQuadruple, NiobiumTitanium, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[1])
-                .duration(1200).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_4096[1])
+                .duration(1200).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(lens, Diamond, 4)
-                .input(EMITTER_ZPM, 4)
-                .input(ELECTRIC_PUMP_ZPM, 4)
-                .input(cableGtQuadruple, VanadiumGallium, 4)
+                .inputItem(HULL[ZPM])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(EMITTER_ZPM, 4)
+                .inputItem(ELECTRIC_PUMP_ZPM, 4)
+                .inputItem(cableGtQuadruple, VanadiumGallium, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[2])
-                .duration(1200).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_4096[2])
+                .duration(1200).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(lens, Diamond, 4)
-                .input(EMITTER_UV, 4)
-                .input(ELECTRIC_PUMP_UV, 4)
-                .input(cableGtQuadruple, YttriumBariumCuprate, 4)
+                .inputItem(HULL[UV])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(EMITTER_UV, 4)
+                .inputItem(ELECTRIC_PUMP_UV, 4)
+                .inputItem(cableGtQuadruple, YttriumBariumCuprate, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[3])
-                .duration(1200).EUt(VA[UV]).buildAndRegister();
+                .outputItem(LASER_INPUT_HATCH_4096[3])
+                .duration(1200).volts(VA[UV]).buildAndRegister();
 
         // 4096A Laser Target Hatches
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[IV])
-                .input(lens, Diamond, 4)
-                .input(SENSOR_IV, 4)
-                .input(ELECTRIC_PUMP_IV, 4)
-                .input(cableGtQuadruple, Platinum, 4)
+                .inputItem(HULL[IV])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(SENSOR_IV, 4)
+                .inputItem(ELECTRIC_PUMP_IV, 4)
+                .inputItem(cableGtQuadruple, Platinum, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[0])
-                .duration(1200).EUt(VA[IV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_4096[0])
+                .duration(1200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[LuV])
-                .input(lens, Diamond, 4)
-                .input(SENSOR_LuV, 4)
-                .input(ELECTRIC_PUMP_LuV, 4)
-                .input(cableGtQuadruple, NiobiumTitanium, 4)
+                .inputItem(HULL[LuV])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(SENSOR_LuV, 4)
+                .inputItem(ELECTRIC_PUMP_LuV, 4)
+                .inputItem(cableGtQuadruple, NiobiumTitanium, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[1])
-                .duration(1200).EUt(VA[LuV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_4096[1])
+                .duration(1200).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[ZPM])
-                .input(lens, Diamond, 4)
-                .input(SENSOR_ZPM, 4)
-                .input(ELECTRIC_PUMP_ZPM, 4)
-                .input(cableGtQuadruple, VanadiumGallium, 4)
+                .inputItem(HULL[ZPM])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(SENSOR_ZPM, 4)
+                .inputItem(ELECTRIC_PUMP_ZPM, 4)
+                .inputItem(cableGtQuadruple, VanadiumGallium, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[2])
-                .duration(1200).EUt(VA[ZPM]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_4096[2])
+                .duration(1200).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(HULL[UV])
-                .input(lens, Diamond, 4)
-                .input(SENSOR_UV, 4)
-                .input(ELECTRIC_PUMP_UV, 4)
-                .input(cableGtQuadruple, YttriumBariumCuprate, 4)
+                .inputItem(HULL[UV])
+                .inputItem(lens, Diamond, 4)
+                .inputItem(SENSOR_UV, 4)
+                .inputItem(ELECTRIC_PUMP_UV, 4)
+                .inputItem(cableGtQuadruple, YttriumBariumCuprate, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[3])
-                .duration(1200).EUt(VA[UV]).buildAndRegister();
+                .outputItem(LASER_OUTPUT_HATCH_4096[3])
+                .duration(1200).volts(VA[UV]).buildAndRegister();
     }
 }
