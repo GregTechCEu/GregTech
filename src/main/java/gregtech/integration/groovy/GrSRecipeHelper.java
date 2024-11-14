@@ -7,7 +7,7 @@ import gregtech.integration.RecipeCompatUtil;
 
 import net.minecraft.item.ItemStack;
 
-import com.cleanroommc.groovyscript.helper.ingredient.IngredientHelper;
+import com.cleanroommc.groovyscript.helper.ingredient.GroovyScriptCodeConverter;
 import com.cleanroommc.groovyscript.helper.ingredient.NbtHelper;
 
 public class GrSRecipeHelper {
@@ -20,7 +20,7 @@ public class GrSRecipeHelper {
                 .append(recipe.getEUt())
                 .append(", ");
 
-        if (recipe.getItemIngredients().size() > 0) {
+        if (!recipe.getItemIngredients().isEmpty()) {
             builder.append("[");
             for (GTRecipeInput ci : recipe.getItemIngredients()) {
                 String ingredient = getGroovyItemString(ci);
@@ -32,10 +32,10 @@ public class GrSRecipeHelper {
             builder.append("null, ");
         }
 
-        if (recipe.getFluidIngredients().size() > 0) {
+        if (!recipe.getFluidIngredients().isEmpty()) {
             builder.append("[");
             for (GTRecipeInput fluidIngredient : recipe.getFluidIngredients()) {
-                builder.append(IngredientHelper.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
+                builder.append(GroovyScriptCodeConverter.asGroovyCode(fluidIngredient.getInputFluidStack(), false));
 
                 if (fluidIngredient.getAmount() > 1) {
                     builder.append(" * ")
@@ -72,7 +72,7 @@ public class GrSRecipeHelper {
         }
         if (itemStack != null) {
             if (itemId == null) {
-                builder.append(IngredientHelper.asGroovyCode(itemStack, false));
+                builder.append(GroovyScriptCodeConverter.asGroovyCode(itemStack, false));
             }
 
             if (itemStack.getTagCompound() != null) {
