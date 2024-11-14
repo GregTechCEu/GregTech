@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.STD_DURATION_FACTOR_INV;
+import static gregtech.api.recipes.logic.OverclockingConstants.STD_DURATION_FACTOR_INV;
 
 public final class DistillationTowerBuildAction implements RecipeBuildAction<SimpleRecipeBuilder> {
 

@@ -2,7 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IHeatingCoil;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.recipes.logic.OverclockingLogic;
+import gregtech.api.recipes.logic.OverclockingConstants;
 import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.lookup.property.TemperatureMaximumProperty;
@@ -16,10 +16,6 @@ import org.jetbrains.annotations.Range;
  * Used with RecipeMaps that run recipes using the {@link TemperatureProperty}
  */
 public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
-
-    public static final int COIL_EUT_DISCOUNT_TEMPERATURE = 900;
-
-    public static final int COIL_PERFECT_OVERCLOCK_TEMPERATURE = 1800;
 
     public <T extends RecipeMapMultiblockController & IHeatingCoil> HeatingCoilRecipeLogic(T metaTileEntity) {
         super(metaTileEntity);
@@ -50,17 +46,17 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
                                               @Range(from = 0, to = Integer.MAX_VALUE) int overclocks) {
         int perfects = Math.min(overclocks, calculateAmountCoilPerfectOverclocks(getCoil().getCurrentTemperature(),
                 recipe.getRecipe().getProperty(TemperatureProperty.getInstance(), 0)));
-        return (float) (Math.pow(OverclockingLogic.PERFECT_DURATION_FACTOR, perfects) *
+        return (float) (Math.pow(OverclockingConstants.PERFECT_DURATION_FACTOR, perfects) *
                 Math.pow(getOverclockingDurationFactor(), overclocks - perfects));
     }
 
     protected @Range(from = 0, to = Integer.MAX_VALUE) int calculateAmountCoilEUtDiscount(int providedTemp,
                                                                                           int requiredTemp) {
-        return Math.max(0, (providedTemp - requiredTemp) / COIL_EUT_DISCOUNT_TEMPERATURE);
+        return Math.max(0, (providedTemp - requiredTemp) / OverclockingConstants.COIL_EUT_DISCOUNT_TEMPERATURE);
     }
 
     protected @Range(from = 0, to = Integer.MAX_VALUE) int calculateAmountCoilPerfectOverclocks(int providedTemp,
                                                                                                 int requiredTemp) {
-        return Math.max(0, (providedTemp - requiredTemp) / COIL_PERFECT_OVERCLOCK_TEMPERATURE);
+        return Math.max(0, (providedTemp - requiredTemp) / OverclockingConstants.COIL_PERFECT_OVERCLOCK_TEMPERATURE);
     }
 }

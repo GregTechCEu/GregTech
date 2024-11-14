@@ -52,7 +52,7 @@ import org.jetbrains.annotations.Range;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.*;
+import static gregtech.api.recipes.logic.OverclockingConstants.*;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, RecipeRunner {
 

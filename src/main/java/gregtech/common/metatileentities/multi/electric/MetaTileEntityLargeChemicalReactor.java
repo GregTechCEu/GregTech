@@ -10,7 +10,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.OverclockingLogic;
+import gregtech.api.recipes.logic.OverclockingConstants;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -48,7 +48,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
 
             @Override
             protected double getOverclockingDurationFactor() {
-                return OverclockingLogic.PERFECT_DURATION_FACTOR;
+                return OverclockingConstants.PERFECT_DURATION_FACTOR;
             }
         };
     }

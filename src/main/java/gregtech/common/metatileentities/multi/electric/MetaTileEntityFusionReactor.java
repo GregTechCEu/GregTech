@@ -86,8 +86,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
-import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_DURATION_FACTOR;
-import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_VOLTAGE_FACTOR;
+import static gregtech.api.recipes.logic.OverclockingConstants.PERFECT_HALF_DURATION_FACTOR;
+import static gregtech.api.recipes.logic.OverclockingConstants.PERFECT_HALF_VOLTAGE_FACTOR;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
