@@ -45,7 +45,6 @@ import gregtech.integration.groovy.GroovyScriptModule;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
@@ -59,7 +58,6 @@ import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
@@ -111,9 +109,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected boolean ignoreAllBuildActions = false;
     protected Object2ObjectOpenHashMap<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
-
-    protected boolean ignoreAllBuildActions = false;
-    protected Map<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
 
     protected RecipeBuilder() {
         this.itemInputs = new ArrayList<>();
@@ -221,11 +216,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         category = recipeBuilder.category;
         isCTRecipe = recipeBuilder.isCTRecipe;
         recipeStatus = recipeBuilder.recipeStatus;
-        return (R) this;
         this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
         if (recipeBuilder.ignoredBuildActions != null) {
             this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
         }
+        return (R) this;
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
@@ -1413,31 +1408,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R copy() {
         return (R) new RecipeBuilder<>(this);
-    }
-
-    /**
-     * Only use if you absolutely don't want the recipe to be run through any build actions.
-     * Instead, you should blacklist specific actions with {@link #ignoreBuildAction(ResourceLocation)}
-     */
-    public R ignoreAllBuildActions() {
-        this.ignoreAllBuildActions = true;
-        return (R) this;
-    }
-
-    public R ignoreBuildAction(ResourceLocation buildActionName) {
-        if (ignoredBuildActions == null) {
-            ignoredBuildActions = new Object2ObjectOpenHashMap<>();
-        } else if (!recipeMap.getBuildActions().containsKey(buildActionName)) {
-            GTLog.logger.error("Recipe map {} does not contain build action {}!", recipeMap, buildActionName,
-                    new Throwable());
-            return (R) this;
-        } else if (ignoredBuildActions.containsKey(buildActionName)) {
-            return (R) this;
-        }
-
-        ignoredBuildActions.put(buildActionName, recipeMap.getBuildActions().get(buildActionName));
-
-        return (R) this;
     }
 
     public ValidationResult<Recipe> build() {
