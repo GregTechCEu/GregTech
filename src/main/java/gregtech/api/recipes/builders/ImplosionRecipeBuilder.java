@@ -4,6 +4,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.properties.impl.ImplosionExplosiveProperty;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.properties.impl.ImplosionExplosiveProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 

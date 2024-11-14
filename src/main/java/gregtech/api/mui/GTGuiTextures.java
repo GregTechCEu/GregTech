@@ -206,6 +206,8 @@ public class GTGuiTextures {
             "textures/gui/widget/button_public_private.png",
             18, 36, 18, 18, true);
 
+    public static final UITexture MENU_OVERLAY = fullImage("textures/gui/overlay/menu_overlay.png");
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS

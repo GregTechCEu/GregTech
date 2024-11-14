@@ -16,6 +16,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.properties.impl.TemperatureProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;

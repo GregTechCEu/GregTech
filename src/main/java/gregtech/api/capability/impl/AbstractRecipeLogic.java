@@ -13,6 +13,12 @@ import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.IParallelableRecipeLogic;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.impl.CleanroomProperty;
+import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.recipes.ingredients.match.IngredientMatchHelper;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
 import gregtech.api.recipes.logic.PrimitiveRecipeRun;
@@ -355,7 +361,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Ticks the recipe runner passed in, referencing the property set
      * and consuming inputs from the list views as necessary
-     * 
+     *
      * @param items      the list view of the input inventory
      * @param fluids     the list view of the import tank
      * @param properties the current property set
@@ -470,7 +476,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     /**
      * Find the recipe that works with the given inputs, and then match it to get a recipe run.
-     * 
+     *
      * @param items      the items for the search
      * @param fluids     the fluids for the search
      * @param properties the properties for the search
@@ -503,7 +509,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * Called to determine if a recipe can be run based on just items and fluids,
      * and if so what the characteristics of the run will be.
      * Should also consume inputs.
-     * 
+     *
      * @param recipe     the recipe to check
      * @param items      the list view of the item input inventories for this check. Will be modified in order to
      *                   consume.

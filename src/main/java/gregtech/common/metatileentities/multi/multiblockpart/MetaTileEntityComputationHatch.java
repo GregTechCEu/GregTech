@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IOpticalComputationHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -14,7 +13,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -130,11 +128,6 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     @Override
     protected boolean openGUIOnRightClick() {
         return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

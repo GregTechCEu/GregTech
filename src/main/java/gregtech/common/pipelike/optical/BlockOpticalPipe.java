@@ -42,6 +42,7 @@ public class BlockOpticalPipe extends BlockPipe<OpticalPipeType, OpticalPipeProp
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(@NotNull World world, BlockPos blockPos) {
         return OpticalPipeRenderer.INSTANCE.getParticleTexture((TileEntityOpticalPipe) world.getTileEntity(blockPos));
     }

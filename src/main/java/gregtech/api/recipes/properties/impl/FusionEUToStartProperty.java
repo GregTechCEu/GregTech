@@ -7,6 +7,7 @@ import gregtech.api.recipes.lookup.property.filter.FilterEqualityBehavior;
 import gregtech.api.recipes.lookup.property.filter.IPropertyFilter;
 import gregtech.api.recipes.lookup.property.filter.LongAVLFilter;
 import gregtech.api.recipes.lookup.property.filter.RecipePropertyWithFilter;
+import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.client.Minecraft;

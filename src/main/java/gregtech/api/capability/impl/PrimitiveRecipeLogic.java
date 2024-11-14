@@ -6,6 +6,9 @@ import gregtech.api.recipes.lookup.property.BiomeInhabitedProperty;
 import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
 import gregtech.api.recipes.lookup.property.DimensionInhabitedProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 
 import org.jetbrains.annotations.NotNull;
 

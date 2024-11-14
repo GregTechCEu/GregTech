@@ -9,6 +9,8 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.recipes.ingredients.IngredientCache;
 import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
 import gregtech.api.recipes.logic.PrimitiveRecipeRun;
@@ -423,8 +425,6 @@ public class CommonProxy {
     }
 
     public void onPostLoad() {
-        TerminalRegistry.init();
-
         if (ConfigHolder.compat.removeSmeltingForEBFMetals) {
             ModHandler.removeSmeltingEBFMetals();
         }

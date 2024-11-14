@@ -4,6 +4,11 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 

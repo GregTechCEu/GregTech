@@ -17,6 +17,8 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.properties.impl.ResearchProperty;
 import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.match.AbstractMatchCalculation;

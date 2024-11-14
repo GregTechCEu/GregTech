@@ -186,6 +186,7 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
         tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_export.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_export.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 

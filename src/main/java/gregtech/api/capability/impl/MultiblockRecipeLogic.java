@@ -12,6 +12,9 @@ import gregtech.api.recipes.logic.RecipeRun;
 import gregtech.api.recipes.logic.RecipeRunner;
 import gregtech.api.recipes.logic.RecipeView;
 import gregtech.api.recipes.lookup.property.PropertySet;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
@@ -126,7 +129,7 @@ public class MultiblockRecipeLogic extends DistributedRecipeLogic {
                 // amperage is 1 when the energy is not exactly on a tier
 
                 // the voltage for recipe search is always on tier, so take the closest lower tier
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             } else {
                 // amperage != 1 means the voltage is exactly on a tier
                 // ignore amperage, since only the voltage is relevant for recipe search
@@ -229,7 +232,7 @@ public class MultiblockRecipeLogic extends DistributedRecipeLogic {
             // The voltage for recipe search is always on tier, so take the closest lower tier.
             // List check is done because single hatches will always be a "clean voltage," no need
             // for any additional checks.
-            return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+            return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
         }
         return voltage;
     }

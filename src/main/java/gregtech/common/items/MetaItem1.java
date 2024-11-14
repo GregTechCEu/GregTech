@@ -11,7 +11,6 @@ import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.items.metaitem.stats.ItemFluidContainer;
-import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -48,7 +47,6 @@ import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.items.behaviors.MultiblockBuilderBehavior;
 import gregtech.common.items.behaviors.NanoSaberBehavior;
 import gregtech.common.items.behaviors.ProspectorScannerBehavior;
-import gregtech.common.items.behaviors.TerminalBehaviour;
 import gregtech.common.items.behaviors.TooltipBehavior;
 import gregtech.common.items.behaviors.TricorderBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
@@ -792,7 +790,6 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TERMINAL = addItem(465, "terminal")
-                .addComponents(new HardwareProvider(), new TerminalBehaviour())
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         PROSPECTOR_LV = addItem(466, "prospector.lv")

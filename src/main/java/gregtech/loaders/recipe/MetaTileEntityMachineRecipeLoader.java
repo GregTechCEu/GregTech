@@ -1171,7 +1171,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_IV)
                 .inputItem(cableGtSingle, Platinum, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_INPUT_HATCH_256[0])
+                .outputItem(LASER_OUTPUT_HATCH_256[0])
                 .duration(300).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1181,7 +1181,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_LuV)
                 .inputItem(cableGtSingle, NiobiumTitanium, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_INPUT_HATCH_256[1])
+                .outputItem(LASER_OUTPUT_HATCH_256[1])
                 .duration(300).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1191,7 +1191,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_ZPM)
                 .inputItem(cableGtSingle, VanadiumGallium, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_INPUT_HATCH_256[2])
+                .outputItem(LASER_OUTPUT_HATCH_256[2])
                 .duration(300).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1201,7 +1201,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_UV)
                 .inputItem(cableGtSingle, YttriumBariumCuprate, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_INPUT_HATCH_256[3])
+                .outputItem(LASER_OUTPUT_HATCH_256[3])
                 .duration(300).volts(VA[UV]).buildAndRegister();
 
         // 256A Laser Target Hatches
@@ -1212,7 +1212,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_IV)
                 .inputItem(cableGtSingle, Platinum, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_OUTPUT_HATCH_256[0])
+                .outputItem(LASER_INPUT_HATCH_256[0])
                 .duration(300).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1222,7 +1222,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_LuV)
                 .inputItem(cableGtSingle, NiobiumTitanium, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_OUTPUT_HATCH_256[1])
+                .outputItem(LASER_INPUT_HATCH_256[1])
                 .duration(300).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1232,7 +1232,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_ZPM)
                 .inputItem(cableGtSingle, VanadiumGallium, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_OUTPUT_HATCH_256[2])
+                .outputItem(LASER_INPUT_HATCH_256[2])
                 .duration(300).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1242,7 +1242,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_UV)
                 .inputItem(cableGtSingle, YttriumBariumCuprate, 4)
                 .circuitMeta(1)
-                .outputItem(LASER_OUTPUT_HATCH_256[3])
+                .outputItem(LASER_INPUT_HATCH_256[3])
                 .duration(300).volts(VA[UV]).buildAndRegister();
 
         // 1024A Laser Source Hatches
@@ -1253,7 +1253,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_IV, 2)
                 .inputItem(cableGtDouble, Platinum, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_INPUT_HATCH_1024[0])
+                .outputItem(LASER_OUTPUT_HATCH_1024[0])
                 .duration(600).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1263,7 +1263,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_LuV, 2)
                 .inputItem(cableGtDouble, NiobiumTitanium, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_INPUT_HATCH_1024[1])
+                .outputItem(LASER_OUTPUT_HATCH_1024[1])
                 .duration(600).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1273,7 +1273,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_ZPM, 2)
                 .inputItem(cableGtDouble, VanadiumGallium, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_INPUT_HATCH_1024[2])
+                .outputItem(LASER_OUTPUT_HATCH_1024[2])
                 .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1283,7 +1283,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_UV, 2)
                 .inputItem(cableGtDouble, YttriumBariumCuprate, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_INPUT_HATCH_1024[3])
+                .outputItem(LASER_OUTPUT_HATCH_1024[3])
                 .duration(600).volts(VA[UV]).buildAndRegister();
 
         // 1024A Laser Target Hatches
@@ -1294,7 +1294,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_IV, 2)
                 .inputItem(cableGtDouble, Platinum, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_OUTPUT_HATCH_1024[0])
+                .outputItem(LASER_INPUT_HATCH_1024[0])
                 .duration(600).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1304,7 +1304,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_LuV, 2)
                 .inputItem(cableGtDouble, NiobiumTitanium, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_OUTPUT_HATCH_1024[1])
+                .outputItem(LASER_INPUT_HATCH_1024[1])
                 .duration(600).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1314,7 +1314,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_ZPM, 2)
                 .inputItem(cableGtDouble, VanadiumGallium, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_OUTPUT_HATCH_1024[2])
+                .outputItem(LASER_INPUT_HATCH_1024[2])
                 .duration(600).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1324,7 +1324,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_UV, 2)
                 .inputItem(cableGtDouble, YttriumBariumCuprate, 4)
                 .circuitMeta(2)
-                .outputItem(LASER_OUTPUT_HATCH_1024[3])
+                .outputItem(LASER_INPUT_HATCH_1024[3])
                 .duration(600).volts(VA[UV]).buildAndRegister();
 
         // 4096A Laser Source Hatches
@@ -1335,7 +1335,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_IV, 4)
                 .inputItem(cableGtQuadruple, Platinum, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_INPUT_HATCH_4096[0])
+                .outputItem(LASER_OUTPUT_HATCH_4096[0])
                 .duration(1200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1345,7 +1345,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_LuV, 4)
                 .inputItem(cableGtQuadruple, NiobiumTitanium, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_INPUT_HATCH_4096[1])
+                .outputItem(LASER_OUTPUT_HATCH_4096[1])
                 .duration(1200).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1355,7 +1355,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_ZPM, 4)
                 .inputItem(cableGtQuadruple, VanadiumGallium, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_INPUT_HATCH_4096[2])
+                .outputItem(LASER_OUTPUT_HATCH_4096[2])
                 .duration(1200).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1365,7 +1365,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_UV, 4)
                 .inputItem(cableGtQuadruple, YttriumBariumCuprate, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_INPUT_HATCH_4096[3])
+                .outputItem(LASER_OUTPUT_HATCH_4096[3])
                 .duration(1200).volts(VA[UV]).buildAndRegister();
 
         // 4096A Laser Target Hatches
@@ -1376,7 +1376,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_IV, 4)
                 .inputItem(cableGtQuadruple, Platinum, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_OUTPUT_HATCH_4096[0])
+                .outputItem(LASER_INPUT_HATCH_4096[0])
                 .duration(1200).volts(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1386,7 +1386,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_LuV, 4)
                 .inputItem(cableGtQuadruple, NiobiumTitanium, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_OUTPUT_HATCH_4096[1])
+                .outputItem(LASER_INPUT_HATCH_4096[1])
                 .duration(1200).volts(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1396,7 +1396,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_ZPM, 4)
                 .inputItem(cableGtQuadruple, VanadiumGallium, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_OUTPUT_HATCH_4096[2])
+                .outputItem(LASER_INPUT_HATCH_4096[2])
                 .duration(1200).volts(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1406,7 +1406,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .inputItem(ELECTRIC_PUMP_UV, 4)
                 .inputItem(cableGtQuadruple, YttriumBariumCuprate, 4)
                 .circuitMeta(3)
-                .outputItem(LASER_OUTPUT_HATCH_4096[3])
+                .outputItem(LASER_INPUT_HATCH_4096[3])
                 .duration(1200).volts(VA[UV]).buildAndRegister();
     }
 }
