@@ -369,23 +369,16 @@ public class PolymerRecipes {
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
                 .fluidInputs(Dichlorobenzidine.getFluid(1000))
                 .fluidInputs(Ammonia.getFluid(2000))
-                .notConsumable(dust, Zinc)
+                .notConsumable(dust, Copper)
                 .fluidOutputs(Diaminobenzidine.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(200)
-                .input(dustTiny, Copper)
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(200)
                 .fluidInputs(Nitrochlorobenzene.getFluid(2000))
                 .fluidInputs(Hydrogen.getFluid(2000))
+                .notConsumable(dust, Zinc)
                 .fluidOutputs(Dichlorobenzidine.getFluid(1000))
-                .buildAndRegister();
-
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(1800)
-                .input(dust, Copper)
-                .fluidInputs(Nitrochlorobenzene.getFluid(18000))
-                .fluidInputs(Hydrogen.getFluid(18000))
-                .fluidOutputs(Dichlorobenzidine.getFluid(9000))
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().EUt(VA[HV]).duration(100)
