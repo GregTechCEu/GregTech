@@ -89,8 +89,6 @@ public interface ChancedOutputLogic {
      */
     ChancedOutputLogic XOR = new ChancedOutputLogic() {
 
-        private int roll;
-
         @Override
         public @Nullable @Unmodifiable <I, T extends ChancedOutput<I>> List<@NotNull CalculatedOutput<I>> roll(
                                                                                                                @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
@@ -101,23 +99,17 @@ public interface ChancedOutputLogic {
                 total += entry.getMaxChance();
             }
 
-            roll = GTValues.RNG.nextInt(total);
+            int roll = GTValues.RNG.nextInt(total);
             for (T entry : chancedEntries) {
                 int chance = context.getChance(entry);
-                if (passesChance(chance, entry, context) && selected == null) {
+                if (chance >= roll && selected == null) {
                     selected = new CalculatedOutput<>(entry);
+                } else if (selected != null) {
+                    roll -= chance;
                 }
+                context.updateCachedChance(entry, chance);
             }
             return selected == null ? null : Collections.singletonList(selected);
-        }
-
-        @Override
-        public <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry,
-                                                                    @NotNull RecipeContext<I> context) {
-            boolean b = chance >= roll;
-            if (!b) roll -= chance;
-            context.updateCachedChance(entry, chance);
-            return b;
         }
 
         @Override
@@ -155,16 +147,17 @@ public interface ChancedOutputLogic {
     };
 
     /**
-     * @param chance  the boosted chance to be checked
-     * @param entry   the entry to get the max chance and ingredient of for comparison and cache
+     * @param chance  the boosted chance plus the cached chance to be checked
+     * @param entry   the entry to get the max chance and compare to chance
      * @param context Context containing machine and recipe tier, the boost function, and the chance cache
      * @return if the roll with the chance is successful
      */
-    default <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry,
-                                                                 @NotNull RecipeContext<I> context) {
+    static <I, T extends ChancedOutput<I>> boolean passesChance(int chance, T entry,
+                                                                @NotNull RecipeContext<I> context) {
         if (context.getCachedChance(entry) == -1) {
             int initial = GTValues.RNG.nextInt(entry.getMaxChance());
             context.updateCachedChance(entry, initial);
+            // chance here is the boosted (if possible) entry chance
             return initial <= chance;
         }
 
