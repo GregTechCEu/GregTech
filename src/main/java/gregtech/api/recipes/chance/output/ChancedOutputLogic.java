@@ -164,18 +164,12 @@ public interface ChancedOutputLogic {
                                                                  @NotNull RecipeContext<I> context) {
         if (context.getCachedChance(entry) == -1) {
             int initial = GTValues.RNG.nextInt(entry.getMaxChance());
-            context.updateCachedChance(entry, chance);
-            return initial <= entry.getChance();
+            context.updateCachedChance(entry, initial);
+            return initial <= chance;
         }
 
-        boolean roll = false;
-        int fullChance = context.getChance(entry);
-        if (fullChance >= entry.getMaxChance()) {
-            roll = true;
-        }
-
-        context.updateCachedChance(entry, fullChance);
-        return roll;
+        context.updateCachedChance(entry, chance);
+        return chance >= entry.getMaxChance();
     }
 
     /**
@@ -184,39 +178,6 @@ public interface ChancedOutputLogic {
     static int getMaxChancedValue() {
         return 10_000;
     }
-
-    // /**
-    // * Roll the chance and attempt to produce the output
-    // *
-    // * @param chancedEntries the list of entries to roll
-    // * @param boostFunction the function to boost the entries' chances
-    // * @param baseTier the base tier of the recipe
-    // * @param machineTier the tier the recipe is run at
-    // * @param cache the cache of previously rolled chances, can be null
-    // * @return a list of the produced outputs, or null if failed
-    // */
-    // <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
-    // @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
-    // @NotNull ChanceBoostFunction boostFunction,
-    // int baseTier, int machineTier,
-    // @Nullable Map<I, Integer> cache);
-
-    // /**
-    // * Roll the chance and attempt to produce the output
-    // *
-    // * @param chancedEntries the list of entries to roll
-    // * @param boostFunction the function to boost the entries' chances
-    // * @param baseTier the base tier of the recipe
-    // * @param machineTier the tier the recipe is run at
-    // * @return a list of the produced outputs
-    // */
-    // default <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull T> roll(
-    // @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
-    // @NotNull ChanceBoostFunction boostFunction,
-    // int baseTier,
-    // int machineTier) {
-    // return roll(chancedEntries, boostFunction, baseTier, machineTier, null);
-    // }
 
     <I, T extends ChancedOutput<I>> @Nullable @Unmodifiable List<@NotNull CalculatedOutput<I>> roll(
                                                                                                     @NotNull @Unmodifiable List<@NotNull T> chancedEntries,
