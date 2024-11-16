@@ -4,6 +4,9 @@ import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.chance.output.ChancedOutput;
 
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+
 import java.util.Map;
 
 public class RecipeContext<I> {
@@ -12,8 +15,8 @@ public class RecipeContext<I> {
     ChanceBoostFunction boostFunction;
     public int baseTier, machineTier;
 
-    public RecipeContext(Map<I, Integer> cache) {
-        this.cache = cache;
+    public RecipeContext(Hash.Strategy<I> strategy) {
+        this.cache = new Object2IntOpenCustomHashMap<>(strategy);
     }
 
     public RecipeContext() {
@@ -29,8 +32,12 @@ public class RecipeContext<I> {
     }
 
     public void updateCachedChance(ChancedOutput<I> entry, int chance) {
+        updateCachedChance(entry.getIngredient(), chance % entry.getMaxChance());
+    }
+
+    public void updateCachedChance(I ingredient, int chance) {
         if (cache == null) return;
-        cache.put(entry.getIngredient(), chance % entry.getMaxChance());
+        cache.put(ingredient, chance);
     }
 
     public int getCachedChance(ChancedOutput<I> entry) {
@@ -51,5 +58,9 @@ public class RecipeContext<I> {
 
     public int boostChance(BoostableChanceEntry<?> entry) {
         return boostFunction.getBoostedChance(entry, baseTier, machineTier);
+    }
+
+    public Map<I, Integer> getCache() {
+        return cache;
     }
 }

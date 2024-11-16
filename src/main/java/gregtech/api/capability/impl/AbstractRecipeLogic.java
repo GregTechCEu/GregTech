@@ -40,14 +40,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static gregtech.api.GTValues.ULV;
 import static gregtech.api.recipes.logic.OverclockingLogic.*;
@@ -75,18 +73,15 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int maxProgressTime;
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
-    protected final Map<FluidStack, Integer> fluidChancesCache = new Object2IntOpenCustomHashMap<>(
-            FluidStackHashStrategy.builder()
-                    .compareFluid(true)
-                    .build());
     protected List<ItemStack> itemOutputs;
-    protected final Map<ItemStack, Integer> itemChancesCache = new Object2IntOpenCustomHashMap<>(
-            ItemStackHashStrategy.builder()
-                    .compareItem(true)
-                    .compareDamage(true)
-                    .build());
-    private final RecipeContext<ItemStack> itemContext = new RecipeContext<>(itemChancesCache);
-    private final RecipeContext<FluidStack> fluidContext = new RecipeContext<>(fluidChancesCache);
+
+    private final RecipeContext<ItemStack> itemContext = new RecipeContext<>(ItemStackHashStrategy.builder()
+            .compareItem(true)
+            .compareDamage(true)
+            .build());
+    private final RecipeContext<FluidStack> fluidContext = new RecipeContext<>(FluidStackHashStrategy.builder()
+            .compareFluid(true)
+            .build());
 
     protected boolean isActive;
     protected boolean workingEnabled = true;
@@ -409,8 +404,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
             // we found a new recipe, clear the cache
             if (this.previousRecipe != null && !currentRecipe.equals(this.previousRecipe)) {
-                this.itemChancesCache.clear();
-                this.fluidChancesCache.clear();
+                this.itemContext.getCache().clear();
+                this.fluidContext.getCache().clear();
             }
             this.previousRecipe = currentRecipe;
         }
@@ -1237,13 +1232,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             compound.setTag("FluidOutputs", fluidOutputsList);
 
             NBTTagList itemCache = new NBTTagList();
-            for (var entry : itemChancesCache.entrySet()) {
+            for (var entry : itemContext.getCache().entrySet()) {
                 var tag = entry.getKey().serializeNBT();
                 tag.setInteger("CachedChance", entry.getValue());
                 itemCache.appendTag(tag);
             }
             NBTTagList fluidCache = new NBTTagList();
-            for (var entry : fluidChancesCache.entrySet()) {
+            for (var entry : fluidContext.getCache().entrySet()) {
                 var tag = entry.getKey().writeToNBT(new NBTTagCompound());
                 tag.setInteger("CachedChance", entry.getValue());
                 fluidCache.appendTag(tag);
@@ -1281,14 +1276,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             for (int i = 0; i < itemCache.tagCount(); i++) {
                 var stack = itemCache.getCompoundTagAt(i);
                 int cache = stack.getInteger("CachedChance");
-                this.itemChancesCache.put(new ItemStack(stack), cache);
+                this.itemContext.updateCachedChance(new ItemStack(stack), cache);
             }
 
             NBTTagList fluidCache = compound.getTagList("FluidChanceCache", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < fluidCache.tagCount(); i++) {
                 var stack = fluidCache.getCompoundTagAt(i);
                 int cache = stack.getInteger("CachedChance");
-                this.fluidChancesCache.put(FluidStack.loadFluidStackFromNBT(stack), cache);
+                this.fluidContext.updateCachedChance(FluidStack.loadFluidStackFromNBT(stack), cache);
             }
         }
     }
