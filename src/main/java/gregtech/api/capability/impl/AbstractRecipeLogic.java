@@ -14,6 +14,7 @@ import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeContext;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.recipes.logic.OCParams;
@@ -74,16 +75,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected int maxProgressTime;
     protected long recipeEUt;
     protected List<FluidStack> fluidOutputs;
-    protected Map<FluidStack, Integer> fluidChancesCache = new Object2IntOpenCustomHashMap<>(
+    protected final Map<FluidStack, Integer> fluidChancesCache = new Object2IntOpenCustomHashMap<>(
             FluidStackHashStrategy.builder()
                     .compareFluid(true)
                     .build());
     protected List<ItemStack> itemOutputs;
-    protected Map<ItemStack, Integer> itemChancesCache = new Object2IntOpenCustomHashMap<>(
+    protected final Map<ItemStack, Integer> itemChancesCache = new Object2IntOpenCustomHashMap<>(
             ItemStackHashStrategy.builder()
                     .compareItem(true)
                     .compareDamage(true)
                     .build());
+    private final RecipeContext<ItemStack> itemContext = new RecipeContext<>(itemChancesCache);
+    private final RecipeContext<FluidStack> fluidContext = new RecipeContext<>(fluidChancesCache);
 
     protected boolean isActive;
     protected boolean workingEnabled = true;
@@ -968,9 +971,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         RecipeMap<?> map = getRecipeMap();
         if (map != null) {
             this.fluidOutputs = GTUtility
-                    .copyFluidList(recipe.getResultFluidOutputs(recipeTier, machineTier, map, fluidChancesCache));
+                    .copyFluidList(recipe.getResultFluidOutputs(
+                            fluidContext.update(map.getChanceFunction(), recipeTier, machineTier)));
             this.itemOutputs = GTUtility
-                    .copyStackList(recipe.getResultItemOutputs(recipeTier, machineTier, map, itemChancesCache));
+                    .copyStackList(recipe.getResultItemOutputs(
+                            itemContext.update(map.getChanceFunction(), recipeTier, machineTier)));
         }
 
         if (this.wasActiveAndNeedsUpdate) {
