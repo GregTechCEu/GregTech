@@ -1,6 +1,9 @@
 package gregtech.api.recipes.roll;
 
 import gregtech.api.GTValues;
+import gregtech.client.utils.TooltipHelper;
+
+import net.minecraft.client.resources.I18n;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -58,5 +61,36 @@ public final class WeightedInterpreter implements RollInterpreter {
             }
         }
         return roll;
+    }
+
+    @Override
+    public @NotNull String interpretSmallDisplay(int index, RollInterpreterApplication application, long maxYield,
+                                                 long rollValue,
+                                                 long rollBoost) {
+        if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedSmallDisplay();
+        String s = String.valueOf(rollValue);
+        String b = InterpreterTextHelp.formatBoost(rollBoost / 100d);
+        if (b != null) s += " " + b + "/t";
+        return s;
+    }
+
+    @Override
+    public @NotNull String interpretTooltip(int index, RollInterpreterApplication application, long maxYield,
+                                            long rollValue,
+                                            long rollBoost) {
+        if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedTooltip();
+        return TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.weight", rollValue, rollBoost);
+    }
+
+    @Override
+    public @NotNull String addJEILine(RollInterpreterApplication application, int count) {
+        count = Math.min(count, maximumRollAttempts);
+        if (chancePerRoll == 10_000) {
+            return I18n.format("gregtech.recipe.chance.weight", count, application.getTranslated(),
+                    application.flowDirectionTranslated());
+        } else {
+            return I18n.format("gregtech.recipe.chance.weight_chanced", count, application.getTranslated(),
+                    application.flowDirectionTranslated(), chancePerRoll / 100d);
+        }
     }
 }

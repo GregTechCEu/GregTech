@@ -13,6 +13,8 @@ import gregtech.api.recipes.ingredients.StandardItemIngredient;
 import gregtech.api.recipes.ingredients.nbt.NBTMatcher;
 import gregtech.api.recipes.lookup.flag.FluidStackMatchingContext;
 import gregtech.api.recipes.lookup.flag.ItemStackMatchingContext;
+import gregtech.api.recipes.output.EmptyFluidOutput;
+import gregtech.api.recipes.output.EmptyItemOutput;
 import gregtech.api.recipes.output.FluidOutputProvider;
 import gregtech.api.recipes.output.ItemOutputProvider;
 import gregtech.api.recipes.output.StandardFluidOutput;
@@ -84,18 +86,18 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected final @NotNull List<GTItemIngredient> itemInputs;
     protected final @NotNull List<RollInformation<GTItemIngredient>> rolledItemInputs;
-    protected @NotNull RollInterpreter itemInputInterpreter = RollInterpreter.DEFAULT;
+    protected @NotNull RollInterpreter itemInputInterpreter = RollInterpreter.chanceIndependent();
     protected final @NotNull List<ItemStack> itemOutputs;
     protected final @NotNull List<RollInformation<ItemStack>> rolledItemOutputs;
-    protected @NotNull RollInterpreter itemOutputInterpreter = RollInterpreter.DEFAULT;
+    protected @NotNull RollInterpreter itemOutputInterpreter = RollInterpreter.chanceIndependent();
     protected @Nullable ItemOutputProvider itemOutputOverride;
 
     protected final @NotNull List<GTFluidIngredient> fluidInputs;
     protected final @NotNull List<RollInformation<GTFluidIngredient>> rolledFluidInputs;
-    protected @NotNull RollInterpreter fluidInputInterpreter = RollInterpreter.DEFAULT;
+    protected @NotNull RollInterpreter fluidInputInterpreter = RollInterpreter.chanceIndependent();
     protected final @NotNull List<FluidStack> fluidOutputs;
     protected final @NotNull List<RollInformation<FluidStack>> rolledFluidOutputs;
-    protected @NotNull RollInterpreter fluidOutputInterpreter = RollInterpreter.DEFAULT;
+    protected @NotNull RollInterpreter fluidOutputInterpreter = RollInterpreter.chanceIndependent();
     protected @Nullable FluidOutputProvider fluidOutputOverride;
 
     protected RecipePropertyStorage recipePropertyStorage = RecipePropertyStorage.EMPTY;
@@ -141,7 +143,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         } else {
             this.itemOutputs = new ObjectArrayList<>();
             this.rolledItemOutputs = new ObjectArrayList<>();
-            this.itemOutputOverride = itemProvider;
+            if (itemProvider.getMaximumOutputs(1) > 0) this.itemOutputOverride = itemProvider;
         }
         FluidOutputProvider fluidProvider = recipe.getFluidOutputProvider();
         // we can unfold a standard output, but otherwise we have to set the override
@@ -154,7 +156,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         } else {
             this.fluidOutputs = new ObjectArrayList<>();
             this.rolledFluidOutputs = new ObjectArrayList<>();
-            this.fluidOutputOverride = fluidProvider;
+            if (fluidProvider.getMaximumOutputs(1) > 0) this.fluidOutputOverride = fluidProvider;
         }
         this.duration = recipe.getDuration();
         this.hidden = recipe.isHidden();
@@ -1424,14 +1426,17 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     protected ItemOutputProvider resolveItemOutputProvider() {
-        return itemOutputOverride != null ? itemOutputOverride :
-                new StandardItemOutput(new ListWithRollInformation<>(ItemStack::getCount, itemOutputs,
-                        rolledItemOutputs, itemOutputInterpreter));
+        if (itemOutputOverride != null) return itemOutputOverride;
+        if (itemOutputs.isEmpty() && rolledItemOutputs.isEmpty()) return EmptyItemOutput.INSTANCE;
+        else return new StandardItemOutput(new ListWithRollInformation<>(ItemStack::getCount, itemOutputs,
+                rolledItemOutputs, itemOutputInterpreter));
     }
 
     protected FluidOutputProvider resolveFluidOutputProvider() {
-        return fluidOutputOverride != null ? fluidOutputOverride : new StandardFluidOutput(
-                new ListWithRollInformation<>(f -> f.amount, fluidOutputs, rolledFluidOutputs, fluidOutputInterpreter));
+        if (fluidOutputOverride != null) return fluidOutputOverride;
+        if (fluidOutputs.isEmpty() && rolledFluidOutputs.isEmpty()) return EmptyFluidOutput.INSTANCE;
+        else return new StandardFluidOutput(new ListWithRollInformation<>(f -> f.amount, fluidOutputs,
+                rolledFluidOutputs, fluidOutputInterpreter));
     }
 
     protected EnumValidationResult validate() {

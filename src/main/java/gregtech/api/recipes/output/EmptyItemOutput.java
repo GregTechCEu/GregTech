@@ -12,7 +12,11 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collections;
 import java.util.List;
 
-public class EmptyItemOutput implements ItemOutputProvider {
+public final class EmptyItemOutput implements ItemOutputProvider {
+
+    public static final EmptyItemOutput INSTANCE = new EmptyItemOutput();
+
+    private EmptyItemOutput() {}
 
     @Override
     public @NotNull List<ItemStack> computeOutputs(@UnmodifiableView @NotNull List<ItemStack> inputItems,

@@ -592,8 +592,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected StandardRecipeView getTrimmedRecipeView(@NotNull Recipe recipe,
                                                       @NotNull MatchCalculation<ItemStack> itemMatch,
                                                       @NotNull MatchCalculation<FluidStack> fluidMatch) {
-        if (recipe.getAllItemOutputs().size() <= metaTileEntity.getItemOutputLimit() &&
-                recipe.getAllFluidOutputs().size() <= metaTileEntity.getFluidOutputLimit())
+        if (recipe.getItemOutputProvider().getMaximumOutputs(1) <= metaTileEntity.getItemOutputLimit() &&
+                recipe.getFluidOutputProvider().getMaximumOutputs(1) <= metaTileEntity.getFluidOutputLimit())
             return new StandardRecipeView(recipe, itemMatch, fluidMatch, getEUtDiscount(), 1);
         else {
             return new TrimmedRecipeView(recipe, itemMatch, fluidMatch, getEUtDiscount(), 1,

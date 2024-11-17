@@ -278,24 +278,6 @@ public class Recipe {
 
     // TODO
 
-    /**
-     * Returns a list of every possible ItemStack output from a recipe, including all possible chanced outputs.
-     *
-     * @return A List of ItemStack outputs from the recipe, including all chanced outputs
-     */
-    public List<ItemStack> getAllItemOutputs() {
-        return null;
-    }
-
-    /**
-     * Returns a list of every possible FluidStack output from a recipe, including all possible chanced outputs.
-     *
-     * @return A List of FluidStack outputs from the recipe, including all chanced outputs
-     */
-    public List<FluidStack> getAllFluidOutputs() {
-        return null;
-    }
-
     public List<ItemStack> getOutputs() {
         return null;
     }

@@ -7,18 +7,16 @@ import net.minecraft.client.resources.I18n;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.DoubleSupplier;
-
 import static gregtech.api.recipes.roll.InterpreterTextHelp.formatBoost;
 
-public final class RangedInterpreter implements RollInterpreter {
+public final class OverrideInterpreter implements RollInterpreter {
 
-    public static final RangedInterpreter INSTANCE = new RangedInterpreter(GTValues.RNG::nextDouble);
+    private final int chance;
+    private final int chanceBoost;
 
-    private final @NotNull DoubleSupplier distribution;
-
-    public RangedInterpreter(@NotNull DoubleSupplier distribution) {
-        this.distribution = distribution;
+    public OverrideInterpreter(int chance, int chanceBoost) {
+        this.chance = chance;
+        this.chanceBoost = chanceBoost;
     }
 
     @Override
@@ -26,14 +24,13 @@ public final class RangedInterpreter implements RollInterpreter {
                                              long @NotNull [] rollBoost, int boostStrength, int parallel) {
         long[] roll = new long[maxYield.length];
         if (maxYield.length == 0) return roll;
-        for (int i = 0; i < maxYield.length; i++) {
-            if (rollValue[i] == Long.MIN_VALUE) continue;
-            long minYield = rollValue[i] + rollBoost[i] * boostStrength;
-            if (minYield >= maxYield[i]) roll[i] = maxYield[i];
-            else {
-                minYield = Math.max(minYield, 0);
-                roll[i] = Math.round(parallel * (maxYield[i] - minYield) * distribution.getAsDouble()) +
-                        minYield * parallel;
+        int chance = this.chance + this.chanceBoost * boostStrength;
+        for (int p = 0; p < parallel; p++) {
+            if (GTValues.RNG.nextInt(10_000) < chance) {
+                for (int i = 0; i < maxYield.length; i++) {
+                    if (rollValue[i] == Long.MIN_VALUE) continue;
+                    roll[i] += maxYield[i];
+                }
             }
         }
         return roll;
@@ -44,8 +41,8 @@ public final class RangedInterpreter implements RollInterpreter {
                                                  long rollValue,
                                                  long rollBoost) {
         if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedSmallDisplay();
-        String s = (rollValue) + "%";
-        String b = formatBoost(rollBoost);
+        String s = (chance / 100d) + "%";
+        String b = formatBoost(rollBoost / 100d);
         if (b != null) s += " " + b + "%/t";
         return s;
     }
@@ -55,18 +52,17 @@ public final class RangedInterpreter implements RollInterpreter {
                                             long rollValue,
                                             long rollBoost) {
         if (rollValue == Long.MIN_VALUE) return InterpreterTextHelp.notConsumedTooltip();
-        return TooltipHelper.BLINKING_CYAN +
-                I18n.format("gregtech.recipe.range", maxYield, rollValue, formatBoost(rollBoost));
+        return TooltipHelper.BLINKING_CYAN + addJEITooltip(application, 0);
     }
 
     @Override
     public @NotNull String addJEILine(RollInterpreterApplication application, int count) {
-        return I18n.format("gregtech.recipe.chance.range", application.getTranslated(),
+        return I18n.format("gregtech.recipe.chance.override", application.getTranslated(),
                 application.flowDirectionTranslated());
     }
 
     @Override
     public @NotNull String addJEITooltip(RollInterpreterApplication application, int count) {
-        return I18n.format("gregtech.recipe.chance.range.tooltip");
+        return I18n.format("gregtech.recipe.chance", chance / 100d, formatBoost(chanceBoost / 100d));
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -81,4 +82,42 @@ public interface FluidOutputProvider {
      * @return whether this output provider is valid
      */
     boolean isValid();
+
+    /**
+     * Can provide a string that will be displayed beneath an output in JEI
+     *
+     * @param index the index of the output
+     * @return the string to be displayed.
+     */
+    default @Nullable String addSmallDisplay(int index) {
+        return null;
+    }
+
+    /**
+     * Can provide a string that will be displayed in the tooltip for an output in JEI
+     *
+     * @param index the index of the rolled input/output
+     * @return the string to be displayed.
+     */
+    default @Nullable String addTooltip(int index) {
+        return null;
+    }
+
+    /**
+     * Can provide a string that will be displayed underneath a recipe in JEI.
+     *
+     * @return the string to be displayed, or null if nothing should be displayed.
+     */
+    default @Nullable String addJEILine() {
+        return null;
+    }
+
+    /**
+     * Can provide a string that will be displayed when the string provided by {@link #addJEILine()} is hovered over.
+     *
+     * @return the string to be displayed, or null if nothing should be displayed.
+     */
+    default @Nullable String addJEITooltip() {
+        return null;
+    }
 }

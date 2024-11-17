@@ -9,17 +9,22 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.chance.boost.BoostableChanceEntry;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.recipes.ingredients.old.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTFluidIngredient;
+import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
+import gregtech.api.recipes.output.FluidOutputProvider;
+import gregtech.api.recipes.output.ItemOutputProvider;
 import gregtech.api.recipes.properties.RecipeProperty;
 import gregtech.api.recipes.properties.impl.ComputationProperty;
 import gregtech.api.recipes.properties.impl.ScanProperty;
 import gregtech.api.recipes.properties.impl.TotalComputationProperty;
+import gregtech.api.recipes.roll.ListWithRollInformation;
+import gregtech.api.recipes.roll.RollInterpreter;
+import gregtech.api.recipes.roll.RollInterpreterApplication;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
@@ -39,7 +44,6 @@ import net.minecraftforge.fluids.FluidStack;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,17 +59,19 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
 
-    private final List<GTRecipeInput> sortedInputs;
-    private final List<GTRecipeInput> sortedFluidInputs;
+    private final ListWithRollInformation<GTItemIngredient> itemIngredients;
+    private final ListWithRollInformation<GTFluidIngredient> fluidIngredients;
+
+    private final ItemOutputProvider itemOutputProvider;
+    private final FluidOutputProvider fluidOutputProvider;
 
     public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
         this.recipeMap = recipeMap;
         this.recipe = recipe;
-
-        this.sortedInputs = new ArrayList<>(recipe.getItemIngredients());
-        this.sortedInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
-        this.sortedFluidInputs = new ArrayList<>(recipe.getFluidIngredients());
-        this.sortedFluidInputs.sort(GTRecipeInput.RECIPE_INPUT_COMPARATOR);
+        this.itemIngredients = recipe.getItemIngredients();
+        this.fluidIngredients = recipe.getFluidIngredients();
+        this.itemOutputProvider = recipe.getItemOutputProvider();
+        this.fluidOutputProvider = recipe.getFluidOutputProvider();
     }
 
     public Recipe getRecipe() {
@@ -75,29 +81,25 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void getIngredients(@NotNull IIngredients ingredients) {
         // Inputs
-        if (!sortedInputs.isEmpty()) {
+        if (!itemIngredients.isEmpty()) {
             List<List<ItemStack>> list = new ArrayList<>();
-            for (GTRecipeInput input : sortedInputs) {
-                List<ItemStack> stacks = new ArrayList<>();
-                for (ItemStack stack : input.getInputStacks()) {
-                    stacks.add(stack.copy());
-                }
-                list.add(stacks);
+            for (GTItemIngredient input : itemIngredients) {
+                list.add(GTUtility.copyStackList(input.getAllMatchingStacks()));
             }
             ingredients.setInputLists(VanillaTypes.ITEM, list);
         }
 
         // Fluid Inputs
-        if (!sortedFluidInputs.isEmpty()) {
-            List<FluidStack> list = new ArrayList<>();
-            for (GTRecipeInput input : sortedFluidInputs) {
-                list.add(input.getInputFluidStack());
+        if (!fluidIngredients.isEmpty()) {
+            List<List<FluidStack>> list = new ArrayList<>();
+            for (GTFluidIngredient input : fluidIngredients) {
+                list.add(GTUtility.copyFluidList(input.getAllMatchingStacks()));
             }
-            ingredients.setInputs(VanillaTypes.FLUID, list);
+            ingredients.setInputLists(VanillaTypes.FLUID, list);
         }
 
         // Outputs
-        if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
+        if (recipe.getItemOutputProvider().getMaximumOutputs(1) > 0) {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy)
                     .collect(Collectors.toList());
@@ -161,78 +163,44 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
     }
 
-    public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = input && isNotConsumedItem(slotIndex);
+    public void addItemTooltip(int slotIndex, boolean input, ItemStack ingredient, List<String> tooltip) {
+        if (input) {
+            RollInterpreter interpreter = itemIngredients.getInterpreter();
+            tooltip.add(interpreter.interpretTooltip(slotIndex, RollInterpreterApplication.ITEM_INPUT,
+                    itemIngredients.getMaxYield(slotIndex), itemIngredients.getRollValue(slotIndex),
+                    itemIngredients.getRollBoost(slotIndex)));
+        } else {
+            tooltip.add(recipe.getItemOutputProvider().addTooltip(slotIndex - recipeMap.getMaxInputs()));
 
-        BoostableChanceEntry<?> entry = null;
-        if (!input) {
-            if (!recipe.getChancedOutputs().getChancedEntries().isEmpty()) {
-                int outputIndex = slotIndex - recipeMap.getMaxInputs();
-                if (outputIndex >= recipe.getOutputs().size()) {
-                    entry = recipe.getChancedOutputs().getChancedEntries()
-                            .get(outputIndex - recipe.getOutputs().size());
-                }
-            }
-        }
-
-        addIngredientTooltips(tooltip, notConsumed, input, entry, recipe.getChancedOutputs().getChancedOutputLogic());
-        addIngredientTooltips(tooltip, notConsumed, input, ingredient, null);
-    }
-
-    public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        FluidStack fluidStack = (FluidStack) ingredient;
-        TankWidget.addIngotMolFluidTooltip(fluidStack, tooltip);
-
-        boolean notConsumed = input && isNotConsumedFluid(slotIndex);
-
-        BoostableChanceEntry<?> entry = null;
-        if (!recipe.getChancedFluidOutputs().getChancedEntries().isEmpty()) {
-            int outputIndex = slotIndex - recipeMap.getMaxFluidInputs();
-            if (outputIndex >= recipe.getFluidOutputs().size()) {
-                entry = recipe.getChancedFluidOutputs().getChancedEntries()
-                        .get(outputIndex - recipe.getFluidOutputs().size());
-            }
-        }
-
-        addIngredientTooltips(tooltip, notConsumed, input, entry,
-                recipe.getChancedFluidOutputs().getChancedOutputLogic());
-        addIngredientTooltips(tooltip, notConsumed, input, ingredient, null);
-    }
-
-    public void addIngredientTooltips(@NotNull Collection<String> tooltip, boolean notConsumed, boolean input,
-                                      @Nullable Object ingredient, @Nullable Object ingredient2) {
-        if (ingredient2 instanceof ChancedOutputLogic logic) {
-            if (ingredient instanceof BoostableChanceEntry<?>entry) {
-                double chance = entry.getChance() / 100.0;
-                double boost = entry.getChanceBoost() / 100.0;
-                if (logic != ChancedOutputLogic.NONE && logic != ChancedOutputLogic.OR) {
-                    tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance_logic",
-                            chance, boost, I18n.format(logic.getTranslationKey())));
-                } else {
-                    tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.chance",
-                            chance, boost));
-                }
-            }
-        } else if (notConsumed) {
-            tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.not_consumed"));
-        }
-
-        if (!input && this.recipeMap instanceof IScannerRecipeMap && ingredient instanceof ItemStack stack &&
-                !stack.isEmpty()) {
-            // check for "normal" data items
-            if (stack.getItem() instanceof IDataItem) return;
-            // check for metaitem data items
-            if (stack.getItem() instanceof MetaItem<?>metaItem) {
-                for (IItemBehaviour behaviour : metaItem.getBehaviours(stack)) {
-                    if (behaviour instanceof IDataItem) {
-                        return;
+            if (this.recipeMap instanceof IScannerRecipeMap && !ingredient.isEmpty()) {
+                // check for "normal" data items
+                if (ingredient.getItem() instanceof IDataItem) return;
+                // check for metaitem data items
+                if (ingredient.getItem() instanceof MetaItem<?>metaItem) {
+                    for (IItemBehaviour behaviour : metaItem.getBehaviours(ingredient)) {
+                        if (behaviour instanceof IDataItem) {
+                            return;
+                        }
                     }
                 }
+                // If we are here, we know this is not the data item, so add the tooltip
+                if (recipe.hasProperty(ScanProperty.getInstance())) {
+                    tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.research_result"));
+                }
             }
-            // If we are here, we know this is not the data item, so add the tooltip
-            if (recipe.hasProperty(ScanProperty.getInstance())) {
-                tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.recipe.research_result"));
-            }
+        }
+    }
+
+    public void addFluidTooltip(int slotIndex, boolean input, FluidStack ingredient, List<String> tooltip) {
+        TankWidget.addIngotMolFluidTooltip(ingredient, tooltip);
+
+        if (input) {
+            RollInterpreter interpreter = fluidIngredients.getInterpreter();
+            tooltip.add(interpreter.interpretTooltip(slotIndex, RollInterpreterApplication.FLUID_INPUT,
+                    fluidIngredients.getMaxYield(slotIndex), fluidIngredients.getRollValue(slotIndex),
+                    fluidIngredients.getRollBoost(slotIndex)));
+        } else {
+            tooltip.add(recipe.getItemOutputProvider().addTooltip(slotIndex - recipeMap.getMaxFluidInputs()));
         }
     }
 
@@ -366,13 +334,5 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     public ChancedOutputLogic getChancedFluidOutputLogic() {
         return recipe.getChancedFluidOutputs().getChancedOutputLogic();
-    }
-
-    public boolean isNotConsumedItem(int slot) {
-        return slot < this.sortedInputs.size() && this.sortedInputs.get(slot).isNonConsumable();
-    }
-
-    public boolean isNotConsumedFluid(int slot) {
-        return slot < this.sortedFluidInputs.size() && this.sortedFluidInputs.get(slot).isNonConsumable();
     }
 }

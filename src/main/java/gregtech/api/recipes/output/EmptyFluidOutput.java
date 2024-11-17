@@ -12,7 +12,11 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collections;
 import java.util.List;
 
-public class EmptyFluidOutput implements FluidOutputProvider {
+public final class EmptyFluidOutput implements FluidOutputProvider {
+
+    public static final EmptyFluidOutput INSTANCE = new EmptyFluidOutput();
+
+    private EmptyFluidOutput() {}
 
     @Override
     public @NotNull List<FluidStack> computeOutputs(@UnmodifiableView @NotNull List<ItemStack> inputItems,

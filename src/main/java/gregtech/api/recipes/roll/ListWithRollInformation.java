@@ -106,6 +106,22 @@ public final class ListWithRollInformation<T> extends AbstractList<T> {
         return index >= unrolled.length ? rolled[index - unrolled.length] : unrolled[index];
     }
 
+    public boolean isRolled(int index) {
+        return index >= unrolled.length;
+    }
+
+    public long getMaxYield(int index) {
+        return yieldCounter.applyAsLong(rolled[index - unrolled.length]);
+    }
+
+    public long getRollValue(int index) {
+        return rollValues[index - unrolled.length];
+    }
+
+    public long getRollBoost(int index) {
+        return rollBoosts[index - unrolled.length];
+    }
+
     public @NotNull ToLongFunction<@NotNull T> getYieldCounter() {
         return yieldCounter;
     }
@@ -124,7 +140,7 @@ public final class ListWithRollInformation<T> extends AbstractList<T> {
     }
 
     private static final ListWithRollInformation<Object> EMPTY = new ListWithRollInformation<>(o -> 0,
-            Collections.emptyList(), Collections.emptyList(), RollInterpreter.DEFAULT);
+            Collections.emptyList(), Collections.emptyList(), RollInterpreter.chanceIndependent());
 
     public static <T> ListWithRollInformation<T> empty() {
         // noinspection unchecked

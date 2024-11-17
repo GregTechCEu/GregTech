@@ -140,12 +140,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
         for (Widget uiWidget : modularUI.guiWidgets.values()) {
 
-            if (uiWidget instanceof SlotWidget) {
-                SlotWidget slotWidget = (SlotWidget) uiWidget;
-                if (!(slotWidget.getHandle() instanceof SlotItemHandler)) {
-                    continue;
-                }
-                SlotItemHandler handle = (SlotItemHandler) slotWidget.getHandle();
+            if (uiWidget instanceof SlotWidget slotWidget) {
+                if (!(slotWidget.getHandle() instanceof SlotItemHandler handle)) continue;
                 if (handle.getItemHandler() == importItems) {
                     // this is input item stack slot widget, so add it to item group
                     itemStackGroup.init(handle.getSlotIndex(), true,
@@ -166,8 +162,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                             slotWidget.getSize().width - 2,
                             slotWidget.getSize().height - 2, 0, 0);
                 }
-            } else if (uiWidget instanceof TankWidget) {
-                TankWidget tankWidget = (TankWidget) uiWidget;
+            } else if (uiWidget instanceof TankWidget tankWidget) {
                 if (importFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int importIndex = importFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
                     List<List<FluidStack>> inputsList = ingredients.getInputs(VanillaTypes.FLUID);

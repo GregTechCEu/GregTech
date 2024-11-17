@@ -3,6 +3,7 @@ package gregtech.api.recipes.roll;
 import gregtech.api.GTValues;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.function.DoubleSupplier;
@@ -10,7 +11,6 @@ import java.util.function.DoubleSupplier;
 /**
  * Interprets what roll data means, and performs rolling.
  */
-@SuppressWarnings("Convert2Lambda")
 public interface RollInterpreter {
 
     /**
@@ -18,15 +18,16 @@ public interface RollInterpreter {
      * Each roll is independently calculated of the others.
      */
     static @NotNull RollInterpreter chanceIndependent() {
-        return DEFAULT;
+        return IndependentInterpreter.INSTANCE;
     }
 
     /**
      * Interprets roll data as chance, ranging from 0 to 10_000, of getting max yield.
-     * The first roll is calculated and the result is applied to all other rolls, regardless of their roll data.
+     * The provided roll data is calculated and the result is applied to all rolls regardless of their roll data,
+     * unless they are marked as not consumable.
      */
-    static @NotNull RollInterpreter chanceOverride() {
-        return OVERRIDE;
+    static @NotNull RollInterpreter chanceOverride(int chance, int chanceBoost) {
+        return new OverrideInterpreter(chance, chanceBoost);
     }
 
     /**
@@ -63,42 +64,7 @@ public interface RollInterpreter {
         return new RangedInterpreter(distribution);
     }
 
-    RollInterpreter DEFAULT = new RollInterpreter() {
-
-        @Override
-        public long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue,
-                                                 long @NotNull [] rollBoost, int boostStrength, int parallel) {
-            long[] roll = new long[maxYield.length];
-            for (int i = 0; i < maxYield.length; i++) {
-                if (rollValue[i] == Long.MIN_VALUE) continue;
-                long chance = rollValue[i] + rollBoost[i] * boostStrength;
-                for (int j = 0; j < parallel; j++) {
-                    roll[i] += GTValues.RNG.nextInt(10_000) < chance ? maxYield[i] : 0;
-                }
-            }
-            return roll;
-        }
-    };
-
-    RollInterpreter OVERRIDE = new RollInterpreter() {
-
-        @Override
-        public long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue,
-                                                 long @NotNull [] rollBoost, int boostStrength, int parallel) {
-            long[] roll = new long[maxYield.length];
-            if (maxYield.length == 0) return roll;
-            long chance = rollValue[0] + rollBoost[0] * boostStrength;
-            for (int p = 0; p < parallel; p++) {
-                if (GTValues.RNG.nextInt(10_000) < chance) {
-                    for (int i = 0; i < maxYield.length; i++) {
-                        if (rollValue[i] == Long.MIN_VALUE) continue;
-                        roll[i] += maxYield[i];
-                    }
-                }
-            }
-            return roll;
-        }
-    };
+    // end static methods //
 
     /**
      * Should interpret the roll data arrays and return the results of rolling. All arrays should be the same size.
@@ -115,4 +81,55 @@ public interface RollInterpreter {
      */
     long @NotNull [] interpretAndRoll(long @NotNull [] maxYield, long @NotNull [] rollValue, long @NotNull [] rollBoost,
                                       int boostStrength, int parallel);
+
+    /**
+     * Should provide a string that will be displayed beneath a rolled intput/output in JEI
+     *
+     * @param index       the index of the rolled input/output
+     * @param application the application of this interpreter
+     * @param maxYield    the max yield for the input/output
+     * @param rollValue   the roll value for the input/output
+     * @param rollBoost   the roll boost for the input/output
+     * @return the string to be displayed.
+     */
+    @NotNull
+    String interpretSmallDisplay(int index, RollInterpreterApplication application, long maxYield, long rollValue,
+                                 long rollBoost);
+
+    /**
+     * Should provide a string that will be displayed in the tooltip for a rolled intput/output in JEI
+     *
+     * @param index       the index of the rolled input/output
+     * @param application the application of this interpreter
+     * @param maxYield    the max yield for the input/output
+     * @param rollValue   the roll value for the input/output
+     * @param rollBoost   the roll boost for the input/output
+     * @return the string to be displayed.
+     */
+    @NotNull
+    String interpretTooltip(int index, RollInterpreterApplication application, long maxYield, long rollValue,
+                            long rollBoost);
+
+    /**
+     * Can provide a string that will be displayed underneath a recipe in JEI.
+     *
+     * @param application the application of this interpreter
+     * @param count       the number of rolled inputs/outputs associated with this interpreter.
+     * @return the string to be displayed, or null if nothing should be displayed.
+     */
+    default @Nullable String addJEILine(RollInterpreterApplication application, int count) {
+        return null;
+    }
+
+    /**
+     * Can provide a string that will be displayed when the string provided by
+     * {@link #addJEILine(RollInterpreterApplication, int)} is hovered over.
+     *
+     * @param application the application of this interpreter
+     * @param count       the number of rolled inputs/outputs associated with this interpreter.
+     * @return the string to be displayed, or null if nothing should be displayed.
+     */
+    default @Nullable String addJEITooltip(RollInterpreterApplication application, int count) {
+        return null;
+    }
 }
