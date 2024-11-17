@@ -25,6 +25,10 @@ public enum Mods {
     AdvancedRocketry(Names.ADVANCED_ROCKETRY),
     AppliedEnergistics2(Names.APPLIED_ENERGISTICS2),
     Baubles(Names.BAUBLES),
+    BetterQuestingUnofficial(Names.BETTER_QUESTING, mod -> {
+        var container = Loader.instance().getIndexedModList().get(Names.BETTER_QUESTING);
+        return container.getVersion().startsWith("4.");
+    }),
     BinnieCore(Names.BINNIE_CORE),
     BiomesOPlenty(Names.BIOMES_O_PLENTY),
     BuildCraftCore(Names.BUILD_CRAFT_CORE),
@@ -54,6 +58,7 @@ public enum Mods {
     InventoryTweaks(Names.INVENTORY_TWEAKS),
     JourneyMap(Names.JOURNEY_MAP),
     JustEnoughItems(Names.JUST_ENOUGH_ITEMS),
+    LittleTiles(Names.LITTLE_TILES),
     MagicBees(Names.MAGIC_BEES),
     Nothirium(Names.NOTHIRIUM),
     NuclearCraft(Names.NUCLEAR_CRAFT, versionExcludes("2o")),
@@ -68,6 +73,8 @@ public enum Mods {
     TOPAddons(Names.TOP_ADDONS),
     VoxelMap(Names.VOXEL_MAP),
     XaerosMinimap(Names.XAEROS_MINIMAP),
+    Vintagium(Names.VINTAGIUM),
+    Alfheim(Names.ALFHEIM),
 
     // Special Optifine handler, but consolidated here for simplicity
     Optifine(null) {
@@ -93,6 +100,7 @@ public enum Mods {
         public static final String ADVANCED_ROCKETRY = "advancedrocketry";
         public static final String APPLIED_ENERGISTICS2 = "appliedenergistics2";
         public static final String BAUBLES = "baubles";
+        public static final String BETTER_QUESTING = "betterquesting";
         public static final String BINNIE_CORE = "binniecore";
         public static final String BIOMES_O_PLENTY = "biomesoplenty";
         public static final String BUILD_CRAFT_CORE = "buildcraftcore";
@@ -122,6 +130,7 @@ public enum Mods {
         public static final String INVENTORY_TWEAKS = "inventorytweaks";
         public static final String JOURNEY_MAP = "journeymap";
         public static final String JUST_ENOUGH_ITEMS = "jei";
+        public static final String LITTLE_TILES = "littletiles";
         public static final String MAGIC_BEES = "magicbees";
         public static final String NOTHIRIUM = "nothirium";
         public static final String NUCLEAR_CRAFT = "nuclearcraft";
@@ -135,6 +144,8 @@ public enum Mods {
         public static final String TOP_ADDONS = "topaddons";
         public static final String VOXEL_MAP = "voxelmap";
         public static final String XAEROS_MINIMAP = "xaerominimap";
+        public static final String VINTAGIUM = "vintagium";
+        public static final String ALFHEIM = "alfheim";
     }
 
     private final String ID;

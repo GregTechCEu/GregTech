@@ -34,6 +34,9 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private int fluidOutputs;
     private boolean modifyFluidOutputs = true;
     private boolean jeiOverclockButton = true;
+
+    private boolean isGenerator;
+
     private @Nullable TextureArea progressBar;
     private @Nullable ProgressWidget.MoveType moveType;
 
@@ -129,6 +132,16 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     }
 
     /**
+     * Mark this recipemap is generating energy
+     *
+     * @return this
+     */
+    public @NotNull RecipeMapBuilder<B> generator() {
+        this.isGenerator = true;
+        return this;
+    }
+
+    /**
      * @param progressBar the progress bar texture to use
      * @return this
      */
@@ -217,7 +230,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
      */
     private @NotNull RecipeMapUI<?> buildUI(@NotNull RecipeMap<?> recipeMap) {
         RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
-                modifyFluidOutputs);
+                modifyFluidOutputs, isGenerator);
         if (progressBar != null) {
             ui.setProgressBarTexture(progressBar);
         }
@@ -282,8 +295,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
      */
     public @NotNull RecipeMap<B> build() {
         RecipeMap<B> recipeMap = new RecipeMap<>(unlocalizedName, defaultRecipeBuilder, this.recipeMapUIFunction,
-                itemInputs,
-                itemOutputs, fluidInputs, fluidOutputs);
+                itemInputs, itemOutputs, fluidInputs, fluidOutputs);
         recipeMap.setSound(sound);
         if (allowEmptyOutputs) {
             recipeMap.allowEmptyOutput();

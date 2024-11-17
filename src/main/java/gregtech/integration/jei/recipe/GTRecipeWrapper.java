@@ -17,13 +17,14 @@ import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
-import gregtech.api.recipes.recipeproperties.ComputationProperty;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.recipes.recipeproperties.ScanProperty;
-import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
+import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.properties.impl.ComputationProperty;
+import gregtech.api.recipes.properties.impl.ScanProperty;
+import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
@@ -42,7 +43,10 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
@@ -250,7 +254,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
-        var properties = recipe.getPropertyTypes();
+        var storage = recipe.propertyStorage();
+        var properties = storage.values();
         boolean drawTotalEU = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU);
         boolean drawEUt = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt);
         boolean drawDuration = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration);
@@ -260,7 +265,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (drawEUt) defaultLines++;
         if (drawDuration) defaultLines++;
 
-        int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
+        int unhiddenCount = (int) storage.entrySet().stream()
+                .filter((property) -> !property.getKey().isHidden())
+                .count();
+        int yPosition = recipeHeight - ((unhiddenCount + defaultLines) * 10 - 3);
 
         // [EUt, duration, color]
         long[] overclockResult = calculateJeiOverclock();
@@ -295,10 +303,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     0, yPosition += LINE_HEIGHT, (int) overclockResult[2]);
         }
         // Property custom entries
-        for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
+        for (var propertyEntry : storage.entrySet()) {
             if (!propertyEntry.getKey().isHidden()) {
                 RecipeProperty<?> property = propertyEntry.getKey();
-                Object value = propertyEntry.getValue();
+                var value = propertyEntry.getValue();
                 property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), 0x111111, value, mouseX,
                         mouseY);
             }
@@ -309,7 +317,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         List<String> tooltips = new ArrayList<>();
-        for (var entry : recipe.getPropertyValues()) {
+        for (var entry : recipe.propertyStorage().entrySet()) {
             if (!entry.getKey().isHidden()) {
                 RecipeProperty<?> property = entry.getKey();
                 Object value = entry.getValue();
@@ -321,29 +329,45 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        // recipe is null on the first call of this method
-        if (recipe == null) return;
-        if (RecipeCompatUtil.isTweakerLoaded()) {
-            BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
-                    Minecraft.getMinecraft().player.isCreative();
-            buttons.add(new JeiButton(166, 2, 10, 10)
-                    .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                    .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
-                            " script, to remove this recipe, to the clipboard"))
-                    .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
-                        String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
-                        String output = RecipeCompatUtil.getFirstOutputString(recipe);
-                        if (!output.isEmpty()) {
-                            output = "// " + output + "\n";
-                        }
-                        String copyString = output + recipeLine + "\n";
-                        ClipboardUtil.copyToClipboard(copyString);
-                        Minecraft.getMinecraft().player.sendMessage(
-                                new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
-                        return true;
-                    })
-                    .setActiveSupplier(creativePlayerCtPredicate));
-        }
+        // do not add the info or X button if no tweaker mod is present
+        if (!RecipeCompatUtil.isTweakerLoaded()) return;
+
+        BooleanSupplier creativePlayerPredicate = () -> Minecraft.getMinecraft().player != null &&
+                Minecraft.getMinecraft().player.isCreative();
+        BooleanSupplier creativeTweaker = () -> creativePlayerPredicate.getAsBoolean() &&
+                (recipe.getIsCTRecipe() || recipe.isGroovyRecipe());
+        BooleanSupplier creativeDefault = () -> creativePlayerPredicate.getAsBoolean() && !recipe.getIsCTRecipe() &&
+                !recipe.isGroovyRecipe();
+
+        // X Button
+        buttons.add(new JeiButton(166, 2, 10, 10)
+                .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
+                .setTooltipBuilder(lines -> lines.add(
+                        LocalizationUtils.format("gregtech.jei.remove_recipe.tooltip",
+                                RecipeCompatUtil.getTweakerName())))
+                .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
+                    String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
+                    String output = RecipeCompatUtil.getFirstOutputString(recipe);
+                    if (!output.isEmpty()) {
+                        output = "// " + output + "\n";
+                    }
+                    String copyString = output + recipeLine + "\n";
+                    ClipboardUtil.copyToClipboard(copyString);
+                    Minecraft.getMinecraft().player.sendMessage(
+                            new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
+                    return true;
+                })
+                .setActiveSupplier(creativeDefault));
+
+        // CT/GS Info
+        buttons.add(new JeiButton(166, 2, 10, 10)
+                .setTextures(GuiTextures.INFO_ICON)
+                .setTooltipBuilder(lines -> lines.add(recipe.isGroovyRecipe() ?
+                        LocalizationUtils.format("gregtech.jei.gs_recipe.tooltip") :
+                        LocalizationUtils.format("gregtech.jei.ct_recipe.tooltip")))
+                .setClickAction((mc, x, y, button) -> false)
+                .setActiveSupplier(creativeTweaker));
+
         if (recipeMap.jeiOverclockButtonEnabled()) {
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
             // just here because if highTier is disabled, if a recipe is (incorrectly) registering

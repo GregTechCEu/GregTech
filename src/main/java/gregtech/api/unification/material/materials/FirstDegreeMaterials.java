@@ -166,7 +166,12 @@ public class FirstDegreeMaterials {
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();
 
-        // FREE ID 270
+        Zircon = new Material.Builder(270, gregtechId("zircon"))
+                .gem().ore()
+                .color(0xC31313)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Silicon, 1, Oxygen, 4)
+                .build();
 
         Coal = new Material.Builder(271, gregtechId("coal"))
                 .gem(1, 1600).ore(2, 1) // default coal burn time in vanilla
@@ -236,7 +241,6 @@ public class FirstDegreeMaterials {
         Galena = new Material.Builder(279, gregtechId("galena"))
                 .dust(3).ore()
                 .color(0x643C64)
-                .flags(NO_SMELTING)
                 .components(Lead, 1, Sulfur, 1)
                 .build();
 
@@ -626,7 +630,12 @@ public class FirstDegreeMaterials {
                 .components(Antimony, 2, Sulfur, 3)
                 .build();
 
-        // Free ID 326
+        Zirconia = new Material.Builder(326, gregtechId("zirconia"))
+                .dust()
+                .color(0x689F9F).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Oxygen, 2)
+                .build();
 
         Tetrahedrite = new Material.Builder(327, gregtechId("tetrahedrite"))
                 .dust().ore()
@@ -675,9 +684,8 @@ public class FirstDegreeMaterials {
                 .dust(3).ore(true)
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium238, 1, Oxygen, 2)
-                .build()
-                .setFormula("UO2", true);
+                .components(Uranium, 1, Oxygen, 2)
+                .build();
 
         Uvarovite = new Material.Builder(333, gregtechId("uvarovite"))
                 .gem()
@@ -822,9 +830,19 @@ public class FirstDegreeMaterials {
                 .components(Copper, 2, Sulfur, 1)
                 .build();
 
-        // Free ID 349
+        ZirconiumTetrachloride = new Material.Builder(349, gregtechId("zirconium_tetrachloride"))
+                .dust()
+                .color(0x689FBF).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zirconium, 1, Chlorine, 4)
+                .build();
 
-        // Free ID 350
+        Hafnia = new Material.Builder(350, gregtechId("hafnia"))
+                .dust()
+                .color(0x39393A).iconSet(SHINY)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1, Oxygen, 2)
+                .build();
 
         GalliumArsenide = new Material.Builder(351, gregtechId("gallium_arsenide"))
                 .ingot(1)
@@ -873,6 +891,7 @@ public class FirstDegreeMaterials {
         MagnesiumChloride = new Material.Builder(357, gregtechId("magnesium_chloride"))
                 .dust(1)
                 .color(0xD40D5C)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Magnesium, 1, Chlorine, 2)
                 .build();
 
@@ -931,6 +950,7 @@ public class FirstDegreeMaterials {
         SodiumBicarbonate = new Material.Builder(366, gregtechId("sodium_bicarbonate"))
                 .dust(1)
                 .color(0x565b96).iconSet(ROUGH)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 1, Hydrogen, 1, Carbon, 1, Oxygen, 3)
                 .build();
 
@@ -1031,7 +1051,12 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10)
                 .build();
 
-        // Free ID 383
+        HafniumTetrachloride = new Material.Builder(383, gregtechId("hafnium_tetrachloride"))
+                .dust()
+                .color(0x69699A).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hafnium, 1, Chlorine, 4)
+                .build();
 
         GlauconiteSand = new Material.Builder(384, gregtechId("glauconite_sand"))
                 .dust().ore(3, 1)
@@ -1063,11 +1088,15 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
                 .build();
 
-        // Free ID 389
+        /* Free IDs: 389-390 */
 
-        // Free ID 390
-
-        // Free ID 391
+        Zircaloy4 = new Material.Builder(391, gregtechId("zircaloy_4"))
+                .ingot()
+                .color(0x8A6E68).iconSet(METALLIC)
+                .components(Zirconium, 16, Tin, 2, Chrome, 1)
+                .blast(b -> b.temp(2123, GasTier.MID)
+                        .blastStats(GTValues.VA[EV]))
+                .build();
 
         Talc = new Material.Builder(392, gregtechId("talc"))
                 .dust().ore(2, 1)
@@ -1204,7 +1233,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         Iron3Chloride = new Material.Builder(411, gregtechId("iron_iii_chloride"))
-                .fluid()
+                .liquid()
                 .color(0x060B0B)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Iron, 1, Chlorine, 3)
@@ -1214,9 +1243,8 @@ public class FirstDegreeMaterials {
                 .gas()
                 .color(0x42D126)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium238, 1, Fluorine, 6)
-                .build()
-                .setFormula("UF6", true);
+                .components(Uranium, 1, Fluorine, 6)
+                .build();
 
         EnrichedUraniumHexafluoride = new Material.Builder(413, gregtechId("enriched_uranium_hexafluoride"))
                 .gas()
@@ -1224,7 +1252,7 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium235, 1, Fluorine, 6)
                 .build()
-                .setFormula("UF6", true);
+                .setFormula("(U-235)F6", true);
 
         DepletedUraniumHexafluoride = new Material.Builder(414, gregtechId("depleted_uranium_hexafluoride"))
                 .gas()
@@ -1232,7 +1260,7 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium238, 1, Fluorine, 6)
                 .build()
-                .setFormula("UF6", true);
+                .setFormula("(U-238)F6", true);
 
         NitrousOxide = new Material.Builder(415, gregtechId("nitrous_oxide"))
                 .gas()
@@ -1347,14 +1375,13 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(1882))
                 .color(0x008700).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Uranium238, 1, Platinum, 3)
+                .components(Uranium, 1, Platinum, 3)
                 .cableProperties(GTValues.V[GTValues.EV], 6, 0, true, 30)
                 .blast(b -> b
                         .temp(4400, GasTier.MID)
                         .blastStats(VA[EV], 1000)
                         .vacuumStats(VA[EV], 200))
-                .build()
-                .setFormula("UPt3", true);
+                .build();
 
         SamariumIronArsenicOxide = new Material.Builder(428, gregtechId("samarium_iron_arsenic_oxide"))
                 .ingot()
@@ -1387,14 +1414,13 @@ public class FirstDegreeMaterials {
                 .liquid(new FluidBuilder().temperature(3410))
                 .color(0x0A0A0A)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, GENERATE_FINE_WIRE)
-                .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
+                .components(Uranium, 1, Rhodium, 1, Naquadah, 2)
                 .cableProperties(GTValues.V[GTValues.ZPM], 8, 0, true, 5)
                 .blast(b -> b
                         .temp(9000, GasTier.HIGH)
                         .blastStats(VA[IV], 1500)
                         .vacuumStats(VA[ZPM], 200))
-                .build()
-                .setFormula("URhNq2", true);
+                .build();
 
         EnrichedNaquadahTriniumEuropiumDuranide = new Material.Builder(431,
                 gregtechId("enriched_naquadah_trinium_europium_duranide"))
@@ -1540,7 +1566,13 @@ public class FirstDegreeMaterials {
                 .components(Calcium, 2, Niobium, 2, Oxygen, 7)
                 .build();
 
-        // FREE ID 450
+        Inconel718 = new Material.Builder(450, gregtechId("inconel_718"))
+                .ingot()
+                .color(0x566570).iconSet(SHINY)
+                .components(Nickel, 5, Chrome, 2, Iron, 2, Niobium, 1, Molybdenum, 1)
+                .blast(b -> b.temp(2622, GasTier.LOW)
+                        .blastStats(GTValues.VA[HV]))
+                .build();
 
         RTMAlloy = new Material.Builder(451, gregtechId("rtm_alloy"))
                 .ingot().fluid()
@@ -1552,6 +1584,11 @@ public class FirstDegreeMaterials {
                         .temp(3000, GasTier.MID)
                         .blastStats(VA[EV], 1400)
                         .vacuumStats(VA[HV], 250))
+                .build();
+
+        IlmeniteSlag = new Material.Builder(452, gregtechId("ilmenite_slag"))
+                .dust(1)
+                .color(0x8B0000).iconSet(SAND)
                 .build();
     }
 }

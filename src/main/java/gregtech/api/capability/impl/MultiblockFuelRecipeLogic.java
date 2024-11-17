@@ -6,7 +6,10 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.util.Tuple;
@@ -26,28 +29,25 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@NotNull int[] values, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
         // apply maintenance bonuses
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         // duration bonus
         if (maintenanceValues.getSecond() != 1.0) {
-            values[1] = (int) Math.round(values[1] / maintenanceValues.getSecond());
+            ocParams.setDuration((int) Math.round(ocParams.duration() / maintenanceValues.getSecond()));
         }
     }
 
     @Override
-    protected void modifyOverclockPost(int[] overclockResults, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
         // duration penalty
         if (maintenanceValues.getFirst() > 0) {
-            overclockResults[1] = (int) (overclockResults[1] * (1 - 0.1 * maintenanceValues.getFirst()));
+            ocResult.setDuration((int) (ocResult.duration() * (1 - 0.1 * maintenanceValues.getFirst())));
         }
-
-        // make EUt negative so it is consumed
-        overclockResults[0] = -overclockResults[0];
     }
 
     @NotNull
@@ -57,7 +57,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected boolean hasEnoughPower(@NotNull int[] resultOverclock) {
+    protected boolean hasEnoughPower(long eut, int duration) {
         // generators always have enough power to run recipes
         return true;
     }
@@ -95,18 +95,19 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+    protected boolean drawEnergy(long recipeEUt, boolean simulate) {
         long euToDraw = boostProduction(recipeEUt);
         long resultEnergy = getEnergyStored() - euToDraw;
         if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
             if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);
             return true;
-        } else return false;
+        }
+        return false;
     }
 
     @Override
-    public int getInfoProviderEUt() {
-        return (int) boostProduction(super.getInfoProviderEUt());
+    public long getInfoProviderEUt() {
+        return boostProduction(super.getInfoProviderEUt());
     }
 
     @Override
@@ -138,10 +139,10 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         }
         FluidStack requiredFluidInput = recipe.getFluidInputs().get(0).getInputFluidStack();
 
-        int ocAmount = (int) (getMaxVoltage() / recipe.getEUt());
+        int ocAmount = GTUtility.safeCastLongToInt(getMaxVoltage() / recipe.getEUt());
         int neededAmount = ocAmount * requiredFluidInput.amount;
         if (rotorHolder != null && rotorHolder.hasRotor()) {
-            neededAmount /= (rotorHolder.getTotalEfficiency() / 100f);
+            neededAmount /= (rotorHolder.getTotalEfficiency() / 100.0);
         } else if (rotorHolder != null && !rotorHolder.hasRotor()) {
             return null;
         }

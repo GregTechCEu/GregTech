@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 public final class FluidStorageKey {
 
@@ -20,32 +19,32 @@ public final class FluidStorageKey {
 
     private final ResourceLocation resourceLocation;
     private final MaterialIconType iconType;
-    private final UnaryOperator<String> registryNameOperator;
+    private final Function<Material, String> registryNameFunction;
     private final Function<Material, String> translationKeyFunction;
     private final int hashCode;
     private final FluidState defaultFluidState;
     private final int registrationPriority;
 
     public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
-                           @NotNull UnaryOperator<@NotNull String> registryNameOperator,
+                           @NotNull Function<@NotNull Material, @NotNull String> registryNameFunction,
                            @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction) {
-        this(resourceLocation, iconType, registryNameOperator, translationKeyFunction, null);
+        this(resourceLocation, iconType, registryNameFunction, translationKeyFunction, null);
     }
 
     public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
-                           @NotNull UnaryOperator<@NotNull String> registryNameOperator,
+                           @NotNull Function<@NotNull Material, @NotNull String> registryNameFunction,
                            @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction,
                            @Nullable FluidState defaultFluidState) {
-        this(resourceLocation, iconType, registryNameOperator, translationKeyFunction, defaultFluidState, 0);
+        this(resourceLocation, iconType, registryNameFunction, translationKeyFunction, defaultFluidState, 0);
     }
 
     public FluidStorageKey(@NotNull ResourceLocation resourceLocation, @NotNull MaterialIconType iconType,
-                           @NotNull UnaryOperator<@NotNull String> registryNameOperator,
+                           @NotNull Function<@NotNull Material, @NotNull String> registryNameFunction,
                            @NotNull Function<@NotNull Material, @NotNull String> translationKeyFunction,
                            @Nullable FluidState defaultFluidState, int registrationPriority) {
         this.resourceLocation = resourceLocation;
         this.iconType = iconType;
-        this.registryNameOperator = registryNameOperator;
+        this.registryNameFunction = registryNameFunction;
         this.translationKeyFunction = translationKeyFunction;
         this.hashCode = resourceLocation.hashCode();
         this.defaultFluidState = defaultFluidState;
@@ -72,8 +71,8 @@ public final class FluidStorageKey {
      * @param baseName the base name of the fluid
      * @return the registry name to use
      */
-    public @NotNull String getRegistryNameFor(@NotNull String baseName) {
-        return registryNameOperator.apply(baseName);
+    public @NotNull String getRegistryNameFor(@NotNull Material baseName) {
+        return registryNameFunction.apply(baseName);
     }
 
     /**

@@ -40,14 +40,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -188,7 +190,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
@@ -198,7 +200,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+    protected ParentWidget<?> createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
         var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
         manualIOmode.updateCacheFromSource(true);
@@ -257,7 +259,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
                     .value(manualIOmode)
                     .lang("cover.generic.manual_io")
-                    .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
+                    .overlay(new IDrawable[] {
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
+                    })
                     .build());
 
         if (createPumpModeRow())
@@ -396,8 +405,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
         this.bucketMode = BucketMode.VALUES[tagCompound.getInteger("BucketMode")];
-        this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        this.fluidFilterContainer.handleLegacyNBT(tagCompound);
+        var filterTag = tagCompound.getCompoundTag("Filter");
+        if (filterTag.hasKey("IsBlacklist"))
+            this.fluidFilterContainer.handleLegacyNBT(filterTag);
+        else
+            this.fluidFilterContainer.deserializeNBT(filterTag);
     }
 
     @Override

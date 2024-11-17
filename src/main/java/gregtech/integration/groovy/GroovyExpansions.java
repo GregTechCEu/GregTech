@@ -18,7 +18,7 @@ public class GroovyExpansions {
 
     public static <R extends RecipeBuilder<R>> RecipeBuilder<R> property(RecipeBuilder<R> builder, String key,
                                                                          Object value) {
-        if (!builder.applyProperty(key, value)) {
+        if (!builder.applyPropertyCT(key, value)) {
             GroovyLog.get().error("Failed to add property '{}' with '{}' to recipe", key, value);
         }
         return builder;
@@ -29,7 +29,7 @@ public class GroovyExpansions {
     }
 
     public static Material.Builder materialBuilder(MaterialEvent event, int id, String domain, String path) {
-        return materialBuilder(event, id, domain, path);
+        return materialBuilder(event, id, new ResourceLocation(domain, path));
     }
 
     public static Material.Builder materialBuilder(MaterialEvent event, int id, String s) {
@@ -61,6 +61,15 @@ public class GroovyExpansions {
     public static Element addElement(MaterialEvent event, long protons, long neutrons, long halfLifeSeconds,
                                      String decayTo, String name, String symbol, boolean isIsotope) {
         return Elements.add(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope);
+    }
+
+    public static Element addElement(MaterialEvent event, long protons, long neutrons, String name, String symbol,
+                                     boolean isIsotope) {
+        return Elements.add(protons, neutrons, name, symbol, isIsotope);
+    }
+
+    public static Element addElement(MaterialEvent event, long protons, long neutrons, String name, String symbol) {
+        return Elements.add(protons, neutrons, name, symbol);
     }
 
     public static FluidBuilder acidic(FluidBuilder builder) {

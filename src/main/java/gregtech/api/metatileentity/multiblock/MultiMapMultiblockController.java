@@ -59,7 +59,6 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                     index = (recipeMapIndex + 1) % recipeMaps.length;
 
                 setRecipeMapIndex(index);
-                this.recipeMapWorkable.forceRecipeRecheck();
             } else {
                 playerIn.sendStatusMessage(
                         new TextComponentTranslation("gregtech.multiblock.multiple_recipemaps.switch_message"), true);
@@ -79,6 +78,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         this.recipeMapIndex = index;
         if (!getWorld().isRemote) {
             writeCustomData(GregtechDataCodes.RECIPE_MAP_INDEX, buf -> buf.writeByte(index));
+            recipeMapWorkable.forceRecipeRecheck();
             markDirty();
         }
     }

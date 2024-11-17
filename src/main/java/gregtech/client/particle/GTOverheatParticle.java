@@ -251,7 +251,15 @@ public class GTOverheatParticle extends GTBloomParticle {
 
     @Override
     public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
-        return !this.insulated;
+        if (this.insulated) return false;
+        for (Cuboid6 cuboid : pipeBoxes) {
+            if (!context.camera().isBoxInFrustum(
+                    cuboid.min.x + posX, cuboid.min.y + posY, cuboid.min.z + posZ,
+                    cuboid.max.x + posX, cuboid.max.y + posY, cuboid.max.z + posZ)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static final IRenderSetup SETUP = new IRenderSetup() {

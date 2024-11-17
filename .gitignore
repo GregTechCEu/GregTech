@@ -81,3 +81,5 @@ local.properties
 run/
 
 logs/
+
+libs/

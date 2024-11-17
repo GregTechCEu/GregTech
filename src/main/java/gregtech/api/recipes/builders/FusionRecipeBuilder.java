@@ -3,7 +3,7 @@ package gregtech.api.recipes.builders;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 
@@ -28,12 +28,12 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
     }
 
     @Override
-    public boolean applyProperty(@NotNull String key, Object value) {
+    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
         if (key.equals(FusionEUToStartProperty.KEY)) {
             this.EUToStart(((Number) value).longValue());
             return true;
         }
-        return super.applyProperty(key, value);
+        return super.applyPropertyCT(key, value);
     }
 
     public FusionRecipeBuilder EUToStart(long EUToStart) {
@@ -46,8 +46,7 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
     }
 
     public long getEUToStart() {
-        return this.recipePropertyStorage == null ? 0L :
-                this.recipePropertyStorage.getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
+        return this.recipePropertyStorage.get(FusionEUToStartProperty.getInstance(), 0L);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package gregtech.client.utils;
 
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.culling.ClippingHelperImpl;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
@@ -19,6 +21,9 @@ public final class EffectRenderContext {
     public static EffectRenderContext getInstance() {
         return instance;
     }
+
+    private final ClippingHelperImpl clippingHelper = new ClippingHelperImpl();
+    private final Frustum camera = new Frustum(this.clippingHelper);
 
     @Nullable
     private Entity renderViewEntity;
@@ -52,6 +57,9 @@ public final class EffectRenderContext {
         this.rotationYZ = ActiveRenderInfo.getRotationYZ();
         this.rotationXY = ActiveRenderInfo.getRotationXY();
         this.rotationXZ = ActiveRenderInfo.getRotationXZ();
+
+        this.clippingHelper.init();
+        this.camera.setPosition(this.cameraX, this.cameraY, this.cameraZ);
 
         return this;
     }
@@ -133,5 +141,13 @@ public final class EffectRenderContext {
      */
     public float rotationXZ() {
         return rotationXZ;
+    }
+
+    /**
+     * @return camera
+     */
+    @NotNull
+    public Frustum camera() {
+        return camera;
     }
 }

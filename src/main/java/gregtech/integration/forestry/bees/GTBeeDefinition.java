@@ -4,12 +4,12 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.Mods;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.forestry.ForestryModule;
 import gregtech.integration.forestry.ForestryUtil;
+import gregtech.integration.forestry.mutation.MaterialMutationCondition;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -46,6 +46,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static forestry.api.apiculture.EnumBeeChromosome.*;
+import static gregtech.api.unification.material.Materials.*;
 
 public enum GTBeeDefinition implements IBeeDefinition {
 
@@ -153,7 +154,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.INDUSTRIOUS, PEAT, 9);
-                mutation.requireResource("blockCoal");
+                mutation.addMutationCondition(new MaterialMutationCondition(Coal));
             }),
     OIL(GTBranchDefinition.GT_ORGANIC, "Oleum", true, 0x4C4C4C, 0x333333,
             beeSpecies -> {
@@ -221,7 +222,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(ASH, COAL, 10);
-                mutation.requireResource("blockApatite");
+                mutation.addMutationCondition(new MaterialMutationCondition(Apatite));
             }),
     BIOMASS(GTBranchDefinition.GT_ORGANIC, "Taeda", true, 0x21E118, 0x17AF0E,
             beeSpecies -> {
@@ -272,7 +273,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(APATITE, ASH, 12);
                 mutation.restrictTemperature(EnumTemperature.HOT);
-                mutation.requireResource("blockTricalciumPhosphate");
+                mutation.addMutationCondition(new MaterialMutationCondition(TricalciumPhosphate));
             }),
     SANDWICH(GTBranchDefinition.GT_ORGANIC, "Sandwico", true, 0x32CD32, 0xDAA520,
             beeSpecies -> {
@@ -316,7 +317,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.INDUSTRIOUS, BeeDefinition.DEMONIC,
                         10);
-                mutation.requireResource("blockRedstone");
+                mutation.addMutationCondition(new MaterialMutationCondition(Redstone));
             }),
     LAPIS(GTBranchDefinition.GT_GEM, "Lapidi", true, 0x1947D1, 0x476CDA,
             beeSpecies -> {
@@ -328,7 +329,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.DEMONIC, BeeDefinition.IMPERIAL, 10);
-                mutation.requireResource("blockLapis");
+                mutation.addMutationCondition(new MaterialMutationCondition(Lapis));
             }),
     CERTUS(GTBranchDefinition.GT_GEM, "Quarzeus", true, 0x57CFFB, 0xBBEEFF,
             beeSpecies -> {
@@ -340,7 +341,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.HERMITIC, LAPIS, 10);
-                mutation.requireResource("blockCertusQuartz");
+                mutation.addMutationCondition(new MaterialMutationCondition(CertusQuartz));
             }),
     FLUIX(GTBranchDefinition.GT_GEM, "", true, 0xA375FF, 0xB591FF,
             beeSpecies -> {
@@ -367,7 +368,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(CERTUS, COAL, 3);
-                mutation.requireResource("blockDiamond");
+                mutation.addMutationCondition(new MaterialMutationCondition(Diamond));
             }),
     RUBY(GTBranchDefinition.GT_GEM, "Rubinus", false, 0xE6005C, 0xCC0052,
             beeSpecies -> {
@@ -380,7 +381,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(REDSTONE, DIAMOND, 5);
-                mutation.requireResource("blockRuby");
+                mutation.addMutationCondition(new MaterialMutationCondition(Ruby));
             }),
     SAPPHIRE(GTBranchDefinition.GT_GEM, "Sapphirus", true, 0x0033CC, 0x00248F,
             beeSpecies -> {
@@ -392,7 +393,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(CERTUS, LAPIS, 5);
-                mutation.requireResource("blockSapphire");
+                mutation.addMutationCondition(new MaterialMutationCondition(Sapphire));
             }),
     OLIVINE(GTBranchDefinition.GT_GEM, "Olivinum", true, 0x248F24, 0xCCFFCC,
             beeSpecies -> {
@@ -416,7 +417,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(OLIVINE, DIAMOND, 4);
-                mutation.requireResource("blockEmerald");
+                mutation.addMutationCondition(new MaterialMutationCondition(Emerald));
             }),
     SPARKLING(GTBranchDefinition.GT_GEM, "Vesperstella", true, 0x7A007A, 0xFFFFFF,
             beeSpecies -> {
@@ -438,7 +439,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 IBeeMutationBuilder mutation = dis.registerMutation(
                         ForestryUtil.getSpecies(Mods.MagicBees, "Withering"),
                         ForestryUtil.getSpecies(Mods.MagicBees, "Draconic"), 1);
-                mutation.requireResource("blockNetherStar");
+                mutation.addMutationCondition(new MaterialMutationCondition(NetherStar));
                 mutation.restrictBiomeType(BiomeDictionary.Type.END);
             },
             Mods.MagicBees::isModLoaded),
@@ -455,7 +456,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.MAJESTIC, CLAY, 13);
-                mutation.requireResource("blockCopper");
+                mutation.addMutationCondition(new MaterialMutationCondition(Copper));
             }),
     TIN(GTBranchDefinition.GT_METAL, "Stannum", true, 0xD4D4D4, 0xDDDDDD,
             beeSpecies -> {
@@ -468,7 +469,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(CLAY, BeeDefinition.DILIGENT, 13);
-                mutation.requireResource("blockTin");
+                mutation.addMutationCondition(new MaterialMutationCondition(Tin));
             }),
     LEAD(GTBranchDefinition.GT_METAL, "Plumbum", true, 0x666699, 0xA3A3CC,
             beeSpecies -> {
@@ -481,7 +482,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(COAL, COPPER, 13);
-                mutation.requireResource("blockLead");
+                mutation.addMutationCondition(new MaterialMutationCondition(Lead));
             }),
     IRON(GTBranchDefinition.GT_METAL, "Ferrum", true, 0xDA9147, 0xDE9C59,
             beeSpecies -> {
@@ -494,7 +495,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(TIN, COPPER, 13);
-                mutation.requireResource("blockIron");
+                mutation.addMutationCondition(new MaterialMutationCondition(Iron));
             }),
     STEEL(GTBranchDefinition.GT_METAL, "Chalybe", true, 0x808080, 0x999999,
             beeSpecies -> {
@@ -507,7 +508,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(IRON, COAL, 10);
-                mutation.requireResource("blockSteel");
+                mutation.addMutationCondition(new MaterialMutationCondition(Steel));
                 mutation.restrictTemperature(EnumTemperature.HOT);
             }),
     NICKEL(GTBranchDefinition.GT_METAL, "Nichelium", true, 0x8585AD, 0x8585AD,
@@ -521,7 +522,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(IRON, COPPER, 13);
-                mutation.requireResource("blockNickel");
+                mutation.addMutationCondition(new MaterialMutationCondition(Nickel));
             }),
     ZINC(GTBranchDefinition.GT_METAL, "Cadmiae", true, 0xF0DEF0, 0xF2E1F2,
             beeSpecies -> {
@@ -534,7 +535,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(IRON, TIN, 13);
-                mutation.requireResource("blockZinc");
+                mutation.addMutationCondition(new MaterialMutationCondition(Zinc));
             }),
     SILVER(GTBranchDefinition.GT_METAL, "Argenti", true, 0xC2C2D6, 0xCECEDE,
             beeSpecies -> {
@@ -547,7 +548,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(LEAD, TIN, 10);
-                mutation.requireResource("blockSilver");
+                mutation.addMutationCondition(new MaterialMutationCondition(Silver));
             }),
     GOLD(GTBranchDefinition.GT_METAL, "Aurum", true, 0xEBC633, 0xEDCC47,
             beeSpecies -> {
@@ -560,7 +561,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(LEAD, COPPER, 13);
-                mutation.requireResource("blockGold");
+                mutation.addMutationCondition(new MaterialMutationCondition(Gold));
                 mutation.restrictTemperature(EnumTemperature.HOT);
             }),
     ARSENIC(GTBranchDefinition.GT_METAL, "Arsenicum", true, 0x736C52, 0x292412,
@@ -573,7 +574,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(ZINC, SILVER, 10);
-                mutation.requireResource("blockArsenic");
+                mutation.addMutationCondition(new MaterialMutationCondition(Arsenic));
             }),
     SILICON(GTBranchDefinition.GT_ORGANIC, "Silex", false, 0xADA2A7, 0x736675,
             beeSpecies -> {
@@ -606,7 +607,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(NICKEL, ZINC, 9);
-                mutation.requireResource("blockAluminium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Aluminium));
             }),
     TITANIUM(GTBranchDefinition.GT_RAREMETAL, "Titanus", true, 0xCC99FF, 0xDBB8FF,
             beeSpecies -> {
@@ -619,7 +620,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(REDSTONE, ALUMINIUM, 5);
-                mutation.requireResource("blockTitanium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Titanium));
             }),
     // todo glowstone?
     CHROME(GTBranchDefinition.GT_RAREMETAL, "Chroma", true, 0xEBA1EB, 0xF2C3F2,
@@ -633,7 +634,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(TITANIUM, RUBY, 5);
-                mutation.requireResource("blockChrome");
+                mutation.addMutationCondition(new MaterialMutationCondition(Chrome));
             }),
     MANGANESE(GTBranchDefinition.GT_RAREMETAL, "Manganum", true, 0xD5D5D5, 0xAAAAAA,
             beeSpecies -> {
@@ -646,7 +647,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(TITANIUM, ALUMINIUM, 5);
-                mutation.requireResource("blockManganese");
+                mutation.addMutationCondition(new MaterialMutationCondition(Manganese));
             }),
     TUNGSTEN(GTBranchDefinition.GT_RAREMETAL, "Wolframium", false, 0x5C5C8A, 0x7D7DA1,
             beeSpecies -> {
@@ -659,7 +660,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.HEROIC, MANGANESE, 5);
-                mutation.requireResource("blockTungsten");
+                mutation.addMutationCondition(new MaterialMutationCondition(Tungsten));
             }),
     PLATINUM(GTBranchDefinition.GT_RAREMETAL, "Platina", false, 0xE6E6E6, 0xFFFFCC,
             beeSpecies -> {
@@ -672,7 +673,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(DIAMOND, CHROME, 5);
-                mutation.requireResource("blockPlatinum");
+                mutation.addMutationCondition(new MaterialMutationCondition(Platinum));
             }),
     IRIDIUM(GTBranchDefinition.GT_RAREMETAL, "Iris", false, 0xDADADA, 0xD1D1E0,
             beeSpecies -> {
@@ -686,7 +687,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(TUNGSTEN, PLATINUM, 5);
-                mutation.requireResource("blockIridium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Iridium));
             }),
     OSMIUM(GTBranchDefinition.GT_RAREMETAL, "Osmia", false, 0x2B2BDA, 0x8B8B8B,
             beeSpecies -> {
@@ -700,7 +701,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(TUNGSTEN, PLATINUM, 5);
-                mutation.requireResource("blockOsmium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Osmium));
             }),
     SALTY(GTBranchDefinition.GT_RAREMETAL, "Sal", true, 0xF0C8C8, 0xFAFAFA,
             beeSpecies -> {
@@ -713,7 +714,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(CLAY, ALUMINIUM, 5);
-                mutation.requireResource("blockSalt");
+                mutation.addMutationCondition(new MaterialMutationCondition(Salt));
             }),
     LITHIUM(GTBranchDefinition.GT_RAREMETAL, "Lithos", false, 0xF0328C, 0xE1DCFF,
             beeSpecies -> {
@@ -726,7 +727,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(SALTY, ALUMINIUM, 5);
-                mutation.requireResource("blockLithium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Lithium));
             }),
     ELECTROTINE(GTBranchDefinition.GT_RAREMETAL, "Electrum", false, 0x1E90FF, 0x3CB4C8,
             beeSpecies -> {
@@ -739,7 +740,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWER),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(REDSTONE, GOLD, 5);
-                mutation.requireResource("blockElectrotine");
+                mutation.addMutationCondition(new MaterialMutationCondition(Electrotine));
             }),
     SULFUR(GTBranchDefinition.GT_RAREMETAL, "Sulphur", false, 0x1E90FF, 0x3CB4C8,
             beeSpecies -> {
@@ -759,7 +760,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, EnumAllele.Speed.SLOWEST),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(LEAD, OSMIUM, 1);
-                mutation.requireResource("blockIndium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Indium));
                 mutation.restrictBiomeType(BiomeDictionary.Type.END);
             }),
 
@@ -793,7 +794,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
                 } else {
                     mutation = dis.registerMutation(BeeDefinition.DEMONIC, BeeDefinition.FIENDISH, 10);
                 }
-                mutation.requireResource("blockRedstone");
+                mutation.addMutationCondition(new MaterialMutationCondition(Redstone));
             }),
     LAPOTRON(GTBranchDefinition.GT_INDUSTRIAL, "Azureus", false, 0xFFEBC4, 0xE36400,
             beeSpecies -> {
@@ -815,7 +816,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(LAPIS, ENERGY, 6);
-                mutation.requireResource("blockLapis");
+                mutation.addMutationCondition(new MaterialMutationCondition(Lapis));
                 mutation.restrictTemperature(EnumTemperature.ICY);
             }),
     EXPLOSIVE(GTBranchDefinition.GT_INDUSTRIAL, "Explosionis", false, 0x7E270F, 0x747474,
@@ -853,7 +854,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(COPPER, REDSTONE, 10);
-                mutation.requireResource("blockRedAlloy");
+                mutation.addMutationCondition(new MaterialMutationCondition(RedAlloy));
             }),
     STAINLESSSTEEL(GTBranchDefinition.GT_ALLOY, "Nonferrugo", false, 0xC8C8DC, 0x778899,
             beeSpecies -> {
@@ -871,7 +872,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(CHROME, STEEL, 9);
-                mutation.requireResource("blockStainlessSteel");
+                mutation.addMutationCondition(new MaterialMutationCondition(StainlessSteel));
             }),
 
     // Radioactive
@@ -889,7 +890,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(BeeDefinition.AVENGING, PLATINUM, 2);
-                mutation.requireResource("blockUranium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Uranium));
             }),
     PLUTONIUM(GTBranchDefinition.GT_RADIOACTIVE, "Plutos", true, 0x570000, 0x240000,
             beeSpecies -> {
@@ -906,7 +907,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(URANIUM, EMERALD, 2);
-                mutation.requireResource("blockPlutonium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Plutonium239));
             }),
     NAQUADAH(GTBranchDefinition.GT_RADIOACTIVE, "Nasquis", false, 0x003300, 0x002400,
             beeSpecies -> {
@@ -923,7 +924,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(PLUTONIUM, IRIDIUM, 1);
-                mutation.requireResource("blockNaquadah");
+                mutation.addMutationCondition(new MaterialMutationCondition(Naquadah));
             }),
     NAQUADRIA(GTBranchDefinition.GT_RADIOACTIVE, "Nasquidrius", false, 0x000000, 0x002400,
             beeSpecies -> {
@@ -941,7 +942,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(PLUTONIUM, IRIDIUM, 1);
-                mutation.requireResource("blockNaquadria");
+                mutation.addMutationCondition(new MaterialMutationCondition(Naquadria));
             }),
     TRINIUM(GTBranchDefinition.GT_RADIOACTIVE, "Trinium", false, 0xB0E0E6, 0xC8C8D2,
             beeSpecies -> {
@@ -955,7 +956,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             template -> AlleleHelper.getInstance().set(template, SPEED, GTAlleleBeeSpecies.speedBlinding),
             dis -> {
                 IBeeMutationBuilder mutation = dis.registerMutation(IRIDIUM, NAQUADAH, 4);
-                mutation.requireResource("blockTrinium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Trinium));
             }),
     THORIUM(GTBranchDefinition.GT_RADIOACTIVE, "Thorax", false, 0x005000, 0x001E00,
             beeSpecies -> {
@@ -970,7 +971,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IMutationBuilder mutation = dis.registerMutation(COAL, URANIUM, 2).setIsSecret();
-                mutation.requireResource("blockThorium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Thorium));
             }),
     LUTETIUM(GTBranchDefinition.GT_RADIOACTIVE, "Lutetia", false, 0x00AAFF, 0x0059FF,
             beeSpecies -> {
@@ -992,7 +993,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
                     mutation = dis.registerMutation(THORIUM, BeeDefinition.IMPERIAL, 1);
                 }
                 mutation.setIsSecret();
-                mutation.requireResource("blockLutetium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Lutetium));
             }),
     AMERICIUM(GTBranchDefinition.GT_RADIOACTIVE, "Libertas", false, 0x287869, 0x0C453A,
             beeSpecies -> {
@@ -1008,7 +1009,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IMutationBuilder mutation = dis.registerMutation(LUTETIUM, CHROME, 1).setIsSecret();
-                mutation.requireResource("blockAmericium");
+                mutation.addMutationCondition(new MaterialMutationCondition(Americium));
             }),
     NEUTRONIUM(GTBranchDefinition.GT_RADIOACTIVE, "Media", false, 0xFFF0F0, 0xFAFAFA,
             beeSpecies -> {
@@ -1024,7 +1025,7 @@ public enum GTBeeDefinition implements IBeeDefinition {
             },
             dis -> {
                 IMutationBuilder mutation = dis.registerMutation(NAQUADRIA, AMERICIUM, 1).setIsSecret();
-                mutation.requireResource(new UnificationEntry(OrePrefix.block, Materials.Neutronium).toString());
+                mutation.addMutationCondition(new MaterialMutationCondition(Neutronium));
             }),
 
     // Noble Gases

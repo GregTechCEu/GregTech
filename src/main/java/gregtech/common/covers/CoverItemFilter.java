@@ -9,8 +9,8 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
+import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +36,7 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import org.jetbrains.annotations.NotNull;
@@ -70,9 +70,6 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        if (TooltipHelper.isCtrlDown())
-            return getCoverableView().getStackForm();
-
         return this.itemFilterContainer.getFilterStack();
     }
 
@@ -105,11 +102,15 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
-    @SuppressWarnings("DataFlowIssue") // this cover should always have a filter
     public @NotNull BaseFilter getFilter() {
-        return this.itemFilterContainer.hasFilter() ?
-                this.itemFilterContainer.getFilter() :
-                BaseFilter.ERROR_FILTER;
+        var filter = getFilterContainer().getFilter();
+        if (filter == null) return BaseFilter.ERROR_FILTER;
+
+        return filter;
+    }
+
+    public @NotNull BaseFilterContainer getFilterContainer() {
+        return this.itemFilterContainer;
     }
 
     @Override
@@ -141,15 +142,14 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var filteringMode = new EnumSyncValue<>(ItemFilterMode.class, this::getFilterMode, this::setFilterMode);
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
-        getFilter().getFilterReader().readStack(this.itemFilterContainer.getFilterStack());
 
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 194).padding(7)
-                .child(CoverWithUI.createTitleRow(getPickItem()).left(4))
+                .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()).left(4))
                 .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
                                 .value(filteringMode)
@@ -179,13 +179,13 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.filterMode = ItemFilterMode.VALUES[tagCompound.getInteger("FilterMode")];
-        var filterTag = tagCompound.getCompoundTag("Filter");
-        if (!filterTag.hasKey("FilterInventory")) {
+        if (tagCompound.hasKey("IsBlacklist")) {
             this.itemFilterContainer.setFilterStack(getDefinition().getDropItemStack());
+            this.itemFilterContainer.handleLegacyNBT(tagCompound);
+            this.itemFilterContainer.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         } else {
-            this.itemFilterContainer.deserializeNBT(filterTag);
+            this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         }
-        this.itemFilterContainer.handleLegacyNBT(tagCompound);
     }
 
     @Override

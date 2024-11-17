@@ -40,22 +40,24 @@
 dependencies {
     // Published dependencies
     api("codechicken:codechickenlib:3.2.3.358")
-    api("com.cleanroommc:modularui:2.4.3") { transitive = false }
-    api("com.cleanroommc:groovyscript:1.0.1") { transitive = false }
-    api("CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.684")
-    api rfg.deobf("curse.maven:ae2-extended-life-570458:4402048") // AE2UEL 0.55.6
+    api("com.cleanroommc:modularui:2.5.0-rc1") { transitive = false }
+    api("com.cleanroommc:groovyscript:1.2.0-hotfix1") { transitive = false }
+    api("CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.700")
+    api("appeng:ae2-uel:v0.56.4") { transitive = false }
     api rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
 
     // Non-published dependencies
     // Change any to devOnlyNonPublishable to test them in-game.
-    compileOnly("curse.maven:journeymap-32274:2916002") // Journeymap 5.7.1
+    compileOnly("curse.maven:journeymap-32274:5172461") // Journeymap 5.7.1p3
     compileOnly("curse.maven:voxelmap-225179:3029445") // VoxelMap 1.9.28
-    compileOnly("curse.maven:xaeros-263420:4516832") // Xaero's Minimap 23.4.1
-    compileOnly rfg.deobf("curse.maven:opencomputers-223008:4526246") // OpenComputers 1.8.0+9833087
+    compileOnly("curse.maven:xaeros-263420:5394758") // Xaero's Minimap 24.2.0
+    compileOnly rfg.deobf("curse.maven:opencomputers-223008:5274236") // OpenComputers 1.8.5+179e1c3
     compileOnly rfg.deobf("curse.maven:hwyla-253449:2568751") // HWYLA 1.8.26-B41
     compileOnly rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2
     compileOnly rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
     compileOnly rfg.deobf("curse.maven:chisel-235279:2915375") // Chisel 1.0.2.45
+    compileOnly rfg.deobf("curse.maven:littletiles-257818:4750222") // LittleTiles 1.5.82-1.12.2
+    compileOnly rfg.deobf("curse.maven:creativecore-257814:4722163") // Creative Core 1.10.71
 
     // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.
     // Uncomment any of these to test them in-game.
@@ -66,21 +68,4 @@ dependencies {
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:magic-bees-65764:2855061") // Magic Bees 3.2.25
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:gendustry-70492:2516215") // Gendustry 1.6.5.8
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:bdlib-70496:2518031") // BdLib 1.14.3.12
-}
-
-minecraft {
-    injectedTags.put('DEP_VERSION_STRING', "required-after:gregtech@[${modVersion},);")
-}
-
-configurations {
-    compileOnly {
-        // exclude GNU trove, FastUtil is superior and still updated
-        exclude group: "net.sf.trove4j", module: "trove4j"
-        // exclude javax.annotation from findbugs, jetbrains annotations are superior
-        exclude group: "com.google.code.findbugs", module: "jsr305"
-        // exclude scala as we don't use it for anything and causes import confusion
-        exclude group: "org.scala-lang"
-        exclude group: "org.scala-lang.modules"
-        exclude group: "org.scala-lang.plugins"
-    }
 }

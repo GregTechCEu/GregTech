@@ -12,8 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import static gregtech.api.GTValues.*;
-import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.LARGE_CHEMICAL_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
@@ -82,14 +81,6 @@ public class ReactorRecipes {
                 .input(dust, Sulfur)
                 .fluidOutputs(SiliconeRubber.getFluid(1296))
                 .duration(600).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Carbon, 2)
-                .input(dust, Rutile)
-                .fluidInputs(Chlorine.getFluid(4000))
-                .fluidOutputs(CarbonMonoxide.getFluid(2000))
-                .fluidOutputs(TitaniumTetrachloride.getFluid(1000))
-                .duration(400).EUt(VA[HV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .fluidInputs(Dimethyldichlorosilane.getFluid(1000))
@@ -505,23 +496,10 @@ public class ReactorRecipes {
                 .duration(500).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Quicklime, 2)
-                .fluidInputs(CarbonDioxide.getFluid(1000))
-                .output(dust, Calcite, 5)
-                .duration(80).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Magnesia, 2)
                 .fluidInputs(CarbonDioxide.getFluid(1000))
                 .output(dust, Magnesite, 5)
                 .duration(80).EUt(VA[LV]).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .circuitMeta(1)
-                .input(dust, Calcite, 5)
-                .output(dust, Quicklime, 2)
-                .fluidOutputs(CarbonDioxide.getFluid(1000))
-                .duration(240).EUt(VA[LV]).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Magnesite, 5)

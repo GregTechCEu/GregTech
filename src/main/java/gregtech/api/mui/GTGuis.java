@@ -9,6 +9,7 @@ import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -60,11 +61,17 @@ public class GTGuis {
         public PopupPanel(@NotNull String name, int width, int height, boolean disableBelow,
                           boolean closeOnOutsideClick) {
             super(name);
-            flex().startDefaultMode();
-            flex().size(width, height).align(Alignment.Center);
-            flex().endDefaultMode();
+            size(width, height).align(Alignment.Center);
             background(GTGuiTextures.BACKGROUND_POPUP);
-            child(ButtonWidget.panelCloseButton().top(5).right(5));
+            child(ButtonWidget.panelCloseButton().top(5).right(5)
+                    .onMousePressed(mouseButton -> {
+                        if (mouseButton == 0 || mouseButton == 1) {
+                            this.closeIfOpen(true);
+                            Interactable.playButtonClickSound();
+                            return true;
+                        }
+                        return false;
+                    }));
             this.disableBelow = disableBelow;
             this.closeOnOutsideClick = closeOnOutsideClick;
         }

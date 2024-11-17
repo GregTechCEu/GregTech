@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.ultimate_voltage.75_fusion_reactor_3.name"
     },
     "icon": {
-      "item": "gregtech:machine",
+      "item": "gregtech:mte",
       "data": 1022
     },
     "frame": "challenge"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:machine",
+            "item": "gregtech:mte",
             "data": 1022
           }
         ]
