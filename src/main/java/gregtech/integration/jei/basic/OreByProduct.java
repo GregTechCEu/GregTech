@@ -289,12 +289,12 @@ public class OreByProduct implements IRecipeWrapper {
 
         // just here because if highTier is disabled, if a recipe is (incorrectly) registering
         // UIV+ recipes, this allows it to go up to the recipe tier for that recipe only
-        int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX;
+        int maxTier = GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX_TRUE;
         // scuffed positioning because we can't have good ui(until mui soontm)
         jeiTexts.add(
-                new JeiInteractableText(0, 160, GTValues.VNF[GTValues.LV], 0x111111, GTValues.LV, true)
+                new JeiInteractableText(0, 160, GTValues.VOCNF[GTValues.LV], 0x111111, GTValues.LV, true)
                         .setTooltipBuilder((state, tooltip) -> {
-                            tooltip.add(I18n.format("gregtech.jei.overclock_button", GTValues.VNF[state]));
+                            tooltip.add(I18n.format("gregtech.jei.overclock_button", GTValues.VOCNF[state]));
                             tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.jei.overclock_warn"));
                         })
                         .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
@@ -305,8 +305,11 @@ public class OreByProduct implements IRecipeWrapper {
                             } else if (mouseButton == 1) {
                                 // decrement tier if right click
                                 if (--state < GTValues.LV) state = maxTier;
+                            } else if (mouseButton == 2) {
+                                // reset tier if middle click
+                                state = GTValues.LV;
                             } else return false;
-                            text.setCurrentText(GTValues.VNF[state]);
+                            text.setCurrentText(GTValues.VOCNF[state]);
                             text.setState(state);
                             return true;
                         }));
@@ -336,7 +339,7 @@ public class OreByProduct implements IRecipeWrapper {
             // The total chance may or may not max out at 100%.
             // TODO possibly change in the future.
             double totalChance = Math.min(chance + boost * tierDifference, 100);
-            tooltip.add(I18n.format("gregtech.recipe.chance_total", GTValues.VNF[tier], totalChance));
+            tooltip.add(I18n.format("gregtech.recipe.chance_total", GTValues.VOCNF[tier], totalChance));
         }
     }
 

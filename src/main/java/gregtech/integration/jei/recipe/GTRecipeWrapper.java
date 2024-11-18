@@ -225,7 +225,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                     // The total chance may or may not max out at 100%.
                     // TODO possibly change in the future.
                     double totalChance = Math.min(chance + boost * tierDifference, 100);
-                    tooltip.add(I18n.format("gregtech.recipe.chance_total", GTValues.VNF[tier], totalChance));
+                    tooltip.add(I18n.format("gregtech.recipe.chance_total", GTValues.VOCNF[tier], totalChance));
                 }
             }
         } else if (notConsumed) {
@@ -278,7 +278,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
             if (recipe.hasProperty(TotalComputationProperty.getInstance()) &&
                     recipe.hasProperty(ComputationProperty.getInstance())) {
-                long eu = Math.abs((long) recipe.getEUt()) * recipe.getDuration();
+                long eu = Math.abs(recipe.getEUt()) * recipe.getDuration();
                 int minimumCWUt = recipe.getProperty(ComputationProperty.getInstance(), 1);
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition,
                         0x111111);
@@ -293,7 +293,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
             minecraft.fontRenderer.drawString(
                     I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted",
                             overclockResult[0],
-                            GTValues.VNF[GTUtility.getTierByVoltage(overclockResult[0])]),
+                            GTValues.VOCNF[GTUtility.getOCTierByVoltage(overclockResult[0])]),
                     0, yPosition += LINE_HEIGHT, (int) overclockResult[2]);
         }
         if (drawDuration) {
@@ -368,17 +368,17 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                 .setClickAction((mc, x, y, button) -> false)
                 .setActiveSupplier(creativeTweaker));
 
-        if (recipeMap.jeiOverclockButtonEnabled()) {
+        if (recipeMap != null && recipeMap.jeiOverclockButtonEnabled()) {
             int recipeTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
             // just here because if highTier is disabled, if a recipe is (incorrectly) registering
             // UIV+ recipes, this allows it to go up to the recipe tier for that recipe only
-            int maxTier = Math.max(recipeTier, GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX);
+            int maxTier = Math.max(recipeTier, GregTechAPI.isHighTier() ? GTValues.UIV : GTValues.MAX_TRUE);
             int minTier = Math.max(GTValues.LV, GTUtility.getTierByVoltage(recipe.getEUt()));
             // scuffed positioning because we can't have good ui(until mui soontm)
             jeiTexts.add(
-                    new JeiInteractableText(0, 90 - LINE_HEIGHT, GTValues.VNF[recipeTier], 0x111111, recipeTier, true)
+                    new JeiInteractableText(0, 90 - LINE_HEIGHT, GTValues.VOCNF[recipeTier], 0x111111, recipeTier, true)
                             .setTooltipBuilder((state, tooltip) -> {
-                                tooltip.add(I18n.format("gregtech.jei.overclock_button", GTValues.VNF[state]));
+                                tooltip.add(I18n.format("gregtech.jei.overclock_button", GTValues.VOCNF[state]));
                                 tooltip.add(TooltipHelper.BLINKING_CYAN + I18n.format("gregtech.jei.overclock_warn"));
                             })
                             .setClickAction((minecraft, text, mouseX, mouseY, mouseButton) -> {
@@ -393,7 +393,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                                     // reset tier if middle click
                                     state = minTier;
                                 } else return false;
-                                text.setCurrentText(GTValues.VNF[state]);
+                                text.setCurrentText(GTValues.VOCNF[state]);
                                 text.setState(state);
                                 return true;
                             }));
@@ -419,7 +419,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         double duration = Math.floor(recipe.getDuration() /
                 Math.pow(recipeMap == RecipeMaps.LARGE_CHEMICAL_RECIPES ? 4 : 2, tierDifference));
         result[2] = duration <= 0.5 ? 0xFFFF55 : 0x111111;
-        result[0] = (long) Math.abs(recipe.getEUt()) *
+        result[0] = Math.abs(recipe.getEUt()) *
                 (int) Math.pow(recipeMap == RecipeMaps.FUSION_RECIPES ? 2 : 4, tierDifference);
         result[1] = Math.max(1, (int) duration);
 
