@@ -171,7 +171,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
-        IntSyncValue syncValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
+        IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
         return new MultiblockUIFactory<>(this) {
 
             @Override
@@ -191,6 +191,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                                 .heightRel(1.0f)))
                                 .child(new Row()
                                         // TODO add inc/dec buttons
+                                        // TODO create slider widget
                                         .child(new TextFieldWidget()
                                                 .size(40, 20)
                                                 .left(38)
@@ -199,7 +200,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                                 .setTextColor(Color.WHITE.darker(1))
                                                 .setNumbers(0, 100)
                                                 // TODO show % sign
-                                                .value(syncValue)
+                                                .value(throttleValue)
                                                 .background(GTGuiTextures.DISPLAY))));
 
                 return new ButtonWidget<>()
