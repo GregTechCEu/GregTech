@@ -170,9 +170,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
+    protected MultiblockUIFactory createUIFactory() {
         IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
-        return new MultiblockUIFactory<>(this) {
+        return new MultiblockUIFactory(this) {
 
             @Override
             public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
