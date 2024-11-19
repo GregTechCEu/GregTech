@@ -359,18 +359,25 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_CROSS = fullImage("textures/gui/widget/button_cross.png");
     public static final UITexture BUTTON_REDSTONE_ON = fullImage("textures/gui/widget/button_redstone_on.png");
     public static final UITexture BUTTON_REDSTONE_OFF = fullImage("textures/gui/widget/button_redstone_off.png");
-    public static final UITexture BUTTON_POWER_ON = fullImage("textures/gui/widget/button_power.png", true); // TODO fix
-    public static final UITexture BUTTON_POWER_OFF = fullImage("textures/gui/widget/button_power.png", true); // TODO
-                                                                                                              // fix
+
+    /**
+     * 0 = OFF <br />
+     * 1 = ON <br />
+     */
+    public static final UITexture[] BUTTON_POWER = slice("textures/gui/widget/button_power.png",
+            18, 36, 18, 18, true);
+
     public static final UITexture BUTTON_POWER_DETAIL = fullImage("textures/gui/widget/button_power_detail.png", true);
-    public static final UITexture BUTTON_VOID_DISABLED = fullImage("textures/gui/widget/button_void_multiblock.png",
-            true); // TODO fix
-    public static final UITexture BUTTON_VOID_ITEM = fullImage("textures/gui/widget/button_void_multiblock.png", true); // TODO
-                                                                                                                        // fix
-    public static final UITexture BUTTON_VOID_FLUID = fullImage("textures/gui/widget/button_void_multiblock.png", true); // TODO
-                                                                                                                         // fix
-    public static final UITexture BUTTON_VOID_ITEM_FLUID = fullImage("textures/gui/widget/button_void_multiblock.png",
-            true); // TODO fix
+
+    /**
+     * 0 = DISABLED <br />
+     * 1 = ITEM VOID <br />
+     * 2 = FLUID VOID <br />
+     * 3 = VOID BOTH <br />
+     **/
+    public static final UITexture[] MULTIBLOCK_VOID = slice("textures/gui/widget/button_void_multiblock.png",
+            18, 72, 18, 18, true);
+
     public static final UITexture BUTTON_VOID_NONE = fullImage("textures/gui/widget/button_void_none.png", true);
     public static final UITexture BUTTON_DISTINCT_BUSES = fullImage("textures/gui/widget/button_distinct_buses.png",
             true);

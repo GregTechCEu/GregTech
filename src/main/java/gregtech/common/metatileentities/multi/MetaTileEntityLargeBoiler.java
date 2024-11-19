@@ -42,7 +42,6 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -171,49 +170,54 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    public void createExtraButtons(@NotNull ModularPanel parentPanel, @NotNull PanelSyncManager panelSyncManager,
-                                   @NotNull List<Widget<?>> list) {
+    protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
         IntSyncValue syncValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
-        syncValue.updateCacheFromSource(true);
-        panelSyncManager.syncValue("boiler_throttle", syncValue);
+        return new MultiblockUIFactory<>(this) {
 
-        PanelSyncHandler panel = panelSyncManager.panel("throttle_panel", parentPanel,
-                (syncManager, syncHandler) -> GTGuis.createPopupPanel("boiler_throttle", 116, 53)
-                        .child(new Row()
-                                .pos(4, 4)
-                                .height(16).coverChildrenWidth()
-                                .child(new ItemDrawable(getStackForm())
-                                        .asWidget()
-                                        .size(16)
-                                        .marginRight(4))
-                                .child(IKey.lang("gregtech.multiblock.large_boiler.throttle.title")
-                                        .asWidget()
-                                        .heightRel(1.0f)))
-                        .child(new Row()
-                                // TODO add inc/dec buttons
-                                .child(new TextFieldWidget()
-                                        .size(40, 20)
-                                        .left(38)
-                                        .top(20)
-                                        .setTextColor(Color.WHITE.darker(1)) // TODO proper color
-                                        .setNumbers(0, 100)
-                                        .value(new IntValue.Dynamic(syncValue::getIntValue,
-                                                syncValue::setIntValue)) // TODO show % sign
-                                        .background(GTGuiTextures.DISPLAY))));
+            @Override
+            public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
+                                                        @NotNull PanelSyncManager panelSyncManager) {
+                PanelSyncHandler panel = panelSyncManager.panel("throttle_panel", mainPanel,
+                        (syncManager, syncHandler) -> GTGuis.createPopupPanel("boiler_throttle", 116, 53)
+                                .child(new Row()
+                                        .pos(4, 4)
+                                        .height(16).coverChildrenWidth()
+                                        .child(new ItemDrawable(getStackForm())
+                                                .asWidget()
+                                                .size(16)
+                                                .marginRight(4))
+                                        .child(IKey.lang("gregtech.multiblock.large_boiler.throttle.title")
+                                                .asWidget()
+                                                .heightRel(1.0f)))
+                                .child(new Row()
+                                        // TODO add inc/dec buttons
+                                        .child(new TextFieldWidget()
+                                                .size(40, 20)
+                                                .left(38)
+                                                .top(20)
+                                                // TODO proper color
+                                                .setTextColor(Color.WHITE.darker(1))
+                                                .setNumbers(0, 100)
+                                                // TODO show % sign
+                                                .value(syncValue)
+                                                .background(GTGuiTextures.DISPLAY))));
 
-        list.add(new ButtonWidget<>()
-                .width(18)
-                .overlay(GTGuiTextures.BUTTON_THROTTLE_MINUS)
-                .background(GTGuiTextures.BUTTON) // TODO make this work
-                .onMousePressed(i -> {
-                    if (panel.isPanelOpen()) {
-                        panel.closePanel();
-                    } else {
-                        panel.openPanel();
-                    }
-                    Interactable.playButtonClickSound();
-                    return true;
-                }));
+                return new ButtonWidget<>()
+                        .width(18)
+                        .overlay(GTGuiTextures.BUTTON_THROTTLE_MINUS)
+                        // TODO make this work
+                        .background(GTGuiTextures.BUTTON)
+                        .onMousePressed(i -> {
+                            if (panel.isPanelOpen()) {
+                                panel.closePanel();
+                            } else {
+                                panel.openPanel();
+                            }
+                            Interactable.playButtonClickSound();
+                            return true;
+                        });
+            }
+        };
     }
 
     private void setThrottlePercentage(int amount) {
