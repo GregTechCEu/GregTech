@@ -3,6 +3,7 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultipleRecipeMaps;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
@@ -24,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.IntValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
@@ -137,23 +137,30 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     }
 
     @Override
-    public void createExtraButtons(@NotNull ModularPanel parentPanel, @NotNull PanelSyncManager panelSyncManager,
-                                   @NotNull List<Widget<?>> list) {
-        if (getAvailableRecipeMaps() != null && getAvailableRecipeMaps().length > 1) {
-            IntSyncValue recipeMapValue = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
-            panelSyncManager.syncValue("recipemap_state", recipeMapValue);
-            list.add(new CycleButtonWidget()
-                    .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
-                    .background(GTGuiTextures.BUTTON)
-                    .disableHoverBackground() // TODO find out why this needs to be called
-                    .value(new IntValue.Dynamic(recipeMapValue::getIntValue, recipeMapValue::setIntValue))
-                    .length(getAvailableRecipeMaps().length)
-                    .tooltipBuilder(t -> t.setAutoUpdate(true)
-                            .addLine(IKey.comp(
-                                    IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
-                                            IKey.lang(getAvailableRecipeMaps()[recipeMapValue.getIntValue()]
-                                                    .getTranslationKey()))))));
-        }
+    protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
+        IntSyncValue recipeMapValue = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
+        return new MultiblockUIFactory<>(this) {
+
+            @Override
+            public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
+                                                        @NotNull PanelSyncManager panelSyncManager) {
+                if (getAvailableRecipeMaps() == null || getAvailableRecipeMaps().length <= 1)
+                    return null;
+
+                return new CycleButtonWidget()
+                        .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
+                        .background(GTGuiTextures.BUTTON)
+                        // TODO find out why this needs to be called
+                        .disableHoverBackground()
+                        .value(recipeMapValue)
+                        .length(getAvailableRecipeMaps().length)
+                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                        .tooltipBuilder(t -> t.addLine(IKey.comp(
+                                IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
+                                        IKey.lang(getAvailableRecipeMaps()[recipeMapValue.getIntValue()]
+                                                .getTranslationKey())))));
+            }
+        };
     }
 
     @Override
