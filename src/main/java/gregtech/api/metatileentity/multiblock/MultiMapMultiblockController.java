@@ -137,9 +137,9 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     }
 
     @Override
-    protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
+    protected MultiblockUIFactory createUIFactory() {
         IntSyncValue recipeMapValue = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
-        return new MultiblockUIFactory<>(this) {
+        return new MultiblockUIFactory(this) {
 
             @Override
             public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
