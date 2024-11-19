@@ -27,6 +27,7 @@ import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
@@ -46,12 +47,8 @@ public class MultiblockUIFactory {
     }
 
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        var list = new ArrayList<Widget<?>>();
-        configureDisplayText(list, panelSyncManager);
-        var displayText = new Column()
-                .padding(4, 4);
-
-        list.forEach(displayText::child);
+        var displayText = new ArrayList<Widget<?>>();
+        configureDisplayText(displayText, panelSyncManager);
 
         var panel = createRootPanel();
 
@@ -60,20 +57,35 @@ public class MultiblockUIFactory {
         // .setWarningStatus(getWarningLogo(), this::addWarningText)
         // .setErrorStatus(getErrorLogo(), this::addErrorText))
 
-        // todo voiding mode button
-        // ImageCycleButtonWidget(173, 161, 18, 18)
-
         // TODO createExtras() hook for overrides?
         var bars = createBars(panel, panelSyncManager);
 
-        return panel.child(createScreen()
-                .child(displayText))
+        return panel.child(createScreen(displayText, panelSyncManager))
                 .childIf(bars != null, bars)
                 .child(new Row()
                         .bottom(7)
                         .height(77)
                         .child(SlotGroupWidget.playerInventory(0).left(4))
                         .child(createButtons(panel, panelSyncManager)));
+    }
+
+    private Widget<?> createIndicator(PanelSyncManager syncManager) {
+        List<Widget<?>> textList = new ArrayList<>();
+        configureErrorText(textList, syncManager);
+        if (!textList.isEmpty())
+            configureWarningText(textList, syncManager);
+
+        return GTGuiTextures.GREGTECH_LOGO.asWidget()
+                // .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipBuilder(tooltip -> {
+                    if (textList.isEmpty()) return;
+                    for (var w : textList) {
+                        if (w instanceof TextWidget textWidget)
+                            tooltip.addLine(textWidget.getKey());
+                    }
+                })
+                .right(4)
+                .bottom(4);
     }
 
     /**
@@ -172,8 +184,17 @@ public class MultiblockUIFactory {
         return column;
     }
 
-    protected ParentWidget<?> createScreen() {
-        return new ScrollWidget<>(new VerticalScrollData())
+    protected ParentWidget<?> createScreen(List<Widget<?>> lines, PanelSyncManager syncManager) {
+        var displayText = new Column()
+                .expanded()
+                .padding(4, 4);
+
+        lines.forEach(displayText::child);
+        return new ParentWidget<>()
+                .child(createIndicator(syncManager))
+                .child(new ScrollWidget<>(new VerticalScrollData())
+                        .sizeRel(1f)
+                        .child(displayText))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, 109)
                 .pos(4, 4);
