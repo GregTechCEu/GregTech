@@ -8,6 +8,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.KeyUtil;
+
+import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
@@ -22,6 +25,7 @@ import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
@@ -34,15 +38,8 @@ import java.util.List;
 public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
 
     private final T mte;
-
-    protected final Column rootColumn = new Column();
-
-    protected final Row screenRow = new Row();
-    protected int screenHeight = 117;
-
-    protected final Row inventoryRow = new Row();
-
-    protected final Column buttonColumn = new Column();
+    protected static final int DEFAULT_HEIGHT = 202;
+    protected static final int DEFAULT_WIDTH = 198;
 
     public MultiblockUIFactory(@NotNull T mte) {
         this.mte = mte;
@@ -66,14 +63,16 @@ public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
         // todo voiding mode button
         // ImageCycleButtonWidget(173, 161, 18, 18)
 
-        // createBars();
         // TODO createExtras() hook for overrides?
-        // createInventory();
+        var bars = createBars(panel, panelSyncManager);
 
         return panel.child(createScreen()
                 .child(displayText))
+                .childIf(bars != null, bars)
                 .child(new Row()
-                        .child(SlotGroupWidget.playerInventory().left(4))
+                        .bottom(7)
+                        .height(77)
+                        .child(SlotGroupWidget.playerInventory(0).left(4))
                         .child(createButtons(panel, panelSyncManager)));
     }
 
@@ -96,9 +95,10 @@ public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
     }
 
     /**
-     * Called serverside to obtain text displayed in GUI
-     * each element of list is displayed on new line
-     * to use translation, use TextComponentTranslation
+     * Called on both sides to obtain text displayed in GUI <br />
+     * Each element of list is displayed on new line <br />
+     * To use translation, use {@link KeyUtil#coloredLang(TextFormatting, String, Object...)}
+     * or {@link KeyUtil#unformattedLang(String, Object...)}
      */
     protected void configureDisplayText(List<Widget<?>> textList, PanelSyncManager manager) {
         MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), manager);
@@ -119,31 +119,37 @@ public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
     }
 
     protected @NotNull ModularPanel createRootPanel() {
-        return GTGuis.createPanel(mte, 198, 208);
+        return GTGuis.createPanel(mte, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
-    protected void createBars() {
-        if (!(mte instanceof ProgressBarMultiblock progressMulti)) {
-            return;
-        }
+    /**
+     * @param mainPanel        the main panel, needed for creating popup panels
+     * @param panelSyncManager the sync manager for synchronizing widgets
+     */
+    @Nullable
+    protected Column createBars(@NotNull ModularPanel mainPanel,
+                                @NotNull PanelSyncManager panelSyncManager) {
+        if (!(mte instanceof ProgressBarMultiblock progressMulti)) return null;
 
         final int count = progressMulti.getProgressBarCount();
-        if (count < 1) {
-            return;
-        }
+        if (count < 1) return null;
+        mainPanel.height(DEFAULT_HEIGHT + (Bars.HEIGHT * 2) - 2);
 
         final int rows = progressMulti.getProgressBarRows();
         final int cols = progressMulti.getProgressBarCols();
 
-        Column column = new Column();
-        rootColumn.child(column);
+        Column column = new Column()
+                .padding(4, 0)
+                .pos(0, 114)
+                .widthRel(1f)
+                .height(Bars.HEIGHT * 2);
+        int rowWidth = (Bars.FULL_WIDTH / cols) - (cols - 1);
 
         for (int r = 0; r < rows; r++) {
-            screenHeight -= (r + 1) * 8;
 
             Row row = new Row()
-                    .size(Bars.FULL_WIDTH, Bars.HEIGHT)
-                    .left(4);
+                    .widthRel(1f)
+                    .height(Bars.HEIGHT);
 
             int from = r * cols;
             int to = Math.min(from + cols, cols);
@@ -155,15 +161,15 @@ public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
             }
 
             for (int i = from; i < to; i++) {
-                // row.top(screenHeight + 6)
-                // .child(progressMulti.createProgressBar(panelSyncManager, i)
-                // .height(Bars.HEIGHT)
-                // .width(cols == 3 ? Bars.THIRD_WIDTH : cols == 2 ? Bars.HALF_WIDTH : Bars.FULL_WIDTH)
-                // .direction(ProgressWidget.Direction.RIGHT));
+                row.child(progressMulti.createProgressBar(panelSyncManager, i)
+                        .height(Bars.HEIGHT)
+                        .width(rowWidth)
+                        .direction(ProgressWidget.Direction.RIGHT));
             }
 
             column.child(row);
         }
+        return column;
     }
 
     protected ParentWidget<?> createScreen() {
@@ -173,35 +179,18 @@ public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
                 .pos(4, 4);
     }
 
-    protected void createInventory() {
-        inventoryRow.size(Screen.WIDTH, 81)
-                .left(4)
-                .bottom(3);
-
-        Column inventory = new Column()
-                .child(SlotGroupWidget.playerInventory()
-                        .left(3)
-                        .bottom(4));
-
-        inventoryRow.child(inventory);
-        rootColumn.child(inventoryRow);
-    }
-
     @NotNull
     protected Column createButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         var flexButton = createFlexButton(mainPanel, panelSyncManager);
         if (flexButton == null) {
-            // 173, 125, 18, 18
             flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
                     .size(18)
-                    // .pos(173, 125)
                     .marginBottom(5);
         }
         var powerButton = createPowerButton(mainPanel, panelSyncManager);
 
         return new Column()
                 .right(4)
-                .bottom(7)
                 .size(18, 77)
                 .child(createDistinctButton(mainPanel, panelSyncManager))
                 .child(createVoidingButton(mainPanel, panelSyncManager))
@@ -258,22 +247,18 @@ public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
             BooleanSyncValue distinctValue = new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct);
 
             return new CycleButtonWidget()
-                    // .top(18)
                     .size(18, 18)
                     .value(distinctValue)
-                    .textureGetter(
-                            i -> i == 0 ? GTGuiTextures.BUTTON_NO_DISTINCT_BUSES : GTGuiTextures.BUTTON_DISTINCT_BUSES)
+                    .textureGetter(i -> GTGuiTextures.BUTTON_DISTINCT_BUSES[i])
                     .background(GTGuiTextures.BUTTON)
                     .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                     .tooltipBuilder(t -> t.addLine(distinctValue.getBoolValue() ?
                             IKey.lang("gregtech.multiblock.universal.distinct_enabled") :
                             IKey.lang("gregtech.multiblock.universal.distinct_disabled")));
         } else {
-            return new Widget<>()
-                    // .top(18)
+            return GTGuiTextures.BUTTON_NO_DISTINCT_BUSES.asWidget()
                     .size(18, 18)
-                    .background(GTGuiTextures.BUTTON, GTGuiTextures.BUTTON_NO_DISTINCT_BUSES)
-                    .tooltip(t -> t.addLine(IKey.lang("gregtech.multiblock.universal.distinct_not_supported")));
+                    .addTooltipLine(IKey.lang("gregtech.multiblock.universal.distinct_not_supported"));
         }
     }
 

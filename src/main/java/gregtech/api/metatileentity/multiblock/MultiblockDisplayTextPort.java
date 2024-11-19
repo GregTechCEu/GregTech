@@ -62,8 +62,8 @@ public class MultiblockDisplayTextPort {
             this.manager = manager;
 
             if (!isStructureFormed && showIncompleteStructureWarning) {
-                var base = KeyUtil.coloredTranslation(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
-                var hover = KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                var base = KeyUtil.coloredLang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
+                var hover = KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.invalid_structure.tooltip");
                 addKey(base).addTooltipLine(hover);
             }
@@ -117,9 +117,9 @@ public class MultiblockDisplayTextPort {
                 // wrap in text component to keep it from being formatted
                 IKey voltageName = IKey.str(GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                var bodyText = KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                var bodyText = KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName);
-                var hoverText = KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                var hoverText = KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick_hover");
                 addKey(bodyText).addTooltipLine(hoverText);
             }
@@ -136,9 +136,9 @@ public class MultiblockDisplayTextPort {
             if (!isStructureFormed) return this;
             if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
 
-            var bodyText = KeyUtil.coloredTranslation(TextFormatting.GRAY,
+            var bodyText = KeyUtil.coloredLang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_recipe_tier", GTValues.VNF[tier]);
-            var hoverText = KeyUtil.coloredTranslation(TextFormatting.GRAY,
+            var hoverText = KeyUtil.coloredLang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_recipe_tier_hover");
             addKey(bodyText).addTooltipLine(hoverText);
             return this;
@@ -157,7 +157,7 @@ public class MultiblockDisplayTextPort {
                 var voltageName = KeyUtil.unformattedString(
                         GTValues.VOCNF[GTUtility.getOCTierByVoltage(energyUsage)]);
 
-                addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.energy_consumption", energyFormatted, voltageName));
             }
             return this;
@@ -176,7 +176,7 @@ public class MultiblockDisplayTextPort {
                 var voltageName = KeyUtil.unformattedString(
                         GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName));
             }
             return this;
@@ -197,7 +197,7 @@ public class MultiblockDisplayTextPort {
                 var voltageName = KeyUtil.unformattedString(
                         GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick_amps",
                         energyFormatted, amperage, voltageName));
             }
@@ -213,7 +213,7 @@ public class MultiblockDisplayTextPort {
             if (!isStructureFormed) return this;
             if (maxCWUt > 0) {
                 var computation = KeyUtil.coloredString(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(maxCWUt));
-                addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.computation.max", computation));
             }
             return this;
@@ -229,7 +229,7 @@ public class MultiblockDisplayTextPort {
             if (isActive && currentCWUt > 0) {
                 var computation = KeyUtil.coloredString(TextFormatting.AQUA,
                         TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
-                addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.computation.usage", computation));
             }
             return this;
@@ -319,7 +319,7 @@ public class MultiblockDisplayTextPort {
                 var parallels = KeyUtil.coloredString(TextFormatting.DARK_PURPLE,
                         TextFormattingUtil.formatNumbers(numParallels));
 
-                addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.parallel", parallels));
             }
             return this;
@@ -333,7 +333,7 @@ public class MultiblockDisplayTextPort {
         public Builder addLowPowerLine(boolean isLowPower) {
             if (!isStructureFormed) return this;
             if (isLowPower) {
-                addKey(KeyUtil.coloredTranslation(TextFormatting.YELLOW,
+                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
                         "gregtech.multiblock.not_enough_energy"));
             }
             return this;
@@ -361,7 +361,7 @@ public class MultiblockDisplayTextPort {
         public Builder addLowDynamoTierLine(boolean isTooLow) {
             if (!isStructureFormed) return this;
             if (isTooLow) {
-                addKey(KeyUtil.coloredTranslation(TextFormatting.YELLOW,
+                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
                         "gregtech.multiblock.not_enough_energy_output"));
             }
             return this;
@@ -381,42 +381,42 @@ public class MultiblockDisplayTextPort {
                 // Wrench
                 if ((maintenanceProblems & 1) == 0) {
                     hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
-                    addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.wrench"));
                 }
 
                 // Screwdriver
                 if (((maintenanceProblems >> 1) & 1) == 0) {
                     hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
-                    addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.screwdriver"));
                 }
 
                 // Soft Mallet
                 if (((maintenanceProblems >> 2) & 1) == 0) {
                     hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
-                    addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.soft_mallet"));
                 }
 
                 // Hammer
                 if (((maintenanceProblems >> 3) & 1) == 0) {
                     hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
-                    addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.hard_hammer"));
                 }
 
                 // Wire Cutters
                 if (((maintenanceProblems >> 4) & 1) == 0) {
                     hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
-                    addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.wire_cutter"));
                 }
 
                 // Crowbar
                 if (((maintenanceProblems >> 5) & 1) == 0) {
                     addMaintenanceProblemHeader(hasAddedHeader);
-                    addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.crowbar"));
                 }
             }
@@ -425,7 +425,7 @@ public class MultiblockDisplayTextPort {
 
         private boolean addMaintenanceProblemHeader(boolean hasAddedHeader) {
             if (!hasAddedHeader) {
-                addKey(KeyUtil.coloredTranslation(TextFormatting.YELLOW,
+                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.has_problems"));
             }
             return true;
@@ -439,9 +439,9 @@ public class MultiblockDisplayTextPort {
         public Builder addMufflerObstructedLine(boolean isObstructed) {
             if (!isStructureFormed) return this;
             if (isObstructed) {
-                addKey(KeyUtil.coloredTranslation(TextFormatting.RED,
+                addKey(KeyUtil.coloredLang(TextFormatting.RED,
                         "gregtech.multiblock.universal.muffler_obstructed"));
-                addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                         "gregtech.multiblock.universal.muffler_obstructed_desc"));
             }
             return this;
@@ -455,7 +455,7 @@ public class MultiblockDisplayTextPort {
         public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
             if (!isStructureFormed || !isActive || fuelName == null) return this;
 
-            addKey(KeyUtil.coloredTranslation(TextFormatting.GRAY,
+            addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
                     KeyUtil.coloredString(TextFormatting.RED, fuelName),
                     KeyUtil.coloredNumber(TextFormatting.AQUA, previousRecipeDuration)));
