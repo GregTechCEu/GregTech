@@ -35,13 +35,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiblockUIFactory<T extends MultiblockWithDisplayBase> {
+public class MultiblockUIFactory {
 
-    private final T mte;
+    private final MultiblockWithDisplayBase mte;
     protected static final int DEFAULT_HEIGHT = 202;
     protected static final int DEFAULT_WIDTH = 198;
 
-    public MultiblockUIFactory(@NotNull T mte) {
+    public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
     }
 

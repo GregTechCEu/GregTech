@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayTextPort;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.BlockPattern;
@@ -124,9 +123,9 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
+    protected MultiblockUIFactory createUIFactory() {
         IntSyncValue temp = new IntSyncValue(this::getCurrentTemperature, i -> {});
-        return new MultiblockUIFactory<>(this) {
+        return new MultiblockUIFactory(this) {
 
             @Override
             protected void configureDisplayText(List<Widget<?>> textList, PanelSyncManager manager) {
