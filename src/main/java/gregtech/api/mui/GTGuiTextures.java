@@ -382,8 +382,13 @@ public class GTGuiTextures {
             18, 72, 18, 18, true);
 
     public static final UITexture BUTTON_VOID_NONE = fullImage("textures/gui/widget/button_void_none.png", true);
-    public static final UITexture BUTTON_DISTINCT_BUSES = fullImage("textures/gui/widget/button_distinct_buses.png",
-            true);
+
+    /**
+     * 0 = DISABLED <br />
+     * 1 = ENABLED <br />
+     */
+    public static final UITexture[] BUTTON_DISTINCT_BUSES = slice("textures/gui/widget/button_distinct_buses.png",
+            18, 36, 18, 18, true);
     public static final UITexture BUTTON_NO_DISTINCT_BUSES = fullImage(
             "textures/gui/widget/button_no_distinct_buses.png", true);
     public static final UITexture BUTTON_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", true);
