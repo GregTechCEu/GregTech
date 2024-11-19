@@ -18,7 +18,7 @@ public class KeyUtil {
         return IKey.comp(toColor(formatting), IKey.comp(keys), RESET);
     }
 
-    public static IKey coloredTranslation(TextFormatting formatting, String lang, Object... args) {
+    public static IKey coloredLang(TextFormatting formatting, String lang, Object... args) {
         if (args == null || args.length == 0) return withColor(formatting, IKey.lang(lang));
         Object[] fixedArgs = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
@@ -44,6 +44,6 @@ public class KeyUtil {
     }
 
     public static IKey unformattedLang(String lang, Object... args) {
-        return coloredTranslation(TextFormatting.RESET, lang, args);
+        return coloredLang(TextFormatting.RESET, lang, args);
     }
 }
