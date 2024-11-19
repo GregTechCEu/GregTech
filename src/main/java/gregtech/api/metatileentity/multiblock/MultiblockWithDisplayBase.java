@@ -49,7 +49,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
-    private final MultiblockUIFactory<MultiblockWithDisplayBase> uiFactory;
+    private final MultiblockUIFactory uiFactory;
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -567,8 +567,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return true;
     }
 
-    protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
-        return new MultiblockUIFactory<>(this);
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this);
     }
 
     @Override
