@@ -1,9 +1,11 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -42,6 +44,7 @@ import java.util.List;
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
                                                     ICleanroomReceiver, IDistinctBusController {
 
+    public static final int UPDATE_ENERGY = GregtechDataCodes.assignId();
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
     protected IItemHandlerModifiable inputInventory;
@@ -102,6 +105,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
+        writeCustomData(UPDATE_ENERGY, buf -> {
+            buf.writeLong(energyContainer.getEnergyCapacity());
+            buf.writeLong(energyContainer.getInputVoltage());
+            buf.writeLong(energyContainer.getInputAmperage());
+            buf.writeLong(energyContainer.getOutputVoltage());
+            buf.writeLong(energyContainer.getOutputAmperage());
+        });
     }
 
     @Override
@@ -254,12 +264,41 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isDistinct);
+        buf.writeLong(energyContainer.getEnergyCapacity());
+        buf.writeLong(energyContainer.getInputVoltage());
+        buf.writeLong(energyContainer.getInputAmperage());
+        buf.writeLong(energyContainer.getOutputVoltage());
+        buf.writeLong(energyContainer.getOutputAmperage());
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isDistinct = buf.readBoolean();
+
+        long capacity = buf.readLong(),
+                inVoltage = buf.readLong(),
+                inAmps = buf.readLong(),
+                outVoltage = buf.readLong(),
+                outAmps = buf.readLong();
+
+        this.energyContainer = new EnergyContainerHandler(this, capacity,
+                inVoltage, inAmps, outVoltage, outAmps);
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == UPDATE_ENERGY) {
+            long capacity = buf.readLong(),
+                    inVoltage = buf.readLong(),
+                    inAmps = buf.readLong(),
+                    outVoltage = buf.readLong(),
+                    outAmps = buf.readLong();
+
+            this.energyContainer = new EnergyContainerHandler(this, capacity,
+                    inVoltage, inAmps, outVoltage, outAmps);
+        }
     }
 
     @Override

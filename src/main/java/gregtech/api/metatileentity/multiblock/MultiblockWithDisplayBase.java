@@ -5,7 +5,6 @@ import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -49,6 +48,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
+    private final MultiblockUIFactory<MultiblockWithDisplayBase> uiFactory;
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -88,6 +88,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super(metaTileEntityId);
         this.maintenance_problems = 0b000000;
         this.voidingMode = VoidingMode.VOID_NONE;
+        this.uiFactory = createUIFactory();
     }
 
     /**
@@ -471,29 +472,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Add a custom third button to the Multiblock UI. By default, this is a placeholder stating that there is no
      * additional functionality for this Multiblock.
      * <br>
-     * Size will be 18x18.
-     *
-     * @param parentPanel      the parent panel containing the button
-     * @param panelSyncManager the sync manager for synchronizing widgets
-     * @param list             the list of widgets to append to
-     */
-    public void createExtraButtons(@NotNull ModularPanel parentPanel,
-                                   @NotNull PanelSyncManager panelSyncManager,
-                                   @NotNull List<com.cleanroommc.modularui.widget.Widget<?>> list) {}
-
-    /**
-     * Add a custom third button to the Multiblock UI. By default, this is a placeholder
-     * stating that there is no additional functionality for this Multiblock.
-     * <br>
      * <br>
      * Parameters should be passed directly to the created widget. Size will be 18x18.
      *
-     * @deprecated {@link #createExtraButtons(ModularPanel, PanelSyncManager, List)}
+     * @deprecated {@link #createFlexButton(ModularPanel, PanelSyncManager)}
      */
     @Deprecated
     @SuppressWarnings("SameParameterValue")
-    @NotNull
-    protected Widget getFlexButton(int x, int y, int width, int height) {
+    protected gregtech.api.gui.@NotNull Widget getFlexButton(int x, int y, int width, int height) {
         return new ImageWidget(x, y, width, height, GuiTextures.BUTTON_NO_FLEX)
                 .setTooltip("gregtech.multiblock.universal.no_flex_button");
     }
@@ -563,9 +549,13 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return true;
     }
 
+    protected MultiblockUIFactory<MultiblockWithDisplayBase> createUIFactory() {
+        return new MultiblockUIFactory<>(this);
+    }
+
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        return new MultiblockUIFactory<>(this, guiData, panelSyncManager).buildUI();
+    public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        return this.uiFactory.buildUI(guiData, panelSyncManager);
     }
 
     @Override
