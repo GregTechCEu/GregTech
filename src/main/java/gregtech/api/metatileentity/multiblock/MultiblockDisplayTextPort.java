@@ -11,7 +11,6 @@ import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.LongSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 
 import java.util.List;
@@ -26,13 +25,13 @@ public class MultiblockDisplayTextPort {
      * <br>
      * Automatically adds the "Invalid Structure" line if the structure is not formed.
      */
-    public static Builder builder(List<Widget<?>> textList, boolean isStructureFormed, PanelSyncManager manager) {
-        return builder(textList, isStructureFormed, true, manager);
+    public static Builder builder(List<Widget<?>> textList, boolean isStructureFormed) {
+        return builder(textList, isStructureFormed, true);
     }
 
     public static Builder builder(List<Widget<?>> textList, boolean isStructureFormed,
-                                  boolean showIncompleteStructureWarning, PanelSyncManager manager) {
-        return new Builder(textList, isStructureFormed, showIncompleteStructureWarning, manager);
+                                  boolean showIncompleteStructureWarning) {
+        return new Builder(textList, isStructureFormed, showIncompleteStructureWarning);
     }
 
     public static class Builder {
@@ -41,7 +40,6 @@ public class MultiblockDisplayTextPort {
         private Function<IKey, Widget<?>> widgetFunction = key -> key.asWidget()
                 .widthRel(1f).height(12);
         private final boolean isStructureFormed;
-        private final PanelSyncManager manager;
 
         private boolean isWorkingEnabled, isActive;
 
@@ -50,16 +48,10 @@ public class MultiblockDisplayTextPort {
         private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused");
         private IKey runningKey = IKey.lang("gregtech.multiblock.running");
 
-        private static final IKey RED = IKey.str(TextFormatting.RED.toString());
-        private static final IKey GRAY = IKey.str(TextFormatting.GRAY.toString());
-        private static final IKey AQUA = IKey.str(TextFormatting.AQUA.toString());
-        private static final IKey RESET = IKey.str(TextFormatting.RESET.toString());
-
         private Builder(List<Widget<?>> textList, boolean isStructureFormed,
-                        boolean showIncompleteStructureWarning, PanelSyncManager manager) {
+                        boolean showIncompleteStructureWarning) {
             this.textList = textList;
             this.isStructureFormed = isStructureFormed;
-            this.manager = manager;
 
             if (!isStructureFormed && showIncompleteStructureWarning) {
                 var base = KeyUtil.coloredLang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
@@ -101,17 +93,8 @@ public class MultiblockDisplayTextPort {
         public Builder addEnergyUsageLine(IEnergyContainer energyContainer) {
             if (!isStructureFormed || energyContainer == null) return this;
 
-            var capacity = syncedGetter(energyContainer::getEnergyCapacity);
-            manager.syncValue("energy_capacity", capacity);
-            capacity.updateCacheFromSource(true);
-
-            var voltage = syncedGetter(
-                    () -> Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage()));
-            manager.syncValue("energy_voltage", voltage);
-            voltage.updateCacheFromSource(true);
-
-            if (capacity.getLongValue() > 0) {
-                long maxVoltage = voltage.getLongValue();
+            if (energyContainer.getEnergyCapacity() > 0) {
+                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
 
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
@@ -376,59 +359,46 @@ public class MultiblockDisplayTextPort {
         public Builder addMaintenanceProblemLines(byte maintenanceProblems) {
             if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
             if (maintenanceProblems < 63) {
-                boolean hasAddedHeader = false;
+                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.universal.has_problems"));
 
                 // Wrench
                 if ((maintenanceProblems & 1) == 0) {
-                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
                     addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.wrench"));
                 }
 
                 // Screwdriver
                 if (((maintenanceProblems >> 1) & 1) == 0) {
-                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
                     addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.screwdriver"));
                 }
 
                 // Soft Mallet
                 if (((maintenanceProblems >> 2) & 1) == 0) {
-                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
                     addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.soft_mallet"));
                 }
 
                 // Hammer
                 if (((maintenanceProblems >> 3) & 1) == 0) {
-                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
                     addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.hard_hammer"));
                 }
 
                 // Wire Cutters
                 if (((maintenanceProblems >> 4) & 1) == 0) {
-                    hasAddedHeader = addMaintenanceProblemHeader(hasAddedHeader);
                     addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.wire_cutter"));
                 }
 
                 // Crowbar
                 if (((maintenanceProblems >> 5) & 1) == 0) {
-                    addMaintenanceProblemHeader(hasAddedHeader);
                     addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.crowbar"));
                 }
             }
             return this;
-        }
-
-        private boolean addMaintenanceProblemHeader(boolean hasAddedHeader) {
-            if (!hasAddedHeader) {
-                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
-                        "gregtech.multiblock.universal.has_problems"));
-            }
-            return true;
         }
 
         /**

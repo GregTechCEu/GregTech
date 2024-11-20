@@ -48,6 +48,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
+    private static final int UPDATE_MAINTANENCE = GregtechDataCodes.assignId();
     private final MultiblockUIFactory uiFactory;
 
     private boolean voidingItems = false;
@@ -194,6 +195,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             if (maintenanceHatch.startWithoutProblems() && !initialMaintenanceDone) {
                 this.maintenance_problems = (byte) 0b111111;
+                writeCustomData(UPDATE_MAINTANENCE, buffer -> buffer.writeByte(this.maintenance_problems));
                 this.timeActive = 0;
                 this.initialMaintenanceDone = true;
             }
@@ -475,7 +477,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * <br>
      * Parameters should be passed directly to the created widget. Size will be 18x18.
      *
-     * @deprecated {@link #createFlexButton(ModularPanel, PanelSyncManager)}
+     * @deprecated override {@link MultiblockUIFactory#createFlexButton(ModularPanel, PanelSyncManager)}
      */
     @Deprecated
     @SuppressWarnings("SameParameterValue")
@@ -651,6 +653,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         if (dataId == IS_WORKING) {
             lastActive = buf.readBoolean();
+        }
+        if (dataId == UPDATE_MAINTANENCE) {
+            this.maintenance_problems = buf.readByte();
         }
     }
 
