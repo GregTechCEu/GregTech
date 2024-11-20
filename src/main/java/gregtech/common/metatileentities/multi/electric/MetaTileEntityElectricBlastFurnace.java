@@ -51,8 +51,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -124,27 +122,24 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        IntSyncValue temp = new IntSyncValue(this::getCurrentTemperature, i -> {});
         return new MultiblockUIFactory(this) {
 
             @Override
-            protected void configureDisplayText(List<Widget<?>> textList, PanelSyncManager manager) {
-                MultiblockDisplayTextPort.builder(textList, isStructureFormed(), manager)
+            protected void configureDisplayText(List<Widget<?>> textList) {
+                MultiblockDisplayTextPort.builder(textList, isStructureFormed())
                         .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                         .addEnergyUsageLine(getEnergyContainer())
                         .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                        .addCustom(adder -> addHeatCapacity(adder, manager))
+                        .addCustom(this::addHeatCapacity)
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
                         .addProgressLine(recipeMapWorkable.getProgressPercent());
             }
 
-            private void addHeatCapacity(Consumer<IKey> adder, PanelSyncManager manager) {
+            private void addHeatCapacity(Consumer<IKey> adder) {
                 if (isStructureFormed()) {
-                    manager.syncValue("temperature", temp);
-                    temp.updateCacheFromSource(true);
                     var heatString = KeyUtil.coloredNumber(TextFormatting.RED,
-                            temp.getIntValue(), "K");
+                            getCurrentTemperature(), "K");
 
                     adder.accept(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.blast_furnace.max_temperature", heatString));
