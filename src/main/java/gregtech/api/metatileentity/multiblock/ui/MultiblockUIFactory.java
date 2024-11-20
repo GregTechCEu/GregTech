@@ -12,6 +12,7 @@ import gregtech.api.util.KeyUtil;
 
 import net.minecraft.util.text.TextFormatting;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.factory.PosGuiData;
@@ -48,7 +49,7 @@ public class MultiblockUIFactory {
 
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         var displayText = new ArrayList<Widget<?>>();
-        configureDisplayText(displayText, panelSyncManager);
+        configureDisplayText(displayText);
 
         var panel = createRootPanel();
 
@@ -69,40 +70,47 @@ public class MultiblockUIFactory {
                         .child(createButtons(panel, panelSyncManager)));
     }
 
-    private Widget<?> createIndicator(PanelSyncManager syncManager) {
+    private Widget<?> createIndicator() {
         List<Widget<?>> textList = new ArrayList<>();
-        configureErrorText(textList, syncManager);
-        if (!textList.isEmpty())
-            configureWarningText(textList, syncManager);
-
-        return GTGuiTextures.GREGTECH_LOGO.asWidget()
+        return new Widget<>()
                 // .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .onUpdateListener(w -> {
+                    IDrawable icon;
+                    textList.clear();
+                    configureErrorText(textList);
+                    if (textList.isEmpty()) {
+                        configureWarningText(textList);
+                        icon = textList.isEmpty() ? GTGuiTextures.GREGTECH_LOGO : GTGuiTextures.OREDICT_WARN;
+                    } else {
+                        // error
+                        icon = GTGuiTextures.FILTER_SETTINGS_OVERLAY;
+                    }
+                    w.overlay(icon);
+                }, true)
                 .tooltipBuilder(tooltip -> {
-                    if (textList.isEmpty()) return;
-                    for (var w : textList) {
-                        if (w instanceof TextWidget textWidget)
+                    for (var text : textList) {
+                        if (text instanceof TextWidget textWidget)
                             tooltip.addLine(textWidget.getKey());
                     }
                 })
-                .right(4)
-                .bottom(4);
+                .pos(174, 93);
     }
 
     /**
      * Returns a list of text indicating any current warnings in this Multiblock.
      * Recommended to only display warnings if the structure is already formed.
      */
-    protected void configureWarningText(List<Widget<?>> textList, PanelSyncManager manager) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), false, manager)
+    protected void configureWarningText(List<Widget<?>> textList) {
+        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), false)
                 .addMaintenanceProblemLines(mte.getMaintenanceProblems());
     }
 
     /**
      * Returns a list of translation keys indicating any current errors in this Multiblock.
-     * Prioritized over any warnings provided by {@link #configureWarningText(List, PanelSyncManager)}.
+     * Prioritized over any warnings provided by {@link #configureWarningText(List)}.
      */
-    protected void configureErrorText(List<Widget<?>> textList, PanelSyncManager manager) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), manager)
+    protected void configureErrorText(List<Widget<?>> textList) {
+        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed())
                 .addMufflerObstructedLine(mte.hasMufflerMechanics() && !mte.isMufflerFaceFree());
     }
 
@@ -112,8 +120,8 @@ public class MultiblockUIFactory {
      * To use translation, use {@link KeyUtil#coloredLang(TextFormatting, String, Object...)}
      * or {@link KeyUtil#unformattedLang(String, Object...)}
      */
-    protected void configureDisplayText(List<Widget<?>> textList, PanelSyncManager manager) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), manager);
+    protected void configureDisplayText(List<Widget<?>> textList) {
+        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed());
     }
 
     /**
@@ -191,7 +199,7 @@ public class MultiblockUIFactory {
 
         lines.forEach(displayText::child);
         return new ParentWidget<>()
-                .child(createIndicator(syncManager))
+                .child(createIndicator())
                 .child(new ScrollWidget<>(new VerticalScrollData())
                         .sizeRel(1f)
                         .child(displayText))
