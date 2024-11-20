@@ -53,11 +53,6 @@ public class MultiblockUIFactory {
 
         var panel = createRootPanel();
 
-        // todo indicator widget
-        // IndicatorImageWidget(174, 101, 17, 17, getLogo())
-        // .setWarningStatus(getWarningLogo(), this::addWarningText)
-        // .setErrorStatus(getErrorLogo(), this::addErrorText))
-
         // TODO createExtras() hook for overrides?
         var bars = createBars(panel, panelSyncManager);
 
