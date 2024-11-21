@@ -51,6 +51,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -124,6 +126,15 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected MultiblockUIFactory createUIFactory() {
         return new MultiblockUIFactory(this) {
 
+            DoubleSyncValue progress;
+
+            @Override
+            protected void syncValues(PanelSyncManager manager) {
+                super.syncValues(manager);
+                progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+                manager.syncValue("progress", progress);
+            }
+
             @Override
             protected void configureDisplayText(List<Widget<?>> textList) {
                 MultiblockDisplayTextPort.builder(textList, isStructureFormed())
@@ -133,7 +144,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                         .addCustom(this::addHeatCapacity)
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
-                        .addProgressLine(recipeMapWorkable.getProgressPercent());
+                        .addProgressLine(progress.getDoubleValue());
             }
 
             private void addHeatCapacity(Consumer<IKey> adder) {
