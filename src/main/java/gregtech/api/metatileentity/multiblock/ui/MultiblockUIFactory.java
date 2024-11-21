@@ -41,7 +41,6 @@ public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
     protected final BooleanSyncValue mufflerObstructed;
-    protected final BooleanSyncValue structureFormed;
     protected final IntSyncValue maintanence;
 
     protected static final int DEFAULT_HEIGHT = 202;
@@ -50,14 +49,12 @@ public class MultiblockUIFactory {
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
         this.mufflerObstructed = new BooleanSyncValue(mte::isStructureObstructed, null);
-        this.structureFormed = new BooleanSyncValue(mte::isStructureFormed, null);
         this.maintanence = new IntSyncValue(mte::getMaintenanceProblems, null);
     }
 
     protected void syncValues(PanelSyncManager manager) {
         manager.syncValue("muffler", mufflerObstructed);
         manager.syncValue("maintenance", maintanence);
-        manager.syncValue("structure_formed", structureFormed);
     }
 
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
@@ -112,7 +109,7 @@ public class MultiblockUIFactory {
      * Recommended to only display warnings if the structure is already formed.
      */
     protected void configureWarningText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, structureFormed.getBoolValue(), false)
+        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), false)
                 .addMaintenanceProblemLines((byte) maintanence.getIntValue());
     }
 
@@ -121,7 +118,7 @@ public class MultiblockUIFactory {
      * Prioritized over any warnings provided by {@link #configureWarningText(List)}.
      */
     protected void configureErrorText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, structureFormed.getBoolValue())
+        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed())
                 .addMufflerObstructedLine(mufflerObstructed.getBoolValue());
     }
 
@@ -132,7 +129,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#unformattedLang(String, Object...)}
      */
     protected void configureDisplayText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, structureFormed.getBoolValue());
+        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed());
     }
 
     /**
