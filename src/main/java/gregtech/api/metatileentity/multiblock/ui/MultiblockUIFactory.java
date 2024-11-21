@@ -60,6 +60,7 @@ public class MultiblockUIFactory {
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         syncValues(panelSyncManager);
         var displayText = new ArrayList<Widget<?>>();
+        // try to make this more dynamic somehow
         configureDisplayText(displayText);
 
         var panel = createRootPanel();
@@ -203,6 +204,13 @@ public class MultiblockUIFactory {
     protected ParentWidget<?> createScreen(List<Widget<?>> lines, PanelSyncManager syncManager) {
         var displayText = new Column()
                 .expanded()
+                // .onUpdateListener(column -> {
+                // column.getChildren().clear();
+                // lines.clear();
+                // configureDisplayText(lines);
+                // lines.forEach(column::child);
+                // WidgetTree.resize(column);
+                // })
                 .padding(4, 4);
 
         lines.forEach(displayText::child);
