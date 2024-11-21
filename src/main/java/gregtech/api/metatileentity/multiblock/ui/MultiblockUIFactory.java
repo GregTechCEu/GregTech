@@ -8,7 +8,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.sync.ByteSyncValue;
 import gregtech.api.util.KeyUtil;
 
 import net.minecraft.util.text.TextFormatting;
@@ -43,7 +42,7 @@ public class MultiblockUIFactory {
     private final MultiblockWithDisplayBase mte;
     protected final BooleanSyncValue mufflerObstructed;
     protected final BooleanSyncValue structureFormed;
-    protected final ByteSyncValue maintanence;
+    protected final IntSyncValue maintanence;
 
     protected static final int DEFAULT_HEIGHT = 202;
     protected static final int DEFAULT_WIDTH = 198;
@@ -52,7 +51,7 @@ public class MultiblockUIFactory {
         this.mte = mte;
         this.mufflerObstructed = new BooleanSyncValue(mte::isStructureObstructed, null);
         this.structureFormed = new BooleanSyncValue(mte::isStructureFormed, null);
-        this.maintanence = new ByteSyncValue(mte::getMaintenanceProblems);
+        this.maintanence = new IntSyncValue(mte::getMaintenanceProblems, null);
     }
 
     protected void syncValues(PanelSyncManager manager) {
@@ -114,7 +113,7 @@ public class MultiblockUIFactory {
      */
     protected void configureWarningText(List<Widget<?>> textList) {
         MultiblockDisplayTextPort.builder(textList, structureFormed.getBoolValue(), false)
-                .addMaintenanceProblemLines(maintanence.getByteValue());
+                .addMaintenanceProblemLines((byte) maintanence.getIntValue());
     }
 
     /**
