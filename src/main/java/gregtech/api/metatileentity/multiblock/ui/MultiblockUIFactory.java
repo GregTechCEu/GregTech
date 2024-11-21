@@ -85,14 +85,15 @@ public class MultiblockUIFactory {
         return new Widget<>()
                 .pos(174 - 5, 93 - 5)
                 .onUpdateListener(w -> {
-                    IDrawable icon;
+                    IDrawable icon = GTGuiTextures.GREGTECH_LOGO;
                     textList.clear();
                     configureErrorText(textList);
                     if (textList.isEmpty()) {
                         configureWarningText(textList);
-                        icon = textList.isEmpty() ?
-                                GTGuiTextures.GREGTECH_LOGO :  // no error
-                                GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW; // warn
+                        if (!textList.isEmpty()) {
+                            // warn
+                            icon = GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
+                        }
                     } else {
                         // error
                         icon = GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
