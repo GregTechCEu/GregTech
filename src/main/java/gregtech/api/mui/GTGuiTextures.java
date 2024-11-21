@@ -8,6 +8,8 @@ import com.cleanroommc.modularui.drawable.UITexture;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * GT MUI textures.<br>
  * Marked experimental as some of these textures may disappear or be renamed at some point
@@ -43,7 +45,12 @@ public class GTGuiTextures {
     /** @apiNote You may want {@link GTGuiTextures#getLogo} instead. */
     public static final UITexture GREGTECH_LOGO_XMAS = fullImage("textures/gui/icon/gregtech_logo_xmas.png");
     public static final UITexture GREGTECH_LOGO_DARK = fullImage("textures/gui/icon/gregtech_logo_dark.png");
-    // todo blinking GT logos
+    public static final IDrawable GREGTECH_LOGO_BLINKING_YELLOW = animated(
+            "textures/gui/icon/gregtech_logo_blinking_yellow.png",
+            17, 34, true, 10);
+    public static final IDrawable GREGTECH_LOGO_BLINKING_RED = animated(
+            "textures/gui/icon/gregtech_logo_blinking_red.png",
+            17, 34, true, 6);
 
     public static final UITexture INDICATOR_NO_ENERGY = fullImage("textures/gui/base/indicator_no_energy.png");
     public static final UITexture INDICATOR_NO_STEAM_BRONZE = fullImage(
@@ -579,6 +586,15 @@ public class GTGuiTextures {
         return slices;
     }
 
+    private static UITexture[] slice(String path, int imageWidth, int imageHeight, boolean canApplyTheme) {
+        int sliceSize = Math.min(imageWidth, imageHeight);
+        return slice(path, imageWidth, imageHeight, sliceSize, sliceSize, canApplyTheme);
+    }
+
+    private static IDrawable animated(String path, int imageWidth, int imageHeight, boolean canApplyTheme, int rate) {
+        return dynamic(slice(path, imageWidth, imageHeight, canApplyTheme), rate);
+    }
+
     private static UITexture progressBar(String path) {
         return progressBar(path, 20, 40, false);
     }
@@ -606,5 +622,14 @@ public class GTGuiTextures {
             if (logo != null) return logo;
         }
         return GTValues.XMAS.get() ? GREGTECH_LOGO_XMAS : GREGTECH_LOGO;
+    }
+
+    public static IDrawable dynamic(UITexture[] textures, int rate) {
+        AtomicInteger index = new AtomicInteger();
+        return (context, x, y, width, height, widgetTheme) -> {
+            int a = (int) (context.getTick() % rate);
+            int i = (a == 0 ? index.getAndIncrement() : index.get()) % textures.length;
+            textures[i].draw(context, x, y, width, height, widgetTheme);
+        };
     }
 }

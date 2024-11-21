@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.ByteSyncValue;
 import gregtech.api.util.KeyUtil;
 
 import net.minecraft.util.text.TextFormatting;
@@ -40,14 +41,28 @@ import java.util.List;
 public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
+    protected final BooleanSyncValue mufflerObstructed;
+    protected final BooleanSyncValue structureFormed;
+    protected final ByteSyncValue maintanence;
+
     protected static final int DEFAULT_HEIGHT = 202;
     protected static final int DEFAULT_WIDTH = 198;
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
+        this.mufflerObstructed = new BooleanSyncValue(mte::isStructureObstructed, null);
+        this.structureFormed = new BooleanSyncValue(mte::isStructureFormed, null);
+        this.maintanence = new ByteSyncValue(mte::getMaintenanceProblems);
+    }
+
+    protected void syncValues(PanelSyncManager manager) {
+        manager.syncValue("muffler", mufflerObstructed);
+        manager.syncValue("maintenance", maintanence);
+        manager.syncValue("structure_formed", structureFormed);
     }
 
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        syncValues(panelSyncManager);
         var displayText = new ArrayList<Widget<?>>();
         configureDisplayText(displayText);
 
@@ -68,27 +83,28 @@ public class MultiblockUIFactory {
     private Widget<?> createIndicator() {
         List<Widget<?>> textList = new ArrayList<>();
         return new Widget<>()
-                // .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .pos(174 - 5, 93 - 5)
                 .onUpdateListener(w -> {
                     IDrawable icon;
                     textList.clear();
                     configureErrorText(textList);
                     if (textList.isEmpty()) {
                         configureWarningText(textList);
-                        icon = textList.isEmpty() ? GTGuiTextures.GREGTECH_LOGO : GTGuiTextures.OREDICT_WARN;
+                        icon = textList.isEmpty() ?
+                                GTGuiTextures.GREGTECH_LOGO :  // no error
+                                GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW; // warn
                     } else {
                         // error
-                        icon = GTGuiTextures.FILTER_SETTINGS_OVERLAY;
+                        icon = GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
                     }
                     w.overlay(icon);
-                }, true)
+                })
                 .tooltipBuilder(tooltip -> {
                     for (var text : textList) {
                         if (text instanceof TextWidget textWidget)
                             tooltip.addLine(textWidget.getKey());
                     }
-                })
-                .pos(174, 93);
+                });
     }
 
     /**
@@ -96,8 +112,8 @@ public class MultiblockUIFactory {
      * Recommended to only display warnings if the structure is already formed.
      */
     protected void configureWarningText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), false)
-                .addMaintenanceProblemLines(mte.getMaintenanceProblems());
+        MultiblockDisplayTextPort.builder(textList, structureFormed.getBoolValue(), false)
+                .addMaintenanceProblemLines(maintanence.getByteValue());
     }
 
     /**
@@ -105,8 +121,8 @@ public class MultiblockUIFactory {
      * Prioritized over any warnings provided by {@link #configureWarningText(List)}.
      */
     protected void configureErrorText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed())
-                .addMufflerObstructedLine(mte.hasMufflerMechanics() && !mte.isMufflerFaceFree());
+        MultiblockDisplayTextPort.builder(textList, structureFormed.getBoolValue())
+                .addMufflerObstructedLine(mufflerObstructed.getBoolValue());
     }
 
     /**
@@ -116,7 +132,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#unformattedLang(String, Object...)}
      */
     protected void configureDisplayText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed());
+        MultiblockDisplayTextPort.builder(textList, structureFormed.getBoolValue());
     }
 
     /**
