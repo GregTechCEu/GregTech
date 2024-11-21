@@ -3,10 +3,15 @@ package gregtech.api.util;
 import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 public class KeyUtil {
 
     public static final IKey RESET = toColor(TextFormatting.RESET);
+    public static final String SECTION = "§";
 
     public static IKey toColor(TextFormatting formatting) {
         return IKey.str(formatting.toString());
@@ -19,12 +24,8 @@ public class KeyUtil {
     }
 
     public static IKey coloredLang(TextFormatting formatting, String lang, Object... args) {
-        if (args == null || args.length == 0) return withColor(formatting, IKey.lang(lang));
-        Object[] fixedArgs = new Object[args.length];
-        for (int i = 0; i < args.length; i++) {
-            fixedArgs[i] = IKey.str(args[i].toString() + formatting);
-        }
-        return withColor(formatting, IKey.lang(lang, fixedArgs));
+        if (ArrayUtils.isEmpty(args)) return withColor(formatting, IKey.lang(lang));
+        return withColor(formatting, IKey.lang(lang, checkFormatting(formatting, args)));
     }
 
     public static IKey coloredString(TextFormatting formatting, String string) {
@@ -45,5 +46,51 @@ public class KeyUtil {
 
     public static IKey unformattedLang(String lang, Object... args) {
         return coloredLang(TextFormatting.RESET, lang, args);
+    }
+
+    public static IKey dynamicString(TextFormatting formatting, Supplier<String> stringSupplier) {
+        return IKey.dynamic(() -> coloredString(formatting, stringSupplier.get()).get());
+    }
+
+    @SafeVarargs
+    public static IKey dynamicLang(TextFormatting formatting, String lang, Supplier<Object>... argSuppliers) {
+        if (ArrayUtils.isEmpty(argSuppliers)) return coloredLang(formatting, lang);
+        if (argSuppliers.length == 1) return IKey.dynamic(() -> coloredLang(formatting, lang,
+                fixString(formatting, argSuppliers[0].get().toString())).get());
+        return IKey.dynamic(() -> {
+            Object[] args = new Object[argSuppliers.length];
+            for (int i = 0; i < args.length; i++) {
+                args[i] = fixString(formatting, argSuppliers[i].get().toString());
+            }
+            return coloredLang(formatting, lang, args).get();
+        });
+    }
+
+    public static IKey dynamicLong(TextFormatting formatting, LongSupplier supplier) {
+        return IKey.dynamic(() -> coloredNumber(formatting, supplier.getAsLong()).get());
+    }
+
+    public static IKey dynamicLong(TextFormatting formatting, LongSupplier supplier, String suffix) {
+        return IKey.dynamic(() -> coloredNumber(formatting, supplier.getAsLong(), suffix).get());
+    }
+
+    public static Object[] checkFormatting(TextFormatting formatting, Object[] args) {
+        Object[] fixedArgs = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            fixedArgs[i] = fixString(formatting, args[i].toString());
+        }
+        return fixedArgs;
+    }
+
+    public static String fixString(TextFormatting formatting, String s) {
+        if (hasFormatting(s)) {
+            return s + formatting;
+        } else {
+            return s;
+        }
+    }
+
+    public static boolean hasFormatting(String s) {
+        return s.contains(SECTION);
     }
 }
