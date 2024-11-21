@@ -10,13 +10,12 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.LongSyncValue;
 import com.cleanroommc.modularui.widget.Widget;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
-import java.util.function.LongSupplier;
 
 public class MultiblockDisplayTextPort {
 
@@ -284,10 +283,10 @@ public class MultiblockDisplayTextPort {
          *
          * @param progressPercent Progress formatted as a range of [0,1] representing the progress of the recipe.
          */
-        public Builder addProgressLine(double progressPercent) { // todo
+        public Builder addProgressLine(DoubleSupplier progressPercent) { // todo
             if (!isStructureFormed || !isActive) return this;
-            int currentProgress = (int) (progressPercent * 100);
-            addKey(KeyUtil.unformattedLang("gregtech.multiblock.progress", currentProgress));
+            addKey(KeyUtil.dynamicLang(TextFormatting.GRAY, "gregtech.multiblock.progress",
+                    () -> ((int) (progressPercent.getAsDouble() * 100))));
             return this;
         }
 
@@ -449,10 +448,6 @@ public class MultiblockDisplayTextPort {
             var w = this.widgetFunction.apply(key);
             this.textList.add(w);
             return w;
-        }
-
-        private static LongSyncValue syncedGetter(LongSupplier getter) {
-            return new LongSyncValue(getter, l -> {});
         }
 
         public Builder widgetFunction(Function<IKey, Widget<?>> widgetFunction) {

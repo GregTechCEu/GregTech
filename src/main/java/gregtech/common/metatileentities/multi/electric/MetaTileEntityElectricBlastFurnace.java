@@ -144,7 +144,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                         .addCustom(this::addHeatCapacity)
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
-                        .addProgressLine(progress.getDoubleValue());
+                        .addProgressLine(progress::getDoubleValue);
             }
 
             private void addHeatCapacity(Consumer<IKey> adder) {
