@@ -53,7 +53,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,9 +134,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             }
 
             @Override
-            protected void configureDisplayText(List<Widget<?>> textList) {
-                MultiblockDisplayTextPort.builder(textList, isStructureFormed())
-                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+            protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {
+                builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                         .addEnergyUsageLine(getEnergyContainer())
                         .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                         .addCustom(this::addHeatCapacity)
