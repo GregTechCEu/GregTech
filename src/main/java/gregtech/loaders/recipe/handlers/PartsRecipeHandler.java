@@ -92,7 +92,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_BOLT)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 8))
                     .output(boltPrefix, material)
-                    .EUt(VA[ULV]).duration(4)
+                    .EUt(VA[ULV]).duration(6)
                     .buildAndRegister();
         }
     }
@@ -116,7 +116,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_SCREW)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 8))
                     .output(screwPrefix, material)
-                    .EUt(VA[ULV]).duration(4)
+                    .EUt(VA[ULV]).duration(7)
                     .buildAndRegister();
         }
     }
@@ -388,7 +388,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_RING)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 4))
                     .output(ringPrefix, material)
-                    .EUt(VA[ULV]).duration(5)
+                    .EUt(VA[ULV]).duration(3)
                     .buildAndRegister();
         }
     }
@@ -492,7 +492,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROD)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 2))
                     .output(stickPrefix, material)
-                    .EUt(VA[ULV]).duration(8)
+                    .EUt(VA[ULV]).duration(10)
                     .buildAndRegister();
         }
     }
@@ -561,7 +561,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROD_LONG)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .output(longStickPrefix, material)
-                    .EUt(VA[ULV]).duration(16)
+                    .EUt(VA[ULV]).duration(20)
                     .buildAndRegister();
         }
     }
@@ -600,7 +600,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_TURBINE_BLADE)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L * 10 + L / 4))
                     .output(toolPrefix, material)
-                    .EUt(VA[ULV]).duration(25)
+                    .EUt(VA[ULV]).duration(50)
                     .buildAndRegister();
         }
     }
@@ -627,7 +627,7 @@ public class PartsRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_MOLD_ROUND)
                     .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L / 9))
                     .output(roundPrefix, material)
-                    .EUt(VA[ULV]).duration(2)
+                    .EUt(VA[ULV]).duration(5)
                     .buildAndRegister();
         }
     }
