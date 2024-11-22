@@ -143,10 +143,9 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
 
             @Override
-            protected void configureDisplayText(List<Widget<?>> textList) {
+            protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {
                 var recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
-                var builder = MultiblockDisplayTextPort.builder(textList, isStructureFormed())
-                        .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
+                builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
 
                 if (isExtreme) {
                     builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
