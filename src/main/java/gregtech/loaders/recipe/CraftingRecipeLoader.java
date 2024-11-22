@@ -364,7 +364,6 @@ public class CraftingRecipeLoader {
                 " S ",
                 'S', SHAPE_EMPTY.getStackForm());
 
-
         ///////////////////////////////////////////////////
         // Credits //
         ///////////////////////////////////////////////////
