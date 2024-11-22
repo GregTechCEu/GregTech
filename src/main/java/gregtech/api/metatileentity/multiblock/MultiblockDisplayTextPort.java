@@ -61,6 +61,11 @@ public class MultiblockDisplayTextPort {
             }
         }
 
+        public Builder addTitle(String metaFullName) {
+            addKey(KeyUtil.coloredLang(TextFormatting.WHITE, metaFullName));
+            return this;
+        }
+
         /** Set the current working enabled and active status of this multiblock, used by many line addition calls. */
         public Builder setWorkingStatus(boolean isWorkingEnabled, boolean isActive) {
             this.isWorkingEnabled = isWorkingEnabled;
