@@ -49,7 +49,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
     private static final int UPDATE_MAINTANENCE = GregtechDataCodes.assignId();
-    private final MultiblockUIFactory uiFactory;
+    private MultiblockUIFactory uiFactory = null;
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -89,7 +89,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super(metaTileEntityId);
         this.maintenance_problems = 0b000000;
         this.voidingMode = VoidingMode.VOID_NONE;
-        this.uiFactory = createUIFactory();
     }
 
     /**
@@ -557,6 +556,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        if (this.uiFactory == null) this.uiFactory = createUIFactory();
         return this.uiFactory.buildUI(guiData, panelSyncManager);
     }
 
