@@ -60,7 +60,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -147,12 +146,12 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                         .addProgressLine(progress::getDoubleValue);
             }
 
-            private void addHeatCapacity(Consumer<IKey> adder) {
+            private void addHeatCapacity(List<IKey> keyList) {
                 if (isStructureFormed()) {
                     var heatString = KeyUtil.coloredNumber(TextFormatting.RED,
                             getCurrentTemperature(), "K");
 
-                    adder.accept(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
                             "gregtech.multiblock.blast_furnace.max_temperature", heatString));
                 }
             }

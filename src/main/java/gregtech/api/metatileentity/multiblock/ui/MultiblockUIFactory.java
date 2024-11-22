@@ -229,8 +229,7 @@ public class MultiblockUIFactory {
         var flexButton = createFlexButton(mainPanel, panelSyncManager);
         if (flexButton == null) {
             flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
-                    .size(18)
-                    .marginBottom(5);
+                    .size(18);
         }
         var powerButton = createPowerButton(mainPanel, panelSyncManager);
 
@@ -340,7 +339,8 @@ public class MultiblockUIFactory {
                 .textureGetter(i -> GTGuiTextures.BUTTON_POWER[i])
                 .disableHoverBackground()
                 .background(GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24), GTGuiTextures.BUTTON)
-                .value(workingStateValue);
+                .value(workingStateValue)
+                .marginTop(5);
     }
 
     public static final class Screen {
