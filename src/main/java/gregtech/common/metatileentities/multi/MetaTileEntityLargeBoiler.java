@@ -14,6 +14,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -37,17 +38,21 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.GuiAxis;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
@@ -172,6 +177,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected MultiblockUIFactory createUIFactory() {
         IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
+        DoubleSyncValue sliderValue = new DoubleSyncValue(
+                () -> (double) getThrottlePercentage() / 100,
+                d -> setThrottlePercentage((int) (d * 100)));
+        IntSyncValue waterFilled = new IntSyncValue(this::getWaterFilled, null);
         return new MultiblockUIFactory(this) {
 
             @Override
@@ -181,7 +190,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                         (syncManager, syncHandler) -> GTGuis.createPopupPanel("boiler_throttle", 116, 53)
                                 .child(new Row()
                                         .pos(4, 4)
-                                        .height(16).coverChildrenWidth()
+                                        .height(16)
+                                        .coverChildrenWidth()
                                         .child(new ItemDrawable(getStackForm())
                                                 .asWidget()
                                                 .size(16)
@@ -190,12 +200,21 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                                 .asWidget()
                                                 .heightRel(1.0f)))
                                 .child(new Row()
+                                        .top(20)
+                                        .margin(4, 0)
+                                        .coverChildrenHeight()
+                                        .child(new SliderWidget()
+                                                .background(new Rectangle().setColor(Color.BLACK.brighter(2)).asIcon()
+                                                        .height(8))
+                                                .bounds(0, 1)
+                                                .setAxis(GuiAxis.X)
+                                                .value(sliderValue)
+                                                .widthRel(0.7f)
+                                                .height(20))
                                         // TODO add inc/dec buttons
-                                        // TODO create slider widget
                                         .child(new TextFieldWidget()
-                                                .size(40, 20)
-                                                .left(38)
-                                                .top(20)
+                                                .widthRel(0.3f)
+                                                .height(20)
                                                 // TODO proper color
                                                 .setTextColor(Color.WHITE.darker(1))
                                                 .setNumbers(0, 100)
@@ -205,7 +224,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
                 return new ButtonWidget<>()
                         .width(18)
-                        .overlay(GTGuiTextures.BUTTON_THROTTLE_MINUS)
+                        .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY)
+                        // todo lang
+                        .addTooltipLine("Configure Boiler Throttle")
                         // TODO make this work
                         .background(GTGuiTextures.BUTTON)
                         .onMousePressed(i -> {
@@ -217,6 +238,61 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                             Interactable.playButtonClickSound();
                             return true;
                         });
+            }
+
+            @Override
+            protected void syncValues(PanelSyncManager manager) {
+                super.syncValues(manager);
+                manager.syncValue("water_filled", waterFilled);
+            }
+
+            @Override
+            protected void configureWarningText(List<Widget<?>> textList) {
+                super.configureWarningText(textList);
+                MultiblockDisplayTextPort.builder(textList, isStructureFormed())
+                        .addCustom(keyList -> {
+                            if (isStructureFormed()) {
+                                if (waterFilled.getIntValue() == 0) {
+                                    keyList.add(KeyUtil.coloredLang(TextFormatting.YELLOW,
+                                            "gregtech.multiblock.large_boiler.no_water"));
+                                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                                            "gregtech.multiblock.large_boiler.explosion_tooltip"));
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            protected void configureDisplayText(List<Widget<?>> textList) {
+                MultiblockDisplayTextPort.builder(textList, isStructureFormed())
+                        .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                        .addCustom(this::addCustomData)
+                        .addWorkingStatusLine();
+            }
+
+            private void addCustomData(List<IKey> keyList) {
+                if (isStructureFormed()) {
+                    // Steam Output line
+                    IKey steamOutput = KeyUtil.coloredNumber(TextFormatting.AQUA, recipeLogic.getLastTickSteam(),
+                            " L/t");
+
+                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                            "gregtech.multiblock.large_boiler.steam_output", steamOutput));
+
+                    // Efficiency line
+                    IKey efficiency = KeyUtil.dynamicString(
+                            () -> getNumberColor(recipeLogic.getHeatScaled()),
+                            () -> recipeLogic.getHeatScaled() + "%");
+                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                            "gregtech.multiblock.large_boiler.efficiency", efficiency));
+
+                    // Throttle line
+                    IKey throttle = KeyUtil.dynamicString(
+                            () -> getNumberColor(getThrottle()),
+                            () -> getThrottle() + "%");
+                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                            "gregtech.multiblock.large_boiler.throttle", throttle));
+                }
             }
         };
     }
