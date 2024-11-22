@@ -12,6 +12,7 @@ import net.minecraft.util.text.TextFormatting;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.widget.Widget;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -439,8 +440,10 @@ public class MultiblockDisplayTextPort {
         }
 
         /** Add custom text dynamically, allowing for custom application logic. */
-        public Builder addCustom(Consumer<Consumer<IKey>> customConsumer) {
-            customConsumer.accept(this::addKey);
+        public Builder addCustom(Consumer<List<IKey>> customConsumer) {
+            List<IKey> customKeys = new ArrayList<>();
+            customConsumer.accept(customKeys);
+            customKeys.forEach(this::addKey);
             return this;
         }
 
