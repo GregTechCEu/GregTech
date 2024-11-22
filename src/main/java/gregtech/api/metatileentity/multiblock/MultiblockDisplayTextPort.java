@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class MultiblockDisplayTextPort {
 
@@ -25,20 +27,24 @@ public class MultiblockDisplayTextPort {
      * <br>
      * Automatically adds the "Invalid Structure" line if the structure is not formed.
      */
-    public static Builder builder(List<Widget<?>> textList, boolean isStructureFormed) {
-        return builder(textList, isStructureFormed, true);
+    public static Builder builder(List<Widget<?>> textList, MultiblockWithDisplayBase mte) {
+        return builder(textList, mte, true);
     }
 
-    public static Builder builder(List<Widget<?>> textList, boolean isStructureFormed,
+    public static Builder builder(List<Widget<?>> textList, MultiblockWithDisplayBase mte,
                                   boolean showIncompleteStructureWarning) {
-        return new Builder(textList, isStructureFormed, showIncompleteStructureWarning);
+        return new Builder(textList, mte, showIncompleteStructureWarning, true);
+    }
+
+    public static Builder builder(List<Widget<?>> textList, MultiblockWithDisplayBase mte,
+                                  boolean showIncompleteStructureWarning, boolean showTitle) {
+        return new Builder(textList, mte, showIncompleteStructureWarning, showTitle);
     }
 
     public static class Builder {
 
         private final List<Widget<?>> textList;
-        private Function<IKey, Widget<?>> widgetFunction = key -> key.asWidget()
-                .widthRel(1f).height(12);
+        private Function<IKey, Widget<?>> widgetFunction = Builder::keyMapper;
         private final boolean isStructureFormed;
 
         private boolean isWorkingEnabled, isActive;
@@ -48,10 +54,13 @@ public class MultiblockDisplayTextPort {
         private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused");
         private IKey runningKey = IKey.lang("gregtech.multiblock.running");
 
-        private Builder(List<Widget<?>> textList, boolean isStructureFormed,
-                        boolean showIncompleteStructureWarning) {
+        private Builder(List<Widget<?>> textList, MultiblockWithDisplayBase mte,
+                        boolean showIncompleteStructureWarning, boolean showTitle) {
             this.textList = textList;
-            this.isStructureFormed = isStructureFormed;
+            this.isStructureFormed = mte.isStructureFormed();
+
+            if (showTitle)
+                addKey(KeyUtil.coloredLang(TextFormatting.WHITE, mte.getMetaFullName()));
 
             if (!isStructureFormed && showIncompleteStructureWarning) {
                 var base = KeyUtil.coloredLang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
@@ -61,9 +70,10 @@ public class MultiblockDisplayTextPort {
             }
         }
 
-        public Builder addTitle(String metaFullName) {
-            addKey(KeyUtil.coloredLang(TextFormatting.WHITE, metaFullName));
-            return this;
+        public static Widget<?> keyMapper(IKey key) {
+            return key.asWidget()
+                    .widthRel(1f)
+                    .height(12);
         }
 
         /** Set the current working enabled and active status of this multiblock, used by many line addition calls. */
@@ -427,13 +437,13 @@ public class MultiblockDisplayTextPort {
          * <br>
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
-        public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
-            if (!isStructureFormed || !isActive || fuelName == null) return this;
+        public Builder addFuelNeededLine(Supplier<String> fuelName, IntSupplier previousRecipeDuration) {
+            if (!isStructureFormed || !isActive || fuelName.get() == null) return this;
 
-            addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+            addKey(KeyUtil.dynamicLang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
-                    KeyUtil.coloredString(TextFormatting.RED, fuelName),
-                    KeyUtil.coloredNumber(TextFormatting.AQUA, previousRecipeDuration)));
+                    () -> KeyUtil.coloredString(TextFormatting.RED, fuelName.get()),
+                    () -> KeyUtil.coloredNumber(TextFormatting.AQUA, previousRecipeDuration.getAsInt())));
 
             return this;
         }

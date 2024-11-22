@@ -60,9 +60,9 @@ public class MultiblockUIFactory {
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         syncValues(panelSyncManager);
         var displayText = new ArrayList<Widget<?>>();
-        // try to make this more dynamic somehow
-        var builder = MultiblockDisplayTextPort.builder(displayText, mte.isStructureFormed())
-                .addTitle(mte.getMetaFullName());
+
+        var builder = MultiblockDisplayTextPort.builder(displayText, mte);
+
         configureDisplayText(builder);
 
         var panel = createRootPanel();
@@ -86,9 +86,10 @@ public class MultiblockUIFactory {
                 .onUpdateListener(w -> {
                     IDrawable icon = GTGuiTextures.GREGTECH_LOGO;
                     textList.clear();
-                    configureErrorText(textList);
+                    var builder = MultiblockDisplayTextPort.builder(textList, mte, true, false);
+                    configureErrorText(builder);
                     if (textList.isEmpty()) {
-                        configureWarningText(textList);
+                        configureWarningText(builder);
                         if (!textList.isEmpty()) {
                             // warn
                             icon = GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
@@ -111,18 +112,16 @@ public class MultiblockUIFactory {
      * Returns a list of text indicating any current warnings in this Multiblock.
      * Recommended to only display warnings if the structure is already formed.
      */
-    protected void configureWarningText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed(), false)
-                .addMaintenanceProblemLines((byte) maintanence.getIntValue());
+    protected void configureWarningText(MultiblockDisplayTextPort.Builder builder) {
+        builder.addMaintenanceProblemLines((byte) maintanence.getIntValue());
     }
 
     /**
      * Returns a list of translation keys indicating any current errors in this Multiblock.
-     * Prioritized over any warnings provided by {@link #configureWarningText(List)}.
+     * Prioritized over any warnings provided by {@link #configureWarningText(MultiblockDisplayTextPort.Builder)}.
      */
-    protected void configureErrorText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed())
-                .addMufflerObstructedLine(mufflerObstructed.getBoolValue());
+    protected void configureErrorText(MultiblockDisplayTextPort.Builder builder) {
+        builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
     }
 
     /**
@@ -241,49 +240,6 @@ public class MultiblockUIFactory {
                 .child(flexButton)
                 .childIf(powerButton != null, powerButton);
     }
-
-    // protected void createExtraButton() {
-    // List<Widget<?>> list = new ArrayList<>();
-    // mte.createExtraButtons(rootPanel, panelSyncManager, list);
-    // if (list.isEmpty()) {
-    // list.add(new Widget<>()
-    // .background(GTGuiTextures.BUTTON)
-    // .overlay(GTGuiTextures.BUTTON_NO_FLEX)
-    // .tooltip(t -> t.addLine(IKey.lang("gregtech.multiblock.universal.no_flex_button"))));
-    // }
-    //
-    // if (list.size() == 1) {
-    // buttonColumn.child(list.get(0).size(18, 18));
-    // return;
-    // }
-    //
-    // PanelSyncHandler popupPanel = panelSyncManager.panel("throttle_panel", rootPanel,
-    // (syncManager, syncHandler) -> {
-    // ModularPanel panel = GTGuis.createPopupPanel("extra_buttons", Screen.WIDTH, screenHeight);
-    // Row row = new Row().height(18)
-    // .margin(4)
-    // .mainAxisAlignment(Alignment.MainAxis.SPACE_BETWEEN);
-    // panel.child(row);
-    // for (var widget : list) {
-    // row.child(widget.size(18, 18));
-    // }
-    // return panel;
-    // });
-    //
-    // buttonColumn.child(new ButtonWidget<>()
-    // .size(18, 18)
-    // .overlay(GTGuiTextures.BUTTON_THROTTLE_MINUS) // TODO texture
-    // .background(GTGuiTextures.BUTTON) // TODO make this work
-    // .onMousePressed(i -> {
-    // if (popupPanel.isPanelOpen()) {
-    // popupPanel.closePanel();
-    // } else {
-    // popupPanel.openPanel();
-    // }
-    // Interactable.playButtonClickSound();
-    // return true;
-    // }));
-    // }
 
     protected IWidget createDistinctButton(@NotNull ModularPanel mainPanel,
                                            @NotNull PanelSyncManager panelSyncManager) {
