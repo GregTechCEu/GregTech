@@ -22,6 +22,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -45,9 +46,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.GenericSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,6 +120,75 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         "gregtech.multiblock.large_combustion_engine.no_lubricant"));
             }
         }
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        var lubricant = new GenericSyncValue<>(
+                () -> getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false),
+                null, NetworkUtils::readFluidStack, NetworkUtils::writeFluidStack);
+
+        var fuelName = new StringSyncValue(
+                () -> ((LargeCombustionEngineWorkableHandler) recipeMapWorkable).getRecipeFluidInputInfo(), null);
+        var fuelAmount = new IntSyncValue(recipeMapWorkable::getPreviousRecipeDuration, null);
+
+        return new MultiblockUIFactory(this) {
+
+            @Override
+            protected void syncValues(PanelSyncManager manager) {
+                super.syncValues(manager);
+                manager.syncValue("lubricant", lubricant);
+                manager.syncValue("fuel_name", fuelName);
+                manager.syncValue("fuel_amount", fuelAmount);
+            }
+
+            @Override
+            protected void configureDisplayText(List<Widget<?>> textList) {
+                var recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
+                var builder = MultiblockDisplayTextPort.builder(textList, isStructureFormed())
+                        .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
+
+                if (isExtreme) {
+                    builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
+                } else {
+                    builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
+                }
+
+                // todo fuel needed line not working?
+                builder.addFuelNeededLine(fuelName.getStringValue(), fuelAmount.getIntValue())
+                        .addCustom(tl -> {
+                            if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
+                                String key = isExtreme ?
+                                        "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
+                                        "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
+                                tl.add(KeyUtil.coloredLang(TextFormatting.AQUA, key));
+                            }
+                        })
+                        .addWorkingStatusLine();
+            }
+
+            @Override
+            protected void configureErrorText(List<Widget<?>> textList) {
+                super.configureErrorText(textList);
+                MultiblockDisplayTextPort.builder(textList, isStructureFormed())
+                        .addCustom(keyList -> {
+                            if (isStructureFormed()) {
+                                if (checkIntakesObstructed()) {
+                                    keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
+                                            "gregtech.multiblock.large_combustion_engine.obstructed"));
+                                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                                            "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
+                                }
+
+                                FluidStack lubricantStack = lubricant.getValue();
+                                if (lubricantStack == null || lubricantStack.amount == 0) {
+                                    keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
+                                            "gregtech.multiblock.large_combustion_engine.no_lubricant"));
+                                }
+                            }
+                        });
+            }
+        };
     }
 
     @Override
