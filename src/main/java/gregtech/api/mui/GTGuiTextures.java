@@ -623,6 +623,8 @@ public class GTGuiTextures {
 
     public static IDrawable dynamic(UITexture[] textures, int rate) {
         AtomicInteger index = new AtomicInteger();
+        // todo something is wrong with this
+        // also this method is client only so that could cause problems too
         return (context, x, y, width, height, widgetTheme) -> {
             int a = (int) (context.getTick() % rate);
             int i = (a == 0 ? index.getAndIncrement() : index.get()) % textures.length;
