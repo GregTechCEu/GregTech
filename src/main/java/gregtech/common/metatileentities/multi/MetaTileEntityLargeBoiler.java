@@ -247,20 +247,19 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             }
 
             @Override
-            protected void configureWarningText(List<Widget<?>> textList) {
-                super.configureWarningText(textList);
-                MultiblockDisplayTextPort.builder(textList, isStructureFormed())
-                        .addCustom(keyList -> {
-                            if (isStructureFormed()) {
-                                // todo this is returning 0 on client for some reason
-                                if (waterFilled.getIntValue() == 0) {
-                                    keyList.add(KeyUtil.coloredLang(TextFormatting.YELLOW,
-                                            "gregtech.multiblock.large_boiler.no_water"));
-                                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
-                                            "gregtech.multiblock.large_boiler.explosion_tooltip"));
-                                }
-                            }
-                        });
+            protected void configureWarningText(MultiblockDisplayTextPort.Builder builder) {
+                super.configureWarningText(builder);
+                builder.addCustom(keyList -> {
+                    if (isStructureFormed()) {
+                        // todo this is returning 0 on client for some reason
+                        if (waterFilled.getIntValue() == 0) {
+                            keyList.add(KeyUtil.coloredLang(TextFormatting.YELLOW,
+                                    "gregtech.multiblock.large_boiler.no_water"));
+                            keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.large_boiler.explosion_tooltip"));
+                        }
+                    }
+                });
             }
 
             @Override
