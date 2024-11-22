@@ -52,15 +52,19 @@ public class KeyUtil {
         return IKey.dynamic(() -> coloredString(formatting, stringSupplier.get()).get());
     }
 
+    public static IKey dynamicString(Supplier<TextFormatting> formatting, Supplier<String> stringSupplier) {
+        return IKey.dynamic(() -> coloredString(formatting.get(), stringSupplier.get()).get());
+    }
+
     @SafeVarargs
     public static IKey dynamicLang(TextFormatting formatting, String lang, Supplier<Object>... argSuppliers) {
         if (ArrayUtils.isEmpty(argSuppliers)) return coloredLang(formatting, lang);
         if (argSuppliers.length == 1) return IKey.dynamic(() -> coloredLang(formatting, lang,
-                fixString(formatting, argSuppliers[0].get().toString())).get());
+                fixArg(formatting, argSuppliers[0].get().toString())).get());
         return IKey.dynamic(() -> {
             Object[] args = new Object[argSuppliers.length];
             for (int i = 0; i < args.length; i++) {
-                args[i] = fixString(formatting, argSuppliers[i].get().toString());
+                args[i] = fixArg(formatting, argSuppliers[i].get());
             }
             return coloredLang(formatting, lang, args).get();
         });
@@ -77,17 +81,20 @@ public class KeyUtil {
     public static Object[] checkFormatting(TextFormatting formatting, Object[] args) {
         Object[] fixedArgs = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
-            fixedArgs[i] = fixString(formatting, args[i].toString());
+            fixedArgs[i] = fixArg(formatting, args[i]);
         }
         return fixedArgs;
     }
 
-    public static String fixString(TextFormatting formatting, String s) {
-        if (hasFormatting(s)) {
-            return s + formatting;
-        } else {
-            return s;
+    public static Object fixArg(TextFormatting formatting, Object arg) {
+        if (arg instanceof IKey key) {
+            if (hasFormatting(key.get()))
+                return IKey.comp(key, toColor(formatting));
+        } else if (arg instanceof String s) {
+            if (hasFormatting(s))
+                return s + formatting;
         }
+        return arg;
     }
 
     public static boolean hasFormatting(String s) {
