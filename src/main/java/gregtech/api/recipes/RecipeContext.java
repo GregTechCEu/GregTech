@@ -6,6 +6,7 @@ import gregtech.api.recipes.chance.output.ChancedOutput;
 
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -15,8 +16,8 @@ public class RecipeContext<I> {
     ChanceBoostFunction boostFunction;
     public int baseTier, machineTier;
 
-    public RecipeContext(Hash.Strategy<I> strategy) {
-        this.cache = new Object2IntOpenCustomHashMap<>(strategy);
+    public RecipeContext(@Nullable Hash.Strategy<I> strategy) {
+        this.cache = strategy == null ? null : new Object2IntOpenCustomHashMap<>(strategy);
     }
 
     public RecipeContext() {
