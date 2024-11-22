@@ -47,10 +47,10 @@ public class GTGuiTextures {
     public static final UITexture GREGTECH_LOGO_DARK = fullImage("textures/gui/icon/gregtech_logo_dark.png");
     public static final IDrawable GREGTECH_LOGO_BLINKING_YELLOW = animated(
             "textures/gui/icon/gregtech_logo_blinking_yellow.png",
-            17, 34, true, 10);
+            17, 34, true, 60);
     public static final IDrawable GREGTECH_LOGO_BLINKING_RED = animated(
             "textures/gui/icon/gregtech_logo_blinking_red.png",
-            17, 34, true, 6);
+            17, 34, true, 36);
 
     public static final UITexture INDICATOR_NO_ENERGY = fullImage("textures/gui/base/indicator_no_energy.png");
     public static final UITexture INDICATOR_NO_STEAM_BRONZE = fullImage(
@@ -626,12 +626,14 @@ public class GTGuiTextures {
 
     public static IDrawable dynamic(UITexture[] textures, int rate) {
         AtomicInteger index = new AtomicInteger();
+        AtomicInteger tick = new AtomicInteger();
         // todo something is wrong with this
         // also this method is client only so that could cause problems too
         return (context, x, y, width, height, widgetTheme) -> {
-            int a = (int) (context.getTick() % rate);
-            int i = (a == 0 ? index.getAndIncrement() : index.get()) % textures.length;
-            textures[i].draw(context, x, y, width, height, widgetTheme);
+            int a = tick.getAndIncrement() % rate; // this makes rate per frame ?
+            int i = a == 0 ? index.incrementAndGet() : index.get();
+            index.set(i % textures.length);
+            textures[index.get()].draw(context, x, y, width, height, widgetTheme);
         };
     }
 }
