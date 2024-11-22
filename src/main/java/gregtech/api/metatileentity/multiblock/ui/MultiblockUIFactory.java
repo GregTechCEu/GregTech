@@ -61,7 +61,9 @@ public class MultiblockUIFactory {
         syncValues(panelSyncManager);
         var displayText = new ArrayList<Widget<?>>();
         // try to make this more dynamic somehow
-        configureDisplayText(displayText);
+        var builder = MultiblockDisplayTextPort.builder(displayText, mte.isStructureFormed())
+                .addTitle(mte.getMetaFullName());
+        configureDisplayText(builder);
 
         var panel = createRootPanel();
 
@@ -129,9 +131,7 @@ public class MultiblockUIFactory {
      * To use translation, use {@link KeyUtil#coloredLang(TextFormatting, String, Object...)}
      * or {@link KeyUtil#unformattedLang(String, Object...)}
      */
-    protected void configureDisplayText(List<Widget<?>> textList) {
-        MultiblockDisplayTextPort.builder(textList, mte.isStructureFormed());
-    }
+    protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {}
 
     /**
      * Add a custom third button to the Multiblock UI. By default, this is a placeholder stating that there is no
