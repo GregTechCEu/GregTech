@@ -734,7 +734,6 @@ public final class ToolHelper {
 
     public static boolean breakBlockRoutine(EntityPlayerMP player, ItemStack tool, BlockPos pos) {
         // This is *not* a vanilla/forge convention, Forge never added "shears" to ItemShear's tool classes.
-        tool = toolbeltPassthrough(tool);
         if (isTool(tool, ToolClasses.SHEARS) && shearBlockRoutine(player, tool, pos) == 0) {
             return false;
         }
