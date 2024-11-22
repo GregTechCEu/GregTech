@@ -88,7 +88,18 @@ public class MetaItem1 extends StandardMetaItem {
         if (!isInCreativeTab(tab)) return;
         for (MetaItem<?>.MetaValueItem item : metaItems.values()) {
             if (!item.isInCreativeTab(tab)) continue;
+
+            int itemMetaData = item.getMetaValue();
+            if (itemMetaData >= 1004 && itemMetaData <= 1013) continue;
+
             item.getSubItemHandler().getSubItems(item.getStackForm(), tab, subItems);
+
+            if (itemMetaData == 30) {
+                for (MetaItem<?>.MetaValueItem moldItem : SHAPE_MOLDS) {
+                    if (moldItem.getMetaValue() < 1005) continue;
+                    moldItem.getSubItemHandler().getSubItems(moldItem.getStackForm(), tab, subItems);
+                }
+            }
         }
     }
 
