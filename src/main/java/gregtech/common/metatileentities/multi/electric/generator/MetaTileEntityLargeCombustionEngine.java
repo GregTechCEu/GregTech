@@ -52,7 +52,6 @@ import com.cleanroommc.modularui.value.sync.GenericSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -154,7 +153,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 }
 
                 // todo fuel needed line not working?
-                builder.addFuelNeededLine(fuelName.getStringValue(), fuelAmount.getIntValue())
+                builder.addFuelNeededLine(fuelName::getStringValue, fuelAmount::getIntValue)
                         .addCustom(tl -> {
                             if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                                 String key = isExtreme ?
@@ -167,25 +166,24 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
 
             @Override
-            protected void configureErrorText(List<Widget<?>> textList) {
-                super.configureErrorText(textList);
-                MultiblockDisplayTextPort.builder(textList, isStructureFormed())
-                        .addCustom(keyList -> {
-                            if (isStructureFormed()) {
-                                if (checkIntakesObstructed()) {
-                                    keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
-                                            "gregtech.multiblock.large_combustion_engine.obstructed"));
-                                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
-                                            "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
-                                }
+            protected void configureErrorText(MultiblockDisplayTextPort.Builder builder) {
+                super.configureErrorText(builder);
+                builder.addCustom(keyList -> {
+                    if (isStructureFormed()) {
+                        if (checkIntakesObstructed()) {
+                            keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
+                                    "gregtech.multiblock.large_combustion_engine.obstructed"));
+                            keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
+                        }
 
-                                FluidStack lubricantStack = lubricant.getValue();
-                                if (lubricantStack == null || lubricantStack.amount == 0) {
-                                    keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
-                                            "gregtech.multiblock.large_combustion_engine.no_lubricant"));
-                                }
-                            }
-                        });
+                        FluidStack lubricantStack = lubricant.getValue();
+                        if (lubricantStack == null || lubricantStack.amount == 0) {
+                            keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
+                                    "gregtech.multiblock.large_combustion_engine.no_lubricant"));
+                        }
+                    }
+                });
             }
         };
     }
