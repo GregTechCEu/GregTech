@@ -52,11 +52,19 @@ public class MultiblockUIFactory {
         this.maintanence = new IntSyncValue(mte::getMaintenanceProblems, null);
     }
 
+    /**
+     * Called once during ui construction.
+     * @param manager for syncing values
+     */
     protected void syncValues(PanelSyncManager manager) {
         manager.syncValue("muffler", mufflerObstructed);
         manager.syncValue("maintenance", maintanence);
     }
 
+    /**
+     * Constructs the multiblock ui panel<br />
+     * <i>It is not recommended to override this method</i>
+     */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
         syncValues(panelSyncManager);
         var displayText = new ArrayList<Widget<?>>();
@@ -100,6 +108,7 @@ public class MultiblockUIFactory {
                     }
                     w.overlay(icon);
                 })
+                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .tooltipBuilder(tooltip -> {
                     for (var text : textList) {
                         if (text instanceof TextWidget textWidget)
@@ -109,23 +118,25 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Returns a list of text indicating any current warnings in this Multiblock.
-     * Recommended to only display warnings if the structure is already formed.
+     * Returns a list of text indicating any current warnings in this Multiblock. <br />
+     * Recommended to only display warnings if the structure is already formed. <br />
+     * This is called every tick on the client-side
      */
     protected void configureWarningText(MultiblockDisplayTextPort.Builder builder) {
         builder.addMaintenanceProblemLines((byte) maintanence.getIntValue());
     }
 
     /**
-     * Returns a list of translation keys indicating any current errors in this Multiblock.
-     * Prioritized over any warnings provided by {@link #configureWarningText(MultiblockDisplayTextPort.Builder)}.
+     * Returns a list of translation keys indicating any current errors in this Multiblock. <br />
+     * Prioritized over any warnings provided by {@link #configureWarningText(MultiblockDisplayTextPort.Builder)}.<br />
+     * This is called every tick on the client-side
      */
     protected void configureErrorText(MultiblockDisplayTextPort.Builder builder) {
         builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
     }
 
     /**
-     * Called on both sides to obtain text displayed in GUI <br />
+     * Called once on both sides to obtain text displayed in GUI <br />
      * Each element of list is displayed on new line <br />
      * To use translation, use {@link KeyUtil#coloredLang(TextFormatting, String, Object...)}
      * or {@link KeyUtil#unformattedLang(String, Object...)}
