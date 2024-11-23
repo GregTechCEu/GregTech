@@ -180,8 +180,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         DoubleSyncValue sliderValue = new DoubleSyncValue(
                 () -> (double) getThrottlePercentage() / 100,
                 d -> setThrottlePercentage((int) (d * 100)));
-        IntSyncValue waterFilled = new IntSyncValue(this::getWaterFilled, null);
         return new MultiblockUIFactory(this) {
+
+            IntSyncValue waterFilled;
 
             @Override
             public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
@@ -243,6 +244,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             @Override
             protected void syncValues(PanelSyncManager manager) {
                 super.syncValues(manager);
+                waterFilled = new IntSyncValue(() -> getWaterFilled(), null);
                 manager.syncValue("water_filled", waterFilled);
             }
 
