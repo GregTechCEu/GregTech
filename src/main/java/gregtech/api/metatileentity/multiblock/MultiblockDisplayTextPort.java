@@ -438,7 +438,7 @@ public class MultiblockDisplayTextPort {
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
         public Builder addFuelNeededLine(Supplier<String> fuelName, IntSupplier previousRecipeDuration) {
-            if (!isStructureFormed || !isActive || fuelName.get() == null) return this;
+            if (!isStructureFormed || !isActive) return this;
 
             addKey(KeyUtil.dynamicLang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",

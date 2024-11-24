@@ -49,7 +49,6 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.GenericSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
@@ -127,18 +126,12 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 () -> getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false),
                 null, NetworkUtils::readFluidStack, NetworkUtils::writeFluidStack);
 
-        var fuelName = new StringSyncValue(
-                () -> ((LargeCombustionEngineWorkableHandler) recipeMapWorkable).getRecipeFluidInputInfo(), null);
-        var fuelAmount = new IntSyncValue(recipeMapWorkable::getPreviousRecipeDuration, null);
-
         return new MultiblockUIFactory(this) {
 
             @Override
             protected void syncValues(PanelSyncManager manager) {
                 super.syncValues(manager);
                 manager.syncValue("lubricant", lubricant);
-                manager.syncValue("fuel_name", fuelName);
-                manager.syncValue("fuel_amount", fuelAmount);
             }
 
             @Override
@@ -153,7 +146,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 }
 
                 // todo fuel needed line not working?
-                builder.addFuelNeededLine(fuelName::getStringValue, fuelAmount::getIntValue)
+                builder.addFuelNeededLine(recipeLogic::getRecipeFluidInputInfo, recipeLogic::getPreviousRecipeDuration)
                         .addCustom(tl -> {
                             if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                                 String key = isExtreme ?
