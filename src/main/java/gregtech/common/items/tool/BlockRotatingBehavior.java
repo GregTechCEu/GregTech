@@ -33,9 +33,9 @@ public class BlockRotatingBehavior implements IToolBehavior {
     protected BlockRotatingBehavior() {/**/}
 
     @Override
-    public EnumActionResult onItemUseFirst(@NotNull ItemStack stack, @NotNull EntityPlayer player,
-                                           @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing side,
-                                           float hitX, float hitY, float hitZ, @NotNull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing side, float hitX, float hitY, float hitZ,
+                                           @NotNull EnumHand hand) {
         TileEntity te = world.getTileEntity(pos);
         // MTEs have special handling on rotation
         if (te instanceof IGregTechTileEntity) {

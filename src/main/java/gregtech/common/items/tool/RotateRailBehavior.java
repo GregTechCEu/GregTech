@@ -29,9 +29,9 @@ public class RotateRailBehavior implements IToolBehavior {
 
     @NotNull
     @Override
-    public EnumActionResult onItemUseFirst(@NotNull ItemStack stack, @NotNull EntityPlayer player,
-                                           @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                           float hitX, float hitY, float hitZ, @NotNull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing facing, float hitX, float hitY, float hitZ,
+                                           @NotNull EnumHand hand) {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof BlockRailBase) {
             if (world.setBlockState(pos, state.withRotation(Rotation.CLOCKWISE_90))) {

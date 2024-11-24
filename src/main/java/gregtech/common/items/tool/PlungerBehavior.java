@@ -32,9 +32,9 @@ public class PlungerBehavior implements IToolBehavior {
     protected PlungerBehavior() {/**/}
 
     @Override
-    public EnumActionResult onItemUseFirst(@NotNull ItemStack stack, @NotNull EntityPlayer player,
-                                           @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                           float hitX, float hitY, float hitZ, @NotNull EnumHand hand) {
+    public EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                           @NotNull EnumFacing facing, float hitX, float hitY, float hitZ,
+                                           @NotNull EnumHand hand) {
         IFluidHandler fluidHandler = FluidUtil.getFluidHandler(world, pos, facing);
         if (fluidHandler == null) {
             return EnumActionResult.PASS;

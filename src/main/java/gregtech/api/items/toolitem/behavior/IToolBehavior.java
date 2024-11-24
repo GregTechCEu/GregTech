@@ -79,7 +79,10 @@ public interface IToolBehavior {
     }
 
     /**
-     * Called when a Block is right-clicked with this Item, but before the block is activated
+     * Called when a Block is right-clicked with this Item, but before the block is activated.
+     * If actions not going through {@link gregtech.api.items.toolitem.ToolHelper} are performed, such as
+     * {@link ItemStack#shrink(int)}, don't forget to perform toolbelt passthrough via
+     * {@link gregtech.api.items.toolitem.ToolHelper#toolbeltPassthrough(ItemStack)}
      *
      * @param player the player clicking with the item
      * @param world  the world in which the block is clicked
@@ -90,16 +93,18 @@ public interface IToolBehavior {
      * @param hitZ   the z location of the block hit
      * @param hand   the hand holding the item
      */
-    default EnumActionResult onItemUseFirst(@NotNull ItemStack stack, @NotNull EntityPlayer player,
-                                            @NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing facing,
-                                            float hitX, float hitY, float hitZ, @NotNull EnumHand hand) {
+    default EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
+                                            @NotNull EnumFacing facing, float hitX, float hitY, float hitZ,
+                                            @NotNull EnumHand hand) {
         return EnumActionResult.PASS;
     }
 
     /**
-     * Called when a Block is right-clicked with this Item
+     * Called when a Block is right-clicked with this Item.
+     * If actions not going through {@link gregtech.api.items.toolitem.ToolHelper} are performed, such as
+     * {@link ItemStack#shrink(int)}, don't forget to perform toolbelt passthrough via
+     * {@link gregtech.api.items.toolitem.ToolHelper#toolbeltPassthrough(ItemStack)}
      *
-     * @param stack  the itemstack of the tool
      * @param player the player clicking with the item
      * @param world  the world in which the block is clicked
      * @param pos    the position of the blocked clicked
@@ -110,8 +115,7 @@ public interface IToolBehavior {
      * @param hitZ   the z location of the block hit
      */
     @NotNull
-    default EnumActionResult onItemUse(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World world,
-                                       @NotNull BlockPos pos,
+    default EnumActionResult onItemUse(@NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos,
                                        @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY,
                                        float hitZ) {
         return EnumActionResult.PASS;
@@ -119,14 +123,17 @@ public interface IToolBehavior {
 
     /**
      * Called when the equipped item is right-clicked.
+     * If actions not going through {@link gregtech.api.items.toolitem.ToolHelper} are performed, such as
+     * {@link ItemStack#shrink(int)}, don't forget to perform toolbelt passthrough via
+     * {@link gregtech.api.items.toolitem.ToolHelper#toolbeltPassthrough(ItemStack)}
      *
      * @param world  the world in which the click happened
      * @param player the player clicking the item
      * @param hand   the hand holding the item
      */
     @NotNull
-    default ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, @NotNull World world,
-                                                     @NotNull EntityPlayer player, @NotNull EnumHand hand) {
+    default ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
+                                                     @NotNull EnumHand hand) {
         return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
     }
 
