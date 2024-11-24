@@ -828,7 +828,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (ri.isNonConsumable()) {
                 newRecipeInputs.add(ri);
             } else {
-                newRecipeInputs.add(ri.withAmount(ri.getAmount() * numberOfOperations));
+                newRecipeInputs.add(ri.copyWithAmount(ri.getAmount() * numberOfOperations));
             }
         });
 
@@ -836,7 +836,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (fi.isNonConsumable()) {
                 newFluidInputs.add(fi);
             } else {
-                newFluidInputs.add(fi.withAmount(fi.getAmount() * numberOfOperations));
+                newFluidInputs.add(fi.copyWithAmount(fi.getAmount() * numberOfOperations));
             }
         });
 
