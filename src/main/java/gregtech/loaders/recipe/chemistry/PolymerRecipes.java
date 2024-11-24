@@ -366,12 +366,20 @@ public class PolymerRecipes {
                 .buildAndRegister();
 
         // 3,3-Diaminobenzidine
-        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
+        CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(100)
                 .fluidInputs(Dichlorobenzidine.getFluid(1000))
                 .fluidInputs(Ammonia.getFluid(2000))
-                .notConsumable(dust, Copper)
+                .input(dustTiny, Copper)
                 .fluidOutputs(Diaminobenzidine.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
+                .buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[IV]).duration(900)
+                .fluidInputs(Dichlorobenzidine.getFluid(9000))
+                .fluidInputs(Ammonia.getFluid(18000))
+                .input(dust, Copper)
+                .fluidOutputs(Diaminobenzidine.getFluid(9000))
+                .fluidOutputs(HydrochloricAcid.getFluid(18000))
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(VA[EV]).duration(200)
