@@ -64,9 +64,22 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
-            refreshList();
-            syncME();
+        if (!getWorld().isRemote) {
+            if (isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
+                refreshList();
+                syncME();
+            }
+
+            // Immediately clear cached items if the status changed, to prevent running recipes while offline
+            if (this.meStatusChanged && !this.isOnline) {
+                if (autoPull) {
+                    clearInventory(0);
+                } else {
+                    for (int i = 0; i < CONFIG_SIZE; i++) {
+                        getAEItemHandler().getInventory()[i].setStack(null);
+                    }
+                }
+            }
         }
     }
 
