@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 
 public class KeyUtil {
 
-    public static final IKey RESET = toColor(TextFormatting.RESET);
     public static final String SECTION = "§";
 
     public static IKey toColor(TextFormatting formatting) {
@@ -19,8 +18,8 @@ public class KeyUtil {
 
     public static IKey withColor(TextFormatting formatting, IKey... keys) {
         if (keys == null) return toColor(formatting);
-        if (keys.length == 1) return IKey.comp(toColor(formatting), keys[0], RESET);
-        return IKey.comp(toColor(formatting), IKey.comp(keys), RESET);
+        if (keys.length == 1) return IKey.comp(toColor(formatting), keys[0]);
+        return IKey.comp(toColor(formatting), IKey.comp(keys));
     }
 
     public static IKey coloredLang(TextFormatting formatting, String lang, Object... args) {
@@ -29,7 +28,8 @@ public class KeyUtil {
     }
 
     public static IKey coloredString(TextFormatting formatting, String string) {
-        return IKey.comp(toColor(formatting), IKey.str(string), RESET);
+        if (string == null) return IKey.EMPTY;
+        return IKey.comp(toColor(formatting), IKey.str(string));
     }
 
     public static IKey coloredNumber(TextFormatting formatting, long number) {
@@ -60,7 +60,7 @@ public class KeyUtil {
     public static IKey dynamicLang(TextFormatting formatting, String lang, Supplier<Object>... argSuppliers) {
         if (ArrayUtils.isEmpty(argSuppliers)) return coloredLang(formatting, lang);
         if (argSuppliers.length == 1) return IKey.dynamic(() -> coloredLang(formatting, lang,
-                fixArg(formatting, argSuppliers[0].get().toString())).get());
+                fixArg(formatting, argSuppliers[0].get())).get());
         return IKey.dynamic(() -> {
             Object[] args = new Object[argSuppliers.length];
             for (int i = 0; i < args.length; i++) {
@@ -78,7 +78,7 @@ public class KeyUtil {
         return IKey.dynamic(() -> coloredNumber(formatting, supplier.getAsLong(), suffix).get());
     }
 
-    public static Object[] checkFormatting(TextFormatting formatting, Object[] args) {
+    private static Object[] checkFormatting(TextFormatting formatting, Object[] args) {
         Object[] fixedArgs = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             fixedArgs[i] = fixArg(formatting, args[i]);
@@ -86,7 +86,7 @@ public class KeyUtil {
         return fixedArgs;
     }
 
-    public static Object fixArg(TextFormatting formatting, Object arg) {
+    private static Object fixArg(TextFormatting formatting, Object arg) {
         if (arg instanceof IKey key) {
             if (hasFormatting(key.get()))
                 return IKey.comp(key, toColor(formatting));
@@ -97,7 +97,7 @@ public class KeyUtil {
         return arg;
     }
 
-    public static boolean hasFormatting(String s) {
+    private static boolean hasFormatting(String s) {
         return s.contains(SECTION);
     }
 }
