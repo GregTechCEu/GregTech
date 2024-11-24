@@ -54,6 +54,7 @@ public class MultiblockUIFactory {
 
     /**
      * Called once during ui construction.
+     * 
      * @param manager for syncing values
      */
     protected void syncValues(PanelSyncManager manager) {
@@ -214,13 +215,6 @@ public class MultiblockUIFactory {
     protected ParentWidget<?> createScreen(List<Widget<?>> lines, PanelSyncManager syncManager) {
         var displayText = new Column()
                 .expanded()
-                // .onUpdateListener(column -> {
-                // column.getChildren().clear();
-                // lines.clear();
-                // configureDisplayText(lines);
-                // lines.forEach(column::child);
-                // WidgetTree.resize(column);
-                // })
                 .padding(4, 4);
 
         lines.forEach(displayText::child);
