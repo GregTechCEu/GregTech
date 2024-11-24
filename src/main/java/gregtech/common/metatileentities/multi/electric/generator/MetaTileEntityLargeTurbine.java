@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
@@ -15,6 +16,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -22,6 +24,8 @@ import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -45,6 +49,7 @@ import java.util.List;
 public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                                         implements ITieredMetaTileEntity, ProgressBarMultiblock {
 
+    private static final int SYNC_ROTOR = GregtechDataCodes.assignId();
     public final int tier;
 
     public final IBlockState casingState;
@@ -56,6 +61,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     private static final int MIN_DURABILITY_TO_WARN = 10;
 
     public IFluidHandler exportFluidHandler;
+    private int cachedRotorEfficiency;
+    private int cachedTotalEfficiency;
 
     public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier,
                                       IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer,
@@ -107,6 +114,12 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         super.formStructure(context);
         this.exportFluidHandler = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         ((LargeTurbineWorkableHandler) this.recipeMapWorkable).updateTanks();
+        this.cachedRotorEfficiency = getRotorHolder().getRotorEfficiency();
+        this.cachedTotalEfficiency = getRotorHolder().getTotalEfficiency();
+        writeCustomData(SYNC_ROTOR, buffer -> {
+            buffer.writeInt(this.cachedRotorEfficiency);
+            buffer.writeInt(this.cachedTotalEfficiency);
+        });
     }
 
     @Override
@@ -181,6 +194,56 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         "gregtech.multiblock.turbine.no_rotor"));
             }
         }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == SYNC_ROTOR) {
+            this.cachedRotorEfficiency = buf.readInt();
+            this.cachedTotalEfficiency = buf.readInt();
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(this.cachedRotorEfficiency);
+        buf.writeInt(this.cachedTotalEfficiency);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.cachedRotorEfficiency = buf.readInt();
+        this.cachedTotalEfficiency = buf.readInt();
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this) {
+
+            @Override
+            protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {
+                MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+
+                builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                        .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
+                        .addCustom(tl -> {
+                            if (isStructureFormed()) {
+                                if (cachedRotorEfficiency > 0) {
+                                    IKey efficiencyInfo = KeyUtil.coloredNumber(TextFormatting.AQUA,
+                                            cachedTotalEfficiency, "%");
+                                    tl.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                                            "gregtech.multiblock.turbine.efficiency",
+                                            efficiencyInfo));
+                                }
+                            }
+                        })
+                        .addFuelNeededLine(recipeLogic::getRecipeFluidInputInfo, recipeLogic::getPreviousRecipeDuration)
+                        .addWorkingStatusLine();
+            }
+        };
     }
 
     @Override
@@ -408,5 +471,20 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
             }
         }
         return new int[2];
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        // really do not like how i have to save this to NBT
+        data.setInteger("cached_eff", this.cachedRotorEfficiency);
+        data.setInteger("cached_total", this.cachedTotalEfficiency);
+        return super.writeToNBT(data);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        this.cachedRotorEfficiency = data.getInteger("cached_eff");
+        this.cachedTotalEfficiency = data.getInteger("cached_total");
     }
 }
