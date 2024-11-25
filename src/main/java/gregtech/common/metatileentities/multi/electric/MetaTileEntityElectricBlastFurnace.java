@@ -146,10 +146,10 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
             private void addHeatCapacity(List<IKey> keyList) {
                 if (isStructureFormed()) {
-                    var heatString = KeyUtil.coloredNumber(TextFormatting.RED,
+                    var heatString = KeyUtil.number(TextFormatting.RED,
                             getCurrentTemperature(), "K");
 
-                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.blast_furnace.max_temperature", heatString));
                 }
             }

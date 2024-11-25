@@ -255,9 +255,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                     if (isStructureFormed()) {
                         // todo this is returning 0 on client for some reason
                         if (waterFilled.getIntValue() == 0) {
-                            keyList.add(KeyUtil.coloredLang(TextFormatting.YELLOW,
+                            keyList.add(KeyUtil.lang(TextFormatting.YELLOW,
                                     "gregtech.multiblock.large_boiler.no_water"));
-                            keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                                     "gregtech.multiblock.large_boiler.explosion_tooltip"));
                         }
                     }
@@ -274,24 +274,24 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             private void addCustomData(List<IKey> keyList) {
                 if (isStructureFormed()) {
                     // Steam Output line
-                    IKey steamOutput = KeyUtil.dynamicLong(TextFormatting.AQUA, recipeLogic::getLastTickSteam,
+                    IKey steamOutput = KeyUtil.number(TextFormatting.AQUA, recipeLogic::getLastTickSteam,
                             " L/t");
 
-                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.large_boiler.steam_output", steamOutput));
 
                     // Efficiency line
-                    IKey efficiency = KeyUtil.dynamicString(
+                    IKey efficiency = KeyUtil.string(
                             () -> getNumberColor(recipeLogic.getHeatScaled()),
                             () -> recipeLogic.getHeatScaled() + "%");
-                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.large_boiler.efficiency", efficiency));
 
                     // Throttle line
-                    IKey throttle = KeyUtil.dynamicString(
+                    IKey throttle = KeyUtil.string(
                             () -> getNumberColor(getThrottle()),
                             () -> getThrottle() + "%");
-                    keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.large_boiler.throttle", throttle));
                 }
             }

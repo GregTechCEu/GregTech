@@ -232,9 +232,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         .addCustom(tl -> {
                             if (isStructureFormed()) {
                                 if (cachedRotorEfficiency > 0) {
-                                    IKey efficiencyInfo = KeyUtil.coloredNumber(TextFormatting.AQUA,
+                                    IKey efficiencyInfo = KeyUtil.number(TextFormatting.AQUA,
                                             cachedTotalEfficiency, "%");
-                                    tl.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                                    tl.add(KeyUtil.lang(TextFormatting.GRAY,
                                             "gregtech.multiblock.turbine.efficiency",
                                             efficiencyInfo));
                                 }
