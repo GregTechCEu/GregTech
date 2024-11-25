@@ -60,11 +60,11 @@ public class MultiblockDisplayTextPort {
             this.isStructureFormed = mte.isStructureFormed();
 
             if (showTitle)
-                addKey(KeyUtil.coloredLang(TextFormatting.WHITE, mte.getMetaFullName()));
+                addKey(KeyUtil.lang(TextFormatting.WHITE, mte.getMetaFullName()));
 
             if (!isStructureFormed && showIncompleteStructureWarning) {
-                var base = KeyUtil.coloredLang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
-                var hover = KeyUtil.coloredLang(TextFormatting.GRAY,
+                var base = KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
+                var hover = KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.invalid_structure.tooltip");
                 addKey(base).addTooltipLine(hover);
             }
@@ -115,9 +115,9 @@ public class MultiblockDisplayTextPort {
                 // wrap in text component to keep it from being formatted
                 IKey voltageName = IKey.str(GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                var bodyText = KeyUtil.coloredLang(TextFormatting.GRAY,
+                var bodyText = KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName);
-                var hoverText = KeyUtil.coloredLang(TextFormatting.GRAY,
+                var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick_hover");
                 addKey(bodyText).addTooltipLine(hoverText);
             }
@@ -134,9 +134,9 @@ public class MultiblockDisplayTextPort {
             if (!isStructureFormed) return this;
             if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
 
-            var bodyText = KeyUtil.coloredLang(TextFormatting.GRAY,
+            var bodyText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_recipe_tier", GTValues.VNF[tier]);
-            var hoverText = KeyUtil.coloredLang(TextFormatting.GRAY,
+            var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_recipe_tier_hover");
             addKey(bodyText).addTooltipLine(hoverText);
             return this;
@@ -152,10 +152,10 @@ public class MultiblockDisplayTextPort {
             if (energyUsage > 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
                 // wrap in text component to keep it from being formatted
-                var voltageName = KeyUtil.unformattedString(
+                var voltageName = KeyUtil.string(
                         GTValues.VOCNF[GTUtility.getOCTierByVoltage(energyUsage)]);
 
-                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.energy_consumption", energyFormatted, voltageName));
             }
             return this;
@@ -171,10 +171,10 @@ public class MultiblockDisplayTextPort {
             if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
-                var voltageName = KeyUtil.unformattedString(
+                var voltageName = KeyUtil.string(
                         GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName));
             }
             return this;
@@ -192,10 +192,10 @@ public class MultiblockDisplayTextPort {
             if (maxVoltage != 0 && amperage != 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
-                var voltageName = KeyUtil.unformattedString(
+                var voltageName = KeyUtil.string(
                         GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
 
-                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick_amps",
                         energyFormatted, amperage, voltageName));
             }
@@ -210,8 +210,8 @@ public class MultiblockDisplayTextPort {
         public Builder addComputationUsageLine(int maxCWUt) {
             if (!isStructureFormed) return this;
             if (maxCWUt > 0) {
-                var computation = KeyUtil.coloredString(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(maxCWUt));
-                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                var computation = KeyUtil.string(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(maxCWUt));
+                addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.computation.max", computation));
             }
             return this;
@@ -225,9 +225,9 @@ public class MultiblockDisplayTextPort {
         public Builder addComputationUsageExactLine(int currentCWUt) {
             if (!isStructureFormed) return this;
             if (isActive && currentCWUt > 0) {
-                var computation = KeyUtil.coloredString(TextFormatting.AQUA,
+                var computation = KeyUtil.string(TextFormatting.AQUA,
                         TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
-                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.computation.usage", computation));
             }
             return this;
@@ -259,7 +259,7 @@ public class MultiblockDisplayTextPort {
         public Builder addWorkPausedLine(boolean checkState) {
             if (!isStructureFormed) return this;
             if (!checkState || !isWorkingEnabled) {
-                addKey(KeyUtil.withColor(TextFormatting.GOLD, pausedKey));
+                addKey(KeyUtil.colored(TextFormatting.GOLD, pausedKey));
             }
             return this;
         }
@@ -273,7 +273,7 @@ public class MultiblockDisplayTextPort {
         public Builder addRunningPerfectlyLine(boolean checkState) {
             if (!isStructureFormed) return this;
             if (!checkState || isActive) {
-                addKey(KeyUtil.withColor(TextFormatting.GREEN, runningKey));
+                addKey(KeyUtil.colored(TextFormatting.GREEN, runningKey));
             }
             return this;
         }
@@ -287,7 +287,7 @@ public class MultiblockDisplayTextPort {
         public Builder addIdlingLine(boolean checkState) {
             if (!isStructureFormed) return this;
             if (!checkState || (isWorkingEnabled && !isActive)) {
-                addKey(KeyUtil.withColor(TextFormatting.GRAY, idlingKey));
+                addKey(KeyUtil.colored(TextFormatting.GRAY, idlingKey));
             }
             return this;
         }
@@ -301,7 +301,7 @@ public class MultiblockDisplayTextPort {
          */
         public Builder addProgressLine(DoubleSupplier progressPercent) { // todo
             if (!isStructureFormed || !isActive) return this;
-            addKey(KeyUtil.dynamicLang(TextFormatting.GRAY, "gregtech.multiblock.progress",
+            addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress",
                     () -> ((int) (progressPercent.getAsDouble() * 100))));
             return this;
         }
@@ -314,10 +314,10 @@ public class MultiblockDisplayTextPort {
         public Builder addParallelsLine(int numParallels) {
             if (!isStructureFormed) return this;
             if (numParallels > 1) {
-                var parallels = KeyUtil.coloredString(TextFormatting.DARK_PURPLE,
+                var parallels = KeyUtil.string(TextFormatting.DARK_PURPLE,
                         TextFormattingUtil.formatNumbers(numParallels));
 
-                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.parallel", parallels));
             }
             return this;
@@ -331,7 +331,7 @@ public class MultiblockDisplayTextPort {
         public Builder addLowPowerLine(boolean isLowPower) {
             if (!isStructureFormed) return this;
             if (isLowPower) {
-                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.not_enough_energy"));
             }
             return this;
@@ -359,7 +359,7 @@ public class MultiblockDisplayTextPort {
         public Builder addLowDynamoTierLine(boolean isTooLow) {
             if (!isStructureFormed) return this;
             if (isTooLow) {
-                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.not_enough_energy_output"));
             }
             return this;
@@ -374,42 +374,42 @@ public class MultiblockDisplayTextPort {
         public Builder addMaintenanceProblemLines(byte maintenanceProblems) {
             if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
             if (maintenanceProblems < 63) {
-                addKey(KeyUtil.coloredLang(TextFormatting.YELLOW,
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.has_problems"));
 
                 // Wrench
                 if ((maintenanceProblems & 1) == 0) {
-                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    addKey(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.wrench"));
                 }
 
                 // Screwdriver
                 if (((maintenanceProblems >> 1) & 1) == 0) {
-                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    addKey(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.screwdriver"));
                 }
 
                 // Soft Mallet
                 if (((maintenanceProblems >> 2) & 1) == 0) {
-                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    addKey(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.soft_mallet"));
                 }
 
                 // Hammer
                 if (((maintenanceProblems >> 3) & 1) == 0) {
-                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    addKey(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.hard_hammer"));
                 }
 
                 // Wire Cutters
                 if (((maintenanceProblems >> 4) & 1) == 0) {
-                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    addKey(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.wire_cutter"));
                 }
 
                 // Crowbar
                 if (((maintenanceProblems >> 5) & 1) == 0) {
-                    addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                    addKey(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.universal.problem.crowbar"));
                 }
             }
@@ -424,9 +424,9 @@ public class MultiblockDisplayTextPort {
         public Builder addMufflerObstructedLine(boolean isObstructed) {
             if (!isStructureFormed) return this;
             if (isObstructed) {
-                addKey(KeyUtil.coloredLang(TextFormatting.RED,
+                addKey(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.universal.muffler_obstructed"));
-                addKey(KeyUtil.coloredLang(TextFormatting.GRAY,
+                addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.universal.muffler_obstructed_desc"));
             }
             return this;
@@ -440,10 +440,10 @@ public class MultiblockDisplayTextPort {
         public Builder addFuelNeededLine(Supplier<String> fuelName, IntSupplier previousRecipeDuration) {
             if (!isStructureFormed || !isActive) return this;
 
-            addKey(KeyUtil.dynamicLang(TextFormatting.GRAY,
+            addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
-                    () -> KeyUtil.coloredString(TextFormatting.RED, fuelName.get()),
-                    () -> KeyUtil.coloredNumber(TextFormatting.AQUA, previousRecipeDuration.getAsInt())));
+                    () -> KeyUtil.string(TextFormatting.RED, fuelName.get()),
+                    () -> KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration.getAsInt())));
 
             return this;
         }
