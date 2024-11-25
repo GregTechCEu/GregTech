@@ -152,7 +152,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                                 String key = isExtreme ?
                                         "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
                                         "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
-                                tl.add(KeyUtil.coloredLang(TextFormatting.AQUA, key));
+                                tl.add(KeyUtil.lang(TextFormatting.AQUA, key));
                             }
                         })
                         .addWorkingStatusLine();
@@ -164,15 +164,15 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 builder.addCustom(keyList -> {
                     if (isStructureFormed()) {
                         if (checkIntakesObstructed()) {
-                            keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
+                            keyList.add(KeyUtil.lang(TextFormatting.RED,
                                     "gregtech.multiblock.large_combustion_engine.obstructed"));
-                            keyList.add(KeyUtil.coloredLang(TextFormatting.GRAY,
+                            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                                     "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
                         }
 
                         FluidStack lubricantStack = lubricant.getValue();
                         if (lubricantStack == null || lubricantStack.amount == 0) {
-                            keyList.add(KeyUtil.coloredLang(TextFormatting.RED,
+                            keyList.add(KeyUtil.lang(TextFormatting.RED,
                                     "gregtech.multiblock.large_combustion_engine.no_lubricant"));
                         }
                     }
