@@ -139,8 +139,8 @@ public class MultiblockUIFactory {
     /**
      * Called once on both sides to obtain text displayed in GUI <br />
      * Each element of list is displayed on new line <br />
-     * To use translation, use {@link KeyUtil#coloredLang(TextFormatting, String, Object...)}
-     * or {@link KeyUtil#unformattedLang(String, Object...)}
+     * To use translation, use {@link KeyUtil#lang(TextFormatting, String, Object...)}
+     * or {@link KeyUtil#lang(String, Object...)}
      */
     protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {}
 
