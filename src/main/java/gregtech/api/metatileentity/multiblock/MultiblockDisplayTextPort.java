@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
 
 public class MultiblockDisplayTextPort {
 
@@ -437,13 +435,13 @@ public class MultiblockDisplayTextPort {
          * <br>
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
-        public Builder addFuelNeededLine(Supplier<String> fuelName, IntSupplier previousRecipeDuration) {
-            if (!isStructureFormed || !isActive) return this;
+        public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
+            if (!isStructureFormed || !isActive || fuelName == null) return this;
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
-                    () -> KeyUtil.string(TextFormatting.RED, fuelName.get()),
-                    () -> KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration.getAsInt())));
+                    KeyUtil.string(TextFormatting.RED, fuelName),
+                    KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
 
             return this;
         }
