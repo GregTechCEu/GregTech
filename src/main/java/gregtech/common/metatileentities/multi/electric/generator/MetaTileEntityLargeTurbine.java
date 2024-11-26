@@ -240,7 +240,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                                 }
                             }
                         })
-                        .addFuelNeededLine(recipeLogic::getRecipeFluidInputInfo, recipeLogic::getPreviousRecipeDuration)
+                        .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(),
+                                recipeLogic.getPreviousRecipeDuration())
                         .addWorkingStatusLine();
             }
         };

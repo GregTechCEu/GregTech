@@ -70,9 +70,9 @@ public class MultiblockUIFactory {
         syncValues(panelSyncManager);
         var displayText = new ArrayList<Widget<?>>();
 
-        var builder = MultiblockDisplayTextPort.builder(displayText, mte);
+        // var builder = MultiblockDisplayTextPort.builder(displayText, mte);
 
-        configureDisplayText(builder);
+        // configureDisplayText(builder);
 
         var panel = createRootPanel();
 
@@ -212,12 +212,19 @@ public class MultiblockUIFactory {
         return column;
     }
 
-    protected ParentWidget<?> createScreen(List<Widget<?>> lines, PanelSyncManager syncManager) {
+    protected Widget<?> createScreen(List<Widget<?>> lines, PanelSyncManager syncManager) {
         var displayText = new Column()
                 .expanded()
+                .onUpdateListener(column -> {
+                    column.getChildren().clear();
+                    lines.clear();
+                    configureDisplayText(MultiblockDisplayTextPort.builder(lines, mte));
+                    lines.forEach(column::child);
+                    resize(column);
+                })
                 .padding(4, 4);
 
-        lines.forEach(displayText::child);
+        // lines.forEach(displayText::child);
         return new ParentWidget<>()
                 .child(createIndicator())
                 .child(new ScrollWidget<>(new VerticalScrollData())
@@ -226,6 +233,18 @@ public class MultiblockUIFactory {
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, 109)
                 .pos(4, 4);
+    }
+
+    private void resize(IWidget parent) {
+        int top = parent.getArea().getPadding().top;
+        for (IWidget widget : parent.getChildren()) {
+            widget.resizer().resize(widget);
+            var area = widget.getArea();
+            area.rx = parent.getArea().getPadding().left;
+            area.ry = top;
+            area.applyPos(parent);
+            top += area.requestedHeight();
+        }
     }
 
     @NotNull
