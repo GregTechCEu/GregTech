@@ -137,6 +137,9 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     public String getRecipeFluidInputInfo() {
+        if (getMetaTileEntity().getWorld().isRemote)
+            return this.cachedFuelAmount;
+
         IRotorHolder rotorHolder = null;
 
         if (metaTileEntity instanceof MultiblockWithDisplayBase multiblockWithDisplayBase) {
@@ -148,7 +151,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         Recipe recipe;
         if (previousRecipe == null) {
             recipe = findRecipe(Integer.MAX_VALUE, getInputInventory(), getInputTank());
-            if (recipe == null) return this.cachedFuelAmount;
+            if (recipe == null) return null;
         } else {
             recipe = previousRecipe;
         }
@@ -159,7 +162,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         if (rotorHolder != null && rotorHolder.hasRotor()) {
             neededAmount /= (rotorHolder.getTotalEfficiency() / 100.0);
         } else if (rotorHolder != null && !rotorHolder.hasRotor()) {
-            return this.cachedFuelAmount;
+            return null;
         }
         this.cachedFuelAmount = TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L";
         return this.cachedFuelAmount;
