@@ -250,7 +250,9 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                 materialTreeList.add(new MaterialTree(material));
             }
             if (material.hasFlag(GENERATE_BOLT_SCREW) && material.hasFlag(GENERATE_RING)) {
-                registry.addIngredientInfo(ToolItems.TOOLBELT.get(material), VanillaTypes.ITEM, "item.gt.tool.toolbelt.tooltip", "item.gt.tool.toolbelt.paint", "item.gt.tool.toolbelt.dye", "item.gt.tool.toolbelt.maintenance");
+                registry.addIngredientInfo(ToolItems.TOOLBELT.get(material), VanillaTypes.ITEM,
+                        "item.gt.tool.toolbelt.tooltip", "item.gt.tool.toolbelt.paint", "item.gt.tool.toolbelt.dye",
+                        "item.gt.tool.toolbelt.maintenance");
             }
         }
 
