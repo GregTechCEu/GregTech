@@ -84,7 +84,9 @@ public class MultiblockUIFactory {
                 .child(new Row()
                         .bottom(7)
                         .height(77)
-                        .child(SlotGroupWidget.playerInventory(0).left(4))
+                        .margin(4, 0)
+                        .child(SlotGroupWidget.playerInventory(0)
+                                .alignX(0f))
                         .child(createButtons(panel, panelSyncManager)));
     }
 
@@ -137,7 +139,7 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * Called once on both sides to obtain text displayed in GUI <br />
+     * Called per tick on client side <br />
      * Each element of list is displayed on new line <br />
      * To use translation, use {@link KeyUtil#lang(TextFormatting, String, Object...)}
      * or {@link KeyUtil#lang(String, Object...)}
@@ -179,8 +181,8 @@ public class MultiblockUIFactory {
         final int cols = progressMulti.getProgressBarCols();
 
         Column column = new Column()
-                .padding(4, 0)
-                .pos(0, 114)
+                .margin(4, 0)
+                .top(114)
                 .widthRel(1f)
                 .height(Bars.HEIGHT * 2);
         int rowWidth = (Bars.FULL_WIDTH / cols) - (cols - 1);
@@ -218,11 +220,12 @@ public class MultiblockUIFactory {
                 .onUpdateListener(column -> {
                     column.getChildren().clear();
                     lines.clear();
+                    // really debating on if the display screen should be its own widget
                     configureDisplayText(MultiblockDisplayTextPort.builder(lines, mte));
                     lines.forEach(column::child);
                     resize(column);
                 })
-                .padding(4, 4);
+                .margin(4, 4);
 
         // lines.forEach(displayText::child);
         return new ParentWidget<>()
@@ -257,7 +260,8 @@ public class MultiblockUIFactory {
         var powerButton = createPowerButton(mainPanel, panelSyncManager);
 
         return new Column()
-                .right(4)
+                .alignX(1f)
+                .right(0)
                 .size(18, 77)
                 .child(createDistinctButton(mainPanel, panelSyncManager))
                 .child(createVoidingButton(mainPanel, panelSyncManager))
