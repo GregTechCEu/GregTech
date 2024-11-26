@@ -274,23 +274,23 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             private void addCustomData(List<IKey> keyList) {
                 if (isStructureFormed()) {
                     // Steam Output line
-                    IKey steamOutput = KeyUtil.number(TextFormatting.AQUA, recipeLogic::getLastTickSteam,
-                            " L/t");
+                    IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
+                            recipeLogic.getLastTickSteam(), " L/t");
 
                     keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.large_boiler.steam_output", steamOutput));
 
                     // Efficiency line
                     IKey efficiency = KeyUtil.string(
-                            () -> getNumberColor(recipeLogic.getHeatScaled()),
-                            () -> recipeLogic.getHeatScaled() + "%");
+                            getNumberColor(recipeLogic.getHeatScaled()),
+                            recipeLogic.getHeatScaled() + "%");
                     keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.large_boiler.efficiency", efficiency));
 
                     // Throttle line
                     IKey throttle = KeyUtil.string(
-                            () -> getNumberColor(getThrottle()),
-                            () -> getThrottle() + "%");
+                            getNumberColor(getThrottle()),
+                            getThrottle() + "%");
                     keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.large_boiler.throttle", throttle));
                 }
