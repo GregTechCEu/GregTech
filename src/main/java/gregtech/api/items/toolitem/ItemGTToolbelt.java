@@ -63,6 +63,7 @@ import org.jetbrains.annotations.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -91,8 +92,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return getHandler(toolbelt).getSlots();
     }
 
-    // nullable to differentiate between "no tool selected" and "no tool in selected slot" which is theoretically
-    // possible
     public @NotNull ItemStack getSelectedTool(@NotNull ItemStack toolbelt) {
         return getHandler(toolbelt).getSelectedStack();
     }
@@ -139,6 +138,15 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                                 .debugName("slot_" + index))
                         .debugName("toolbelt_inventory"))
                 .bindPlayerInventory();
+    }
+
+    @Override
+    public @NotNull List<IToolBehavior> getBehaviors(ItemStack stack) {
+        ItemStack selected = getHandler(stack).getSelectedStack();
+        if (selected.isEmpty()) return super.getBehaviors(stack);
+        else if (selected.getItem() instanceof IGTTool tool) {
+            return tool.getBehaviors(selected);
+        } else return Collections.emptyList();
     }
 
     public static boolean isToolbeltableOredict(String oredict) {
@@ -378,8 +386,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public @NotNull ItemStack getContainerItem(@NotNull ItemStack stack) {
         if (getHandler(stack).dealCraftDamageToSelected()) {
-            stack = stack.copy();
-            return stack;
+            return stack.copy();
         }
         return super.getContainerItem(stack);
     }

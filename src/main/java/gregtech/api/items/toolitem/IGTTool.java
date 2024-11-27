@@ -218,7 +218,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
         // Set behaviours
         NBTTagCompound behaviourTag = getBehaviorsTag(stack);
-        getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
+        getBehaviors(stack).forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
 
         if (aoeDefinition != AoESymmetrical.none()) {
             behaviourTag.setInteger(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
@@ -420,14 +420,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        getToolStats().getBehaviors().forEach(behavior -> behavior.hitEntity(stack, target, attacker));
+        getBehaviors(stack).forEach(behavior -> behavior.hitEntity(stack, target, attacker));
         damageItem(stack, attacker, getToolStats().getToolDamagePerAttack(stack));
         return true;
     }
 
     default boolean definition$onBlockStartBreak(ItemStack stack, BlockPos pos, EntityPlayer player) {
         if (player.world.isRemote) return false;
-        getToolStats().getBehaviors().forEach(behavior -> behavior.onBlockStartBreak(stack, pos, player));
+        getBehaviors(stack).forEach(behavior -> behavior.onBlockStartBreak(stack, pos, player));
 
         if (!player.isSneaking()) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
@@ -469,7 +469,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     default boolean definition$onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos,
                                                 EntityLivingBase entityLiving) {
         if (!worldIn.isRemote) {
-            getToolStats().getBehaviors()
+            getBehaviors(stack)
                     .forEach(behavior -> behavior.onBlockDestroyed(stack, worldIn, state, pos, entityLiving));
 
             if ((double) state.getBlockHardness(worldIn, pos) != 0.0D) {
@@ -533,7 +533,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity,
                                                 EntityLivingBase attacker) {
-        return getToolStats().getBehaviors().stream()
+        return getBehaviors(stack).stream()
                 .anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
     }
 
@@ -581,7 +581,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default boolean definition$onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
-        getToolStats().getBehaviors().forEach(behavior -> behavior.onEntitySwing(entityLiving, stack));
+        getBehaviors(stack).forEach(behavior -> behavior.onEntitySwing(entityLiving, stack));
         return false;
     }
 
@@ -633,7 +633,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (isElectric()) {
             providers.add(ElectricStats.createElectricItem(0L, getElectricTier()).createProvider(stack));
         }
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
+        for (IToolBehavior behavior : getBehaviors(stack)) {
             ICapabilityProvider behaviorProvider = behavior.createProvider(stack, nbt);
             if (behaviorProvider != null) {
                 providers.add(behaviorProvider);
@@ -644,14 +644,15 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return new CombinedCapabilityProvider(providers);
     }
 
+    @NotNull
+    default List<IToolBehavior> getBehaviors(ItemStack stack) {
+        return getToolStats().getBehaviors();
+    }
+
     default EnumActionResult definition$onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,
                                                        @NotNull BlockPos pos, @NotNull EnumFacing facing, float hitX,
                                                        float hitY, float hitZ, @NotNull EnumHand hand) {
-        ItemStack stack = toolbeltPassthrough(player.getHeldItem(hand));
-        List<IToolBehavior> behaviors;
-        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
-        else return EnumActionResult.PASS;
-        for (IToolBehavior behavior : behaviors) {
+        for (IToolBehavior behavior : getBehaviors(player.getHeldItem(hand))) {
             if (behavior.onItemUseFirst(player, world, pos, facing, hitX, hitY, hitZ, hand) ==
                     EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
@@ -663,12 +664,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default EnumActionResult definition$onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
                                                   EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = toolbeltPassthrough(player.getHeldItem(hand));
-        List<IToolBehavior> behaviors;
-        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
-        else return EnumActionResult.PASS;
-
-        for (IToolBehavior behavior : behaviors) {
+        for (IToolBehavior behavior : getBehaviors(player.getHeldItem(hand))) {
             if (behavior.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ) ==
                     EnumActionResult.SUCCESS) {
                 return EnumActionResult.SUCCESS;
@@ -680,25 +676,20 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     default ActionResult<ItemStack> definition$onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        ItemStack original = stack;
-        stack = toolbeltPassthrough(stack);
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
             if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
                 ItemGuiFactory.open((EntityPlayerMP) player, hand);
-                return ActionResult.newResult(EnumActionResult.SUCCESS, original);
+                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
         }
-        List<IToolBehavior> behaviors;
-        if (stack.getItem() instanceof IGTTool tool) behaviors = tool.getToolStats().getBehaviors();
-        else return ActionResult.newResult(EnumActionResult.PASS, original);
 
-        for (IToolBehavior behavior : behaviors) {
+        for (IToolBehavior behavior : getBehaviors(stack)) {
             if (behavior.onItemRightClick(world, player, hand).getType() == EnumActionResult.SUCCESS) {
-                return ActionResult.newResult(EnumActionResult.SUCCESS, original);
+                return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
         }
-        return ActionResult.newResult(EnumActionResult.PASS, original);
+        return ActionResult.newResult(EnumActionResult.PASS, stack);
     }
 
     default void definition$getSubItems(@NotNull NonNullList<ItemStack> items) {
@@ -788,10 +779,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             tooltip.add(I18n.format("item.gt.tool.behavior.relocate_mining"));
         }
 
-        if (!addedBehaviorNewLine && !toolStats.getBehaviors().isEmpty()) {
+        if (!addedBehaviorNewLine && !getBehaviors(stack).isEmpty()) {
             tooltip.add("");
         }
-        toolStats.getBehaviors().forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
+        getBehaviors(stack).forEach(behavior -> behavior.addInformation(stack, world, tooltip, flag));
 
         // unique tooltip
         String uniqueTooltip = "item.gt.tool." + getToolId() + ".tooltip";

@@ -5,11 +5,9 @@ import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.GuiIngameForge;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -20,13 +18,13 @@ public class GuiIngameForgeMixin extends GuiIngame {
         super(mcIn);
     }
 
-    @WrapOperation(method = "renderToolHighlight",
-                   at = @At(value = "INVOKE",
-                            target = "Lnet/minecraft/client/gui/ScaledResolution;getScaledHeight()I"))
-    private int shiftToolHighlightText(ScaledResolution resolution, Operation<Integer> op) {
+    @ModifyExpressionValue(method = "renderToolHighlight",
+                           at = @At(value = "INVOKE",
+                                    target = "Lnet/minecraft/client/gui/ScaledResolution;getScaledHeight()I"))
+    private int shiftToolHighlightText(int y) {
         if (ConfigHolder.client.toolbeltConfig.enableToolbeltHotbarDisplay &&
                 highlightingItemStack.getItem() instanceof ItemGTToolbelt)
-            return op.call(resolution) - 31 + 6;
-        else return op.call(resolution);
+            return y - 31 + 6;
+        else return y;
     }
 }
