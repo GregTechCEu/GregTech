@@ -558,9 +558,8 @@ public class ElementMaterials {
 
         Neodymium = new Material.Builder(66, gregtechId("neodymium"))
                 .ingot().fluid().ore()
-                .physicalProperties(
+                .color(0x646464).iconSet(METALLIC).physicalProperties(
                         new PhysicalProperties.Builder().thermalConductivity(17).mp(1295).bp(3347).oxidizes())
-                .color(0x646464).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
                 .element(Elements.Nd)
                 .rotorStats(7.0f, 2.0f, 512)
