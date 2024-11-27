@@ -5,6 +5,8 @@ import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
+import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -449,6 +451,22 @@ public class Material implements Comparable<Material> {
     @NotNull
     public MaterialRegistry getRegistry() {
         return GregTechAPI.materialManager.getRegistry(getModid());
+    }
+
+    @Nullable
+    public TextureArea getChemicalStructureTextureArea() {
+        Preconditions.checkArgument(hasProperty(PropertyKey.CHEMICAL_STRUCTURE),
+                "does not have PropertyKey.CHEMICAL_STRUCTURE!");
+        return ChemicalStructureProperty.getMoleculeTexture(this);
+    }
+
+    @Nullable
+    public ImageWidget getChemicalStructureWidget(int x, int y) {
+        Preconditions.checkArgument(hasProperty(PropertyKey.CHEMICAL_STRUCTURE),
+                "does not have PropertyKey.CHEMICAL_STRUCTURE!");
+        ChemicalStructureProperty property = this.getProperty(PropertyKey.CHEMICAL_STRUCTURE);
+        return ChemicalStructureProperty.getChemicalStructureWidget(this, x, y, property.textureHeight(),
+                property.textureWidth());
     }
 
     /**
@@ -1102,6 +1120,14 @@ public class Material implements Comparable<Material> {
 
         public Builder physicalProperties(PhysicalProperties.Builder builder) {
             properties.setProperty(PropertyKey.PHYSICAL_PROPERTIES, builder.build());
+            return this;
+        }
+
+        public Builder chemicalStructureTexture(int textureHeight, int textureWidth) {
+            Preconditions.checkArgument(textureHeight > 0 && textureWidth > 0,
+                    "textureHeight and textureWidth must be > 0");
+            properties.setProperty(PropertyKey.CHEMICAL_STRUCTURE,
+                    new ChemicalStructureProperty(textureHeight, textureWidth));
             return this;
         }
 
