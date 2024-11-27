@@ -6,6 +6,7 @@ import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
+import gregtech.api.unification.material.properties.PhysicalProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 
@@ -26,6 +27,7 @@ public class ElementMaterials {
         Aluminium = new Material.Builder(2, gregtechId("aluminium"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(933))
+                .physicalProperties(new PhysicalProperties.Builder().oxidizes().thermalConductivity(237))
                 .ore()
                 .color(0x80C8F0)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_SPRING,
@@ -59,12 +61,16 @@ public class ElementMaterials {
 
         Argon = new Material.Builder(5, gregtechId("argon"))
                 .gas().plasma()
+                .physicalProperties(new PhysicalProperties.Builder()
+                        .mp(84)
+                        .bp(81))
                 .color(0x00FF00)
                 .element(Elements.Ar)
                 .build();
 
         Arsenic = new Material.Builder(6, gregtechId("arsenic"))
                 .dust()
+                .physicalProperties(new PhysicalProperties.Builder().oxidizes())
                 .gas(new FluidBuilder().temperature(887))
                 .color(0x676756)
                 .element(Elements.As)
@@ -77,6 +83,7 @@ public class ElementMaterials {
 
         Barium = new Material.Builder(8, gregtechId("barium"))
                 .dust()
+                .physicalProperties(new PhysicalProperties.Builder().oxidizes())
                 .color(0x83824C).iconSet(METALLIC)
                 .element(Elements.Ba)
                 .build();
@@ -90,6 +97,11 @@ public class ElementMaterials {
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1560))
                 .ore()
+                .physicalProperties(new PhysicalProperties.Builder()
+                        .thermalConductivity(216)
+                        .oxidizes()
+                        .mp(1560)
+                        .bp(2742))
                 .color(0x64B464).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_DOUBLE_PLATE)
                 .element(Elements.Be)
@@ -97,6 +109,7 @@ public class ElementMaterials {
 
         Bismuth = new Material.Builder(11, gregtechId("bismuth"))
                 .ingot(1)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(8).mp(545).bp(1837))
                 .liquid(new FluidBuilder().temperature(545))
                 .color(0x64A0A0).iconSet(METALLIC)
                 .element(Elements.Bi)
@@ -109,23 +122,30 @@ public class ElementMaterials {
 
         Boron = new Material.Builder(13, gregtechId("boron"))
                 .dust()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(27).mp(2349).bp(4200).oxidizes())
                 .color(0xD2FAD2)
                 .element(Elements.B)
                 .build();
 
         Bromine = new Material.Builder(14, gregtechId("bromine"))
+                .fluid()
                 .color(0x500A0A).iconSet(SHINY)
                 .element(Elements.Br)
                 .build();
 
         Caesium = new Material.Builder(15, gregtechId("caesium"))
-                .dust()
+                .fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(36).mp(302).bp(944).pyrophoric())
                 .color(0x80620B).iconSet(METALLIC)
                 .element(Elements.Cs)
                 .build();
 
         Calcium = new Material.Builder(16, gregtechId("calcium"))
                 .dust()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(201).mp(1115).bp(1757).pyrophoric())
                 .color(0xFFF5DE).iconSet(METALLIC)
                 .element(Elements.Ca)
                 .build();
@@ -143,13 +163,17 @@ public class ElementMaterials {
                 .build();
 
         Cadmium = new Material.Builder(19, gregtechId("cadmium"))
-                .dust()
+                .dust().fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(97).mp(594).bp(1040).pyrophoric())
                 .color(0x32323C).iconSet(SHINY)
                 .element(Elements.Cd)
                 .build();
 
         Cerium = new Material.Builder(20, gregtechId("cerium"))
                 .dust()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(11).mp(1068).bp(3716).oxidizes())
                 .liquid(new FluidBuilder().temperature(1068))
                 .color(0x87917D).iconSet(METALLIC)
                 .element(Elements.Ce)
@@ -163,6 +187,8 @@ public class ElementMaterials {
 
         Chrome = new Material.Builder(22, gregtechId("chrome"))
                 .ingot(3)
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(94).mp(2180).bp(2944).oxidizes())
                 .liquid(new FluidBuilder().temperature(2180))
                 .color(0xEAC4D8).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_ROTOR, GENERATE_DOUBLE_PLATE)
@@ -174,6 +200,7 @@ public class ElementMaterials {
 
         Cobalt = new Material.Builder(23, gregtechId("cobalt"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(100).mp(1768).bp(3200))
                 .liquid(new FluidBuilder().temperature(1768))
                 .ore() // leave for TiCon ore processing
                 .color(0x5050FA).iconSet(METALLIC)
@@ -190,6 +217,8 @@ public class ElementMaterials {
 
         Copper = new Material.Builder(25, gregtechId("copper"))
                 .ingot(1)
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(401).mp(1358).bp(2835).oxidizes())
                 .liquid(new FluidBuilder().temperature(1358))
                 .ore()
                 .color(0xFF6400).iconSet(SHINY)
@@ -224,6 +253,9 @@ public class ElementMaterials {
                 .build();
 
         Dysprosium = new Material.Builder(30, gregtechId("dysprosium"))
+                .ingot().fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(11).mp(1680).bp(2840).pyrophoric())
                 .iconSet(METALLIC)
                 .element(Elements.Dy)
                 .build();
@@ -234,12 +266,16 @@ public class ElementMaterials {
                 .build();
 
         Erbium = new Material.Builder(32, gregtechId("erbium"))
+                .ingot().fluid()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(14).mp(1802).bp(3141))
                 .iconSet(METALLIC)
                 .element(Elements.Er)
                 .build();
 
         Europium = new Material.Builder(33, gregtechId("europium"))
                 .ingot()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(14).mp(1099).bp(1802).oxidizes())
                 .liquid(new FluidBuilder().temperature(1099))
                 .color(0x20FFFF).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_LONG_ROD, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_FOIL, GENERATE_FRAME,
@@ -265,6 +301,7 @@ public class ElementMaterials {
 
         Fluorine = new Material.Builder(36, gregtechId("fluorine"))
                 .gas(new FluidBuilder().customStill())
+                .physicalProperties(new PhysicalProperties.Builder().mp(53).bp(85))
                 .color(0x6EA7DC)
                 .element(Elements.F)
                 .build();
@@ -275,25 +312,32 @@ public class ElementMaterials {
                 .build();
 
         Gadolinium = new Material.Builder(38, gregtechId("gadolinium"))
+                .ingot().fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(11).mp(1545).bp(3546).oxidizes())
                 .color(0xDDDDFF).iconSet(METALLIC)
                 .element(Elements.Gd)
                 .build();
 
         Gallium = new Material.Builder(39, gregtechId("gallium"))
-                .ingot()
-                .liquid(new FluidBuilder().temperature(303))
+                .ingot().fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(41).mp(303).bp(2676).oxidizes())
                 .color(0xDCDCFF).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Ga)
                 .build();
 
         Germanium = new Material.Builder(40, gregtechId("germanium"))
+                .ingot().fluid()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(60).mp(1211).bp(3106))
                 .color(0x434343).iconSet(SHINY)
                 .element(Elements.Ge)
                 .build();
 
         Gold = new Material.Builder(41, gregtechId("gold"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(318).mp(1337).bp(3243))
                 .liquid(new FluidBuilder().temperature(1337))
                 .ore()
                 .color(0xFFE650).iconSet(SHINY)
@@ -306,7 +350,9 @@ public class ElementMaterials {
                 .build();
 
         Hafnium = new Material.Builder(42, gregtechId("hafnium"))
-                .ingot()
+                .ingot().fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(23).mp(2506).bp(4876).oxidizes())
                 .color(0x99999A).iconSet(SHINY)
                 .element(Elements.Hf)
                 .blast(b -> b.temp(2227, GasTier.HIGH)
@@ -352,18 +398,22 @@ public class ElementMaterials {
 
         Indium = new Material.Builder(48, gregtechId("indium"))
                 .ingot()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(82).mp(430).bp(2345).oxidizes())
                 .liquid(new FluidBuilder().temperature(430))
                 .color(0x400080).iconSet(SHINY)
                 .element(Elements.In)
                 .build();
 
         Iodine = new Material.Builder(49, gregtechId("iodine"))
+                .dust()
                 .color(0x2C344F).iconSet(SHINY)
                 .element(Elements.I)
                 .build();
 
         Iridium = new Material.Builder(50, gregtechId("iridium"))
                 .ingot(3)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(147).mp(2719).bp(4403))
                 .liquid(new FluidBuilder().temperature(2719))
                 .color(0xA1E4E4).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
@@ -378,6 +428,8 @@ public class ElementMaterials {
 
         Iron = new Material.Builder(51, gregtechId("iron"))
                 .ingot()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(80).mp(1811).bp(3134).oxidizes())
                 .liquid(new FluidBuilder().temperature(1811))
                 .plasma()
                 .ore()
@@ -395,12 +447,15 @@ public class ElementMaterials {
         Krypton = new Material.Builder(52, gregtechId("krypton"))
                 .gas(new FluidBuilder()
                         .customStill())
+                .physicalProperties(new PhysicalProperties.Builder().mp(116).bp(120))
                 .color(0x80FF80)
                 .element(Elements.Kr)
                 .build();
 
         Lanthanum = new Material.Builder(53, gregtechId("lanthanum"))
                 .dust()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(13).mp(1193).bp(3737).oxidizes())
                 .liquid(new FluidBuilder().temperature(1193))
                 .color(0x5D7575).iconSet(METALLIC)
                 .element(Elements.La)
@@ -413,6 +468,8 @@ public class ElementMaterials {
 
         Lead = new Material.Builder(55, gregtechId("lead"))
                 .ingot(1)
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(35).mp(600).bp(2022).oxidizes())
                 .liquid(new FluidBuilder().temperature(600))
                 .ore()
                 .color(0x8C648C)
@@ -425,6 +482,8 @@ public class ElementMaterials {
 
         Lithium = new Material.Builder(56, gregtechId("lithium"))
                 .dust()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(85).mp(454).bp(1603).oxidizes())
                 .liquid(new FluidBuilder().temperature(454))
                 .ore()
                 .color(0xBDC7DB)
@@ -438,6 +497,8 @@ public class ElementMaterials {
 
         Lutetium = new Material.Builder(58, gregtechId("lutetium"))
                 .dust()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(16).mp(1925).bp(3675).oxidizes())
                 .liquid(new FluidBuilder().temperature(1925))
                 .color(0x00AAFF).iconSet(METALLIC)
                 .element(Elements.Lu)
@@ -445,6 +506,8 @@ public class ElementMaterials {
 
         Magnesium = new Material.Builder(59, gregtechId("magnesium"))
                 .dust()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(156).mp(923).bp(1363).hygroscopic())
                 .liquid(new FluidBuilder().temperature(923))
                 .color(0xFFC8C8).iconSet(METALLIC)
                 .element(Elements.Mg)
@@ -457,6 +520,8 @@ public class ElementMaterials {
 
         Manganese = new Material.Builder(61, gregtechId("manganese"))
                 .ingot()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(8).mp(1519).bp(2334).oxidizes())
                 .liquid(new FluidBuilder().temperature(1519))
                 .color(0xCDE1B9)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_BOLT_SCREW)
@@ -477,6 +542,7 @@ public class ElementMaterials {
 
         Molybdenum = new Material.Builder(64, gregtechId("molybdenum"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(138).mp(2896).bp(4912))
                 .liquid(new FluidBuilder().temperature(2896))
                 .ore()
                 .color(0xB4B4DC).iconSet(SHINY)
@@ -492,6 +558,8 @@ public class ElementMaterials {
 
         Neodymium = new Material.Builder(66, gregtechId("neodymium"))
                 .ingot().fluid().ore()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(17).mp(1295).bp(3347).oxidizes())
                 .color(0x646464).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
                 .element(Elements.Nd)
@@ -501,6 +569,7 @@ public class ElementMaterials {
 
         Neon = new Material.Builder(67, gregtechId("neon"))
                 .gas()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(18).mp(25).bp(27))
                 .color(0xFAB4B4)
                 .element(Elements.Ne)
                 .build();
@@ -512,6 +581,8 @@ public class ElementMaterials {
 
         Nickel = new Material.Builder(69, gregtechId("nickel"))
                 .ingot()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(91).mp(1728).bp(3003).oxidizes())
                 .liquid(new FluidBuilder().temperature(1728))
                 .plasma()
                 .ore()
@@ -529,6 +600,8 @@ public class ElementMaterials {
 
         Niobium = new Material.Builder(71, gregtechId("niobium"))
                 .ingot().fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(54).mp(2750).bp(5017).oxidizes())
                 .color(0xBEB4C8).iconSet(METALLIC)
                 .element(Elements.Nb)
                 .blast(b -> b
@@ -554,6 +627,8 @@ public class ElementMaterials {
 
         Osmium = new Material.Builder(75, gregtechId("osmium"))
                 .ingot(4)
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(88).mp(3306).bp(5281).oxidizes())
                 .liquid(new FluidBuilder().temperature(3306))
                 .color(0x3232FF).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_FOIL, GENERATE_DOUBLE_PLATE)
@@ -583,6 +658,7 @@ public class ElementMaterials {
         Palladium = new Material.Builder(77, gregtechId("palladium"))
                 .ingot().fluid().ore()
                 .color(0x808080).iconSet(SHINY)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(72).mp(1828).bp(3236))
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
                 .element(Elements.Pd)
                 .blast(b -> b
@@ -593,6 +669,7 @@ public class ElementMaterials {
 
         Phosphorus = new Material.Builder(78, gregtechId("phosphorus"))
                 .dust()
+                .physicalProperties(new PhysicalProperties.Builder().pyrophoric())
                 .color(0xFFFF00)
                 .element(Elements.P)
                 .build();
@@ -604,6 +681,7 @@ public class ElementMaterials {
 
         Platinum = new Material.Builder(80, gregtechId("platinum"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(72).mp(2041).bp(4098))
                 .liquid(new FluidBuilder().temperature(2041))
                 .ore()
                 .color(0xFFFFC8).iconSet(SHINY)
@@ -630,23 +708,33 @@ public class ElementMaterials {
 
         Potassium = new Material.Builder(83, gregtechId("potassium"))
                 .dust(1)
-                .liquid(new FluidBuilder().temperature(337))
+                .fluid()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(103).mp(337).bp(1031).pyrophoric())
                 .color(0xBEDCFF).iconSet(METALLIC)
                 .element(Elements.K)
                 .build();
 
         Praseodymium = new Material.Builder(84, gregtechId("praseodymium"))
+                .dust()
                 .color(0xCECECE).iconSet(METALLIC)
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(13).mp(1204).bp(3403).oxidizes())
                 .element(Elements.Pr)
                 .build();
 
         Promethium = new Material.Builder(85, gregtechId("promethium"))
+                .dust()
                 .iconSet(METALLIC)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(18).mp(1315).bp(3273))
                 .element(Elements.Pm)
                 .build();
 
         Protactinium = new Material.Builder(86, gregtechId("protactinium"))
+                .ingot()
                 .color(0xA78B6D).iconSet(METALLIC)
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(47).oxidizes().mp(1841).bp(4300))
                 .element(Elements.Pa)
                 .build();
 
@@ -662,12 +750,15 @@ public class ElementMaterials {
                 .build();
 
         Rhenium = new Material.Builder(89, gregtechId("rhenium"))
+                .ingot().fluid()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(48).mp(3459).bp(5903))
                 .color(0xB6BAC3).iconSet(SHINY)
                 .element(Elements.Re)
                 .build();
 
         Rhodium = new Material.Builder(90, gregtechId("rhodium"))
                 .ingot().fluid()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(150).mp(2237).bp(3698))
                 .color(0xDC0C58).iconSet(BRIGHT)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_FINE_WIRE)
                 .element(Elements.Rh)
@@ -684,11 +775,15 @@ public class ElementMaterials {
 
         Rubidium = new Material.Builder(92, gregtechId("rubidium"))
                 .color(0xF01E1E).iconSet(SHINY)
+                .liquid(new FluidBuilder().temperature(312))
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(58).pyrophoric().mp(312).bp(691))
                 .element(Elements.Rb)
                 .build();
 
         Ruthenium = new Material.Builder(93, gregtechId("ruthenium"))
                 .ingot().fluid()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(117))
                 .color(0x50ACCD).iconSet(SHINY)
                 .flags(GENERATE_FOIL, GENERATE_GEAR)
                 .element(Elements.Ru)
@@ -705,6 +800,7 @@ public class ElementMaterials {
 
         Samarium = new Material.Builder(95, gregtechId("samarium"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(13).oxidizes())
                 .liquid(new FluidBuilder().temperature(1345))
                 .color(0xFFFFCC).iconSet(METALLIC)
                 .flags(GENERATE_LONG_ROD)
@@ -716,6 +812,9 @@ public class ElementMaterials {
                 .build();
 
         Scandium = new Material.Builder(96, gregtechId("scandium"))
+                .ingot()
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(16).oxidizes().mp(1814).bp(3109))
                 .iconSet(METALLIC)
                 .element(Elements.Sc)
                 .build();
@@ -726,6 +825,8 @@ public class ElementMaterials {
                 .build();
 
         Selenium = new Material.Builder(98, gregtechId("selenium"))
+                .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().mp(494).bp(958))
                 .color(0xB6BA6B).iconSet(SHINY)
                 .element(Elements.Se)
                 .build();
@@ -733,6 +834,7 @@ public class ElementMaterials {
         Silicon = new Material.Builder(99, gregtechId("silicon"))
                 .ingot().fluid()
                 .color(0x3C3C50).iconSet(METALLIC)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(149))
                 .flags(GENERATE_FOIL)
                 .element(Elements.Si)
                 .blast(2273) // no gas tier for silicon
@@ -741,6 +843,7 @@ public class ElementMaterials {
         Silver = new Material.Builder(100, gregtechId("silver"))
                 .ingot()
                 .liquid(new FluidBuilder().temperature(1235))
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(429))
                 .ore()
                 .color(0xDCDCFF).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, MORTAR_GRINDABLE, GENERATE_FINE_WIRE, GENERATE_RING)
@@ -750,12 +853,17 @@ public class ElementMaterials {
 
         Sodium = new Material.Builder(101, gregtechId("sodium"))
                 .dust()
+                .liquid(new FluidBuilder().temperature(371))
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(142).pyrophoric())
                 .color(0x000096).iconSet(METALLIC)
                 .element(Elements.Na)
                 .build();
 
         Strontium = new Material.Builder(102, gregtechId("strontium"))
+                .ingot()
                 .color(0xC8C8C8).iconSet(METALLIC)
+                .physicalProperties(
+                        new PhysicalProperties.Builder().thermalConductivity(35).oxidizes().mp(1050).bp(1650))
                 .element(Elements.Sr)
                 .build();
 
@@ -768,6 +876,7 @@ public class ElementMaterials {
 
         Tantalum = new Material.Builder(104, gregtechId("tantalum"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(57).mp(3290).bp(5731))
                 .liquid(new FluidBuilder().temperature(3290))
                 .color(0x69B7FF).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_FINE_WIRE)
@@ -780,6 +889,8 @@ public class ElementMaterials {
                 .build();
 
         Tellurium = new Material.Builder(106, gregtechId("tellurium"))
+                .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(3).mp(723).bp(1261))
                 .iconSet(METALLIC)
                 .element(Elements.Te)
                 .build();
@@ -790,12 +901,17 @@ public class ElementMaterials {
                 .build();
 
         Terbium = new Material.Builder(108, gregtechId("terbium"))
+                .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(11)
+                        .mp(1629)
+                        .bp(3396))
                 .iconSet(METALLIC)
                 .element(Elements.Tb)
                 .build();
 
         Thorium = new Material.Builder(109, gregtechId("thorium"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(54).oxidizes().hygroscopic())
                 .liquid(new FluidBuilder().temperature(2023))
                 .ore()
                 .color(0x001E00).iconSet(SHINY)
@@ -804,17 +920,22 @@ public class ElementMaterials {
                 .build();
 
         Thallium = new Material.Builder(110, gregtechId("thallium"))
+                .ingot()
                 .color(0xC1C1DE).iconSet(SHINY)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(46).oxidizes())
                 .element(Elements.Tl)
                 .build();
 
         Thulium = new Material.Builder(111, gregtechId("thulium"))
+                .ingot()
                 .iconSet(METALLIC)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(17).oxidizes())
                 .element(Elements.Tm)
                 .build();
 
         Tin = new Material.Builder(112, gregtechId("tin"))
                 .ingot(1)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(67).mp(505).bp(2875))
                 .liquid(new FluidBuilder().temperature(505))
                 .plasma()
                 .ore()
@@ -830,6 +951,7 @@ public class ElementMaterials {
                                                                      // ores
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(22).oxidizes())
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_GEAR,
                         GENERATE_FRAME)
                 .element(Elements.Ti)
@@ -853,6 +975,7 @@ public class ElementMaterials {
         Tungsten = new Material.Builder(115, gregtechId("tungsten"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(3695))
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(173))
                 .color(0x323232).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL, GENERATE_FOIL, GENERATE_GEAR,
                         GENERATE_DOUBLE_PLATE)
@@ -869,12 +992,14 @@ public class ElementMaterials {
         Uranium = new Material.Builder(116, gregtechId("uranium"))
                 .dust(3)
                 .liquid(new FluidBuilder().temperature(1405))
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(27).oxidizes())
                 .color(0x32F032).iconSet(METALLIC)
                 .element(Elements.U)
                 .build();
 
         Uranium235 = new Material.Builder(117, gregtechId("uranium_235"))
                 .dust(3)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(27).oxidizes())
                 .liquid(new FluidBuilder().temperature(1405))
                 .color(0x46FA46).iconSet(SHINY)
                 .element(Elements.U235)
@@ -882,6 +1007,7 @@ public class ElementMaterials {
 
         Vanadium = new Material.Builder(118, gregtechId("vanadium"))
                 .ingot().fluid()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(31).oxidizes())
                 .color(0x323232).iconSet(METALLIC)
                 .element(Elements.V)
                 .blast(2183, GasTier.MID)
@@ -894,12 +1020,15 @@ public class ElementMaterials {
                 .build();
 
         Ytterbium = new Material.Builder(120, gregtechId("ytterbium"))
+                .ingot().fluid()
                 .color(0xA7A7A7).iconSet(METALLIC)
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(38).oxidizes())
                 .element(Elements.Yb)
                 .build();
 
         Yttrium = new Material.Builder(121, gregtechId("yttrium"))
                 .ingot().fluid()
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(17).oxidizes())
                 .color(0x76524C).iconSet(METALLIC)
                 .element(Elements.Y)
                 .blast(1799)
@@ -908,6 +1037,7 @@ public class ElementMaterials {
         Zinc = new Material.Builder(122, gregtechId("zinc"))
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(693))
+                .physicalProperties(new PhysicalProperties.Builder().thermalConductivity(116).pyrophoric())
                 .color(0xEBEBFA).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING, GENERATE_FINE_WIRE)
                 .element(Elements.Zn)
@@ -915,6 +1045,8 @@ public class ElementMaterials {
 
         Zirconium = new Material.Builder(123, gregtechId("zirconium"))
                 .ingot()
+                .physicalProperties(new PhysicalProperties.Builder()
+                        .thermalConductivity(22))
                 .color(0xC8FFFF).iconSet(METALLIC)
                 .element(Elements.Zr)
                 .blast(b -> b.temp(2125, GasTier.MID)

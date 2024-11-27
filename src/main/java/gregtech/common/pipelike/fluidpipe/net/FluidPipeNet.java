@@ -21,6 +21,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         tagCompound.setBoolean("cryo_proof", nodeData.isCryoProof());
         tagCompound.setBoolean("plasma_proof", nodeData.isPlasmaProof());
         tagCompound.setInteger("channels", nodeData.getTanks());
+        tagCompound.setBoolean("base_proof", nodeData.isBaseProof());
+        tagCompound.setBoolean("fluoride_proof", nodeData.isBaseProof());
     }
 
     @Override
@@ -32,7 +34,10 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         boolean cryoProof = tagCompound.getBoolean("cryo_proof");
         boolean plasmaProof = tagCompound.getBoolean("plasma_proof");
         int channels = tagCompound.getInteger("channels");
+        boolean baseProof = tagCompound.getBoolean("base_proof");
+        boolean fluorideProof = tagCompound.getBoolean("fluoride_proof");
         return new FluidPipeProperties(maxTemperature, throughput, gasProof, acidProof, cryoProof, plasmaProof,
+                baseProof, fluorideProof,
                 channels);
     }
 }

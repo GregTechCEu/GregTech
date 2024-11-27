@@ -435,6 +435,10 @@ public class Material implements Comparable<Material> {
         return hasProperty(PropertyKey.FLUID);
     }
 
+    public PhysicalProperties getPhysicalProperties() {
+        return this.getProperties().getProperty(PropertyKey.PHYSICAL_PROPERTIES);
+    }
+
     public void verifyMaterial() {
         properties.verify();
         flags.verify(this);
@@ -592,6 +596,24 @@ public class Material implements Comparable<Material> {
          */
         public Builder gas(@NotNull FluidBuilder builder) {
             return fluid(FluidStorageKeys.GAS, builder.state(FluidState.GAS));
+        }
+
+        /**
+         * Add a distilled fluid for this material.
+         *
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder distilledFluid() {
+            return fluid(FluidStorageKeys.DISTILLED_LIQUID, FluidState.LIQUID);
+        }
+
+        /**
+         * Add a distilled fluid for this material.
+         *
+         * @see #fluid(FluidStorageKey, FluidState)
+         */
+        public Builder distilledFluid(@NotNull FluidBuilder builder) {
+            return fluid(FluidStorageKeys.DISTILLED_LIQUID, builder.state(FluidState.LIQUID));
         }
 
         /**
@@ -1059,8 +1081,27 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
+                                           boolean cryoProof, boolean plasmaProof, boolean baseProof,
+                                           boolean fluorideProof) {
+            properties.setProperty(PropertyKey.FLUID_PIPE,
+                    new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof, baseProof,
+                            fluorideProof));
+            return this;
+        }
+
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
             properties.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
+            return this;
+        }
+
+        public Builder physicalProperties(PhysicalProperties physicalProperties) {
+            properties.setProperty(PropertyKey.PHYSICAL_PROPERTIES, physicalProperties);
+            return this;
+        }
+
+        public Builder physicalProperties(PhysicalProperties.Builder builder) {
+            properties.setProperty(PropertyKey.PHYSICAL_PROPERTIES, builder.build());
             return this;
         }
 

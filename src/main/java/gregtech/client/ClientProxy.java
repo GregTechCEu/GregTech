@@ -7,6 +7,7 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PhysicalProperties;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
@@ -157,6 +158,9 @@ public class ClientProxy extends CommonProxy {
             if (unificationEntry.material.getChemicalFormula() != null &&
                     !unificationEntry.material.getChemicalFormula().isEmpty())
                 tooltips.add(TextFormatting.YELLOW + unificationEntry.material.getChemicalFormula());
+
+            tooltips.addAll(PhysicalProperties.createPhysicalPropertiesTooltip(unificationEntry.material));
+
         } else if (itemStack.hasTagCompound()) { // Test for Fluids
             // Vanilla bucket
             // noinspection ConstantConditions

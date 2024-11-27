@@ -65,6 +65,8 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
                 baseProperties.isAcidProof(),
                 baseProperties.isCryoProof(),
                 baseProperties.isPlasmaProof(),
+                baseProperties.isBaseProof(),
+                baseProperties.isFluorideProof(),
                 channels);
     }
 

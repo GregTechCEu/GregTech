@@ -18,6 +18,12 @@ public final class FluidStorageKeys {
             m -> m.hasProperty(PropertyKey.DUST) ? "gregtech.fluid.liquid_generic" : "gregtech.fluid.generic",
             FluidState.LIQUID);
 
+    public static final FluidStorageKey DISTILLED_LIQUID = new FluidStorageKey(gregtechId("distilled_liquid"),
+            MaterialIconType.distilledLiquid,
+            m -> "distilled." + m.getName(),
+            m -> "gregtech.fluid.distilled_liquid",
+            FluidState.LIQUID, -1);
+
     public static final FluidStorageKey GAS = new FluidStorageKey(gregtechId("gas"),
             MaterialIconType.gas,
             m -> prefixedRegistryName("gas.", FluidStorageKeys.GAS, m),
