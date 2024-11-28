@@ -42,18 +42,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 
 public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
+    private boolean dirty;
     protected boolean mufflerObstructed;
-    protected byte maintanence;
+    protected byte maintenance;
     protected Consumer<PanelSyncManager> valueSyncer;
+    protected Consumer<Builder> warningText;
+    protected Consumer<Builder> errorText;
     protected Consumer<Builder> displayText = builder -> {};
-    protected Consumer<Builder> warningText = builder -> {};
-    protected Consumer<Builder> errorText = builder -> {};
     protected BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton = (panel, syncManager) -> null;
 
     protected static final int DEFAULT_HEIGHT = 202;
@@ -63,16 +63,17 @@ public class MultiblockUIFactory {
         this.mte = mte;
         var mufflerObstructed = new BooleanSyncValue(
                 () -> this.mufflerObstructed, value -> this.mufflerObstructed = value,
-                mte::isStructureObstructed, null);
-        var maintenance = new IntSyncValue(
-                () -> this.maintanence, value -> this.maintanence = (byte) value,
+                () -> !mte.isMufflerFaceFree(), null);
+        var maintenanceValue = new IntSyncValue(
+                () -> this.maintenance, value -> this.maintenance = (byte) value,
                 mte::getMaintenanceProblems, null);
-        maintenance.updateCacheFromSource(true);
 
         this.valueSyncer = syncManager -> {
             syncManager.syncValue("muffler", mufflerObstructed);
-            syncManager.syncValue("maintenance", maintenance);
+            syncManager.syncValue("maintenance", maintenanceValue);
         };
+        this.errorText = builder -> builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
+        this.warningText = builder -> builder.addMaintenanceProblemLines((byte) maintenanceValue.getIntValue());
     }
 
     /**
@@ -146,10 +147,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureWarningText(Consumer<Builder> warningText) {
-        this.warningText = builder -> {
-            builder.addMaintenanceProblemLines(maintanence);
-            warningText.accept(builder);
-        };
+        this.warningText = this.warningText.andThen(warningText);
         return this;
     }
 
@@ -159,10 +157,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureErrorText(Consumer<Builder> errorText) {
-        this.errorText = builder -> {
-            builder.addMufflerObstructedLine(mufflerObstructed);
-            errorText.accept(builder);
-        };
+        this.errorText = this.errorText.andThen(errorText);
         return this;
     }
 
@@ -637,10 +632,9 @@ public class MultiblockUIFactory {
          *
          * @param progressPercent Progress formatted as a range of [0,1] representing the progress of the recipe.
          */
-        public Builder addProgressLine(DoubleSupplier progressPercent) { // todo
+        public Builder addProgressLine(double progressPercent) { // todo
             if (!isStructureFormed || !isActive) return this;
-            addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress",
-                    () -> ((int) (progressPercent.getAsDouble() * 100))));
+            addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress", (int) (progressPercent * 100)));
             return this;
         }
 
