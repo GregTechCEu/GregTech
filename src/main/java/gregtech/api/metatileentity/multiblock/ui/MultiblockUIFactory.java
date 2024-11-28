@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -47,7 +48,6 @@ import java.util.function.Function;
 public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
-    private boolean dirty;
     protected boolean mufflerObstructed;
     protected byte maintenance;
     protected Consumer<PanelSyncManager> valueSyncer;
@@ -63,31 +63,26 @@ public class MultiblockUIFactory {
         this.mte = mte;
         var mufflerObstructed = new BooleanSyncValue(
                 () -> this.mufflerObstructed, value -> this.mufflerObstructed = value,
-                () -> !mte.isMufflerFaceFree(), null);
-        var maintenanceValue = new IntSyncValue(
-                () -> this.maintenance, value -> this.maintenance = (byte) value,
-                mte::getMaintenanceProblems, null);
+                () -> mte.hasMufflerMechanics() && !mte.isMufflerFaceFree(), null);
 
-        this.valueSyncer = syncManager -> {
-            syncManager.syncValue("muffler", mufflerObstructed);
-            syncManager.syncValue("maintenance", maintenanceValue);
-        };
+        this.valueSyncer = syncManager -> syncManager.syncValue("muffler", mufflerObstructed);
         this.errorText = builder -> builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
-        this.warningText = builder -> builder.addMaintenanceProblemLines((byte) maintenanceValue.getIntValue());
-        mufflerObstructed.setChangeListener(this::markDirty);
-        maintenanceValue.setChangeListener(this::markDirty);
+        this.warningText = builder -> builder.addMaintenanceProblemLines(mte.getMaintenanceProblems());
     }
 
     /**
      * Called once during ui construction.
      */
     public MultiblockUIFactory syncValues(Consumer<PanelSyncManager> valueSyncer) {
-        this.valueSyncer = this.valueSyncer.andThen(valueSyncer);
-        return this;
+        return syncValues(valueSyncer, true);
     }
 
-    protected void markDirty() {
-        this.dirty = true;
+    /**
+     * Called once during ui construction.
+     */
+    public MultiblockUIFactory syncValues(Consumer<PanelSyncManager> valueSyncer, boolean merge) {
+        this.valueSyncer = merge ? this.valueSyncer.andThen(valueSyncer) : valueSyncer;
+        return this;
     }
 
     /**
@@ -251,15 +246,14 @@ public class MultiblockUIFactory {
                         .child(new Column()
                                 .expanded()
                                 .onUpdateListener(column -> {
-                                    if (!dirty) return;
-                                    // todo this causes tooltips to flash, very problematic
-                                    column.getChildren().clear();
+                                    List<Widget<?>> copy = new ArrayList<>(lines);
                                     lines.clear();
-                                    // really debating on if the display screen should be its own widget
                                     this.displayText.accept(builder(lines, mte));
+                                    if (!listChanged(copy, lines)) return;
+                                    column.getChildren().clear();
+                                    // really debating on if the display screen should be its own widget
                                     lines.forEach(column::child);
                                     resize(column);
-                                    dirty = false;
                                 })
                                 .margin(4, 4)))
                 .background(GTGuiTextures.DISPLAY)
@@ -277,6 +271,18 @@ public class MultiblockUIFactory {
             area.applyPos(parent);
             top += area.requestedHeight();
         }
+    }
+
+    protected static boolean listChanged(List<?> a, List<?> b) {
+        if (a.size() != b.size()) return true;
+        for (int i = 0; i < a.size(); i++) {
+            if (a.get(i).getClass() != b.get(i).getClass()) return true;
+            if (a.get(i) instanceof TextWidget left && b.get(i) instanceof TextWidget right &&
+                    !Objects.equals(left.getKey(), right.getKey()))
+                return true;
+            // todo handle other things? or should text widgets be forced
+        }
+        return false;
     }
 
     @NotNull
@@ -643,7 +649,8 @@ public class MultiblockUIFactory {
          */
         public Builder addProgressLine(double progressPercent) { // todo
             if (!isStructureFormed || !isActive) return this;
-            addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress", (int) (progressPercent * 100)));
+            addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress",
+                    () -> ((int) (progressPercent * 100))));
             return this;
         }
 
