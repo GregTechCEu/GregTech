@@ -140,7 +140,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
                     // todo fuel needed line not working?
                     builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(),
-                                    recipeLogic.getPreviousRecipeDuration())
+                            recipeLogic.getPreviousRecipeDuration())
                             .addCustom(tl -> {
                                 if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                                     String key = isExtreme ?
