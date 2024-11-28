@@ -330,7 +330,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
         return switch (index) {
             case 0 -> {
-                FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null, 2);
+                FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
                 StringSyncValue fuelNameValue = new StringSyncValue(() -> {
                     FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
                     if (stack == null) {

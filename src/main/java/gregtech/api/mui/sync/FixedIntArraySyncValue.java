@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -24,10 +25,10 @@ public class FixedIntArraySyncValue extends ValueSyncHandler<int[]> {
     private final Supplier<int[]> getter;
     private final @Nullable Consumer<int[]> setter;
 
-    public FixedIntArraySyncValue(@NotNull Supplier<int[]> getter, @Nullable Consumer<int[]> setter, int size) {
-        this.getter = getter;
+    public FixedIntArraySyncValue(@NotNull Supplier<int[]> getter, @Nullable Consumer<int[]> setter) {
+        this.getter = Objects.requireNonNull(getter);
         this.setter = setter;
-        this.cache = new int[size];
+        this.cache = getter.get();
     }
 
     @Contract("null, _, null, _ -> fail")
@@ -62,7 +63,7 @@ public class FixedIntArraySyncValue extends ValueSyncHandler<int[]> {
 
     @Override
     public boolean updateCacheFromSource(boolean isFirstSync) {
-        if (this.getter != null && (isFirstSync || !Arrays.equals(this.getter.get(), this.cache))) {
+        if (isFirstSync || !Arrays.equals(this.getter.get(), this.cache)) {
             setValue(this.getter.get(), false, false);
             return true;
         }
