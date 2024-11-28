@@ -221,13 +221,10 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        return new MultiblockUIFactory(this) {
-
-            @Override
-            protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {
-                MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-
-                builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+        final MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+        return new MultiblockUIFactory(this)
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                         .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
                         .addCustom(tl -> {
                             if (isStructureFormed()) {
@@ -242,9 +239,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         })
                         .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(),
                                 recipeLogic.getPreviousRecipeDuration())
-                        .addWorkingStatusLine();
-            }
-        };
+                        .addWorkingStatusLine());
     }
 
     @Override

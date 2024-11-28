@@ -36,12 +36,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
     protected final BooleanSyncValue mufflerObstructed;
     protected final IntSyncValue maintanence;
+    protected Consumer<PanelSyncManager> valueSyncer = syncManager -> {};
+    protected Consumer<MultiblockDisplayTextPort.Builder> displayText = builder -> {};
+    protected Consumer<MultiblockDisplayTextPort.Builder> warningText = builder -> {};
+    protected Consumer<MultiblockDisplayTextPort.Builder> errorText = builder -> {};
+    protected BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton = (panel, syncManager) -> null;
 
     protected static final int DEFAULT_HEIGHT = 202;
     protected static final int DEFAULT_WIDTH = 198;
@@ -54,12 +62,14 @@ public class MultiblockUIFactory {
 
     /**
      * Called once during ui construction.
-     * 
-     * @param manager for syncing values
      */
-    protected void syncValues(PanelSyncManager manager) {
-        manager.syncValue("muffler", mufflerObstructed);
-        manager.syncValue("maintenance", maintanence);
+    public MultiblockUIFactory syncValues(Consumer<PanelSyncManager> valueSyncer) {
+        this.valueSyncer = syncManager -> {
+            syncManager.syncValue("muffler", mufflerObstructed);
+            syncManager.syncValue("maintenance", maintanence);
+            valueSyncer.accept(syncManager);
+        };
+        return this;
     }
 
     /**
@@ -67,14 +77,10 @@ public class MultiblockUIFactory {
      * <i>It is not recommended to override this method</i>
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        syncValues(panelSyncManager);
-        var displayText = new ArrayList<Widget<?>>();
-
-        // var builder = MultiblockDisplayTextPort.builder(displayText, mte);
-
-        // configureDisplayText(builder);
-
+        this.valueSyncer.accept(panelSyncManager);
         var panel = createRootPanel();
+
+        var displayText = new ArrayList<Widget<?>>();
 
         // TODO createExtras() hook for overrides?
         var bars = createBars(panel, panelSyncManager);
@@ -94,23 +100,7 @@ public class MultiblockUIFactory {
         List<Widget<?>> textList = new ArrayList<>();
         return new Widget<>()
                 .pos(174 - 5, 93 - 5)
-                .onUpdateListener(w -> {
-                    IDrawable icon = GTGuiTextures.GREGTECH_LOGO;
-                    textList.clear();
-                    var builder = MultiblockDisplayTextPort.builder(textList, mte, true, false);
-                    configureErrorText(builder);
-                    if (textList.isEmpty()) {
-                        configureWarningText(builder);
-                        if (!textList.isEmpty()) {
-                            // warn
-                            icon = GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
-                        }
-                    } else {
-                        // error
-                        icon = GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
-                    }
-                    w.overlay(icon);
-                })
+                .onUpdateListener(w -> w.overlay(getIndicatorOverlay(textList)))
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .tooltipBuilder(tooltip -> {
                     for (var text : textList) {
@@ -120,22 +110,49 @@ public class MultiblockUIFactory {
                 });
     }
 
+    private IDrawable getIndicatorOverlay(List<Widget<?>> textList) {
+        if (!textList.isEmpty()) textList.clear();
+
+        var builder = MultiblockDisplayTextPort.builder(textList, mte, true, false);
+        this.errorText.accept(builder);
+        if (!textList.isEmpty()) {
+            // error
+            return GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
+        }
+        this.warningText.accept(builder);
+        if (!textList.isEmpty()) {
+            // warn
+            return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
+        }
+
+        // todo getLogo()?
+        return GTGuiTextures.GREGTECH_LOGO_DARK;
+    }
+
     /**
      * Returns a list of text indicating any current warnings in this Multiblock. <br />
      * Recommended to only display warnings if the structure is already formed. <br />
      * This is called every tick on the client-side
      */
-    protected void configureWarningText(MultiblockDisplayTextPort.Builder builder) {
-        builder.addMaintenanceProblemLines((byte) maintanence.getIntValue());
+    public MultiblockUIFactory configureWarningText(Consumer<MultiblockDisplayTextPort.Builder> warningText) {
+        this.warningText = builder -> {
+            builder.addMaintenanceProblemLines((byte) maintanence.getIntValue());
+            warningText.accept(builder);
+        };
+        return this;
     }
 
     /**
      * Returns a list of translation keys indicating any current errors in this Multiblock. <br />
-     * Prioritized over any warnings provided by {@link #configureWarningText(MultiblockDisplayTextPort.Builder)}.<br />
+     * Prioritized over any warnings provided by {@link #configureWarningText(Consumer)}.<br />
      * This is called every tick on the client-side
      */
-    protected void configureErrorText(MultiblockDisplayTextPort.Builder builder) {
-        builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
+    public MultiblockUIFactory configureErrorText(Consumer<MultiblockDisplayTextPort.Builder> errorText) {
+        this.errorText = builder -> {
+            builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
+            errorText.accept(builder);
+        };
+        return this;
     }
 
     /**
@@ -144,20 +161,20 @@ public class MultiblockUIFactory {
      * To use translation, use {@link KeyUtil#lang(TextFormatting, String, Object...)}
      * or {@link KeyUtil#lang(String, Object...)}
      */
-    protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {}
+    public MultiblockUIFactory configureDisplayText(Consumer<MultiblockDisplayTextPort.Builder> displayText) {
+        this.displayText = displayText;
+        return this;
+    }
 
     /**
      * Add a custom third button to the Multiblock UI. By default, this is a placeholder stating that there is no
      * additional functionality for this Multiblock.
      * <br>
      * Size will be 18x18.
-     *
-     * @param mainPanel        the main panel, needed for creating popup panels
-     * @param panelSyncManager the sync manager for synchronizing widgets
      */
-    public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
-                                                @NotNull PanelSyncManager panelSyncManager) {
-        return null;
+    public MultiblockUIFactory createFlexButton(BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton) {
+        this.flexButton = flexButton;
+        return this;
     }
 
     protected @NotNull ModularPanel createRootPanel() {
@@ -221,7 +238,7 @@ public class MultiblockUIFactory {
                     column.getChildren().clear();
                     lines.clear();
                     // really debating on if the display screen should be its own widget
-                    configureDisplayText(MultiblockDisplayTextPort.builder(lines, mte));
+                    this.displayText.accept(MultiblockDisplayTextPort.builder(lines, mte));
                     lines.forEach(column::child);
                     resize(column);
                 })
@@ -252,7 +269,7 @@ public class MultiblockUIFactory {
 
     @NotNull
     protected Column createButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        var flexButton = createFlexButton(mainPanel, panelSyncManager);
+        var flexButton = this.flexButton.apply(mainPanel, panelSyncManager);
         if (flexButton == null) {
             flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
                     .size(18);

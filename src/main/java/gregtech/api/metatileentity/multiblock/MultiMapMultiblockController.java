@@ -139,28 +139,24 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     @Override
     protected MultiblockUIFactory createUIFactory() {
         IntSyncValue recipeMapValue = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
-        return new MultiblockUIFactory(this) {
+        return new MultiblockUIFactory(this)
+                .createFlexButton((panel, syncManager) -> {
+                    if (getAvailableRecipeMaps() == null || getAvailableRecipeMaps().length <= 1)
+                        return null;
 
-            @Override
-            public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
-                                                        @NotNull PanelSyncManager panelSyncManager) {
-                if (getAvailableRecipeMaps() == null || getAvailableRecipeMaps().length <= 1)
-                    return null;
-
-                return new CycleButtonWidget()
-                        .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
-                        .background(GTGuiTextures.BUTTON)
-                        // TODO find out why this needs to be called
-                        .disableHoverBackground()
-                        .value(recipeMapValue)
-                        .length(getAvailableRecipeMaps().length)
-                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                        .tooltipBuilder(t -> t.addLine(IKey.comp(
-                                IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
-                                        IKey.lang(getAvailableRecipeMaps()[recipeMapValue.getIntValue()]
-                                                .getTranslationKey())))));
-            }
-        };
+                    return new CycleButtonWidget()
+                            .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
+                            .background(GTGuiTextures.BUTTON)
+                            // TODO find out why this needs to be called
+                            .disableHoverBackground()
+                            .value(recipeMapValue)
+                            .length(getAvailableRecipeMaps().length)
+                            .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                            .tooltipBuilder(t -> t.addLine(IKey.comp(
+                                    IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
+                                            IKey.lang(getAvailableRecipeMaps()[recipeMapValue.getIntValue()]
+                                                    .getTranslationKey())))));
+                });
     }
 
     @Override
