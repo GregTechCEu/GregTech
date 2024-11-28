@@ -45,6 +45,7 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
@@ -69,6 +70,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     private FluidTankList steamOutputTank;
 
     private int throttlePercentage = 100;
+    private boolean hasWaterCache;
 
     public MetaTileEntityLargeBoiler(ResourceLocation metaTileEntityId, BoilerType boilerType) {
         super(metaTileEntityId);
@@ -175,9 +177,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        final IntSyncValue waterFilled = new IntSyncValue(this::getWaterFilled, null);
-        // update cache manually, as it's not done in constructor
-        waterFilled.updateCacheFromSource(true);
+        final var waterFilled = new BooleanSyncValue(
+                () -> hasWaterCache, b -> hasWaterCache = b,
+                () -> getWaterFilled() > 0, null);
 
         return new MultiblockUIFactory(this)
                 .syncValues(syncManager -> syncManager.syncValue("water_filled", waterFilled))
@@ -188,7 +190,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .configureWarningText(builder -> builder.addCustom(keyList -> {
                     if (isStructureFormed()) {
                         // todo this is returning 0 on client for some reason
-                        if (waterFilled.getIntValue() == 0) {
+                        if (!waterFilled.getBoolValue()) {
                             keyList.add(KeyUtil.lang(TextFormatting.YELLOW,
                                     "gregtech.multiblock.large_boiler.no_water"));
                             keyList.add(KeyUtil.lang(TextFormatting.GRAY,
@@ -390,12 +392,14 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(throttlePercentage);
+        buf.writeBoolean(hasWaterCache = getWaterFilled() > 0);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         throttlePercentage = buf.readVarInt();
+        this.hasWaterCache = buf.readBoolean();
     }
 
     public int getThrottle() {
