@@ -12,6 +12,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -34,6 +35,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,13 +107,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
-        writeCustomData(UPDATE_ENERGY, buf -> {
-            buf.writeLong(energyContainer.getEnergyCapacity());
-            buf.writeLong(energyContainer.getInputVoltage());
-            buf.writeLong(energyContainer.getInputAmperage());
-            buf.writeLong(energyContainer.getOutputVoltage());
-            buf.writeLong(energyContainer.getOutputAmperage());
-        });
     }
 
     @Override
@@ -198,6 +193,22 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
+    protected MultiblockUIFactory createUIFactory() {
+        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+        return new MultiblockUIFactory(this)
+                .syncValues(syncManager -> syncManager.syncValue("progress", progress))
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                        .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
+                        .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                        .addWorkingStatusLine()
+                        .addProgressLine(progress.getDoubleValue()))
+                .configureWarningText(builder -> builder
+                        .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy()));
+    }
+
+    @Override
     public TraceabilityPredicate autoAbilities() {
         return autoAbilities(true, true, true, true, true, true, true);
     }
@@ -276,29 +287,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         super.receiveInitialSyncData(buf);
         isDistinct = buf.readBoolean();
 
-        long capacity = buf.readLong(),
-                inVoltage = buf.readLong(),
-                inAmps = buf.readLong(),
-                outVoltage = buf.readLong(),
-                outAmps = buf.readLong();
+        long capacity = buf.readLong();
+        long inVoltage = buf.readLong();
+        long inAmps = buf.readLong();
+        long outVoltage = buf.readLong();
+        long outAmps = buf.readLong();
 
         this.energyContainer = new EnergyContainerHandler(this, capacity,
                 inVoltage, inAmps, outVoltage, outAmps);
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == UPDATE_ENERGY) {
-            long capacity = buf.readLong(),
-                    inVoltage = buf.readLong(),
-                    inAmps = buf.readLong(),
-                    outVoltage = buf.readLong(),
-                    outAmps = buf.readLong();
-
-            this.energyContainer = new EnergyContainerHandler(this, capacity,
-                    inVoltage, inAmps, outVoltage, outAmps);
-        }
     }
 
     @Override
