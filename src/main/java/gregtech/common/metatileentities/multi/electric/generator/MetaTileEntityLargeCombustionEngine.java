@@ -35,6 +35,7 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -46,9 +47,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GenericSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
@@ -62,6 +61,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     private final int tier;
     private final boolean isExtreme;
     private boolean boostAllowed;
+    private boolean hasLubricant;
 
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, tier);
@@ -122,12 +122,12 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        var lubricant = new GenericSyncValue<>(
-                () -> getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false),
-                null, NetworkUtils::readFluidStack, NetworkUtils::writeFluidStack);
+        final BooleanSyncValue hasLubricant = new BooleanSyncValue(
+                () -> this.hasLubricant, value -> this.hasLubricant = value,
+                () -> getLubricantAmount()[0] > 0, null);
 
         return new MultiblockUIFactory(this)
-                .syncValues(syncManager -> syncManager.syncValue("lubricant", lubricant))
+                .syncValues(syncManager -> syncManager.syncValue("lubricant", hasLubricant))
                 .configureDisplayText(builder -> {
                     var recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
                     builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
@@ -160,8 +160,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                                     "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
                         }
 
-                        FluidStack lubricantStack = lubricant.getValue();
-                        if (lubricantStack == null || lubricantStack.amount == 0) {
+                        if (!hasLubricant.getBoolValue()) {
                             keyList.add(KeyUtil.lang(TextFormatting.RED,
                                     "gregtech.multiblock.large_combustion_engine.no_lubricant"));
                         }
@@ -285,6 +284,18 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Override
     public int getProgressBarCount() {
         return 3;
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(this.hasLubricant = getLubricantAmount()[0] > 0);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.hasLubricant = buf.readBoolean();
     }
 
     @Override
