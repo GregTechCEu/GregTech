@@ -48,8 +48,8 @@ import java.util.function.Function;
 public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
-    protected final BooleanSyncValue mufflerObstructed;
-    protected final IntSyncValue maintanence;
+    protected boolean mufflerObstructed;
+    protected byte maintanence;
     protected Consumer<PanelSyncManager> valueSyncer;
     protected Consumer<Builder> displayText = builder -> {};
     protected Consumer<Builder> warningText = builder -> {};
@@ -61,11 +61,17 @@ public class MultiblockUIFactory {
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
-        this.mufflerObstructed = new BooleanSyncValue(mte::isStructureObstructed, null);
-        this.maintanence = new IntSyncValue(mte::getMaintenanceProblems, null);
+        var mufflerObstructed = new BooleanSyncValue(
+                () -> this.mufflerObstructed, value -> this.mufflerObstructed = value,
+                mte::isStructureObstructed, null);
+        var maintenance = new IntSyncValue(
+                () -> this.maintanence, value -> this.maintanence = (byte) value,
+                mte::getMaintenanceProblems, null);
+        maintenance.updateCacheFromSource(true);
+
         this.valueSyncer = syncManager -> {
             syncManager.syncValue("muffler", mufflerObstructed);
-            syncManager.syncValue("maintenance", maintanence);
+            syncManager.syncValue("maintenance", maintenance);
         };
     }
 
@@ -141,7 +147,7 @@ public class MultiblockUIFactory {
      */
     public MultiblockUIFactory configureWarningText(Consumer<Builder> warningText) {
         this.warningText = builder -> {
-            builder.addMaintenanceProblemLines((byte) maintanence.getIntValue());
+            builder.addMaintenanceProblemLines(maintanence);
             warningText.accept(builder);
         };
         return this;
@@ -154,7 +160,7 @@ public class MultiblockUIFactory {
      */
     public MultiblockUIFactory configureErrorText(Consumer<Builder> errorText) {
         this.errorText = builder -> {
-            builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
+            builder.addMufflerObstructedLine(mufflerObstructed);
             errorText.accept(builder);
         };
         return this;
