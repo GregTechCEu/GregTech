@@ -74,6 +74,8 @@ public class MultiblockUIFactory {
         };
         this.errorText = builder -> builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
         this.warningText = builder -> builder.addMaintenanceProblemLines((byte) maintenanceValue.getIntValue());
+        mufflerObstructed.setChangeListener(this::markDirty);
+        maintenanceValue.setChangeListener(this::markDirty);
     }
 
     /**
@@ -82,6 +84,10 @@ public class MultiblockUIFactory {
     public MultiblockUIFactory syncValues(Consumer<PanelSyncManager> valueSyncer) {
         this.valueSyncer = this.valueSyncer.andThen(valueSyncer);
         return this;
+    }
+
+    protected void markDirty() {
+        this.dirty = true;
     }
 
     /**
@@ -245,12 +251,15 @@ public class MultiblockUIFactory {
                         .child(new Column()
                                 .expanded()
                                 .onUpdateListener(column -> {
+                                    if (!dirty) return;
+                                    // todo this causes tooltips to flash, very problematic
                                     column.getChildren().clear();
                                     lines.clear();
                                     // really debating on if the display screen should be its own widget
                                     this.displayText.accept(builder(lines, mte));
                                     lines.forEach(column::child);
                                     resize(column);
+                                    dirty = false;
                                 })
                                 .margin(4, 4)))
                 .background(GTGuiTextures.DISPLAY)
