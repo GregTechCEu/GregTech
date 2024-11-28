@@ -122,38 +122,27 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        return new MultiblockUIFactory(this) {
-
-            DoubleSyncValue progress;
-
-            @Override
-            protected void syncValues(PanelSyncManager manager) {
-                super.syncValues(manager);
-                progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
-                manager.syncValue("progress", progress);
-            }
-
-            @Override
-            protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {
-                builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+        return new MultiblockUIFactory(this)
+                .syncValues(syncManager -> syncManager.syncValue("progress", progress))
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                         .addEnergyUsageLine(getEnergyContainer())
                         .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                         .addCustom(this::addHeatCapacity)
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
-                        .addProgressLine(progress::getDoubleValue);
-            }
+                        .addProgressLine(progress::getDoubleValue));
+    }
 
-            private void addHeatCapacity(List<IKey> keyList) {
-                if (isStructureFormed()) {
-                    var heatString = KeyUtil.number(TextFormatting.RED,
-                            getCurrentTemperature(), "K");
+    private void addHeatCapacity(List<IKey> keyList) {
+        if (isStructureFormed()) {
+            var heatString = KeyUtil.number(TextFormatting.RED,
+                    getCurrentTemperature(), "K");
 
-                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                            "gregtech.multiblock.blast_furnace.max_temperature", heatString));
-                }
-            }
-        };
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.blast_furnace.max_temperature", heatString));
+        }
     }
 
     @Override

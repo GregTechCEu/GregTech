@@ -49,7 +49,6 @@ import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SliderWidget;
@@ -176,82 +175,17 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
-        DoubleSyncValue sliderValue = new DoubleSyncValue(
-                () -> (double) getThrottlePercentage() / 100,
-                d -> setThrottlePercentage((int) (d * 100)));
-        return new MultiblockUIFactory(this) {
+        final IntSyncValue waterFilled = new IntSyncValue(this::getWaterFilled, null);
+        // update cache manually, as it's not done in constructor
+        waterFilled.updateCacheFromSource(true);
 
-            IntSyncValue waterFilled;
-
-            @Override
-            public @Nullable Widget<?> createFlexButton(@NotNull ModularPanel mainPanel,
-                                                        @NotNull PanelSyncManager panelSyncManager) {
-                PanelSyncHandler panel = panelSyncManager.panel("throttle_panel", mainPanel,
-                        (syncManager, syncHandler) -> GTGuis.createPopupPanel("boiler_throttle", 116, 53)
-                                .child(new Row()
-                                        .pos(4, 4)
-                                        .height(16)
-                                        .coverChildrenWidth()
-                                        .child(new ItemDrawable(getStackForm())
-                                                .asWidget()
-                                                .size(16)
-                                                .marginRight(4))
-                                        .child(IKey.lang("gregtech.multiblock.large_boiler.throttle.title")
-                                                .asWidget()
-                                                .heightRel(1.0f)))
-                                .child(new Row()
-                                        .top(20)
-                                        .margin(4, 0)
-                                        .coverChildrenHeight()
-                                        .child(new SliderWidget()
-                                                .background(new Rectangle().setColor(Color.BLACK.brighter(2)).asIcon()
-                                                        .height(8))
-                                                .bounds(0, 1)
-                                                .setAxis(GuiAxis.X)
-                                                .value(sliderValue)
-                                                .widthRel(0.7f)
-                                                .height(20))
-                                        // TODO add inc/dec buttons
-                                        .child(new TextFieldWidget()
-                                                .widthRel(0.3f)
-                                                .height(20)
-                                                // TODO proper color
-                                                .setTextColor(Color.WHITE.darker(1))
-                                                .setNumbers(0, 100)
-                                                // TODO show % sign
-                                                .value(throttleValue)
-                                                .background(GTGuiTextures.DISPLAY))));
-
-                return new ButtonWidget<>()
-                        .width(18)
-                        .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY)
-                        // todo lang
-                        .addTooltipLine("Configure Boiler Throttle")
-                        // TODO make this work
-                        .background(GTGuiTextures.BUTTON)
-                        .onMousePressed(i -> {
-                            if (panel.isPanelOpen()) {
-                                panel.closePanel();
-                            } else {
-                                panel.openPanel();
-                            }
-                            Interactable.playButtonClickSound();
-                            return true;
-                        });
-            }
-
-            @Override
-            protected void syncValues(PanelSyncManager manager) {
-                super.syncValues(manager);
-                waterFilled = new IntSyncValue(() -> getWaterFilled(), null);
-                manager.syncValue("water_filled", waterFilled);
-            }
-
-            @Override
-            protected void configureWarningText(MultiblockDisplayTextPort.Builder builder) {
-                super.configureWarningText(builder);
-                builder.addCustom(keyList -> {
+        return new MultiblockUIFactory(this)
+                .syncValues(syncManager -> syncManager.syncValue("water_filled", waterFilled))
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                        .addCustom(this::addCustomData)
+                        .addWorkingStatusLine())
+                .configureWarningText(builder -> builder.addCustom(keyList -> {
                     if (isStructureFormed()) {
                         // todo this is returning 0 on client for some reason
                         if (waterFilled.getIntValue() == 0) {
@@ -261,41 +195,95 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                     "gregtech.multiblock.large_boiler.explosion_tooltip"));
                         }
                     }
+                }))
+                .createFlexButton((panel, syncManager) -> {
+                    PanelSyncHandler throttle = syncManager.panel("throttle_panel", panel, this::makeThrottlePanel);
+
+                    return new ButtonWidget<>()
+                            .width(18)
+                            .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY)
+                            // todo lang
+                            .addTooltipLine("Configure Boiler Throttle")
+                            // TODO make this work
+                            .background(GTGuiTextures.BUTTON)
+                            .onMousePressed(i -> {
+                                if (throttle.isPanelOpen()) {
+                                    throttle.closePanel();
+                                } else {
+                                    throttle.openPanel();
+                                }
+                                Interactable.playButtonClickSound();
+                                return true;
+                            });
                 });
-            }
+    }
 
-            @Override
-            protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {
-                builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                        .addCustom(this::addCustomData)
-                        .addWorkingStatusLine();
-            }
+    private void addCustomData(List<IKey> keyList) {
+        if (isStructureFormed()) {
+            // Steam Output line
+            IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
+                    recipeLogic.getLastTickSteam(), " L/t");
 
-            private void addCustomData(List<IKey> keyList) {
-                if (isStructureFormed()) {
-                    // Steam Output line
-                    IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
-                            recipeLogic.getLastTickSteam(), " L/t");
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.large_boiler.steam_output", steamOutput));
 
-                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                            "gregtech.multiblock.large_boiler.steam_output", steamOutput));
+            // Efficiency line
+            IKey efficiency = KeyUtil.string(
+                    getNumberColor(recipeLogic.getHeatScaled()),
+                    recipeLogic.getHeatScaled() + "%");
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.large_boiler.efficiency", efficiency));
 
-                    // Efficiency line
-                    IKey efficiency = KeyUtil.string(
-                            getNumberColor(recipeLogic.getHeatScaled()),
-                            recipeLogic.getHeatScaled() + "%");
-                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                            "gregtech.multiblock.large_boiler.efficiency", efficiency));
+            // Throttle line
+            IKey throttle = KeyUtil.string(
+                    getNumberColor(getThrottle()),
+                    getThrottle() + "%");
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.large_boiler.throttle", throttle));
+        }
+    }
 
-                    // Throttle line
-                    IKey throttle = KeyUtil.string(
-                            getNumberColor(getThrottle()),
-                            getThrottle() + "%");
-                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                            "gregtech.multiblock.large_boiler.throttle", throttle));
-                }
-            }
-        };
+    private ModularPanel makeThrottlePanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
+        IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
+        DoubleSyncValue sliderValue = new DoubleSyncValue(
+                () -> (double) getThrottlePercentage() / 100,
+                d -> setThrottlePercentage((int) (d * 100))
+        );
+
+        return GTGuis.createPopupPanel("boiler_throttle", 116, 53)
+                .child(new Row()
+                        .pos(4, 4)
+                        .height(16)
+                        .coverChildrenWidth()
+                        .child(new ItemDrawable(getStackForm())
+                                .asWidget()
+                                .size(16)
+                                .marginRight(4))
+                        .child(IKey.lang("gregtech.multiblock.large_boiler.throttle.title")
+                                .asWidget()
+                                .heightRel(1.0f)))
+                .child(new Row()
+                        .top(20)
+                        .margin(4, 0)
+                        .coverChildrenHeight()
+                        .child(new SliderWidget()
+                                .background(new Rectangle().setColor(Color.BLACK.brighter(2)).asIcon()
+                                        .height(8))
+                                .bounds(0, 1)
+                                .setAxis(GuiAxis.X)
+                                .value(sliderValue)
+                                .widthRel(0.7f)
+                                .height(20))
+                        // TODO add inc/dec buttons
+                        .child(new TextFieldWidget()
+                                .widthRel(0.3f)
+                                .height(20)
+                                // TODO proper color
+                                .setTextColor(Color.WHITE.darker(1))
+                                .setNumbers(0, 100)
+                                // TODO show % sign
+                                .value(throttleValue)
+                                .background(GTGuiTextures.DISPLAY)));
     }
 
     private void setThrottlePercentage(int amount) {
