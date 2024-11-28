@@ -73,11 +73,7 @@ public class MultiblockUIFactory {
      * Called once during ui construction.
      */
     public MultiblockUIFactory syncValues(Consumer<PanelSyncManager> valueSyncer) {
-        this.valueSyncer = syncManager -> {
-            syncManager.syncValue("muffler", mufflerObstructed);
-            syncManager.syncValue("maintenance", maintanence);
-            valueSyncer.accept(syncManager);
-        };
+        this.valueSyncer = this.valueSyncer.andThen(valueSyncer);
         return this;
     }
 
