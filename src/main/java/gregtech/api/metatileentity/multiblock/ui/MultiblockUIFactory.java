@@ -50,7 +50,7 @@ public class MultiblockUIFactory {
     private final MultiblockWithDisplayBase mte;
     protected final BooleanSyncValue mufflerObstructed;
     protected final IntSyncValue maintanence;
-    protected Consumer<PanelSyncManager> valueSyncer = syncManager -> {};
+    protected Consumer<PanelSyncManager> valueSyncer;
     protected Consumer<Builder> displayText = builder -> {};
     protected Consumer<Builder> warningText = builder -> {};
     protected Consumer<Builder> errorText = builder -> {};
@@ -63,6 +63,10 @@ public class MultiblockUIFactory {
         this.mte = mte;
         this.mufflerObstructed = new BooleanSyncValue(mte::isStructureObstructed, null);
         this.maintanence = new IntSyncValue(mte::getMaintenanceProblems, null);
+        this.valueSyncer = syncManager -> {
+            syncManager.syncValue("muffler", mufflerObstructed);
+            syncManager.syncValue("maintenance", maintanence);
+        };
     }
 
     /**
@@ -103,7 +107,7 @@ public class MultiblockUIFactory {
 
     private Widget<?> createIndicator() {
         List<Widget<?>> textList = new ArrayList<>();
-        var builder = builder(textList);
+        var builder = builder(textList, mte);
         return new Widget<>()
                 .pos(174 - 5, 93 - 5)
                 .onUpdateListener(w -> w.overlay(getIndicatorOverlay(builder)))
@@ -167,7 +171,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(Consumer<Builder> displayText) {
-        this.displayText = builder -> displayText.accept(builder.title().structureFormed());
+        this.displayText = displayText;
         return this;
     }
 
@@ -247,7 +251,7 @@ public class MultiblockUIFactory {
                                     column.getChildren().clear();
                                     lines.clear();
                                     // really debating on if the display screen should be its own widget
-                                    this.displayText.accept(builder(lines));
+                                    this.displayText.accept(builder(lines, mte));
                                     lines.forEach(column::child);
                                     resize(column);
                                 })
@@ -363,17 +367,19 @@ public class MultiblockUIFactory {
         private Bars() {}
     }
 
-    protected Builder builder(List<Widget<?>> list) {
-        return new Builder(list).title().structureFormed();
+    protected static Builder builder(List<Widget<?>> list, MultiblockWithDisplayBase mte) {
+        return new Builder(list)
+                .title(mte.getMetaFullName())
+                .structureFormed(mte.isStructureFormed());
     }
 
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
-    public class Builder {
+    public static class Builder {
 
         private final List<Widget<?>> textList;
         private Function<IKey, Widget<?>> widgetFunction = Builder::keyMapper;
 
-        private boolean isWorkingEnabled, isActive;
+        private boolean isWorkingEnabled, isActive, isStructureFormed;
 
         // Keys for the three-state working system, can be set custom by multiblocks.
         private IKey idlingKey = IKey.lang("gregtech.multiblock.idling");
@@ -390,8 +396,9 @@ public class MultiblockUIFactory {
             this.textList = textList;
         }
 
-        public Builder structureFormed() {
-            if (!mte.isStructureFormed()) {
+        public Builder structureFormed(boolean structureFormed) {
+            this.isStructureFormed = structureFormed;
+            if (!structureFormed) {
                 var base = KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
                 var hover = KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.invalid_structure.tooltip");
@@ -400,8 +407,8 @@ public class MultiblockUIFactory {
             return this;
         }
 
-        public Builder title() {
-            addKey(KeyUtil.lang(TextFormatting.WHITE, mte.getMetaFullName()));
+        public Builder title(String lang) {
+            addKey(KeyUtil.lang(TextFormatting.WHITE, lang));
             return this;
         }
 
@@ -435,7 +442,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the passed energy container has greater than zero capacity.
          */
         public Builder addEnergyUsageLine(IEnergyContainer energyContainer) {
-            if (!mte.isStructureFormed() || energyContainer == null) return this;
+            if (!isStructureFormed || energyContainer == null) return this;
 
             if (energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
@@ -460,7 +467,7 @@ public class MultiblockUIFactory {
          * {@link GTValues#VNF}.
          */
         public Builder addEnergyTierLine(int tier) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
 
             var bodyText = KeyUtil.lang(TextFormatting.GRAY,
@@ -477,7 +484,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the passed value is greater than zero.
          */
         public Builder addEnergyUsageExactLine(long energyUsage) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (energyUsage > 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
                 // wrap in text component to keep it from being formatted
@@ -496,7 +503,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the max voltage is greater than zero and the recipe EU/t.
          */
         public Builder addEnergyProductionLine(long maxVoltage, long recipeEUt) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
@@ -517,7 +524,7 @@ public class MultiblockUIFactory {
          * zero.
          */
         public Builder addEnergyProductionAmpsLine(long maxVoltage, int amperage) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (maxVoltage != 0 && amperage != 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
@@ -537,7 +544,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the max CWU/t is greater than zero.
          */
         public Builder addComputationUsageLine(int maxCWUt) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (maxCWUt > 0) {
                 var computation = KeyUtil.string(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(maxCWUt));
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
@@ -552,7 +559,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed, the machine is active, and the current CWU/t is greater than zero.
          */
         public Builder addComputationUsageExactLine(int currentCWUt) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (isActive && currentCWUt > 0) {
                 var computation = KeyUtil.string(TextFormatting.AQUA,
                         TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
@@ -568,7 +575,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed.
          */
         public Builder addWorkingStatusLine() {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
 
             if (!isWorkingEnabled) {
                 return addWorkPausedLine(false);
@@ -586,7 +593,7 @@ public class MultiblockUIFactory {
          * Also added only if formed.
          */
         public Builder addWorkPausedLine(boolean checkState) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (!checkState || !isWorkingEnabled) {
                 addKey(KeyUtil.colored(TextFormatting.GOLD, pausedKey));
             }
@@ -600,7 +607,7 @@ public class MultiblockUIFactory {
          * Also added only if formed.
          */
         public Builder addRunningPerfectlyLine(boolean checkState) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (!checkState || isActive) {
                 addKey(KeyUtil.colored(TextFormatting.GREEN, runningKey));
             }
@@ -614,7 +621,7 @@ public class MultiblockUIFactory {
          * Also added only if formed.
          */
         public Builder addIdlingLine(boolean checkState) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (!checkState || (isWorkingEnabled && !isActive)) {
                 addKey(KeyUtil.colored(TextFormatting.GRAY, idlingKey));
             }
@@ -629,7 +636,7 @@ public class MultiblockUIFactory {
          * @param progressPercent Progress formatted as a range of [0,1] representing the progress of the recipe.
          */
         public Builder addProgressLine(DoubleSupplier progressPercent) { // todo
-            if (!mte.isStructureFormed() || !isActive) return this;
+            if (!isStructureFormed || !isActive) return this;
             addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress",
                     () -> ((int) (progressPercent.getAsDouble() * 100))));
             return this;
@@ -641,7 +648,7 @@ public class MultiblockUIFactory {
          * Added if structure is formed and the number of parallels is greater than one.
          */
         public Builder addParallelsLine(int numParallels) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (numParallels > 1) {
                 var parallels = KeyUtil.string(TextFormatting.DARK_PURPLE,
                         TextFormattingUtil.formatNumbers(numParallels));
@@ -658,7 +665,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the passed parameter is true.
          */
         public Builder addLowPowerLine(boolean isLowPower) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (isLowPower) {
                 addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.not_enough_energy"));
@@ -672,7 +679,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the passed parameter is true.
          */
         public Builder addLowComputationLine(boolean isLowComputation) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (isLowComputation) {
                 addKey(IKey.comp(IKey.str(TextFormatting.YELLOW.toString()),
                         IKey.lang("gregtech.multiblock.computation.not_enough_computation")));
@@ -686,7 +693,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the passed parameter is true.
          */
         public Builder addLowDynamoTierLine(boolean isTooLow) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (isTooLow) {
                 addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.not_enough_energy_output"));
@@ -701,7 +708,7 @@ public class MultiblockUIFactory {
          * Will check the config setting for if maintenance is enabled automatically.
          */
         public Builder addMaintenanceProblemLines(byte maintenanceProblems) {
-            if (!mte.isStructureFormed() || !ConfigHolder.machines.enableMaintenance) return this;
+            if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
             if (maintenanceProblems < 63) {
                 addKey(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.universal.has_problems"));
@@ -751,7 +758,7 @@ public class MultiblockUIFactory {
          * Added if the structure is formed and if the passed parameter is true.
          */
         public Builder addMufflerObstructedLine(boolean isObstructed) {
-            if (!mte.isStructureFormed()) return this;
+            if (!isStructureFormed) return this;
             if (isObstructed) {
                 addKey(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.universal.muffler_obstructed"));
@@ -767,7 +774,7 @@ public class MultiblockUIFactory {
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
         public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
-            if (!mte.isStructureFormed() || !isActive || fuelName == null) return this;
+            if (!isStructureFormed || !isActive || fuelName == null) return this;
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
