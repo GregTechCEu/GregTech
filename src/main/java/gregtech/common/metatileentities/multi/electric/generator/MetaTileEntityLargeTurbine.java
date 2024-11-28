@@ -24,7 +24,6 @@ import gregtech.client.renderer.ICubeRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -114,12 +113,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         super.formStructure(context);
         this.exportFluidHandler = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         ((LargeTurbineWorkableHandler) this.recipeMapWorkable).updateTanks();
-        this.cachedRotorEfficiency = getRotorHolder().getRotorEfficiency();
-        this.cachedTotalEfficiency = getRotorHolder().getTotalEfficiency();
-        writeCustomData(SYNC_ROTOR, buffer -> {
-            buffer.writeInt(this.cachedRotorEfficiency);
-            buffer.writeInt(this.cachedTotalEfficiency);
-        });
     }
 
     @Override
@@ -197,19 +190,10 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == SYNC_ROTOR) {
-            this.cachedRotorEfficiency = buf.readInt();
-            this.cachedTotalEfficiency = buf.readInt();
-        }
-    }
-
-    @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(this.cachedRotorEfficiency);
-        buf.writeInt(this.cachedTotalEfficiency);
+        buf.writeInt(this.cachedRotorEfficiency = getRotorHolder().getRotorEfficiency());
+        buf.writeInt(this.cachedTotalEfficiency = getRotorHolder().getTotalEfficiency());
     }
 
     @Override
@@ -222,15 +206,26 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     @Override
     protected MultiblockUIFactory createUIFactory() {
         final MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+        final IntSyncValue efficiency = new IntSyncValue(
+                () -> cachedRotorEfficiency, value -> cachedRotorEfficiency = value,
+                () -> getRotorHolder().getRotorEfficiency(), null);
+        final IntSyncValue total = new IntSyncValue(
+                () -> cachedTotalEfficiency, value -> cachedTotalEfficiency = value,
+                () -> getRotorHolder().getRotorEfficiency(), null);
+
         return new MultiblockUIFactory(this)
+                .syncValues(syncManager -> {
+                    syncManager.syncValue("eff", efficiency);
+                    syncManager.syncValue("total", total);
+                })
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                         .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
                         .addCustom(tl -> {
                             if (isStructureFormed()) {
-                                if (cachedRotorEfficiency > 0) {
+                                if (efficiency.getIntValue() > 0) {
                                     IKey efficiencyInfo = KeyUtil.number(TextFormatting.AQUA,
-                                            cachedTotalEfficiency, "%");
+                                            total.getIntValue(), "%");
                                     tl.add(KeyUtil.lang(TextFormatting.GRAY,
                                             "gregtech.multiblock.turbine.efficiency",
                                             efficiencyInfo));
@@ -467,20 +462,5 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
             }
         }
         return new int[2];
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        // really do not like how i have to save this to NBT
-        data.setInteger("cached_eff", this.cachedRotorEfficiency);
-        data.setInteger("cached_total", this.cachedTotalEfficiency);
-        return super.writeToNBT(data);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        this.cachedRotorEfficiency = data.getInteger("cached_eff");
-        this.cachedTotalEfficiency = data.getInteger("cached_total");
     }
 }
