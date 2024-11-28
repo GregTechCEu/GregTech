@@ -247,8 +247,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
         DoubleSyncValue sliderValue = new DoubleSyncValue(
                 () -> (double) getThrottlePercentage() / 100,
-                d -> setThrottlePercentage((int) (d * 100))
-        );
+                d -> setThrottlePercentage((int) (d * 100)));
 
         return GTGuis.createPopupPanel("boiler_throttle", 116, 53)
                 .child(new Row()
