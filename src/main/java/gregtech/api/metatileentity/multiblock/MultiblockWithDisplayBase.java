@@ -476,7 +476,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * <br>
      * Parameters should be passed directly to the created widget. Size will be 18x18.
      *
-     * @deprecated override {@link MultiblockUIFactory#createFlexButton(ModularPanel, PanelSyncManager)}
+     * @deprecated override {@link MultiblockUIFactory#createFlexButton(BiFunction)}
      */
     @Deprecated
     @SuppressWarnings("SameParameterValue")
