@@ -302,7 +302,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
         return switch (index) {
             case 0 -> {
-                FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null, 2);
+                FixedIntArraySyncValue fuelValue = new FixedIntArraySyncValue(this::getFuelAmount, null);
                 StringSyncValue fuelNameValue = new StringSyncValue(() -> {
                     FluidStack stack = ((MultiblockFuelRecipeLogic) recipeMapWorkable).getInputFluidStack();
                     if (stack == null) {
@@ -324,7 +324,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
             }
             case 1 -> {
-                FixedIntArraySyncValue lubricantValue = new FixedIntArraySyncValue(this::getLubricantAmount, null, 2);
+                FixedIntArraySyncValue lubricantValue = new FixedIntArraySyncValue(this::getLubricantAmount, null);
                 panelSyncManager.syncValue("lubricant_amount", lubricantValue);
 
                 yield new ProgressWidget()
@@ -346,7 +346,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         });
             }
             case 2 -> {
-                FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount, null, 2);
+                FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount, null);
                 BooleanSyncValue boostValue = new BooleanSyncValue(this::isBoostAllowed, null);
                 panelSyncManager.syncValue("oxygen_amount", oxygenValue);
                 panelSyncManager.syncValue("boost_allowed", boostValue);
