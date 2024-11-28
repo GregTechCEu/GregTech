@@ -40,6 +40,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -195,7 +196,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             if (maintenanceHatch.startWithoutProblems() && !initialMaintenanceDone) {
                 this.maintenance_problems = (byte) 0b111111;
-                writeCustomData(UPDATE_MAINTANENCE, buffer -> buffer.writeByte(this.maintenance_problems));
                 this.timeActive = 0;
                 this.initialMaintenanceDone = true;
             }
@@ -671,9 +671,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         if (dataId == IS_WORKING) {
             lastActive = buf.readBoolean();
-        }
-        if (dataId == UPDATE_MAINTANENCE) {
-            this.maintenance_problems = buf.readByte();
         }
     }
 
