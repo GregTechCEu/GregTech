@@ -126,43 +126,32 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 () -> getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE), false),
                 null, NetworkUtils::readFluidStack, NetworkUtils::writeFluidStack);
 
-        return new MultiblockUIFactory(this) {
+        return new MultiblockUIFactory(this)
+                .syncValues(syncManager -> syncManager.syncValue("lubricant", lubricant))
+                .configureDisplayText(builder -> {
+                    var recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
+                    builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
 
-            @Override
-            protected void syncValues(PanelSyncManager manager) {
-                super.syncValues(manager);
-                manager.syncValue("lubricant", lubricant);
-            }
+                    if (isExtreme) {
+                        builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
+                    } else {
+                        builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
+                    }
 
-            @Override
-            protected void configureDisplayText(MultiblockDisplayTextPort.Builder builder) {
-                var recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
-                builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
-
-                if (isExtreme) {
-                    builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
-                } else {
-                    builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
-                }
-
-                // todo fuel needed line not working?
-                builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(),
-                        recipeLogic.getPreviousRecipeDuration())
-                        .addCustom(tl -> {
-                            if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
-                                String key = isExtreme ?
-                                        "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
-                                        "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
-                                tl.add(KeyUtil.lang(TextFormatting.AQUA, key));
-                            }
-                        })
-                        .addWorkingStatusLine();
-            }
-
-            @Override
-            protected void configureErrorText(MultiblockDisplayTextPort.Builder builder) {
-                super.configureErrorText(builder);
-                builder.addCustom(keyList -> {
+                    // todo fuel needed line not working?
+                    builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(),
+                                    recipeLogic.getPreviousRecipeDuration())
+                            .addCustom(tl -> {
+                                if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
+                                    String key = isExtreme ?
+                                            "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
+                                            "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
+                                    tl.add(KeyUtil.lang(TextFormatting.AQUA, key));
+                                }
+                            })
+                            .addWorkingStatusLine();
+                })
+                .configureErrorText(builder -> builder.addCustom(keyList -> {
                     if (isStructureFormed()) {
                         if (checkIntakesObstructed()) {
                             keyList.add(KeyUtil.lang(TextFormatting.RED,
@@ -177,9 +166,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                                     "gregtech.multiblock.large_combustion_engine.no_lubricant"));
                         }
                     }
-                });
-            }
-        };
+                }));
     }
 
     @Override
