@@ -2,12 +2,17 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.*;
+import net.minecraftforge.fluids.FluidStack;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -477,6 +482,43 @@ public class MultiblockDisplayText {
         public Builder addCustom(Consumer<List<ITextComponent>> customConsumer) {
             customConsumer.accept(textList);
             return this;
+        }
+
+        /** While the Multiblock is active, add lines which display the outputs of the currently run recipe. */
+        public Builder addRecipeOutputsLine(@Nullable Recipe recipe) {
+            if (!isStructureFormed || !isActive) {
+                return this;
+            }
+            if (recipe == null) {
+                return this;
+            }
+            if (!recipe.getAllItemOutputs().isEmpty()) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                        "gregtech.multiblock.recipe_outputs", itemOutputsToString(recipe.getAllItemOutputs())));
+            }
+            if (!recipe.getAllFluidOutputs().isEmpty()) {
+                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
+                        "gregtech.multiblock.recipe_outputs", fluidOutputsToString(recipe.getAllFluidOutputs())));
+            }
+            return this;
+        }
+
+        private String fluidOutputsToString(List<FluidStack> stacks) {
+            StringBuilder output = new StringBuilder();
+            for (FluidStack stack : stacks) {
+                output.append(stack.amount).append("L of ").append(stack.getLocalizedName()).append(", ");
+            }
+            String str = output.toString();
+            return str.substring(0, str.length() - 2);
+        }
+
+        private String itemOutputsToString(List<ItemStack> stacks) {
+            StringBuilder output = new StringBuilder();
+            for (ItemStack stack : stacks) {
+                output.append(stack.getCount()).append("x ").append(stack.getDisplayName()).append(", ");
+            }
+            String str = output.toString();
+            return str.substring(0, str.length() - 2);
         }
     }
 }

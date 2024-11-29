@@ -5817,6 +5817,8 @@ gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
+gregtech.multiblock.recipe_outputs=Crafting: %s
+
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload
