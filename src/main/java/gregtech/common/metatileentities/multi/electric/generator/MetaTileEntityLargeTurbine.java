@@ -219,7 +219,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                     syncManager.syncValue("total", total);
                 })
                 .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                        .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
                         .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
                         .addCustom(tl -> {
                             if (isStructureFormed()) {
