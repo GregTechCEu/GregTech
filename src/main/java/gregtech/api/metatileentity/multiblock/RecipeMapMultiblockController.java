@@ -173,12 +173,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return new MultiblockUIFactory(this)
                 .syncValues(syncManager -> syncManager.syncValue("progress", progress))
                 .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
                         .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
                         .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
-                        .addProgressLine(progress.getDoubleValue()))
+                        .addProgressLine(progress::getDoubleValue))
                 .configureWarningText(builder -> builder
                         .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy()));
     }
