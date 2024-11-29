@@ -122,7 +122,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected MultiblockUIFactory createUIFactory() {
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
         return new MultiblockUIFactory(this)
-                .syncValues(syncManager -> syncManager.syncValue("progress", progress))
+                .syncValue("progress", progress)
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
                         .addEnergyUsageLine(getEnergyContainer())
