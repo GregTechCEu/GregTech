@@ -130,7 +130,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 .syncValues(syncManager -> syncManager.syncValue("lubricant", hasLubricant))
                 .configureDisplayText(builder -> {
                     var recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
-                    builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
+                    builder.setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive);
 
                     if (isExtreme) {
                         builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
