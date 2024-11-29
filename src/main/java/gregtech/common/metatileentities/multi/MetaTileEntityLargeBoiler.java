@@ -39,6 +39,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.GuiAxis;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
@@ -217,7 +218,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 });
     }
 
-    private void addCustomData(List<IKey> keyList) {
+    private void addCustomData(List<IDrawable> keyList) {
         if (isStructureFormed()) {
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
