@@ -2,20 +2,28 @@ package gregtech.api.graphnet.graph;
 
 import gregtech.api.graphnet.NetNode;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Objects;
 
 public final class GraphVertex {
 
-    public final @NotNull NetNode wrapped;
+    public final NetNode wrapped;
 
     public GraphVertex(@NotNull NetNode wrapped) {
         this.wrapped = wrapped;
         wrapped.wrapper = this;
     }
 
-    public @NotNull NetNode getWrapped() {
+    @ApiStatus.Internal
+    public GraphVertex() {
+        wrapped = null;
+    }
+
+    public NetNode getWrapped() {
         return wrapped;
     }
 

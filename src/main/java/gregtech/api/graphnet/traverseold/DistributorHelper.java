@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.traverse;
+package gregtech.api.graphnet.traverseold;
 
 public class DistributorHelper {
 

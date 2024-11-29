@@ -15,7 +15,7 @@ import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.TraverseHelpers;
+import gregtech.api.graphnet.traverseold.TraverseHelpers;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.ItemStackHashStrategy;

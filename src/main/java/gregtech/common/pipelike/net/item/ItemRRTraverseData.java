@@ -5,7 +5,7 @@ import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.IRoundRobinTraverseData;
+import gregtech.api.graphnet.traverseold.IRoundRobinTraverseData;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.EnumFacing;

@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.traverse.util;
+package gregtech.api.graphnet.traverseold.util;
 
 public interface ReversibleLossOperator {
 

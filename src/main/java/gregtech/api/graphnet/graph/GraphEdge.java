@@ -2,21 +2,28 @@ package gregtech.api.graphnet.graph;
 
 import gregtech.api.graphnet.edge.NetEdge;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.Objects;
 
 public final class GraphEdge extends DefaultWeightedEdge {
 
-    public final @NotNull NetEdge wrapped;
+    public final NetEdge wrapped;
 
     public GraphEdge(@NotNull NetEdge wrapped) {
         this.wrapped = wrapped;
         wrapped.wrapper = this;
     }
 
-    public @NotNull NetEdge getWrapped() {
+    @ApiStatus.Internal
+    public GraphEdge() {
+        this.wrapped = null;
+    }
+
+    public NetEdge getWrapped() {
         return wrapped;
     }
 

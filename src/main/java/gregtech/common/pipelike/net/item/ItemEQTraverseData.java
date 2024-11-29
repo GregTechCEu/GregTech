@@ -4,7 +4,7 @@ import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.IEqualizableTraverseData;
+import gregtech.api.graphnet.traverseold.IEqualizableTraverseData;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.EnumFacing;

@@ -4,7 +4,6 @@ import gregtech.api.cover.Cover;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.alg.AlgorithmBuilder;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
@@ -43,13 +42,12 @@ public abstract class WorldPipeNet extends WorldPosNet {
 
     private static final Int2ObjectOpenHashMap<Set<WorldPipeNet>> dimensionNets = new Int2ObjectOpenHashMap<>();
 
-    public WorldPipeNet(String name, Function<IGraphNet, INetGraph> graphBuilder,
-                        AlgorithmBuilder... algorithmBuilders) {
-        super(name, graphBuilder, algorithmBuilders);
+    public WorldPipeNet(String name, Function<IGraphNet, INetGraph> graphBuilder) {
+        super(name, graphBuilder);
     }
 
-    public WorldPipeNet(String name, boolean directed, AlgorithmBuilder... algorithmBuilders) {
-        super(name, directed, algorithmBuilders);
+    public WorldPipeNet(String name, boolean directed) {
+        super(name, directed);
     }
 
     @Override

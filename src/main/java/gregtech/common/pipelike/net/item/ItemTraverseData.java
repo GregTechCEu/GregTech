@@ -6,8 +6,8 @@ import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.AbstractTraverseData;
-import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
+import gregtech.api.graphnet.traverseold.AbstractTraverseData;
+import gregtech.api.graphnet.traverseold.util.ReversibleLossOperator;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.EnumFacing;

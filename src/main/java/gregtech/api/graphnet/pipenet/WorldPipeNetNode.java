@@ -85,6 +85,6 @@ public final class WorldPipeNetNode extends WorldPosNetNode {
 
     @Override
     public BlockPos getEquivalencyData() {
-        return (BlockPos) super.getEquivalencyData();
+        return super.getEquivalencyData();
     }
 }

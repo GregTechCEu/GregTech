@@ -9,10 +9,10 @@ import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.traverse.ITraverseData;
-import gregtech.api.graphnet.traverse.TraverseDataProvider;
-import gregtech.api.graphnet.traverse.TraverseGuide;
-import gregtech.api.graphnet.traverse.TraverseHelpers;
+import gregtech.api.graphnet.traverseold.ITraverseData;
+import gregtech.api.graphnet.traverseold.TraverseDataProvider;
+import gregtech.api.graphnet.traverseold.TraverseGuide;
+import gregtech.api.graphnet.traverseold.TraverseHelpers;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;

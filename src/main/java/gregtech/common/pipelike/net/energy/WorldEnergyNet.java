@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
@@ -33,7 +32,7 @@ public final class WorldEnergyNet extends WorldPipeNet {
     }
 
     public WorldEnergyNet(String name) {
-        super(name, false, DynamicWeightsShortestPathsAlgorithm::new);
+        super(name, false);
     }
 
     @Override

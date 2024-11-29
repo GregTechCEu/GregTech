@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.traverse;
+package gregtech.api.graphnet.traverseold;
 
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;

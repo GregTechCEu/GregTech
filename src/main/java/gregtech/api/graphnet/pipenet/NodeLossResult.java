@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.pipenet;
 
-import gregtech.api.graphnet.traverse.util.CompositeLossOperator;
-import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
+import gregtech.api.graphnet.traverseold.util.CompositeLossOperator;
+import gregtech.api.graphnet.traverseold.util.ReversibleLossOperator;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

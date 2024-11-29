@@ -10,8 +10,8 @@ import gregtech.api.graphnet.logic.NetLogicType;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.IFreezable;
-import gregtech.api.graphnet.traverse.util.CompleteLossOperator;
-import gregtech.api.graphnet.traverse.util.MultLossOperator;
+import gregtech.api.graphnet.traverseold.util.CompleteLossOperator;
+import gregtech.api.graphnet.traverseold.util.MultLossOperator;
 import gregtech.client.particle.GTOverheatParticle;
 
 import net.minecraft.block.state.IBlockState;

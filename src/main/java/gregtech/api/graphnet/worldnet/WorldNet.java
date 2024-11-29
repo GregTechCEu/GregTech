@@ -3,7 +3,6 @@ package gregtech.api.graphnet.worldnet;
 import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
-import gregtech.api.graphnet.alg.AlgorithmBuilder;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.graph.NetDirectedGraph;
@@ -25,15 +24,13 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet {
     private World world;
     private int fallbackDimensionID;
 
-    public WorldNet(String name, @NotNull Function<IGraphNet, INetGraph> graphBuilder,
-                    AlgorithmBuilder... algorithmBuilders) {
+    public WorldNet(String name, @NotNull Function<IGraphNet, INetGraph> graphBuilder) {
         super(name);
         this.backer = new GraphNetBacker(this, graphBuilder.apply(this));
     }
 
-    public WorldNet(String name, boolean directed, AlgorithmBuilder... algorithmBuilders) {
-        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder(),
-                algorithmBuilders);
+    public WorldNet(String name, boolean directed) {
+        this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder());
     }
 
     public void setWorld(World world) {

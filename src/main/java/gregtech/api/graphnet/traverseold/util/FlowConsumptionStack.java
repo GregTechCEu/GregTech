@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.traverse.util;
+package gregtech.api.graphnet.traverseold.util;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 

@@ -1,10 +1,10 @@
-package gregtech.api.graphnet.traverse;
+package gregtech.api.graphnet.traverseold;
 
 import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.path.NetPath;
-import gregtech.api.graphnet.traverse.util.FlowConsumptionStack;
+import gregtech.api.graphnet.traverseold.util.FlowConsumptionStack;
 import gregtech.api.util.GTUtility;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;

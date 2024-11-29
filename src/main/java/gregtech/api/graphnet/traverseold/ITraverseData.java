@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.traverse;
+package gregtech.api.graphnet.traverseold;
 
 import gregtech.api.graphnet.IGraphNet;
 import gregtech.api.graphnet.NetNode;
@@ -6,7 +6,7 @@ import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-import gregtech.api.graphnet.traverse.util.ReversibleLossOperator;
+import gregtech.api.graphnet.traverseold.util.ReversibleLossOperator;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;

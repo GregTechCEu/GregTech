@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.pipenet;
 
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-import gregtech.api.graphnet.traverse.ITraverseData;
+import gregtech.api.graphnet.traverseold.ITraverseData;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.function.Task;
 

@@ -3,7 +3,6 @@ package gregtech.common.pipelike.net.item;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.filter.CoverWithItemFilter;
 import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.alg.DynamicWeightsShortestPathsAlgorithm;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
@@ -45,7 +44,7 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
     }
 
     public WorldItemNet(String name) {
-        super(name, true, DynamicWeightsShortestPathsAlgorithm::new);
+        super(name, true);
     }
 
     @Override

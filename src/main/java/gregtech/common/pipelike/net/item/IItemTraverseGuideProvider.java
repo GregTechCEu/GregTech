@@ -2,10 +2,10 @@ package gregtech.common.pipelike.net.item;
 
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.ITraverseData;
-import gregtech.api.graphnet.traverse.ITraverseGuideProvider;
-import gregtech.api.graphnet.traverse.TraverseDataProvider;
-import gregtech.api.graphnet.traverse.TraverseGuide;
+import gregtech.api.graphnet.traverseold.ITraverseData;
+import gregtech.api.graphnet.traverseold.ITraverseGuideProvider;
+import gregtech.api.graphnet.traverseold.TraverseDataProvider;
+import gregtech.api.graphnet.traverseold.TraverseGuide;
 
 import org.jetbrains.annotations.Nullable;
 

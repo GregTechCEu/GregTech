@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.net.laser;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.graphnet.alg.SinglePathAlgorithm;
 import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
@@ -33,7 +32,7 @@ public class WorldLaserNet extends WorldPipeNet {
     }
 
     public WorldLaserNet(String name) {
-        super(name, false, SinglePathAlgorithm::new);
+        super(name, false);
     }
 
     @Override

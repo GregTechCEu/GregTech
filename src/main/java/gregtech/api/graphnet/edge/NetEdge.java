@@ -43,7 +43,7 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
         else return null;
     }
 
-    public double getWeight() {
+    public final double getWeight() {
         return wrapper == null ? Double.POSITIVE_INFINITY : wrapper.getWeight();
     }
 

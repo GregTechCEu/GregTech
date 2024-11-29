@@ -3,7 +3,7 @@ package gregtech.api.graphnet.pipenet.traverse;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
-import gregtech.api.graphnet.traverse.IRoundRobinData;
+import gregtech.api.graphnet.traverseold.IRoundRobinData;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
