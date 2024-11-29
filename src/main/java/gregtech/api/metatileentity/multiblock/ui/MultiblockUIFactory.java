@@ -342,42 +342,42 @@ public class MultiblockUIFactory {
 
     protected IWidget createDistinctButton(@NotNull ModularPanel mainPanel,
                                            @NotNull PanelSyncManager panelSyncManager) {
-        if (mte instanceof IDistinctBusController distinct && distinct.canBeDistinct()) {
-            BooleanSyncValue distinctValue = new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct);
-
-            return new CycleButtonWidget()
-                    .size(18, 18)
-                    .value(distinctValue)
-                    .textureGetter(i -> GTGuiTextures.BUTTON_DISTINCT_BUSES[i])
-                    .background(GTGuiTextures.BUTTON)
-                    .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                    .tooltipBuilder(t -> t.addLine(distinctValue.getBoolValue() ?
-                            IKey.lang("gregtech.multiblock.universal.distinct_enabled") :
-                            IKey.lang("gregtech.multiblock.universal.distinct_disabled")));
-        } else {
+        if (!(mte instanceof IDistinctBusController distinct) || !distinct.canBeDistinct()) {
             return GTGuiTextures.BUTTON_NO_DISTINCT_BUSES.asWidget()
                     .size(18, 18)
                     .addTooltipLine(IKey.lang("gregtech.multiblock.universal.distinct_not_supported"));
         }
+
+        BooleanSyncValue distinctValue = new BooleanSyncValue(distinct::isDistinct, distinct::setDistinct);
+
+        return new CycleButtonWidget()
+                .size(18, 18)
+                .value(distinctValue)
+                .textureGetter(i -> GTGuiTextures.BUTTON_DISTINCT_BUSES[i])
+                .background(GTGuiTextures.BUTTON)
+                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipBuilder(t -> t.addLine(distinctValue.getBoolValue() ?
+                        IKey.lang("gregtech.multiblock.universal.distinct_enabled") :
+                        IKey.lang("gregtech.multiblock.universal.distinct_disabled")));
     }
 
     protected IWidget createVoidingButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        if (mte.shouldShowVoidingModeButton()) {
-            IntSyncValue voidingValue = new IntSyncValue(mte::getVoidingMode, mte::setVoidingMode);
-
-            return new CycleButtonWidget()
-                    .size(18, 18)
-                    .textureGetter(i -> GTGuiTextures.MULTIBLOCK_VOID[i])
-                    .background(GTGuiTextures.BUTTON)
-                    .value(voidingValue)
-                    .length(4)
-                    .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                    .tooltipBuilder(t -> t.addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
-        } else {
+        if (!mte.shouldShowVoidingModeButton()) {
             return GTGuiTextures.BUTTON_VOID_NONE.asWidget()
                     .size(18, 18)
                     .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.multiblock_voiding_not_supported")));
         }
+
+        IntSyncValue voidingValue = new IntSyncValue(mte::getVoidingMode, mte::setVoidingMode);
+
+        return new CycleButtonWidget()
+                .size(18, 18)
+                .textureGetter(i -> GTGuiTextures.MULTIBLOCK_VOID[i])
+                .background(GTGuiTextures.BUTTON)
+                .value(voidingValue)
+                .length(4)
+                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipBuilder(t -> t.addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
     }
 
     @Nullable
