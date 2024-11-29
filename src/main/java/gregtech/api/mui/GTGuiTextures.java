@@ -2,6 +2,8 @@ package gregtech.api.mui;
 
 import gregtech.api.GTValues;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -175,6 +177,9 @@ public class GTGuiTextures {
     public static final UITexture OREDICT_SUCCESS = fullImage("textures/gui/widget/ore_filter/success.png");
     public static final UITexture OREDICT_WAITING = fullImage("textures/gui/widget/ore_filter/waiting.png");
     public static final UITexture OREDICT_WARN = fullImage("textures/gui/widget/ore_filter/warn.png");
+
+    public static final IDrawable PLUS = IKey.str("+").asIcon().marginLeft(1);
+    public static final IDrawable MINUS = IKey.str("-").asIcon().marginLeft(1);
 
     public static final UITexture[] MANUAL_IO_OVERLAY_IN = slice("textures/gui/overlay/manual_io_overlay_in.png",
             18, 18 * 3, 18, 18, true);

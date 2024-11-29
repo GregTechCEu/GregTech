@@ -60,7 +60,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import appeng.api.implementations.items.IAEWrench;
 import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
@@ -921,9 +920,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         }
     }
 
-    IDrawable PLUS = IKey.str("+").asIcon().marginLeft(1);
-    IDrawable MINUS = IKey.str("-").asIcon().marginLeft(1);
-
     @Override
     default ModularPanel buildUI(HandGuiData guiData, PanelSyncManager manager) {
         final var usedStack = guiData.getUsedItemStack();
@@ -963,7 +959,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         IWidget increaseButton = new ButtonWidget<>()
                 .size(9, 18)
                 .background(GTGuiTextures.MC_BUTTON)
-                .overlay(PLUS)
+                .overlay(GTGuiTextures.PLUS)
                 .disableHoverBackground()
                 .onMousePressed(data -> {
                     syncValue.setIntValue(syncValue.getIntValue() + 1, true, true);
@@ -974,7 +970,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         IWidget decreaseButton = new ButtonWidget<>()
                 .size(9, 18)
                 .background(GTGuiTextures.MC_BUTTON)
-                .overlay(MINUS)
+                .overlay(GTGuiTextures.MINUS)
                 .disableHoverBackground()
                 .onMousePressed(data -> {
                     syncValue.setIntValue(syncValue.getIntValue() - 1, true, true);

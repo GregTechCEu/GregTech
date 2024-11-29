@@ -108,12 +108,12 @@ public class AoESymmetrical {
 
     public static void decreaseRow(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         int currentRow = getRow(tag, defaultDefinition);
-        setRow(tag, currentRow + 1, defaultDefinition);
+        setRow(tag, currentRow - 1, defaultDefinition);
     }
 
     public static void decreaseLayer(NBTTagCompound tag, AoESymmetrical defaultDefinition) {
         int currentLayer = getLayer(tag, defaultDefinition);
-        setLayer(tag, currentLayer + 1, defaultDefinition);
+        setLayer(tag, currentLayer - 1, defaultDefinition);
     }
 
     public static AoESymmetrical none() {
