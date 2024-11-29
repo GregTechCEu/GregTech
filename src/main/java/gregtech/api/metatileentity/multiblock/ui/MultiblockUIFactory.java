@@ -838,8 +838,6 @@ public class MultiblockUIFactory {
                     "gregtech.multiblock.turbine.fuel_needed",
                     KeyUtil.string(TextFormatting.RED, fuelName),
                     KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration::getAsInt)));
-
-            // addKey(KeyUtil.lang(TextFormatting.getValueByName(keys[0].get()), keys[1].get(), keys[2], keys[3]));
             return this;
         }
 
