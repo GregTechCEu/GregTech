@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.IHeatingCoilBlockStats;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IHeatingCoil;
 import gregtech.api.capability.impl.HeatingCoilRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -37,7 +36,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -51,18 +49,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController implements IHeatingCoil {
 
-    private static final int UPDATE_TEMP = GregtechDataCodes.assignId();
     private int blastFurnaceTemperature;
 
     public MetaTileEntityElectricBlastFurnace(ResourceLocation metaTileEntityId) {
@@ -73,25 +72,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityElectricBlastFurnace(metaTileEntityId);
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeInt(blastFurnaceTemperature);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        this.blastFurnaceTemperature = buf.readInt();
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == UPDATE_TEMP)
-            this.blastFurnaceTemperature = buf.readInt();
     }
 
     @Override
@@ -121,26 +101,30 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected MultiblockUIFactory createUIFactory() {
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+        IntSyncValue temp = new IntSyncValue(this::getCurrentTemperature, null);
         return new MultiblockUIFactory(this)
                 .syncValue("progress", progress)
+                .syncValue("temp", temp)
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
                         .addEnergyUsageLine(getEnergyContainer())
                         .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                        .addCustom(this::addHeatCapacity)
+                        .addCustom(addHeatCapacity(temp))
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
                         .addProgressLine(progress::getDoubleValue));
     }
 
-    private void addHeatCapacity(List<IKey> keyList) {
-        if (isStructureFormed()) {
-            var heatString = KeyUtil.number(TextFormatting.RED,
-                    getCurrentTemperature(), "K");
+    private Consumer<List<IKey>> addHeatCapacity(IntSyncValue temp) {
+        return keyList -> {
+            if (isStructureFormed()) {
+                var heatString = KeyUtil.number(TextFormatting.RED,
+                        temp::getIntValue, "K");
 
-            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                    "gregtech.multiblock.blast_furnace.max_temperature", heatString));
-        }
+                keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.blast_furnace.max_temperature", heatString));
+            }
+        };
     }
 
     @Override
@@ -155,7 +139,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         // the subtracted tier gives the starting level (exclusive) of the +100K heat bonus
         this.blastFurnaceTemperature += 100 *
                 Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
-        writeCustomData(UPDATE_TEMP, buffer -> buffer.writeInt(this.blastFurnaceTemperature));
     }
 
     @Override
