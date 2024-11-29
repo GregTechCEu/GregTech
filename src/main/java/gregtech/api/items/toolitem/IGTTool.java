@@ -947,12 +947,12 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                         .alignY(0.5f)
                         .coverChildrenHeight()
                         .mainAxisAlignment(Alignment.MainAxis.SPACE_BETWEEN)
-                        .child(createColumn(columnValue, "columns", true))
-                        .child(createColumn(rowValue, "rows", true))
-                        .child(createColumn(layerValue, "layers", false)));
+                        .child(createColumn(columnValue, "columns", true, defaultDefinition.column))
+                        .child(createColumn(rowValue, "rows", true, defaultDefinition.row))
+                        .child(createColumn(layerValue, "layers", false, defaultDefinition.layer)));
     }
 
-    default Column createColumn(IntSyncValue syncValue, String lang, boolean shouldDouble) {
+    default Column createColumn(IntSyncValue syncValue, String lang, boolean shouldDouble, int max) {
         final var display = IKey.dynamic(
                 () -> String.valueOf(1 + (shouldDouble ? 2 * syncValue.getIntValue() : syncValue.getIntValue())));
 
@@ -962,7 +962,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 .overlay(GTGuiTextures.PLUS)
                 .disableHoverBackground()
                 .onMousePressed(data -> {
-                    syncValue.setIntValue(syncValue.getIntValue() + 1, true, true);
+                    int val = syncValue.getIntValue();
+                    if (val < max) syncValue.setIntValue(++val);
                     Interactable.playButtonClickSound();
                     return true;
                 });
@@ -973,7 +974,8 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 .overlay(GTGuiTextures.MINUS)
                 .disableHoverBackground()
                 .onMousePressed(data -> {
-                    syncValue.setIntValue(syncValue.getIntValue() - 1, true, true);
+                    int val = syncValue.getIntValue();
+                    if (val > 0) syncValue.setIntValue(--val);
                     Interactable.playButtonClickSound();
                     return true;
                 });
