@@ -47,6 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
@@ -123,9 +124,13 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     protected MultiblockUIFactory createUIFactory() {
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
         final BooleanSyncValue hasLubricant = new BooleanSyncValue(() -> getLubricantAmount()[0] > 0, null);
+        StringSyncValue fuelAmount = new StringSyncValue(recipeLogic::getRecipeFluidInputInfo, null);
+        IntSyncValue prevDuration = new IntSyncValue(recipeLogic::getPreviousRecipeDuration, null);
 
         return new MultiblockUIFactory(this)
                 .syncValue("lubricant", hasLubricant)
+                .syncValue("fuel_amount", fuelAmount)
+                .syncValue("prev_duration", prevDuration)
                 .configureDisplayText(builder -> {
                     builder.setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive);
 
@@ -135,9 +140,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
                     }
 
-                    // todo fuel needed line not working?
-                    builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(),
-                            recipeLogic::getPreviousRecipeDuration)
+                    builder.addFuelNeededLine(fuelAmount.getValue(), prevDuration::getIntValue)
                             .addCustom(tl -> {
                                 if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                                     String key = isExtreme ?
