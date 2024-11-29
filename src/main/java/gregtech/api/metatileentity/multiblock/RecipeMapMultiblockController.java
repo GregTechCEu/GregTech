@@ -1,7 +1,6 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -46,7 +45,6 @@ import java.util.List;
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
                                                     ICleanroomReceiver, IDistinctBusController {
 
-    public static final int UPDATE_ENERGY = GregtechDataCodes.assignId();
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
     protected IItemHandlerModifiable inputInventory;
