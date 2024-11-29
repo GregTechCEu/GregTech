@@ -279,7 +279,8 @@ public class MultiblockUIFactory {
         var flexButton = this.flexButton.apply(mainPanel, panelSyncManager);
         if (flexButton == null) {
             flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
-                    .size(18);
+                    .size(18)
+                    .addTooltipLine(IKey.lang("gregtech.multiblock.universal.no_flex_button"));
         }
         var powerButton = createPowerButton(mainPanel, panelSyncManager);
 
