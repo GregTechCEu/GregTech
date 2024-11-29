@@ -543,8 +543,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 yield new com.cleanroommc.modularui.widgets.ProgressWidget()
                         .progress(() -> 1.0 * currentCWUtValue.getIntValue() / maxCWUtValue.getIntValue())
                         .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION, MultiblockUIFactory.Bars.HALF_WIDTH)
+                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                         .tooltipBuilder(t -> {
-                            t.setAutoUpdate(true);
                             if (isStructureFormed()) {
                                 t.addLine(IKey.lang("gregtech.multiblock.hpca.computation",
                                         currentCWUtValue.getIntValue(), maxCWUtValue.getIntValue()));
@@ -560,8 +560,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 yield new com.cleanroommc.modularui.widgets.ProgressWidget()
                         .progress(() -> Math.min(1.0, temperatureValue.getDoubleValue() / DAMAGE_TEMPERATURE))
                         .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
+                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                         .tooltipBuilder(t -> {
-                            t.setAutoUpdate(true);
                             if (isStructureFormed()) {
                                 double temp = temperatureValue.getDoubleValue();
                                 int degrees = (int) Math.round(temp / 10.0);
