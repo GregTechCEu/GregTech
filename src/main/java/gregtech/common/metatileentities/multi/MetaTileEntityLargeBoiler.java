@@ -184,12 +184,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         return new MultiblockUIFactory(this)
                 .syncValues(syncManager -> syncManager.syncValue("water_filled", waterFilled))
                 .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                        .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
                         .addCustom(this::addCustomData)
                         .addWorkingStatusLine())
                 .configureWarningText(builder -> builder.addCustom(keyList -> {
                     if (isStructureFormed()) {
-                        // todo this is returning 0 on client for some reason
                         if (!waterFilled.getBoolValue()) {
                             keyList.add(KeyUtil.lang(TextFormatting.YELLOW,
                                     "gregtech.multiblock.large_boiler.no_water"));

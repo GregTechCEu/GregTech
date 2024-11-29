@@ -40,9 +40,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 
 public class MultiblockUIFactory {
@@ -51,9 +52,7 @@ public class MultiblockUIFactory {
     protected boolean mufflerObstructed;
     protected byte maintenance;
     protected Consumer<PanelSyncManager> valueSyncer;
-    protected Consumer<Builder> warningText;
-    protected Consumer<Builder> errorText;
-    protected Consumer<Builder> displayText = builder -> {};
+    protected Consumer<Builder> displayText, warningText, errorText;
     protected BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton = (panel, syncManager) -> null;
 
     protected static final int DEFAULT_HEIGHT = 202;
@@ -68,6 +67,7 @@ public class MultiblockUIFactory {
         this.valueSyncer = syncManager -> syncManager.syncValue("muffler", mufflerObstructed);
         this.errorText = builder -> builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
         this.warningText = builder -> builder.addMaintenanceProblemLines(mte.getMaintenanceProblems());
+        this.displayText = builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed());
     }
 
     /**
@@ -111,7 +111,7 @@ public class MultiblockUIFactory {
 
     private Widget<?> createIndicator() {
         List<Widget<?>> textList = new ArrayList<>();
-        var builder = builder(textList, mte);
+        var builder = builder(textList);
         return new Widget<>()
                 .pos(174 - 5, 93 - 5)
                 .onUpdateListener(w -> w.overlay(getIndicatorOverlay(builder)))
@@ -169,7 +169,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(Consumer<Builder> displayText) {
-        this.displayText = displayText;
+        this.displayText = this.displayText.andThen(displayText);
         return this;
     }
 
@@ -239,6 +239,7 @@ public class MultiblockUIFactory {
     }
 
     protected Widget<?> createScreen(List<Widget<?>> lines, PanelSyncManager syncManager) {
+        final var builder = builder(lines);
         return new ParentWidget<>()
                 .child(createIndicator())
                 .child(new ScrollWidget<>(new VerticalScrollData())
@@ -246,10 +247,10 @@ public class MultiblockUIFactory {
                         .child(new Column()
                                 .expanded()
                                 .onUpdateListener(column -> {
-                                    List<Widget<?>> copy = new ArrayList<>(lines);
-                                    lines.clear();
-                                    this.displayText.accept(builder(lines, mte));
-                                    if (!listChanged(copy, lines)) return;
+                                    int prev = lines.size();
+                                    builder.clear();
+                                    this.displayText.accept(builder);
+                                    if (prev == lines.size()) return;
                                     column.getChildren().clear();
                                     // really debating on if the display screen should be its own widget
                                     lines.forEach(column::child);
@@ -271,18 +272,6 @@ public class MultiblockUIFactory {
             area.applyPos(parent);
             top += area.requestedHeight();
         }
-    }
-
-    protected static boolean listChanged(List<?> a, List<?> b) {
-        if (a.size() != b.size()) return true;
-        for (int i = 0; i < a.size(); i++) {
-            if (a.get(i).getClass() != b.get(i).getClass()) return true;
-            if (a.get(i) instanceof TextWidget left && b.get(i) instanceof TextWidget right &&
-                    !Objects.equals(left.getKey(), right.getKey()))
-                return true;
-            // todo handle other things? or should text widgets be forced
-        }
-        return false;
     }
 
     @NotNull
@@ -379,10 +368,8 @@ public class MultiblockUIFactory {
         private Bars() {}
     }
 
-    protected static Builder builder(List<Widget<?>> list, MultiblockWithDisplayBase mte) {
-        return new Builder(list)
-                .title(mte.getMetaFullName())
-                .structureFormed(mte.isStructureFormed());
+    protected static Builder builder(List<Widget<?>> list) {
+        return new Builder(list);
     }
 
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
@@ -391,7 +378,9 @@ public class MultiblockUIFactory {
         private final List<Widget<?>> textList;
         private Function<IKey, Widget<?>> widgetFunction = Builder::keyMapper;
 
-        private boolean isWorkingEnabled, isActive, isStructureFormed;
+        private BooleanSupplier isWorkingEnabled = () -> false;
+        private BooleanSupplier isActive = () -> false;
+        private boolean isStructureFormed;
 
         // Keys for the three-state working system, can be set custom by multiblocks.
         private IKey idlingKey = IKey.lang("gregtech.multiblock.idling");
@@ -425,7 +414,7 @@ public class MultiblockUIFactory {
         }
 
         /** Set the current working enabled and active status of this multiblock, used by many line addition calls. */
-        public Builder setWorkingStatus(boolean isWorkingEnabled, boolean isActive) {
+        public Builder setWorkingStatus(BooleanSupplier isWorkingEnabled, BooleanSupplier isActive) {
             this.isWorkingEnabled = isWorkingEnabled;
             this.isActive = isActive;
             return this;
@@ -572,7 +561,7 @@ public class MultiblockUIFactory {
          */
         public Builder addComputationUsageExactLine(int currentCWUt) {
             if (!isStructureFormed) return this;
-            if (isActive && currentCWUt > 0) {
+            if (isActive.getAsBoolean() && currentCWUt > 0) {
                 var computation = KeyUtil.string(TextFormatting.AQUA,
                         TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
@@ -589,13 +578,16 @@ public class MultiblockUIFactory {
         public Builder addWorkingStatusLine() {
             if (!isStructureFormed) return this;
 
-            if (!isWorkingEnabled) {
-                return addWorkPausedLine(false);
-            } else if (isActive) {
-                return addRunningPerfectlyLine(false);
-            } else {
-                return addIdlingLine(false);
-            }
+            addKey(KeyUtil.string(() -> {
+                if (!isWorkingEnabled.getAsBoolean()) {
+                    return TextFormatting.GOLD + pausedKey.get();
+                } else if (isActive.getAsBoolean()) {
+                    return TextFormatting.GREEN + runningKey.get();
+                } else {
+                    return TextFormatting.GRAY + idlingKey.get();
+                }
+            }));
+            return this;
         }
 
         /**
@@ -606,7 +598,7 @@ public class MultiblockUIFactory {
          */
         public Builder addWorkPausedLine(boolean checkState) {
             if (!isStructureFormed) return this;
-            if (!checkState || !isWorkingEnabled) {
+            if (!checkState || !isWorkingEnabled.getAsBoolean()) {
                 addKey(KeyUtil.colored(TextFormatting.GOLD, pausedKey));
             }
             return this;
@@ -620,7 +612,7 @@ public class MultiblockUIFactory {
          */
         public Builder addRunningPerfectlyLine(boolean checkState) {
             if (!isStructureFormed) return this;
-            if (!checkState || isActive) {
+            if (!checkState || isActive.getAsBoolean()) {
                 addKey(KeyUtil.colored(TextFormatting.GREEN, runningKey));
             }
             return this;
@@ -634,7 +626,7 @@ public class MultiblockUIFactory {
          */
         public Builder addIdlingLine(boolean checkState) {
             if (!isStructureFormed) return this;
-            if (!checkState || (isWorkingEnabled && !isActive)) {
+            if (!checkState || (isWorkingEnabled.getAsBoolean() && !isActive.getAsBoolean())) {
                 addKey(KeyUtil.colored(TextFormatting.GRAY, idlingKey));
             }
             return this;
@@ -647,10 +639,10 @@ public class MultiblockUIFactory {
          *
          * @param progressPercent Progress formatted as a range of [0,1] representing the progress of the recipe.
          */
-        public Builder addProgressLine(double progressPercent) { // todo
-            if (!isStructureFormed || !isActive) return this;
+        public Builder addProgressLine(DoubleSupplier progressPercent) {
+            if (!isStructureFormed || !isActive.getAsBoolean()) return this;
             addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress",
-                    () -> ((int) (progressPercent * 100))));
+                    () -> ((int) (progressPercent.getAsDouble() * 100))));
             return this;
         }
 
@@ -786,7 +778,7 @@ public class MultiblockUIFactory {
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
         public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
-            if (!isStructureFormed || !isActive || fuelName == null) return this;
+            if (!isStructureFormed || !isActive.getAsBoolean() || fuelName == null) return this;
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
