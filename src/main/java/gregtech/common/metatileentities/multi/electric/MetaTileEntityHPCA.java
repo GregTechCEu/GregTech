@@ -8,7 +8,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SuppliedImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -59,6 +58,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -88,12 +88,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
-    private final ProgressWidget.TimedProgressSupplier progressSupplier;
+    private final gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier progressSupplier;
 
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
-        this.progressSupplier = new ProgressWidget.TimedProgressSupplier(200, 47, false);
+        this.progressSupplier = new gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier(200, 47, false);
         this.hpcaHandler = new HPCAGridHandler(this);
     }
 
@@ -363,9 +363,10 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
         ModularUI.Builder builder = super.createUITemplate(entityPlayer);
 
         // Create the hover grid
-        builder.widget(new ProgressWidget(
+        builder.widget(new gregtech.api.gui.widgets.ProgressWidget(
                 () -> hpcaHandler.getAllocatedCWUt() > 0 ? progressSupplier.getAsDouble() : 0,
-                74, 57, 47, 47, GuiTextures.HPCA_COMPONENT_OUTLINE, ProgressWidget.MoveType.HORIZONTAL)
+                74, 57, 47, 47, GuiTextures.HPCA_COMPONENT_OUTLINE,
+                gregtech.api.gui.widgets.ProgressWidget.MoveType.HORIZONTAL)
                         .setIgnoreColor(true)
                         .setHoverTextConsumer(hpcaHandler::addInfo));
         int startX = 76;
@@ -531,8 +532,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public com.cleanroommc.modularui.widgets.@NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager,
-                                                                                       int index) {
+    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager,
+                                                     int index) {
         return switch (index) {
             case 0 -> {
                 IntSyncValue currentCWUtValue = new IntSyncValue(() -> hpcaHandler.cachedCWUt, null);
@@ -540,7 +541,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 panelSyncManager.syncValue("current_cwut", currentCWUtValue);
                 panelSyncManager.syncValue("max_cwut", maxCWUtValue);
 
-                yield new com.cleanroommc.modularui.widgets.ProgressWidget()
+                yield new ProgressWidget()
                         .progress(() -> 1.0 * currentCWUtValue.getIntValue() / maxCWUtValue.getIntValue())
                         .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION, MultiblockUIFactory.Bars.HALF_WIDTH)
                         .tooltip(tooltip -> tooltip.setAutoUpdate(true))
@@ -557,7 +558,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 DoubleSyncValue temperatureValue = new DoubleSyncValue(() -> temperature, null);
                 panelSyncManager.syncValue("temperature", temperatureValue);
 
-                yield new com.cleanroommc.modularui.widgets.ProgressWidget()
+                yield new ProgressWidget()
                         .progress(() -> Math.min(1.0, temperatureValue.getDoubleValue() / DAMAGE_TEMPERATURE))
                         .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
                         .tooltip(tooltip -> tooltip.setAutoUpdate(true))
