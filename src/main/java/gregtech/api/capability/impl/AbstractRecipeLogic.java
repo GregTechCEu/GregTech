@@ -58,7 +58,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private double speedBonus = -1;
 
     protected Recipe previousRecipe;
-    protected int cachedDuration;
     private boolean allowOverclocking = true;
     protected int parallelRecipesPerformed;
     private long overclockVoltage;
@@ -1021,8 +1020,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return the previous recipe's duration
      */
     public int getPreviousRecipeDuration() {
-        this.cachedDuration = getPreviousRecipe() == null ? this.cachedDuration : getPreviousRecipe().getDuration();
-        return this.cachedDuration;
+        return getPreviousRecipe() == null ? 0 : getPreviousRecipe().getDuration();
     }
 
     /**
