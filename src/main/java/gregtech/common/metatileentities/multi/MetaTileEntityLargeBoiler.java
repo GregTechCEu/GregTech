@@ -70,7 +70,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     private FluidTankList steamOutputTank;
 
     private int throttlePercentage = 100;
-    private boolean hasWaterCache;
 
     public MetaTileEntityLargeBoiler(ResourceLocation metaTileEntityId, BoilerType boilerType) {
         super(metaTileEntityId);
@@ -178,11 +177,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected MultiblockUIFactory createUIFactory() {
         final var waterFilled = new BooleanSyncValue(
-                () -> hasWaterCache, b -> hasWaterCache = b,
                 () -> getWaterFilled() > 0, null);
 
         return new MultiblockUIFactory(this)
-                .syncValues(syncManager -> syncManager.syncValue("water_filled", waterFilled))
+                .syncValue("water_filled", waterFilled)
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
                         .addCustom(this::addCustomData)
@@ -391,14 +389,12 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(throttlePercentage);
-        buf.writeBoolean(hasWaterCache = getWaterFilled() > 0);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         throttlePercentage = buf.readVarInt();
-        this.hasWaterCache = buf.readBoolean();
     }
 
     public int getThrottle() {

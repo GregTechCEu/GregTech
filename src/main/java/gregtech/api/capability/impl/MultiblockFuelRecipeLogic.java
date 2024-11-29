@@ -1,6 +1,5 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
@@ -13,12 +12,10 @@ import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
-import com.cleanroommc.modularui.network.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -26,21 +23,9 @@ import java.util.List;
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     protected long totalContinuousRunningTime;
-    protected String cachedFuelAmount;
-
-    private static final int SYNC_FUEL_NEEDED = GregtechDataCodes.assignId();
 
     public MultiblockFuelRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity);
-    }
-
-    @Override
-    protected void trySearchNewRecipe() {
-        super.trySearchNewRecipe();
-        writeCustomData(SYNC_FUEL_NEEDED, buffer -> {
-            NetworkUtils.writeStringSafe(buffer, getRecipeFluidInputInfo());
-            buffer.writeInt(getPreviousRecipeDuration());
-        });
     }
 
     @Override
@@ -127,9 +112,6 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     public String getRecipeFluidInputInfo() {
-        if (getMetaTileEntity().getWorld().isRemote)
-            return this.cachedFuelAmount;
-
         IRotorHolder rotorHolder = null;
 
         if (metaTileEntity instanceof MultiblockWithDisplayBase multiblockWithDisplayBase) {
@@ -150,12 +132,11 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         int ocAmount = GTUtility.safeCastLongToInt(getMaxVoltage() / recipe.getEUt());
         int neededAmount = ocAmount * requiredFluidInput.amount;
         if (rotorHolder != null && rotorHolder.hasRotor()) {
-            neededAmount /= (rotorHolder.getTotalEfficiency() / 100.0);
+            neededAmount /= (int) (rotorHolder.getTotalEfficiency() / 100.0);
         } else if (rotorHolder != null && !rotorHolder.hasRotor()) {
             return null;
         }
-        this.cachedFuelAmount = TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L";
-        return this.cachedFuelAmount;
+        return TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L";
     }
 
     public FluidStack getInputFluidStack() {
@@ -174,14 +155,5 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     @Override
     public boolean isAllowOverclocking() {
         return false;
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        if (dataId == SYNC_FUEL_NEEDED) {
-            this.cachedFuelAmount = NetworkUtils.readStringSafe(buf);
-            this.cachedDuration = buf.readInt();
-        }
     }
 }

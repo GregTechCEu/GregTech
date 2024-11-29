@@ -9,11 +9,13 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
@@ -25,6 +27,7 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.Widget;
@@ -38,6 +41,7 @@ import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -45,44 +49,61 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 
 public class MultiblockUIFactory {
-
-    private final MultiblockWithDisplayBase mte;
-    protected boolean mufflerObstructed;
-    protected byte maintenance;
-    protected Consumer<PanelSyncManager> valueSyncer;
-    protected Consumer<Builder> displayText, warningText, errorText;
-    protected BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton = (panel, syncManager) -> null;
 
     protected static final int DEFAULT_HEIGHT = 202;
     protected static final int DEFAULT_WIDTH = 198;
 
+    private final MultiblockWithDisplayBase mte;
+    protected Consumer<PanelSyncManager> valueSyncer;
+    protected Consumer<Builder> displayText, warningText, errorText;
+    protected BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton = (panel, syncManager) -> null;
+    private Consumer<PacketBuffer> writer, reader;
+
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
         var mufflerObstructed = new BooleanSyncValue(
-                () -> this.mufflerObstructed, value -> this.mufflerObstructed = value,
                 () -> mte.hasMufflerMechanics() && !mte.isMufflerFaceFree(), null);
 
         this.valueSyncer = syncManager -> syncManager.syncValue("muffler", mufflerObstructed);
         this.errorText = builder -> builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
         this.warningText = builder -> builder.addMaintenanceProblemLines(mte.getMaintenanceProblems());
         this.displayText = builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed());
+        this.writer = mufflerObstructed::write;
+        this.reader = mufflerObstructed::read;
     }
 
     /**
-     * Called once during ui construction.
+     * Use this to sync a value to the PanelSyncManager <br />
+     * Also initially syncs the value before ui is constructed
      */
-    public MultiblockUIFactory syncValues(Consumer<PanelSyncManager> valueSyncer) {
-        return syncValues(valueSyncer, true);
-    }
-
-    /**
-     * Called once during ui construction.
-     */
-    public MultiblockUIFactory syncValues(Consumer<PanelSyncManager> valueSyncer, boolean merge) {
-        this.valueSyncer = merge ? this.valueSyncer.andThen(valueSyncer) : valueSyncer;
+    public MultiblockUIFactory syncValue(String name, ValueSyncHandler<?> syncHandler) {
+        this.writer = this.writer.andThen(buffer -> {
+            try {
+                syncHandler.write(buffer);
+            } catch (IOException ignored) {
+                GTLog.logger.warn("Sync handler \"{}\" failed to write!", name);
+            }
+        });
+        this.reader = this.reader.andThen(buffer -> {
+            try {
+                syncHandler.read(buffer);
+            } catch (IOException ignored) {
+                GTLog.logger.warn("Sync handler \"{}\" failed to read!", name);
+            }
+        });
+        this.valueSyncer = this.valueSyncer.andThen(syncManager -> syncManager.syncValue(name, syncHandler));
         return this;
+    }
+
+    public void writeInitialSync(PacketBuffer buffer) {
+        this.writer.accept(buffer);
+    }
+
+    public void readInitialSync(PacketBuffer buffer) {
+        this.reader.accept(buffer);
     }
 
     /**
@@ -147,8 +168,27 @@ public class MultiblockUIFactory {
      * Recommended to only display warnings if the structure is already formed. <br />
      * This is called every tick on the client-side
      */
+    public MultiblockUIFactory configureWarningText(boolean merge, Consumer<Builder> warningText) {
+        this.warningText = merge ? this.warningText.andThen(warningText) : warningText;
+        return this;
+    }
+
+    /**
+     * Returns a list of text indicating any current warnings in this Multiblock. <br />
+     * Recommended to only display warnings if the structure is already formed. <br />
+     * This is called every tick on the client-side
+     */
     public MultiblockUIFactory configureWarningText(Consumer<Builder> warningText) {
-        this.warningText = this.warningText.andThen(warningText);
+        return configureWarningText(true, warningText);
+    }
+
+    /**
+     * Returns a list of translation keys indicating any current errors in this Multiblock. <br />
+     * Prioritized over any warnings provided by {@link #configureWarningText(Consumer)}.<br />
+     * This is called every tick on the client-side
+     */
+    public MultiblockUIFactory configureErrorText(boolean merge, Consumer<Builder> errorText) {
+        this.errorText = merge ? this.errorText.andThen(errorText) : errorText;
         return this;
     }
 
@@ -158,7 +198,17 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureErrorText(Consumer<Builder> errorText) {
-        this.errorText = this.errorText.andThen(errorText);
+        return configureErrorText(true, errorText);
+    }
+
+    /**
+     * Called per tick on client side <br />
+     * Each element of list is displayed on new line <br />
+     * To use translation, use {@link KeyUtil#lang(TextFormatting, String, Object...)}
+     * or {@link KeyUtil#lang(String, Object...)}
+     */
+    public MultiblockUIFactory configureDisplayText(boolean merge, Consumer<Builder> displayText) {
+        this.displayText = merge ? this.displayText.andThen(displayText) : displayText;
         return this;
     }
 
@@ -169,8 +219,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(Consumer<Builder> displayText) {
-        this.displayText = this.displayText.andThen(displayText);
-        return this;
+        return configureDisplayText(true, displayText);
     }
 
     /**
@@ -325,8 +374,8 @@ public class MultiblockUIFactory {
                     .background(GTGuiTextures.BUTTON)
                     .value(voidingValue)
                     .length(4)
-                    .tooltipBuilder(t -> t.setAutoUpdate(true)
-                            .addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
+                    .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                    .tooltipBuilder(t -> t.addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
         } else {
             return GTGuiTextures.BUTTON_VOID_NONE.asWidget()
                     .size(18, 18)
@@ -336,19 +385,23 @@ public class MultiblockUIFactory {
 
     @Nullable
     protected Widget<?> createPowerButton(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        // todo in the future, refactor so that this multis are instanceof IControllable.
-        IControllable controllable = mte.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-        if (controllable == null) return null;
-
-        BooleanSyncValue workingStateValue = new BooleanSyncValue(controllable::isWorkingEnabled,
-                controllable::setWorkingEnabled);
+        IControllable controllable;
+        if (!(mte instanceof IControllable)) {
+            // is this actually relevant?
+            // todo in the future, refactor so that this multis are instanceof IControllable.
+            controllable = mte.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+            if (controllable == null) return null;
+            GTLog.logger.warn("MTE [{}] does not extend IControllable when it should!", mte.getClass().getSimpleName());
+        } else {
+            controllable = (IControllable) mte;
+        }
 
         return new CycleButtonWidget()
                 .size(18)
                 .textureGetter(i -> GTGuiTextures.BUTTON_POWER[i])
                 .disableHoverBackground()
                 .background(GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24), GTGuiTextures.BUTTON)
-                .value(workingStateValue)
+                .value(new BooleanSyncValue(controllable::isWorkingEnabled, controllable::setWorkingEnabled))
                 .marginTop(5);
     }
 
@@ -778,14 +831,15 @@ public class MultiblockUIFactory {
          * <br>
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
-        public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
+        public Builder addFuelNeededLine(String fuelName, IntSupplier previousRecipeDuration) {
             if (!isStructureFormed || !isActive.getAsBoolean() || fuelName == null) return this;
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
                     KeyUtil.string(TextFormatting.RED, fuelName),
-                    KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
+                    KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration::getAsInt)));
 
+            // addKey(KeyUtil.lang(TextFormatting.getValueByName(keys[0].get()), keys[1].get(), keys[2], keys[3]));
             return this;
         }
 

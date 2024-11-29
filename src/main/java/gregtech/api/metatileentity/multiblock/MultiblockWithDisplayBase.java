@@ -49,8 +49,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
-    private static final int UPDATE_MAINTANENCE = GregtechDataCodes.assignId();
-    private MultiblockUIFactory uiFactory = null;
+    private MultiblockUIFactory uiFactory;
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -563,7 +562,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        if (this.uiFactory == null) this.uiFactory = createUIFactory();
+        if (uiFactory == null) return null;
         return this.uiFactory.buildUI(guiData, panelSyncManager);
     }
 
@@ -611,6 +610,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         buf.writeBoolean(voidingFluids);
         buf.writeBoolean(voidingItems);
         buf.writeInt(voidingMode.ordinal());
+        if (uiFactory == null) uiFactory = createUIFactory();
+        this.uiFactory.writeInitialSync(buf);
     }
 
     @Override
@@ -621,6 +622,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         voidingFluids = buf.readBoolean();
         voidingItems = buf.readBoolean();
         voidingMode = VoidingMode.values()[buf.readInt()];
+        if (uiFactory == null) uiFactory = createUIFactory();
+        this.uiFactory.readInitialSync(buf);
     }
 
     @Override
