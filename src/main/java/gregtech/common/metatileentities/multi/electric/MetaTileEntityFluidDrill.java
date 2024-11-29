@@ -21,6 +21,7 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
@@ -400,16 +401,20 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                         if (operationsValue.getIntValue() == 0) {
                             t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depleted"));
                         } else {
-                            // TODO working dynamic color substitutions into IKey.lang
-                            int percent = (int) Math.round(100.0 * operationsValue.getIntValue() /
-                                    BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
-                            if (percent > 40) {
-                                t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depletion.high", percent));
-                            } else if (percent > 10) {
-                                t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depletion.medium", percent));
-                            } else {
-                                t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depletion.low", percent));
-                            }
+                            t.addLine(KeyUtil.string(() -> {
+                                int percent = (int) Math.round(100.0 * operationsValue.getIntValue() /
+                                        BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS);
+                                if (percent > 40) {
+                                    return TextFormatting.GREEN + IKey
+                                            .lang("gregtech.multiblock.fluid_rig.vein_depletion.high", percent).get();
+                                } else if (percent > 10) {
+                                    return TextFormatting.YELLOW + IKey
+                                            .lang("gregtech.multiblock.fluid_rig.vein_depletion.medium", percent).get();
+                                } else {
+                                    return TextFormatting.RED + IKey
+                                            .lang("gregtech.multiblock.fluid_rig.vein_depletion.low", percent).get();
+                                }
+                            }));
                         }
                     } else {
                         t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
