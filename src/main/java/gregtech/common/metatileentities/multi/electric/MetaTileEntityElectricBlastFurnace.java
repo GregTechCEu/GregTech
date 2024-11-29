@@ -124,13 +124,13 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         return new MultiblockUIFactory(this)
                 .syncValues(syncManager -> syncManager.syncValue("progress", progress))
                 .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
                         .addEnergyUsageLine(getEnergyContainer())
                         .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                         .addCustom(this::addHeatCapacity)
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
-                        .addProgressLine(progress.getDoubleValue()));
+                        .addProgressLine(progress::getDoubleValue));
     }
 
     private void addHeatCapacity(List<IKey> keyList) {
