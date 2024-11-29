@@ -35,9 +35,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GenericSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
@@ -203,8 +201,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                 () -> getRotorHolder().getRotorDurabilityPercent(), null);
         BooleanSyncValue rotorFree = new BooleanSyncValue(
                 this::isRotorFaceFree, null);
-         StringSyncValue fuelAmount = new StringSyncValue(recipeLogic::getRecipeFluidInputInfo, null);
-         IntSyncValue prevDuration = new IntSyncValue(recipeLogic::getPreviousRecipeDuration, null);
+        StringSyncValue fuelAmount = new StringSyncValue(recipeLogic::getRecipeFluidInputInfo, null);
+        IntSyncValue prevDuration = new IntSyncValue(recipeLogic::getPreviousRecipeDuration, null);
 
         return new MultiblockUIFactory(this)
                 .syncValue("eff", efficiency)
