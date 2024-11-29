@@ -21,6 +21,7 @@ import net.minecraft.util.text.TextFormatting;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.keys.DynamicKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -35,14 +36,16 @@ import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
@@ -114,12 +117,10 @@ public class MultiblockUIFactory {
         this.valueSyncer.accept(panelSyncManager);
         var panel = createRootPanel();
 
-        var displayText = new ArrayList<Widget<?>>();
-
         // TODO createExtras() hook for overrides?
         var bars = createBars(panel, panelSyncManager);
 
-        return panel.child(createScreen(displayText, panelSyncManager))
+        return panel.child(createScreen(panelSyncManager))
                 .childIf(bars != null, bars)
                 .child(new Row()
                         .bottom(7)
@@ -131,18 +132,12 @@ public class MultiblockUIFactory {
     }
 
     private Widget<?> createIndicator() {
-        List<Widget<?>> textList = new ArrayList<>();
-        var builder = builder(textList);
+        var builder = builder();
         return new Widget<>()
                 .pos(174 - 5, 93 - 5)
                 .onUpdateListener(w -> w.overlay(getIndicatorOverlay(builder)))
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                .tooltipBuilder(tooltip -> {
-                    for (var text : textList) {
-                        if (text instanceof TextWidget textWidget)
-                            tooltip.addLine(textWidget.getKey());
-                    }
-                });
+                .tooltipBuilder(tooltip -> tooltip.addDrawableLines(builder.getTextList()));
     }
 
     private IDrawable getIndicatorOverlay(Builder builder) {
@@ -287,25 +282,27 @@ public class MultiblockUIFactory {
         return column;
     }
 
-    protected Widget<?> createScreen(List<Widget<?>> lines, PanelSyncManager syncManager) {
-        final var builder = builder(lines);
+    protected Widget<?> createScreen(PanelSyncManager syncManager) {
+        final var builder = builder();
+        this.displayText.accept(builder);
+        var col = new Column();
+        builder.build(col);
+
         return new ParentWidget<>()
                 .child(createIndicator())
                 .child(new ScrollWidget<>(new VerticalScrollData())
                         .sizeRel(1f)
-                        .child(new Column()
-                                .expanded()
+                        .child(col.expanded()
+                                .margin(4, 4)
                                 .onUpdateListener(column -> {
-                                    int prev = lines.size();
-                                    builder.clear();
-                                    this.displayText.accept(builder);
-                                    if (prev == lines.size()) return;
+                                    var b = builder();
+                                    this.displayText.accept(b);
+                                    if (!builder.hasChanged(b)) return;
                                     column.getChildren().clear();
                                     // really debating on if the display screen should be its own widget
-                                    lines.forEach(column::child);
+                                    b.build(column);
                                     resize(column);
-                                })
-                                .margin(4, 4)))
+                                })))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, 109)
                 .pos(4, 4);
@@ -422,15 +419,16 @@ public class MultiblockUIFactory {
         private Bars() {}
     }
 
-    protected static Builder builder(List<Widget<?>> list) {
-        return new Builder(list);
+    protected static Builder builder() {
+        return new Builder();
     }
 
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
     public static class Builder {
 
-        private final List<Widget<?>> textList;
-        private Function<IKey, Widget<?>> widgetFunction = Builder::keyMapper;
+        private final List<IDrawable> textList;
+        private Function<IDrawable, Widget<?>> widgetFunction = Builder::keyMapper;
+        private final Int2ObjectMap<IDrawable> tooltips = new Int2ObjectArrayMap<>();
 
         private BooleanSupplier isWorkingEnabled = () -> false;
         private BooleanSupplier isActive = () -> false;
@@ -441,14 +439,14 @@ public class MultiblockUIFactory {
         private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused");
         private IKey runningKey = IKey.lang("gregtech.multiblock.running");
 
-        protected static Widget<?> keyMapper(IKey key) {
+        protected static Widget<?> keyMapper(IDrawable key) {
             return key.asWidget()
                     .widthRel(1f)
                     .height(12);
         }
 
-        private Builder(List<Widget<?>> textList) {
-            this.textList = textList;
+        private Builder() {
+            this.textList = new ArrayList<>();
         }
 
         public Builder structureFormed(boolean structureFormed) {
@@ -457,7 +455,7 @@ public class MultiblockUIFactory {
                 var base = KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
                 var hover = KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.invalid_structure.tooltip");
-                addKey(base).addTooltipLine(hover);
+                addKey(base, hover);
             }
             return this;
         }
@@ -510,7 +508,7 @@ public class MultiblockUIFactory {
                         "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName);
                 var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick_hover");
-                addKey(bodyText).addTooltipLine(hoverText);
+                addKey(bodyText, hoverText);
             }
             return this;
         }
@@ -529,7 +527,7 @@ public class MultiblockUIFactory {
                     "gregtech.multiblock.max_recipe_tier", GTValues.VNF[tier]);
             var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_recipe_tier_hover");
-            addKey(bodyText).addTooltipLine(hoverText);
+            addKey(bodyText, hoverText);
             return this;
         }
 
@@ -848,8 +846,8 @@ public class MultiblockUIFactory {
         }
 
         /** Add custom text dynamically, allowing for custom application logic. */
-        public Builder addCustom(Consumer<List<IKey>> customConsumer) {
-            List<IKey> customKeys = new ArrayList<>();
+        public Builder addCustom(Consumer<List<IDrawable>> customConsumer) {
+            List<IDrawable> customKeys = new ArrayList<>();
             customConsumer.accept(customKeys);
             customKeys.forEach(this::addKey);
             return this;
@@ -858,7 +856,7 @@ public class MultiblockUIFactory {
         /**
          * @param widgetFunction function to build widgets from keys
          */
-        public Builder widgetFunction(Function<IKey, Widget<?>> widgetFunction) {
+        public Builder widgetFunction(Function<IDrawable, Widget<?>> widgetFunction) {
             this.widgetFunction = widgetFunction;
             return this;
         }
@@ -871,10 +869,41 @@ public class MultiblockUIFactory {
             textList.clear();
         }
 
-        private Widget<?> addKey(IKey key) {
-            var w = this.widgetFunction.apply(key);
-            this.textList.add(w);
-            return w;
+        protected void build(ParentWidget<?> parent) {
+            for (int i = 0; i < textList.size(); i++) {
+                var line = this.widgetFunction.apply(textList.get(i));
+                if (tooltips.containsKey(i))
+                    line.addTooltipLine(tooltips.get(i));
+                parent.child(line);
+            }
+        }
+
+        protected List<IDrawable> getTextList() {
+            return Collections.unmodifiableList(textList);
+        }
+
+        protected boolean hasChanged(Builder other) {
+            if (textList.size() != other.textList.size()) return true;
+            for (int i = 0; i < textList.size(); i++) {
+                IDrawable left = textList.get(i), right = other.textList.get(i);
+
+                // dynamic keys are impossible to check, skip
+                if (left instanceof DynamicKey && right instanceof DynamicKey)
+                    continue;
+
+                if (!left.equals(right))
+                    return true;
+            }
+            return false;
+        }
+
+        private void addKey(IDrawable key) {
+            this.textList.add(key);
+        }
+
+        private void addKey(IDrawable key, IDrawable hover) {
+            this.tooltips.put(textList.size(), hover);
+            addKey(key);
         }
     }
 }
