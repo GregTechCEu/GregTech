@@ -35,7 +35,6 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -122,14 +121,12 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
     @Override
     protected MultiblockUIFactory createUIFactory() {
-        final BooleanSyncValue hasLubricant = new BooleanSyncValue(
-                () -> this.hasLubricant, value -> this.hasLubricant = value,
-                () -> getLubricantAmount()[0] > 0, null);
+        var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
+        final BooleanSyncValue hasLubricant = new BooleanSyncValue(() -> getLubricantAmount()[0] > 0, null);
 
         return new MultiblockUIFactory(this)
-                .syncValues(syncManager -> syncManager.syncValue("lubricant", hasLubricant))
+                .syncValue("lubricant", hasLubricant)
                 .configureDisplayText(builder -> {
-                    var recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
                     builder.setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive);
 
                     if (isExtreme) {
@@ -140,7 +137,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
                     // todo fuel needed line not working?
                     builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(),
-                            recipeLogic.getPreviousRecipeDuration())
+                            recipeLogic::getPreviousRecipeDuration)
                             .addCustom(tl -> {
                                 if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                                     String key = isExtreme ?
@@ -287,18 +284,6 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeBoolean(this.hasLubricant = getLubricantAmount()[0] > 0);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        this.hasLubricant = buf.readBoolean();
-    }
-
-    @Override
     public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
         return switch (index) {
             case 0 -> {
@@ -331,8 +316,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         .progress(() -> lubricantValue.getValue()[1] == 0 ? 0 :
                                 1.0 * lubricantValue.getValue()[0] / lubricantValue.getValue()[1])
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_LUBRICANT, MultiblockUIFactory.Bars.THIRD_WIDTH)
+                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                         .tooltipBuilder(t -> {
-                            t.setAutoUpdate(true);
                             if (isStructureFormed()) {
                                 if (lubricantValue.getValue()[0] == 0) {
                                     t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.no_lubricant"));
