@@ -394,8 +394,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
         return new ProgressWidget()
                 .progress(() -> operationsValue.getIntValue() * 1.0 / BedrockFluidVeinHandler.MAXIMUM_VEIN_OPERATIONS)
                 .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION, MultiblockUIFactory.Bars.FULL_WIDTH)
+                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .tooltipBuilder(t -> {
-                    t.setAutoUpdate(true);
                     if (isStructureFormed()) {
                         if (operationsValue.getIntValue() == 0) {
                             t.addLine(IKey.lang("gregtech.multiblock.fluid_rig.vein_depleted"));
