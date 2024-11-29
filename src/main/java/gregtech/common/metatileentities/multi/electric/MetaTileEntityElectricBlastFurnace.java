@@ -47,7 +47,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
@@ -115,7 +115,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                         .addProgressLine(progress::getDoubleValue));
     }
 
-    private Consumer<List<IKey>> addHeatCapacity(IntSyncValue temp) {
+    private Consumer<List<IDrawable>> addHeatCapacity(IntSyncValue temp) {
         return keyList -> {
             if (isStructureFormed()) {
                 var heatString = KeyUtil.number(TextFormatting.RED,
