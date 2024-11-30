@@ -10,6 +10,7 @@
   "mixins": [
     "BlockConcretePowderMixin",
     "NetworkHandlerMixin",
+    "BlockRenderLayerMixin",
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
     "MinecraftMixin"
