@@ -203,7 +203,7 @@ public final class ToolHelper {
     }
 
     public static ItemStack toolbeltPassthrough(ItemStack stack) {
-        if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+        if (stack.getItem() instanceof ItemGTToolbelt toolbelt && hasMaterial(stack)) {
             ItemStack selected = toolbelt.getSelectedTool(stack);
             if (!selected.isEmpty()) stack = selected;
         }
@@ -845,5 +845,11 @@ public final class ToolHelper {
         if (stack.getItem() instanceof IGTTool) {
             ((IGTTool) stack.getItem()).playSound(player);
         }
+    }
+
+    public static boolean hasMaterial(ItemStack stack) {
+        var tag = stack.getTagCompound();
+        if (tag == null || !tag.hasKey(TOOL_TAG_KEY)) return false;
+        return tag.getCompoundTag(TOOL_TAG_KEY).hasKey(MATERIAL_KEY);
     }
 }

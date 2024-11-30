@@ -8,7 +8,6 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.LocalizationUtils;
@@ -545,14 +544,12 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         public ToolbeltCapabilityProvider(ItemStack stack) {
             slotCountSupplier = () -> {
+                if (!ToolHelper.hasMaterial(stack)) return 4;
                 NBTTagCompound toolTag = stack.getOrCreateSubCompound(ToolHelper.TOOL_TAG_KEY);
-                String string = toolTag.getString(MATERIAL_KEY);
-                Material material = GregTechAPI.materialManager.getMaterial(string);
-                if (material == null) {
-                    toolTag.setString(MATERIAL_KEY, (material = Materials.Iron).getRegistryName());
-                }
+                Material material = GregTechAPI.materialManager.getMaterial(toolTag.getString(MATERIAL_KEY));
+                if (material == null) return 4;
                 ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-                return Math.min(8, 2 + (toolProperty == null ? 0 : toolProperty.getToolHarvestLevel()));
+                return Math.min(8, 2 + toolProperty.getToolHarvestLevel());
             };
         }
 
@@ -564,24 +561,25 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         @Override
         public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
             if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.getHandler(0));
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.getHandler());
             else return null;
         }
 
         @Override
         public NBTTagCompound serializeNBT() {
-            return this.getHandler(0).serializeNBT();
+            return this.getHandler().serializeNBT();
         }
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             // .copy() prevents double damage ticks in singleplayer
-            this.getHandler(slotCountSupplier.getAsInt()).deserializeNBT(nbt.copy());
+            this.getHandler().deserializeNBT(nbt.copy());
         }
 
-        protected ToolStackHandler getHandler(int minsize) {
-            int slots = Math.max(slotCountSupplier.getAsInt(), minsize);
-            if (handler == null || handler.getSlots() != slots) handler = new ToolStackHandler(slots);
+        protected @NotNull ToolStackHandler getHandler() {
+            int size = slotCountSupplier.getAsInt();
+            if (handler == null) handler = new ToolStackHandler(size);
+            else if (handler.getSlots() != size) handler.setSize(size);
             return handler;
         }
     }
@@ -615,9 +613,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         private boolean passthrough = true;
 
         public ToolStackHandler(int size) {
-            super(size);
-            tools = new ItemTool[size];
-            gtTools = new IGTTool[size];
+            setSize(size);
         }
 
         public void incrementSelectedSlot() {
@@ -693,9 +689,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         @Override
+        public void setSize(int size) {
+            super.setSize(size);
+            this.gtTools = new IGTTool[size];
+            this.tools = new ItemTool[size];
+        }
+
+        @Override
         protected void onLoad() {
-            this.tools = new ItemTool[getSlots()];
-            this.gtTools = new IGTTool[getSlots()];
             for (int i = 0; i < getSlots(); i++) {
                 this.updateSlot(i);
             }
