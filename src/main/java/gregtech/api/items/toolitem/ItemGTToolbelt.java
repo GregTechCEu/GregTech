@@ -47,6 +47,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -122,11 +123,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             slots.add(new ItemSlot());
         }
 
-        return GTGuis.createPanel(usedStack.getTranslationKey(), 176, 120 + heightBonus)
+        return GTGuis.createPanel(usedStack.getTranslationKey(), 176, 120 + heightBonus + 12)
+                .child(IKey.str(usedStack.getDisplayName()).asWidget()
+                        .pos(5, 5)
+                        .height(12))
                 .child(new Grid()
                         .margin(0)
                         .leftRel(0.5f)
-                        .top(7)
+                        .top(7 + 12)
                         .coverChildren()
                         .mapTo(group.getRowSize(), slots, (index, value) -> value
                                 .slot(SyncHandlers.itemSlot(handler, index)
