@@ -24,6 +24,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,6 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -74,6 +76,8 @@ import java.util.function.Supplier;
 import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 
 public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
+
+    private static final ThreadLocal<Integer> slotThread = new ThreadLocal<>();
 
     public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
         super(domain, id, -1,
@@ -388,6 +392,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         int match = getHandler(stack).checkIngredientAgainstTools(ingredient);
         if (match != -1) {
             setSelectedTool(match, stack);
+            PacketToolbeltSelectionChange.toClient(match, slotThread.get(),
+                    (EntityPlayerMP) ForgeHooks.getCraftingPlayer());
         }
     }
 
@@ -418,8 +424,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ToolStackHandler handler = getHandler(stack);
         if (direction < 0) handler.incrementSelectedSlot();
         else handler.decrementSelectedSlot();
-        GregTechAPI.networkHandler.sendToServer(
-                new PacketToolbeltSelectionChange(handler.selectedSlot));
+        PacketToolbeltSelectionChange.toServer(handler.selectedSlot);
     }
 
     @SideOnly(Side.CLIENT)
@@ -427,8 +432,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ToolStackHandler handler = getHandler(stack);
         if (slot < 0 || slot >= handler.getSlots()) handler.selectedSlot = -1;
         else handler.selectedSlot = slot;
-        GregTechAPI.networkHandler.sendToServer(
-                new PacketToolbeltSelectionChange(handler.selectedSlot));
+        PacketToolbeltSelectionChange.toServer(handler.selectedSlot);
     }
 
     /**
@@ -520,6 +524,10 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
             }
         }
         return false;
+    }
+
+    public static void setCraftingSlot(int slot) {
+        slotThread.set(slot);
     }
 
     public static boolean checkToolAgainstToolbelt(@NotNull ItemStack toolbelt, @NotNull ItemStack tool) {
@@ -685,7 +693,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         @Override
         protected void onLoad() {
             super.onLoad();
-            for (int i = 0; i < this.getSlots(); i++) {
+            for (int i = 0; i < Math.min(tools.length, gtTools.length); i++) {
                 this.updateSlot(i);
             }
             this.update();
@@ -707,7 +715,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         protected void update() {
             this.toolClasses.clear();
-            for (int i = 0; i < this.getSlots(); i++) {
+            for (int i = 0; i < Math.min(tools.length, gtTools.length); i++) {
                 if (tools[i] != null) this.toolClasses.addAll(tools[i].getToolClasses(stacks.get(i)));
             }
         }

@@ -246,7 +246,8 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.networkHandler.registerPacket(PacketNotifyCapeChange.class);
         GregTechAPI.networkHandler.registerPacket(PacketReloadShaders.class);
         GregTechAPI.networkHandler.registerPacket(PacketClipboardNBTUpdate.class);
-        GregTechAPI.networkHandler.registerPacket(PacketToolbeltSelectionChange.class);
+        GregTechAPI.networkHandler.registerPacket(PacketToolbeltSelectionChange.Server.class);
+        GregTechAPI.networkHandler.registerPacket(PacketToolbeltSelectionChange.Client.class);
     }
 
     @Override
