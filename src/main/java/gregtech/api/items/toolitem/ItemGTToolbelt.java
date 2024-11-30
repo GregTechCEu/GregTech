@@ -608,14 +608,16 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         private @Range(from = -1, to = 128) int selectedSlot = -1;
 
-        protected final ItemTool[] tools = new ItemTool[this.getSlots()];
-        protected final IGTTool[] gtTools = new IGTTool[this.getSlots()];
+        protected ItemTool[] tools;
+        protected IGTTool[] gtTools;
         protected final Set<String> toolClasses = new ObjectOpenHashSet<>();
 
         private boolean passthrough = true;
 
         public ToolStackHandler(int size) {
             super(size);
+            tools = new ItemTool[size];
+            gtTools = new IGTTool[size];
         }
 
         public void incrementSelectedSlot() {
@@ -692,8 +694,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         protected void onLoad() {
-            super.onLoad();
-            for (int i = 0; i < Math.min(tools.length, gtTools.length); i++) {
+            this.tools = new ItemTool[getSlots()];
+            this.gtTools = new IGTTool[getSlots()];
+            for (int i = 0; i < getSlots(); i++) {
                 this.updateSlot(i);
             }
             this.update();
@@ -715,7 +718,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         protected void update() {
             this.toolClasses.clear();
-            for (int i = 0; i < Math.min(tools.length, gtTools.length); i++) {
+            for (int i = 0; i < getSlots(); i++) {
                 if (tools[i] != null) this.toolClasses.addAll(tools[i].getToolClasses(stacks.get(i)));
             }
         }
