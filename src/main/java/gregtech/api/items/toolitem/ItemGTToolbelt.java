@@ -58,16 +58,15 @@ import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
@@ -75,8 +74,6 @@ import java.util.function.Supplier;
 import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 
 public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
-
-    protected final static Set<String> VALID_OREDICTS = new ObjectOpenHashSet<>();
 
     public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
         super(domain, id, -1,
@@ -153,14 +150,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         } else return Collections.emptyList();
     }
 
-    public static boolean isToolbeltableOredict(String oredict) {
-        return VALID_OREDICTS.contains(oredict);
-    }
-
-    public void registerValidOredict(String oredict) {
-        VALID_OREDICTS.add(oredict);
-    }
-
     @Override
     public float getDestroySpeed(@NotNull ItemStack stack, @NotNull IBlockState state) {
         ItemStack selected = getHandler(stack).getSelectedStack();
@@ -220,7 +209,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (!selected.isEmpty()) {
             return selected.getItem().getHarvestLevel(stack, toolClass, player, blockState);
-        } else return super.getHarvestLevel(stack, toolClass, player, blockState);
+        } else return definition$getHarvestLevel(stack, toolClass, player, blockState);
     }
 
     @NotNull
@@ -283,7 +272,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (!selected.isEmpty()) {
             return selected.getItem().getDamage(selected);
-        } else return super.getDamage(stack);
+        } else return definition$getDamage(stack);
     }
 
     @Override
@@ -299,7 +288,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         ItemStack selected = getHandler(stack).getSelectedStack();
         if (!selected.isEmpty()) {
             selected.getItem().setDamage(selected, damage);
-        } else super.setDamage(stack, damage);
+        } else definition$setDamage(stack, damage);
     }
 
     @Override
@@ -442,6 +431,10 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
                 new PacketToolbeltSelectionChange(handler.selectedSlot));
     }
 
+    /**
+     * For use by {@link PacketToolbeltSelectionChange} only!
+     */
+    @ApiStatus.Internal
     public void setSelectedTool(int slot, ItemStack stack) {
         ToolStackHandler handler = getHandler(stack);
         if (slot < 0 || slot >= handler.getSlots())
@@ -471,7 +464,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (result == EnumActionResult.PASS) {
             ItemStack stack = player.getHeldItem(hand);
             ToolStackHandler handler = getHandler(stack);
-            if (handler.getSelectedSlot() == -1 && world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
+            if (handler.getSelectedStack().isEmpty() &&
+                    world.getTileEntity(pos) instanceof MetaTileEntityHolder holder &&
                     holder.getMetaTileEntity() instanceof MetaTileEntityMaintenanceHatch maintenance) {
                 maintenance.fixMaintenanceProblemsWithToolbelt(player, this, stack);
                 return EnumActionResult.SUCCESS;
@@ -573,10 +567,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
-            // make sure we can load all the slots, no matter what we're supposed to be limited to.
-            int minsize = nbt.hasKey("Size") ? nbt.getInteger("Size") : 0;
             // .copy() prevents double damage ticks in singleplayer
-            this.getHandler(minsize).deserializeNBT(nbt.copy());
+            this.getHandler(slotCountSupplier.getAsInt()).deserializeNBT(nbt.copy());
         }
 
         protected ToolStackHandler getHandler(int minsize) {
@@ -611,7 +603,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         protected final ItemTool[] tools = new ItemTool[this.getSlots()];
         protected final IGTTool[] gtTools = new IGTTool[this.getSlots()];
         protected final Set<String> toolClasses = new ObjectOpenHashSet<>();
-        public final Set<String> oreDicts = new ObjectOpenHashSet<>();
 
         private boolean passthrough = true;
 
@@ -646,7 +637,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         public @NotNull ItemStack getSelectedStack() {
             if (getSelectedSlot() == -1) return ItemStack.EMPTY;
-            else return this.stacks.get(getSelectedSlot());
+            else return this.getStackInSlot(getSelectedSlot());
         }
 
         public Set<String> getToolClasses(boolean defaultEmpty) {
@@ -715,14 +706,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         }
 
         protected void update() {
-            this.oreDicts.clear();
-            Arrays.stream(gtTools).filter(Objects::nonNull).map(igtTool -> {
-                Set<String> set = new ObjectOpenHashSet<>(igtTool.getSecondaryOreDicts());
-                set.add(igtTool.getOreDictName());
-                return set;
-            }).forEach(this.oreDicts::addAll);
-            this.oreDicts.retainAll(VALID_OREDICTS);
-
             this.toolClasses.clear();
             for (int i = 0; i < this.getSlots(); i++) {
                 if (tools[i] != null) this.toolClasses.addAll(tools[i].getToolClasses(stacks.get(i)));

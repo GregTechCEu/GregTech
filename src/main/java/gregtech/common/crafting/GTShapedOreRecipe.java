@@ -166,7 +166,7 @@ public class GTShapedOreRecipe extends ShapedOreRecipe {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
-            return net.minecraftforge.common.ForgeHooks.defaultRecipeGetRemainingItems(inv);
+            return super.getRemainingItems(inv);
         }
     }
 }

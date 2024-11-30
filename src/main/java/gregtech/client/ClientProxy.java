@@ -354,6 +354,8 @@ public class ClientProxy extends CommonProxy {
         if (event.getDwheel() != 0 && player.isSneaking()) {
             ItemStack stack = player.getHeldItemMainhand();
             if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+                // vanilla code in GuiIngame line 1235 does not copy the stack before storing it in the highlighting
+                // item stack, so unless we copy the stack the tool highlight will not refresh.
                 stack = stack.copy();
                 toolbelt.changeSelectedToolMousewheel(event.getDwheel(), stack);
                 InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;

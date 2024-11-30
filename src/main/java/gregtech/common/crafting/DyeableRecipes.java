@@ -120,6 +120,8 @@ public final class DyeableRecipes extends RecipesArmorDyes {
             k1 = (int) ((float) k1 * f3 / f4);
             int k2 = (i1 << 8) + j1;
             k2 = (k2 << 8) + k1;
+            // prevent consuming dye when the color would not change
+            if (dyeable.hasColor(itemstack) && dyeable.getColor(itemstack) == k2) return ItemStack.EMPTY;
             dyeable.setColor(itemstack, k2);
             return itemstack;
         }

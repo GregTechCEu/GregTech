@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,7 @@ public class GTShapelessOreRecipe extends ShapelessOreRecipe {
         if (isClearing) {
             return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
         } else {
-            return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+            return super.getRemainingItems(inv);
         }
     }
 }

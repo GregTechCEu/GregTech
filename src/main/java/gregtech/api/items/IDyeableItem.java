@@ -16,15 +16,17 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IDyeableItem {
 
+    String COLOR_KEY = "gt_color";
+
     default boolean hasColor(ItemStack stack) {
         NBTTagCompound nbttagcompound = stack.getTagCompound();
-        return nbttagcompound != null && nbttagcompound.hasKey("color", Constants.NBT.TAG_INT);
+        return nbttagcompound != null && nbttagcompound.hasKey(COLOR_KEY, Constants.NBT.TAG_INT);
     }
 
     default int getColor(ItemStack stack) {
         NBTTagCompound nbttagcompound = stack.getTagCompound();
-        if (nbttagcompound != null && nbttagcompound.hasKey("color", Constants.NBT.TAG_INT)) {
-            return nbttagcompound.getInteger("color");
+        if (nbttagcompound != null && nbttagcompound.hasKey(COLOR_KEY, Constants.NBT.TAG_INT)) {
+            return nbttagcompound.getInteger(COLOR_KEY);
         }
         return getDefaultColor(stack);
     }
@@ -35,8 +37,8 @@ public interface IDyeableItem {
 
     default void removeColor(ItemStack stack) {
         NBTTagCompound nbttagcompound = stack.getTagCompound();
-        if (nbttagcompound != null && nbttagcompound.hasKey("color")) {
-            nbttagcompound.removeTag("color");
+        if (nbttagcompound != null && nbttagcompound.hasKey(COLOR_KEY)) {
+            nbttagcompound.removeTag(COLOR_KEY);
         }
     }
 
@@ -46,7 +48,7 @@ public interface IDyeableItem {
             nbttagcompound = new NBTTagCompound();
             stack.setTagCompound(nbttagcompound);
         }
-        nbttagcompound.setInteger("color", color);
+        nbttagcompound.setInteger(COLOR_KEY, color);
     }
 
     default @NotNull EnumActionResult onItemUseFirst(@NotNull EntityPlayer player, @NotNull World world,

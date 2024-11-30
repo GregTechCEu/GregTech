@@ -393,11 +393,9 @@ public final class ToolItems {
             final ItemStack stack = new ItemStack(tool.get(), 1, GTValues.W);
             if (tool.getOreDictName() != null) {
                 OreDictUnifier.registerOre(stack, tool.getOreDictName());
-                TOOLBELT.registerValidOredict(tool.getOreDictName());
             }
             tool.getSecondaryOreDicts().forEach(oreDict -> {
                 OreDictUnifier.registerOre(stack, oreDict);
-                TOOLBELT.registerValidOredict(oreDict);
             });
         });
     }
