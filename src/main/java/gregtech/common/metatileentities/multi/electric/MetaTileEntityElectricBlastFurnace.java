@@ -134,12 +134,8 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        Object type = context.get("CoilType");
-        if (type instanceof IHeatingCoilBlockStats) {
-            this.blastFurnaceTemperature = ((IHeatingCoilBlockStats) type).getCoilTemperature();
-        } else {
-            this.blastFurnaceTemperature = CoilType.CUPRONICKEL.getCoilTemperature();
-        }
+        IHeatingCoilBlockStats type = context.getOrDefault("CoilType", CoilType.CUPRONICKEL);
+        this.blastFurnaceTemperature = type.getCoilTemperature();
         // the subtracted tier gives the starting level (exclusive) of the +100K heat bonus
         this.blastFurnaceTemperature += 100 *
                 Math.max(0, GTUtility.getFloorTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
