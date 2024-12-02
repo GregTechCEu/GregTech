@@ -65,6 +65,7 @@ public class MultiblockUIFactory {
     private int width = 198, height = 202;
     private int screenHeight = 109;
     private Supplier<ParentWidget<?>> customScreen;
+    private boolean dirty;
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
@@ -96,14 +97,12 @@ public class MultiblockUIFactory {
         this.writer = this.writer.andThen(buffer -> {
             try {
                 syncHandler.write(buffer);
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) {}
         });
         this.reader = this.reader.andThen(buffer -> {
             try {
                 syncHandler.read(buffer);
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) {}
         });
         return this;
     }
@@ -310,6 +309,7 @@ public class MultiblockUIFactory {
         this.displayText.accept(builder);
         var col = new Column();
         builder.build(col);
+        final var compare = builder();
 
         return new ParentWidget<>()
                 .child(createIndicator())
@@ -318,13 +318,16 @@ public class MultiblockUIFactory {
                         .child(col.expanded()
                                 .margin(4, 4)
                                 .onUpdateListener(column -> {
-                                    var b = builder();
-                                    this.displayText.accept(b);
-                                    if (!builder.hasChanged(b)) return;
-                                    column.getChildren().clear();
                                     // really debating on if the display screen should be its own widget
-                                    b.build(column);
+                                    compare.clear();
+                                    this.displayText.accept(compare);
+                                    if (!builder.hasChanged(compare) && !dirty) return;
+                                    builder.clear();
+                                    column.getChildren().clear();
+                                    this.displayText.accept(builder);
+                                    builder.build(column);
                                     resize(column);
+                                    dirty = false;
                                 })))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)
@@ -425,6 +428,10 @@ public class MultiblockUIFactory {
                 .marginTop(5);
     }
 
+    public void markDirty() {
+        dirty = true;
+    }
+
     public static final class Screen {
 
         public static int WIDTH = 190;
@@ -461,6 +468,7 @@ public class MultiblockUIFactory {
         private IKey idlingKey = IKey.lang("gregtech.multiblock.idling");
         private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused");
         private IKey runningKey = IKey.lang("gregtech.multiblock.running");
+        private boolean dirty;
 
         protected static Widget<?> keyMapper(IDrawable key) {
             return key.asWidget()
