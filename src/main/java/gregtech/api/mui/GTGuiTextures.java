@@ -124,6 +124,17 @@ public class GTGuiTextures {
 
     // todo primitive display?
 
+    // FUSION
+    public static final UITexture FUSION_REACTOR_MK1_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk1_title.png");
+    public static final UITexture FUSION_REACTOR_MK2_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk2_title.png");
+    public static final UITexture FUSION_REACTOR_MK3_TITLE = fullImage(
+            "textures/gui/widget/fusion_reactor_mk3_title.png");
+    public static final UITexture FUSION_DIAGRAM = fullImage("textures/gui/widget/fusion_reactor_diagram.png");
+    public static final UITexture FUSION_LEGEND = fullImage("textures/gui/widget/fusion_reactor_legend.png");
+    public static final UITexture FUSION_PROGRESS = fullImage("textures/gui/progress_bar/fusion_diagram/stitched.png");
+
     // SLOTS
     public static final UITexture SLOT = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/base/slot.png")
