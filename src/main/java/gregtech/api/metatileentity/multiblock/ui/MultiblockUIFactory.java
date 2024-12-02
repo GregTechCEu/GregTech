@@ -53,17 +53,18 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 public class MultiblockUIFactory {
-
-    protected static final int DEFAULT_HEIGHT = 202;
-    protected static final int DEFAULT_WIDTH = 198;
 
     private final MultiblockWithDisplayBase mte;
     protected Consumer<PanelSyncManager> valueSyncer;
     protected Consumer<Builder> displayText, warningText, errorText;
     protected BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton = (panel, syncManager) -> null;
     private Consumer<PacketBuffer> writer, reader;
+    private int width = 198, height = 202;
+    private int screenHeight = 109;
+    private Supplier<ParentWidget<?>> customScreen;
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
@@ -83,21 +84,27 @@ public class MultiblockUIFactory {
      * Also initially syncs the value before ui is constructed
      */
     public MultiblockUIFactory syncValue(String name, ValueSyncHandler<?> syncHandler) {
+        this.valueSyncer = this.valueSyncer.andThen(syncManager -> syncManager.syncValue(name, syncHandler));
+        return syncValue(syncHandler);
+    }
+
+    /**
+     * Initially syncs the value before ui is constructed <br />
+     * Use this if the value will be passed into a widget.
+     */
+    public MultiblockUIFactory syncValue(ValueSyncHandler<?> syncHandler) {
         this.writer = this.writer.andThen(buffer -> {
             try {
                 syncHandler.write(buffer);
             } catch (IOException ignored) {
-                GTLog.logger.warn("Sync handler \"{}\" failed to write!", name);
             }
         });
         this.reader = this.reader.andThen(buffer -> {
             try {
                 syncHandler.read(buffer);
             } catch (IOException ignored) {
-                GTLog.logger.warn("Sync handler \"{}\" failed to read!", name);
             }
         });
-        this.valueSyncer = this.valueSyncer.andThen(syncManager -> syncManager.syncValue(name, syncHandler));
         return this;
     }
 
@@ -134,7 +141,7 @@ public class MultiblockUIFactory {
     private Widget<?> createIndicator() {
         var builder = builder();
         return new Widget<>()
-                .pos(174 - 5, 93 - 5)
+                .pos(174 - 5, screenHeight - 18 - 3)
                 .onUpdateListener(w -> w.overlay(getIndicatorOverlay(builder)))
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .tooltipBuilder(tooltip -> tooltip.addDrawableLines(builder.getTextList()));
@@ -228,8 +235,19 @@ public class MultiblockUIFactory {
         return this;
     }
 
+    public MultiblockUIFactory setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        return this;
+    }
+
+    public MultiblockUIFactory setScreenHeight(int height) {
+        this.screenHeight = height;
+        return this;
+    }
+
     protected @NotNull ModularPanel createRootPanel() {
-        return GTGuis.createPanel(mte, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        return GTGuis.createPanel(mte, width, height);
     }
 
     /**
@@ -243,7 +261,7 @@ public class MultiblockUIFactory {
 
         final int count = progressMulti.getProgressBarCount();
         if (count < 1) return null;
-        mainPanel.height(DEFAULT_HEIGHT + (Bars.HEIGHT * 2) - 2);
+        mainPanel.height(height + (Bars.HEIGHT * 2) - 2);
 
         final int rows = progressMulti.getProgressBarRows();
         final int cols = progressMulti.getProgressBarCols();
@@ -282,6 +300,11 @@ public class MultiblockUIFactory {
         return column;
     }
 
+    public MultiblockUIFactory customScreen(Supplier<ParentWidget<?>> customScreen) {
+        this.customScreen = customScreen;
+        return this;
+    }
+
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
         final var builder = builder();
         this.displayText.accept(builder);
@@ -290,7 +313,7 @@ public class MultiblockUIFactory {
 
         return new ParentWidget<>()
                 .child(createIndicator())
-                .child(new ScrollWidget<>(new VerticalScrollData())
+                .child(customScreen != null ? customScreen.get() : new ScrollWidget<>(new VerticalScrollData())
                         .sizeRel(1f)
                         .child(col.expanded()
                                 .margin(4, 4)
@@ -304,7 +327,7 @@ public class MultiblockUIFactory {
                                     resize(column);
                                 })))
                 .background(GTGuiTextures.DISPLAY)
-                .size(190, 109)
+                .size(190, screenHeight)
                 .pos(4, 4);
     }
 
@@ -332,7 +355,7 @@ public class MultiblockUIFactory {
 
         return new Column()
                 .alignX(1f)
-                .right(0)
+                .right(4)
                 .size(18, 77)
                 .child(createDistinctButton(mainPanel, panelSyncManager))
                 .child(createVoidingButton(mainPanel, panelSyncManager))
