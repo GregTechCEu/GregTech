@@ -48,7 +48,6 @@ import java.util.List;
 public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                                         implements ITieredMetaTileEntity, ProgressBarMultiblock {
 
-    private static final int SYNC_ROTOR = GregtechDataCodes.assignId();
     public final int tier;
 
     public final IBlockState casingState;
