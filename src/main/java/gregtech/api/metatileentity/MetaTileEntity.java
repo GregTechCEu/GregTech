@@ -168,9 +168,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @Nullable
     private UUID owner = null;
 
-    private final Set<CreativeTabs> additionalCreativeTabs = new ObjectArraySet<>();
-    private boolean showsInSearchTab = true;
-    private boolean showsInGTCreativeTab = true;
+    private final Set<CreativeTabs> creativeTabs = new ObjectArraySet<>();
+
+    {
+        creativeTabs.add(CreativeTabs.SEARCH);
+        creativeTabs.add(GTCreativeTabs.TAB_GREGTECH_MACHINES);
+    }
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -368,9 +371,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return (showsInSearchTab && creativeTab == CreativeTabs.SEARCH) ||
-                (showsInGTCreativeTab && creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES) ||
-                additionalCreativeTabs.contains(creativeTab);
+        return creativeTabs.contains(creativeTab);
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -1677,23 +1678,27 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      */
     public void addAdditionalCreativeTabs(CreativeTabs creativeTab) {
         Preconditions.checkNotNull(creativeTab, "creativeTab");
-        if (creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES || creativeTab == CreativeTabs.SEARCH) {
-            GTLog.logger.error("Adding {} as additional creative tab is redundant.", creativeTab.tabLabel,
+        if (creativeTabs.contains(creativeTab)) {
+            GTLog.logger.error("{} is already in the creative tab {}.", this, creativeTab.tabLabel,
                     new IllegalArgumentException());
+            return;
         }
 
-        additionalCreativeTabs.add(creativeTab);
+        creativeTabs.add(creativeTab);
     }
 
-    public Set<CreativeTabs> getAdditionalCreativeTabs() {
-        return Collections.unmodifiableSet(additionalCreativeTabs);
+    public void removeFromCreativeTab(CreativeTabs creativeTab) {
+        Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (!creativeTabs.contains(creativeTab)) {
+            GTLog.logger.error("{} is not in the creative tab {}.", this, creativeTab.tabLabel,
+                    new IllegalArgumentException());
+            return;
+        }
+
+        creativeTabs.remove(creativeTab);
     }
 
-    public void removeFromSearchTab() {
-        showsInSearchTab = false;
-    }
-
-    public void removeFromGTCreativeTab() {
-        showsInGTCreativeTab = false;
+    public Set<CreativeTabs> getCreativeTabs() {
+        return Collections.unmodifiableSet(creativeTabs);
     }
 }
