@@ -86,7 +86,7 @@ public class ExNihiloRecipes {
                             builder.outputs(siftable.getDrop().getItemStack());
                         } else {
                             builder.chancedOutput(siftable.getDrop().getItemStack(),
-                                    (int) (siftable.getChance() * (float) maxChance), 200);
+                                    (int) (siftable.getChance() * (float) maxChance), 500);
                         }
                     }
                 }
