@@ -368,9 +368,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        if (showsInSearchTab && creativeTab == CreativeTabs.SEARCH) return true;
-        if (showsInGTCreativeTab && creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES) return true;
-        return additionalCreativeTabs.contains(creativeTab);
+        return (showsInSearchTab && creativeTab == CreativeTabs.SEARCH) ||
+                (showsInGTCreativeTab && creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES) ||
+                additionalCreativeTabs.contains(creativeTab);
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
