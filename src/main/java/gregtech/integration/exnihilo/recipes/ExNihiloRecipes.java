@@ -1,5 +1,7 @@
 package gregtech.integration.exnihilo.recipes;
 
+import exnihilocreatio.ModItems;
+
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
@@ -15,6 +17,7 @@ import gregtech.integration.exnihilo.ExNihiloModule;
 import gregtech.loaders.recipe.MetaTileEntityLoader;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import exnihilocreatio.ModBlocks;
@@ -25,6 +28,9 @@ import exnihilocreatio.registries.types.Siftable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.stick;
+import static gregtech.api.unification.ore.OrePrefix.stone;
 import static gregtech.common.blocks.BlockSteamCasing.SteamCasingType.BRONZE_HULL;
 import static gregtech.integration.exnihilo.ExNihiloModule.*;
 import static gregtech.loaders.recipe.CraftingComponent.*;
@@ -65,6 +71,35 @@ public class ExNihiloRecipes {
                 'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.TinAlloy), 'M',
                 STEAM_SIEVE_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
+    }
+
+    public static void registerCraftingRecipes() {
+
+        // Pebbles
+        ModHandler.addShapedRecipe("basalt", OreDictUnifier.get(stone, Basalt, 1), "PP", "PP", 'P',
+                new ItemStack(ExNihiloModule.GTPebbles, 1, 0));
+        ModHandler.addShapedRecipe("black_granite", OreDictUnifier.get(stone, GraniteBlack, 1), "PP", "PP", 'P',
+                new ItemStack(ExNihiloModule.GTPebbles, 1, 1));
+        ModHandler.addShapedRecipe("marble", OreDictUnifier.get(stone, Marble, 1), "PP", "PP", 'P',
+                new ItemStack(ExNihiloModule.GTPebbles, 1, 2));
+        ModHandler.addShapedRecipe("red_granite", OreDictUnifier.get(stone, GraniteRed, 1), "PP", "PP", 'P',
+                new ItemStack(ExNihiloModule.GTPebbles, 1, 3));
+
+        // Meshes
+        if (ExNihiloConfig.harderMeshes) {
+            ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_2");
+            ModHandler.addShapedRecipe("bronze_mesh", new ItemStack(ModItems.mesh, 1, 2), "TST", "STS", "TST",
+                    'T', new UnificationEntry(stick, Materials.Bronze),
+                    'S', new ItemStack(Items.STRING));
+            ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_3");
+            ModHandler.addShapedRecipe("steel_mesh", new ItemStack(ModItems.mesh, 1, 3), "TST", "STS", "TST",
+                    'T', new UnificationEntry(stick, Steel),
+                    'S', new ItemStack(Items.STRING));
+            ModHandler.removeRecipeByName("exnihilocreatio:item_mesh_4");
+            ModHandler.addShapedRecipe("aluminium_mesh", new ItemStack(ModItems.mesh, 1, 4), "TST", "STS", "TST",
+                    'T', new UnificationEntry(stick, Aluminium),
+                    'S', new ItemStack(Items.STRING));
+        }
     }
 
     // Has to be done in init phase because of ExNi registering outside the Registry event
