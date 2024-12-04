@@ -1,9 +1,5 @@
 package gregtech.integration.exnihilo.recipes;
 
-import exnihilocreatio.ModItems;
-
-import exnihilocreatio.compatibility.jei.crucible.CrucibleRecipe;
-
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
@@ -22,13 +18,14 @@ import gregtech.loaders.recipe.MetaTileEntityLoader;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidUtil;
 
 import exnihilocreatio.ModBlocks;
+import exnihilocreatio.ModItems;
+import exnihilocreatio.compatibility.jei.crucible.CrucibleRecipe;
 import exnihilocreatio.compatibility.jei.sieve.SieveRecipe;
 import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
 import exnihilocreatio.registries.types.Siftable;
-
-import net.minecraftforge.fluids.FluidUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +78,6 @@ public class ExNihiloRecipes {
     }
 
     public static void registerCraftingRecipes() {
-
         // Pebbles
         ModHandler.addShapedRecipe("basalt", OreDictUnifier.get(stone, Basalt, 1), "PP", "PP", 'P',
                 new ItemStack(ExNihiloModule.GTPebbles, 1, 0));
