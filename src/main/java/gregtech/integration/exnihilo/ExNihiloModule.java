@@ -19,7 +19,6 @@ import gregtech.integration.exnihilo.items.ExNihiloPebble;
 import gregtech.integration.exnihilo.metatileentities.MetaTileEntitySieve;
 import gregtech.integration.exnihilo.metatileentities.MetaTileEntitySteamSieve;
 import gregtech.integration.exnihilo.recipes.ExNihiloRecipes;
-import gregtech.integration.exnihilo.recipes.MeshRecipes;
 import gregtech.integration.exnihilo.recipes.SieveDrops;
 import gregtech.integration.exnihilo.recipes.ui.SieveUI;
 import gregtech.modules.GregTechModules;
@@ -102,7 +101,6 @@ public class ExNihiloModule extends IntegrationSubmodule {
     public void init(FMLInitializationEvent event) {
         SieveDrops.registerRecipes();
         ExNihiloRecipes.registerExNihiloRecipes();
-        MeshRecipes.init();
     }
 
     @SubscribeEvent()
