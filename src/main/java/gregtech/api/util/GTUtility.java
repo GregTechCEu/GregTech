@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
@@ -53,7 +54,6 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
@@ -63,17 +63,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static gregtech.api.GTValues.V;
 
 public class GTUtility {
 
@@ -254,7 +254,22 @@ public class GTUtility {
      *         tier that can handle it, {@code MAX} is returned.
      */
     public static byte getTierByVoltage(long voltage) {
-        return (byte) Math.min(GTValues.MAX, nearestLesser(V, voltage) + 1);
+        if (voltage >= GTValues.V[GTValues.MAX]) {
+            return GTValues.MAX;
+        }
+        return getOCTierByVoltage(voltage);
+    }
+
+    /**
+     * @return Lowest tier of the voltage that can handle {@code voltage}, extended up to max long value; that is,
+     *         a voltage with value greater than equal than {@code voltage}. If there's no
+     *         tier that can handle it, {@code MAX_TRUE} is returned.
+     */
+    public static byte getOCTierByVoltage(long voltage) {
+        if (voltage <= GTValues.V[GTValues.ULV]) {
+            return GTValues.ULV;
+        }
+        return (byte) ((62 - Long.numberOfLeadingZeros(voltage - 1)) >> 1);
     }
 
     /**
@@ -264,7 +279,14 @@ public class GTUtility {
      *         {@code ULV} if there's no tier below
      */
     public static byte getFloorTierByVoltage(long voltage) {
-        return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(V, voltage));
+        if (voltage < GTValues.V[GTValues.LV]) {
+            return GTValues.ULV;
+        }
+        if (voltage == GTValues.VOC[GTValues.MAX_TRUE]) {
+            return GTValues.MAX_TRUE;
+        }
+
+        return (byte) ((60 - Long.numberOfLeadingZeros(voltage)) >> 1);
     }
 
     @SuppressWarnings("deprecation")
@@ -444,18 +466,20 @@ public class GTUtility {
         return compound;
     }
 
-    public static NonNullList<ItemStack> copyStackList(List<ItemStack> itemStacks) {
-        ItemStack[] stacks = new ItemStack[itemStacks.size()];
-        for (int i = 0; i < itemStacks.size(); i++) {
-            stacks[i] = copy(itemStacks.get(i));
+    public static @NotNull List<@NotNull ItemStack> copyStackList(@NotNull List<@NotNull ItemStack> itemStacks) {
+        List<ItemStack> list = new ArrayList<>(itemStacks.size());
+        for (ItemStack itemStack : itemStacks) {
+            list.add(copy(itemStack));
         }
-        return NonNullList.from(ItemStack.EMPTY, stacks);
+        return list;
     }
 
-    public static List<FluidStack> copyFluidList(List<FluidStack> fluidStacks) {
-        FluidStack[] stacks = new FluidStack[fluidStacks.size()];
-        for (int i = 0; i < fluidStacks.size(); i++) stacks[i] = fluidStacks.get(i).copy();
-        return Lists.newArrayList(stacks);
+    public static @NotNull List<@NotNull FluidStack> copyFluidList(@NotNull List<@NotNull FluidStack> fluidStacks) {
+        List<FluidStack> list = new ArrayList<>(fluidStacks.size());
+        for (FluidStack stack : fluidStacks) {
+            list.add(stack.copy());
+        }
+        return list;
     }
 
     /**
@@ -464,8 +488,7 @@ public class GTUtility {
      * @param stack item stack for copying
      * @return a copy of ItemStack, or {@link ItemStack#EMPTY} if the stack is empty
      */
-    @NotNull
-    public static ItemStack copy(@NotNull ItemStack stack) {
+    public static @NotNull ItemStack copy(@NotNull ItemStack stack) {
         return stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
     }
 
@@ -704,18 +727,24 @@ public class GTUtility {
 
     public static MetaTileEntity getMetaTileEntity(ItemStack stack) {
         if (!(stack.getItem() instanceof MachineItemBlock)) return null;
-        return GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(
+                Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
+        return registry.getObjectById(stack.getItemDamage());
     }
 
-    public static boolean canSeeSunClearly(World world, BlockPos blockPos) {
-        if (!world.canSeeSky(blockPos.up())) {
+    /**
+     * @param world    the world containing the block
+     * @param blockPos the position of the block to check
+     * @return if the block can see the sun clearly
+     */
+    public static boolean canSeeSunClearly(@NotNull World world, @NotNull BlockPos blockPos) {
+        BlockPos up = blockPos.up();
+        if (!world.canSeeSky(up)) {
             return false;
         }
-        Biome biome = world.getBiome(blockPos.up());
-        if (world.isRaining()) {
-            if (biome.canRain() || biome.getEnableSnow()) {
-                return false;
-            }
+        Biome biome = world.getBiome(up);
+        if (world.isRaining() && (biome.canRain() || biome.getEnableSnow())) {
+            return false;
         }
         Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
         if (biomeTypes.contains(BiomeDictionary.Type.END)) {
@@ -812,9 +841,7 @@ public class GTUtility {
             if (tab == null || tab == CreativeTabs.SEARCH) continue;
             item.getSubItems(tab, subItems);
         }
-        Set<ItemStack> set = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingItemDamageCount());
-        set.addAll(subItems);
-        return set;
+        return new ObjectOpenCustomHashSet<>(subItems, ItemStackHashStrategy.comparingItemDamageCount());
     }
 
     /**
@@ -882,5 +909,15 @@ public class GTUtility {
         DoubleSupplier supplier2 = () -> tracker.get() >= splitPoint ?
                 (1.0 / (1 - splitPoint)) * (tracker.get() - splitPoint) : 0;
         return Pair.of(supplier1, supplier2);
+    }
+
+    /**
+     * Safely cast a Long to an Int without overflow.
+     *
+     * @param v The Long value to cast to an Int.
+     * @return v, cast to Int, or Integer.MAX_VALUE if it would overflow.
+     */
+    public static int safeCastLongToInt(long v) {
+        return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
     }
 }

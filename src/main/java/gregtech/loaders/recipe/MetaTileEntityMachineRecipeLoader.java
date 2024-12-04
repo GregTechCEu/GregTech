@@ -1,14 +1,18 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
+import gregtech.api.items.OreDictNames;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
@@ -19,7 +23,6 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.common.blocks.MetaBlocks.LD_FLUID_PIPE;
 import static gregtech.common.blocks.MetaBlocks.LD_ITEM_PIPE;
 import static gregtech.common.items.MetaItems.*;
-import static gregtech.common.items.MetaItems.SENSOR_UV;
 import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 public class MetaTileEntityMachineRecipeLoader {
@@ -243,8 +246,8 @@ public class MetaTileEntityMachineRecipeLoader {
                 .duration(300).EUt(VA[EV]).buildAndRegister();
 
         // Item Buses
-        registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], new ItemStack(Blocks.CHEST));
-        registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], new ItemStack(Blocks.CHEST));
+        registerHatchBusRecipe(ULV, ITEM_IMPORT_BUS[ULV], ITEM_EXPORT_BUS[ULV], OreDictNames.chestWood.toString());
+        registerHatchBusRecipe(LV, ITEM_IMPORT_BUS[LV], ITEM_EXPORT_BUS[LV], OreDictNames.chestWood.toString());
         registerHatchBusRecipe(MV, ITEM_IMPORT_BUS[MV], ITEM_EXPORT_BUS[MV], BRONZE_CRATE.getStackForm());
         registerHatchBusRecipe(HV, ITEM_IMPORT_BUS[HV], ITEM_EXPORT_BUS[HV], STEEL_CRATE.getStackForm());
         registerHatchBusRecipe(EV, ITEM_IMPORT_BUS[EV], ITEM_EXPORT_BUS[EV], ALUMINIUM_CRATE.getStackForm());
@@ -989,11 +992,11 @@ public class MetaTileEntityMachineRecipeLoader {
 
         // ME Parts
 
-        if (Loader.isModLoaded(MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
 
-            ItemStack fluidInterface = GameRegistry.makeItemStack(MODID_APPENG + ":fluid_interface", 0, 1, null);
-            ItemStack normalInterface = GameRegistry.makeItemStack(MODID_APPENG + ":interface", 0, 1, null);
-            ItemStack accelerationCard = GameRegistry.makeItemStack(MODID_APPENG + ":material", 30, 2, null);
+            ItemStack fluidInterface = Mods.AppliedEnergistics2.getItem("fluid_interface");
+            ItemStack normalInterface = Mods.AppliedEnergistics2.getItem("interface");
+            ItemStack accelerationCard = Mods.AppliedEnergistics2.getItem("material", 30, 2);
 
             ASSEMBLER_RECIPES.recipeBuilder()
                     .input(FLUID_EXPORT_HATCH[EV])
@@ -1022,11 +1025,38 @@ public class MetaTileEntityMachineRecipeLoader {
                     .inputs(accelerationCard.copy())
                     .output(ITEM_IMPORT_BUS_ME)
                     .duration(300).EUt(VA[HV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(ITEM_IMPORT_BUS[IV])
+                    .inputs(normalInterface.copy())
+                    .input(CONVEYOR_MODULE_IV)
+                    .input(SENSOR_IV)
+                    .inputs(GTUtility.copy(4, accelerationCard))
+                    .output(STOCKING_BUS_ME)
+                    .duration(300).EUt(VA[IV]).buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(FLUID_IMPORT_HATCH[IV])
+                    .inputs(fluidInterface.copy())
+                    .input(ELECTRIC_PUMP_IV)
+                    .input(SENSOR_IV)
+                    .inputs(GTUtility.copy(4, accelerationCard))
+                    .output(STOCKING_HATCH_ME)
+                    .duration(300).EUt(VA[IV]).buildAndRegister();
         }
     }
 
     private static void registerHatchBusRecipe(int tier, MetaTileEntity inputBus, MetaTileEntity outputBus,
-                                               ItemStack extra) {
+                                               Object extraInput) {
+        GTRecipeInput extra;
+        if (extraInput instanceof ItemStack stack) {
+            extra = new GTRecipeItemInput(stack);
+        } else if (extraInput instanceof String oreName) {
+            extra = new GTRecipeOreInput(oreName);
+        } else {
+            throw new IllegalArgumentException("extraInput must be ItemStack or GTRecipeInput");
+        }
+
         // Glue recipe for ULV and LV
         // 250L for ULV, 500L for LV
         if (tier <= GTValues.LV) {
@@ -1115,29 +1145,18 @@ public class MetaTileEntityMachineRecipeLoader {
     }
 
     private static int getFluidAmount(int offsetTier) {
-        switch (offsetTier) {
-            case 0:
-                return 4;
-            case 1:
-                return 9;
-            case 2:
-                return 18;
-            case 3:
-                return 36;
-            case 4:
-                return 72;
-            case 5:
-                return 144;
-            case 6:
-                return 288;
-            case 7:
-                return 432;
-            case 8:
-                return 576;
-            case 9:
-            default:
-                return 720;
-        }
+        return switch (offsetTier) {
+            case 0 -> 4;
+            case 1 -> 9;
+            case 2 -> 18;
+            case 3 -> 36;
+            case 4 -> 72;
+            case 5 -> 144;
+            case 6 -> 288;
+            case 7 -> 432;
+            case 8 -> 576;
+            default -> 720;
+        };
     }
 
     // TODO clean this up with a CraftingComponent rework
@@ -1150,7 +1169,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_IV)
                 .input(cableGtSingle, Platinum, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[0])
+                .output(LASER_OUTPUT_HATCH_256[0])
                 .duration(300).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1160,7 +1179,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LuV)
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[1])
+                .output(LASER_OUTPUT_HATCH_256[1])
                 .duration(300).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1170,7 +1189,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_ZPM)
                 .input(cableGtSingle, VanadiumGallium, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[2])
+                .output(LASER_OUTPUT_HATCH_256[2])
                 .duration(300).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1180,7 +1199,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_UV)
                 .input(cableGtSingle, YttriumBariumCuprate, 4)
                 .circuitMeta(1)
-                .output(LASER_INPUT_HATCH_256[3])
+                .output(LASER_OUTPUT_HATCH_256[3])
                 .duration(300).EUt(VA[UV]).buildAndRegister();
 
         // 256A Laser Target Hatches
@@ -1191,7 +1210,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_IV)
                 .input(cableGtSingle, Platinum, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[0])
+                .output(LASER_INPUT_HATCH_256[0])
                 .duration(300).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1201,7 +1220,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LuV)
                 .input(cableGtSingle, NiobiumTitanium, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[1])
+                .output(LASER_INPUT_HATCH_256[1])
                 .duration(300).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1211,7 +1230,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_ZPM)
                 .input(cableGtSingle, VanadiumGallium, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[2])
+                .output(LASER_INPUT_HATCH_256[2])
                 .duration(300).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1221,7 +1240,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_UV)
                 .input(cableGtSingle, YttriumBariumCuprate, 4)
                 .circuitMeta(1)
-                .output(LASER_OUTPUT_HATCH_256[3])
+                .output(LASER_INPUT_HATCH_256[3])
                 .duration(300).EUt(VA[UV]).buildAndRegister();
 
         // 1024A Laser Source Hatches
@@ -1232,7 +1251,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_IV, 2)
                 .input(cableGtDouble, Platinum, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[0])
+                .output(LASER_OUTPUT_HATCH_1024[0])
                 .duration(600).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1242,7 +1261,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LuV, 2)
                 .input(cableGtDouble, NiobiumTitanium, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[1])
+                .output(LASER_OUTPUT_HATCH_1024[1])
                 .duration(600).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1252,7 +1271,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_ZPM, 2)
                 .input(cableGtDouble, VanadiumGallium, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[2])
+                .output(LASER_OUTPUT_HATCH_1024[2])
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1262,7 +1281,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_UV, 2)
                 .input(cableGtDouble, YttriumBariumCuprate, 4)
                 .circuitMeta(2)
-                .output(LASER_INPUT_HATCH_1024[3])
+                .output(LASER_OUTPUT_HATCH_1024[3])
                 .duration(600).EUt(VA[UV]).buildAndRegister();
 
         // 1024A Laser Target Hatches
@@ -1273,7 +1292,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_IV, 2)
                 .input(cableGtDouble, Platinum, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[0])
+                .output(LASER_INPUT_HATCH_1024[0])
                 .duration(600).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1283,7 +1302,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LuV, 2)
                 .input(cableGtDouble, NiobiumTitanium, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[1])
+                .output(LASER_INPUT_HATCH_1024[1])
                 .duration(600).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1293,7 +1312,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_ZPM, 2)
                 .input(cableGtDouble, VanadiumGallium, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[2])
+                .output(LASER_INPUT_HATCH_1024[2])
                 .duration(600).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1303,7 +1322,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_UV, 2)
                 .input(cableGtDouble, YttriumBariumCuprate, 4)
                 .circuitMeta(2)
-                .output(LASER_OUTPUT_HATCH_1024[3])
+                .output(LASER_INPUT_HATCH_1024[3])
                 .duration(600).EUt(VA[UV]).buildAndRegister();
 
         // 4096A Laser Source Hatches
@@ -1314,7 +1333,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(cableGtQuadruple, Platinum, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[0])
+                .output(LASER_OUTPUT_HATCH_4096[0])
                 .duration(1200).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1324,7 +1343,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LuV, 4)
                 .input(cableGtQuadruple, NiobiumTitanium, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[1])
+                .output(LASER_OUTPUT_HATCH_4096[1])
                 .duration(1200).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1334,7 +1353,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_ZPM, 4)
                 .input(cableGtQuadruple, VanadiumGallium, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[2])
+                .output(LASER_OUTPUT_HATCH_4096[2])
                 .duration(1200).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1344,7 +1363,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_UV, 4)
                 .input(cableGtQuadruple, YttriumBariumCuprate, 4)
                 .circuitMeta(3)
-                .output(LASER_INPUT_HATCH_4096[3])
+                .output(LASER_OUTPUT_HATCH_4096[3])
                 .duration(1200).EUt(VA[UV]).buildAndRegister();
 
         // 4096A Laser Target Hatches
@@ -1355,7 +1374,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_IV, 4)
                 .input(cableGtQuadruple, Platinum, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[0])
+                .output(LASER_INPUT_HATCH_4096[0])
                 .duration(1200).EUt(VA[IV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1365,7 +1384,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LuV, 4)
                 .input(cableGtQuadruple, NiobiumTitanium, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[1])
+                .output(LASER_INPUT_HATCH_4096[1])
                 .duration(1200).EUt(VA[LuV]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1375,7 +1394,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_ZPM, 4)
                 .input(cableGtQuadruple, VanadiumGallium, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[2])
+                .output(LASER_INPUT_HATCH_4096[2])
                 .duration(1200).EUt(VA[ZPM]).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -1385,7 +1404,7 @@ public class MetaTileEntityMachineRecipeLoader {
                 .input(ELECTRIC_PUMP_UV, 4)
                 .input(cableGtQuadruple, YttriumBariumCuprate, 4)
                 .circuitMeta(3)
-                .output(LASER_OUTPUT_HATCH_4096[3])
+                .output(LASER_INPUT_HATCH_4096[3])
                 .duration(1200).EUt(VA[UV]).buildAndRegister();
     }
 }

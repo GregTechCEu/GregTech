@@ -1,37 +1,47 @@
 package gregtech.common.gui.widget.appeng;
 
 import gregtech.common.gui.widget.appeng.slot.AEItemConfigSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEInputBus;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
 import appeng.api.storage.data.IAEItemStack;
 
-/**
- * @Author GlodBlock
- * @Description Display {@link IAEItemStack} config
- * @Date 2023/4/22-1:02
- */
 public class AEItemConfigWidget extends AEConfigWidget<IAEItemStack> {
 
-    public AEItemConfigWidget(int x, int y, IConfigurableSlot<IAEItemStack>[] config) {
-        super(x, y, config);
+    final ExportOnlyAEItemList itemList;
+
+    public AEItemConfigWidget(int x, int y, ExportOnlyAEItemList itemList) {
+        super(x, y, itemList.getInventory(), itemList.isStocking());
+        this.itemList = itemList;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     void init() {
-        int line;
+        final int size = (int) Math.sqrt(this.config.length);
         this.displayList = new IConfigurableSlot[this.config.length];
         this.cached = new IConfigurableSlot[this.config.length];
-        for (int index = 0; index < this.config.length; index++) {
-            this.displayList[index] = new MetaTileEntityMEInputBus.ExportOnlyAEItem();
-            this.cached[index] = new MetaTileEntityMEInputBus.ExportOnlyAEItem();
-            line = index / 8;
-            this.addWidget(new AEItemConfigSlot((index - line * 8) * 18, line * (18 * 2 + 2), this, index));
+        for (int h = 0; h < size; h++) {
+            for (int w = 0; w < size; w++) {
+                final int index = h * size + w;
+                this.displayList[index] = new ExportOnlyAEItemSlot();
+                this.cached[index] = new ExportOnlyAEItemSlot();
+                this.addWidget(new AEItemConfigSlot(w * 18, h * 18, this, index));
+            }
         }
+    }
+
+    public boolean hasStackInConfig(ItemStack stack) {
+        return itemList.hasStackInConfig(stack, true);
+    }
+
+    public boolean isAutoPull() {
+        return itemList.isAutoPull();
     }
 
     @Override

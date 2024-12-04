@@ -4,6 +4,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.api.worldgen.config.FillerConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.filler.BlockFiller;
@@ -26,7 +27,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fml.common.Loader;
 
 import com.google.common.collect.ImmutableList;
 import mezz.jei.api.ingredients.IIngredients;
@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import static gregtech.api.GTValues.M;
-import static gregtech.api.GTValues.MODID_CC;
 
 public class GTOreInfo implements IRecipeWrapper {
 
@@ -64,7 +63,7 @@ public class GTOreInfo implements IRecipeWrapper {
 
         // Don't default to vanilla Maximums and minimums if the values are not defined and Cubic Chunks is loaded
         // This could be improved to use the actual minimum and maximum heights, at the cost of including the CC Api
-        if (Loader.isModLoaded(MODID_CC)) {
+        if (Mods.CubicChunks.isModLoaded()) {
             this.maxHeight = definition.getMaximumHeight() == Integer.MAX_VALUE ? Integer.MAX_VALUE :
                     definition.getMaximumHeight();
             this.minHeight = definition.getMinimumHeight() == Integer.MIN_VALUE ? Integer.MIN_VALUE :

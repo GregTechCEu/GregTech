@@ -1,41 +1,33 @@
 # Checks daily to see if the buildscript is in need of an update
-name: Buildscript Updating
+name: Update Buildscript
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *" # "min hr day month year", so run once per day
+    - cron: '0 0 * * *' # "min hr day month year", so run once per day
 
 jobs:
   buildscript-update:
     runs-on: ubuntu-latest
+
     # Avoid running this workflow on forks
     if: github.repository == 'GregTechCEu/GregTech'
+
     permissions:
       contents: write
       pull-requests: write
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+      - name: Setup Build
+        uses: ./.github/actions/build_setup
 
-      - name: Run script updater
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: 'updateBuildScript'
-          generate-job-summary: false
-          gradle-home-cache-includes: |
-            caches
-            jdks
-            notifications
-            wrapper
+      - name: Run Buildscript Updater
+        run: ./gradlew updateBuildScript --warning-mode all --build-cache
 
-      - name: Get new script version
+      - name: Get New Buildscript Version
         id: version-check
         run: |
           new_version=$(head -1 build.gradle | sed -r 's|//version: (.*)|\1|g')
@@ -43,24 +35,19 @@ jobs:
 
       - name: Create Pull Request
         id: create-pull-request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         env:
           GITHUB_TOKEN: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
         with:
           token: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit-message: 'update build script version to ${{ steps.version-check.outputs.NEW_VERSION }}'
           branch: gha-update-buildscript
           title: Update build script version to ${{ steps.version-check.outputs.NEW_VERSION }}
           body: This pull request is created by the buildscript-update workflow
           labels: ignore changelog
 
-      - name: Enable pull request auto-merge
-        id: pull-request-auto-merge
+      - name: Enable Pull-Request Auto-Merge
         if: steps.create-pull-request.outputs.pull-request-operation == 'created'
-        uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}
-          pull-request-number: ${{ steps.create-pull-request.outputs.pull-request-number }}
-          merge-method: squash
+        run: gh pr merge --squash --auto "${{ steps.create-pull-request.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.BUILDSCRIPT_UPDATER_TOKEN }}

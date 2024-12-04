@@ -24,6 +24,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -89,14 +90,21 @@ import static gregtech.api.items.toolitem.ToolHelper.*;
  * Backing of every variation of a GT Tool
  */
 @Optional.InterfaceList({
-        @Optional.Interface(modid = GTValues.MODID_APPENG, iface = "appeng.api.implementations.items.IAEWrench"),
-        @Optional.Interface(modid = GTValues.MODID_BC, iface = "buildcraft.api.tools.IToolWrench"),
-        @Optional.Interface(modid = GTValues.MODID_COFH, iface = "cofh.api.item.IToolHammer"),
-        @Optional.Interface(modid = GTValues.MODID_EIO, iface = "crazypants.enderio.api.tool.ITool"),
-        @Optional.Interface(modid = GTValues.MODID_FR, iface = "forestry.api.arboriculture.IToolGrafter"),
-        @Optional.Interface(modid = GTValues.MODID_PROJRED_CORE, iface = "mrtjp.projectred.api.IScrewdriver"),
-        @Optional.Interface(modid = GTValues.MODID_RC, iface = "mods.railcraft.api.items.IToolCrowbar"),
-        @Optional.Interface(modid = GTValues.MODID_ECORE,
+        @Optional.Interface(modid = Mods.Names.APPLIED_ENERGISTICS2,
+                            iface = "appeng.api.implementations.items.IAEWrench"),
+        @Optional.Interface(modid = Mods.Names.BUILD_CRAFT_CORE,
+                            iface = "buildcraft.api.tools.IToolWrench"),
+        @Optional.Interface(modid = Mods.Names.COFH_CORE,
+                            iface = "cofh.api.item.IToolHammer"),
+        @Optional.Interface(modid = Mods.Names.ENDER_IO,
+                            iface = "crazypants.enderio.api.tool.ITool"),
+        @Optional.Interface(modid = Mods.Names.FORESTRY,
+                            iface = "forestry.api.arboriculture.IToolGrafter"),
+        @Optional.Interface(modid = Mods.Names.PROJECT_RED_CORE,
+                            iface = "mrtjp.projectred.api.IScrewdriver"),
+        @Optional.Interface(modid = Mods.Names.RAILCRAFT,
+                            iface = "mods.railcraft.api.items.IToolCrowbar"),
+        @Optional.Interface(modid = Mods.Names.ENDER_CORE,
                             iface = "com.enderio.core.common.interfaces.IOverlayRenderAware") })
 public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHammer, ITool, IToolGrafter,
                          IOverlayRenderAware, IScrewdriver, IToolCrowbar {

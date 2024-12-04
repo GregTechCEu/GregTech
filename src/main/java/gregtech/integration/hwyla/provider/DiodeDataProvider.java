@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.electric.MetaTileEntityDiode;
 
 import net.minecraft.client.resources.I18n;
@@ -26,7 +27,7 @@ public class DiodeDataProvider extends ElectricContainerDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.diode");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.diode");
     }
 
     @Override
@@ -59,9 +60,11 @@ public class DiodeDataProvider extends ElectricContainerDataProvider {
             final EnumFacing frontFacing = EnumFacing.byIndex(tag.getInteger("FrontFacing"));
 
             if (accessor.getSide() == frontFacing) { // output side
-                tooltip.add(I18n.format("gregtech.top.transform_output") + " " + outputAmperage + " A");
+                tooltip.add(I18n.format("gregtech.top.transform_output") + " " +
+                        TextFormattingUtil.formatNumbers(outputAmperage) + " A");
             } else {
-                tooltip.add(I18n.format("gregtech.top.transform_input") + " " + inputAmperage + " A");
+                tooltip.add(I18n.format("gregtech.top.transform_input") + " " +
+                        TextFormattingUtil.formatNumbers(inputAmperage) + " A");
             }
         }
         return tooltip;

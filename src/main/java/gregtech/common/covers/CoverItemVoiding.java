@@ -3,11 +3,6 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +21,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverItemVoiding extends CoverConveyor {
@@ -60,7 +65,7 @@ public class CoverItemVoiding extends CoverConveyor {
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
+            if (!itemFilterContainer.test(sourceStack)) {
                 continue;
             }
             myItemHandler.extractItem(srcIndex, Integer.MAX_VALUE, false);
@@ -68,29 +73,40 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    protected String getUITitle() {
-        return "cover.item.voiding.title";
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
+        return super.buildUI(guiData, guiSyncManager).height(192 - 22);
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle()));
-        this.itemFilterContainer.initUI(20, primaryGroup::addWidget);
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
+        var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
-        primaryGroup
-                .addWidget(new CycleButtonWidget(10, 92 + 23, 80, 18, this::isWorkingEnabled, this::setWorkingEnabled,
-                        "cover.voiding.label.disabled", "cover.voiding.label.enabled")
-                                .setTooltipHoverString("cover.voiding.tooltip"));
+        return super.createUI(mainPanel, guiSyncManager)
+                .child(new Row().height(18).widthRel(1f)
+                        .marginBottom(2)
+                        .child(new ToggleButton()
+                                .value(isWorking)
+                                .overlay(IKey.dynamic(() -> IKey.lang(this.isWorkingAllowed ?
+                                        "behaviour.soft_hammer.enabled" :
+                                        "behaviour.soft_hammer.disabled").get())
+                                        .color(Color.WHITE.darker(1)))
+                                .widthRel(0.6f)
+                                .left(0)));
+    }
 
-        primaryGroup.addWidget(new CycleButtonWidget(10, 112 + 23, 116, 18,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+    @Override
+    protected boolean createThroughputRow() {
+        return false;
+    }
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 125 + 82 + 16 + 24)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 125 + 16 + 24);
-        return builder.build(this, player);
+    @Override
+    protected boolean createConveyorModeRow() {
+        return false;
+    }
+
+    @Override
+    protected boolean createDistributionModeRow() {
+        return false;
     }
 
     @Override
@@ -137,7 +153,7 @@ public class CoverItemVoiding extends CoverConveyor {
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            if (!itemFilterContainer.testItemStack(stack)) {
+            if (!itemFilterContainer.test(stack)) {
                 return stack;
             }
             return ItemStack.EMPTY;

@@ -5,9 +5,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
-import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -165,7 +165,8 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        BlockPos pos = setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing, isFlipped)
+                        BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, frontFacing, upwardsFacing,
+                                isFlipped, structureDir)
                                 .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         TileEntity tileEntity = worldState.getTileEntity();
@@ -250,9 +251,10 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        BlockPos pos = setActualRelativeOffset(x, y, z, facing, controllerBase.getUpwardsFacing(),
-                                controllerBase.isFlipped())
-                                        .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
+                        BlockPos pos = RelativeDirection.setActualRelativeOffset(x, y, z, facing,
+                                controllerBase.getUpwardsFacing(),
+                                controllerBase.isFlipped(), structureDir)
+                                .add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                         worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
                         if (!world.getBlockState(pos).getMaterial().isReplaceable()) {
                             blocks.put(pos, world.getBlockState(pos));
@@ -382,13 +384,13 @@ public class BlockPattern {
                             blocks.put(pos, state);
                             world.setBlockState(pos, state);
                             TileEntity holder = world.getTileEntity(pos);
-                            if (holder instanceof IGregTechTileEntity) {
-                                MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY
-                                        .getObjectById(found.getItemDamage());
+                            if (holder instanceof IGregTechTileEntity igtte) {
+                                MTERegistry registry = GregTechAPI.mteManager
+                                        .getRegistry(found.getItem().getRegistryName().getNamespace());
+                                MetaTileEntity sampleMetaTileEntity = registry.getObjectById(found.getItemDamage());
                                 if (sampleMetaTileEntity != null) {
-                                    MetaTileEntity metaTileEntity = ((IGregTechTileEntity) holder)
-                                            .setMetaTileEntity(sampleMetaTileEntity);
-                                    metaTileEntity.onPlacement();
+                                    MetaTileEntity metaTileEntity = igtte.setMetaTileEntity(sampleMetaTileEntity);
+                                    metaTileEntity.onPlacement(player);
                                     blocks.put(pos, metaTileEntity);
                                     if (found.getTagCompound() != null) {
                                         metaTileEntity.initFromItemStackData(found.getTagCompound());
@@ -571,13 +573,14 @@ public class BlockPattern {
                             }
                         }
                         BlockInfo info = infos == null || infos.length == 0 ? BlockInfo.EMPTY : infos[0];
-                        BlockPos pos = setActualRelativeOffset(z, y, x, EnumFacing.NORTH, EnumFacing.UP, false);
+                        BlockPos pos = RelativeDirection.setActualRelativeOffset(z, y, x, EnumFacing.NORTH,
+                                EnumFacing.UP, false, structureDir);
                         // TODO
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());
                             holder.getMetaTileEntity().onPlacement();
-                            info = new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder);
+                            info = new BlockInfo(holder.getMetaTileEntity().getBlock().getDefaultState(), holder);
                         }
                         blocks.put(pos, info);
                         minX = Math.min(pos.getX(), minX);
@@ -623,88 +626,5 @@ public class BlockPattern {
             result[pos.getX() - finalMinX][pos.getY() - finalMinY][pos.getZ() - finalMinZ] = info;
         });
         return result;
-    }
-
-    private BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing, EnumFacing upwardsFacing,
-                                             boolean isFlipped) {
-        int[] c0 = new int[] { x, y, z }, c1 = new int[3];
-        if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) {
-            EnumFacing of = facing == EnumFacing.DOWN ? upwardsFacing : upwardsFacing.getOpposite();
-            for (int i = 0; i < 3; i++) {
-                switch (structureDir[i].getActualFacing(of)) {
-                    case UP -> c1[1] = c0[i];
-                    case DOWN -> c1[1] = -c0[i];
-                    case WEST -> c1[0] = -c0[i];
-                    case EAST -> c1[0] = c0[i];
-                    case NORTH -> c1[2] = -c0[i];
-                    case SOUTH -> c1[2] = c0[i];
-                }
-            }
-            int xOffset = upwardsFacing.getXOffset();
-            int zOffset = upwardsFacing.getZOffset();
-            int tmp;
-            if (xOffset == 0) {
-                tmp = c1[2];
-                c1[2] = zOffset > 0 ? c1[1] : -c1[1];
-                c1[1] = zOffset > 0 ? -tmp : tmp;
-            } else {
-                tmp = c1[0];
-                c1[0] = xOffset > 0 ? c1[1] : -c1[1];
-                c1[1] = xOffset > 0 ? -tmp : tmp;
-            }
-            if (isFlipped) {
-                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
-                    c1[0] = -c1[0]; // flip X-axis
-                } else {
-                    c1[2] = -c1[2]; // flip Z-axis
-                }
-            }
-        } else {
-            for (int i = 0; i < 3; i++) {
-                switch (structureDir[i].getActualFacing(facing)) {
-                    case UP -> c1[1] = c0[i];
-                    case DOWN -> c1[1] = -c0[i];
-                    case WEST -> c1[0] = -c0[i];
-                    case EAST -> c1[0] = c0[i];
-                    case NORTH -> c1[2] = -c0[i];
-                    case SOUTH -> c1[2] = c0[i];
-                }
-            }
-            if (upwardsFacing == EnumFacing.WEST || upwardsFacing == EnumFacing.EAST) {
-                int xOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getXOffset() :
-                        facing.rotateY().getOpposite().getXOffset();
-                int zOffset = upwardsFacing == EnumFacing.WEST ? facing.rotateY().getZOffset() :
-                        facing.rotateY().getOpposite().getZOffset();
-                int tmp;
-                if (xOffset == 0) {
-                    tmp = c1[2];
-                    c1[2] = zOffset > 0 ? -c1[1] : c1[1];
-                    c1[1] = zOffset > 0 ? tmp : -tmp;
-                } else {
-                    tmp = c1[0];
-                    c1[0] = xOffset > 0 ? -c1[1] : c1[1];
-                    c1[1] = xOffset > 0 ? tmp : -tmp;
-                }
-            } else if (upwardsFacing == EnumFacing.SOUTH) {
-                c1[1] = -c1[1];
-                if (facing.getXOffset() == 0) {
-                    c1[0] = -c1[0];
-                } else {
-                    c1[2] = -c1[2];
-                }
-            }
-            if (isFlipped) {
-                if (upwardsFacing == EnumFacing.NORTH || upwardsFacing == EnumFacing.SOUTH) {
-                    if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH) {
-                        c1[0] = -c1[0]; // flip X-axis
-                    } else {
-                        c1[2] = -c1[2]; // flip Z-axis
-                    }
-                } else {
-                    c1[1] = -c1[1]; // flip Y-axis
-                }
-            }
-        }
-        return new BlockPos(c1[0], c1[1], c1[2]);
     }
 }

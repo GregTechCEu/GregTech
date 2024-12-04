@@ -31,8 +31,8 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
 
     public CircuitAssemblerRecipeBuilder solderMultiplier(int multiplier) {
         if (1 > GTValues.L * multiplier || GTValues.L * multiplier > 64000) {
-            GTLog.logger.error("Fluid multiplier cannot exceed 64000mb total. Multiplier: {}", multiplier);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Fluid multiplier cannot exceed 64000mb total. Multiplier: {}", multiplier,
+                    new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
         }
         this.solderMultiplier = multiplier;

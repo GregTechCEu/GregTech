@@ -3,9 +3,7 @@ pluginManagement {
         maven {
             // RetroFuturaGradle
             name 'GTNH Maven'
-            //noinspection HttpUrlsUsage
-            url 'http://jenkins.usrv.eu:8081/nexus/content/groups/public/'
-            allowInsecureProtocol = true
+            url 'https://nexus.gtnewhorizons.com/repository/public/'
             //noinspection GroovyAssignabilityCheck
             mavenContent {
                 includeGroup 'com.gtnewhorizons'

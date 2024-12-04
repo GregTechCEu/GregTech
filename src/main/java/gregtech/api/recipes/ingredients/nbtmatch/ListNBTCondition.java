@@ -19,8 +19,7 @@ public class ListNBTCondition extends NBTCondition {
         super(NBTTagType.LIST, nbtKey, value);
         this.listTagType = listTagType;
         if (listTagType == null) {
-            GTLog.logger.error("ListNBTCondition must not have null parameters.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("ListNBTCondition must not have null parameters.", new Throwable());
         }
     }
 

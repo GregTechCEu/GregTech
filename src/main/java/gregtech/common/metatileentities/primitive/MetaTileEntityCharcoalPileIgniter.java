@@ -5,7 +5,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IWorkable;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -13,6 +12,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.*;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -22,7 +22,6 @@ import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFireball;
@@ -337,11 +336,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     protected boolean openGUIOnRightClick() {
         return false;
     }
@@ -449,7 +443,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @ZenMethod("addWallBlock")
-    @Optional.Method(modid = GTValues.MODID_CT)
+    @Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     @SuppressWarnings("unused")
     public static void addWallBlockCT(@NotNull IBlock block) {
         WALL_BLOCKS.add(CraftTweakerMC.getBlock(block));

@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 import gregtech.api.GTValues;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.capability.impl.LaserContainerHandler;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -12,7 +11,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -63,17 +61,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     protected boolean openGUIOnRightClick() {
-        return false;
-    }
-
-    @Override
-    public boolean canPartShare() {
         return false;
     }
 
@@ -114,7 +102,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", amperage));
         }
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", buffer.getEnergyCapacity()));
-        tooltip.add(I18n.format("gregtech.universal.disabled"));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
     @NotNull

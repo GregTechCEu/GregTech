@@ -2,11 +2,11 @@ package gregtech.client.renderer.handler;
 
 import gregtech.api.cover.CoverUtil;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.util.ModCompatibility;
 import gregtech.client.model.pipeline.VertexLighterFlatSpecial;
 import gregtech.client.model.pipeline.VertexLighterSmoothAoSpecial;
 import gregtech.client.utils.AdvCCRSConsumer;
 import gregtech.client.utils.FacadeBlockAccess;
+import gregtech.client.utils.ItemRenderCompat;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
 
@@ -82,7 +82,7 @@ public class FacadeRenderer implements IItemRenderer {
 
     @Override
     public void renderItem(ItemStack rawStack, ItemCameraTransforms.TransformType transformType) {
-        ItemStack itemStack = ModCompatibility.getRealItemStack(rawStack);
+        ItemStack itemStack = ItemRenderCompat.getRepresentedStack(rawStack);
         if (!(itemStack.getItem() instanceof MetaItem<?>)) {
             return;
         }

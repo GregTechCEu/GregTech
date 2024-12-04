@@ -1,0 +1,64 @@
+# Publishes the project to GitHub Releases, CurseForge, and Modrinth
+name: Publish Project
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+' # any SemVer tag, e.g. v1.2.3
+
+env:
+  # link to the changelog with a format code for the version
+  CHANGELOG_LOCATION: "Changelog is available [here](https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }})"
+  # type of release
+  RELEASE_TYPE: 'beta'
+
+concurrency:
+  group: publish-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # needed to create GitHub releases
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Build
+        uses: ./.github/actions/build_setup
+
+      - name: Build Project
+        run: ./gradlew build --warning-mode all --build-cache
+
+      - name: Publish to GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "build/libs/*.jar"
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+      - name: Publish to Maven
+        env:
+          MAVEN_USER: "${{ secrets.MAVEN_USER }}"
+          MAVEN_PASSWORD: "${{ secrets.MAVEN_PASSWORD }}"
+        run: ./gradlew publish
+
+      - name: Publish to Curseforge
+        env:
+          CURSEFORGE_API_KEY: "${{ secrets.CURSEFORGE_API_KEY }}"
+          CURSEFORGE_PROJECT_ID: "${{ secrets.CURSEFORGE_PROJECT_ID }}"
+          CHANGELOG_LOCATION: "${{ env.CHANGELOG_LOCATION }}"
+          RELEASE_TYPE: "${{ env.RELEASE_TYPE }}"
+        run: ./gradlew curseforge --warning-mode all --build-cache
+
+      - name: Publish to Modrinth
+        env:
+          MODRINTH_API_KEY: "${{ secrets.MODRINTH_API_KEY }}"
+          MODRINTH_PROJECT_ID: "${{ secrets.MODRINTH_PROJECT_ID }}"
+          CHANGELOG_LOCATION: "${{ env.CHANGELOG_LOCATION }}"
+          RELEASE_TYPE: "${{ env.RELEASE_TYPE }}"
+        run: ./gradlew modrinth --warning-mode all --build-cache

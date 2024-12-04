@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.laser;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
@@ -9,6 +8,7 @@ import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.laser.net.WorldLaserPipeNet;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserPipe;
 
@@ -39,11 +39,12 @@ public class BlockLaserPipe extends BlockPipe<LaserPipeType, LaserPipeProperties
     public BlockLaserPipe(@NotNull LaserPipeType pipeType) {
         this.pipeType = pipeType;
         this.properties = LaserPipeProperties.INSTANCE;
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WIRE_CUTTER, 1);
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         return LaserPipeRenderer.INSTANCE.getParticleTexture((TileEntityLaserPipe) world.getTileEntity(blockPos));
     }

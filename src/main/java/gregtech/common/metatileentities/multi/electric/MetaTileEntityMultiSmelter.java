@@ -4,13 +4,20 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.logic.OCParams;
+import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -24,13 +31,16 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static gregtech.api.recipes.logic.OverclockingLogic.standardOC;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
@@ -194,6 +204,13 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         @Override
         public ParallelLogicType getParallelLogicType() {
             return ParallelLogicType.APPEND_ITEMS;
+        }
+
+        @Override
+        protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
+                                            @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
+            standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
+                    getOverclockingVoltageFactor());
         }
 
         @Override

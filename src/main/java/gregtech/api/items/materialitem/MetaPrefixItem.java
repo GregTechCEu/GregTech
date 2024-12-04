@@ -1,7 +1,6 @@
 package gregtech.api.items.materialitem;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
@@ -15,6 +14,7 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -58,7 +58,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         super();
         this.registry = registry;
         this.prefix = orePrefix;
-        this.setCreativeTab(GregTechAPI.TAB_GREGTECH_MATERIALS);
+        this.setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MATERIALS);
     }
 
     @Override
@@ -85,11 +85,7 @@ public class MetaPrefixItem extends StandardMetaItem {
             OreDictUnifier.registerOre(item, prefix.getAlternativeOreName(), material);
         }
 
-        if (material == Materials.Plutonium239) {
-            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");
-        } else if (material == Materials.Uranium238) {
-            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "238");
-        } else if (material == Materials.Saltpeter) {
+        if (material == Materials.Saltpeter) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString());
         }
     }

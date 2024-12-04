@@ -4,18 +4,24 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.IBlockOre;
-import gregtech.api.util.ModCompatibility;
+import gregtech.api.util.Mods;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.pipe.*;
+import gregtech.client.renderer.pipe.CableRenderer;
+import gregtech.client.renderer.pipe.FluidPipeRenderer;
+import gregtech.client.renderer.pipe.ItemPipeRenderer;
+import gregtech.client.renderer.pipe.LaserPipeRenderer;
+import gregtech.client.renderer.pipe.OpticalPipeRenderer;
+import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
@@ -28,6 +34,7 @@ import gregtech.common.items.ToolItems;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,13 +48,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -55,7 +62,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-import codechicken.lib.texture.TextureUtils;
 import org.jetbrains.annotations.NotNull;
 import paulscode.sound.SoundSystemConfig;
 
@@ -72,7 +78,7 @@ public class ClientProxy extends CommonProxy {
 
         SoundSystemConfig.setNumberNormalChannels(ConfigHolder.client.maxNumSounds);
 
-        if (!Loader.isModLoaded(GTValues.MODID_CTM)) {
+        if (!Mods.CTM.isModLoaded()) {
             Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(),
                     MetadataSectionCTM.class);
             MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);
@@ -87,8 +93,6 @@ public class ClientProxy extends CommonProxy {
         OpticalPipeRenderer.INSTANCE.preInit();
         LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
-        TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
-        TextureUtils.addIconRegister(PipeRenderer::initializeRestrictor);
     }
 
     @Override
@@ -100,8 +104,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onPostLoad() {
         super.onPostLoad();
-        TerminalRegistry.initTerminalFiles();
-        ModCompatibility.initCompat();
+        ItemRenderCompat.init();
         FacadeRenderer.init();
     }
 
@@ -109,6 +112,19 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerColors();
         MetaItems.registerColors();
         ToolItems.registerColors();
+    }
+
+    @SubscribeEvent
+    public static void textureStitchPre(@NotNull TextureStitchEvent.Pre event) {
+        TextureMap map = event.getMap();
+        GTFluidRegistration.INSTANCE.registerSprites(map);
+        PipeRenderer.initializeRestrictor(map);
+        Textures.register(map);
+        CableRenderer.INSTANCE.registerIcons(map);
+        FluidPipeRenderer.INSTANCE.registerIcons(map);
+        ItemPipeRenderer.INSTANCE.registerIcons(map);
+        OpticalPipeRenderer.INSTANCE.registerIcons(map);
+        LaserPipeRenderer.INSTANCE.registerIcons(map);
     }
 
     @SubscribeEvent

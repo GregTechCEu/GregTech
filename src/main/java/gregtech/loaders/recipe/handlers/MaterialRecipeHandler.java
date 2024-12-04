@@ -13,6 +13,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.recipe.CraftingComponent;
 
@@ -90,14 +91,28 @@ public class MaterialRecipeHandler {
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesAmount(2)
+                        .explosives(new ItemStack(MetaBlocks.POWDERBARREL, 8))
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copy(4, dustStack))
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
-                        .explosivesType(MetaItems.DYNAMITE.getStackForm())
+                        .explosives(4)
+                        .buildAndRegister();
+
+                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
+                        .inputs(GTUtility.copy(4, dustStack))
+                        .outputs(GTUtility.copy(3, gemStack))
+                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
+                        .explosives(MetaItems.DYNAMITE.getStackForm(2))
+                        .buildAndRegister();
+
+                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
+                        .inputs(GTUtility.copy(4, dustStack))
+                        .outputs(GTUtility.copy(3, gemStack))
+                        .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
+                        .explosives(new ItemStack(MetaBlocks.ITNT))
                         .buildAndRegister();
             }
 
@@ -286,10 +301,10 @@ public class MaterialRecipeHandler {
             }
         }
 
-        if (material.hasFluid()) {
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
-                    .fluidInputs(material.getFluid(L))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                     .outputs(OreDictUnifier.get(ingotPrefix, material))
                     .duration(20).EUt(VA[ULV])
                     .buildAndRegister();
@@ -424,10 +439,10 @@ public class MaterialRecipeHandler {
                     .output(ingot, material)
                     .buildAndRegister();
 
-            if (material.hasFluid()) {
+            if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
                 RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                         .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
-                        .fluidInputs(material.getFluid(L))
+                        .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(L))
                         .outputs(OreDictUnifier.get(orePrefix, material, 9))
                         .duration((int) material.getMass())
                         .EUt(VA[ULV])
@@ -465,10 +480,11 @@ public class MaterialRecipeHandler {
     public static void processBlock(OrePrefix blockPrefix, Material material, DustProperty property) {
         ItemStack blockStack = OreDictUnifier.get(blockPrefix, material);
         long materialAmount = blockPrefix.getMaterialAmount(material);
-        if (material.hasFluid()) {
+        if (material.hasFluid() && material.getProperty(PropertyKey.FLUID).solidifiesFrom() != null) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_BLOCK)
-                    .fluidInputs(material.getFluid((int) (materialAmount * L / M)))
+                    .fluidInputs(material.getProperty(PropertyKey.FLUID).solidifiesFrom(
+                            ((int) (materialAmount * L / M))))
                     .outputs(blockStack)
                     .duration((int) material.getMass()).EUt(VA[ULV])
                     .buildAndRegister();

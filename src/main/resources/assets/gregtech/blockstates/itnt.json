@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_bottom_top",
+    "textures": {
+      "bottom": "minecraft:blocks/tnt_bottom",
+      "top": "minecraft:blocks/tnt_top",
+      "side": "gregtech:blocks/misc/itnt"
+    }
+  },
+  "variants": {
+    "normal": [
+      {}
+    ]
+  }
+}

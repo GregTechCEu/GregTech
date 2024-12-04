@@ -1,13 +1,14 @@
 package gregtech.api.metatileentity;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.Cover;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.Mods;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.particle.GTNameTagParticle;
 import gregtech.client.particle.GTParticleManager;
@@ -24,12 +25,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional.Interface;
 import net.minecraftforge.fml.common.Optional.InterfaceList;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -54,10 +58,11 @@ import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
 
 @InterfaceList(value = {
         @Interface(iface = "appeng.api.networking.security.IActionHost",
-                   modid = GTValues.MODID_APPENG,
+                   modid = Mods.Names.APPLIED_ENERGISTICS2,
                    striprefs = true),
-        @Interface(iface = "appeng.me.helpers.IGridProxyable", modid = GTValues.MODID_APPENG, striprefs = true),
-})
+        @Interface(iface = "appeng.me.helpers.IGridProxyable",
+                   modid = Mods.Names.APPLIED_ENERGISTICS2,
+                   striprefs = true) })
 public class MetaTileEntityHolder extends TickableTileEntityBase implements IGregTechTileEntity, IUIHolder,
                                   IWorldNameable, IActionHost, IGridProxyable {
 
@@ -84,13 +89,18 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
      * Also can use certain data to preinit the block before data is synced
      */
     @Override
-    public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
+    public MetaTileEntity setMetaTileEntity(@NotNull MetaTileEntity sampleMetaTileEntity,
+                                            @Nullable NBTTagCompound tagCompound) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
+        if (tagCompound != null && !tagCompound.isEmpty())
+            getMetaTileEntity().readFromNBT(tagCompound);
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             writeCustomData(INITIALIZE_MTE, buffer -> {
-                buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(getMetaTileEntity().metaTileEntityId));
+                buffer.writeVarInt(sampleMetaTileEntity.getRegistry().getNetworkId());
+                buffer.writeVarInt(
+                        sampleMetaTileEntity.getRegistry().getIdByObjectName(getMetaTileEntity().metaTileEntityId));
                 getMetaTileEntity().writeInitialSyncData(buffer);
             });
             // just to update neighbours so cables and other things will work properly
@@ -126,7 +136,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (compound.hasKey("MetaId", NBT.TAG_STRING)) {
             String metaTileEntityIdRaw = compound.getString("MetaId");
             ResourceLocation metaTileEntityId = new ResourceLocation(metaTileEntityIdRaw);
-            MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
+            MTERegistry registry = GregTechAPI.mteManager.getRegistry(metaTileEntityId.getNamespace());
+            MetaTileEntity sampleMetaTileEntity = registry.getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 setRawMetaTileEntity(sampleMetaTileEntity.createMetaTileEntity(this));
@@ -136,9 +147,9 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
                  */
                 this.metaTileEntity.readFromNBT(metaTileEntityData);
             } else {
-                GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
+                GTLog.logger.error("Failed to load MetaTileEntity with invalid ID {}", metaTileEntityIdRaw);
             }
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            if (Mods.AppliedEnergistics2.isModLoaded()) {
                 readFromNBT_AENetwork(compound);
             }
         }
@@ -154,7 +165,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             NBTTagCompound metaTileEntityData = new NBTTagCompound();
             metaTileEntity.writeToNBT(metaTileEntityData);
             compound.setTag("MetaTileEntity", metaTileEntityData);
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+            if (Mods.AppliedEnergistics2.isModLoaded()) {
                 writeToNBT_AENetwork(compound);
             }
         }
@@ -167,7 +178,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
             metaTileEntity.invalidate();
         }
         super.invalidate();
-        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
             invalidateAE();
         }
     }
@@ -297,7 +308,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         buf.writeString(getName());
         if (metaTileEntity != null) {
             buf.writeBoolean(true);
-            buf.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
+            buf.writeVarInt(metaTileEntity.getRegistry().getNetworkId());
+            buf.writeVarInt(metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId));
             metaTileEntity.writeInitialSyncData(buf);
         } else buf.writeBoolean(false);
     }
@@ -325,8 +337,10 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
      * @param buf the buffer to read data from
      */
     private void receiveMTEInitializationData(@NotNull PacketBuffer buf) {
+        int networkId = buf.readVarInt();
         int metaTileEntityId = buf.readVarInt();
-        setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(networkId);
+        setMetaTileEntity(registry.getObjectById(metaTileEntityId));
         this.metaTileEntity.onPlacement();
         this.metaTileEntity.receiveInitialSyncData(buf);
         scheduleRenderUpdate();
@@ -375,7 +389,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         if (metaTileEntity != null) {
             metaTileEntity.onUnload();
         }
-        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
             onChunkUnloadAE();
         }
     }
@@ -384,7 +398,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     public boolean shouldRefresh(@NotNull World world, @NotNull BlockPos pos, IBlockState oldState,
                                  IBlockState newState) {
         return oldState.getBlock() != newState.getBlock(); // MetaTileEntityHolder should never refresh (until block
-                                                           // changes)
+        // changes)
     }
 
     @Override
@@ -505,7 +519,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     @Nullable
     @Override
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public IGridNode getGridNode(@NotNull AEPartLocation part) {
         // Forbid it connects the faces it shouldn't connect.
         if (this.getCableConnectionType(part) == AECableType.NONE) {
@@ -517,44 +531,44 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
 
     @NotNull
     @Override
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return metaTileEntity == null ? AECableType.NONE : metaTileEntity.getCableConnectionType(part);
     }
 
     @Override
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void securityBreak() {}
 
     @NotNull
     @Override
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public IGridNode getActionableNode() {
         AENetworkProxy proxy = getProxy();
         return proxy == null ? null : proxy.getNode();
     }
 
     @Override
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AENetworkProxy getProxy() {
         return metaTileEntity == null ? null : metaTileEntity.getProxy();
     }
 
     @Override
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public DimensionalCoord getLocation() {
         return new DimensionalCoord(this);
     }
 
     @Override
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void gridChanged() {
         if (metaTileEntity != null) {
             metaTileEntity.gridChanged();
         }
     }
 
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void readFromNBT_AENetwork(NBTTagCompound data) {
         AENetworkProxy proxy = getProxy();
         if (proxy != null) {
@@ -562,7 +576,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         }
     }
 
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void writeToNBT_AENetwork(NBTTagCompound data) {
         AENetworkProxy proxy = getProxy();
         if (proxy != null) {
@@ -570,7 +584,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         }
     }
 
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     void onChunkUnloadAE() {
         AENetworkProxy proxy = getProxy();
         if (proxy != null) {
@@ -578,7 +592,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
         }
     }
 
-    @Method(modid = GTValues.MODID_APPENG)
+    @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     void invalidateAE() {
         AENetworkProxy proxy = getProxy();
         if (proxy != null) {

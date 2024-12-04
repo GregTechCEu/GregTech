@@ -1,6 +1,5 @@
 package gregtech.api.fluids;
 
-import gregtech.api.GTValues;
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.fluids.store.FluidStorageKey;
@@ -12,13 +11,13 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Loader;
 
 import com.google.common.base.Preconditions;
 import io.github.drmanganese.topaddons.reference.Colors;
@@ -380,7 +379,7 @@ public class FluidBuilder {
         }
 
         // register cross mod compat for colors
-        if (Loader.isModLoaded(GTValues.MODID_TOP_ADDONS)) {
+        if (Mods.TOPAddons.isModLoaded()) {
             int displayColor = isColorEnabled || material == null ? color : material.getMaterialRGB();
             Colors.FLUID_NAME_COLOR_MAP.put(name, displayColor);
         }
@@ -391,7 +390,7 @@ public class FluidBuilder {
     private void determineName(@Nullable Material material, @Nullable FluidStorageKey key) {
         if (name != null) return;
         if (material == null || key == null) throw new IllegalArgumentException("Fluid must have a name");
-        name = key.getRegistryNameFor(material.getName());
+        name = key.getRegistryNameFor(material);
     }
 
     private void determineTextures(@Nullable Material material, @Nullable FluidStorageKey key, @NotNull String modid) {

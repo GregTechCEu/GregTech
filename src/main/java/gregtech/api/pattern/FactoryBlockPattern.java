@@ -30,7 +30,7 @@ public class FactoryBlockPattern {
         structureDir[1] = stringDir;
         structureDir[2] = aisleDir;
         int flags = 0;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < this.structureDir.length; i++) {
             switch (structureDir[i]) {
                 case UP:
                 case DOWN:
@@ -125,6 +125,14 @@ public class FactoryBlockPattern {
     public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
         this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher).sort());
         return this;
+    }
+
+    public FactoryBlockPattern where(String symbol, TraceabilityPredicate blockMatcher) {
+        if (symbol.length() == 1) {
+            return where(symbol.charAt(0), blockMatcher);
+        }
+        throw new IllegalArgumentException(
+                String.format("Symbol \"%s\" is invalid! It must be exactly one character!", symbol));
     }
 
     public BlockPattern build() {

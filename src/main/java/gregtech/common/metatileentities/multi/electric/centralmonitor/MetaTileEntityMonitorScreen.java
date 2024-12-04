@@ -202,20 +202,69 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     public int getX() {
-        if (this.getController() != null) {
-            if (this.getController().getPos().getX() - this.getPos().getX() != 0) {
-                return Math.abs(this.getController().getPos().getX() - this.getPos().getX()) - 1;
-            } else {
-                return Math.abs(this.getController().getPos().getZ() - this.getPos().getZ()) - 1;
+        MultiblockControllerBase controller = this.getController();
+        if (controller != null) {
+            EnumFacing spin = controller.getUpwardsFacing();
+            switch (controller.getFrontFacing().getAxis()) {
+                case Y -> {
+                    if (spin.getAxis() == EnumFacing.Axis.X)
+                        return Math.abs(this.getController().getPos().getZ() - this.getPos().getZ()) - 1;
+                    else
+                        return Math.abs(this.getController().getPos().getX() - this.getPos().getX()) - 1;
+                }
+                case X -> {
+                    if (spin.getAxis() == EnumFacing.Axis.Z)
+                        return Math.abs(this.getController().getPos().getZ() - this.getPos().getZ()) - 1;
+                    else
+                        return Math.abs(this.getController().getPos().getY() - this.getPos().getY()) - 1;
+                }
+                default -> {
+                    if (spin.getAxis() == EnumFacing.Axis.Z)
+                        return Math.abs(this.getController().getPos().getX() - this.getPos().getX()) - 1;
+                    else
+                        return Math.abs(this.getController().getPos().getY() - this.getPos().getY()) - 1;
+                }
             }
         }
         return -1;
     }
 
     public int getY() {
-        if (this.getController() != null) {
-            return ((MetaTileEntityCentralMonitor) this.getController()).height -
-                    (this.getPos().getY() + 1 - this.getController().getPos().getY()) - 1;
+        MultiblockControllerBase controller = this.getController();
+        if (controller != null) {
+            EnumFacing spin = controller.getUpwardsFacing();
+            EnumFacing facing = controller.getFrontFacing();
+            int height = ((MetaTileEntityCentralMonitor) this.getController()).height;
+            switch (facing.getAxis()) {
+                case Y -> {
+                    if (spin.getAxis() == EnumFacing.Axis.X)
+                        return height -
+                                (Math.abs(controller.getPos().getX() - spin.getXOffset() - this.getPos().getX())) - 1;
+                    else
+                        return height -
+                                (Math.abs(controller.getPos().getZ() - spin.getZOffset() - this.getPos().getZ())) - 1;
+                }
+                case X -> {
+                    if (spin.getAxis() == EnumFacing.Axis.Z)
+                        return height -
+                                (Math.abs(controller.getPos().getY() + spin.getZOffset() - this.getPos().getY())) - 1;
+                    else
+                        return height - (Math.abs(
+                                controller.getPos().getZ() + spin.getXOffset() * facing.rotateY().getZOffset() -
+                                        this.getPos().getZ())) -
+                                1;
+                }
+                default -> {
+                    if (spin.getAxis() == EnumFacing.Axis.Z)
+                        return height -
+                                (Math.abs(controller.getPos().getY() + spin.getZOffset() - this.getPos().getY())) - 1;
+                    else
+                        return height - (Math.abs(
+                                controller.getPos().getX() + spin.getXOffset() * facing.rotateY().getXOffset() -
+                                        this.getPos().getX())) -
+                                1;
+                }
+            }
         }
         return -1;
     }
@@ -800,6 +849,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(null, -1);
     }

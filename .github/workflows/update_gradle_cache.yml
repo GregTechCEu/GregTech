@@ -1,39 +1,30 @@
-# Updates the Gradle Cache when relevant files change
+# Updates the Gradle Cache when necessary
 name: Update Gradle Cache
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
-    paths:
-      - "gradle**" # covers gradle folder, gradle.properties, gradlew
-      - "build.gradle*"
-      - "settings.gradle*"
-      - "src/main/resources/*_at.cfg" # access transformers
+    paths: ['gradle/**', '**.gradle', 'gradle.properties', 'gradlew**', 'src/main/resources/*_at.cfg']
+  workflow_dispatch:
+
+concurrency:
+  group: gradle-cache-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  Update_Cache:
+  update-cache:
+    name: Update Grade Cache
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
+      - name: Setup Build
+        uses: ./.github/actions/build_setup
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          update-cache: true
 
-      - name: Update Cache
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: 'test --build-cache --no-daemon' # disable daemon since only one gradle operation will happen
-          generate-job-summary: false
-          gradle-home-cache-includes: |
-            caches
-            jdks
-            notifications
-            wrapper
-          cache-write-only: true
+      - name: Build Project with Gradle
+        run: ./gradlew assemble --warning-mode all --build-cache

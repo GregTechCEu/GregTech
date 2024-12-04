@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMapBuilder;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -24,6 +25,7 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityItemB
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -38,8 +40,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 
 public class IParallelableRecipeLogicTest {
 
@@ -237,7 +238,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(120));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(120L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
@@ -290,7 +291,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(60));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(60L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(100));
@@ -346,7 +347,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(1920));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(1920L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
@@ -399,7 +400,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(960));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(960L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(10));
@@ -446,7 +447,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(4));
 
         // Check that the EUt of the recipe was not modified
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30L));
 
         // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(400));
@@ -493,7 +494,7 @@ public class IParallelableRecipeLogicTest {
         MatcherAssert.assertThat(parallelRecipe.getParallel(), is(2));
 
         // Check that the EUt of the recipe was not modified
-        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30));
+        MatcherAssert.assertThat(parallelRecipe.getEUt(), is(30L));
 
         // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(parallelRecipe.getDuration(), is(200));
@@ -525,7 +526,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -568,7 +569,7 @@ public class IParallelableRecipeLogicTest {
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
         // Check that the EUt of the recipe was multiplied correctly
-        MatcherAssert.assertThat(outputRecipe.getEUt(), is(120));
+        MatcherAssert.assertThat(outputRecipe.getEUt(), is(120L));
 
         // Check if the recipe duration was not modified
         MatcherAssert.assertThat(outputRecipe.getDuration(), is(100));
@@ -600,7 +601,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -665,7 +666,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -714,6 +715,44 @@ public class IParallelableRecipeLogicTest {
     }
 
     @Test
+    public void findParallelRecipe_SmallMaxStackSize() {
+        MetaTileEntityElectricBlastFurnace EBF = initEBF(521);
+
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMapBuilder<>("electric_blast_furnace", new BlastRecipeBuilder())
+                .itemInputs(3).itemOutputs(2).fluidInputs(1).fluidOutputs(1).build();
+
+        // Create a simple recipe to be used for testing
+        // Use an output item with small max stack size
+        Recipe recipe = map.recipeBuilder()
+                .inputs(new ItemStack(Blocks.COBBLESTONE))
+                .outputs(new ItemStack(Items.ELYTRA))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        IParallelableRecipeLogic logic = new ParallelableTestLogic(EBF, map, ParallelLogicType.MULTIPLY);
+
+        // Populate the Input Bus
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
+
+        // Saturate the export bus, except for one slot
+        exportItemBus.getExportItems().insertItem(0, new ItemStack(Blocks.BONE_BLOCK, 16), false);
+        exportItemBus.getExportItems().insertItem(1, new ItemStack(Blocks.BONE_BLOCK, 16), false);
+        exportItemBus.getExportItems().insertItem(2, new ItemStack(Blocks.BONE_BLOCK, 16), false);
+
+        RecipeBuilder<?> parallelRecipe = logic.findMultipliedParallelRecipe(map, recipe,
+                importItemBus.getImportItems(), importFluidBus.getImportFluids(),
+                exportItemBus.getExportItems(), exportFluidBus.getExportFluids(), parallelLimit, Integer.MAX_VALUE,
+                EBF);
+
+        MatcherAssert.assertThat(parallelRecipe, notNullValue());
+        MatcherAssert.assertThat(parallelRecipe.getParallel(), is(1));
+    }
+
+    @Test
     public void applyParallelBonus_Test() {
         MetaTileEntityElectricBlastFurnace EBF = initEBF(518);
 
@@ -732,7 +771,7 @@ public class IParallelableRecipeLogicTest {
             }
 
             @Override
-            protected boolean drawEnergy(int recipeEUt, boolean simulate) {
+            protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
             }
 
@@ -775,7 +814,7 @@ public class IParallelableRecipeLogicTest {
                 exportFluidBus.getExportFluids(), 128, parallelLimit);
 
         // Check that the EUt of the recipe was not modified
-        MatcherAssert.assertThat(outputRecipe.getEUt(), is(1));
+        MatcherAssert.assertThat(outputRecipe.getEUt(), is(1L));
 
         // Check if the recipe duration was multiplied correctly
         MatcherAssert.assertThat(outputRecipe.getDuration(), is(50));

@@ -9,19 +9,25 @@ import gregtech.api.recipes.chance.output.ChancedOutputList;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
-import gregtech.api.recipes.ingredients.*;
+import gregtech.api.recipes.ingredients.GTRecipeFluidInput;
+import gregtech.api.recipes.ingredients.GTRecipeInput;
+import gregtech.api.recipes.ingredients.GTRecipeItemInput;
+import gregtech.api.recipes.ingredients.GTRecipeOreInput;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTCondition;
 import gregtech.api.recipes.ingredients.nbtmatch.NBTMatcher;
-import gregtech.api.recipes.recipeproperties.CleanroomProperty;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
+import gregtech.api.recipes.properties.impl.CleanroomProperty;
+import gregtech.api.recipes.properties.impl.DimensionProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.groovy.GroovyScriptModule;
@@ -29,7 +35,7 @@ import gregtech.integration.groovy.GroovyScriptModule;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
@@ -38,12 +44,20 @@ import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @see Recipe
@@ -65,19 +79,22 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected ChancedOutputLogic chancedOutputLogic = ChancedOutputLogic.OR;
     protected ChancedOutputLogic chancedFluidOutputLogic = ChancedOutputLogic.OR;
 
-    protected int duration, EUt;
+    protected int duration;
+    protected long EUt;
     protected boolean hidden = false;
     protected GTRecipeCategory category;
     protected boolean isCTRecipe = false;
     protected int parallel = 0;
-    protected Consumer<R> onBuildAction = null;
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
-    protected IRecipePropertyStorage recipePropertyStorage = null;
+    protected RecipePropertyStorage recipePropertyStorage = RecipePropertyStorage.EMPTY;
     protected boolean recipePropertyStorageErrored = false;
 
+    protected boolean ignoreAllBuildActions = false;
+    protected Map<ResourceLocation, RecipeBuildAction<R>> ignoredBuildActions;
+
     protected RecipeBuilder() {
-        this.inputs = NonNullList.create();
-        this.outputs = NonNullList.create();
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
         this.chancedOutputs = new ArrayList<>();
         this.fluidInputs = new ArrayList<>();
         this.fluidOutputs = new ArrayList<>();
@@ -86,10 +103,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public RecipeBuilder(Recipe recipe, RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
-        this.inputs = NonNullList.create();
-        this.inputs.addAll(recipe.getInputs());
-        this.outputs = NonNullList.create();
-        this.outputs.addAll(GTUtility.copyStackList(recipe.getOutputs()));
+        this.inputs = new ArrayList<>(recipe.getInputs());
+        this.outputs = new ArrayList<>(recipe.getOutputs());
         this.chancedOutputs = new ArrayList<>(recipe.getChancedOutputs().getChancedEntries());
         this.fluidInputs = new ArrayList<>(recipe.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
@@ -98,19 +113,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.EUt = recipe.getEUt();
         this.hidden = recipe.isHidden();
         this.category = recipe.getRecipeCategory();
-        this.recipePropertyStorage = recipe.getRecipePropertyStorage().copy();
-        if (this.recipePropertyStorage != null) {
-            this.recipePropertyStorage.freeze(false);
-        }
+        this.recipePropertyStorage = recipe.propertyStorage().copy();
     }
 
     @SuppressWarnings("CopyConstructorMissesField")
     protected RecipeBuilder(RecipeBuilder<R> recipeBuilder) {
         this.recipeMap = recipeBuilder.recipeMap;
-        this.inputs = NonNullList.create();
-        this.inputs.addAll(recipeBuilder.getInputs());
-        this.outputs = NonNullList.create();
-        this.outputs.addAll(GTUtility.copyStackList(recipeBuilder.getOutputs()));
+        this.inputs = new ArrayList<>(recipeBuilder.getInputs());
+        this.outputs = new ArrayList<>(recipeBuilder.getOutputs());
         this.chancedOutputs = new ArrayList<>(recipeBuilder.chancedOutputs);
         this.fluidInputs = new ArrayList<>(recipeBuilder.getFluidInputs());
         this.fluidOutputs = GTUtility.copyFluidList(recipeBuilder.getFluidOutputs());
@@ -121,23 +131,62 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         this.EUt = recipeBuilder.EUt;
         this.hidden = recipeBuilder.hidden;
         this.category = recipeBuilder.category;
-        this.onBuildAction = recipeBuilder.onBuildAction;
-        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage;
-        if (this.recipePropertyStorage != null) {
-            this.recipePropertyStorage = this.recipePropertyStorage.copy();
+        this.recipePropertyStorage = recipeBuilder.recipePropertyStorage.copy();
+        this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
+        if (recipeBuilder.ignoredBuildActions != null) {
+            this.ignoredBuildActions = new Object2ObjectOpenHashMap<>(recipeBuilder.ignoredBuildActions);
         }
     }
 
     public R cleanroom(@Nullable CleanroomType cleanroom) {
-        if (!ConfigHolder.machines.enableCleanroom) {
-            return (R) this;
+        if (ConfigHolder.machines.enableCleanroom && cleanroom != null) {
+            this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         }
-        this.applyProperty(CleanroomProperty.getInstance(), cleanroom);
         return (R) this;
     }
 
-    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
-        if (key.equals(CleanroomProperty.KEY)) {
+    public R dimension(int dimensionID) {
+        return dimension(dimensionID, false);
+    }
+
+    public R dimension(int dimensionID, boolean toBlackList) {
+        DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
+        if (dimensionIDs == null) {
+            dimensionIDs = new DimensionProperty.DimensionPropertyList();
+            this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
+        }
+        dimensionIDs.add(dimensionID, toBlackList);
+        return (R) this;
+    }
+
+    public @Nullable DimensionProperty.DimensionPropertyList getCompleteDimensionIDs() {
+        return this.recipePropertyStorage.get(DimensionProperty.getInstance(), null);
+    }
+
+    public @NotNull IntList getDimensionIDs() {
+        return this.recipePropertyStorage.get(DimensionProperty.getInstance(),
+                DimensionProperty.DimensionPropertyList.EMPTY_LIST).whiteListDimensions;
+    }
+
+    public @NotNull IntList getBlockedDimensionIDs() {
+        return this.recipePropertyStorage.get(DimensionProperty.getInstance(),
+                DimensionProperty.DimensionPropertyList.EMPTY_LIST).blackListDimensions;
+    }
+
+    @MustBeInvokedByOverriders
+    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
+        if (key.equals(DimensionProperty.KEY)) {
+            if (value instanceof DimensionProperty.DimensionPropertyList list) {
+                DimensionProperty.DimensionPropertyList dimensionIDs = getCompleteDimensionIDs();
+                if (dimensionIDs == null) {
+                    dimensionIDs = new DimensionProperty.DimensionPropertyList();
+                    this.applyProperty(DimensionProperty.getInstance(), dimensionIDs);
+                }
+                dimensionIDs.merge(list);
+                return true;
+            }
+            return false;
+        } else if (key.equals(CleanroomProperty.KEY)) {
             if (value instanceof CleanroomType) {
                 this.cleanroom((CleanroomType) value);
             } else if (value instanceof String) {
@@ -150,28 +199,21 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    public boolean applyProperty(@NotNull RecipeProperty<?> property, @Nullable Object value) {
-        if (value == null) {
-            if (this.recipePropertyStorage != null) {
-                return this.recipePropertyStorage.remove(property);
-            }
-        } else {
-            if (this.recipePropertyStorage == null) {
-                this.recipePropertyStorage = new RecipePropertyStorage();
-            }
-            boolean stored = this.recipePropertyStorage.store(property, value);
-            if (!stored) {
-                this.recipePropertyStorageErrored = true;
-            }
-            return stored;
+    public final boolean applyProperty(@NotNull RecipeProperty<?> property, @NotNull Object value) {
+        if (this.recipePropertyStorage == RecipePropertyStorage.EMPTY) {
+            this.recipePropertyStorage = new RecipePropertyStorageImpl();
         }
-        return true;
+
+        boolean stored = this.recipePropertyStorage.store(property, value);
+        if (!stored) {
+            this.recipePropertyStorageErrored = true;
+        }
+        return stored;
     }
 
     public R input(GTRecipeInput input) {
         if (input.getAmount() < 0) {
-            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
         } else {
             this.inputs.add(input);
         }
@@ -240,18 +282,15 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R inputNBT(GTRecipeInput input, NBTMatcher matcher, NBTCondition condition) {
         if (input.getAmount() < 0) {
-            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
             return (R) this;
         }
         if (matcher == null) {
-            GTLog.logger.error("NBTMatcher must not be null");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("NBTMatcher must not be null", new Throwable());
             return (R) this;
         }
         if (condition == null) {
-            GTLog.logger.error("NBTCondition must not be null");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+            GTLog.logger.error("NBTCondition must not be null", new Throwable());
             return (R) this;
         }
         this.inputs.add(input.setNBTMatchingCondition(matcher, condition));
@@ -275,20 +314,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R inputNBT(Item item, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item)), matcher, condition);
+        return inputNBT(new ItemStack(item), matcher, condition);
     }
 
     public R inputNBT(Item item, int count, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item), count), matcher, condition);
+        return inputNBT(new ItemStack(item, count), matcher, condition);
     }
 
     public R inputNBT(Item item, int count, int meta, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item, count, meta)), matcher, condition);
+        return inputNBT(new ItemStack(item, count, meta), matcher, condition);
     }
 
     public R inputNBT(Item item, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher,
                       NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(item, count, GTValues.W)), matcher, condition);
+        return inputNBT(new ItemStack(item, count, GTValues.W), matcher, condition);
     }
 
     public R inputNBT(Block block, NBTMatcher matcher, NBTCondition condition) {
@@ -296,35 +335,57 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R inputNBT(Block block, int count, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(block, count)), matcher, condition);
+        return inputNBT(new ItemStack(block, count), matcher, condition);
     }
 
     public R inputNBT(Block block, int count, @SuppressWarnings("unused") boolean wild, NBTMatcher matcher,
                       NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(new ItemStack(block, count, GTValues.W)), matcher, condition);
+        return inputNBT(new ItemStack(block, count, GTValues.W), matcher, condition);
     }
 
     public R inputNBT(MetaItem<?>.MetaValueItem item, int count, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(item.getStackForm(count)), matcher, condition);
+        return inputNBT(item.getStackForm(count), matcher, condition);
     }
 
     public R inputNBT(MetaItem<?>.MetaValueItem item, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(item.getStackForm()), matcher, condition);
+        return inputNBT(item.getStackForm(), matcher, condition);
     }
 
     public R inputNBT(MetaTileEntity mte, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(mte.getStackForm()), matcher, condition);
+        return inputNBT(mte.getStackForm(), matcher, condition);
     }
 
     public R inputNBT(MetaTileEntity mte, int amount, NBTMatcher matcher, NBTCondition condition) {
-        return inputNBT(new GTRecipeItemInput(mte.getStackForm(amount)), matcher, condition);
+        return inputNBT(mte.getStackForm(amount), matcher, condition);
+    }
+
+    /**
+     * NBT tags are stripped from the input stack and are not automatically checked.
+     *
+     * @param stack     the itemstack to input.
+     * @param matcher   the matcher for the stack's nbt
+     * @param condition the condition for the stack's nbt
+     * @return this
+     */
+    public R inputNBT(@NotNull ItemStack stack, NBTMatcher matcher, NBTCondition condition) {
+        return inputNBT(new GTRecipeItemInput(stack), matcher, condition);
+    }
+
+    public R inputs(ItemStack input) {
+        if (input == null || input.isEmpty()) {
+            GTLog.logger.error("Input cannot be null or empty. Input: {}", input, new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+        } else {
+            this.inputs.add(new GTRecipeItemInput(input));
+        }
+        return (R) this;
     }
 
     public R inputs(ItemStack... inputs) {
         for (ItemStack input : inputs) {
             if (input == null || input.isEmpty()) {
-                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Inputs cannot contain null or empty ItemStacks. Inputs: {}", input,
+                        new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -336,8 +397,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputStacks(Collection<ItemStack> inputs) {
         for (ItemStack input : inputs) {
             if (input == null || input.isEmpty()) {
-                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input);
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", input, new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -346,11 +406,21 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R inputs(GTRecipeInput input) {
+        if (input.getAmount() < 0) {
+            GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
+            recipeStatus = EnumValidationResult.INVALID;
+        } else {
+            this.inputs.add(input);
+        }
+        return (R) this;
+    }
+
     public R inputs(GTRecipeInput... inputs) {
         for (GTRecipeInput input : inputs) {
             if (input.getAmount() < 0) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Input count cannot be less than 0. Actual: {}.", input.getAmount(),
+                        new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -362,8 +432,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R inputIngredients(Collection<GTRecipeInput> inputs) {
         for (GTRecipeInput input : inputs) {
             if (input.getAmount() < 0) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount());
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", input.getAmount(), new Throwable());
                 recipeStatus = EnumValidationResult.INVALID;
                 continue;
             }
@@ -412,8 +481,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public R circuitMeta(int circuitNumber) {
         if (IntCircuitIngredient.CIRCUIT_MIN > circuitNumber || circuitNumber > IntCircuitIngredient.CIRCUIT_MAX) {
             GTLog.logger.error("Integrated Circuit Number cannot be less than {} and more than {}",
-                    IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid Integrated Circuit Number"));
+                    IntCircuitIngredient.CIRCUIT_MIN, IntCircuitIngredient.CIRCUIT_MAX, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
@@ -464,6 +532,13 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return outputs(mte.getStackForm(amount));
     }
 
+    public R outputs(ItemStack output) {
+        if (output != null && !output.isEmpty()) {
+            this.outputs.add(output);
+        }
+        return (R) this;
+    }
+
     public R outputs(ItemStack... outputs) {
         return outputs(Arrays.asList(outputs));
     }
@@ -490,14 +565,25 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R fluidInputs(FluidStack input) {
+        if (input != null && input.amount > 0) {
+            this.fluidInputs.add(new GTRecipeFluidInput(input));
+        } else if (input != null) {
+            GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", input.amount, new Throwable());
+        } else {
+            GTLog.logger.error("FluidStack cannot be null.");
+        }
+        return (R) this;
+    }
+
     public R fluidInputs(FluidStack... fluidStacks) {
         ArrayList<GTRecipeInput> fluidIngredients = new ArrayList<>();
         for (FluidStack fluidStack : fluidStacks) {
             if (fluidStack != null && fluidStack.amount > 0) {
                 fluidIngredients.add(new GTRecipeFluidInput(fluidStack));
             } else if (fluidStack != null) {
-                GTLog.logger.error("Count cannot be less than 0. Actual: {}.", fluidStack.amount);
-                GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                GTLog.logger.error("Fluid Input count cannot be less than 0. Actual: {}.", fluidStack.amount,
+                        new Throwable());
             } else {
                 GTLog.logger.error("FluidStack cannot be null.");
             }
@@ -511,13 +597,20 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R fluidOutputs(FluidStack output) {
+        if (output != null && output.amount > 0) {
+            this.fluidOutputs.add(output);
+        }
+        return (R) this;
+    }
+
     public R fluidOutputs(FluidStack... outputs) {
         return fluidOutputs(Arrays.asList(outputs));
     }
 
     public R fluidOutputs(Collection<FluidStack> outputs) {
         outputs = new ArrayList<>(outputs);
-        outputs.removeIf(Objects::isNull);
+        outputs.removeIf(o -> o == null || o.amount <= 0);
         this.fluidOutputs.addAll(outputs);
         return (R) this;
     }
@@ -533,8 +626,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
             GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
-                    ChancedOutputLogic.getMaxChancedValue(), chance);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                    ChancedOutputLogic.getMaxChancedValue(), chance, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
@@ -581,8 +673,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         if (0 >= chance || chance > ChancedOutputLogic.getMaxChancedValue()) {
             GTLog.logger.error("Chance cannot be less or equal to 0 or more than {}. Actual: {}.",
-                    ChancedOutputLogic.getMaxChancedValue(), chance);
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
+                    ChancedOutputLogic.getMaxChancedValue(), chance, new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return (R) this;
         }
@@ -607,12 +698,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R inputs(IIngredient ingredient) {
         return input(ofGroovyIngredient(ingredient));
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R inputs(IIngredient... ingredients) {
         for (IIngredient ingredient : ingredients) {
             inputs(ingredient);
@@ -620,7 +711,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R inputs(Collection<IIngredient> ingredients) {
         for (IIngredient ingredient : ingredients) {
             inputs(ingredient);
@@ -628,12 +719,12 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     public R notConsumable(IIngredient ingredient) {
         return notConsumable(ofGroovyIngredient(ingredient));
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     private static GTRecipeInput ofGroovyIngredient(IIngredient ingredient) {
         if (ingredient instanceof OreDictIngredient) {
             return new GTRecipeOreInput(((OreDictIngredient) ingredient).getOreDict(), ingredient.getAmount());
@@ -692,8 +783,8 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
      */
 
     public R append(Recipe recipe, int multiplier, boolean multiplyDuration) {
-        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
-            this.applyProperty(property.getKey().getKey(), property.getValue());
+        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.propertyStorage().entrySet()) {
+            this.applyPropertyCT(property.getKey().getKey(), property.getValue());
         }
 
         // Create holders for the various parts of the new multiplied Recipe
@@ -716,7 +807,13 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
         this.EUt(multiplyDuration ? recipe.getEUt() : this.EUt + recipe.getEUt() * multiplier);
         this.duration(multiplyDuration ? this.duration + recipe.getDuration() * multiplier : recipe.getDuration());
-        this.parallel += multiplier;
+        if (this.parallel == 0) {
+            this.parallel = multiplier;
+        } else if (multiplyDuration) {
+            this.parallel += multiplier;
+        } else {
+            this.parallel *= multiplier;
+        }
 
         return (R) this;
     }
@@ -731,7 +828,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (ri.isNonConsumable()) {
                 newRecipeInputs.add(ri);
             } else {
-                newRecipeInputs.add(ri.withAmount(ri.getAmount() * numberOfOperations));
+                newRecipeInputs.add(ri.copyWithAmount(ri.getAmount() * numberOfOperations));
             }
         });
 
@@ -739,7 +836,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             if (fi.isNonConsumable()) {
                 newFluidInputs.add(fi);
             } else {
-                newFluidInputs.add(fi.withAmount(fi.getAmount() * numberOfOperations));
+                newFluidInputs.add(fi.copyWithAmount(fi.getAmount() * numberOfOperations));
             }
         });
 
@@ -771,7 +868,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R EUt(int EUt) {
+    public R EUt(long EUt) {
         this.EUt = EUt;
         return (R) this;
     }
@@ -800,12 +897,34 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) new RecipeBuilder<>(this);
     }
 
-    protected EnumValidationResult finalizeAndValidate() {
-        return recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
+    /**
+     * Only use if you absolutely don't want the recipe to be run through any build actions.
+     * Instead, you should blacklist specific actions with {@link #ignoreBuildAction(ResourceLocation)}
+     */
+    public R ignoreAllBuildActions() {
+        this.ignoreAllBuildActions = true;
+        return (R) this;
+    }
+
+    public R ignoreBuildAction(ResourceLocation buildActionName) {
+        if (ignoredBuildActions == null) {
+            ignoredBuildActions = new Object2ObjectOpenHashMap<>();
+        } else if (!recipeMap.getBuildActions().containsKey(buildActionName)) {
+            GTLog.logger.error("Recipe map {} does not contain build action {}!", recipeMap, buildActionName,
+                    new Throwable());
+            return (R) this;
+        } else if (ignoredBuildActions.containsKey(buildActionName)) {
+            return (R) this;
+        }
+
+        ignoredBuildActions.put(buildActionName, recipeMap.getBuildActions().get(buildActionName));
+
+        return (R) this;
     }
 
     public ValidationResult<Recipe> build() {
-        return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs,
+        EnumValidationResult result = recipePropertyStorageErrored ? EnumValidationResult.INVALID : validate();
+        return ValidationResult.newResult(result, new Recipe(inputs, outputs,
                 new ChancedOutputList<>(this.chancedOutputLogic, chancedOutputs),
                 fluidInputs, fluidOutputs,
                 new ChancedOutputList<>(this.chancedFluidOutputLogic, chancedFluidOutputs),
@@ -819,31 +938,31 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
             return msg.postIfNotEmpty() ? EnumValidationResult.SKIP : EnumValidationResult.VALID;
         }
         if (EUt == 0) {
-            GTLog.logger.error("EU/t cannot be equal to 0", new IllegalArgumentException());
+            GTLog.logger.error("EU/t cannot be equal to 0", new Throwable());
             if (isCTRecipe) {
-                CraftTweakerAPI.logError("EU/t cannot be equal to 0", new IllegalArgumentException());
+                CraftTweakerAPI.logError("EU/t cannot be equal to 0", new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (duration <= 0) {
-            GTLog.logger.error("Duration cannot be less or equal to 0", new IllegalArgumentException());
+            GTLog.logger.error("Duration cannot be less or equal to 0", new Throwable());
             if (isCTRecipe) {
-                CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new IllegalArgumentException());
+                CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (recipeMap != null) { // recipeMap can be null in tests
             if (category == null) {
-                GTLog.logger.error("Recipes must have a category", new IllegalArgumentException());
+                GTLog.logger.error("Recipes must have a category", new Throwable());
                 if (isCTRecipe) {
-                    CraftTweakerAPI.logError("Recipes must have a category", new IllegalArgumentException());
+                    CraftTweakerAPI.logError("Recipes must have a category", new Throwable());
                 }
                 recipeStatus = EnumValidationResult.INVALID;
             } else if (category.getRecipeMap() != this.recipeMap) {
-                GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new IllegalArgumentException());
+                GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new Throwable());
                 if (isCTRecipe) {
                     CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap",
-                            new IllegalArgumentException());
+                            new Throwable());
                 }
                 recipeStatus = EnumValidationResult.INVALID;
             }
@@ -851,13 +970,10 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         if (recipeStatus == EnumValidationResult.INVALID) {
             GTLog.logger.error("Invalid recipe, read the errors above: {}", this);
         }
-        if (recipePropertyStorage != null) {
-            recipePropertyStorage.freeze(true);
-        }
         return recipeStatus;
     }
 
-    @Optional.Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Optional.Method(modid = Mods.Names.GROOVY_SCRIPT)
     protected void validateGroovy(GroovyLog.Msg errorMsg) {
         errorMsg.add(EUt == 0, () -> "EU/t must not be to 0");
         errorMsg.add(duration <= 0, () -> "Duration must not be less or equal to 0");
@@ -886,19 +1002,32 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return out;
     }
 
-    protected R onBuild(Consumer<R> consumer) {
-        this.onBuildAction = consumer;
-        return (R) this;
-    }
-
+    /**
+     * @deprecated Obsolete. Does not need calling.
+     */
+    @ApiStatus.Obsolete
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     protected R invalidateOnBuildAction() {
-        this.onBuildAction = null;
         return (R) this;
     }
 
+    /**
+     * Build and register the recipe, if valid.
+     * <strong>Do not call outside of the
+     * {@link net.minecraftforge.event.RegistryEvent.Register<net.minecraft.item.crafting.IRecipe>} event for recipes.
+     * </strong>
+     */
+    @MustBeInvokedByOverriders
     public void buildAndRegister() {
-        if (onBuildAction != null) {
-            onBuildAction.accept((R) this);
+        if (!ignoreAllBuildActions) {
+            for (Map.Entry<ResourceLocation, RecipeBuildAction<R>> buildAction : recipeMap.getBuildActions()
+                    .entrySet()) {
+                if (ignoredBuildActions != null && ignoredBuildActions.containsKey(buildAction.getKey())) {
+                    continue;
+                }
+                buildAction.getValue().accept((R) this);
+            }
         }
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
@@ -947,7 +1076,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return fluidOutputs;
     }
 
-    public int getEUt() {
+    public long getEUt() {
         return EUt;
     }
 
@@ -955,10 +1084,29 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return duration;
     }
 
-    @Nullable
-    public CleanroomType getCleanroom() {
-        return this.recipePropertyStorage == null ? null :
-                this.recipePropertyStorage.getRecipePropertyValue(CleanroomProperty.getInstance(), null);
+    public @Nullable CleanroomType getCleanroom() {
+        return this.recipePropertyStorage.get(CleanroomProperty.getInstance(), null);
+    }
+
+    public boolean ignoresAllBuildActions() {
+        return ignoreAllBuildActions;
+    }
+
+    /**
+     * Get all ignored build actions for the recipe map.
+     * 
+     * @return A map of ignored build actions.
+     */
+    public @NotNull Map<ResourceLocation, RecipeBuildAction<R>> getIgnoredBuildActions() {
+        if (ignoreAllBuildActions) {
+            return recipeMap.getBuildActions();
+        }
+
+        if (ignoredBuildActions == null) {
+            return Collections.emptyMap();
+        }
+
+        return ignoredBuildActions;
     }
 
     @Override
@@ -975,7 +1123,11 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                 .append("EUt", EUt)
                 .append("hidden", hidden)
                 .append("cleanroom", getCleanroom())
+                .append("dimensions", getDimensionIDs().toString())
+                .append("dimensions_blocked", getBlockedDimensionIDs().toString())
                 .append("recipeStatus", recipeStatus)
+                .append("ignoresBuildActions", ignoresAllBuildActions())
+                .append("ignoredBuildActions", getIgnoredBuildActions())
                 .toString();
     }
 }

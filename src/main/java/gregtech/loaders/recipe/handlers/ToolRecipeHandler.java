@@ -287,6 +287,10 @@ public class ToolRecipeHandler {
                         .EUt(8 * voltageMultiplier)
                         .buildAndRegister();
             }
+
+            // wirecutter
+            addElectricWirecutterRecipe(material,
+                    new IGTTool[] { ToolItems.WIRECUTTER_LV, ToolItems.WIRECUTTER_HV, ToolItems.WIRECUTTER_IV });
         }
 
         // screwdriver
@@ -313,6 +317,21 @@ public class ToolRecipeHandler {
                     "wHd", " U ",
                     'H', new UnificationEntry(toolHead, material),
                     'U', powerUnitStack);
+        }
+    }
+
+    public static void addElectricWirecutterRecipe(Material material, IGTTool[] toolItems) {
+        for (IGTTool toolItem : toolItems) {
+            int tier = toolItem.getElectricTier();
+            ItemStack powerUnitStack = powerUnitItems.get(tier).getStackForm();
+            IElectricItem powerUnit = powerUnitStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            ItemStack tool = toolItem.get(material, 0, powerUnit.getMaxCharge());
+            ModHandler.addShapedEnergyTransferRecipe(String.format("%s_%s", toolItem.getToolId(), material), tool,
+                    Ingredient.fromStacks(powerUnitStack), true, true,
+                    "PfP", "hPd", "RUR",
+                    'P', new UnificationEntry(OrePrefix.plate, material),
+                    'U', powerUnitStack,
+                    'R', new UnificationEntry(OrePrefix.stick, material));
         }
     }
 

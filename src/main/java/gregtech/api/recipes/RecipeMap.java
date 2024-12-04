@@ -27,6 +27,7 @@ import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.api.util.Mods;
 import gregtech.api.util.ValidationResult;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.crafttweaker.CTRecipeHelper;
@@ -38,6 +39,7 @@ import gregtech.modules.GregTechModules;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -58,6 +60,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
@@ -74,9 +77,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -87,7 +88,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new Object2ReferenceOpenHashMap<>();
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration)
-            .thenComparingInt(Recipe::getEUt)
+            .thenComparingLong(Recipe::getEUt)
             .thenComparing(Recipe::hashCode);
 
     private static boolean foundInvalidRecipe = false;
@@ -123,9 +124,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
-    private Consumer<R> onRecipeBuildAction;
-    protected SoundEvent sound;
-    private RecipeMap<?> smallRecipeMap;
+    private final Map<ResourceLocation, RecipeBuildAction<R>> recipeBuildActions = new Object2ObjectOpenHashMap<>();
+    protected @Nullable SoundEvent sound;
+    private @Nullable RecipeMap<?> smallRecipeMap;
 
     /**
      * Create and register new instance of RecipeMap with specified properties. All
@@ -139,7 +140,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      *
-     * @deprecated {@link #RecipeMap(String, RecipeBuilder, Function, int, int, int, int)}
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
@@ -168,7 +169,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
      *
-     * @deprecated {@link #RecipeMap(String, RecipeBuilder, Function, int, int, int, int)}
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     @Deprecated
@@ -192,7 +193,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.recipeBuilderSample = defaultRecipeBuilder;
 
         this.recipeMapUI = new RecipeMapUI<>(this, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
-                modifyFluidOutputs);
+                modifyFluidOutputs, false);
         this.recipeMapUI.setJEIVisible(!isHidden);
 
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
@@ -310,9 +311,44 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Consumer<R> consumer) {
-        onRecipeBuildAction = consumer;
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param name   the unique name of the action
+     * @param action the action to perform
+     * @return this
+     */
+    public RecipeMap<R> onRecipeBuild(@NotNull ResourceLocation name, @NotNull RecipeBuildAction<R> action) {
+        if (recipeBuildActions.containsKey(name)) {
+            throw new IllegalArgumentException("Cannot register RecipeBuildAction with duplicate name: " + name);
+        }
+        recipeBuildActions.put(name, action);
         return this;
+    }
+
+    /**
+     * @param name the name of the build action to remove
+     */
+    public void removeBuildAction(@NotNull ResourceLocation name) {
+        recipeBuildActions.remove(name);
+    }
+
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param actions the actions to perform
+     */
+    @ApiStatus.Internal
+    protected void onRecipeBuild(@NotNull Map<ResourceLocation, RecipeBuildAction<R>> actions) {
+        recipeBuildActions.putAll(actions);
+    }
+
+    /**
+     * @return the build actions for this RecipeMap's default RecipeBuilder
+     */
+    @ApiStatus.Internal
+    protected @UnmodifiableView @NotNull Map<ResourceLocation, RecipeBuildAction<R>> getBuildActions() {
+        return this.recipeBuildActions;
     }
 
     public RecipeMap<R> allowEmptyOutput() {
@@ -401,7 +437,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @see GTRecipeHandler#removeAllRecipes(RecipeMap)
      */
     @ApiStatus.Internal
-    void removeAllRecipes() {
+    protected void removeAllRecipes() {
         if (GroovyScriptModule.isCurrentlyRunning()) {
             this.lookup.getRecipes(false).forEach(this.getGroovyScriptRecipeMap()::addBackup);
         }
@@ -426,11 +462,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         boolean emptyInputs = recipe.getInputs().isEmpty() && recipe.getFluidInputs().isEmpty();
         if (emptyInputs) {
-            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.");
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -438,11 +472,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().getChancedEntries().isEmpty() &&
                 recipe.getChancedFluidOutputs().getChancedEntries().isEmpty();
         if (emptyOutputs) {
-            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.", new Throwable());
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.");
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.",
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -450,12 +483,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int amount = recipe.getInputs().size();
         if (amount > getMaxInputs()) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                    getMaxInputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(String.format(
-                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -463,13 +495,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getOutputs().size() + recipe.getChancedOutputs().getChancedEntries().size();
         if (amount > getMaxOutputs()) {
             GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                    getMaxOutputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI
                         .logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxOutputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                                amount, getMaxOutputs()), new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -477,13 +507,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getFluidInputs().size();
         if (amount > getMaxFluidInputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxFluidInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+                    getMaxFluidInputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(
                         String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidInputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+                                amount, getMaxFluidInputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -491,14 +520,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getFluidOutputs().size() + recipe.getChancedFluidOutputs().getChancedEntries().size();
         if (amount > getMaxFluidOutputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxFluidOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
+                    getMaxFluidOutputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(
                         String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidOutputs()));
-                CraftTweakerAPI.logError("Stacktrace:",
-                        new IllegalArgumentException("Invalid number of Fluid Outputs"));
+                                amount, getMaxFluidOutputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -942,7 +969,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    @Method(modid = GTValues.MODID_GROOVYSCRIPT)
+    @Method(modid = Mods.Names.GROOVY_SCRIPT)
     private VirtualizedRecipeMap getGroovyScriptRecipeMap() {
         return ((VirtualizedRecipeMap) grsVirtualizedRecipeMap);
     }
@@ -972,7 +999,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                              @NotNull Branch branchMap, int index, int count) {
         if (count >= ingredients.size()) return true;
         if (index >= ingredients.size()) {
-            throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
+            throw new IllegalStateException("Index out of bounds for recurseItemTreeAdd, should not happen");
         }
         // Loop through NUMBER_OF_INGREDIENTS times.
 
@@ -1291,7 +1318,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenMethod("findRecipe")
-    @Method(modid = GTValues.MODID_CT)
+    @Method(modid = Mods.Names.CRAFT_TWEAKER)
     @Nullable
     public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs,
                                  @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
@@ -1304,7 +1331,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenGetter("recipes")
-    @Method(modid = GTValues.MODID_CT)
+    @Method(modid = Mods.Names.CRAFT_TWEAKER)
     public List<CTRecipe> ctGetRecipeList() {
         return getRecipeList().stream().map(recipe -> new CTRecipe(this, recipe)).collect(Collectors.toList());
     }
@@ -1325,7 +1352,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
+        return recipeBuilderSample.copy();
     }
 
     /**
@@ -1393,7 +1420,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenMethod("recipeBuilder")
-    @Method(modid = GTValues.MODID_CT)
+    @Method(modid = Mods.Names.CRAFT_TWEAKER)
     public CTRecipeBuilder ctRecipeBuilder() {
         return new CTRecipeBuilder(recipeBuilder());
     }

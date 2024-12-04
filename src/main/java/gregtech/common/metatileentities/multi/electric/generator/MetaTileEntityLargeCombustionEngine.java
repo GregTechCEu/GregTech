@@ -10,12 +10,18 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
+import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -28,7 +34,6 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -192,18 +197,19 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     private boolean checkIntakesObstructed() {
-        EnumFacing facing = this.getFrontFacing();
-        boolean permuteXZ = facing.getAxis() == EnumFacing.Axis.Z;
-        BlockPos centerPos = this.getPos().offset(facing);
-        for (int x = -1; x < 2; x++) {
-            for (int y = -1; y < 2; y++) {
-                // Skip the controller block itself
-                if (x == 0 && y == 0)
+        for (int left = -1; left <= 1; left++) {
+            for (int up = -1; up <= 1; up++) {
+                if (left == 0 && up == 0) {
+                    // Skip the controller block itself
                     continue;
-                BlockPos blockPos = centerPos.add(permuteXZ ? x : 0, y, permuteXZ ? 0 : x);
-                IBlockState blockState = this.getWorld().getBlockState(blockPos);
-                if (!blockState.getBlock().isAir(blockState, this.getWorld(), blockPos))
+                }
+
+                final BlockPos checkPos = RelativeDirection.offsetPos(
+                        getPos(), getFrontFacing(), getUpwardsFacing(), isFlipped(), up, left, 1);
+                final IBlockState state = getWorld().getBlockState(checkPos);
+                if (!state.getBlock().isAir(state, getWorld(), checkPos)) {
                     return true;
+                }
             }
         }
         return false;
@@ -424,8 +430,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
         @Override
         public void invalidate() {
-            isOxygenBoosted = false;
             super.invalidate();
+            isOxygenBoosted = false;
         }
     }
 }

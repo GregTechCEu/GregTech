@@ -3,23 +3,21 @@ package gregtech.common.metatileentities.electric;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 
 import appeng.api.util.AECableType;
@@ -73,11 +71,6 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
-    }
-
-    @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         String tierName = GTValues.VNF[getTier()];
         tooltip.add(I18n.format("gregtech.machine.hull.tooltip"));
@@ -89,21 +82,21 @@ public class MetaTileEntityHull extends MetaTileEntityMultiblockPart
     @Override
     public void update() {
         super.update();
-        if (isFirstTick() && Loader.isModLoaded(GTValues.MODID_APPENG)) {
+        if (isFirstTick() && Mods.AppliedEnergistics2.isModLoaded()) {
             if (getProxy() != null) getProxy().onReady();
         }
     }
 
     @NotNull
     @Override
-    @Optional.Method(modid = GTValues.MODID_APPENG)
+    @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AECableType getCableConnectionType(@NotNull AEPartLocation part) {
         return AECableType.SMART;
     }
 
     @Nullable
     @Override
-    @Optional.Method(modid = GTValues.MODID_APPENG)
+    @Optional.Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public AENetworkProxy getProxy() {
         if (gridProxy == null && getHolder() instanceof MetaTileEntityHolder) {
             gridProxy = new AENetworkProxy((MetaTileEntityHolder) getHolder(), "proxy", getStackForm(), true);

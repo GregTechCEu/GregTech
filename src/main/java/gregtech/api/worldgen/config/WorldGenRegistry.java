@@ -3,6 +3,7 @@ package gregtech.api.worldgen.config;
 import gregtech.api.GTValues;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.Mods;
 import gregtech.api.worldgen.filler.BlacklistedBlockFiller;
 import gregtech.api.worldgen.filler.BlockFiller;
 import gregtech.api.worldgen.filler.LayeredBlockFiller;
@@ -123,7 +124,7 @@ public class WorldGenRegistry {
         } catch (IOException | RuntimeException exception) {
             GTLog.logger.fatal("Failed to initialize worldgen registry.", exception);
         }
-        if (Loader.isModLoaded("galacticraftcore")) {
+        if (Mods.GalacticraftCore.isModLoaded()) {
             try {
                 Class<?> transformerHooksClass = Class.forName("micdoodle8.mods.galacticraft.core.TransformerHooks");
                 Field otherModGeneratorsWhitelistField = transformerHooksClass

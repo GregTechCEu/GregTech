@@ -63,7 +63,6 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
         super.update();
         if (!getWorld().isRemote) {
             fillContainerFromInternalTank(fluidTank);
-            fillInternalTankFromFluidContainer(fluidTank);
             if (getOffsetTimer() % 20 == 0) {
                 fluidTank.refillWater();
             }
@@ -129,7 +128,7 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
 
         // Add input/output-specific widgets
         tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
-                .setAlwaysShowFull(true).setDrawHoveringText(false).setContainerClicking(true, true);
+                .setAlwaysShowFull(true).setDrawHoveringText(false).setContainerClicking(true, false);
 
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY)
                 .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
@@ -180,47 +179,39 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
 
     private static class InfiniteWaterTank extends NotifiableFluidTank {
 
-        private final FluidStack BIG_WATER = new FluidStack(FluidRegistry.WATER, FLUID_AMOUNT);
-
         public InfiniteWaterTank(int capacity, MetaTileEntity entityToNotify) {
             super(capacity, entityToNotify, false);
-            setFluid(BIG_WATER);
+            // start with the full amount
+            setFluid(new FluidStack(FluidRegistry.WATER, FLUID_AMOUNT));
+            // don't allow external callers to fill this tank
+            setCanFill(false);
         }
 
         private void refillWater() {
-            if (BIG_WATER.amount != FLUID_AMOUNT) {
-                BIG_WATER.amount = FLUID_AMOUNT;
-                onContentsChanged();
+            int fillAmount = Math.max(0, FLUID_AMOUNT - getFluidAmount());
+            if (fillAmount > 0) {
+                // call super since our overrides don't allow any kind of filling
+                super.fillInternal(new FluidStack(FluidRegistry.WATER, fillAmount), true);
             }
         }
 
         @Override
-        public FluidStack drainInternal(int maxDrain, boolean doDrain) {
-            return new FluidStack(BIG_WATER, maxDrain);
+        public boolean canDrainFluidType(@Nullable FluidStack fluid) {
+            return fluid != null && fluid.getFluid() == FluidRegistry.WATER;
         }
 
-        @Nullable
-        @Override
-        public FluidStack drainInternal(FluidStack resource, boolean doDrain) {
-            return new FluidStack(BIG_WATER, resource.amount);
-        }
-
+        // don't allow external filling
         @Override
         public int fillInternal(FluidStack resource, boolean doFill) {
-            return resource.amount;
-        }
-
-        @Override
-        public boolean canDrainFluidType(@Nullable FluidStack fluid) {
-            return fluid != null && fluid.getFluid() == BIG_WATER.getFluid();
+            return 0;
         }
 
         @Override
         public boolean canFillFluidType(FluidStack fluid) {
-            return fluid.getFluid() == BIG_WATER.getFluid();
+            return false;
         }
 
-        // serialization is unnecessary here, it should always have the same amount of fluid
+        // serialization is unnecessary here, we can always recreate it completely full since it would refill anyway
         @Override
         public FluidTank readFromNBT(NBTTagCompound nbt) {
             return this;

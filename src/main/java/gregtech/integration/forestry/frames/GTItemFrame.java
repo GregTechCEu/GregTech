@@ -1,6 +1,7 @@
 package gregtech.integration.forestry.frames;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
@@ -62,7 +63,7 @@ public class GTItemFrame extends Item implements IHiveFrame, IItemModelRegister 
     @SuppressWarnings("deprecation")
     @Override
     public void registerModel(@NotNull Item item, @NotNull IModelManager manager) {
-        manager.registerItemModel(item, 0, GTValues.MODID_FR, "gt.frame_" + type.getName().toLowerCase());
+        manager.registerItemModel(item, 0, Mods.Names.FORESTRY, "gt.frame_" + type.getName().toLowerCase());
     }
 
     public ItemStack getItemStack() {

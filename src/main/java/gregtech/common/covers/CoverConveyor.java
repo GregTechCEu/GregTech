@@ -1,6 +1,5 @@
 package gregtech.common.covers;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -9,9 +8,8 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
@@ -26,7 +24,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,10 +42,26 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.factory.SidedPosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.sync.EnumSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +95,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     public void setTransferRate(int transferRate) {
-        this.transferRate = transferRate;
+        this.transferRate = MathHelper.clamp(transferRate, 1, maxItemTransferRate);
         CoverableView coverable = getCoverableView();
         coverable.markDirty();
 
@@ -168,7 +187,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected int doTransferItemsByGroup(IItemHandler itemHandler, IItemHandler myItemHandler,
-                                         Map<Object, GroupItemInfo> itemInfos, int maxTransferAmount) {
+                                         Map<Integer, GroupItemInfo> itemInfos, int maxTransferAmount) {
         if (conveyorMode == ConveyorMode.IMPORT) {
             return moveInventoryItems(itemHandler, myItemHandler, itemInfos, maxTransferAmount);
         } else if (conveyorMode == ConveyorMode.EXPORT) {
@@ -177,8 +196,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return 0;
     }
 
-    protected Map<Object, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
-                                                                                      IItemHandler myItemHandler) {
+    protected Map<Integer, GroupItemInfo> doCountDestinationInventoryItemsByMatchIndex(IItemHandler itemHandler,
+                                                                                       IItemHandler myItemHandler) {
         if (conveyorMode == ConveyorMode.IMPORT) {
             return countInventoryItemsByMatchSlot(myItemHandler);
         } else if (conveyorMode == ConveyorMode.EXPORT) {
@@ -265,15 +284,17 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     protected int moveInventoryItems(IItemHandler sourceInventory, IItemHandler targetInventory,
-                                     Map<Object, GroupItemInfo> itemInfos, int maxTransferAmount) {
+                                     Map<Integer, GroupItemInfo> itemInfos, int maxTransferAmount) {
         int itemsLeftToTransfer = maxTransferAmount;
         for (int i = 0; i < sourceInventory.getSlots(); i++) {
             ItemStack itemStack = sourceInventory.getStackInSlot(i);
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object matchSlotIndex = itemFilterContainer.matchItemStack(itemStack);
-            if (matchSlotIndex == null || !itemInfos.containsKey(matchSlotIndex)) {
+
+            var matchResult = itemFilterContainer.match(itemStack);
+            int matchSlotIndex = matchResult.getFilterIndex();
+            if (!matchResult.isMatched() || !itemInfos.containsKey(matchSlotIndex)) {
                 continue;
             }
 
@@ -317,9 +338,10 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (sourceStack.isEmpty()) {
                 continue;
             }
-            if (!itemFilterContainer.testItemStack(sourceStack)) {
-                continue;
-            }
+
+            var result = itemFilterContainer.match(sourceStack);
+            if (!result.isMatched()) continue;
+
             ItemStack remainder = GTTransferUtils.insertItem(targetInventory, sourceStack, true);
             int amountToInsert = sourceStack.getCount() - remainder.getCount();
 
@@ -341,11 +363,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     protected static class TypeItemInfo {
 
         public final ItemStack itemStack;
-        public final Object filterSlot;
+        public final int filterSlot;
         public final IntList slots;
         public int totalCount;
 
-        public TypeItemInfo(ItemStack itemStack, Object filterSlot, IntList slots, int totalCount) {
+        public TypeItemInfo(ItemStack itemStack, int filterSlot, IntList slots, int totalCount) {
             this.itemStack = itemStack;
             this.filterSlot = filterSlot;
             this.slots = slots;
@@ -355,11 +377,11 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     protected static class GroupItemInfo {
 
-        public final Object filterSlot;
+        public final int filterSlot;
         public final Set<ItemStack> itemStackTypes;
         public int totalCount;
 
-        public GroupItemInfo(Object filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
+        public GroupItemInfo(int filterSlot, Set<ItemStack> itemStackTypes, int totalCount) {
             this.filterSlot = filterSlot;
             this.itemStackTypes = itemStackTypes;
             this.totalCount = totalCount;
@@ -375,12 +397,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
-            if (transferSlotIndex == null) {
-                continue;
-            }
+
+            var matchResult = itemFilterContainer.match(itemStack);
+            if (!matchResult.isMatched()) continue;
+
             if (!result.containsKey(itemStack)) {
-                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), transferSlotIndex, new IntArrayList(), 0);
+                TypeItemInfo itemInfo = new TypeItemInfo(itemStack.copy(), matchResult.getFilterIndex(),
+                        new IntArrayList(), 0);
                 itemInfo.totalCount += itemStack.getCount();
                 itemInfo.slots.add(srcIndex);
                 result.put(itemStack.copy(), itemInfo);
@@ -394,28 +417,30 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @NotNull
-    protected Map<Object, GroupItemInfo> countInventoryItemsByMatchSlot(@NotNull IItemHandler inventory) {
-        Map<Object, GroupItemInfo> result = new Object2ObjectOpenHashMap<>();
+    protected Map<Integer, GroupItemInfo> countInventoryItemsByMatchSlot(@NotNull IItemHandler inventory) {
+        Map<Integer, GroupItemInfo> result = new Int2ObjectOpenHashMap<>();
         for (int srcIndex = 0; srcIndex < inventory.getSlots(); srcIndex++) {
             ItemStack itemStack = inventory.getStackInSlot(srcIndex);
             if (itemStack.isEmpty()) {
                 continue;
             }
-            Object transferSlotIndex = itemFilterContainer.matchItemStack(itemStack);
-            if (transferSlotIndex == null) {
-                continue;
-            }
-            if (!result.containsKey(transferSlotIndex)) {
-                GroupItemInfo itemInfo = new GroupItemInfo(transferSlotIndex,
+
+            var matchResult = itemFilterContainer.match(itemStack);
+            if (!matchResult.isMatched()) continue;
+            int matchedSlot = matchResult.getFilterIndex();
+
+            if (!result.containsKey(matchedSlot)) {
+                GroupItemInfo itemInfo = new GroupItemInfo(matchedSlot,
                         new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount()), 0);
                 itemInfo.itemStackTypes.add(itemStack.copy());
                 itemInfo.totalCount += itemStack.getCount();
-                result.put(transferSlotIndex, itemInfo);
+                result.put(matchedSlot, itemInfo);
             } else {
-                GroupItemInfo itemInfo = result.get(transferSlotIndex);
+                GroupItemInfo itemInfo = result.get(matchedSlot);
                 itemInfo.itemStackTypes.add(itemStack.copy());
                 itemInfo.totalCount += itemStack.getCount();
             }
+
         }
         return result;
     }
@@ -432,7 +457,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
 
     @Override
     public void onRemoval() {
-        dropInventoryContents(itemFilterContainer.getFilterInventory());
+        dropInventoryContents(itemFilterContainer);
     }
 
     @Override
@@ -473,57 +498,130 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return defaultValue;
     }
 
-    protected String getUITitle() {
-        return "cover.conveyor.title";
-    }
-
-    protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
-        return builder.build(this, player);
+    @Override
+    public boolean usesMui2() {
+        return true;
     }
 
     @Override
-    public ModularUI createUI(EntityPlayer player) {
-        WidgetGroup primaryGroup = new WidgetGroup();
-        primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle(), GTValues.VN[tier]));
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
+        var panel = GTGuis.createPanel(this, 176, 192 + 18);
 
-        primaryGroup.addWidget(new IncrementButtonWidget(136, 20, 30, 20, 1, 8, 64, 512, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
-        primaryGroup.addWidget(new IncrementButtonWidget(10, 20, 30, 20, -1, -8, -64, -512, this::adjustTransferRate)
-                .setDefaultTooltip()
-                .setShouldClientCallback(false));
+        getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
-        primaryGroup.addWidget(new ImageWidget(40, 20, 96, 20, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new TextFieldWidget2(42, 26, 92, 20, () -> String.valueOf(transferRate), val -> {
-            if (val != null && !val.isEmpty())
-                setTransferRate(MathHelper.clamp(Integer.parseInt(val), 1, maxItemTransferRate));
-        })
-                .setNumbersOnly(1, maxItemTransferRate)
-                .setMaxLength(4)
-                .setPostFix("cover.conveyor.transfer_rate"));
+        return panel.child(CoverWithUI.createTitleRow(getPickItem()))
+                .child(createUI(panel, guiSyncManager))
+                .bindPlayerInventory();
+    }
 
-        primaryGroup.addWidget(new CycleButtonWidget(10, 45, 75, 20,
-                ConveyorMode.class, this::getConveyorMode, this::setConveyorMode));
-        primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                        .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
+        var column = new Column().top(24).margin(7, 0)
+                .widthRel(1f).coverChildrenHeight();
 
-        if (getTileEntityHere() instanceof TileEntityItemPipe ||
-                getNeighbor(getAttachedSide()) instanceof TileEntityItemPipe) {
-            final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20,
-                    GuiTextures.DISTRIBUTION_MODE, 3,
-                    () -> distributionMode.ordinal(),
-                    val -> setDistributionMode(DistributionMode.values()[val]))
-                            .setTooltipHoverString(val -> DistributionMode.values()[val].getName());
-            primaryGroup.addWidget(distributionModeButton);
-        }
+        EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
+                this::getManualImportExportMode, this::setManualImportExportMode);
 
-        this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
+        EnumSyncValue<ConveyorMode> conveyorMode = new EnumSyncValue<>(ConveyorMode.class,
+                this::getConveyorMode, this::setConveyorMode);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
-                .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 190);
-        return buildUI(builder, player);
+        IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
+        throughput.updateCacheFromSource(true);
+
+        StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue,
+                throughput::setStringValue);
+
+        EnumSyncValue<DistributionMode> distributionMode = new EnumSyncValue<>(DistributionMode.class,
+                this::getDistributionMode, this::setDistributionMode);
+
+        guiSyncManager.syncValue("manual_io", manualIOmode);
+        guiSyncManager.syncValue("conveyor_mode", conveyorMode);
+        guiSyncManager.syncValue("distribution_mode", distributionMode);
+        guiSyncManager.syncValue("throughput", throughput);
+
+        if (createThroughputRow())
+            column.child(new Row().coverChildrenHeight()
+                    .marginBottom(2).widthRel(1f)
+                    .child(new ButtonWidget<>()
+                            .left(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
+                                throughput.setValue(val, true, true);
+                                Interactable.playButtonClickSound();
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
+                    .child(new TextFieldWidget()
+                            .left(18).right(18)
+                            .setTextColor(Color.WHITE.darker(1))
+                            .setNumbers(1, maxItemTransferRate)
+                            .value(formattedThroughput)
+                            .background(GTGuiTextures.DISPLAY))
+                    .child(new ButtonWidget<>()
+                            .right(0).width(18)
+                            .onMousePressed(mouseButton -> {
+                                int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
+                                throughput.setValue(val, true, true);
+                                Interactable.playButtonClickSound();
+                                return true;
+                            })
+                            .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
+
+        if (createFilterRow())
+            column.child(getItemFilterContainer().initUI(mainPanel, guiSyncManager));
+
+        if (createManualIOModeRow())
+            column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
+                    .value(manualIOmode)
+                    .lang("cover.generic.manual_io")
+                    .overlay(new IDrawable[] {
+                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
+                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
+                            new DynamicDrawable(() -> conveyorMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
+                    })
+                    .build());
+
+        if (createConveyorModeRow())
+            column.child(new EnumRowBuilder<>(ConveyorMode.class)
+                    .value(conveyorMode)
+                    .lang("cover.generic.io")
+                    .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
+                    .build());
+
+        if (createDistributionModeRow())
+            column.child(new EnumRowBuilder<>(DistributionMode.class)
+                    .value(distributionMode)
+                    .overlay(16, GTGuiTextures.DISTRIBUTION_MODE_OVERLAY)
+                    .lang("cover.conveyor.distribution.name")
+                    .build());
+
+        return column;
+    }
+
+    protected boolean createThroughputRow() {
+        return true;
+    }
+
+    protected boolean createFilterRow() {
+        return true;
+    }
+
+    protected boolean createManualIOModeRow() {
+        return true;
+    }
+
+    protected boolean createConveyorModeRow() {
+        return true;
+    }
+
+    protected boolean createDistributionModeRow() {
+        return true;
+    }
+
+    protected int getMaxStackSize() {
+        return 1;
     }
 
     @Override
@@ -546,17 +644,23 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+    public void writeInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.writeInitialSyncData(packetBuffer);
-        packetBuffer.writeEnumValue(conveyorMode);
-        packetBuffer.writeEnumValue(distributionMode);
+        packetBuffer.writeInt(transferRate);
+        packetBuffer.writeByte(conveyorMode.ordinal());
+        packetBuffer.writeByte(distributionMode.ordinal());
+        packetBuffer.writeByte(manualImportExportMode.ordinal());
+        getItemFilterContainer().writeInitialSyncData(packetBuffer);
     }
 
     @Override
     public void readInitialSyncData(@NotNull PacketBuffer packetBuffer) {
         super.readInitialSyncData(packetBuffer);
-        this.conveyorMode = packetBuffer.readEnumValue(ConveyorMode.class);
-        this.distributionMode = packetBuffer.readEnumValue(DistributionMode.class);
+        this.transferRate = packetBuffer.readInt();
+        this.conveyorMode = ConveyorMode.VALUES[packetBuffer.readByte()];
+        this.distributionMode = DistributionMode.VALUES[packetBuffer.readByte()];
+        this.manualImportExportMode = ManualImportExportMode.VALUES[packetBuffer.readByte()];
+        getItemFilterContainer().readInitialSyncData(packetBuffer);
     }
 
     @Override
@@ -574,11 +678,16 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
-        this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
-        this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
+        this.conveyorMode = ConveyorMode.VALUES[tagCompound.getInteger("ConveyorMode")];
+        this.distributionMode = DistributionMode.VALUES[tagCompound.getInteger("DistributionMode")];
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
-        this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
-        this.itemFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
+        this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
+        var filterTag = tagCompound.getCompoundTag("Filter");
+        if (filterTag.hasKey("IsBlacklist")) {
+            this.itemFilterContainer.handleLegacyNBT(filterTag);
+        } else {
+            this.itemFilterContainer.deserializeNBT(filterTag);
+        }
     }
 
     @Override
@@ -592,6 +701,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         IMPORT("cover.conveyor.mode.import"),
         EXPORT("cover.conveyor.mode.export");
 
+        public static final ConveyorMode[] VALUES = values();
         public final String localeName;
 
         ConveyorMode(String localeName) {
@@ -623,7 +733,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 return stack;
             }
             if (manualImportExportMode == ManualImportExportMode.FILTERED &&
-                    !itemFilterContainer.testItemStack(stack)) {
+                    !itemFilterContainer.test(stack)) {
                 return stack;
             }
             return super.insertItem(slot, stack, simulate);
@@ -637,7 +747,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
             }
             if (manualImportExportMode == ManualImportExportMode.FILTERED) {
                 ItemStack result = super.extractItem(slot, amount, true);
-                if (result.isEmpty() || !itemFilterContainer.testItemStack(result)) {
+                if (result.isEmpty() || !itemFilterContainer.test(result)) {
                     return ItemStack.EMPTY;
                 }
                 return simulate ? result : super.extractItem(slot, amount, false);

@@ -4,9 +4,10 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.ItemRenderCompat;
+import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -38,7 +39,6 @@ import codechicken.lib.render.block.BlockRenderingRegistry;
 import codechicken.lib.render.block.ICCBlockRenderer;
 import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
@@ -61,7 +61,6 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         BLOCK_RENDER_TYPE = BlockRenderingRegistry.createRenderType("meta_tile_entity");
         BlockRenderingRegistry.registerRenderer(BLOCK_RENDER_TYPE, INSTANCE);
         MinecraftForge.EVENT_BUS.register(INSTANCE);
-        TextureUtils.addIconRegister(Textures::register);
     }
 
     @SubscribeEvent
@@ -72,7 +71,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
 
     @Override
     public void renderItem(ItemStack rawStack, TransformType transformType) {
-        ItemStack stack = ModCompatibility.getRealItemStack(rawStack);
+        ItemStack stack = ItemRenderCompat.getRepresentedStack(rawStack);
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         if (metaTileEntity == null) {
             return;
@@ -94,7 +93,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
     @Override
     public boolean renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, BufferBuilder buffer) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(world, pos);
-        if (metaTileEntity == null) {
+        if (metaTileEntity == null || !metaTileEntity.isValid()) {
             return false;
         }
         CCRenderState renderState = CCRenderState.instance();
@@ -115,7 +114,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
 
         metaTileEntity.renderCovers(renderState, translation.copy(), renderLayer);
 
-        Textures.RENDER_STATE.set(null);
+        Textures.RENDER_STATE.remove();
         return true;
     }
 
@@ -153,15 +152,10 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
     public static Pair<TextureAtlasSprite, Integer> getParticleTexture(IBlockAccess world, BlockPos pos) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(world, pos);
         if (metaTileEntity == null) {
-            return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+            return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
         } else {
             return metaTileEntity.getParticleTexture();
         }
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return TextureUtils.getMissingSprite();
     }
 
     @Override

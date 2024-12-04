@@ -2,6 +2,7 @@ package gregtech.integration.theoneprobe;
 
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.theoneprobe.provider.*;
 import gregtech.integration.theoneprobe.provider.debug.DebugPipeNetInfoProvider;
@@ -16,7 +17,7 @@ import mcjty.theoneprobe.api.ITheOneProbe;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_TOP,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_TOP,
+                modDependencies = Mods.Names.THE_ONE_PROBE,
                 name = "GregTech TheOneProbe Integration",
                 description = "TheOneProbe Integration Module")
 public class TheOneProbeModule extends IntegrationSubmodule {
@@ -42,6 +43,9 @@ public class TheOneProbeModule extends IntegrationSubmodule {
         oneProbe.registerProvider(new LampInfoProvider());
         oneProbe.registerProvider(new LDPipeProvider());
         oneProbe.registerProvider(new LaserContainerInfoProvider());
+        oneProbe.registerProvider(new QuantumStorageProvider());
+        oneProbe.registerProvider(new ActiveTransformerInfoProvider());
+        oneProbe.registerProvider(new BatteryBufferInfoProvider());
 
         // Dev environment debug providers
         oneProbe.registerProvider(new DebugPipeNetInfoProvider());

@@ -1,11 +1,15 @@
 package gregtech.client.renderer.texture.custom;
 
 import gregtech.api.gui.resources.TextTexture;
+import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer.RenderSide;
+import gregtech.client.texture.IconRegistrar;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorage;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -19,8 +23,10 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,17 +34,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 
-public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
+public class QuantumStorageRenderer implements IconRegistrar {
 
     private static final Cuboid6 glassBox = new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
 
     private static final EnumMap<EnumFacing, Cuboid6> boxFacingMap = new EnumMap<>(EnumFacing.class);
+
+    private static final TextTexture textRenderer = new TextTexture().setWidth(32);
 
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite glassTexture;
@@ -57,35 +65,57 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     @Override
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         this.glassTexture = textureMap
                 .registerSprite(new ResourceLocation("gregtech:blocks/overlay/machine/overlay_screen_glass"));
     }
 
-    public void renderMachine(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
-                              EnumFacing frontFacing, int tier) {
+    public <T extends MetaTileEntityQuantumStorage<?> & ITieredMetaTileEntity> void renderMachine(CCRenderState renderState,
+                                                                                                  Matrix4 translation,
+                                                                                                  IVertexOperation[] pipeline,
+                                                                                                  T mte) {
+        EnumFacing frontFacing = mte.getFrontFacing();
+        int tier = mte.getTier();
         Textures.renderFace(renderState, translation, pipeline, frontFacing, glassBox, glassTexture,
                 BlockRenderLayer.CUTOUT_MIPPED);
 
         TextureAtlasSprite hullTexture = Textures.VOLTAGE_CASINGS[tier]
                 .getSpriteOnSide(RenderSide.bySide(EnumFacing.NORTH));
-        boxFacingMap.keySet().forEach(facing -> {
-            for (EnumFacing box : EnumFacing.VALUES) {
-                if ((facing != frontFacing || box != frontFacing) &&
-                        (facing != EnumFacing.DOWN || box.getAxis().isVertical())) { // Don't render the front facing
-                                                                                     // box from the front, nor allow
-                                                                                     // Z-fighting to occur on the
-                                                                                     // bottom
-                    Textures.renderFace(renderState, translation, pipeline, facing, boxFacingMap.get(box), hullTexture,
-                            BlockRenderLayer.CUTOUT_MIPPED);
-                }
-            }
-        });
+
+        if (mte.isConnected()) {
+            hullTexture = Textures.QUANTUM_CASING.getParticleSprite();
+        }
+
+        for (var facing : boxFacingMap.keySet()) {
+            // do not render the box at the front face when "facing" is "frontFacing"
+            if (facing == frontFacing) continue;
+
+            // render when the box face matches facing
+            Textures.renderFace(renderState, translation, pipeline, facing, boxFacingMap.get(facing),
+                    hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+
+            // render when the box face is opposite of facing
+            Textures.renderFace(renderState, translation, pipeline, facing.getOpposite(), boxFacingMap.get(facing),
+                    hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+        }
+
+        // render the sides of the box that face the front face
+        if (frontFacing.getAxis() == EnumFacing.Axis.Y) return;
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(EnumFacing.DOWN),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(EnumFacing.UP),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+
+        EnumFacing facing = frontFacing.rotateYCCW();
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(facing),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, boxFacingMap.get(facing.getOpposite()),
+                hullTexture, BlockRenderLayer.CUTOUT_MIPPED);
     }
 
     public static void renderChestStack(double x, double y, double z, MetaTileEntityQuantumChest machine,
                                         ItemStack stack, long count, float partialTicks) {
-        if (stack.isEmpty() || count == 0)
+        if (!ConfigHolder.client.enableFancyChestRender || stack.isEmpty() || count == 0)
             return;
 
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
@@ -93,15 +123,19 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         World world = machine.getWorld();
         setLightingCorrectly(world, machine.getPos());
         EnumFacing frontFacing = machine.getFrontFacing();
-        RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
-        float tick = world.getWorldTime() + partialTicks;
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-        GlStateManager.translate(0.5D, 0.5D, 0.5D);
-        GlStateManager.rotate(tick * (float) Math.PI * 2 / 40, 0, 1, 0);
-        GlStateManager.scale(0.6f, 0.6f, 0.6f);
-        itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
-        GlStateManager.popMatrix();
+
+        if (canRender(x, y, z, 8 *
+                MathHelper.clamp((double) Minecraft.getMinecraft().gameSettings.renderDistanceChunks / 8, 1.0, 2.5))) {
+            RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
+            float tick = world.getWorldTime() + partialTicks;
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(x, y, z);
+            GlStateManager.translate(0.5D, 0.5D, 0.5D);
+            GlStateManager.rotate(tick * (float) Math.PI * 2 / 40, 0, 1, 0);
+            GlStateManager.scale(0.6f, 0.6f, 0.6f);
+            itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
+            GlStateManager.popMatrix();
+        }
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
         renderAmountText(x, y, z, count, frontFacing);
@@ -110,36 +144,61 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
 
     public static void renderTankFluid(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline,
                                        FluidTank tank, IBlockAccess world, BlockPos pos, EnumFacing frontFacing) {
-        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
-        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+        FluidStack stack = tank.getFluid();
+        if (stack == null || stack.amount == 0 || !ConfigHolder.client.enableFancyChestRender) {
+            return;
+        }
+
+        Fluid fluid = stack.getFluid();
+        if (fluid == null) {
+            return;
+        }
+
         if (world != null) {
             renderState.setBrightness(world, pos);
         }
-        FluidStack stack = tank.getFluid();
-        if (stack == null || stack.amount == 0)
-            return;
 
         Cuboid6 partialFluidBox = new Cuboid6(1.0625 / 16.0, 2.0625 / 16.0, 1.0625 / 16.0, 14.9375 / 16.0,
                 14.9375 / 16.0, 14.9375 / 16.0);
 
         double fillFraction = (double) stack.amount / tank.getCapacity();
-        if (tank.getFluid().getFluid().isGaseous()) {
+        boolean gas = fluid.isGaseous(stack);
+        if (gas) {
             partialFluidBox.min.y = Math.max(13.9375 - (11.875 * fillFraction), 2.0) / 16.0;
         } else {
             partialFluidBox.max.y = Math.min((11.875 * fillFraction) + 2.0625, 14.0) / 16.0;
         }
 
         renderState.setFluidColour(stack);
-        ResourceLocation fluidStill = stack.getFluid().getStill(stack);
+        ResourceLocation fluidStill = fluid.getStill(stack);
         TextureAtlasSprite fluidStillSprite = Minecraft.getMinecraft().getTextureMapBlocks()
                 .getAtlasSprite(fluidStill.toString());
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            Textures.renderFace(renderState, translation, pipeline, facing, partialFluidBox, fluidStillSprite,
-                    BlockRenderLayer.CUTOUT_MIPPED);
-        }
+
+        Textures.renderFace(renderState, translation, pipeline, frontFacing, partialFluidBox, fluidStillSprite,
+                BlockRenderLayer.CUTOUT_MIPPED);
+
+        Textures.renderFace(renderState, translation, pipeline, gas ? EnumFacing.DOWN : EnumFacing.UP, partialFluidBox,
+                fluidStillSprite,
+                BlockRenderLayer.CUTOUT_MIPPED);
+
         GlStateManager.resetColor();
 
         renderState.reset();
+    }
+
+    /**
+     * Takes in the difference in x, y, and z from the camera to the rendering TE and
+     * calculates the squared distance and checks if it's within the range squared
+     * 
+     * @param x     the difference in x from entity to this rendering TE
+     * @param y     the difference in y from entity to this rendering TE
+     * @param z     the difference in z from entity to this rendering TE
+     * @param range distance needed to be rendered
+     * @return true if the camera is within the given range, otherwise false
+     */
+    public static boolean canRender(double x, double y, double z, double range) {
+        double distance = (x * x) + (y * y) + (z * z);
+        return distance < range * range;
     }
 
     public static void renderTankAmount(double x, double y, double z, EnumFacing frontFacing, long amount) {
@@ -153,6 +212,9 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
     }
 
     public static void renderAmountText(double x, double y, double z, long amount, EnumFacing frontFacing) {
+        if (!ConfigHolder.client.enableFancyChestRender || !canRender(x, y, z, 64))
+            return;
+
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         GlStateManager.translate(frontFacing.getXOffset() * -1 / 16f, frontFacing.getYOffset() * -1 / 16f,
@@ -167,7 +229,8 @@ public class QuantumStorageRenderer implements TextureUtils.IIconRegister {
         GlStateManager.scale(1f / 64, 1f / 64, 0);
         GlStateManager.translate(-32, -32, 0);
         GlStateManager.disableLighting();
-        new TextTexture(amountText, 0xFFFFFF).draw(0, 24, 64, 28);
+        textRenderer.setText(amountText);
+        textRenderer.draw(0, 24, 64, 28);
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }

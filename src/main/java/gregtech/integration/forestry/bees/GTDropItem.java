@@ -1,6 +1,7 @@
 package gregtech.integration.forestry.bees;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -44,7 +45,7 @@ public class GTDropItem extends Item implements IColoredItem, IItemModelRegister
     public void registerModel(@NotNull Item item, @NotNull IModelManager manager) {
         manager.registerItemModel(item, 0);
         for (int i = 0; i < GTDropType.VALUES.length; i++) {
-            manager.registerItemModel(item, i, GTValues.MODID_FR, "gt.honey_drop");
+            manager.registerItemModel(item, i, Mods.Names.FORESTRY, "gt.honey_drop");
         }
     }
 

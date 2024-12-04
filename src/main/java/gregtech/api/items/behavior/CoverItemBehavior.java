@@ -56,8 +56,10 @@ public class CoverItemBehavior implements IItemBehaviour {
 
         ItemStack itemStack = player.getHeldItem(hand);
 
-        coverHolder.addCover(coverSide, cover);
+        // Call onAttachment first so that the cover can set up any
+        // necessary variables needed for the S2C cover sync packet.
         cover.onAttachment(coverHolder, coverSide, player, itemStack);
+        coverHolder.addCover(coverSide, cover);
 
         AdvancementTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) player);
 

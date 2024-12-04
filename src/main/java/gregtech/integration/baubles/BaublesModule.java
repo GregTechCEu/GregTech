@@ -2,6 +2,7 @@ package gregtech.integration.baubles;
 
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.modules.GregTechModules;
@@ -24,7 +25,7 @@ import java.util.List;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_BAUBLES,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_BAUBLES,
+                modDependencies = Mods.Names.BAUBLES,
                 name = "GregTech Baubles Integration",
                 description = "Baubles Integration Module")
 public class BaublesModule extends IntegrationSubmodule {

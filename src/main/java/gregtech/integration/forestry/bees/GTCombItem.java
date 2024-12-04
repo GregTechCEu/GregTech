@@ -1,6 +1,7 @@
 package gregtech.integration.forestry.bees;
 
 import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -37,7 +38,7 @@ public class GTCombItem extends Item implements IColoredItem, IItemModelRegister
     public void registerModel(@NotNull Item item, IModelManager manager) {
         manager.registerItemModel(item, 0);
         for (int i = 0; i < GTCombType.values().length; i++) {
-            manager.registerItemModel(item, i, GTValues.MODID_FR, "gt.comb");
+            manager.registerItemModel(item, i, Mods.Names.FORESTRY, "gt.comb");
         }
     }
 

@@ -1,0 +1,29 @@
+{
+  "package": "gregtech.mixins.minecraft",
+  "refmap": "mixins.gregtech.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "injectors": {
+    "maxShiftBy": 10
+  },
+  "mixins": [
+    "BlockConcretePowderMixin",
+    "BlockRenderLayerMixin",
+    "DamageSourceMixin",
+    "EnchantmentCanApplyMixin",
+    "MinecraftMixin"
+  ],
+  "client": [
+    "BlockMixin",
+    "EntityRendererMixin",
+    "LayerArmorBaseMixin",
+    "LayerCustomHeadMixin",
+    "RecipeRepairItemMixin",
+    "RegionRenderCacheBuilderMixin",
+    "RenderChunkMixin",
+    "RenderGlobalMixin",
+    "RenderItemMixin"
+  ],
+  "server": []
+}

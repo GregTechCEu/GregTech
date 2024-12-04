@@ -1,6 +1,6 @@
 package gregtech.core.network.packets;
 
-import gregtech.common.terminal.app.prospector.ProspectorMode;
+import gregtech.common.gui.widget.prospector.ProspectorMode;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;

@@ -1,9 +1,7 @@
 package gregtech.integration.forestry.bees;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationModule;
-
-import net.minecraftforge.fml.common.Loader;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -16,10 +14,10 @@ public class BeeRemovals {
     private static final List<String> EB_REMOVALS = new ArrayList<>();
 
     public static void init() {
-        if (Loader.isModLoaded(GTValues.MODID_MB)) {
+        if (Mods.MagicBees.isModLoaded()) {
             removeMagicBees();
         }
-        if (Loader.isModLoaded(GTValues.MODID_EB)) {
+        if (Mods.ExtraBees.isModLoaded()) {
             removeExtraBees();
         }
     }

@@ -1,8 +1,8 @@
 package gregtech.integration.forestry.tools;
 
-import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.items.toolitem.behavior.IToolBehavior;
+import gregtech.api.util.Mods;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.Loader;
 
 import forestry.api.lepidopterology.EnumFlutterType;
 import forestry.api.lepidopterology.IAlleleButterflySpecies;
@@ -32,7 +31,7 @@ public class ScoopBehavior implements IToolBehavior {
     @Override
     public void hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
                           @NotNull EntityLivingBase attacker) {
-        if (!Loader.isModLoaded(GTValues.MODID_FR)) return;
+        if (!Mods.Forestry.isModLoaded()) return;
         if (!(target instanceof IEntityButterfly butterfly)) return;
         if (!(attacker instanceof EntityPlayer player)) return;
         if (attacker.world == null || attacker.world.isRemote) return;

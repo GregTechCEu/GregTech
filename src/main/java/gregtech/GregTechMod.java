@@ -3,6 +3,7 @@ package gregtech;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
+import gregtech.api.persistence.PersistentData;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
@@ -26,14 +27,14 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
 @Mod(modid = GTValues.MODID,
-     name = "GregTech",
+     name = GTValues.MOD_NAME,
      acceptedMinecraftVersions = "[1.12.2,1.13)",
      version = GTInternalTags.VERSION,
      dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
              "required-after:modularui@[2.3,);" + "required-after:mixinbooter@[8.0,);" + "after:appliedenergistics2;" +
              "after:forestry;" + "after:extrabees;" + "after:extratrees;" + "after:genetics;" + "after:magicbees;" +
-             "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" + "after:groovyscript@[0.7.0,);" +
-             "after:theoneprobe;" + "after:hwyla;" + "after:exnihilocreatio;")
+             "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" + "after:groovyscript@[1.2.0,);" +
+             "after:theoneprobe;" + "after:hwyla;"  + "after:exnihilocreatio;")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without
@@ -50,6 +51,7 @@ public class GregTechMod {
 
     @EventHandler
     public void onConstruction(FMLConstructionEvent event) {
+        PersistentData.instance().init();
         moduleManager = ModuleManager.getInstance();
         GregTechAPI.moduleManager = moduleManager;
         moduleManager.registerContainer(new GregTechModules());

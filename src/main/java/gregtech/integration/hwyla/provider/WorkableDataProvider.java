@@ -26,7 +26,7 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, TileEntity.class);
         registrar.registerNBTProvider(this, TileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.workable");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.workable");
     }
 
     @Override

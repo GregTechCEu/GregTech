@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.steam.boiler.SteamBoiler;
 
 import net.minecraft.client.resources.I18n;
@@ -28,7 +29,7 @@ public class SteamBoilerDataProvider implements IWailaDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, IGregTechTileEntity.class);
         registrar.registerNBTProvider(this, IGregTechTileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.steam_boiler");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.steam_boiler");
     }
 
     @NotNull
@@ -65,7 +66,8 @@ public class SteamBoilerDataProvider implements IWailaDataProvider {
 
                 // Creating steam
                 if (steamRate > 0 && hasWater) {
-                    tooltip.add(I18n.format("gregtech.top.energy_production") + ": " + (steamRate / 10) + " L/t " +
+                    tooltip.add(I18n.format("gregtech.top.energy_production") + ": " +
+                            TextFormattingUtil.formatNumbers(steamRate / 10) + " L/t " +
                             I18n.format(Materials.Steam.getUnlocalizedName()));
                 }
 

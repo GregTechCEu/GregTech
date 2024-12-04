@@ -1,11 +1,11 @@
 package gregtech.integration.crafttweaker.material;
 
-import gregtech.api.GTValues;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
+import gregtech.api.util.Mods;
 
 import net.minecraft.enchantment.Enchantment;
 
@@ -60,12 +60,12 @@ public class MaterialExpansion {
     @ZenGetter
     public static boolean isGaseous(Material m) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
-        return prop != null && prop.getStorage().get(FluidStorageKeys.GAS) != null;
+        return prop != null && prop.get(FluidStorageKeys.GAS) != null;
     }
 
     // TODO May need to move this to Material
     @ZenGetter("fluid")
-    @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
+    @net.minecraftforge.fml.common.Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     public static ILiquidDefinition getFluid(Material m) {
         FluidProperty prop = m.getProperty(PropertyKey.FLUID);
         if (prop != null) {
@@ -164,13 +164,13 @@ public class MaterialExpansion {
     }
 
     @ZenMethod
-    @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
+    @net.minecraftforge.fml.common.Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     public static void addToolEnchantment(Material m, IEnchantment enchantment) {
         addScaledToolEnchantment(m, enchantment, 0);
     }
 
     @ZenMethod
-    @net.minecraftforge.fml.common.Optional.Method(modid = GTValues.MODID_CT)
+    @net.minecraftforge.fml.common.Optional.Method(modid = Mods.Names.CRAFT_TWEAKER)
     public static void addScaledToolEnchantment(Material m, IEnchantment enchantment, double levelGrowth) {
         if (checkFrozen("add tool enchantment")) return;
         ToolProperty prop = m.getProperty(PropertyKey.TOOL);

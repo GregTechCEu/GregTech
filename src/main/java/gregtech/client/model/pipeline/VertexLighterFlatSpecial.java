@@ -1,6 +1,6 @@
 package gregtech.client.model.pipeline;
 
-import gregtech.client.shader.Shaders;
+import gregtech.api.util.Mods;
 
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -134,7 +134,7 @@ public class VertexLighterFlatSpecial extends VertexLighterFlat {
             updateColor(normal[v], color[v], x, y, z, tint, multiplier);
 
             // When enabled this causes the rendering to be black with Optifine
-            if (!Shaders.isOptiFineShaderPackLoaded() && diffuse) {
+            if (!Mods.Optifine.isModLoaded() && diffuse) {
                 float d = LightUtil.diffuseLight(normal[v][0], normal[v][1], normal[v][2]);
                 for (int i = 0; i < 3; i++) {
                     color[v][i] *= d;

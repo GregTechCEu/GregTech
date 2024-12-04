@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IPrimitivePump;
+import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,7 +33,9 @@ public class PrimitivePumpInfoProvider implements IProbeInfoProvider {
             if (metaTileEntity instanceof IPrimitivePump) {
                 probeInfo.text(
                         TextStyleClass.INFO + "{*gregtech.top.primitive_pump_production*} " + TextFormatting.AQUA +
-                                ((IPrimitivePump) metaTileEntity).getFluidProduction() + TextFormatting.RESET + " L/s");
+                                TextFormattingUtil
+                                        .formatNumbers(((IPrimitivePump) metaTileEntity).getFluidProduction()) +
+                                TextFormatting.RESET + " L/s");
             }
         }
     }

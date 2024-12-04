@@ -67,7 +67,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         if (tileEntity instanceof SyncedTileEntityBase pipeBase) {
             addPacketsFrom(pipeBase);
         }
-        coverableImplementation.transferDataTo(tileEntity.getCoverableImplementation());
+        tileEntity.getCoverableImplementation().transferDataTo(coverableImplementation);
         setFrameMaterial(tileEntity.getFrameMaterial());
     }
 
@@ -335,24 +335,28 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Nullable
     @Override
     public final <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
-        boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER;
-        Cover cover = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
-        T defaultValue;
-        if (getPipeBlock() == null)
-            defaultValue = null;
-        else
-            defaultValue = getCapabilityInternal(capability, facing);
+        T pipeCapability = getPipeBlock() == null ? null : getCapabilityInternal(capability, facing);
 
-        if (isCoverable) {
-            return defaultValue;
+        if (capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER) {
+            return pipeCapability;
         }
-        if (cover == null && facing != null) {
-            return isConnected(facing) ? defaultValue : null;
+
+        Cover cover = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
+        if (cover == null) {
+            if (facing == null || isConnected(facing)) {
+                return pipeCapability;
+            }
+            return null;
         }
-        if (cover != null) {
-            return cover.getCapability(capability, defaultValue);
+
+        T coverCapability = cover.getCapability(capability, pipeCapability);
+        if (coverCapability == pipeCapability) {
+            if (isConnected(facing)) {
+                return pipeCapability;
+            }
+            return null;
         }
-        return defaultValue;
+        return coverCapability;
     }
 
     @Override

@@ -52,6 +52,8 @@ public final class WoodTypeEntry {
     public final String fenceGateRecipeName;
     @NotNull
     public final ItemStack stairs;
+    @Nullable
+    public final String stairsRecipeName;
     public final boolean addStairsCraftingRecipe;
     @NotNull
     public final ItemStack boat;
@@ -83,13 +85,14 @@ public final class WoodTypeEntry {
                           @NotNull ItemStack slab, @Nullable String slabRecipeName, boolean addSlabCraftingRecipe,
                           @NotNull ItemStack fence, @Nullable String fenceRecipeName,
                           @NotNull ItemStack fenceGate, @Nullable String fenceGateRecipeName, @NotNull ItemStack stairs,
-                          boolean addStairsCraftingRecipe, @NotNull ItemStack boat, @Nullable String boatRecipeName,
-                          @Nullable Material material, boolean addLogOreDict, boolean addPlanksOreDict,
-                          boolean addDoorsOreDict, boolean addSlabsOreDict, boolean addFencesOreDict,
-                          boolean addFenceGatesOreDict, boolean addStairsOreDict, boolean addPlanksUnificationInfo,
-                          boolean addDoorsUnificationInfo, boolean addSlabsUnificationInfo,
-                          boolean addFencesUnificationInfo, boolean addFenceGatesUnificationInfo,
-                          boolean addStairsUnificationInfo, boolean addBoatsUnificationInfo) {
+                          @Nullable String stairsRecipeName, boolean addStairsCraftingRecipe, @NotNull ItemStack boat,
+                          @Nullable String boatRecipeName, @Nullable Material material, boolean addLogOreDict,
+                          boolean addPlanksOreDict, boolean addDoorsOreDict, boolean addSlabsOreDict,
+                          boolean addFencesOreDict, boolean addFenceGatesOreDict, boolean addStairsOreDict,
+                          boolean addPlanksUnificationInfo, boolean addDoorsUnificationInfo,
+                          boolean addSlabsUnificationInfo, boolean addFencesUnificationInfo,
+                          boolean addFenceGatesUnificationInfo, boolean addStairsUnificationInfo,
+                          boolean addBoatsUnificationInfo) {
         this.modid = modid;
         this.woodName = woodName;
         this.log = log;
@@ -107,6 +110,7 @@ public final class WoodTypeEntry {
         this.fenceGate = fenceGate;
         this.fenceGateRecipeName = fenceGateRecipeName;
         this.stairs = stairs;
+        this.stairsRecipeName = stairsRecipeName;
         this.addStairsCraftingRecipe = addStairsCraftingRecipe;
         this.boat = boat;
         this.boatRecipeName = boatRecipeName;
@@ -153,6 +157,7 @@ public final class WoodTypeEntry {
         private ItemStack fenceGate = ItemStack.EMPTY;
         private String fenceGateRecipeName;
         private ItemStack stairs = ItemStack.EMPTY;
+        private String stairsRecipeName;
         private boolean addStairsCraftingRecipe;
         private ItemStack boat = ItemStack.EMPTY;
         private String boatRecipeName;
@@ -294,11 +299,13 @@ public final class WoodTypeEntry {
         /**
          * Add an entry for stairs
          *
-         * @param stairs the stairs to add
+         * @param stairs           the stairs to add
+         * @param stairsRecipeName the recipe name for crafting the stairs
          * @return this
          */
-        public Builder stairs(@NotNull ItemStack stairs) {
+        public Builder stairs(@NotNull ItemStack stairs, @Nullable String stairsRecipeName) {
             this.stairs = stairs;
+            this.stairsRecipeName = stairsRecipeName;
             return this;
         }
 
@@ -410,12 +417,11 @@ public final class WoodTypeEntry {
             Preconditions.checkArgument(!planks.isEmpty(), "Planks cannot be empty.");
             return new WoodTypeEntry(modid, woodName, log, removeCharcoalRecipe, addCharcoalRecipe, planks,
                     planksRecipeName, door, doorRecipeName, slab, slabRecipeName, addSlabsCraftingRecipe, fence,
-                    fenceRecipeName,
-                    fenceGate, fenceGateRecipeName, stairs, addStairsCraftingRecipe, boat, boatRecipeName, material,
-                    addLogOreDict, addPlanksOreDict, addDoorsOreDict, addSlabsOreDict, addFencesOreDict,
-                    addFenceGatesOreDict, addStairsOreDict, addPlanksUnificationInfo, addDoorsUnificationInfo,
-                    addSlabsUnificationInfo, addFencesUnificationInfo, addFenceGatesUnificationInfo,
-                    addStairsUnificationInfo, addBoatsUnificationInfo);
+                    fenceRecipeName, fenceGate, fenceGateRecipeName, stairs, stairsRecipeName, addStairsCraftingRecipe,
+                    boat, boatRecipeName, material, addLogOreDict, addPlanksOreDict, addDoorsOreDict, addSlabsOreDict,
+                    addFencesOreDict, addFenceGatesOreDict, addStairsOreDict, addPlanksUnificationInfo,
+                    addDoorsUnificationInfo, addSlabsUnificationInfo, addFencesUnificationInfo,
+                    addFenceGatesUnificationInfo, addStairsUnificationInfo, addBoatsUnificationInfo);
         }
     }
 }

@@ -5,6 +5,7 @@ import gregtech.api.block.VariantBlock;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.Mods;
 import gregtech.common.blocks.BlockColored;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockWarningSign;
@@ -31,7 +32,7 @@ import java.util.Objects;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_CHISEL,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_CHISEL,
+                modDependencies = Mods.Names.CHISEL,
                 name = "GregTech Chisel Integration",
                 description = "Chisel Integration Module")
 public class ChiselModule extends IntegrationSubmodule {
@@ -110,7 +111,7 @@ public class ChiselModule extends IntegrationSubmodule {
         tag.setString("group", group);
         tag.setString("block", Objects.requireNonNull(block.getRegistryName()).toString());
         tag.setInteger("meta", meta);
-        FMLInterModComms.sendMessage(GTValues.MODID_CHISEL, "add_variation", tag);
+        FMLInterModComms.sendMessage(Mods.Names.CHISEL, "add_variation", tag);
     }
 
     private boolean doesGroupExist(String group) {

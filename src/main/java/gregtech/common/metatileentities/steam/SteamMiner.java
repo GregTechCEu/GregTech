@@ -254,6 +254,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         this.minerLogic.receiveCustomData(dataId, buf);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.STEAM_CASING_BRONZE.getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.TOP),

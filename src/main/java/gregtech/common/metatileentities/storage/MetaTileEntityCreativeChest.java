@@ -33,6 +33,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -42,26 +43,13 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     private int itemsPerCycle = 1;
     private int ticksPerCycle = 1;
 
-    private final GTItemStackHandler handler = new GTItemStackHandler(this, 1) {
-
-        @Override
-        protected int getStackLimit(int slot, ItemStack stack) {
-            return 1;
-        }
-
-        @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
-            this.validateSlotIndex(slot);
-            stack.setCount(1);
-            this.stacks.set(slot, stack);
-            this.onContentsChanged(slot);
-        }
-    };
+    private final GTItemStackHandler handler;
 
     private boolean active;
 
     public MetaTileEntityCreativeChest(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.MAX, 0);
+        this.handler = new CreativeItemStackHandler(1);
     }
 
     @Override
@@ -69,10 +57,13 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         Textures.QUANTUM_STORAGE_RENDERER.renderMachine(renderState, translation,
                 ArrayUtils.add(pipeline,
                         new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))),
-                this.getFrontFacing(), this.getTier());
+                this);
         Textures.CREATIVE_CONTAINER_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_OUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
-        Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+        if (!isConnected() && active) {
+            Textures.ITEM_OUTPUT_OVERLAY.renderSided(this.getOutputFacing(), renderState, translation, pipeline);
+        }
+        renderIndicatorOverlay(renderState, translation, pipeline);
     }
 
     @Override
@@ -110,8 +101,14 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         }).setMaxLength(11).setNumbersOnly(1, Integer.MAX_VALUE));
         builder.label(7, 65, "gregtech.creative.chest.tpc");
 
-        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> active = value,
-                "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
+        builder.widget(new CycleButtonWidget(7, 101, 162, 20, () -> active, value -> {
+            active = value;
+            scheduleRenderUpdate();
+            var c = getQuantumController();
+            if (c != null) c.updateHandler();
+        }, "gregtech.creative.activity.off", "gregtech.creative.activity.on"));
+
+        builder.widget(createConnectedGui(6));
 
         return builder.build(getHolder(), entityPlayer);
     }
@@ -122,7 +119,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         this.virtualItemStack = stack; // For rendering purposes
         super.update();
         if (ticksPerCycle == 0 || getOffsetTimer() % ticksPerCycle != 0) return;
-        if (getWorld().isRemote || !active || stack.isEmpty()) return;
+        if (getWorld().isRemote || !active || stack.isEmpty() || isConnected()) return;
 
         TileEntity tile = getNeighbor(getOutputFacing());
         if (tile != null) {
@@ -189,8 +186,44 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.handler.setStackInSlot(0, this.virtualItemStack);
+    }
+
+    @Override
+    public IItemHandler getTypeValue() {
+        return this.handler;
+    }
+
+    protected class CreativeItemStackHandler extends GTItemStackHandler {
+
+        CreativeItemStackHandler(int size) {
+            super(MetaTileEntityCreativeChest.this, size);
+        }
+
+        @NotNull
+        @Override
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @NotNull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (!active) return ItemStack.EMPTY;
+            return GTUtility.copy(Math.min(amount, itemsPerCycle), getStackInSlot(0));
+        }
+
+        @Override
+        protected int getStackLimit(int slot, ItemStack stack) {
+            return 1;
+        }
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            super.setStackInSlot(slot, stack);
+            virtualItemStack = GTUtility.copy(1, stack);
+        }
     }
 }

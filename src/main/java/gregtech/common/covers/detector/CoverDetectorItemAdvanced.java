@@ -78,7 +78,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         // "cover.generic.advanced_detector.invert_label"));
         group.addWidget(
                 new CycleButtonWidget(10, 3 * (SIZE + PADDING), 4 * SIZE, SIZE, this::isInverted, this::setInverted,
-                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
+                        "cover.advanced_energy_detector.normal", "cover.advanced_energy_detector.inverted")
                                 .setTooltipHoverString("cover.generic.advanced_detector.invert_tooltip"));
         // group.addWidget(new LabelWidget(10, 5 + 4 * (SIZE + PADDING),
         // "cover.generic.advanced_detector.latch_label"));
@@ -151,7 +151,7 @@ public class CoverDetectorItemAdvanced extends CoverDetectorItem implements Cove
         int storedItems = 0;
 
         for (int i = 0; i < itemHandler.getSlots(); i++) {
-            if (itemFilter.testItemStack(itemHandler.getStackInSlot(i)))
+            if (itemFilter.test(itemHandler.getStackInSlot(i)))
                 storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 

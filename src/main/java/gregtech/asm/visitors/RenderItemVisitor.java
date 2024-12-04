@@ -1,6 +1,6 @@
 package gregtech.asm.visitors;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.asm.util.ObfMapping;
 
 import net.minecraftforge.fml.common.Loader;
@@ -28,7 +28,7 @@ public class RenderItemVisitor implements Opcodes {
                 callRenderLampOverlay.add(new MethodInsnNode(INVOKESTATIC, "gregtech/asm/hooks/RenderItemHooks",
                         "renderLampOverlay", "(Lnet/minecraft/item/ItemStack;II)V", false));
 
-                boolean enderCoreLoaded = Loader.instance().getIndexedModList().containsKey(GTValues.MODID_ECORE);
+                boolean enderCoreLoaded = Loader.instance().getIndexedModList().containsKey(Mods.Names.ENDER_CORE);
 
                 // do not conflict with EnderCore's changes, which already do what we need
                 InsnList callRenderElectricBar;

@@ -4,16 +4,15 @@ import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.crafttweaker.recipe.MetaItemBracketHandler;
-import gregtech.integration.crafttweaker.terminal.CTTerminalRegistry;
 import gregtech.modules.GregTechModules;
 
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -27,7 +26,7 @@ import java.util.List;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_CT,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_CT,
+                modDependencies = Mods.Names.CRAFT_TWEAKER,
                 name = "GregTech CraftTweaker Integration",
                 description = "CraftTweaker Integration Module")
 public class CraftTweakerModule extends IntegrationSubmodule {
@@ -44,11 +43,6 @@ public class CraftTweakerModule extends IntegrationSubmodule {
     public void preInit(FMLPreInitializationEvent event) {
         CT_OREDICT_ITEM = new MetaOreDictItem((short) 0);
         CT_OREDICT_ITEM.setRegistryName("meta_oredict_item_ct");
-    }
-
-    @Override
-    public void postInit(FMLPostInitializationEvent event) {
-        CTTerminalRegistry.register();
     }
 
     @Override

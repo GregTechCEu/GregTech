@@ -1,119 +1,167 @@
 package gregtech.common.covers.filter;
 
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
-import gregtech.api.util.LargeStackSizeItemStackHandler;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.util.TextFormattingUtil;
+import gregtech.common.covers.CoverItemVoidingAdvanced;
+import gregtech.common.covers.CoverRoboticArm;
+import gregtech.common.covers.TransferMode;
+import gregtech.common.covers.VoidingMode;
+import gregtech.common.covers.filter.readers.SimpleItemFilterReader;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class SimpleItemFilter extends ItemFilter {
+public class SimpleItemFilter extends BaseFilter {
 
     private static final int MAX_MATCH_SLOTS = 9;
+    private final SimpleItemFilterReader filterReader;
 
-    protected final ItemStackHandler itemFilterSlots;
-    protected boolean ignoreDamage = true;
-    protected boolean ignoreNBT = true;
-
-    public SimpleItemFilter() {
-        this.itemFilterSlots = new LargeStackSizeItemStackHandler(MAX_MATCH_SLOTS) {
-
-            @Override
-            public int getSlotLimit(int slot) {
-                return getMaxStackSize();
-            }
-        };
+    public SimpleItemFilter(ItemStack stack) {
+        filterReader = new SimpleItemFilterReader(stack, MAX_MATCH_SLOTS);
     }
 
     @Override
-    protected void onMaxStackSizeChange() {
-        for (int i = 0; i < itemFilterSlots.getSlots(); i++) {
-            ItemStack itemStack = itemFilterSlots.getStackInSlot(i);
-            if (!itemStack.isEmpty()) {
-                itemStack.setCount(Math.min(itemStack.getCount(), getMaxStackSize()));
-            }
-        }
-    }
-
-    public ItemStackHandler getItemFilterSlots() {
-        return itemFilterSlots;
-    }
-
-    public boolean isIgnoreDamage() {
-        return ignoreDamage;
-    }
-
-    public boolean isIgnoreNBT() {
-        return ignoreNBT;
-    }
-
-    protected void setIgnoreDamage(boolean ignoreDamage) {
-        this.ignoreDamage = ignoreDamage;
-        markDirty();
-    }
-
-    protected void setIgnoreNBT(boolean ignoreNBT) {
-        this.ignoreNBT = ignoreNBT;
-        markDirty();
+    public SimpleItemFilterReader getFilterReader() {
+        return filterReader;
     }
 
     @Override
-    public Integer matchItemStack(ItemStack itemStack) {
-        int itemFilterMatchIndex = itemFilterMatch(getItemFilterSlots(), isIgnoreDamage(), isIgnoreNBT(), itemStack);
-        return itemFilterMatchIndex == -1 ? null : itemFilterMatchIndex;
+    public MatchResult matchItem(ItemStack itemStack) {
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
+                itemStack);
+        return MatchResult.create(matchedSlot != -1 == !isBlacklistFilter(),
+                filterReader.getStackInSlot(matchedSlot), matchedSlot);
     }
 
     @Override
-    public int getSlotTransferLimit(Object matchSlot, int globalTransferLimit) {
-        Integer matchSlotIndex = (Integer) matchSlot;
-        ItemStack stackInFilterSlot = itemFilterSlots.getStackInSlot(matchSlotIndex);
-        return Math.min(stackInFilterSlot.getCount(), globalTransferLimit);
+    public boolean testItem(ItemStack toTest) {
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
+                toTest);
+        return matchedSlot != -1;
     }
 
     @Override
-    public boolean showGlobalTransferLimitSlider() {
-        return false;
+    public int getTransferLimit(int matchSlot, int transferSize) {
+        ItemStack stackInFilterSlot = filterReader.getStackInSlot(matchSlot);
+        return Math.min(stackInFilterSlot.getCount(), transferSize);
     }
 
     @Override
-    public int getTotalOccupiedHeight() {
-        return 36;
+    public FilterType getType() {
+        return FilterType.ITEM;
     }
 
     @Override
-    public void initUI(Consumer<Widget> widgetGroup) {
+    public int getTransferLimit(ItemStack stack, int transferSize) {
+        int matchedSlot = itemFilterMatch(filterReader, filterReader.isIgnoreDamage(), filterReader.isIgnoreNBT(),
+                stack);
+        return getTransferLimit(matchedSlot, transferSize);
+    }
+
+    @Override
+    public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {
         for (int i = 0; i < 9; i++) {
-            widgetGroup.accept(new PhantomSlotWidget(itemFilterSlots, i, 10 + 18 * (i % 3), 18 * (i / 3))
+            widgetGroup.accept(new PhantomSlotWidget(filterReader, i, 10 + 18 * (i % 3), 18 * (i / 3))
                     .setBackgroundTexture(GuiTextures.SLOT));
         }
         widgetGroup.accept(new ToggleButtonWidget(74, 0, 20, 20, GuiTextures.BUTTON_FILTER_DAMAGE,
-                () -> ignoreDamage, this::setIgnoreDamage).setTooltipText("cover.item_filter.ignore_damage"));
+                filterReader::isIgnoreDamage, filterReader::setIgnoreDamage)
+                        .setTooltipText("cover.item_filter.ignore_damage"));
         widgetGroup.accept(new ToggleButtonWidget(99, 0, 20, 20, GuiTextures.BUTTON_FILTER_NBT,
-                () -> ignoreNBT, this::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
+                filterReader::isIgnoreNBT, filterReader::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setTag("ItemFilter", itemFilterSlots.serializeNBT());
-        tagCompound.setBoolean("IgnoreDamage", ignoreDamage);
-        tagCompound.setBoolean("IgnoreNBT", ignoreNBT);
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
+        return GTGuis.createPopupPanel("simple_item_filter", 98, 81)
+                .child(CoverWithUI.createTitleRow(getContainerStack()))
+                .child(createWidgets(syncManager).top(22).left(4));
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        this.itemFilterSlots.deserializeNBT(tagCompound.getCompoundTag("ItemFilter"));
-        this.ignoreDamage = tagCompound.getBoolean("IgnoreDamage");
-        this.ignoreNBT = tagCompound.getBoolean("IgnoreNBT");
+    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
+        return GTGuis.createPanel("simple_item_filter", 176, 166);
     }
 
-    public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage, boolean ignoreNBTData,
-                                      ItemStack itemStack) {
+    @SuppressWarnings("UnstableApiUsage")
+    @Override
+    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
+        SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
+        var ignoreDamage = new BooleanSyncValue(this.filterReader::isIgnoreDamage, this.filterReader::setIgnoreDamage);
+        var ignoreNBT = new BooleanSyncValue(this.filterReader::isIgnoreNBT, this.filterReader::setIgnoreNBT);
+
+        syncManager.registerSlotGroup(filterInventory);
+
+        return new Row().coverChildren()
+                .child(SlotGroupWidget.builder()
+                        .matrix("XXX",
+                                "XXX",
+                                "XXX")
+                        .key('X', index -> new ItemSlot()
+                                .tooltip(tooltip -> {
+                                    tooltip.setAutoUpdate(true);
+                                    tooltip.textColor(Color.GREY.main);
+                                })
+                                .tooltipBuilder(tooltip -> {
+                                    if (dirtyNotifiable instanceof CoverRoboticArm coverArm &&
+                                            coverArm.getTransferMode() != TransferMode.TRANSFER_ANY ||
+                                            dirtyNotifiable instanceof CoverItemVoidingAdvanced coverItem &&
+                                                    coverItem.getVoidingMode() != VoidingMode.VOID_ANY) {
+                                        tooltip.addLine(IKey.lang("cover.item_filter.config_amount"));
+                                        int count = this.filterReader.getTagAt(index)
+                                                .getInteger(SimpleItemFilterReader.COUNT);
+                                        if (count > 0)
+                                            tooltip.addLine(
+                                                    IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                    }
+                                })
+                                .slot(SyncHandlers.phantomItemSlot(this.filterReader, index)
+                                        .ignoreMaxStackSize(true)
+                                        .slotGroup(filterInventory)
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            if (onlyAmountChanged && !init) {
+                                                markDirty();
+                                            }
+                                        })))
+                        .build().marginRight(4))
+                .child(new Column().width(18).coverChildren()
+                        .child(createBlacklistUI())
+                        .child(new CycleButtonWidget()
+                                .value(ignoreDamage)
+                                .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_DAMAGE[state])
+                                .addTooltip(0, IKey.lang("cover.item_filter.ignore_damage.disabled"))
+                                .addTooltip(1, IKey.lang("cover.item_filter.ignore_damage.enabled")))
+                        .child(new CycleButtonWidget()
+                                .value(ignoreNBT)
+                                .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_NBT[state])
+                                .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.disabled"))
+                                .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.enabled"))));
+    }
+
+    public static int itemFilterMatch(IItemHandler filterSlots, boolean ignoreDamage,
+                                      boolean ignoreNBTData, ItemStack itemStack) {
         for (int i = 0; i < filterSlots.getSlots(); i++) {
             ItemStack filterStack = filterSlots.getStackInSlot(i);
             if (!filterStack.isEmpty() && areItemsEqual(ignoreDamage, ignoreNBTData, filterStack, itemStack)) {
@@ -123,8 +171,8 @@ public class SimpleItemFilter extends ItemFilter {
         return -1;
     }
 
-    private static boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData, ItemStack filterStack,
-                                         ItemStack itemStack) {
+    private static boolean areItemsEqual(boolean ignoreDamage, boolean ignoreNBTData,
+                                         ItemStack filterStack, ItemStack itemStack) {
         if (ignoreDamage) {
             if (!filterStack.isItemEqualIgnoreDurability(itemStack)) {
                 return false;

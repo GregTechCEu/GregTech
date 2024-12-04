@@ -1,7 +1,12 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.*;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
+import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
@@ -34,7 +39,7 @@ import java.util.function.Function;
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
                                                    implements IDataInfoProvider, ICleanroomReceiver {
 
-    protected final RecipeLogicEnergy workable;
+    protected final AbstractRecipeLogic workable;
     protected final RecipeMap<?> recipeMap;
     protected final ICubeRenderer renderer;
 
@@ -63,7 +68,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
         reinitializeEnergyContainer();
     }
 
-    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
+    protected AbstractRecipeLogic createWorkable(RecipeMap<?> recipeMap) {
         return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
     }
 

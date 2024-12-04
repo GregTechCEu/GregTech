@@ -35,7 +35,6 @@ public class ConfigHolder {
     // TODO move to ToolsModule config
     @Config.Comment("Config options for Tools and Armor")
     @Config.Name("Tool and Armor Options")
-    @Config.RequiresMcRestart
     public static ToolOptions tools = new ToolOptions();
 
     @Config.Comment("Config options for World Generation features")
@@ -156,6 +155,11 @@ public class ConfigHolder {
                 "Default: false" })
         @Config.RequiresMcRestart
         public boolean highTierContent = false;
+
+        @Config.Comment({ "Whether tick acceleration effects are allowed to affect GT machines.",
+                "This does NOT apply to the World Accelerator, but to external effects like Time in a Bottle.",
+                "Default: true" })
+        public boolean allowTickAcceleration = true;
     }
 
     public static class WorldGenOptions {
@@ -399,7 +403,7 @@ public class ConfigHolder {
 
         @Config.Comment({
                 "Whether or not to enable Emissive Textures for Electric Blast Furnace Coils when the multiblock is working.",
-                "Default: false" })
+                "Default: true" })
         public boolean coilsActiveEmissiveTextures = true;
 
         @Config.Comment({ "Whether or not sounds should be played when using tools outside of crafting.",
@@ -450,6 +454,10 @@ public class ConfigHolder {
 
         @Config.Comment({ "Prevent optical and laser cables from animating when active.", "Default: false" })
         public boolean preventAnimatedCables = false;
+
+        @Config.Comment({ "Enable the fancy rendering for Super/Quantum Chests/Tanks.",
+                "Default: true" })
+        public boolean enableFancyChestRender = true;
 
         public static class GuiConfig {
 
@@ -632,34 +640,42 @@ public class ConfigHolder {
 
     public static class ToolOptions {
 
+        @Config.RequiresMcRestart
         @Config.Name("NanoSaber Options")
         public NanoSaber nanoSaber = new NanoSaber();
 
+        @Config.RequiresMcRestart
         @Config.Comment("NightVision Goggles Voltage Tier. Default: 1 (LV)")
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierNightVision = 1;
 
+        @Config.RequiresMcRestart
         @Config.Comment("NanoSuit Voltage Tier. Default: 3 (HV)")
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierNanoSuit = 3;
 
+        @Config.RequiresMcRestart
         @Config.Comment({ "Advanced NanoSuit Chestplate Voltage Tier.", "Default: 3 (HV)" })
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierAdvNanoSuit = 3;
 
+        @Config.RequiresMcRestart
         @Config.Comment({ "QuarkTech Suit Voltage Tier.", "Default: 5 (IV)" })
         @Config.RangeInt(min = 0, max = 14)
         @Config.SlidingOption
         public int voltageTierQuarkTech = 5;
 
+        @Config.RequiresMcRestart
         @Config.Comment({ "Advanced QuarkTech Suit Chestplate Voltage Tier.", "Default: 5 (LuV)" })
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierAdvQuarkTech = 6;
 
+        @Config.RequiresMcRestart
         @Config.Comment({ "Electric Impeller Jetpack Voltage Tier.", "Default: 2 (MV)" })
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierImpeller = 2;
 
+        @Config.RequiresMcRestart
         @Config.Comment({ "Advanced Electric Jetpack Voltage Tier.", "Default: 3 (HV)" })
         @Config.RangeInt(min = 0, max = 14)
         public int voltageTierAdvImpeller = 3;
@@ -671,6 +687,11 @@ public class ConfigHolder {
 
         @Config.Comment("Armor HUD Location")
         public ArmorHud armorHud = new ArmorHud();
+
+        @Config.Comment({ "How often items should be moved by a magnet", "Default: 10 ticks" })
+        @Config.RangeInt(min = 1, max = 100)
+        @Config.SlidingOption
+        public int magnetDelay = 10;
     }
 
     public static class ArmorHud {

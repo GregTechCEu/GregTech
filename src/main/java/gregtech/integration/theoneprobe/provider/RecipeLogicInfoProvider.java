@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,8 +45,7 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
             if (capability instanceof PrimitiveRecipeLogic) {
                 return; // do not show info for primitive machines, as they are supposed to appear powerless
             }
-            int EUt = capability.getInfoProviderEUt();
-            int absEUt = Math.abs(EUt);
+            long eut = capability.getInfoProviderEUt();
             String text = null;
 
             if (tileEntity instanceof IGregTechTileEntity) {
@@ -53,18 +53,20 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 MetaTileEntity mte = gtTileEntity.getMetaTileEntity();
                 if (mte instanceof SteamMetaTileEntity || mte instanceof MetaTileEntityLargeBoiler ||
                         mte instanceof RecipeMapSteamMultiblockController) {
-                    text = TextFormatting.AQUA.toString() + absEUt + TextStyleClass.INFO + " L/t {*" +
+                    text = TextFormatting.AQUA + TextFormattingUtil.formatNumbers(eut) +
+                            TextStyleClass.INFO + " L/t {*" +
                             Materials.Steam.getUnlocalizedName() + "*}";
                 }
             }
             if (text == null) {
                 // Default behavior, if this TE is not a steam machine (or somehow not instanceof
                 // IGregTechTileEntity...)
-                text = TextFormatting.RED.toString() + absEUt + TextStyleClass.INFO + " EU/t" + TextFormatting.GREEN +
-                        " (" + GTValues.VNF[GTUtility.getTierByVoltage(absEUt)] + TextFormatting.GREEN + ")";
+                text = TextFormatting.RED + TextFormattingUtil.formatNumbers(eut) + TextStyleClass.INFO +
+                        " EU/t" + TextFormatting.GREEN +
+                        " (" + GTValues.VOCNF[GTUtility.getOCTierByVoltage(eut)] + TextFormatting.GREEN + ")";
             }
 
-            if (EUt == 0) return; // idk what to do for 0 eut
+            if (eut == 0) return; // do not display 0 eut
 
             if (capability.consumesEnergy()) {
                 probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_consumption*} " + text);

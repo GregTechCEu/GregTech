@@ -13,7 +13,6 @@ import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
@@ -87,8 +86,7 @@ public class OreDictUnifier {
 
     public static void init() {
         for (String registeredOreName : OreDictionary.getOreNames()) {
-            NonNullList<ItemStack> theseOres = OreDictionary.getOres(registeredOreName);
-            for (ItemStack itemStack : theseOres) {
+            for (ItemStack itemStack : OreDictionary.getOres(registeredOreName)) {
                 onItemRegistration(new OreRegisterEvent(registeredOreName, itemStack));
             }
         }
@@ -217,8 +215,13 @@ public class OreDictUnifier {
         return wildcardNames != null && wildcardNames != names && wildcardNames.contains(oreDictName);
     }
 
-    public static List<ItemStack> getAllWithOreDictionaryName(String oreDictionaryName) {
-        return oreDictNameStacks.get(oreDictionaryName).stream()
+    public static @NotNull List<@NotNull ItemStack> getAllWithOreDictionaryName(@NotNull String oreDictionaryName) {
+        var stacks = oreDictNameStacks.get(oreDictionaryName);
+        if (stacks == null) {
+            return Collections.emptyList();
+        }
+
+        return stacks.stream()
                 .map(ItemStack::copy)
                 .collect(Collectors.toList());
     }

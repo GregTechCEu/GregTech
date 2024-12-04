@@ -1,5 +1,6 @@
 package gregtech.api.util.input;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.util.GTLog;
 import gregtech.core.network.packets.PacketKeysPressed;
@@ -99,14 +100,14 @@ public enum KeyBind {
 
     KeyBind(String langKey, int button) {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = new KeyBinding(langKey, button, "GregTech");
+            this.keybinding = new KeyBinding(langKey, button, GTValues.MOD_NAME);
             ClientRegistry.registerKeyBinding(this.keybinding);
         }
     }
 
     KeyBind(String langKey, IKeyConflictContext ctx, int button) {
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            this.keybinding = new KeyBinding(langKey, ctx, button, "GregTech");
+            this.keybinding = new KeyBinding(langKey, ctx, button, GTValues.MOD_NAME);
             ClientRegistry.registerKeyBinding(this.keybinding);
         }
     }

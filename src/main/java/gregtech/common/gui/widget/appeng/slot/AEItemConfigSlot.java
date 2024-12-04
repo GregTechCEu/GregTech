@@ -5,10 +5,11 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.common.gui.widget.appeng.AEConfigWidget;
-import gregtech.common.metatileentities.multi.multiblockpart.appeng.IConfigurableSlot;
+import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.IConfigurableSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,27 +25,26 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @Author GlodBlock
- * @Description A configurable slot for {@link IAEItemStack}
- * @Date 2023/4/22-0:48
- */
 public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
 
-    public AEItemConfigSlot(int x, int y, AEConfigWidget<IAEItemStack> widget, int index) {
-        super(new Position(x, y), new Size(18, 18 * 2), widget, index);
+    public AEItemConfigSlot(int x, int y, AEItemConfigWidget widget, int index) {
+        super(new Position(x, y), new Size(18 * 6, 18), widget, index);
+    }
+
+    @Override
+    public AEItemConfigWidget getParentWidget() {
+        return (AEItemConfigWidget) super.getParentWidget();
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
+        AEItemConfigWidget pw = getParentWidget();
         Position position = getPosition();
-        IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
+        IConfigurableSlot<IAEItemStack> slot = pw.getDisplay(this.index);
         IAEItemStack config = slot.getConfig();
         IAEItemStack stock = slot.getStock();
-        GuiTextures.SLOT.draw(position.x, position.y, 18, 18);
-        GuiTextures.SLOT.draw(position.x, position.y + 18, 18, 18);
-        GuiTextures.CONFIG_ARROW_DARK.draw(position.x, position.y, 18, 18);
+        drawSlots(pw.isAutoPull(), position.x, position.y);
         if (this.select) {
             GuiTextures.SELECT_BOX.draw(position.x, position.y, 18, 18);
         }
@@ -54,28 +54,43 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
             ItemStack stack = config.createItemStack();
             stack.setCount(1);
             drawItemStack(stack, stackX, stackY, null);
-            String amountStr = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4);
-            drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
+
+            // Only draw the config amount if not stocking, as its meaningless when stocking
+            if (!pw.isStocking()) {
+                String amountStr = TextFormattingUtil.formatLongToCompactString(config.getStackSize(), 4);
+                drawStringFixedCorner(amountStr, stackX + 17, stackY + 17, 16777215, true, 0.5f);
+            }
         }
         if (stock != null) {
             ItemStack stack = stock.createItemStack();
             stack.setCount(1);
-            drawItemStack(stack, stackX, stackY + 18, null);
+            drawItemStack(stack, stackX + DISPLAY_X_OFFSET, stackY, null);
             String amountStr = TextFormattingUtil.formatLongToCompactString(stock.getStackSize(), 4);
-            drawStringFixedCorner(amountStr, stackX + 17, stackY + 18 + 17, 16777215, true, 0.5f);
+            drawStringFixedCorner(amountStr, stackX + DISPLAY_X_OFFSET + 17, stackY + 17, 16777215, true, 0.5f);
         }
         if (mouseOverConfig(mouseX, mouseY)) {
             drawSelectionOverlay(stackX, stackY, 16, 16);
         } else if (mouseOverStock(mouseX, mouseY)) {
-            drawSelectionOverlay(stackX, stackY + 18, 16, 16);
+            drawSelectionOverlay(stackX + DISPLAY_X_OFFSET, stackY, 16, 16);
         }
+    }
+
+    private void drawSlots(boolean autoPull, int x, int y) {
+        if (autoPull) {
+            GuiTextures.SLOT_DARK.draw(x, y, 18, 18);
+            GuiTextures.CONFIG_ARROW.draw(x, y, 18, 18);
+        } else {
+            GuiTextures.SLOT.draw(x, y, 18, 18);
+            GuiTextures.CONFIG_ARROW_DARK.draw(x, y, 18, 18);
+        }
+        GuiTextures.SLOT_DARK.draw(x + DISPLAY_X_OFFSET, y, 18, 18);
     }
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         super.drawInForeground(mouseX, mouseY);
         IAEItemStack item = null;
-        IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
+        IConfigurableSlot<IAEItemStack> slot = this.getParentWidget().getDisplay(this.index);
         if (mouseOverConfig(mouseX, mouseY)) {
             item = slot.getConfig();
         } else if (mouseOverStock(mouseX, mouseY)) {
@@ -87,21 +102,44 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
     }
 
     @Override
+    protected void addHoverText(List<String> hoverText) {
+        if (getParentWidget().isAutoPull()) {
+            hoverText.add(I18n.format("gregtech.gui.config_slot"));
+            hoverText.add(I18n.format("gregtech.gui.config_slot.auto_pull_managed"));
+        } else {
+            super.addHoverText(hoverText);
+        }
+    }
+
+    @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        AEItemConfigWidget pw = getParentWidget();
+        // don't allow manual interaction with config slots when auto pull is enabled
+        if (pw.isAutoPull()) {
+            return false;
+        }
+
         if (mouseOverConfig(mouseX, mouseY)) {
             if (button == 1) {
                 // Right click to clear
-                this.parentWidget.disableAmount();
                 writeClientAction(REMOVE_ID, buf -> {});
+
+                if (!pw.isStocking()) {
+                    pw.disableAmount();
+                }
             } else if (button == 0) {
                 // Left click to set/select
                 ItemStack item = this.gui.entityPlayer.inventory.getItemStack();
 
                 if (!item.isEmpty()) {
                     writeClientAction(UPDATE_ID, buf -> buf.writeItemStack(item));
+                    return true;
                 }
-                this.parentWidget.enableAmount(this.index);
-                this.select = true;
+
+                if (!pw.isStocking()) {
+                    pw.enableAmount(this.index);
+                    this.select = true;
+                }
             }
             return true;
         }
@@ -120,6 +158,7 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         if (id == UPDATE_ID) {
             try {
                 ItemStack item = buffer.readItemStack();
+                if (!isItemValidForSlot(item)) return;
                 slot.setConfig(WrappedItemStack.fromItemStack(item));
                 this.parentWidget.enableAmount(this.index);
                 if (!item.isEmpty()) {
@@ -157,13 +196,21 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
         }
     }
 
+    // Method for server-side validation of an attempted new configured item
+    private boolean isItemValidForSlot(ItemStack stack) {
+        if (stack == null || stack.isEmpty()) return true;
+        AEItemConfigWidget pw = getParentWidget();
+        if (!pw.isStocking()) return true;
+        return !pw.hasStackInConfig(stack);
+    }
+
     @Override
     public List<IGhostIngredientHandler.Target<?>> getPhantomTargets(Object ingredient) {
         if (!(ingredient instanceof ItemStack)) {
             return Collections.emptyList();
         }
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         return Lists.newArrayList(new IGhostIngredientHandler.Target<>() {
 
             @NotNull
@@ -183,9 +230,11 @@ public class AEItemConfigSlot extends AEConfigSlot<IAEItemStack> {
 
     @SideOnly(Side.CLIENT)
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        // Only allow the amount scrolling if not stocking, as amount is useless for stocking
+        if (parentWidget.isStocking()) return false;
         IConfigurableSlot<IAEItemStack> slot = this.parentWidget.getDisplay(this.index);
         Rectangle rectangle = toRectangleBox();
-        rectangle.height /= 2;
+        rectangle.width /= 6;
         if (slot.getConfig() == null || wheelDelta == 0 || !rectangle.contains(mouseX, mouseY)) {
             return false;
         }

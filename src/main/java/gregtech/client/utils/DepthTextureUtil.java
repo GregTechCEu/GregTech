@@ -1,6 +1,6 @@
 package gregtech.client.utils;
 
-import gregtech.client.shader.Shaders;
+import gregtech.api.util.Mods;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
@@ -40,7 +40,7 @@ public class DepthTextureUtil {
     private static int lastWidth, lastHeight;
 
     private static boolean shouldRenderDepthTexture() {
-        return lastBind && !Shaders.isOptiFineShaderPackLoaded() && ConfigHolder.client.hookDepthTexture &&
+        return lastBind && !Mods.Optifine.isModLoaded() && ConfigHolder.client.hookDepthTexture &&
                 OpenGlHelper.isFramebufferEnabled();
     }
 

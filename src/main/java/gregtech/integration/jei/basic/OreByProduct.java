@@ -1,6 +1,5 @@
 package gregtech.integration.jei.basic;
 
-import gregtech.api.GTValues;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -30,9 +29,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gregtech.api.GTValues.LV;
+
 public class OreByProduct implements IRecipeWrapper {
 
     private static final List<OrePrefix> ORES = new ArrayList<>();
+
+    private static final int NUM_INPUTS = 21;
 
     public static void addOreByProductPrefix(OrePrefix orePrefix) {
         if (!ORES.contains(orePrefix)) {
@@ -62,14 +65,14 @@ public class OreByProduct implements IRecipeWrapper {
     public OreByProduct(Material material) {
         if (ALWAYS_MACHINES == null) {
             ALWAYS_MACHINES = ImmutableList.of(
-                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-                    MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm(),
-                    MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm(),
-                    MetaTileEntities.THERMAL_CENTRIFUGE[GTValues.LV].getStackForm(),
-                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-                    MetaTileEntities.MACERATOR[GTValues.LV].getStackForm(),
-                    MetaTileEntities.CENTRIFUGE[GTValues.LV].getStackForm());
+                    MetaTileEntities.MACERATOR[LV].getStackForm(),
+                    MetaTileEntities.MACERATOR[LV].getStackForm(),
+                    MetaTileEntities.CENTRIFUGE[LV].getStackForm(),
+                    MetaTileEntities.ORE_WASHER[LV].getStackForm(),
+                    MetaTileEntities.THERMAL_CENTRIFUGE[LV].getStackForm(),
+                    MetaTileEntities.MACERATOR[LV].getStackForm(),
+                    MetaTileEntities.MACERATOR[LV].getStackForm(),
+                    MetaTileEntities.CENTRIFUGE[LV].getStackForm());
         }
         OreProperty property = material.getProperty(PropertyKey.ORE);
         int oreMultiplier = property.getOreMultiplier();
@@ -97,7 +100,7 @@ public class OreByProduct implements IRecipeWrapper {
         // set up machines as inputs
         List<ItemStack> simpleWashers = new ArrayList<>();
         simpleWashers.add(new ItemStack(Items.CAULDRON));
-        simpleWashers.add(MetaTileEntities.ORE_WASHER[GTValues.LV].getStackForm());
+        simpleWashers.add(MetaTileEntities.ORE_WASHER[LV].getStackForm());
 
         if (!material.hasProperty(PropertyKey.BLAST)) {
             addToInputs(new ItemStack(Blocks.FURNACE));
@@ -116,19 +119,19 @@ public class OreByProduct implements IRecipeWrapper {
 
         if (washedIn != null && washedIn.getKey() != null) {
             hasChemBath = true;
-            addToInputs(MetaTileEntities.CHEMICAL_BATH[GTValues.LV].getStackForm());
+            addToInputs(MetaTileEntities.CHEMICAL_BATH[LV].getStackForm());
         } else {
             addToInputs(ItemStack.EMPTY);
         }
         if (separatedInto != null && !separatedInto.isEmpty()) {
             hasSeparator = true;
-            addToInputs(MetaTileEntities.ELECTROMAGNETIC_SEPARATOR[GTValues.LV].getStackForm());
+            addToInputs(MetaTileEntities.ELECTROMAGNETIC_SEPARATOR[LV].getStackForm());
         } else {
             addToInputs(ItemStack.EMPTY);
         }
         if (material.hasProperty(PropertyKey.GEM)) {
             hasSifter = true;
-            addToInputs(MetaTileEntities.SIFTER[GTValues.LV].getStackForm());
+            addToInputs(MetaTileEntities.SIFTER[LV].getStackForm());
         } else {
             addToInputs(ItemStack.EMPTY);
         }
@@ -141,7 +144,7 @@ public class OreByProduct implements IRecipeWrapper {
         }
 
         // total number of inputs added
-        currentSlot += 21;
+        currentSlot += NUM_INPUTS;
 
         // BASIC PROCESSING
 
@@ -256,8 +259,6 @@ public class OreByProduct implements IRecipeWrapper {
         // sifter
         if (hasSifter) {
             boolean highOutput = material.hasFlag(MaterialFlags.HIGH_SIFTER_OUTPUT);
-            ItemStack flawedStack = OreDictUnifier.get(OrePrefix.gemFlawed, material);
-            ItemStack chippedStack = OreDictUnifier.get(OrePrefix.gemChipped, material);
 
             addToOutputs(material, OrePrefix.gemExquisite, 1);
             addGemChance(300, 100, 500, 150, highOutput);
@@ -267,19 +268,10 @@ public class OreByProduct implements IRecipeWrapper {
             addGemChance(3500, 500, 5000, 1000, highOutput);
             addToOutputs(material, OrePrefix.dustPure, 1);
             addGemChance(5000, 750, 2500, 500, highOutput);
-
-            if (!flawedStack.isEmpty()) {
-                addToOutputs(flawedStack);
-                addGemChance(2500, 300, 2000, 500, highOutput);
-            } else {
-                addEmptyOutputs(1);
-            }
-            if (!chippedStack.isEmpty()) {
-                addToOutputs(chippedStack);
-                addGemChance(3500, 400, 3000, 350, highOutput);
-            } else {
-                addEmptyOutputs(1);
-            }
+            addToOutputs(material, OrePrefix.gemFlawed, 1);
+            addGemChance(2500, 300, 2000, 500, highOutput);
+            addToOutputs(material, OrePrefix.gemChipped, 1);
+            addGemChance(3500, 400, 3000, 350, highOutput);
         } else {
             addEmptyOutputs(6);
         }
@@ -345,8 +337,11 @@ public class OreByProduct implements IRecipeWrapper {
     }
 
     private void addChance(int base, int tier) {
-        // this is solely for the chance overlay and tooltip, neither of which care about the ItemStack
-        chances.put(currentSlot - 1, new ChancedItemOutput(ItemStack.EMPTY, base, tier));
+        // hacky check to not add a chance for empty stacks
+        if (!outputs.get(currentSlot - 1 - NUM_INPUTS).get(0).isEmpty()) {
+            // this is solely for the chance overlay and tooltip, neither of which care about the ItemStack
+            chances.put(currentSlot - 1, new ChancedItemOutput(ItemStack.EMPTY, base, tier));
+        }
     }
 
     // make the code less :weary:

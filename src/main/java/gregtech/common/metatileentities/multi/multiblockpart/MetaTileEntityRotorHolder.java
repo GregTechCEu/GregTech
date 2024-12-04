@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
@@ -27,7 +28,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -163,14 +163,17 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     private boolean checkTurbineFaceFree() {
-        EnumFacing facing = getFrontFacing();
-        boolean permuteXZ = facing.getAxis() == EnumFacing.Axis.Z;
-        BlockPos centerPos = getPos().offset(facing);
-        for (int x = -1; x < 2; x++) {
-            for (int y = -1; y < 2; y++) {
-                BlockPos blockPos = centerPos.add(permuteXZ ? x : 0, y, permuteXZ ? 0 : x);
-                IBlockState blockState = getWorld().getBlockState(blockPos);
-                if (!blockState.getBlock().isAir(blockState, getWorld(), blockPos)) {
+        final EnumFacing front = getFrontFacing();
+        // this can be anything really, as long as it is not up/down when on Y axis
+        final EnumFacing upwards = front.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : EnumFacing.UP;
+
+        for (int left = -1; left <= 1; left++) {
+            for (int up = -1; up <= 1; up++) {
+                // flip doesn't affect anything here since we are checking a square anyway
+                final BlockPos checkPos = RelativeDirection.offsetPos(
+                        getPos(), front, upwards, false, up, left, 1);
+                final IBlockState state = getWorld().getBlockState(checkPos);
+                if (!state.getBlock().isAir(state, getWorld(), checkPos)) {
                     return false;
                 }
             }
@@ -291,7 +294,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, inventory);
     }

@@ -2,12 +2,12 @@ package gregtech.integration;
 
 import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
 import gregtech.modules.BaseGregTechModule;
 import gregtech.modules.GregTechModules;
 
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -47,13 +47,13 @@ public class IntegrationModule extends BaseGregTechModule {
     public void init(FMLInitializationEvent event) {
         super.init(event);
 
-        if (Loader.isModLoaded(GTValues.MODID_IE)) {
+        if (Mods.ImmersiveEngineering.isModLoaded()) {
             BelljarHandler.registerBasicItemFertilizer(MetaItems.FERTILIZER.getStackForm(), 1.25f);
             logger.info("Registered Immersive Engineering Compat");
         }
     }
 
-    @Optional.Method(modid = GTValues.MODID_EIO)
+    @Optional.Method(modid = Mods.Names.ENDER_IO)
     @SubscribeEvent
     public static void registerFertilizer(@NotNull RegistryEvent.Register<IFertilizer> event) {
         event.getRegistry().register(new Bonemeal(MetaItems.FERTILIZER.getStackForm()));

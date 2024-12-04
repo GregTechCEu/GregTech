@@ -527,7 +527,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
             }
             if (stack.isEmpty()) {
-                // try the itemstack constructor if we're not a GT machine
+                // first, see what the block has to say for itself before forcing it to use a particular meta value
+                stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos,
+                        new GregFakePlayer(world));
+            }
+            if (stack.isEmpty()) {
+                // try the default itemstack constructor if we're not a GT machine
                 stack = GTUtility.toItem(state);
             }
             if (stack.isEmpty()) {
@@ -540,11 +545,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                         stack = is;
                     }
                 }
-            }
-            if (stack.isEmpty()) {
-                // if everything else doesn't work, try the not great getPickBlock() with some dummy values
-                stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos,
-                        new GregFakePlayer(world));
             }
 
             // if we got a stack, add it to the set and map

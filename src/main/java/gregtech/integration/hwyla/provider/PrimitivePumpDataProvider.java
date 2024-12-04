@@ -3,6 +3,7 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IPrimitivePump;
+import gregtech.api.util.TextFormattingUtil;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,7 +29,7 @@ public class PrimitivePumpDataProvider implements IWailaDataProvider {
     public void register(@NotNull IWailaRegistrar registrar) {
         registrar.registerBodyProvider(this, IGregTechTileEntity.class);
         registrar.registerNBTProvider(this, IGregTechTileEntity.class);
-        registrar.addConfig(GTValues.MODID, "gregtech.primitive_pump");
+        registrar.addConfig(GTValues.MOD_NAME, "gregtech.primitive_pump");
     }
 
     @NotNull
@@ -58,7 +59,8 @@ public class PrimitivePumpDataProvider implements IWailaDataProvider {
         if (accessor.getNBTData().hasKey("gregtech.IPrimitivePump")) {
             NBTTagCompound tag = accessor.getNBTData().getCompoundTag("gregtech.IPrimitivePump");
             int production = tag.getInteger("Production");
-            tooltip.add(I18n.format("gregtech.top.primitive_pump_production") + " " + TextFormatting.AQUA + production +
+            tooltip.add(I18n.format("gregtech.top.primitive_pump_production") + " " + TextFormatting.AQUA +
+                    TextFormattingUtil.formatNumbers(production) +
                     TextFormatting.RESET + " L/s");
         }
         return tooltip;

@@ -1,7 +1,6 @@
 package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -10,6 +9,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -47,7 +47,7 @@ public class MachineItemBlock extends ItemBlock {
 
     /**
      * Adds another creative tab for the machine item. Additional tabs added by this method are checked along with
-     * default tabs ({@link GregTechAPI#MACHINE} and {@link CreativeTabs#SEARCH}) during
+     * default tabs ({@link GTCreativeTabs#TAB_GREGTECH_MACHINES} and {@link CreativeTabs#SEARCH}) during
      * {@link net.minecraft.item.Item#getSubItems(CreativeTabs, NonNullList) Item#getSubItems()} operation.<br>
      * Note that, for machines to be properly registered on the creative tab, a matching implementation of
      * {@link MetaTileEntity#isInCreativeTab(CreativeTabs)} should be provided as well.
@@ -61,8 +61,8 @@ public class MachineItemBlock extends ItemBlock {
      */
     public static void addCreativeTab(CreativeTabs creativeTab) {
         Preconditions.checkNotNull(creativeTab, "creativeTab");
-        if (creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES) {
-            throw new IllegalArgumentException("Adding " + GregTechAPI.TAB_GREGTECH_MACHINES.tabLabel +
+        if (creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES) {
+            throw new IllegalArgumentException("Adding " + GTCreativeTabs.TAB_GREGTECH_MACHINES.tabLabel +
                     " as additional creative tab is redundant.");
         } else if (creativeTab == CreativeTabs.SEARCH) {
             throw new IllegalArgumentException(
@@ -91,7 +91,7 @@ public class MachineItemBlock extends ItemBlock {
         // prevent rendering glitch before meta tile entity sync to client, but after block placement
         // set opaque property on the placing on block, instead during set of meta tile entity
         boolean superVal = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
-                newState.withProperty(BlockMachine.OPAQUE, metaTileEntity != null && metaTileEntity.isOpaqueCube()));
+                newState.withProperty(BlockMachine.OPAQUE, metaTileEntity == null || metaTileEntity.isOpaqueCube()));
         if (superVal && !world.isRemote) {
             BlockPos possiblePipe = pos.offset(side.getOpposite());
             Block block = world.getBlockState(possiblePipe).getBlock();
@@ -201,5 +201,10 @@ public class MachineItemBlock extends ItemBlock {
     public int getItemStackLimit(@NotNull ItemStack stack) {
         MetaTileEntity metaTileEntity = GTUtility.getMetaTileEntity(stack);
         return metaTileEntity != null ? metaTileEntity.getItemStackLimit(stack) : super.getItemStackLimit(stack);
+    }
+
+    @Override
+    public @NotNull BlockMachine getBlock() {
+        return (BlockMachine) super.getBlock();
     }
 }

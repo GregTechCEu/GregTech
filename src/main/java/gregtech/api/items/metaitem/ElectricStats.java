@@ -6,6 +6,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.items.metaitem.stats.*;
+import gregtech.api.util.Mods;
 import gregtech.common.ConfigHolder;
 import gregtech.integration.baubles.BaublesModule;
 
@@ -25,7 +26,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.common.Loader;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -75,7 +75,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
             IInventory inventoryPlayer = entityPlayer.inventory;
             long transferLimit = electricItem.getTransferLimit();
 
-            if (Loader.isModLoaded(GTValues.MODID_BAUBLES)) {
+            if (Mods.Baubles.isModLoaded()) {
                 inventoryPlayer = BaublesModule.getBaublesWrappedInventory(entityPlayer);
             }
 

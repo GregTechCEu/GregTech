@@ -1,10 +1,10 @@
 package gregtech.api.block.machines;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.block.UnlistedIntegerProperty;
 import gregtech.api.block.UnlistedStringProperty;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -13,9 +13,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.IBlockAppearance;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 import gregtech.integration.ctm.IFacadeWrapper;
 
@@ -40,7 +43,11 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -51,7 +58,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -63,7 +69,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 
 import static gregtech.api.util.GTUtility.getMetaTileEntity;
 
@@ -83,7 +95,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     public BlockMachine() {
         super(Material.IRON);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_MACHINES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_MACHINES);
         setSoundType(SoundType.METAL);
         setHardness(6.0f);
         setResistance(6.0f);
@@ -194,6 +206,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         return ItemStack.EMPTY;
     }
 
+    @NotNull
+    @Override
+    public ItemStack getItem(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state) {
+        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        if (metaTileEntity == null)
+            return ItemStack.EMPTY;
+        return metaTileEntity.getStackForm();
+    }
+
     @Override
     public void addCollisionBoxToList(@NotNull IBlockState state, @NotNull World worldIn, @NotNull BlockPos pos,
                                       @NotNull AxisAlignedBB entityBox, @NotNull List<AxisAlignedBB> collidingBoxes,
@@ -246,17 +267,42 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public void onBlockPlacedBy(World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
                                 @NotNull EntityLivingBase placer, ItemStack stack) {
         IGregTechTileEntity holder = (IGregTechTileEntity) worldIn.getTileEntity(pos);
-        MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
-        if (holder != null && sampleMetaTileEntity != null) {
-            // TODO Fix this
-            if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
-                ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
+        MTERegistry registry = GregTechAPI.mteManager.getRegistry(
+                Objects.requireNonNull(stack.getItem().getRegistryName()).getNamespace());
+
+        MetaTileEntity sampleMetaTileEntity = registry.getObjectById(stack.getItemDamage());
+        if (holder == null || sampleMetaTileEntity == null)
+            return;
+
+        // TODO Fix this
+        if (stack.hasDisplayName() && holder instanceof MetaTileEntityHolder) {
+            ((MetaTileEntityHolder) holder).setCustomName(stack.getDisplayName());
+        }
+        var stackTag = stack.getTagCompound();
+        NBTTagCompound mteTag = null;
+        if (stackTag != null && !stackTag.isEmpty()) {
+            if (stackTag.hasKey(GregtechDataCodes.BLOCK_ENTITY_TAG)) {
+                var blockTag = stackTag.getCompoundTag(GregtechDataCodes.BLOCK_ENTITY_TAG);
+                String customName = blockTag.getString(GregtechDataCodes.CUSTOM_NAME);
+                if (!customName.isEmpty())
+                    ((MetaTileEntityHolder) holder).setCustomName(customName);
+
+                mteTag = blockTag.getCompoundTag(GregtechDataCodes.TAG_KEY_MTE);
+                List<String> removed = new ArrayList<>();
+                for (var key : mteTag.getKeySet()) {
+                    var trait = sampleMetaTileEntity.getMTETrait(key);
+                    if (trait == null) continue;
+
+                    removed.add(key);
+                }
+                removed.forEach(mteTag::removeTag);
             }
-            MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
-            if (stack.hasTagCompound()) {
-                // noinspection ConstantConditions
-                metaTileEntity.initFromItemStackData(stack.getTagCompound());
-            }
+        }
+        MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity, mteTag);
+        if (mteTag == null) {
+            if (stackTag != null && !stackTag.isEmpty())
+                metaTileEntity.initFromItemStackData(stackTag);
+
             if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
                 metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
             } else {
@@ -272,26 +318,26 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                     }
                 }
             }
-            if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
-                if (metaTileEntity.getProxy() != null) {
-                    metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
-                }
-            }
-
-            // Color machines on place if holding spray can in off-hand
-            if (placer instanceof EntityPlayer) {
-                ItemStack offhand = placer.getHeldItemOffhand();
-                for (int i = 0; i < EnumDyeColor.values().length; i++) {
-                    if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
-                        MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
-                                pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
-                        break;
-                    }
-                }
-            }
-
-            metaTileEntity.onPlacement();
         }
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
+            if (metaTileEntity.getProxy() != null) {
+                metaTileEntity.getProxy().setOwner((EntityPlayer) placer);
+            }
+        }
+
+        // Color machines on place if holding spray can in off-hand
+        if (placer instanceof EntityPlayer) {
+            ItemStack offhand = placer.getHeldItemOffhand();
+            for (int i = 0; i < EnumDyeColor.values().length; i++) {
+                if (offhand.isItemEqual(MetaItems.SPRAY_CAN_DYES[i].getStackForm())) {
+                    MetaItems.SPRAY_CAN_DYES[i].getBehaviours().get(0).onItemUse((EntityPlayer) placer, worldIn,
+                            pos, EnumHand.OFF_HAND, EnumFacing.UP, 0, 0, 0);
+                    break;
+                }
+            }
+        }
+
+        metaTileEntity.onPlacement(placer);
     }
 
     @Override
@@ -299,7 +345,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity != null) {
             if (!metaTileEntity.keepsInventory()) {
-                NonNullList<ItemStack> inventoryContents = NonNullList.create();
+                List<ItemStack> inventoryContents = new ArrayList<>();
                 metaTileEntity.clearMachineInventory(inventoryContents);
                 for (ItemStack itemStack : inventoryContents) {
                     Block.spawnAsEntity(worldIn, pos, itemStack);
@@ -423,7 +469,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
                              @NotNull IBlockState state, @Nullable TileEntity te, @NotNull ItemStack stack) {
         tileEntities.set(te == null ? tileEntities.get() : ((IGregTechTileEntity) te).getMetaTileEntity());
         super.harvestBlock(worldIn, player, pos, state, te, stack);
-        tileEntities.set(null);
+        tileEntities.remove();
     }
 
     @Nullable
@@ -473,12 +519,15 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public int getLightOpacity(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos) {
         // since it is called on neighbor blocks
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        return metaTileEntity == null ? 0 : metaTileEntity.getLightOpacity();
+        return metaTileEntity == null ? 255 : metaTileEntity.getLightOpacity();
     }
 
     @Override
     public void getSubBlocks(@NotNull CreativeTabs tab, @NotNull NonNullList<ItemStack> items) {
-        for (MetaTileEntity metaTileEntity : GregTechAPI.MTE_REGISTRY) {
+        MTERegistry registry = GregTechAPI.mteManager
+                .getRegistry(Objects.requireNonNull(getRegistryName()).getNamespace());
+
+        for (MetaTileEntity metaTileEntity : registry) {
             if (metaTileEntity.isInCreativeTab(tab)) {
                 metaTileEntity.getSubItems(tab, items);
             }

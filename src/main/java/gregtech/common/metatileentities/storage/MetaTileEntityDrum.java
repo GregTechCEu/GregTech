@@ -3,13 +3,11 @@ package gregtech.common.metatileentities.storage;
 import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.GTFluidHandlerItemStack;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -44,6 +42,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -53,36 +52,59 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
 
+    private final IPropertyFluidFilter fluidFilter;
+    private final boolean isWood;
+    private final int color;
     private final int tankSize;
-    private final Material material;
+
     private FilteredFluidHandler fluidTank;
     private boolean isAutoOutput = false;
 
-    public MetaTileEntityDrum(ResourceLocation metaTileEntityId, Material material, int tankSize) {
+    /**
+     * @param metaTileEntityId the id for the MTE
+     * @param material         the material the drum is made of, must have
+     *                         {@link gregtech.api.unification.material.properties.FluidProperty}.
+     * @param tankSize         the size of the storage tank
+     */
+    public MetaTileEntityDrum(ResourceLocation metaTileEntityId, @NotNull Material material, int tankSize) {
         super(metaTileEntityId);
+        IPropertyFluidFilter filter = material.getProperty(PropertyKey.FLUID_PIPE);
+        if (filter == null) {
+            throw new IllegalArgumentException("Material " + material + " requires FluidPipeProperty for Drums");
+        }
+        this.fluidFilter = filter;
+        this.isWood = ModHandler.isMaterialWood(material);
+        this.color = material.getMaterialRGB();
         this.tankSize = tankSize;
-        this.material = material;
+        initializeInventory();
+    }
+
+    /**
+     *
+     * @param metaTileEntityId the id for the MTE
+     * @param fluidFilter      the filter for which fluids can be stored
+     * @param isWood           if the drum is made of wood
+     * @param color            the color of the drum in RGB format
+     * @param tankSize         the size of the storage tank
+     */
+    public MetaTileEntityDrum(ResourceLocation metaTileEntityId, @NotNull IPropertyFluidFilter fluidFilter,
+                              boolean isWood, int color, int tankSize) {
+        super(metaTileEntityId);
+        this.fluidFilter = fluidFilter;
+        this.isWood = isWood;
+        this.color = color;
+        this.tankSize = tankSize;
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDrum(metaTileEntityId, material, tankSize);
-    }
-
-    @Override
-    public int getLightOpacity() {
-        return 1;
-    }
-
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
+        return new MetaTileEntityDrum(metaTileEntityId, fluidFilter, isWood, color, tankSize);
     }
 
     @Override
     public String getHarvestTool() {
-        return ModHandler.isMaterialWood(material) ? ToolClasses.AXE : ToolClasses.WRENCH;
+        return isWood ? ToolClasses.AXE : ToolClasses.WRENCH;
     }
 
     @Override
@@ -92,14 +114,14 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     protected void initializeInventory() {
-        if (this.material == null) return; // call before field initialization, should be called later with fields set
-        super.initializeInventory();
-        IPropertyFluidFilter filter = this.material.getProperty(PropertyKey.FLUID_PIPE);
-        if (filter == null) {
-            throw new IllegalArgumentException(
-                    String.format("Material %s requires FluidPipePropety for Drums", material));
+        // call before field initialization, should be called later with fields set
+        if (this.fluidFilter == null) {
+            return;
         }
-        this.fluidInventory = this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(filter);
+
+        super.initializeInventory();
+        this.fluidTank = new FilteredFluidHandler(tankSize).setFilter(this.fluidFilter);
+        this.fluidInventory = this.fluidTank;
     }
 
     @Override
@@ -129,7 +151,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         FluidStack fluidStack = fluidTank.getFluid();
         buf.writeBoolean(fluidStack != null);
@@ -142,7 +164,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         FluidStack fluidStack = null;
         if (buf.readBoolean()) {
@@ -156,7 +178,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_AUTO_OUTPUT) {
             this.isAutoOutput = buf.readBoolean();
@@ -212,27 +234,26 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        if (ModHandler.isMaterialWood(material)) {
+        if (isWood) {
             return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColorForRendering());
         } else {
-            int color = ColourRGBA.multiply(
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
-            color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
+            int color = GTUtility.convertOpaqueRGBA_CLtoRGB(ColourRGBA.multiply(
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(this.color),
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
             return Pair.of(Textures.DRUM.getParticleTexture(), color);
         }
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        if (ModHandler.isMaterialWood(material)) {
+        if (isWood) {
             ColourMultiplier multiplier = new ColourMultiplier(
                     GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.WOODEN_DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier),
                     getFrontFacing());
         } else {
             ColourMultiplier multiplier = new ColourMultiplier(
-                    ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
+                    ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(this.color),
                             GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
             Textures.DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
             Textures.DRUM_OVERLAY.render(renderState, translation, pipeline);
@@ -252,8 +273,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", tankSize));
-        FluidPipeProperties pipeProperties = material.getProperty(PropertyKey.FLUID_PIPE);
-        pipeProperties.appendTooltips(tooltip, true, true);
+        this.fluidFilter.appendTooltips(tooltip, true, true);
 
         if (TooltipHelper.isShiftDown()) {
             tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
@@ -266,7 +286,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(tagCompound.getCompoundTag("Fluid"));
             if (fluidStack == null) return;
             tooltip.add(I18n.format("gregtech.machine.fluid_tank.fluid", fluidStack.amount,
-                    I18n.format(fluidStack.getUnlocalizedName())));
+                    fluidStack.getFluid().getLocalizedName(fluidStack)));
         }
     }
 
@@ -274,11 +294,6 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     public boolean showToolUsages() {
         return false;
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

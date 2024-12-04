@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.pipenet.longdist.BlockLongDistancePipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -24,6 +25,8 @@ import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.explosive.BlockITNT;
+import gregtech.common.blocks.explosive.BlockPowderbarrel;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.wood.BlockGregFence;
@@ -111,7 +114,6 @@ public class MetaBlocks {
 
     private MetaBlocks() {}
 
-    public static BlockMachine MACHINE;
     public static final Map<String, BlockCable[]> CABLES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, BlockFluidPipe[]> FLUID_PIPES = new Object2ObjectOpenHashMap<>();
     public static final Map<String, BlockItemPipe[]> ITEM_PIPES = new Object2ObjectOpenHashMap<>();
@@ -164,6 +166,8 @@ public class MetaBlocks {
     public static BlockFenceGate TREATED_WOOD_FENCE_GATE;
     public static BlockWoodenDoor RUBBER_WOOD_DOOR;
     public static BlockWoodenDoor TREATED_WOOD_DOOR;
+    public static BlockPowderbarrel POWDERBARREL;
+    public static BlockITNT ITNT;
 
     public static BlockBrittleCharcoal BRITTLE_CHARCOAL;
 
@@ -183,8 +187,11 @@ public class MetaBlocks {
     public static final List<BlockFluidBase> FLUID_BLOCKS = new ArrayList<>();
 
     public static void init() {
-        GregTechAPI.MACHINE = MACHINE = new BlockMachine();
-        MACHINE.setRegistryName("machine");
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            BlockMachine machine = new BlockMachine();
+            machine.setRegistryName(registry.getModid(), "mte");
+            registry.setBlock(machine);
+        }
 
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
@@ -312,6 +319,10 @@ public class MetaBlocks {
         RUBBER_WOOD_DOOR.setRegistryName("rubber_wood_door").setTranslationKey("rubber_wood_door");
         TREATED_WOOD_DOOR = new BlockWoodenDoor(() -> MetaItems.TREATED_WOOD_DOOR.getStackForm());
         TREATED_WOOD_DOOR.setRegistryName("treated_wood_door").setTranslationKey("treated_wood_door");
+        POWDERBARREL = new BlockPowderbarrel();
+        POWDERBARREL.setRegistryName("powderbarrel").setTranslationKey("powderbarrel");
+        ITNT = new BlockITNT();
+        ITNT.setRegistryName("itnt").setTranslationKey("itnt");
 
         BRITTLE_CHARCOAL = new BlockBrittleCharcoal();
         BRITTLE_CHARCOAL.setRegistryName("brittle_charcoal");
@@ -429,8 +440,11 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE),
-                stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(registry.getBlock()),
+                    stack -> MetaTileEntityRenderer.MODEL_LOCATION);
+        }
+
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             for (BlockCable cable : CABLES.get(registry.getModid())) cable.onModelRegister();
             for (BlockFluidPipe pipe : FLUID_PIPES.get(registry.getModid())) pipe.onModelRegister();
@@ -481,6 +495,8 @@ public class MetaBlocks {
                 new ModelResourceLocation(Objects.requireNonNull(TREATED_WOOD_FENCE_GATE.getRegistryName()),
                         "inventory"));
         registerItemModel(BRITTLE_CHARCOAL);
+        registerItemModel(POWDERBARREL);
+        registerItemModel(ITNT);
 
         registerItemModel(METAL_SHEET);
         registerItemModel(LARGE_METAL_SHEET);
@@ -526,7 +542,10 @@ public class MetaBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
-        ModelLoader.setCustomStateMapper(MACHINE, new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            ModelLoader.setCustomStateMapper(registry.getBlock(),
+                    new SimpleStateMapper(MetaTileEntityRenderer.MODEL_LOCATION));
+        }
 
         IStateMapper normalStateMapper;
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {

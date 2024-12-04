@@ -12,8 +12,8 @@ import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
-import gregtech.integration.IntegrationUtil;
 import gregtech.integration.forestry.ForestryUtil;
 import gregtech.integration.forestry.bees.GTCombItem;
 import gregtech.integration.forestry.bees.GTCombType;
@@ -21,7 +21,6 @@ import gregtech.integration.forestry.bees.GTDropType;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Loader;
 
 import appeng.core.Api;
 import com.google.common.collect.ImmutableMap;
@@ -98,8 +97,8 @@ public class CombRecipes {
                         ModuleCore.getItems().refractoryWax.getItemStack() },
                 new int[] { 20 * 100, 50 * 100 }, Voltage.HV, 196);
         ItemStack wax = ModuleCore.getItems().beeswax.getItemStack();
-        if (Loader.isModLoaded(GTValues.MODID_MB)) {
-            wax = IntegrationUtil.getModItem(GTValues.MODID_MB, "wax", 2);
+        if (Mods.MagicBees.isModLoaded()) {
+            wax = Mods.MagicBees.getItem("wax", 2);
         }
         addCentrifugeToItemStack(GTCombType.LAPOTRON,
                 new ItemStack[] { OreDictUnifier.get(OrePrefix.dust, Materials.Lapotron), wax },
@@ -248,14 +247,14 @@ public class CombRecipes {
         addProcessGT(GTCombType.ALMANDINE,
                 new Material[] { Materials.Almandine, Materials.Pyrope, Materials.Sapphire, Materials.GreenSapphire },
                 Voltage.LV);
-        addProcessGT(GTCombType.URANIUM, new Material[] { Materials.Uranium238, Materials.Pitchblende,
+        addProcessGT(GTCombType.URANIUM, new Material[] { Materials.Uranium, Materials.Pitchblende,
                 Materials.Uraninite, Materials.Uranium235 }, Voltage.EV);
         addProcessGT(GTCombType.PLUTONIUM, new Material[] { Materials.Plutonium239, Materials.Uranium235 }, Voltage.EV);
         addProcessGT(GTCombType.NAQUADAH,
                 new Material[] { Materials.Naquadah, Materials.NaquadahEnriched, Materials.Naquadria }, Voltage.IV);
         addProcessGT(GTCombType.NAQUADRIA,
                 new Material[] { Materials.Naquadria, Materials.NaquadahEnriched, Materials.Naquadah }, Voltage.LUV);
-        addProcessGT(GTCombType.THORIUM, new Material[] { Materials.Thorium, Materials.Uranium238, Materials.Coal },
+        addProcessGT(GTCombType.THORIUM, new Material[] { Materials.Thorium, Materials.Uranium, Materials.Coal },
                 Voltage.EV);
         addProcessGT(GTCombType.LUTETIUM, new Material[] { Materials.Lutetium, Materials.Thorium }, Voltage.IV);
         addProcessGT(GTCombType.AMERICIUM, new Material[] { Materials.Americium, Materials.Lutetium }, Voltage.LUV);
@@ -271,11 +270,10 @@ public class CombRecipes {
                 .cleanroom(CleanroomType.CLEANROOM)
                 .duration(3000).EUt(Voltage.UV.getChemicalEnergy()).buildAndRegister();
 
-        if (Loader.isModLoaded(GTValues.MODID_MB)) {
+        if (Mods.MagicBees.isModLoaded()) {
             addProcessGT(GTCombType.SPARKLING, new Material[] { Materials.NetherStar }, Voltage.EV);
             addCentrifugeToItemStack(GTCombType.SPARKLING,
-                    new ItemStack[] { IntegrationUtil.getModItem(GTValues.MODID_MB, "wax", 0),
-                            IntegrationUtil.getModItem(GTValues.MODID_MB, "resource", 5),
+                    new ItemStack[] { Mods.MagicBees.getItem("wax", 0), Mods.MagicBees.getItem("resource", 5),
                             OreDictUnifier.get(OrePrefix.dustTiny, Materials.NetherStar) },
                     new int[] { 50 * 100, 10 * 100, 10 * 100 }, Voltage.EV);
         }
@@ -290,7 +288,7 @@ public class CombRecipes {
         addExtractorProcess(GTCombType.HYDROGEN, Materials.Hydrogen.getFluid(500), Voltage.MV, 100);
         addExtractorProcess(GTCombType.FLUORINE, Materials.Fluorine.getFluid(250), Voltage.MV, 128);
 
-        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
             ItemStack fluixDust = OreDictUnifier.get("dustFluix");
             if (fluixDust == ItemStack.EMPTY) {
                 fluixDust = Api.INSTANCE.definitions().materials().fluixDust().maybeStack(1).orElse(ItemStack.EMPTY);

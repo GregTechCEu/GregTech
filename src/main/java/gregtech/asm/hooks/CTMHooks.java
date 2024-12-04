@@ -1,6 +1,6 @@
 package gregtech.asm.hooks;
 
-import gregtech.client.shader.Shaders;
+import gregtech.api.util.Mods;
 import gregtech.client.utils.BloomEffectUtil;
 
 import net.minecraft.block.state.IBlockState;
@@ -20,7 +20,7 @@ public class CTMHooks {
     public static ThreadLocal<Boolean> ENABLE = new ThreadLocal<>();
 
     public static boolean checkLayerWithOptiFine(boolean canRenderInLayer, byte layers, BlockRenderLayer layer) {
-        if (Shaders.isOptiFineShaderPackLoaded()) {
+        if (Mods.Optifine.isModLoaded()) {
             if (canRenderInLayer) {
                 if (layer == BloomEffectUtil.getBloomLayer()) return false;
             } else if ((layers >> BloomEffectUtil.getBloomLayer().ordinal() & 1) == 1 &&
@@ -34,7 +34,7 @@ public class CTMHooks {
     public static List<BakedQuad> getQuadsWithOptiFine(List<BakedQuad> ret, BlockRenderLayer layer,
                                                        IBakedModel bakedModel, IBlockState state, EnumFacing side,
                                                        long rand) {
-        if (Shaders.isOptiFineShaderPackLoaded() && CTMHooks.ENABLE.get() == null) {
+        if (Mods.Optifine.isModLoaded() && CTMHooks.ENABLE.get() == null) {
             if (layer == BloomEffectUtil.getBloomLayer()) {
                 return Collections.emptyList();
             } else if (layer == BloomEffectUtil.getEffectiveBloomLayer()) {
@@ -43,7 +43,7 @@ public class CTMHooks {
                 ForgeHooksClient.setRenderLayer(BloomEffectUtil.getBloomLayer());
                 result.addAll(bakedModel.getQuads(state, side, rand));
                 ForgeHooksClient.setRenderLayer(layer);
-                CTMHooks.ENABLE.set(null);
+                CTMHooks.ENABLE.remove();
                 return result;
             }
         }

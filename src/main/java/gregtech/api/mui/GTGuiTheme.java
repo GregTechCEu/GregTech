@@ -1,5 +1,6 @@
 package gregtech.api.mui;
 
+import gregtech.api.cover.CoverWithUI;
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -33,7 +34,15 @@ public class GTGuiTheme {
                     ConfigHolder.client.defaultUIColor)
             .build();
 
-    // TODO Cover theme to utilize the GT5u-like button textures vs the standard ones
+    public static final GTGuiTheme COVER = templateBuilder("gregtech_cover")
+            .panel(GTGuiTextures.IDs.COVER_BACKGROUND)
+            .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
+            .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
+            .color(ConfigHolder.client.defaultUIColor)
+            .textColor(CoverWithUI.UI_TEXT_COLOR)
+            .build();
+
+    // TODO Multiblock theme for display texture, logo changes
 
     public static final GTGuiTheme BRONZE = templateBuilder("gregtech_bronze")
             .panel(GTGuiTextures.IDs.BRONZE_BACKGROUND)
@@ -220,7 +229,9 @@ public class GTGuiTheme {
                             .add("background", new JsonBuilder()
                                     .add("type", "texture")
                                     .add("id", buttonId))
-                            .add("hoverBackground", hoverId)
+                            .add("hoverBackground", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", hoverId))
                             .add("textColor", textColor)
                             .add("textShadow", textShadow)));
             return this;

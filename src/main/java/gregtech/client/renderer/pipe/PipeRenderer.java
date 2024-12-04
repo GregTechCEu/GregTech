@@ -11,9 +11,10 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ModCompatibility;
 import gregtech.client.renderer.CubeRendererState;
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.utils.ItemRenderCompat;
+import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -48,7 +49,6 @@ import codechicken.lib.render.block.ICCBlockRenderer;
 import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
@@ -126,7 +126,6 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
         blockRenderType = BlockRenderingRegistry.createRenderType(name);
         BlockRenderingRegistry.registerRenderer(blockRenderType, this);
         MinecraftForge.EVENT_BUS.register(this);
-        TextureUtils.addIconRegister(this::registerIcons);
     }
 
     public ModelResourceLocation getModelLocation() {
@@ -150,7 +149,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     @Override
     public void renderItem(ItemStack rawItemStack, TransformType transformType) {
-        ItemStack stack = ModCompatibility.getRealItemStack(rawItemStack);
+        ItemStack stack = ItemRenderCompat.getRepresentedStack(rawItemStack);
         if (!(stack.getItem() instanceof ItemBlockPipe)) {
             return;
         }
@@ -218,7 +217,7 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
             CoverHolder coverHolder = pipeTile.getCoverableImplementation();
             coverHolder.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()),
                     renderLayer);
-            Textures.RENDER_STATE.set(null);
+            Textures.RENDER_STATE.remove();
         }
         return true;
     }
@@ -407,11 +406,6 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return TextureUtils.getMissingSprite();
-    }
-
-    @Override
     public boolean isBuiltInRenderer() {
         return true;
     }
@@ -428,13 +422,13 @@ public abstract class PipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<?, ?> pipeTile) {
         if (pipeTile == null) {
-            return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+            return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
         }
         IPipeType<?> pipeType = pipeTile.getPipeType();
         Material material = pipeTile instanceof TileEntityMaterialPipeBase ?
                 ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;
         if (pipeType == null) {
-            return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+            return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
         }
         TextureAtlasSprite atlasSprite = getParticleTexture(pipeType, material);
         int pipeColor = getPipeColor(material, pipeTile.getPaintingColor());

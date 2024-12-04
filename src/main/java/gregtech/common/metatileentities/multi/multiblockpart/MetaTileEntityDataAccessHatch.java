@@ -175,6 +175,11 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
         } else {
             tooltip.add(I18n.format("gregtech.machine.data_access_hatch.tooltip.2", getInventorySize()));
         }
+        if (canPartShare()) {
+            tooltip.add(I18n.format("gregtech.universal.enabled"));
+        } else {
+            tooltip.add(I18n.format("gregtech.universal.disabled"));
+        }
     }
 
     @NotNull
@@ -199,7 +204,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public boolean canPartShare() {
-        return false;
+        return isCreative;
     }
 
     @Override

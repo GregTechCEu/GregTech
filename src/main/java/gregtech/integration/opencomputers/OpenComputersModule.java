@@ -3,8 +3,8 @@ package gregtech.integration.opencomputers;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.modules.GregTechModule;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.IntegrationUtil;
 import gregtech.integration.opencomputers.drivers.*;
 import gregtech.integration.opencomputers.drivers.specific.DriverConverter;
 import gregtech.integration.opencomputers.drivers.specific.DriverFusionReactor;
@@ -21,17 +21,14 @@ import li.cil.oc.api.driver.DriverBlock;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_OC,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_OC,
+                modDependencies = Mods.Names.OPEN_COMPUTERS,
                 name = "GregTech OpenComputers Integration",
                 description = "OpenComputers Integration Module")
 public class OpenComputersModule extends IntegrationSubmodule {
 
-    private static final String MODID_GTCE2OC = "gtce2oc";
-
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        IntegrationUtil.throwIncompatibilityIfLoaded(MODID_GTCE2OC,
-                "All functionality from this mod has been implemented in GregTech CE Unofficial.");
+        Mods.GTCE2OC.throwIncompatibilityIfLoaded("All functionality from this mod has been implemented here.");
     }
 
     @Override

@@ -7,12 +7,15 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.items.toolitem.ItemGTTool;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.machines.RecipeMapScanner;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.Mods;
 import gregtech.common.items.ToolItems;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.IntegrationSubmodule;
@@ -25,10 +28,10 @@ import gregtech.modules.GregTechModules;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -41,13 +44,15 @@ import forestry.api.core.ForestryAPI;
 import forestry.core.items.IColoredItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_FR,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_FR,
+                modDependencies = Mods.Names.FORESTRY,
                 name = "GregTech Forestry Integration",
                 description = "Forestry Integration Module")
 public class ForestryModule extends IntegrationSubmodule {
@@ -95,7 +100,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
         // GT Frames
         if (ForestryConfig.enableGTFrames) {
-            if (ForestryUtil.apicultureEnabled()) {
+            if (Mods.ForestryApiculture.isModLoaded()) {
                 FRAME_ACCELERATED = new GTItemFrame(GTFrameType.ACCELERATED);
                 FRAME_MUTAGENIC = new GTItemFrame(GTFrameType.MUTAGENIC);
                 FRAME_WORKING = new GTItemFrame(GTFrameType.WORKING);
@@ -121,7 +126,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
         // GT Bees
         if (ForestryConfig.enableGTBees) {
-            if (ForestryUtil.apicultureEnabled()) {
+            if (Mods.ForestryApiculture.isModLoaded()) {
                 DROPS = new GTDropItem();
                 COMBS = new GTCombItem();
             } else {
@@ -132,7 +137,7 @@ public class ForestryModule extends IntegrationSubmodule {
         // Remove duplicate/conflicting bees from other Forestry addons.
         // Done in init to have our changes applied before their registration,
         // since we load after other Forestry addons purposefully.
-        if (ForestryConfig.disableConflictingBees && ForestryUtil.apicultureEnabled()) {
+        if (ForestryConfig.disableConflictingBees && Mods.ForestryApiculture.isModLoaded()) {
             BeeRemovals.init();
         }
 
@@ -149,7 +154,7 @@ public class ForestryModule extends IntegrationSubmodule {
             ForestryElectrodeRecipes.onInit();
         }
 
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.harderForestryRecipes) {
                 ForestryMiscRecipes.initRemoval();
             }
@@ -160,8 +165,12 @@ public class ForestryModule extends IntegrationSubmodule {
             }
         }
 
+        if (Mods.ExtraBees.isModLoaded()) {
+            registerAlvearyMutators();
+        }
+
         if (event.getSide() == Side.CLIENT) {
-            if (ForestryUtil.apicultureEnabled()) {
+            if (Mods.ForestryApiculture.isModLoaded()) {
                 if (ForestryConfig.enableGTBees) {
                     Minecraft.getMinecraft().getItemColors().registerItemColorHandler((stack, tintIndex) -> {
                         if (stack.getItem() instanceof IColoredItem coloredItem) {
@@ -176,7 +185,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             getLogger().info("Copying Forestry Centrifuge recipes to GT Centrifuge");
             CombRecipes.initForestryCombs();
         }
@@ -187,7 +196,7 @@ public class ForestryModule extends IntegrationSubmodule {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         // GT Frames
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTFrames) {
                 registry.register(FRAME_ACCELERATED);
                 registry.register(FRAME_MUTAGENIC);
@@ -213,20 +222,19 @@ public class ForestryModule extends IntegrationSubmodule {
             ELECTRODE_OBSIDIAN = forestryMetaItem.addItem(10, "electrode.obsidian");
             ELECTRODE_TIN = forestryMetaItem.addItem(11, "electrode.tin");
 
-            if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+            if (Mods.IndustrialCraft2.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
                 ELECTRODE_IRON = forestryMetaItem.addItem(12, "electrode.iron");
             }
-            if (Loader.isModLoaded(GTValues.MODID_XU2)) {
+            if (Mods.ExtraUtilities2.isModLoaded()) {
                 ELECTRODE_ORCHID = forestryMetaItem.addItem(13, "electrode.orchid");
             }
-            if (Loader.isModLoaded(GTValues.MODID_IC2) || Loader.isModLoaded(GTValues.MODID_TR) ||
-                    Loader.isModLoaded(GTValues.MODID_BINNIE)) {
+            if (Mods.IndustrialCraft2.isModLoaded() || Mods.TechReborn.isModLoaded() || Mods.BinnieCore.isModLoaded()) {
                 ELECTRODE_RUBBER = forestryMetaItem.addItem(14, "electrode.rubber");
             }
         }
 
         // GT Drops
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTBees) {
                 registry.register(DROPS);
                 registry.register(COMBS);
@@ -237,7 +245,7 @@ public class ForestryModule extends IntegrationSubmodule {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTFrames) {
                 FRAME_ACCELERATED.registerModel(FRAME_ACCELERATED, ForestryAPI.modelManager);
                 FRAME_MUTAGENIC.registerModel(FRAME_MUTAGENIC, ForestryAPI.modelManager);
@@ -256,7 +264,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             // GT Frames
             if (ForestryConfig.enableGTFrames) {
                 ForestryFrameRecipes.init();
@@ -285,7 +293,7 @@ public class ForestryModule extends IntegrationSubmodule {
 
     @SubscribeEvent
     public static void registerMaterials(MaterialEvent event) {
-        if (ForestryUtil.apicultureEnabled()) {
+        if (Mods.ForestryApiculture.isModLoaded()) {
             if (ForestryConfig.enableGTFrames) {
                 Materials.TreatedWood.addFlags(MaterialFlags.GENERATE_LONG_ROD);
                 Materials.Uranium235.addFlags(MaterialFlags.GENERATE_LONG_ROD);
@@ -315,7 +323,8 @@ public class ForestryModule extends IntegrationSubmodule {
                 createOreProperty(Materials.Osmium, Materials.Iridium);
                 createOreProperty(Materials.Iridium, Materials.Platinum, Materials.Osmium);
                 createOreProperty(Materials.Electrum, Materials.Gold, Materials.Silver);
-                createOreProperty(Materials.Uranium238, Materials.Lead, Materials.Uranium235, Materials.Thorium);
+                createOreProperty(Materials.Uranium, Materials.Lead, Materials.Uranium235, Materials.Thorium);
+                createOreProperty(Materials.Plutonium, Materials.Uraninite, Materials.Lead, Materials.Uraninite);
                 createOreProperty(Materials.NaquadahEnriched, Materials.Naquadah, Materials.Naquadria);
                 createOreProperty(Materials.Uranium235);
                 createOreProperty(Materials.Neutronium);
@@ -343,5 +352,32 @@ public class ForestryModule extends IntegrationSubmodule {
         }
         material.setProperty(PropertyKey.ORE, property);
         material.addFlags(MaterialFlags.DISABLE_ORE_BLOCK);
+    }
+
+    private static void registerAlvearyMutators() {
+        try {
+            Class<?> mutationHandler = Class.forName("binnie.extrabees.utils.AlvearyMutationHandler");
+            Method method = mutationHandler.getDeclaredMethod("addMutationItem", ItemStack.class, float.class);
+
+            registerAlvearyMutator(method, Materials.Uranium, 2.0f);
+            registerAlvearyMutator(method, Materials.Uranium235, 4.0f);
+            registerAlvearyMutator(method, Materials.Plutonium241, 6.0f);
+            registerAlvearyMutator(method, Materials.Plutonium239, 8.0f);
+            registerAlvearyMutator(method, Materials.NaquadahEnriched, 10.0f);
+            registerAlvearyMutator(method, Materials.Naquadria, 15.0f);
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+            IntegrationModule.logger.error("Could not register GT Alveary mutators!");
+        }
+    }
+
+    private static void registerAlvearyMutator(Method method, Material material, float chance) {
+        try {
+            ItemStack stack = OreDictUnifier.get(OrePrefix.dust, material);
+            if (stack != ItemStack.EMPTY) {
+                method.invoke(null, stack, chance);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            IntegrationModule.logger.error("Could not register GT Alveary mutators!");
+        }
     }
 }

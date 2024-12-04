@@ -6,8 +6,8 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
-import gregtech.integration.IntegrationUtil;
 import gregtech.integration.forestry.ForestryConfig;
 import gregtech.integration.forestry.ForestryUtil;
 import gregtech.integration.forestry.bees.GTDropType;
@@ -15,7 +15,6 @@ import gregtech.integration.forestry.bees.GTDropType;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
 
 import forestry.api.recipes.RecipeManagers;
 import forestry.apiculture.ModuleApiculture;
@@ -28,7 +27,7 @@ import forestry.factory.ModuleFactory;
 public class ForestryMiscRecipes {
 
     public static void init() {
-        if (ForestryConfig.enableGTBees) {
+        if (ForestryConfig.enableGTBees && Mods.ForestryApiculture.isModLoaded()) {
             // Oil Drop
             ItemStack dropStack = ForestryUtil.getDropStack(GTDropType.OIL);
             RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
@@ -45,8 +44,8 @@ public class ForestryMiscRecipes {
             // Biomass Drop
             dropStack = ForestryUtil.getDropStack(GTDropType.BIOMASS);
             ItemStack propolisStack = ModuleApiculture.getItems().propolis.get(EnumPropolis.NORMAL, 1);
-            if (Loader.isModLoaded(GTValues.MODID_EB)) {
-                propolisStack = IntegrationUtil.getModItem(GTValues.MODID_EB, "propolis", 7);
+            if (Mods.ExtraBees.isModLoaded()) {
+                propolisStack = Mods.ExtraBees.getItem("propolis", 7);
             }
             RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
                     .inputs(dropStack)
@@ -202,7 +201,7 @@ public class ForestryMiscRecipes {
         }
 
         // Fertilizer
-        ItemStack fertilizer = IntegrationUtil.getModItem(GTValues.MODID_FR, "fertilizer_compound", 0);
+        ItemStack fertilizer = Mods.Forestry.getItem("fertilizer_compound");
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
                 .input("sand", 2)
                 .input(OrePrefix.dust, Materials.Apatite)
@@ -224,8 +223,8 @@ public class ForestryMiscRecipes {
                 .outputs(GTUtility.copy(30, fertilizer))
                 .duration(100).EUt(16).buildAndRegister();
 
-        if (Loader.isModLoaded(GTValues.MODID_MB)) {
-            ItemStack concentratedCompound = IntegrationUtil.getModItem(GTValues.MODID_MB, "resource", 2);
+        if (Mods.MagicBees.isModLoaded()) {
+            ItemStack concentratedCompound = Mods.MagicBees.getItem("resource", 2);
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
                     .input("sand", 2)
                     .inputs(GTUtility.copy(concentratedCompound))
@@ -249,7 +248,7 @@ public class ForestryMiscRecipes {
         }
 
         // Compost
-        ItemStack compost = IntegrationUtil.getModItem(GTValues.MODID_FR, "fertilizer_bio", 0);
+        ItemStack compost = Mods.Forestry.getItem("fertilizer_bio");
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
                 .input(Blocks.DIRT, 1, true)
                 .input(Items.WHEAT, 4)
@@ -279,19 +278,19 @@ public class ForestryMiscRecipes {
 
         // Phosphor
         RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "phosphor", 0))
+                .inputs(Mods.Forestry.getItem("phosphor"))
                 .chancedOutput(OrePrefix.dust, Materials.Phosphorus, 1000, 0)
                 .fluidOutputs(Materials.Lava.getFluid(800))
                 .duration(256).EUt(GTValues.VA[GTValues.MV]).buildAndRegister();
 
         // Ice Shard
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-                .inputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "crafting_material", 5))
+                .inputs(Mods.Forestry.getItem("crafting_material", 5))
                 .output(OrePrefix.dust, Materials.Ice)
                 .duration(16).EUt(4).buildAndRegister();
 
         // Mulch
-        ItemStack mulch = IntegrationUtil.getModItem(GTValues.MODID_FR, "mulch", 0);
+        ItemStack mulch = Mods.Forestry.getItem("mulch");
         RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(MetaItems.BIO_CHAFF)
                 .fluidInputs(Materials.Water.getFluid(750))
@@ -300,9 +299,9 @@ public class ForestryMiscRecipes {
                 .chancedOutput(GTUtility.copy(4, mulch), 2000, 0)
                 .duration(500).EUt(GTValues.VA[GTValues.LV]).buildAndRegister();
 
-        if (Loader.isModLoaded(GTValues.MODID_ET)) {
+        if (Mods.ExtraTrees.isModLoaded()) {
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
-                    .inputs(IntegrationUtil.getModItem(GTValues.MODID_ET, "misc", 1))
+                    .inputs(Mods.ExtraTrees.getItem("misc", 1))
                     .fluidInputs(Materials.Water.getFluid(500))
                     .outputs(GTUtility.copy(mulch))
                     .duration(600).EUt(2).buildAndRegister();
@@ -328,7 +327,7 @@ public class ForestryMiscRecipes {
                 .duration(900).EUt(10).buildAndRegister();
 
         // Humus
-        ItemStack humus = IntegrationUtil.getModItem(GTValues.MODID_FR, "humus", 0);
+        ItemStack humus = Mods.Forestry.getItem("humus");
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
                 .inputs(GTUtility.copy(2, mulch))
                 .input(Blocks.DIRT, 2, true)
@@ -362,35 +361,35 @@ public class ForestryMiscRecipes {
                 .input(OrePrefix.plate, Materials.Tin, 2)
                 .input(Blocks.GLASS_PANE)
                 .circuitMeta(1)
-                .outputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "can", 0))
+                .outputs(Mods.Forestry.getItem("can"))
                 .duration(120).EUt(7).buildAndRegister();
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .inputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "beeswax", 0))
+                .inputs(Mods.Forestry.getItem("beeswax"))
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .outputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "capsule", 0))
+                .outputs(Mods.Forestry.getItem("capsule"))
                 .duration(64).EUt(16).buildAndRegister();
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .inputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "refractory_wax", 0))
+                .inputs(Mods.Forestry.getItem("refractory_wax"))
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-                .outputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "refractory", 0))
+                .outputs(Mods.Forestry.getItem("refractory"))
                 .duration(128).EUt(16).buildAndRegister();
 
         // Propolis
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
-                .inputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "propolis", 0))
+                .inputs(Mods.Forestry.getItem("propolis"))
                 .output(MetaItems.STICKY_RESIN)
                 .duration(128).EUt(5).buildAndRegister();
 
-        if (Loader.isModLoaded(GTValues.MODID_GENETICS)) {
+        if (Mods.Genetics.isModLoaded()) {
 
             // DNA Dye
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
                     .input(OrePrefix.dust, Materials.Glowstone)
                     .input("dyePurple")
                     .input("dyeBlue")
-                    .outputs(IntegrationUtil.getModItem(GTValues.MODID_GENETICS, "misc", 1, 8))
+                    .outputs(Mods.Genetics.getItem("misc", 1, 8))
                     .duration(100).EUt(GTValues.VA[GTValues.LV]).buildAndRegister();
 
             // Fluorescent Dye
@@ -398,14 +397,14 @@ public class ForestryMiscRecipes {
                     .input(OrePrefix.dust, Materials.Glowstone)
                     .input("dyeOrange")
                     .input("dyeYellow")
-                    .outputs(IntegrationUtil.getModItem(GTValues.MODID_GENETICS, "misc", 2, 2))
+                    .outputs(Mods.Genetics.getItem("misc", 2, 2))
                     .duration(100).EUt(GTValues.VA[GTValues.LV]).buildAndRegister();
 
             // Growth Medium
             RecipeMaps.MIXER_RECIPES.recipeBuilder()
                     .input(OrePrefix.dust, Materials.Sugar)
                     .input(OrePrefix.dust, Materials.Bone)
-                    .outputs(IntegrationUtil.getModItem(GTValues.MODID_GENETICS, "misc", 4, 2))
+                    .outputs(Mods.Genetics.getItem("misc", 4, 2))
                     .duration(400).EUt(16).buildAndRegister();
         }
 
@@ -413,7 +412,7 @@ public class ForestryMiscRecipes {
         RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                 .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
                 .fluidInputs(Fluids.FOR_HONEY.getFluid(200))
-                .outputs(IntegrationUtil.getModItem(GTValues.MODID_FR, "honey_drop", 0))
+                .outputs(Mods.Forestry.getItem("honey_drop"))
                 .duration(400).EUt(7).buildAndRegister();
 
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
@@ -425,7 +424,7 @@ public class ForestryMiscRecipes {
     public static void initRemoval() {
         ModHandler.removeRecipeByName("forestry:sand_to_fertilizer");
         ModHandler.removeRecipeByName("forestry:ash_to_fertilizer");
-        if (Loader.isModLoaded(GTValues.MODID_MB)) {
+        if (Mods.MagicBees.isModLoaded()) {
             ModHandler.removeRecipeByName("magicbees:fertilizer1");
             ModHandler.removeRecipeByName("magicbees:fertilizer2");
             ModHandler.removeRecipeByName("magicbees:fertilizer3");
@@ -437,7 +436,7 @@ public class ForestryMiscRecipes {
         ModHandler.removeRecipeByName("forestry:tin_can");
         ModHandler.removeRecipeByName("forestry:wax_capsule");
         ModHandler.removeRecipeByName("forestry:refractory_capsule");
-        if (Loader.isModLoaded(GTValues.MODID_GENETICS)) {
+        if (Mods.Genetics.isModLoaded()) {
             ModHandler.removeRecipeByName("genetics:dna_dye_from_glowstone");
             ModHandler.removeRecipeByName("genetics:dna_dye");
             ModHandler.removeRecipeByName("genetics:fluorescent_dye");

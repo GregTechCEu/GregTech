@@ -124,7 +124,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.outputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
                 getAbilities(MultiblockAbility.EXPORT_FLUIDS));
-        this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
+
+        List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
+        this.energyContainer = new EnergyContainerList(inputEnergy);
     }
 
     private void resetTileAbilities() {
@@ -246,6 +250,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void setDistinct(boolean isDistinct) {
         this.isDistinct = isDistinct;
         recipeMapWorkable.onDistinctChanged();
+        getMultiblockParts().forEach(part -> part.onDistinctChange(isDistinct));
         // mark buses as changed on distinct toggle
         if (this.isDistinct) {
             this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));

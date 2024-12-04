@@ -3,15 +3,26 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IDataStickIntractable;
+import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
+import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
 
 import net.minecraft.client.resources.I18n;
@@ -23,117 +34,160 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
-import appeng.me.GridAccessException;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
-/**
- * @Author GlodBlock
- * @Description The Input Bus that can auto fetch item ME storage network.
- * @Date 2023/4/22-13:34
- */
-public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
-                                      implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEItemStack>
+                                      implements IMultiblockAbilityPart<IItemHandlerModifiable>,
+                                      IGhostSlotConfigurable, IDataStickIntractable {
 
     public final static String ITEM_BUFFER_TAG = "ItemSlots";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled;
-    private ExportOnlyAEItemList aeItemHandler;
+    private boolean workingEnabled = true;
+    protected ExportOnlyAEItemList aeItemHandler;
+    protected GhostCircuitItemStackHandler circuitInventory;
+    protected NotifiableItemStackHandler extraSlotInventory;
+    private ItemHandlerList actualImportItems;
 
     public MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, false);
-        this.workingEnabled = true;
+        this(metaTileEntityId, GTValues.EV);
+    }
+
+    protected MetaTileEntityMEInputBus(ResourceLocation metaTileEntityId, int tier) {
+        super(metaTileEntityId, tier, false, IItemStorageChannel.class);
+    }
+
+    protected ExportOnlyAEItemList getAEItemHandler() {
+        if (aeItemHandler == null) {
+            aeItemHandler = new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
+        }
+        return aeItemHandler;
     }
 
     @Override
     protected void initializeInventory() {
-        this.aeItemHandler = new ExportOnlyAEItemList(this, CONFIG_SIZE, this.getController());
         super.initializeInventory();
-    }
-
-    protected IItemHandlerModifiable createImportItemHandler() {
-        return this.aeItemHandler;
+        this.aeItemHandler = getAEItemHandler();
+        this.circuitInventory = new GhostCircuitItemStackHandler(this);
+        this.circuitInventory.addNotifiableMetaTileEntity(this);
+        this.extraSlotInventory = new NotifiableItemStackHandler(this, 1, this, false);
+        this.extraSlotInventory.addNotifiableMetaTileEntity(this);
+        this.actualImportItems = new ItemHandlerList(
+                Arrays.asList(this.aeItemHandler, this.circuitInventory, this.extraSlotInventory));
+        this.importItems = this.actualImportItems;
     }
 
     public IItemHandlerModifiable getImportItems() {
-        this.importItems = this.aeItemHandler;
-        return super.getImportItems();
+        return this.actualImportItems;
     }
 
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
-            if (this.updateMEStatus()) {
-                try {
-                    IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-                    for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
-                        // Try to clear the wrong item
-                        IAEItemStack exceedItem = aeSlot.exceedStack();
-                        if (exceedItem != null) {
-                            long total = exceedItem.getStackSize();
-                            IAEItemStack notInserted = aeNetwork.injectItems(exceedItem, Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (notInserted != null && notInserted.getStackSize() > 0) {
-                                aeSlot.extractItem(0, (int) (total - notInserted.getStackSize()), false);
-                                continue;
-                            } else {
-                                aeSlot.extractItem(0, (int) total, false);
-                            }
-                        }
-                        // Fill it
-                        IAEItemStack reqItem = aeSlot.requestStack();
-                        if (reqItem != null) {
-                            IAEItemStack extracted = aeNetwork.extractItems(reqItem, Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (extracted != null) {
-                                aeSlot.addStack(extracted);
-                            }
-                        }
-                    }
-                } catch (GridAccessException ignore) {}
+        if (!getWorld().isRemote && this.workingEnabled && updateMEStatus() && shouldSyncME()) {
+            syncME();
+        }
+    }
+
+    protected void syncME() {
+        IMEMonitor<IAEItemStack> monitor = getMonitor();
+        if (monitor == null) return;
+
+        for (ExportOnlyAEItemSlot aeSlot : this.getAEItemHandler().getInventory()) {
+            // Try to clear the wrong item
+            IAEItemStack exceedItem = aeSlot.exceedStack();
+            if (exceedItem != null) {
+                long total = exceedItem.getStackSize();
+                IAEItemStack notInserted = monitor.injectItems(exceedItem, Actionable.MODULATE, this.getActionSource());
+                if (notInserted != null && notInserted.getStackSize() > 0) {
+                    aeSlot.extractItem(0, (int) (total - notInserted.getStackSize()), false);
+                    continue;
+                } else {
+                    aeSlot.extractItem(0, (int) total, false);
+                }
+            }
+            // Fill it
+            IAEItemStack reqItem = aeSlot.requestStack();
+            if (reqItem != null) {
+                IAEItemStack extracted = monitor.extractItems(reqItem, Actionable.MODULATE, this.getActionSource());
+                if (extracted != null) {
+                    aeSlot.addStack(extracted);
+                }
             }
         }
     }
 
     @Override
     public void onRemoval() {
-        try {
-            IMEMonitor<IAEItemStack> aeNetwork = this.getProxy().getStorage().getInventory(ITEM_NET);
-            for (ExportOnlyAEItem aeSlot : this.aeItemHandler.inventory) {
-                IAEItemStack stock = aeSlot.stock;
-                if (stock instanceof WrappedItemStack) {
-                    stock = ((WrappedItemStack) stock).getAEStack();
-                }
-                if (stock != null) {
-                    aeNetwork.injectItems(stock, Actionable.MODULATE, this.getActionSource());
-                }
-            }
-        } catch (GridAccessException ignore) {}
+        flushInventory();
         super.onRemoval();
+    }
+
+    protected void flushInventory() {
+        IMEMonitor<IAEItemStack> monitor = getMonitor();
+        if (monitor == null) return;
+
+        for (ExportOnlyAEItemSlot aeSlot : this.getAEItemHandler().getInventory()) {
+            IAEItemStack stock = aeSlot.getStock();
+            if (stock instanceof WrappedItemStack) {
+                stock = ((WrappedItemStack) stock).getAEStack();
+            }
+            if (stock != null) {
+                monitor.injectItems(stock, Actionable.MODULATE, this.getActionSource());
+            }
+        }
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
-        return new MetaTileEntityMEInputBus(this.metaTileEntityId);
+        return new MetaTileEntityMEInputBus(metaTileEntityId);
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
+        super.addToMultiBlock(controllerBase);
+        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
+            if (handler instanceof INotifiableHandler notifiable) {
+                notifiable.addNotifiableMetaTileEntity(controllerBase);
+                notifiable.addToNotifiedList(this, handler, false);
+            }
+        }
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
+            if (handler instanceof INotifiableHandler notifiable) {
+                notifiable.removeNotifiableMetaTileEntity(controllerBase);
+            }
+        }
+    }
+
+    @Override
+    protected final ModularUI createUI(EntityPlayer player) {
+        ModularUI.Builder builder = createUITemplate(player);
+        return builder.build(this.getHolder(), player);
+    }
+
+    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI
                 .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
@@ -141,13 +195,37 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
+                0x404040);
 
         // Config slots
-        builder.widget(new AEItemConfigWidget(16, 25, this.aeItemHandler.inventory));
+        builder.widget(new AEItemConfigWidget(7, 25, this.getAEItemHandler()));
 
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder.build(this.getHolder(), entityPlayer);
+        // Ghost circuit slot
+        SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, 7 + 18 * 4, 25 + 18 * 3)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY);
+        builder.widget(circuitSlot.setConsumer(w -> {
+            String configString;
+            if (circuitInventory == null ||
+                    circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
+                configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value")
+                        .getFormattedText();
+            } else {
+                configString = String.valueOf(circuitInventory.getCircuitValue());
+            }
+
+            w.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
+        }));
+
+        // Extra slot
+        builder.widget(new SlotWidget(extraSlotInventory, 0, 7 + 18 * 4, 25 + 18 * 2)
+                .setBackgroundTexture(GuiTextures.SLOT)
+                .setTooltipText("gregtech.gui.me_bus.extra_slot"));
+
+        // Arrow image
+        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
+
+        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
+        return builder;
     }
 
     @Override
@@ -190,13 +268,16 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         NBTTagList slots = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i++) {
-            ExportOnlyAEItem slot = this.aeItemHandler.inventory[i];
+            ExportOnlyAEItemSlot slot = this.getAEItemHandler().getInventory()[i];
             NBTTagCompound slotTag = new NBTTagCompound();
             slotTag.setInteger("slot", i);
             slotTag.setTag("stack", slot.serializeNBT());
             slots.appendTag(slotTag);
         }
         data.setTag(ITEM_BUFFER_TAG, slots);
+        this.circuitInventory.write(data);
+        // Extra slot inventory
+        GTUtility.writeItems(this.extraSlotInventory, "ExtraInventory", data);
         return data;
     }
 
@@ -210,10 +291,12 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
             NBTTagList slots = (NBTTagList) data.getTag(ITEM_BUFFER_TAG);
             for (NBTBase nbtBase : slots) {
                 NBTTagCompound slotTag = (NBTTagCompound) nbtBase;
-                ExportOnlyAEItem slot = this.aeItemHandler.inventory[slotTag.getInteger("slot")];
+                ExportOnlyAEItemSlot slot = this.getAEItemHandler().getInventory()[slotTag.getInteger("slot")];
                 slot.deserializeNBT(slotTag.getCompoundTag("stack"));
             }
         }
+        this.circuitInventory.read(data);
+        GTUtility.readItems(this.extraSlotInventory, "ExtraInventory", data);
         this.importItems = createImportItemHandler();
     }
 
@@ -221,7 +304,11 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            Textures.ME_INPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            if (isOnline) {
+                Textures.ME_INPUT_BUS_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            } else {
+                Textures.ME_INPUT_BUS.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            }
         }
     }
 
@@ -231,6 +318,9 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.item_import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
@@ -241,197 +331,79 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart
 
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> list) {
-        list.add(this.aeItemHandler);
+        list.add(this.actualImportItems);
     }
 
-    private static class ExportOnlyAEItemList extends NotifiableItemStackHandler {
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return true;
+    }
 
-        ExportOnlyAEItem[] inventory;
+    @Override
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
+    }
 
-        public ExportOnlyAEItemList(MetaTileEntity holder, int slots, MetaTileEntity entityToNotify) {
-            super(holder, slots, entityToNotify, false);
-            this.inventory = new ExportOnlyAEItem[CONFIG_SIZE];
+    @Override
+    public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("MEInputBus", writeConfigToTag());
+        dataStick.setTagCompound(tag);
+        dataStick.setTranslatableName("gregtech.machine.me.item_import.data_stick.name");
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_copy_settings"), true);
+    }
+
+    protected NBTTagCompound writeConfigToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound configStacks = new NBTTagCompound();
+        tag.setTag("ConfigStacks", configStacks);
+        for (int i = 0; i < CONFIG_SIZE; i++) {
+            var slot = this.aeItemHandler.getInventory()[i];
+            IAEItemStack config = slot.getConfig();
+            if (config == null) {
+                continue;
+            }
+            NBTTagCompound stackNbt = new NBTTagCompound();
+            config.getDefinition().writeToNBT(stackNbt);
+            configStacks.setTag(Integer.toString(i), stackNbt);
+        }
+        tag.setByte("GhostCircuit", (byte) this.circuitInventory.getCircuitValue());
+        return tag;
+    }
+
+    @Override
+    public final boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = dataStick.getTagCompound();
+        if (tag == null || !tag.hasKey("MEInputBus")) {
+            return false;
+        }
+        readConfigFromTag(tag.getCompoundTag("MEInputBus"));
+        syncME();
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_paste_settings"), true);
+        return true;
+    }
+
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.hasKey("ConfigStacks")) {
+            NBTTagCompound configStacks = tag.getCompoundTag("ConfigStacks");
             for (int i = 0; i < CONFIG_SIZE; i++) {
-                this.inventory[i] = new ExportOnlyAEItem(null, null);
-            }
-            for (ExportOnlyAEItem slot : this.inventory) {
-                slot.trigger = this::onContentsChanged;
-            }
-        }
-
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            for (int index = 0; index < CONFIG_SIZE; index++) {
-                if (nbt.hasKey("#" + index)) {
-                    NBTTagCompound slotTag = nbt.getCompoundTag("#" + index);
-                    this.inventory[index].deserializeNBT(slotTag);
+                String key = Integer.toString(i);
+                if (configStacks.hasKey(key)) {
+                    NBTTagCompound configTag = configStacks.getCompoundTag(key);
+                    this.aeItemHandler.getInventory()[i].setConfig(WrappedItemStack.fromNBT(configTag));
+                } else {
+                    this.aeItemHandler.getInventory()[i].setConfig(null);
                 }
             }
         }
-
-        @Override
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound nbt = new NBTTagCompound();
-            for (int index = 0; index < CONFIG_SIZE; index++) {
-                NBTTagCompound slot = this.inventory[index].serializeNBT();
-                nbt.setTag("#" + index, slot);
-            }
-            return nbt;
-        }
-
-        @Override
-        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-            // NO-OP
-        }
-
-        @Override
-        public int getSlots() {
-            return MetaTileEntityMEInputBus.CONFIG_SIZE;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            if (slot >= 0 && slot < CONFIG_SIZE) {
-                return this.inventory[slot].getStackInSlot(0);
-            }
-            return ItemStack.EMPTY;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            return stack;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot >= 0 && slot < CONFIG_SIZE) {
-                return this.inventory[slot].extractItem(0, amount, simulate);
-            }
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
-            return Integer.MAX_VALUE;
-        }
-
-        @Override
-        protected int getStackLimit(int slot, @NotNull ItemStack stack) {
-            return Integer.MAX_VALUE;
-        }
-    }
-
-    public static class ExportOnlyAEItem extends ExportOnlyAESlot<IAEItemStack> implements IItemHandlerModifiable {
-
-        private Consumer<Integer> trigger;
-
-        public ExportOnlyAEItem(IAEItemStack config, IAEItemStack stock) {
-            super(config, stock);
-        }
-
-        public ExportOnlyAEItem() {
-            super();
-        }
-
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            if (nbt.hasKey(CONFIG_TAG)) {
-                this.config = WrappedItemStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
-            }
-            if (nbt.hasKey(STOCK_TAG)) {
-                this.stock = WrappedItemStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
-            }
-        }
-
-        @Override
-        public ExportOnlyAEItem copy() {
-            return new ExportOnlyAEItem(
-                    this.config == null ? null : this.config.copy(),
-                    this.stock == null ? null : this.stock.copy());
-        }
-
-        @Override
-        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-            // NO-OP
-        }
-
-        @Override
-        public int getSlots() {
-            return 1;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            if (slot == 0 && this.stock != null) {
-                return this.stock.getDefinition();
-            }
-            return ItemStack.EMPTY;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            return stack;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot == 0 && this.stock != null) {
-                int extracted = (int) Math.min(this.stock.getStackSize(), amount);
-                ItemStack result = this.stock.createItemStack();
-                result.setCount(extracted);
-                if (!simulate) {
-                    this.stock.decStackSize(extracted);
-                    if (this.stock.getStackSize() == 0) {
-                        this.stock = null;
-                    }
-                }
-                if (this.trigger != null) {
-                    this.trigger.accept(0);
-                }
-                return result;
-            }
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public IAEItemStack requestStack() {
-            IAEItemStack result = super.requestStack();
-            if (result instanceof WrappedItemStack) {
-                return ((WrappedItemStack) result).getAEStack();
-            } else {
-                return result;
-            }
-        }
-
-        @Override
-        public IAEItemStack exceedStack() {
-            IAEItemStack result = super.exceedStack();
-            if (result instanceof WrappedItemStack) {
-                return ((WrappedItemStack) result).getAEStack();
-            } else {
-                return result;
-            }
-        }
-
-        @Override
-        public void addStack(IAEItemStack stack) {
-            if (this.stock == null) {
-                this.stock = WrappedItemStack.fromItemStack(stack.createItemStack());
-            } else {
-                this.stock.add(stack);
-            }
-            this.trigger.accept(0);
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
-            return Integer.MAX_VALUE;
+        if (tag.hasKey("GhostCircuit")) {
+            this.setGhostCircuitConfig(tag.getByte("GhostCircuit"));
         }
     }
 }

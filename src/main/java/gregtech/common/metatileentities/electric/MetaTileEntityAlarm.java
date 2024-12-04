@@ -11,9 +11,9 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.terminal.gui.widgets.SelectorWidget;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
+import gregtech.common.gui.widget.terminal.gui.widgets.SelectorWidget;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.resources.I18n;
@@ -76,15 +76,17 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         return ModularUI.builder(GuiTextures.BACKGROUND, 240, 86)
                 .widget(new LabelWidget(10, 5, getMetaFullName()))
                 .widget(new SelectorWidget(10, 20, 220, 20,
-                        getSounds().stream().map((event) -> event.getSoundName().toString())
+                        getSounds().stream().map(this::getNameOfSound)
                                 .collect(Collectors.toList()),
-                        0x555555, () -> this.selectedSound.getSoundName().toString(), true).setOnChanged((v) -> {
-                            GregTechAPI.soundManager.stopTileSound(getPos());
+                        0x555555, () -> getNameOfSound(this.selectedSound), true).setOnChanged((v) -> {
+                            if (this.getWorld().isRemote)
+                                GregTechAPI.soundManager.stopTileSound(getPos());
                             SoundEvent newSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
                             if (this.selectedSound != newSound) {
                                 this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(v));
                                 this.writeCustomData(GregtechDataCodes.UPDATE_SOUND,
-                                        (writer) -> writer.writeResourceLocation(this.selectedSound.getSoundName()));
+                                        (writer) -> writer
+                                                .writeResourceLocation(getResourceLocationOfSound(this.selectedSound)));
                             }
                         }))
                 .widget(new ImageWidget(10, 54, 220, 20, GuiTextures.DISPLAY))
@@ -168,14 +170,14 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isActive);
-        buf.writeResourceLocation(this.selectedSound.getSoundName());
+        buf.writeResourceLocation(getResourceLocationOfSound(this.selectedSound));
         buf.writeInt(this.radius);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         data.setBoolean("isActive", this.isActive);
-        data.setString("selectedSound", this.selectedSound.getSoundName().toString());
+        data.setString("selectedSound", getNameOfSound(this.selectedSound));
         data.setInteger("radius", this.radius);
         return super.writeToNBT(data);
     }
@@ -186,5 +188,13 @@ public class MetaTileEntityAlarm extends TieredMetaTileEntity {
         this.selectedSound = SoundEvent.REGISTRY.getObject(new ResourceLocation(data.getString("selectedSound")));
         this.radius = data.getInteger("radius");
         super.readFromNBT(data);
+    }
+
+    public String getNameOfSound(SoundEvent sound) {
+        return getResourceLocationOfSound(sound).toString();
+    }
+
+    public ResourceLocation getResourceLocationOfSound(SoundEvent sound) {
+        return SoundEvent.REGISTRY.getNameForObject(sound);
     }
 }

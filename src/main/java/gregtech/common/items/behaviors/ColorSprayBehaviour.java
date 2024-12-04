@@ -1,11 +1,11 @@
 package gregtech.common.items.behaviors;
 
-import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GradientUtil;
+import gregtech.api.util.Mods;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;
@@ -20,10 +20,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Loader;
 
 import appeng.api.util.AEColor;
 import appeng.tile.networking.TileCableBus;
@@ -93,7 +96,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             world.setBlockState(pos, newBlockState);
             return true;
         }
-        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileCableBus) {
                 TileCableBus cable = (TileCableBus) te;
@@ -146,7 +149,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
 
         // AE2 cable special case
-        if (Loader.isModLoaded(GTValues.MODID_APPENG)) {
+        if (Mods.AppliedEnergistics2.isModLoaded()) {
             if (te instanceof TileCableBus) {
                 TileCableBus cable = (TileCableBus) te;
                 // do not try to strip color if it is already colorless
@@ -189,7 +192,9 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
             lines.add(I18n.format("behaviour.paintspray.solvent.tooltip"));
         }
         lines.add(I18n.format("behaviour.paintspray.uses", remainingUses));
-        lines.add(I18n.format("behaviour.paintspray.offhand"));
+        if (color != null) {
+            lines.add(I18n.format("behaviour.paintspray.offhand"));
+        }
     }
 
     @Override

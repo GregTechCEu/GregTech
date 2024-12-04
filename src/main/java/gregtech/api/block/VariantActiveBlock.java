@@ -1,6 +1,6 @@
 package gregtech.api.block;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.client.model.ActiveVariantBlockBakedModel;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.common.ConfigHolder;
@@ -22,7 +22,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -135,7 +134,7 @@ public class VariantActiveBlock<T extends Enum<T> & IStringSerializable> extends
                 .withProperty(ACTIVE, Minecraft.getMinecraft().world != null &&
                         isBlockActive(Minecraft.getMinecraft().world.provider.getDimension(), pos));
 
-        if (Loader.isModLoaded(GTValues.MODID_CTM)) {
+        if (Mods.CTM.isModLoaded()) {
             // if the Connected Textures Mod is loaded we wrap our IExtendedBlockState with their wrapper,
             // so that the CTM renderer can render the block properly.
             return new CTMExtendedState(ext, world, pos);

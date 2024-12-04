@@ -3,16 +3,19 @@ package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.INotifiableHandler;
+import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEFluidConfigWidget;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidList;
+import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEFluidSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedFluidStack;
 
 import net.minecraft.client.resources.I18n;
@@ -24,113 +27,115 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import appeng.api.config.Actionable;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.channels.IFluidStorageChannel;
 import appeng.api.storage.data.IAEFluidStack;
-import appeng.me.GridAccessException;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @Author GlodBlock
- * @Description The Input Hatch that can auto fetch fluid ME storage network.
- * @Date 2023/4/20-21:21
- */
-public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
-                                        implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart<IAEFluidStack>
+                                        implements IMultiblockAbilityPart<IFluidTank>, IDataStickIntractable {
 
     public final static String FLUID_BUFFER_TAG = "FluidTanks";
     public final static String WORKING_TAG = "WorkingEnabled";
     private final static int CONFIG_SIZE = 16;
-    private boolean workingEnabled;
-    private ExportOnlyAEFluid[] aeFluidTanks;
+    private boolean workingEnabled = true;
+    protected ExportOnlyAEFluidList aeFluidHandler;
 
     public MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, GTValues.UHV, false);
-        this.workingEnabled = true;
+        this(metaTileEntityId, GTValues.EV);
+    }
+
+    protected MetaTileEntityMEInputHatch(ResourceLocation metaTileEntityId, int tier) {
+        super(metaTileEntityId, tier, false, IFluidStorageChannel.class);
+    }
+
+    protected ExportOnlyAEFluidList getAEFluidHandler() {
+        if (aeFluidHandler == null) {
+            aeFluidHandler = new ExportOnlyAEFluidList(this, CONFIG_SIZE, this.getController());
+        }
+        return aeFluidHandler;
     }
 
     @Override
     protected void initializeInventory() {
-        this.aeFluidTanks = new ExportOnlyAEFluid[CONFIG_SIZE];
-        for (int i = 0; i < CONFIG_SIZE; i++) {
-            this.aeFluidTanks[i] = new ExportOnlyAEFluid(this, null, null, this.getController());
-        }
+        getAEFluidHandler(); // initialize it
         super.initializeInventory();
     }
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, this.aeFluidTanks);
+        return new FluidTankList(false, getAEFluidHandler().getInventory());
     }
 
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME()) {
-            if (this.updateMEStatus()) {
-                try {
-                    IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
-                    for (ExportOnlyAEFluid aeTank : this.aeFluidTanks) {
-                        // Try to clear the wrong fluid
-                        IAEFluidStack exceedFluid = aeTank.exceedStack();
-                        if (exceedFluid != null) {
-                            long total = exceedFluid.getStackSize();
-                            IAEFluidStack notInserted = aeNetwork.injectItems(exceedFluid, Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (notInserted != null && notInserted.getStackSize() > 0) {
-                                aeTank.drain((int) (total - notInserted.getStackSize()), true);
-                                continue;
-                            } else {
-                                aeTank.drain((int) total, true);
-                            }
-                        }
-                        // Fill it
-                        IAEFluidStack reqFluid = aeTank.requestStack();
-                        if (reqFluid != null) {
-                            IAEFluidStack extracted = aeNetwork.extractItems(reqFluid, Actionable.MODULATE,
-                                    this.getActionSource());
-                            if (extracted != null) {
-                                aeTank.addStack(extracted);
-                            }
-                        }
-                    }
-                } catch (GridAccessException ignore) {}
+        if (!getWorld().isRemote && this.workingEnabled && this.shouldSyncME() && updateMEStatus()) {
+            syncME();
+        }
+    }
+
+    protected void syncME() {
+        IMEMonitor<IAEFluidStack> monitor = getMonitor();
+        if (monitor == null) return;
+
+        for (ExportOnlyAEFluidSlot aeTank : this.getAEFluidHandler().getInventory()) {
+            // Try to clear the wrong fluid
+            IAEFluidStack exceedFluid = aeTank.exceedStack();
+            if (exceedFluid != null) {
+                long total = exceedFluid.getStackSize();
+                IAEFluidStack notInserted = monitor.injectItems(exceedFluid, Actionable.MODULATE,
+                        this.getActionSource());
+                if (notInserted != null && notInserted.getStackSize() > 0) {
+                    aeTank.drain((int) (total - notInserted.getStackSize()), true);
+                    continue;
+                } else {
+                    aeTank.drain((int) total, true);
+                }
+            }
+            // Fill it
+            IAEFluidStack reqFluid = aeTank.requestStack();
+            if (reqFluid != null) {
+                IAEFluidStack extracted = monitor.extractItems(reqFluid, Actionable.MODULATE, this.getActionSource());
+                if (extracted != null) {
+                    aeTank.addStack(extracted);
+                }
             }
         }
     }
 
     @Override
     public void onRemoval() {
-        try {
-            IMEMonitor<IAEFluidStack> aeNetwork = this.getProxy().getStorage().getInventory(FLUID_NET);
-            for (ExportOnlyAEFluid aeTank : this.aeFluidTanks) {
-                IAEFluidStack stock = aeTank.stock;
-                if (stock instanceof WrappedFluidStack) {
-                    stock = ((WrappedFluidStack) stock).getAEStack();
-                }
-                if (stock != null) {
-                    aeNetwork.injectItems(stock, Actionable.MODULATE, this.getActionSource());
-                }
-            }
-        } catch (GridAccessException ignore) {}
+        flushInventory();
         super.onRemoval();
+    }
+
+    protected void flushInventory() {
+        IMEMonitor<IAEFluidStack> monitor = getMonitor();
+        if (monitor == null) return;
+
+        for (ExportOnlyAEFluidSlot aeTank : this.getAEFluidHandler().getInventory()) {
+            IAEFluidStack stock = aeTank.getStock();
+            if (stock instanceof WrappedFluidStack) {
+                stock = ((WrappedFluidStack) stock).getAEStack();
+            }
+            if (stock != null) {
+                monitor.injectItems(stock, Actionable.MODULATE, this.getActionSource());
+            }
+        }
     }
 
     @Override
@@ -139,7 +144,12 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    protected final ModularUI createUI(EntityPlayer player) {
+        ModularUI.Builder builder = createUITemplate(player);
+        return builder.build(this.getHolder(), player);
+    }
+
+    protected ModularUI.Builder createUITemplate(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI
                 .builder(GuiTextures.BACKGROUND, 176, 18 + 18 * 4 + 94)
                 .label(10, 5, getMetaFullName());
@@ -147,13 +157,21 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
         builder.dynamicLabel(10, 15, () -> this.isOnline ?
                 I18n.format("gregtech.gui.me_network.online") :
                 I18n.format("gregtech.gui.me_network.offline"),
-                0xFFFFFFFF);
+                0x404040);
 
         // Config slots
-        builder.widget(new AEFluidConfigWidget(16, 25, this.aeFluidTanks));
+        builder.widget(new AEFluidConfigWidget(7, 25, this.getAEFluidHandler()));
 
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
-        return builder.build(this.getHolder(), entityPlayer);
+        // Arrow image
+        builder.image(7 + 18 * 4, 25 + 18, 18, 18, GuiTextures.ARROW_DOUBLE);
+
+        // GT Logo, cause there's some free real estate
+        builder.widget(new ImageWidget(7 + 18 * 4, 25 + 18 * 3, 17, 17,
+                GTValues.XMAS.get() ? GuiTextures.GREGTECH_LOGO_XMAS : GuiTextures.GREGTECH_LOGO)
+                        .setIgnoreColor(true));
+
+        builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 18 + 18 * 4 + 12);
+        return builder;
     }
 
     @Override
@@ -196,7 +214,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
         data.setBoolean(WORKING_TAG, this.workingEnabled);
         NBTTagList tanks = new NBTTagList();
         for (int i = 0; i < CONFIG_SIZE; i++) {
-            ExportOnlyAEFluid tank = this.aeFluidTanks[i];
+            ExportOnlyAEFluidSlot tank = this.getAEFluidHandler().getInventory()[i];
             NBTTagCompound tankTag = new NBTTagCompound();
             tankTag.setInteger("slot", i);
             tankTag.setTag("tank", tank.serializeNBT());
@@ -216,7 +234,7 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
             NBTTagList tanks = (NBTTagList) data.getTag(FLUID_BUFFER_TAG);
             for (NBTBase nbtBase : tanks) {
                 NBTTagCompound tankTag = (NBTTagCompound) nbtBase;
-                ExportOnlyAEFluid tank = this.aeFluidTanks[tankTag.getInteger("slot")];
+                ExportOnlyAEFluidSlot tank = this.getAEFluidHandler().getInventory()[tankTag.getInteger("slot")];
                 tank.deserializeNBT(tankTag.getCompoundTag("tank"));
             }
         }
@@ -226,7 +244,11 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (this.shouldRenderOverlay()) {
-            Textures.ME_INPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            if (isOnline) {
+                Textures.ME_INPUT_HATCH_ACTIVE.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            } else {
+                Textures.ME_INPUT_HATCH.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            }
         }
     }
 
@@ -236,6 +258,9 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.fluid_import.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me_import_fluid_hatch.configs.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.copy_paste.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 
@@ -246,157 +271,59 @@ public class MetaTileEntityMEInputHatch extends MetaTileEntityAEHostablePart
 
     @Override
     public void registerAbilities(List<IFluidTank> list) {
-        list.addAll(Arrays.asList(this.aeFluidTanks));
+        list.addAll(Arrays.asList(this.getAEFluidHandler().getInventory()));
     }
 
-    public static class ExportOnlyAEFluid extends ExportOnlyAESlot<IAEFluidStack>
-                                          implements IFluidTank, INotifiableHandler, IFluidHandler {
+    @Override
+    public final void onDataStickLeftClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("MEInputHatch", writeConfigToTag());
+        dataStick.setTagCompound(tag);
+        dataStick.setTranslatableName("gregtech.machine.me.fluid_import.data_stick.name");
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_copy_settings"), true);
+    }
 
-        private final List<MetaTileEntity> notifiableEntities = new ArrayList<>();
-        private MetaTileEntity holder;
-
-        public ExportOnlyAEFluid(MetaTileEntity holder, IAEFluidStack config, IAEFluidStack stock, MetaTileEntity mte) {
-            super(config, stock);
-            this.holder = holder;
-            this.notifiableEntities.add(mte);
-        }
-
-        public ExportOnlyAEFluid() {
-            super();
-        }
-
-        @Override
-        public IAEFluidStack requestStack() {
-            IAEFluidStack result = super.requestStack();
-            if (result instanceof WrappedFluidStack) {
-                return ((WrappedFluidStack) result).getAEStack();
-            } else {
-                return result;
+    protected NBTTagCompound writeConfigToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound configStacks = new NBTTagCompound();
+        tag.setTag("ConfigStacks", configStacks);
+        for (int i = 0; i < CONFIG_SIZE; i++) {
+            var slot = this.aeFluidHandler.getInventory()[i];
+            IAEFluidStack config = slot.getConfig();
+            if (config == null) {
+                continue;
             }
+            NBTTagCompound stackNbt = new NBTTagCompound();
+            config.writeToNBT(stackNbt);
+            configStacks.setTag(Integer.toString(i), stackNbt);
         }
+        return tag;
+    }
 
-        @Override
-        public IAEFluidStack exceedStack() {
-            IAEFluidStack result = super.exceedStack();
-            if (result instanceof WrappedFluidStack) {
-                return ((WrappedFluidStack) result).getAEStack();
-            } else {
-                return result;
-            }
+    @Override
+    public final boolean onDataStickRightClick(EntityPlayer player, ItemStack dataStick) {
+        NBTTagCompound tag = dataStick.getTagCompound();
+        if (tag == null || !tag.hasKey("MEInputHatch")) {
+            return false;
         }
+        readConfigFromTag(tag.getCompoundTag("MEInputHatch"));
+        syncME();
+        player.sendStatusMessage(new TextComponentTranslation("gregtech.machine.me.import_paste_settings"), true);
+        return true;
+    }
 
-        @Override
-        public void addStack(IAEFluidStack stack) {
-            if (this.stock == null) {
-                this.stock = WrappedFluidStack.fromFluidStack(stack.getFluidStack());
-            } else {
-                this.stock.add(stack);
-            }
-            trigger();
-        }
-
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            if (nbt.hasKey(CONFIG_TAG)) {
-                this.config = WrappedFluidStack.fromNBT(nbt.getCompoundTag(CONFIG_TAG));
-            }
-            if (nbt.hasKey(STOCK_TAG)) {
-                this.stock = WrappedFluidStack.fromNBT(nbt.getCompoundTag(STOCK_TAG));
-            }
-        }
-
-        @Nullable
-        @Override
-        public FluidStack getFluid() {
-            if (this.stock != null && this.stock instanceof WrappedFluidStack) {
-                return ((WrappedFluidStack) this.stock).getDelegate();
-            }
-            return null;
-        }
-
-        @Override
-        public int getFluidAmount() {
-            return this.stock != null ? (int) this.stock.getStackSize() : 0;
-        }
-
-        @Override
-        public int getCapacity() {
-            // Its capacity is always 0.
-            return 0;
-        }
-
-        @Override
-        public FluidTankInfo getInfo() {
-            return new FluidTankInfo(this);
-        }
-
-        @Override
-        public IFluidTankProperties[] getTankProperties() {
-            return new IFluidTankProperties[] {
-                    new FluidTankProperties(this.getFluid(), 0)
-            };
-        }
-
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            return 0;
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (this.getFluid() != null && this.getFluid().isFluidEqual(resource)) {
-                return this.drain(resource.amount, doDrain);
-            }
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (this.stock == null) {
-                return null;
-            }
-            int drained = (int) Math.min(this.stock.getStackSize(), maxDrain);
-            FluidStack result = new FluidStack(this.stock.getFluid(), drained);
-            if (doDrain) {
-                this.stock.decStackSize(drained);
-                if (this.stock.getStackSize() == 0) {
-                    this.stock = null;
-                }
-                trigger();
-            }
-            return result;
-        }
-
-        @Override
-        public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.notifiableEntities.add(metaTileEntity);
-        }
-
-        @Override
-        public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-            this.notifiableEntities.remove(metaTileEntity);
-        }
-
-        private void trigger() {
-            for (MetaTileEntity metaTileEntity : this.notifiableEntities) {
-                if (metaTileEntity != null && metaTileEntity.isValid()) {
-                    this.addToNotifiedList(metaTileEntity, this, false);
+    protected void readConfigFromTag(NBTTagCompound tag) {
+        if (tag.hasKey("ConfigStacks")) {
+            NBTTagCompound configStacks = tag.getCompoundTag("ConfigStacks");
+            for (int i = 0; i < CONFIG_SIZE; i++) {
+                String key = Integer.toString(i);
+                if (configStacks.hasKey(key)) {
+                    NBTTagCompound configTag = configStacks.getCompoundTag(key);
+                    this.aeFluidHandler.getInventory()[i].setConfig(WrappedFluidStack.fromNBT(configTag));
+                } else {
+                    this.aeFluidHandler.getInventory()[i].setConfig(null);
                 }
             }
-            if (holder != null) {
-                holder.markDirty();
-            }
-        }
-
-        @Override
-        public ExportOnlyAEFluid copy() {
-            return new ExportOnlyAEFluid(
-                    this.holder,
-                    this.config == null ? null : this.config.copy(),
-                    this.stock == null ? null : this.stock.copy(),
-                    null);
         }
     }
 }

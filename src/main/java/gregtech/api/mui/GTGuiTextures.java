@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * while MUI port is still ongoing. When MUI port is done, this annotation will be removed.
  */
 // TODO ^
+@SuppressWarnings("unused")
 @ApiStatus.Experimental
 public class GTGuiTextures {
 
@@ -19,6 +20,7 @@ public class GTGuiTextures {
     public static class IDs {
 
         public static final String STANDARD_BACKGROUND = "gregtech_standard_bg";
+        public static final String COVER_BACKGROUND = "gregtech_cover_bg";
         public static final String BRONZE_BACKGROUND = "gregtech_bronze_bg";
         public static final String STEEL_BACKGROUND = "gregtech_steel_bg";
         public static final String PRIMITIVE_BACKGROUND = "gregtech_primitive_bg";
@@ -34,9 +36,9 @@ public class GTGuiTextures {
     }
 
     // ICONS
-    /** @apiNote You may want {@link GTGuiTextures#getLogo()} instead. */
+    /** @apiNote You may want {@link GTGuiTextures#getLogo} instead. */
     public static final UITexture GREGTECH_LOGO = fullImage("textures/gui/icon/gregtech_logo.png");
-    /** @apiNote You may want {@link GTGuiTextures#getLogo()} instead. */
+    /** @apiNote You may want {@link GTGuiTextures#getLogo} instead. */
     public static final UITexture GREGTECH_LOGO_XMAS = fullImage("textures/gui/icon/gregtech_logo_xmas.png");
     public static final UITexture GREGTECH_LOGO_DARK = fullImage("textures/gui/icon/gregtech_logo_dark.png");
     // todo blinking GT logos
@@ -61,6 +63,7 @@ public class GTGuiTextures {
             .location(GTValues.MODID, "textures/gui/base/background_popup.png")
             .imageSize(195, 136)
             .adaptable(4)
+            .name(IDs.COVER_BACKGROUND)
             .canApplyTheme()
             .build();
 
@@ -151,6 +154,60 @@ public class GTGuiTextures {
             .canApplyTheme()
             .build();
 
+    public static final UITexture[] BUTTON_BLACKLIST = slice("textures/gui/widget/button_blacklist.png",
+            16, 32, 16, 16, true);
+    public static final UITexture[] BUTTON_IGNORE_DAMAGE = slice("textures/gui/widget/button_filter_damage.png",
+            16, 32, 16, 16, true);
+    public static final UITexture[] BUTTON_IGNORE_NBT = slice("textures/gui/widget/button_filter_nbt.png",
+            16, 32, 16, 16, true);
+
+    public static final UITexture[] BUTTON_CASE_SENSITIVE = slice(
+            "textures/gui/widget/ore_filter/button_case_sensitive.png",
+            16, 32, 16, 16, true);
+
+    public static final UITexture[] BUTTON_MATCH_ALL = slice("textures/gui/widget/ore_filter/button_match_all.png",
+            16, 32, 16, 16, true);
+
+    public static final UITexture OREDICT_ERROR = fullImage("textures/gui/widget/ore_filter/error.png");
+    public static final UITexture OREDICT_INFO = fullImage("textures/gui/widget/ore_filter/info.png");
+    public static final UITexture OREDICT_MATCH = fullImage("textures/gui/widget/ore_filter/match.png");
+    public static final UITexture OREDICT_NO_MATCH = fullImage("textures/gui/widget/ore_filter/no_match.png");
+    public static final UITexture OREDICT_SUCCESS = fullImage("textures/gui/widget/ore_filter/success.png");
+    public static final UITexture OREDICT_WAITING = fullImage("textures/gui/widget/ore_filter/waiting.png");
+    public static final UITexture OREDICT_WARN = fullImage("textures/gui/widget/ore_filter/warn.png");
+
+    public static final UITexture[] MANUAL_IO_OVERLAY_IN = slice("textures/gui/overlay/manual_io_overlay_in.png",
+            18, 18 * 3, 18, 18, true);
+    public static final UITexture[] MANUAL_IO_OVERLAY_OUT = slice("textures/gui/overlay/manual_io_overlay_out.png",
+            18, 18 * 3, 18, 18, true);
+    public static final UITexture[] CONVEYOR_MODE_OVERLAY = slice("textures/gui/overlay/conveyor_mode_overlay.png",
+            18, 18 * 2, 18, 18, true);
+
+    public static final UITexture[] TRANSFER_MODE_OVERLAY = slice("textures/gui/overlay/transfer_mode_overlay.png",
+            18, 18 * 3, 18, 18, true);
+
+    public static final UITexture[] FLUID_TRANSFER_MODE_OVERLAY = slice(
+            "textures/gui/overlay/fluid_transfer_mode_overlay.png",
+            18, 18 * 3, 18, 18, true);
+
+    public static final UITexture[] DISTRIBUTION_MODE_OVERLAY = slice(
+            "textures/gui/widget/button_distribution_mode.png",
+            16, 48, 16, 16, true);
+
+    public static final UITexture[] VOIDING_MODE_OVERLAY = slice(
+            "textures/gui/overlay/voiding_mode_overlay.png",
+            16, 32, 16, 16, true);
+
+    public static final UITexture[] FILTER_MODE_OVERLAY = slice(
+            "textures/gui/overlay/filter_mode_overlay.png",
+            16, 48, 16, 16, true);
+
+    public static final UITexture[] PRIVATE_MODE_BUTTON = slice(
+            "textures/gui/widget/button_public_private.png",
+            18, 36, 18, 18, true);
+
+    public static final UITexture MENU_OVERLAY = fullImage("textures/gui/overlay/menu_overlay.png");
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS
@@ -203,6 +260,9 @@ public class GTGuiTextures {
     public static final UITexture EXTRACTOR_OVERLAY_STEEL = fullImage(
             "textures/gui/overlay/extractor_overlay_steel.png");
     public static final UITexture FILTER_SLOT_OVERLAY = fullImage("textures/gui/overlay/filter_slot_overlay.png", true);
+    public static final UITexture FILTER_SETTINGS_OVERLAY = fullImage(
+            "textures/gui/overlay/filter_settings_overlay.png",
+            true);
     public static final UITexture FURNACE_OVERLAY_1 = fullImage("textures/gui/overlay/furnace_overlay_1.png", true);
     public static final UITexture FURNACE_OVERLAY_2 = fullImage("textures/gui/overlay/furnace_overlay_2.png", true);
     public static final UITexture FURNACE_OVERLAY_BRONZE = fullImage("textures/gui/overlay/furnace_overlay_bronze.png");
@@ -263,9 +323,22 @@ public class GTGuiTextures {
     public static final UITexture BUTTON = new UITexture.Builder()
             .location(GTValues.MODID, "textures/gui/widget/button.png")
             .imageSize(18, 18)
-            .adaptable(1)
+            .adaptable(2)
             .name(IDs.STANDARD_BUTTON)
             .canApplyTheme()
+            .build();
+
+    public static final UITexture MC_BUTTON = new UITexture.Builder()
+            .location("modularui", "gui/widgets/mc_button.png") // todo
+            .imageSize(16, 32)
+            .uv(0.0f, 0.0f, 1.0f, 0.5f)
+            .adaptable(2)
+            .build();
+
+    public static final UITexture MC_BUTTON_DISABLED = new UITexture.Builder()
+            .location("modularui", "gui/widgets/mc_button_disabled.png") // todo
+            .imageSize(16, 16)
+            .adaptable(2)
             .build();
 
     // BUTTON OVERLAYS
@@ -276,6 +349,10 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage(
             "textures/gui/widget/button_auto_collapse_overlay.png");
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
+
+    public static final UITexture BUTTON_CROSS = fullImage("textures/gui/widget/button_cross.png");
+    public static final UITexture BUTTON_REDSTONE_ON = fullImage("textures/gui/widget/button_redstone_on.png");
+    public static final UITexture BUTTON_REDSTONE_OFF = fullImage("textures/gui/widget/button_redstone_off.png");
 
     // PROGRESS BARS
     public static final UITexture PROGRESS_BAR_ARC_FURNACE = progressBar(
@@ -432,6 +509,29 @@ public class GTGuiTextures {
 
     private static UITexture fullImage(String path, boolean canApplyTheme) {
         return UITexture.fullImage(GTValues.MODID, path, canApplyTheme);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static UITexture[] slice(String path, int imageWidth, int imageHeight, int sliceWidth, int sliceHeight,
+                                     boolean canApplyTheme) {
+        if (imageWidth % sliceWidth != 0 || imageHeight % sliceHeight != 0)
+            throw new IllegalArgumentException("Slice height and slice width must divide the image evenly!");
+
+        int countX = imageWidth / sliceWidth;
+        int countY = imageHeight / sliceHeight;
+        UITexture[] slices = new UITexture[countX * countY];
+
+        for (int indexX = 0; indexX < countX; indexX++) {
+            for (int indexY = 0; indexY < countY; indexY++) {
+                slices[(indexX * countX) + indexY] = UITexture.builder()
+                        .location(GTValues.MODID, path)
+                        .canApplyTheme(canApplyTheme)
+                        .imageSize(imageWidth, imageHeight)
+                        .uv(indexX * sliceWidth, indexY * sliceHeight, sliceWidth, sliceHeight)
+                        .build();
+            }
+        }
+        return slices;
     }
 
     private static UITexture progressBar(String path) {

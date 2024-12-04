@@ -1,6 +1,6 @@
 package gregtech.integration.forestry;
 
-import gregtech.api.GTValues;
+import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationModule;
 import gregtech.integration.forestry.bees.GTCombType;
 import gregtech.integration.forestry.bees.GTDropType;
@@ -11,52 +11,39 @@ import forestry.api.apiculture.IAlleleBeeEffect;
 import forestry.api.apiculture.IAlleleBeeSpecies;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAlleleFlowers;
-import forestry.modules.ModuleHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ForestryUtil {
 
-    public static boolean apicultureEnabled() {
-        return ModuleHelper.isEnabled("apiculture");
-    }
-
-    public static boolean arboricultureEnabled() {
-        return ModuleHelper.isEnabled("arboriculture");
-    }
-
-    public static boolean lepidopterologyEnabled() {
-        return ModuleHelper.isEnabled("lepidopterology");
-    }
-
     @Nullable
-    public static IAlleleBeeEffect getEffect(@NotNull String modid, @NotNull String name) {
-        String s = switch (modid) {
-            case GTValues.MODID_EB -> "extrabees.effect." + name;
-            case GTValues.MODID_MB -> "magicbees.effect" + name;
-            case GTValues.MODID -> "gregtech.effect." + name;
+    public static IAlleleBeeEffect getEffect(@NotNull Mods mod, @NotNull String name) {
+        String s = switch (mod) {
+            case ExtraBees -> "extrabees.effect." + name;
+            case MagicBees -> "magicbees.effect" + name;
+            case GregTech -> "gregtech.effect." + name;
             default -> "forestry.effect" + name;
         };
         return (IAlleleBeeEffect) AlleleManager.alleleRegistry.getAllele(s);
     }
 
     @Nullable
-    public static IAlleleFlowers getFlowers(@NotNull String modid, @NotNull String name) {
-        String s = switch (modid) {
-            case GTValues.MODID_EB -> "extrabees.flower." + name;
-            case GTValues.MODID_MB -> "magicbees.flower" + name;
-            case GTValues.MODID -> "gregtech.flower." + name;
+    public static IAlleleFlowers getFlowers(@NotNull Mods mod, @NotNull String name) {
+        String s = switch (mod) {
+            case ExtraBees -> "extrabees.flower." + name;
+            case MagicBees -> "magicbees.flower" + name;
+            case GregTech -> "gregtech.flower." + name;
             default -> "forestry.flowers" + name;
         };
         return (IAlleleFlowers) AlleleManager.alleleRegistry.getAllele(s);
     }
 
     @Nullable
-    public static IAlleleBeeSpecies getSpecies(@NotNull String modid, @NotNull String name) {
-        String s = switch (modid) {
-            case GTValues.MODID_EB -> "extrabees.species." + name;
-            case GTValues.MODID_MB -> "magicbees.species" + name;
-            case GTValues.MODID -> "gregtech.species." + name;
+    public static IAlleleBeeSpecies getSpecies(@NotNull Mods mod, @NotNull String name) {
+        String s = switch (mod) {
+            case ExtraBees -> "extrabees.species." + name;
+            case MagicBees -> "magicbees.species" + name;
+            case GregTech -> "gregtech.species." + name;
             default -> "forestry.species" + name;
         };
         return (IAlleleBeeSpecies) AlleleManager.alleleRegistry.getAllele(s);
@@ -74,7 +61,7 @@ public class ForestryUtil {
                     .error("Tried to get GregTech Comb stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;
         }
-        if (!apicultureEnabled()) {
+        if (!Mods.ForestryApiculture.isModLoaded()) {
             IntegrationModule.logger.error("Tried to get GregTech Comb stack, but Apiculture module is not enabled!");
             return ItemStack.EMPTY;
         }
@@ -93,7 +80,7 @@ public class ForestryUtil {
                     .error("Tried to get GregTech Drop stack, but GregTech Bees config is not enabled!");
             return ItemStack.EMPTY;
         }
-        if (!apicultureEnabled()) {
+        if (!Mods.ForestryApiculture.isModLoaded()) {
             IntegrationModule.logger.error("Tried to get GregTech Drop stack, but Apiculture module is not enabled!");
             return ItemStack.EMPTY;
         }

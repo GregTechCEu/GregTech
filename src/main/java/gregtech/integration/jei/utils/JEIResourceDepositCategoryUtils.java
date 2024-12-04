@@ -1,6 +1,7 @@
 package gregtech.integration.jei.utils;
 
 import gregtech.api.util.GTLog;
+import gregtech.api.util.Mods;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 
 import net.minecraft.client.Minecraft;
@@ -10,7 +11,6 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.Loader;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static gregtech.api.GTValues.MODID_AR;
 
 /**
  * Common util methods shared between {@link gregtech.integration.jei.basic.GTOreCategory}
@@ -139,7 +137,7 @@ public class JEIResourceDepositCategoryUtils {
         // to remove AR space dims from the dimension list
         DimensionType arSpaceDimensionType = null;
 
-        if (Loader.isModLoaded(MODID_AR)) {
+        if (Mods.AdvancedRocketry.isModLoaded()) {
             try {
                 arSpaceDimensionType = DimensionType.byName("space");
             } catch (IllegalArgumentException e) {
