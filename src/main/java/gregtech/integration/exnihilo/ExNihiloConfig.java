@@ -25,4 +25,11 @@ public class ExNihiloConfig {
     })
     @RequiresMcRestart
     public static boolean harderMeshes = true;
+
+    @Comment({
+            "Mirror all Ex Nihilo Crucible recipes to the Fluid Extractor.",
+            "Default: true"
+    })
+    @RequiresMcRestart
+    public static boolean crucibleExtractorRecipes = true;
 }

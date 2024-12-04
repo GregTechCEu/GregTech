@@ -2,6 +2,8 @@ package gregtech.integration.exnihilo.recipes;
 
 import exnihilocreatio.ModItems;
 
+import exnihilocreatio.compatibility.jei.crucible.CrucibleRecipe;
+
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.chance.output.ChancedOutputLogic;
@@ -13,6 +15,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.integration.exnihilo.ExNihiloConfig;
 import gregtech.integration.exnihilo.ExNihiloModule;
 import gregtech.loaders.recipe.MetaTileEntityLoader;
 
@@ -25,9 +28,13 @@ import exnihilocreatio.compatibility.jei.sieve.SieveRecipe;
 import exnihilocreatio.registries.manager.ExNihiloRegistryManager;
 import exnihilocreatio.registries.types.Siftable;
 
+import net.minecraftforge.fluids.FluidUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import static gregtech.api.recipes.RecipeMaps.EXTRACTOR_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.stick;
 import static gregtech.api.unification.ore.OrePrefix.stone;
@@ -126,6 +133,26 @@ public class ExNihiloRecipes {
                     }
                 }
                 builder.buildAndRegister();
+            }
+        }
+
+        // Mirror Crucible recipes to Extractor RecipeMap if enabled in config
+        if (ExNihiloConfig.crucibleExtractorRecipes) {
+            for (CrucibleRecipe recipe : ExNihiloRegistryManager.CRUCIBLE_STONE_REGISTRY.getRecipeList()) {
+                if (FluidUtil.getFluidContained(recipe.getFluid()) != null) {
+                    for (List<ItemStack> listStack : recipe.getInputs()) {
+                        for (ItemStack stack : listStack) {
+                            if (EXTRACTOR_RECIPES.findRecipe(4, Arrays.asList(stack), new ArrayList<>(), true) !=
+                                    null)
+                                continue;
+                            EXTRACTOR_RECIPES.recipeBuilder()
+                                    .inputs(stack)
+                                    .fluidOutputs(FluidUtil.getFluidContained(recipe.getFluid()))
+                                    .duration(100)
+                                    .buildAndRegister();
+                        }
+                    }
+                }
             }
         }
     }
