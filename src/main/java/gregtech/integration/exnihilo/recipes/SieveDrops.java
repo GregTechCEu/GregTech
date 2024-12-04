@@ -109,11 +109,12 @@ public class SieveDrops {
     }
 
     public static void registerRecipes() {
+        NonNullList<Siftable> siftablesDirt = NonNullList.create();
         if (ExNihiloConfig.overrideAllSiftDrops) {
+            siftablesDirt.addAll(ExNihiloRegistryManager.SIEVE_REGISTRY.getDrops(OreDictUnifier.get("dirt")));
             ExNihiloRegistryManager.SIEVE_REGISTRY.getRegistry().clear();
         }
         processDrops(FileUtility.loadJson(new File(Loader.instance().getConfigDir(), "/gregtech/sieve_drops.json")));
-        NonNullList<Siftable> siftablesDirt = NonNullList.create();
         siftablesDirt.add(new Siftable(new ItemInfo(ExNihiloModule.GTPebbles, 3), 0.1f,
                 BlockSieve.MeshType.STRING.getID()));
         siftablesDirt.add(new Siftable(new ItemInfo(ExNihiloModule.GTPebbles), 0.5f,
