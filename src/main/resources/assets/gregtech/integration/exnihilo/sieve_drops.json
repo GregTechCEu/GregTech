@@ -1,1032 +1,512 @@
 {
   "exnihilocreatio:block_andesite_crushed": {
-    "redstone": {
-      "meshlevel": 2,
-      "chance": 0.1938
-    },
-    "ruby": {
-      "meshlevel": 2,
-      "chance": 0.0646
-    },
-    "cinnabar": {
-      "meshlevel": 2,
-      "chance": 0.0646
-    },
-    "chromite": {
-      "meshlevel": 2,
-      "chance": 0.01615
-    },
-    "almandine": {
-      "meshlevel": 2,
-      "chance": 0.0816
-    },
-    "pyrope": {
-      "meshlevel": 2,
-      "chance": 0.0816
-    },
-    "sapphire": {
-      "meshlevel": 2,
-      "chance": 0.0816
-    },
-    "green_sapphire": {
-      "meshlevel": 2,
-      "chance": 0.0272
-    },
-    "topaz": {
-      "meshlevel": 2,
-      "chance": 0.06
-    },
-    "blue_topaz": {
-      "meshlevel": 2,
-      "chance": 0.04
-    },
     "chalcopyrite": {
-      "meshlevel": 3,
-      "chance": 0.0969
+      "meshlevel": 1,
+      "chance": 0.07
     },
-    "iron": {
-      "meshlevel": 3,
-      "chance": 0.0969
-    },
-    "pyrite": {
-      "meshlevel": 3,
-      "chance": 0.0969
+    "coal": {
+      "meshlevel": 1,
+      "chance": 0.08
     },
     "copper": {
-      "meshlevel": 3,
-      "chance": 0.0323
+      "meshlevel": 1,
+      "chance": 0.07
     },
-    "brown_limonite": {
-      "meshlevel": 3,
-      "chance": 0.0507
+    "iron": {
+      "meshlevel": 1,
+      "chance": 0.09
     },
-    "yellow_limonite": {
-      "meshlevel": 3,
-      "chance": 0.0507
+    "pyrite": {
+      "meshlevel": 1,
+      "chance": 0.09
     },
-    "banded_iron": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "malachite": {
-      "meshlevel": 3,
-      "chance": 0.0169
-    },
-    "bastnasite": {
-      "meshlevel": 3,
-      "chance": 0.1014
-    },
-    "monazite": {
-      "meshlevel": 3,
-      "chance": 0.0338
-    },
-    "neodymium": {
-      "meshlevel": 3,
-      "chance": 0.0338
-    },
-    "garnierite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "nickel": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "cobaltite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "pentlandite": {
-      "meshlevel": 3,
-      "chance": 0.0182
-    },
-    "bentonite": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "magnesite": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "olivine": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "pitchblende": {
-      "meshlevel": 3,
-      "chance": 0.0845
-    },
-    "uraninite": {
-      "meshlevel": 3,
-      "chance": 0.0676
-    },
-    "graphite": {
+    "COAL": {
       "meshlevel": 2,
-      "chance": 0.0114
+      "chance": 0.23
     },
     "diamond": {
       "meshlevel": 2,
-      "chance": 0.0033
+      "chance": 0.08
     },
-    "coal": {
+    "graphite": {
       "meshlevel": 2,
-      "chance": 0.0033
+      "chance": 0.005
     },
-    "beryllium": {
-      "meshlevel": 4,
-      "chance": 0.0845
+    "banded_iron": {
+      "meshlevel": 3,
+      "chance": 0.15
     },
-    "emerald": {
-      "meshlevel": 4,
-      "chance": 0.0507
+    "brown_limonite": {
+      "meshlevel": 3,
+      "chance": 0.18
     },
-    "thorium": {
-      "meshlevel": 4,
-      "chance": 0.0338
+    "malachite": {
+      "meshlevel": 3,
+      "chance": 0.075
     },
-    "soapstone": {
-      "meshlevel": 4,
-      "chance": 0.056
+    "yellow_limonite": {
+      "meshlevel": 3,
+      "chance": 0.18
     },
-    "talc": {
+    "apatite": {
       "meshlevel": 4,
-      "chance": 0.056
+      "chance": 0.15
     },
-    "pentlandite": {
+    "pyrochlore": {
       "meshlevel": 4,
-      "chance": 0.056
+      "chance": 0.005
     },
-    "scheelite": {
+    "tricalcium_phosphate": {
       "meshlevel": 4,
-      "chance": 0.1014
-    },
-    "tungstate": {
-      "meshlevel": 4,
-      "chance": 0.0338
-    },
-    "lithium": {
-      "meshlevel": 4,
-      "chance": 0.0338
+      "chance": 0.1
     }
   },
   "exnihilocreatio:block_diorite_crushed": {
-    "bauxite": {
+    "cassiterite": {
       "meshlevel": 1,
-      "chance": 0.153
-    },
-    "aluminium": {
-      "meshlevel": 1,
-      "chance": 0.0765
-    },
-    "ilmenite": {
-      "meshlevel": 1,
-      "chance": 0.0255
+      "chance": 0.07
     },
     "chalcopyrite": {
       "meshlevel": 1,
-      "chance": 0.0585
+      "chance": 0.2
     },
-    "cassiterite": {
+    "coal": {
       "meshlevel": 1,
-      "chance": 0.0585
+      "chance": 0.06
     },
-    "alunite": {
+    "zeolite": {
       "meshlevel": 1,
-      "chance": 0.0195
-    },
-    "quartzite": {
-      "meshlevel": 1,
-      "chance": 0.09945
-    },
-    "barite": {
-      "meshlevel": 1,
-      "chance": 0.05525
-    },
-    "certus_quartz": {
-      "meshlevel": 1,
-      "chance": 0.0663
-    },
-    "tin": {
-      "meshlevel": 1,
-      "chance": 0.1290
-    },
-    "cassiterite": {
-      "meshlevel": 1,
-      "chance": 0.08075
-    },
-    "bornite": {
-      "meshlevel": 2,
-      "chance": 0.0969
-    },
-    "chalcocite": {
-      "meshlevel": 2,
-      "chance": 0.0969
-    },
-    "copper": {
-      "meshlevel": 2,
-      "chance": 0.0323
-    },
-    "galena": {
-      "meshlevel": 2,
-      "chance": 0.104
-    },
-    "lead": {
-      "meshlevel": 2,
-      "chance": 0.052
-    },
-    "silver": {
-      "meshlevel": 2,
-      "chance": 0.052
-    },
-    "lazurite": {
-      "meshlevel": 2,
-      "chance": 0.0585
-    },
-    "sodalite": {
-      "meshlevel": 2,
-      "chance": 0.039
-    },
-    "lapis": {
-      "meshlevel": 2,
-      "chance": 0.06825
+      "chance": 0.0001
     },
     "calcite": {
       "meshlevel": 2,
-      "chance": 0.02925
+      "chance": 0.1
     },
-    "brown_limonite": {
+    "lapis": {
+      "meshlevel": 2,
+      "chance": 0.25
+    },
+    "lazurite": {
+      "meshlevel": 2,
+      "chance": 0.0001
+    },
+    "sodalite": {
+      "meshlevel": 2,
+      "chance": 0.0001
+    },
+    "cobaltite": {
       "meshlevel": 3,
-      "chance": 0.0507
+      "chance": 0.005
     },
-    "yellow_limonite": {
+    "garnierite": {
       "meshlevel": 3,
-      "chance": 0.0507
+      "chance": 0.12
     },
-    "banded_iron": {
+    "nickel": {
       "meshlevel": 3,
-      "chance": 0.0507
+      "chance": 0.12
     },
-    "malachite": {
+    "pentlandite": {
       "meshlevel": 3,
-      "chance": 0.0169
+      "chance": 0.09
     },
-    "pitchblende": {
-      "meshlevel": 3,
-      "chance": 0.0845
-    },
-    "uraninite": {
-      "meshlevel": 3,
-      "chance": 0.0676
-    },
-    "kyanite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "mica": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "cassiterite": {
-      "meshlevel": 3,
-      "chance": 0.0364
-    },
-    "pollucite": {
-      "meshlevel": 3,
-      "chance": 0.0364
-    },
-    "graphite": {
+    "PENTLANDITE": {
       "meshlevel": 4,
-      "chance": 0.1014
+      "chance": 0.06
     },
-    "diamond": {
+    "glauconite_sand": {
       "meshlevel": 4,
-      "chance": 0.0338
-    },
-    "coal": {
-      "meshlevel": 4,
-      "chance": 0.0338
+      "chance": 0.04
     },
     "soapstone": {
       "meshlevel": 4,
-      "chance": 0.056
+      "chance": 0.16
     },
     "talc": {
       "meshlevel": 4,
-      "chance": 0.056
-    },
-    "pentlandite": {
-      "meshlevel": 4,
-      "chance": 0.056
+      "chance": 0.16
     }
   },
   "exnihilocreatio:block_endstone_crushed": {
-    "beryllium": {
+    "aluminium": {
       "meshlevel": 2,
-      "chance": 0.0405
+      "chance": 0.25
     },
-    "emerald": {
+    "bauxite": {
       "meshlevel": 2,
-      "chance": 0.0243
-    },
-    "thorium": {
-      "meshlevel": 2,
-      "chance": 0.0162
-    },
-    "grossular": {
-      "meshlevel": 3,
-      "chance": 0.0192
-    },
-    "spessartine": {
-      "meshlevel": 3,
-      "chance": 0.0192
-    },
-    "pyrolusite": {
-      "meshlevel": 3,
-      "chance": 0.0192
-    },
-    "tantalite": {
-      "meshlevel": 3,
-      "chance": 0.0064
-    },
-    "wulfenite": {
-      "meshlevel": 3,
-      "chance": 0.0256
-    },
-    "molybdenite": {
-      "meshlevel": 3,
-      "chance": 0.0256
-    },
-    "powellite": {
-      "meshlevel": 3,
-      "chance": 0.0128
-    },
-    "garnierite": {
-      "meshlevel": 3,
-      "chance": 0.0189
-    },
-    "nickel": {
-      "meshlevel": 3,
-      "chance": 0.0189
-    },
-    "cobaltite": {
-      "meshlevel": 3,
-      "chance": 0.0189
-    },
-    "pentlandite": {
-      "meshlevel": 3,
-      "chance": 0.0063
-    },
-    "bentonite": {
-      "meshlevel": 3,
-      "chance": 0.0192
-    },
-    "magnesite": {
-      "meshlevel": 3,
-      "chance": 0.0192
-    },
-    "olivine": {
-      "meshlevel": 3,
-      "chance": 0.0192
+      "chance": 0.25
     },
     "chromite": {
+      "meshlevel": 2,
+      "chance": 0.3
+    },
+    "gold": {
+      "meshlevel": 2,
+      "chance": 0.2
+    },
+    "ilmenite": {
+      "meshlevel": 2,
+      "chance": 0.25
+    },
+    "magnetite": {
+      "meshlevel": 2,
+      "chance": 0.25
+    },
+    "vanadium_magnetite": {
+      "meshlevel": 2,
+      "chance": 0.15
+    },
+    "bornite": {
       "meshlevel": 3,
-      "chance": 0.064
+      "chance": 0.05
     },
     "cooperite": {
       "meshlevel": 3,
-      "chance": 0.0288
+      "chance": 0.05
+    },
+    "lithium": {
+      "meshlevel": 3,
+      "chance": 0.05
     },
     "palladium": {
       "meshlevel": 3,
-      "chance": 0.0224
-    },
-    "scheelite": {
-      "meshlevel": 3,
-      "chance": 0.0384
-    },
-    "tungstate": {
-      "meshlevel": 3,
-      "chance": 0.0128
-    },
-    "lithium": {
-      "meshlevel": 3,
-      "chance": 0.0128
-    },
-    "naquadah": {
-      "meshlevel": 4,
-      "chance": 0.36
-    },
-    "lazurite": {
-      "meshlevel": 4,
-      "chance": 0.0216
-    },
-    "sodalite": {
-      "meshlevel": 4,
-      "chance": 0.0144
-    },
-    "lapis": {
-      "meshlevel": 4,
-      "chance": 0.0252
-    },
-    "calcite": {
-      "meshlevel": 4,
-      "chance": 0.0108
-    }
-    },
-  "exnihilocreatio:block_granite_crushed": {
-    "apatite": {
-      "meshlevel": 1,
-      "chance": 0.1014
-    },
-    "tricalcium_phosphate": {
-      "meshlevel": 1,
-      "chance": 0.0676
-    },
-    "bauxite": {
-      "meshlevel": 1,
-      "chance": 0.153
-    },
-    "aluminium": {
-      "meshlevel": 1,
-      "chance": 0.0765
-    },
-    "ilmenite": {
-      "meshlevel": 1,
-      "chance": 0.0255
-    },
-    "magnetite": {
-      "meshlevel": 1,
-      "chance": 0.2505
-    },
-    "iron": {
-      "meshlevel": 1,
-      "chance": 0.0627
-    },
-    "vanadium_magnetite": {
-      "meshlevel": 1,
-      "chance": 0.0627
-    },
-    "gold": {
-      "meshlevel": 1,
-      "chance": 0.0418
-    },
-    "quartzite": {
-      "meshlevel": 1,
-      "chance": 0.09945
-    },
-    "barite": {
-      "meshlevel": 1,
-      "chance": 0.05525
-    },
-    "certus_quartz": {
-      "meshlevel": 1,
-      "chance": 0.0663
-    },
-    "tetrahedrite": {
-      "meshlevel": 1,
-      "chance": 0.1836
-    },
-    "copper": {
-      "meshlevel": 1,
-      "chance": 0.0612
-    },
-    "stibnite": {
-      "meshlevel": 1,
-      "chance": 0.0612
-    },
-    "redstone": {
-      "meshlevel": 2,
-      "chance": 0.1938
-    },
-    "ruby": {
-      "meshlevel": 2,
-      "chance": 0.0646
-    },
-    "cinnabar": {
-      "meshlevel": 2,
-      "chance": 0.0646
-    },
-    "chromite": {
-      "meshlevel": 2,
-      "chance": 0.01615
-    },
-    "bornite": {
-      "meshlevel": 2,
-      "chance": 0.0969
-    },
-    "chalcocite": {
-      "meshlevel": 2,
-      "chance": 0.0969
-    },
-    "copper": {
-      "meshlevel": 2,
-      "chance": 0.0323
-    },
-    "lazurite": {
-      "meshlevel": 2,
-      "chance": 0.0585
-    },
-    "sodalite": {
-      "meshlevel": 2,
-      "chance": 0.039
-    },
-    "lapis": {
-      "meshlevel": 2,
-      "chance": 0.06825
-    },
-    "calcite": {
-      "meshlevel": 2,
-      "chance": 0.02925
-    },
-    "topaz": {
-      "meshlevel": 2,
-      "chance": 0.06
-    },
-    "blue_topaz": {
-      "meshlevel": 2,
-      "chance": 0.04
-    },
-    "chalcopyrite": {
-      "meshlevel": 3,
-      "chance": 0.0969
-    },
-    "iron": {
-      "meshlevel": 3,
-      "chance": 0.0969
-    },
-    "pyrite": {
-      "meshlevel": 3,
-      "chance": 0.0969
-    },
-    "copper": {
-      "meshlevel": 3,
-      "chance": 0.0323
-    },
-    "brown_limonite": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "yellow_limonite": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "banded_iron": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "malachite": {
-      "meshlevel": 3,
-      "chance": 0.0169
-    },
-    "bastnasite": {
-      "meshlevel": 3,
-      "chance": 0.1014
-    },
-    "monazite": {
-      "meshlevel": 3,
-      "chance": 0.0338
-    },
-    "neodymium": {
-      "meshlevel": 3,
-      "chance": 0.0338
-    },
-    "garnierite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "nickel": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "cobaltite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "pentlandite": {
-      "meshlevel": 3,
-      "chance": 0.0182
-    },
-    "pitchblende": {
-      "meshlevel": 3,
-      "chance": 0.0845
-    },
-    "uraninite": {
-      "meshlevel": 3,
-      "chance": 0.0676
-    },
-    "kyanite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "mica": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "cassiterite": {
-      "meshlevel": 3,
-      "chance": 0.0364
-    },
-    "pollucite": {
-      "meshlevel": 3,
-      "chance": 0.0364
-    },
-    "graphite": {
-      "meshlevel": 4,
-      "chance": 0.1014
-    },
-    "diamond": {
-      "meshlevel": 4,
-      "chance": 0.0338
-    },
-    "coal": {
-      "meshlevel": 4,
-      "chance": 0.0338
-    },
-    "wulfenite": {
-      "meshlevel": 4,
-      "chance": 0.0676
-    },
-    "molybdenite": {
-      "meshlevel": 4,
-      "chance": 0.0676
-    },
-    "powellite": {
-      "meshlevel": 4,
-      "chance": 0.0338
-    },
-    "soapstone": {
-      "meshlevel": 4,
-      "chance": 0.056
-    },
-    "talc": {
-      "meshlevel": 4,
-      "chance": 0.056
-    },
-    "pentlandite": {
-      "meshlevel": 4,
-      "chance": 0.056
-    },
-    "scheelite": {
-      "meshlevel": 4,
-      "chance": 0.1014
-    },
-    "tungstate": {
-      "meshlevel": 4,
-      "chance": 0.0338
-    },
-    "lithium": {
-      "meshlevel": 4,
-      "chance": 0.0338
-    }
-  },
-  "minecraft:gravel": {
-    "coal": {
-      "meshlevel": 1,
-      "chance": 0.102
-    },
-    "trona": {
-      "meshlevel": 1,
-      "chance": 0.0507
-    },
-    "coal": {
-      "meshlevel": 1,
-      "chance": 0.095
-    },
-    "salt": {
-      "meshlevel": 1,
-      "chance": 0.0952
-    },
-    "rock_salt": {
-      "meshlevel": 1,
-      "chance": 0.0833
-    },
-    "lepidolite": {
-      "meshlevel": 1,
-      "chance": 0.0357
-    },
-    "spodumene": {
-      "meshlevel": 1,
-      "chance": 0.0238
-    },
-    "tin": {
-      "meshlevel": 1,
-      "chance": 0.24225
-    },
-    "cassiterite": {
-      "meshlevel": 1,
-      "chance": 0.08075
-    },
-    "basaltic_mineral_sand": {
-      "meshlevel": 1,
-      "chance": 0.0546
-    },
-    "granitic_mineral_sand": {
-      "meshlevel": 1,
-      "chance": 0.0546
-    },
-    "fullers_earth": {
-      "meshlevel": 1,
-      "chance": 0.0364
-    },
-    "gypsum": {
-      "meshlevel": 1,
-      "chance": 0.0364
-    },
-    "galena": {
-      "meshlevel": 2,
-      "chance": 0.104
-    },
-    "lead": {
-      "meshlevel": 2,
-      "chance": 0.052
-    },
-    "silver": {
-      "meshlevel": 2,
-      "chance": 0.052
-    },
-    "zeolite": {
-      "meshlevel": 2,
-      "chance": 0.0507
-    },
-    "fullers_earth": {
-      "meshlevel": 2,
-      "chance": 0.0338
-    },
-    "glauconite_sand": {
-      "meshlevel": 2,
-      "chance": 0.0338
-    },
-    "oilsands": {
-      "meshlevel": 2,
-      "chance": 0.225
-    },
-    "cassiterite_sand": {
-      "meshlevel": 2,
-      "chance": 0.0432
-    },
-    "garnet_sand": {
-      "meshlevel": 2,
-      "chance": 0.0432
-    },
-    "asbestos": {
-      "meshlevel": 2,
-      "chance": 0.0432
-    },
-    "diatomite": {
-      "meshlevel": 2,
-      "chance": 0.0144
+      "chance": 0.005
     },
     "platinum": {
       "meshlevel": 3,
-      "chance": 0.07605
+      "chance": 0.005
     },
-    "palladium": {
+    "scheelite": {
       "meshlevel": 3,
-      "chance": 0.05915
+      "chance": 0.25
+    },
+    "tungstate": {
+      "meshlevel": 3,
+      "chance": 0.25
+    },
+    "naquadah": {
+      "meshlevel": 4,
+      "chance": 0.001
+    },
+    "pitchblende": {
+      "meshlevel": 4,
+      "chance": 0.125
+    },
+    "plutonium": {
+      "meshlevel": 4,
+      "chance": 0.001
+    },
+    "uraninite": {
+      "meshlevel": 4,
+      "chance": 0.1
     }
   },
-  "exnihilocreatio:block_netherrack_crushed": {
-    "chalcopyrite": {
-      "meshlevel": 2,
-      "chance": 0.0432
-    },
-    "iron": {
-      "meshlevel": 2,
-      "chance": 0.0432
-    },
-    "pyrite": {
-      "meshlevel": 2,
-      "chance": 0.0432
-    },
-    "copper": {
-      "meshlevel": 2,
-      "chance": 0.0144
-    },
-    "brown_limonite": {
-      "meshlevel": 2,
-      "chance": 0.0324
-    },
-    "yellow_limonite": {
-      "meshlevel": 2,
-      "chance": 0.0324
-    },
-    "banded_iron": {
-      "meshlevel": 2,
-      "chance": 0.0324
-    },
-    "malachite": {
-      "meshlevel": 2,
-      "chance": 0.0108
-    },
-    "magnetite": {
-      "meshlevel": 2,
-      "chance": 0.1428
-    },
-    "iron": {
-      "meshlevel": 2,
-      "chance": 0.0357
-    },
-    "vanadium_magnetite": {
-      "meshlevel": 2,
-      "chance": 0.0357
+  "exnihilocreatio:block_granite_crushed": {
+    "coal": {
+      "meshlevel": 1,
+      "chance": 0.12
     },
     "gold": {
+      "meshlevel": 1,
+      "chance": 0.05
+    },
+    "magnetite": {
+      "meshlevel": 1,
+      "chance": 0.25
+    },
+    "vanadium_magnetite": {
+      "meshlevel": 1,
+      "chance": 0.005
+    },
+    "cinnabar": {
       "meshlevel": 2,
-      "chance": 0.0238
-    },
-    "nether_quartz": {
-      "meshlevel": 2,
-      "chance": 0.324
-    },
-    "sulfur": {
-      "meshlevel": 2,
-      "chance": 0.1632
-    },
-    "pyrite": {
-      "meshlevel": 2,
-      "chance": 0.0544
-    },
-    "sphalerite": {
-      "meshlevel": 2,
-      "chance": 0.0544
-    },
-    "tetrahedrite": {
-      "meshlevel": 2,
-      "chance": 0.0936
-    },
-    "copper": {
-      "meshlevel": 2,
-      "chance": 0.0312
-    },
-    "stibnite": {
-      "meshlevel": 2,
-      "chance": 0.0312
-    },
-    "garnierite": {
-      "meshlevel": 4,
-      "chance": 0.0189
-    },
-    "nickel": {
-      "meshlevel": 4,
-      "chance": 0.0189
-    },
-    "cobaltite": {
-      "meshlevel": 4,
-      "chance": 0.0189
-    },
-    "pentlandite": {
-      "meshlevel": 4,
-      "chance": 0.0063
+      "chance": 0.005
     },
     "redstone": {
-      "meshlevel": 4,
-      "chance": 0.0864
+      "meshlevel": 2,
+      "chance": 0.3
     },
     "ruby": {
-      "meshlevel": 4,
-      "chance": 0.0288
-    },
-    "cinnabar": {
-      "meshlevel": 4,
-      "chance": 0.0288
-    },
-    "chromite": {
-      "meshlevel": 4,
-      "chance": 0.072
-    },
-    "electrotine": {
-      "meshlevel": 4,
-      "chance": 0.0072
-    },
-    "topaz": {
-      "meshlevel": 4,
-      "chance": 0.0294
-    },
-    "blue_topaz": {
-      "meshlevel": 4,
-      "chance": 0.0196
-    }
-  },
-  "ore:sand": {
-    "copper": {
       "meshlevel": 2,
-      "chance": 0.0612
-    },
-    "redstone": {
-      "meshlevel": 2,
-      "chance": 0.1938
-    },
-    "cinnabar": {
-      "meshlevel": 2,
-      "chance": 0.0646
-    },
-    "chromite": {
-      "meshlevel": 2,
-      "chance": 0.01615
-    },
-    "almandine": {
-      "meshlevel": 2,
-      "chance": 0.0816
-    },
-    "pyrope": {
-      "meshlevel": 2,
-      "chance": 0.0816
-    },
-    "sapphire": {
-      "meshlevel": 2,
-      "chance": 0.0816
-    },
-    "green_sapphire": {
-      "meshlevel": 2,
-      "chance": 0.0272
-    },
-    "chalcopyrite": {
-      "meshlevel": 3,
-      "chance": 0.0969
-    },
-    "iron": {
-      "meshlevel": 3,
-      "chance": 0.0969
-    },
-    "pyrite": {
-      "meshlevel": 3,
-      "chance": 0.0969
-    },
-    "copper": {
-      "meshlevel": 3,
-      "chance": 0.0323
-    },
-    "brown_limonite": {
-      "meshlevel": 2,
-      "chance": 0.0507
-    },
-    "yellow_limonite": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "banded_iron": {
-      "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "malachite": {
-      "meshlevel": 3,
-      "chance": 0.0169
-    },
-    "garnierite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "nickel": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "cobalitite": {
-      "meshlevel": 3,
-      "chance": 0.0546
-    },
-    "pentlandite": {
-      "meshlevel": 3,
-      "chance": 0.0182
+      "chance": 0.08
     },
     "bentonite": {
       "meshlevel": 3,
-      "chance": 0.0507
+      "chance": 0.0001
+    },
+    "glauconite_sand": {
+      "meshlevel": 3,
+      "chance": 0.04
     },
     "magnesite": {
       "meshlevel": 3,
-      "chance": 0.0507
+      "chance": 0.005
     },
     "olivine": {
       "meshlevel": 3,
-      "chance": 0.0507
-    },
-    "beryllium": {
-      "meshlevel": 4,
-      "chance": 0.0845
-    },
-    "emerald": {
-      "meshlevel": 4,
-      "chance": 0.0507
-    },
-    "thorium": {
-      "meshlevel": 4,
-      "chance": 0.0338
+      "chance": 0.25
     },
     "grossular": {
       "meshlevel": 4,
-      "chance": 0.0507
-    },
-    "spessartine": {
-      "meshlevel": 4,
-      "chance": 0.0507
+      "chance": 0.0001
     },
     "pyrolusite": {
       "meshlevel": 4,
-      "chance": 0.0507
+      "chance": 0.1
+    },
+    "spessartine": {
+      "meshlevel": 4,
+      "chance": 0.0001
     },
     "tantalite": {
       "meshlevel": 4,
-      "chance": 0.0169
+      "chance": 0.005
+    }
+  },
+  "minecraft:gravel": {
+    "cassiterite": {
+      "meshlevel": 1,
+      "chance": 0.05
+    },
+    "coal": {
+      "meshlevel": 1,
+      "chance": 0.1
+    },
+    "tin": {
+      "meshlevel": 1,
+      "chance": 0.2
+    },
+    "galena": {
+      "meshlevel": 2,
+      "chance": 0.16
+    },
+    "lead": {
+      "meshlevel": 2,
+      "chance": 0.08
+    },
+    "silver": {
+      "meshlevel": 2,
+      "chance": 0.10
+    },
+    "lepidolite": {
+      "meshlevel": 3,
+      "chance": 0.005
+    },
+    "rock_salt": {
+      "meshlevel": 3,
+      "chance": 0.12
+    },
+    "salt": {
+      "meshlevel": 3,
+      "chance": 0.2
+    },
+    "spodumene": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "bauxite": {
+      "meshlevel": 4,
+      "chance": 0.3
+    },
+    "kyanite": {
+      "meshlevel": 4,
+      "chance": 0.0001
+    },
+    "mica": {
+      "meshlevel": 4,
+      "chance": 0.005
+    },
+    "pollucite": {
+      "meshlevel": 4,
+      "chance": 0.0001
+    }
+  },
+  "exnihilocreatio:block_netherrack_crushed": {
+    "banded_iron": {
+      "meshlevel": 1,
+      "chance": 0.2
+    },
+    "brown_limonite": {
+      "meshlevel": 1,
+      "chance": 0.2
+    },
+    "copper": {
+      "meshlevel": 1,
+      "chance": 0.2
+    },
+    "gold": {
+      "meshlevel": 1,
+      "chance": 0.1
+    },
+    "stibnite": {
+      "meshlevel": 1,
+      "chance": 0.005
+    },
+    "tetrahedrite": {
+      "meshlevel": 1,
+      "chance": 0.2
+    },
+    "yellow_limonite": {
+      "meshlevel": 1,
+      "chance": 0.2
+    },
+    "barite": {
+      "meshlevel": 2,
+      "chance": 0.005
+    },
+    "certus_quartz": {
+      "meshlevel": 2,
+      "chance": 0.25
+    },
+    "nether_quartz": {
+      "meshlevel": 2,
+      "chance": 0.25
+    },
+    "pyrite": {
+      "meshlevel": 2,
+      "chance": 0.15
+    },
+    "quartzite": {
+      "meshlevel": 2,
+      "chance": 0.1
+    },
+    "sphalerite": {
+      "meshlevel": 2,
+      "chance": 0.05
+    },
+    "sulfur": {
+      "meshlevel": 2,
+      "chance": 0.15
+    },
+    "beryllium": {
+      "meshlevel": 3,
+      "chance": 0.005
+    },
+    "blue_topaz": {
+      "meshlevel": 3,
+      "chance": 0.075
+    },
+    "bornite": {
+      "meshlevel": 3,
+      "chance": 0.1
+    },
+    "chalcocite": {
+      "meshlevel": 3,
+      "chance": 0.1
+    },
+    "emerald": {
+      "meshlevel": 3,
+      "chance": 0.1
+    },
+    "glowstone": {
+      "meshlevel": 3,
+      "chance": 0.005
+    },
+    "thorium": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "topaz": {
+      "meshlevel": 3,
+      "chance": 0.1
+    },
+    "bastnasite": {
+      "meshlevel": 4,
+      "chance": 0.1
+    },
+    "electrotine": {
+      "meshlevel": 4,
+      "chance": 0.005
+    },
+    "molybdenite": {
+      "meshlevel": 4,
+      "chance": 0.06
+    },
+    "monazite": {
+      "meshlevel": 4,
+      "chance": 0.035
+    },
+    "neodymium": {
+      "meshlevel": 4,
+      "chance": 0.005
+    },
+    "powellite": {
+      "meshlevel": 4,
+      "chance": 0.03
+    },
+    "wulfenite": {
+      "meshlevel": 4,
+      "chance": 0.06
+    }
+  },
+  "ore:sand": {
+    "asbestos": {
+      "meshlevel": 2,
+      "chance": 0.0001
+    },
+    "basaltic_mineral_sand": {
+      "meshlevel": 2,
+      "chance": 0.1
+    },
+    "cassiterite_sand": {
+      "meshlevel": 2,
+      "chance": 0.12
+    },
+    "diatomite": {
+      "meshlevel": 2,
+      "chance": 0.0001
+    },
+    "fullers_earth": {
+      "meshlevel": 2,
+      "chance": 0.0001
+    },
+    "garnet_sand": {
+      "meshlevel": 2,
+      "chance": 0.0001
+    },
+    "granitic_mineral_sand": {
+      "meshlevel": 2,
+      "chance": 0.1
+    },
+    "gypsum": {
+      "meshlevel": 2,
+      "chance": 0.1
+    },
+    "almandine": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "amethyst": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "green_sapphire": {
+      "meshlevel": 3,
+      "chance": 0.15
+    },
+    "opal": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "pyrope": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "garnet_red": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "sapphire": {
+      "meshlevel": 3,
+      "chance": 0.35
+    },
+    "garnet_yellow": {
+      "meshlevel": 3,
+      "chance": 0.0001
+    },
+    "oilsands": {
+      "meshlevel": 4,
+      "chance": 0.25
     }
   }
 }

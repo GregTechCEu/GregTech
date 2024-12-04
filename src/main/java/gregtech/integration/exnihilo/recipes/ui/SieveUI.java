@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class SieveUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
 
     public SieveUI(@NotNull R recipeMap) {
-        super(recipeMap, false, true, false, false);
+        super(recipeMap, false, true, false, false, false);
         setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, ProgressWidget.MoveType.VERTICAL_INVERTED);
     }
 
@@ -36,8 +36,9 @@ public class SieveUI<R extends RecipeMap<?>> extends RecipeMapUI<R> {
     }
 
     @Override
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler,
-                                         FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+    protected void addInventorySlotGroup(ModularUI.@NotNull Builder builder,
+                                         @NotNull IItemHandlerModifiable itemHandler,
+                                         @NotNull FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         if (isOutputs) {
             for (int y = 0; y < 5; y++) {
                 for (int x = 0; x < 6; x++) {

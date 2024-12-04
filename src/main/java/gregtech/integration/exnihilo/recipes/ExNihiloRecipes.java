@@ -62,7 +62,7 @@ public class ExNihiloRecipes {
                 MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'S', new ItemStack(ModBlocks.sieve), 'P',
                 Blocks.PISTON);
         ModHandler.addShapedRecipe(true, "steam_sieve_steel", STEAM_SIEVE_STEEL.getStackForm(), "BPB", "WMW", "BBB",
-                'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron), 'M',
+                'B', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.TinAlloy), 'M',
                 STEAM_SIEVE_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
     }

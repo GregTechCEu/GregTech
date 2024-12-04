@@ -10,6 +10,7 @@ import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.FileUtility;
+import gregtech.api.util.Mods;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationModule;
@@ -46,7 +47,7 @@ import static gregtech.common.metatileentities.MetaTileEntities.*;
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_EN,
                 containerID = GTValues.MODID,
-                modDependencies = GTValues.MODID_EN,
+                modDependencies = Mods.Names.EX_NIHILO_CREATIO,
                 name = "GregTech Ex Nihilo Creatio Integration",
                 description = "Ex Nihilo Integration Module")
 public class ExNihiloModule extends IntegrationSubmodule {
