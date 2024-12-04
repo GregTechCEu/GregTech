@@ -398,10 +398,6 @@
       "meshlevel": 3,
       "chance": 0.1
     },
-    "glowstone": {
-      "meshlevel": 3,
-      "chance": 0.005
-    },
     "thorium": {
       "meshlevel": 3,
       "chance": 0.0001
