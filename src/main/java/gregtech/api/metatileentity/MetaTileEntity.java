@@ -100,6 +100,7 @@ import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -107,6 +108,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -165,6 +167,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Nullable
     private UUID owner = null;
+
+    private final Set<CreativeTabs> additionalCreativeTabs = new ObjectArraySet<>();
+    private boolean showsInSearchTab = true;
+    private boolean showsInGTCreativeTab = true;
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -362,7 +368,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return creativeTab == CreativeTabs.SEARCH || creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES;
+        if (showsInSearchTab && creativeTab == CreativeTabs.SEARCH) return true;
+        if (showsInGTCreativeTab && creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES) return true;
+        return additionalCreativeTabs.contains(creativeTab);
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -1661,4 +1669,31 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void gridChanged() {}
+
+    /**
+     * Add MTE to a creative tab. Ensure that the creative tab has been registered via
+     * {@link gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs)
+     * MachineItemBlock#addCreativeTab(CreativeTabs)} beforehand.
+     */
+    public void addAdditionalCreativeTabs(CreativeTabs creativeTab) {
+        Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES || creativeTab == CreativeTabs.SEARCH) {
+            GTLog.logger.error("Adding {} as additional creative tab is redundant.", creativeTab.tabLabel,
+                    new IllegalArgumentException());
+        }
+
+        additionalCreativeTabs.add(creativeTab);
+    }
+
+    public Set<CreativeTabs> getAdditionalCreativeTabs() {
+        return Collections.unmodifiableSet(additionalCreativeTabs);
+    }
+
+    public void removeFromSearchTab() {
+        showsInSearchTab = false;
+    }
+
+    public void removeFromGTCreativeTab() {
+        showsInGTCreativeTab = false;
+    }
 }
