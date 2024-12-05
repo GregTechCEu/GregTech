@@ -51,6 +51,7 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
         this.mte = mte;
         this.syncHandler = new DisplaySyncHandler();
         setSyncHandler(this.syncHandler);
+        this.syncHandler.setChangeListener(() -> scroll.getScrollY().setScrollSize(syncHandler.getActiveHeight()));
         scroll.setScrollDataY(new VerticalScrollData());
         sizeRel(1f);
         listenGuiAction((IGuiAction.MouseReleased) mouseButton -> {
@@ -135,7 +136,6 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
     public void onUpdate() {
         super.onUpdate();
         this.scroll.drag(getContext().getAbsMouseX(), getContext().getAbsMouseY());
-        this.scroll.getScrollY().setScrollSize(this.syncHandler.getActiveHeight());
     }
 
     public GregtechDisplayScreen addLine(Consumer<PacketBuffer> serializer, Function<PacketBuffer, IKey> deserializer) {
@@ -230,6 +230,7 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
         private IKey[] builtKeys = new IKey[0];
         private final PacketBuffer internalBuffer = new PacketBuffer(Unpooled.buffer());
         private boolean dirty = true;
+        private Runnable changeListener = null;
         private int activeHeight = 0;
 
         public void addLine(Consumer<PacketBuffer> serializer, Function<PacketBuffer, IKey> deserializer) {
@@ -247,6 +248,7 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
                 if (init) buildKeys(null);
                 if (dirty) dirty = false;
                 syncToClient(0, this::serializeKeys);
+                if (changeListener != null) changeListener.run();
                 return;
             }
 
@@ -262,6 +264,10 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
                     return;
                 }
             }
+        }
+
+        public void setChangeListener(Runnable changeListener) {
+            this.changeListener = changeListener;
         }
 
         private void buildKeys(PacketBuffer buffer) {
