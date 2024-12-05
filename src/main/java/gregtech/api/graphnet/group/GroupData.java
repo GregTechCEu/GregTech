@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.group;
 
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
+import gregtech.api.graphnet.net.NetNode;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;

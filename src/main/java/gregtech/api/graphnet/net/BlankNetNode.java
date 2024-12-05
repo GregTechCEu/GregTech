@@ -7,7 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class BlankNetNode extends NetNode {
 
-    public static final GraphClassType<BlankNetNode> TYPE = new GraphClassType<>(GTValues.MODID, "BlankNode", BlankNetNode::new);
+    public static final GraphClassType<BlankNetNode> TYPE = new GraphClassType<>(GTValues.MODID, "BlankNode",
+            BlankNetNode::new);
 
     public BlankNetNode(@NotNull IGraphNet net) {
         super(net);

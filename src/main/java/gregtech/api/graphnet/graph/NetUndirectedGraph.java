@@ -19,7 +19,8 @@ public class NetUndirectedGraph extends SimpleWeightedGraph<GraphVertex, GraphEd
     }
 
     public static Function<IGraphNet, INetGraph> standardBuilder() {
-        return iGraphNet -> new NetUndirectedGraph(() -> new GraphVertex(iGraphNet.getDefaultNodeType().getNew(iGraphNet)),
+        return iGraphNet -> new NetUndirectedGraph(
+                () -> new GraphVertex(iGraphNet.getDefaultNodeType().getNew(iGraphNet)),
                 () -> new GraphEdge(iGraphNet.getDefaultEdgeType().getNew(iGraphNet)));
     }
 }

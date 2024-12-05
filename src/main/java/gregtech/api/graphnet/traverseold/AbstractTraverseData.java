@@ -1,8 +1,8 @@
 package gregtech.api.graphnet.traverseold;
 
+import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetNode;
-import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 

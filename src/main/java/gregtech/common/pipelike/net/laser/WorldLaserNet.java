@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.net.laser;
 
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.group.PathCacheGroupData;
@@ -11,13 +10,10 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.traverse.iter.NetBreadthIterator;
 
-import gregtech.common.pipelike.net.energy.EnergyCapabilityObject;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

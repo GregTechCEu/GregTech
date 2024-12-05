@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.net.fluid;
 
 import gregtech.api.fluids.FluidState;
-import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
@@ -16,7 +15,6 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.traverse.FDTraverse;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.EnumFacing;
@@ -25,7 +23,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,7 +134,8 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         return testObject.recombine(report.get());
     }
 
-    protected void reportFlow(NetEdge edge, int flow, FluidTestObject testObject, SimulatorKey key, boolean sourceBias) {
+    protected void reportFlow(NetEdge edge, int flow, FluidTestObject testObject, SimulatorKey key,
+                              boolean sourceBias) {
         if (edge instanceof AbstractNetFlowEdge n)
             n.consumeFlowLimit(testObject, node.getNet(), flow, getQueryTick(), key);
         if (key == null) {
@@ -151,7 +149,6 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             logic.recordFlow(getQueryTick(), testObject.recombine(flow));
         }
     }
-
 
     protected void reportFlow(NetNode node, int flow, FluidTestObject testObject) {
         if (flow == 0) return;
@@ -168,7 +165,8 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             FluidState state = FluidState.inferState(stack);
             if (!logic.contains(state)) state.handleFailure(tile.getWorld(), tile.getPos(), stack);
         } else if (node instanceof NodeExposingCapabilities exposer) {
-            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, exposer.exposedFacing());
+            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                    exposer.exposedFacing());
             if (handler != null) {
                 // positive flow is supply, aka we pulled flow from this node
                 if (flow > 0) {
@@ -182,7 +180,8 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     protected int getSupply(NetNode node, FluidTestObject testObject, boolean supply) {
         if (node instanceof NodeExposingCapabilities exposer) {
-            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, exposer.exposedFacing());
+            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                    exposer.exposedFacing());
             if (handler != null) {
                 if (supply) {
                     FluidStack s = handler.drain(testObject.recombine(Integer.MAX_VALUE), false);

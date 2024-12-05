@@ -3,16 +3,13 @@ package gregtech.api.graphnet.pipenet.physical.tile;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.WorldPipeCapConnectionNode;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
-
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.util.FacingPos;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.capabilities.Capability;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

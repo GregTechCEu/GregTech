@@ -6,11 +6,8 @@ import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.group.MergeDirection;
 import gregtech.api.graphnet.group.NetGroup;
-
 import gregtech.api.graphnet.net.IGraphNet;
-
 import gregtech.api.graphnet.net.NetNode;
-
 import gregtech.api.graphnet.traverse.iter.EdgeDirection;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,8 +21,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -206,7 +201,8 @@ public final class GraphNetBacker {
             NBTTagCompound tag = edges.getCompoundTagAt(i);
             GraphClassType<?> type = GraphClassRegistry.getTypeNullable(tag.getString("ClassType"));
             Object o = type == null ? null : type.getNew(backedNet);
-            GraphEdge graphEdge = new GraphEdge(o instanceof NetEdge e ? e : backedNet.getDefaultEdgeType().getNew(backedNet));
+            GraphEdge graphEdge = new GraphEdge(
+                    o instanceof NetEdge e ? e : backedNet.getDefaultEdgeType().getNew(backedNet));
             this.getGraph().addEdge(vertexMap.get(tag.getInteger("SourceID")),
                     vertexMap.get(tag.getInteger("TargetID")), graphEdge);
             this.getGraph().setEdgeWeight(graphEdge, tag.getDouble("Weight"));

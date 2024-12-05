@@ -1,8 +1,8 @@
 package gregtech.api.graphnet;
 
-import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
-
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
 
 import java.util.Comparator;
 

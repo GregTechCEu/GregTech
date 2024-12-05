@@ -1,17 +1,14 @@
 package gregtech.api.graphnet.traverse;
 
-import com.github.bsideup.jabel.Desugar;
-
-import gregtech.api.graphnet.net.IGraphNet;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.util.GTUtility;
-
 import gregtech.api.util.function.ToBooleanFunction;
 
+import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -30,7 +27,7 @@ public class EQTraverse extends AbstractMinCostTraverse {
     protected final ToIntFunction<NetEdge> capacityFunction;
     protected final ToIntFunction<NetNode> supplyFunction;
     protected @Nullable ToBooleanFunction<NetNode> lossyNodes;
-    
+
     protected final Set<NetNode> suppliers;
     protected final Set<NetNode> consumers;
     protected TestCase testCase;

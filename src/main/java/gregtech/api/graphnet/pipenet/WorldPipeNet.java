@@ -3,11 +3,11 @@ package gregtech.api.graphnet.pipenet;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.graphnet.GraphClassType;
-import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.MultiNodeHelper;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.net.WorldSavedNet;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
@@ -16,12 +16,9 @@ import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.predicate.NetPredicateType;
 import gregtech.api.graphnet.traverse.iter.EdgeDirection;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.reference.WeakHashSet;
 import gregtech.common.covers.CoverShutter;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -38,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -180,7 +176,8 @@ public abstract class WorldPipeNet extends WorldSavedNet {
         return null;
     }
 
-    public abstract PipeCapabilityWrapper buildCapabilityWrapper(@NotNull PipeTileEntity owner, @NotNull WorldPipeNode node);
+    public abstract PipeCapabilityWrapper buildCapabilityWrapper(@NotNull PipeTileEntity owner,
+                                                                 @NotNull WorldPipeNode node);
 
     @Override
     public @NotNull GraphClassType<? extends NetNode> getDefaultNodeType() {

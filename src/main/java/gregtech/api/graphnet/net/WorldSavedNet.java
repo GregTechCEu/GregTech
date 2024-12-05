@@ -7,9 +7,6 @@ import gregtech.api.graphnet.graph.NetDirectedGraph;
 import gregtech.api.graphnet.graph.NetUndirectedGraph;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 
-import gregtech.api.graphnet.net.IGraphNet;
-import gregtech.api.graphnet.net.NetNode;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.WorldSavedData;
 

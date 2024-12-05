@@ -4,22 +4,18 @@ import gregtech.api.GTValues;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.graphnet.GraphClassType;
 import gregtech.api.graphnet.MultiNodeHelper;
-import gregtech.api.graphnet.net.BlankNetNode;
+import gregtech.api.graphnet.net.BlockPosNode;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.net.BlockPosNode;
-
 import gregtech.api.util.GTLog;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
-public class WorldPipeNode extends BlockPosNode implements NodeWithFacingToOthers, NodeWithCovers, NodeExposingCapabilities {
+public class WorldPipeNode extends BlockPosNode
+                           implements NodeWithFacingToOthers, NodeWithCovers, NodeExposingCapabilities {
 
     public static final GraphClassType<WorldPipeNode> TYPE = new GraphClassType<>(GTValues.MODID, "WorldPipeNode",
             WorldPipeNode::resolve);
@@ -45,7 +42,8 @@ public class WorldPipeNode extends BlockPosNode implements NodeWithFacingToOther
 
     private static WorldPipeNode resolve(IGraphNet net) {
         if (net instanceof WorldPipeNet w) return new WorldPipeNode(w);
-        GTLog.logger.fatal("Attempted to initialize a WorldPipeNode to a non-WorldPipeNet. If relevant NPEs occur later, this is most likely the cause.");
+        GTLog.logger.fatal(
+                "Attempted to initialize a WorldPipeNode to a non-WorldPipeNet. If relevant NPEs occur later, this is most likely the cause.");
         return null;
     }
 
@@ -117,7 +115,8 @@ public class WorldPipeNode extends BlockPosNode implements NodeWithFacingToOther
 
     @Override
     public @Nullable EnumFacing getFacingToOther(@NotNull NetNode other) {
-        return other instanceof WorldPipeNode n ? GTUtility.getFacingToNeighbor(this.getEquivalencyData(), n.getEquivalencyData()) : null;
+        return other instanceof WorldPipeNode n ?
+                GTUtility.getFacingToNeighbor(this.getEquivalencyData(), n.getEquivalencyData()) : null;
     }
 
     @Override

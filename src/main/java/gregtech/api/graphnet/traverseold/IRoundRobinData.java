@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.traverseold;
 
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.SimulatorKey;
+import gregtech.api.graphnet.net.NetNode;
 
 import org.jetbrains.annotations.Nullable;
 

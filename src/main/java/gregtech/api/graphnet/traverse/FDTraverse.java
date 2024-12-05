@@ -1,11 +1,10 @@
 package gregtech.api.graphnet.traverse;
 
-import gregtech.api.graphnet.net.IGraphNet;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.util.function.ToBooleanFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,8 @@ public class FDTraverse extends AbstractMinCostTraverse {
         if (!net.getGraph().isDirected()) {
             throw new IllegalArgumentException("Cannot perform flood traverse logic on undirected graph!");
         }
-        EvaluationResult result = new FDTraverse(net.getGraph(), capacityFunction, supplyFunction, lossyNodes).evaluate();
+        EvaluationResult result = new FDTraverse(net.getGraph(), capacityFunction, supplyFunction, lossyNodes)
+                .evaluate();
         if (result.isEmpty()) return;
         result.getFlowMap().forEach(flowReporterEdge::accept);
         result.getSupplyMap().forEach(flowReporterNode::accept);

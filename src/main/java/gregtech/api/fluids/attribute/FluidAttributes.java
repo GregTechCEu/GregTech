@@ -1,9 +1,7 @@
 package gregtech.api.fluids.attribute;
 
 import gregtech.api.GTValues;
-import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
 import gregtech.api.util.EntityDamageUtil;
-
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.client.resources.I18n;
@@ -13,9 +11,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 import java.util.List;
 
@@ -46,12 +41,15 @@ public final class FluidAttributes {
                 w.setBlockToAir(b);
             },
             (p, f) -> {
-                p.world.playSound(null, p.getPosition(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                p.world.playSound(null, p.getPosition(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F,
+                        1.0F);
                 boolean gaseous = f.getFluid().isGaseous(f);
                 for (EnumFacing facing : EnumFacing.HORIZONTALS) {
-                    GTUtility.spawnParticles(p.world, facing, EnumParticleTypes.CRIT_MAGIC, p, 3 + GTValues.RNG.nextInt(2));
+                    GTUtility.spawnParticles(p.world, facing, EnumParticleTypes.CRIT_MAGIC, p,
+                            3 + GTValues.RNG.nextInt(2));
                 }
-                GTUtility.spawnParticles(p.world, gaseous ? EnumFacing.UP : EnumFacing.DOWN, EnumParticleTypes.CRIT_MAGIC,
+                GTUtility.spawnParticles(p.world, gaseous ? EnumFacing.UP : EnumFacing.DOWN,
+                        EnumParticleTypes.CRIT_MAGIC,
                         p, 6 + GTValues.RNG.nextInt(4));
                 float scalar = (float) Math.log(f.amount);
                 List<EntityLivingBase> entities = p.world.getEntitiesWithinAABB(EntityLivingBase.class,

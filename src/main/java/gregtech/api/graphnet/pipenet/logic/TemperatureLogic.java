@@ -2,11 +2,11 @@ package gregtech.api.graphnet.pipenet.logic;
 
 import gregtech.api.GTValues;
 import gregtech.api.graphnet.MultiNodeHelper;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.logic.INetLogicEntryListener;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicType;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.IFreezable;

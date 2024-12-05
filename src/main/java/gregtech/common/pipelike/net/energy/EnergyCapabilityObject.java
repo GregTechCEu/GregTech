@@ -2,10 +2,10 @@ package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.group.PathCacheGroupData;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
@@ -80,7 +80,8 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
                         available -= allowed;
                         if (!simulate) {
                             flow.report();
-                            controller.insertToHandler(flow.voltageOut(), flow.amperageOut(), container, capability.getKey(), false);
+                            controller.insertToHandler(flow.voltageOut(), flow.amperageOut(), container,
+                                    capability.getKey(), false);
                         }
                     }
                 }

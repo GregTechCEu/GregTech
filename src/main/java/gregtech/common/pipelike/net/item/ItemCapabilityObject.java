@@ -10,13 +10,9 @@ import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.graphnet.traverse.FDTraverse;
-
 import gregtech.api.util.GTUtility;
-
-import gregtech.common.pipelike.net.fluid.FluidFlowLogic;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -121,7 +117,8 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
     protected void reportFlow(NetNode node, int flow, ItemTestObject testObject) {
         if (flow == 0) return;
         if (node instanceof NodeExposingCapabilities exposer) {
-            IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, exposer.exposedFacing());
+            IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                    exposer.exposedFacing());
             if (handler != null) {
                 // positive flow is supply, aka we pulled flow from this node
                 if (flow > 0) {
@@ -134,7 +131,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                         if (flow == 0) return;
                     }
                 } else {
-                    for (int i = 0; i < handler.getSlots() ; i++) {
+                    for (int i = 0; i < handler.getSlots(); i++) {
                         ItemStack stack = testObject.recombineSafe(flow);
                         flow -= stack.getCount() - handler.insertItem(i, stack, false).getCount();
                         if (flow == 0) return;
@@ -146,18 +143,19 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     protected int getSupply(NetNode node, ItemTestObject testObject, boolean supply) {
         if (node instanceof NodeExposingCapabilities exposer) {
-            IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, exposer.exposedFacing());
+            IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                    exposer.exposedFacing());
             if (handler != null) {
                 if (supply) {
                     int sum = 0;
-                    for (int i = 0; i < handler.getSlots() ; i++) {
+                    for (int i = 0; i < handler.getSlots(); i++) {
                         ItemStack stack = handler.extractItem(i, Integer.MAX_VALUE, true);
                         if (testObject.test(stack)) sum += stack.getCount();
                     }
                     return sum;
                 } else {
                     int sum = 0;
-                    for (int i = 0; i < handler.getSlots() ; i++) {
+                    for (int i = 0; i < handler.getSlots(); i++) {
                         ItemStack stack = testObject.recombineSafe(Integer.MAX_VALUE);
                         sum += stack.getCount() - handler.insertItem(i, stack, true).getCount();
                     }

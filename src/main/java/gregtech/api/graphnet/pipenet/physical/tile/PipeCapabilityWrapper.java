@@ -1,17 +1,13 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
-
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 
 public class PipeCapabilityWrapper implements ICapabilityProvider {

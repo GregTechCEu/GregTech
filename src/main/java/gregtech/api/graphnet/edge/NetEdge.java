@@ -2,10 +2,9 @@ package gregtech.api.graphnet.edge;
 
 import gregtech.api.GTValues;
 import gregtech.api.graphnet.GraphClassType;
-import gregtech.api.graphnet.net.IGraphNet;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.predicate.EdgePredicateHandler;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
@@ -19,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class NetEdge implements INBTSerializable<NBTTagCompound> {
 
-    public static final GraphClassType<NetEdge> TYPE = new GraphClassType<>(GTValues.MODID, "NetEdge", n -> new NetEdge());
+    public static final GraphClassType<NetEdge> TYPE = new GraphClassType<>(GTValues.MODID, "NetEdge",
+            n -> new NetEdge());
 
     /**
      * For interacting with the internal graph representation ONLY, do not use or set this field otherwise.

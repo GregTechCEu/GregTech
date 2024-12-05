@@ -1,12 +1,10 @@
 package gregtech.api.fluids.attribute;
 
 import gregtech.api.fluids.ContainmentFailureHandler;
-
 import gregtech.api.util.function.TriConsumer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;

@@ -1,11 +1,7 @@
 package gregtech.api.graphnet;
 
 import gregtech.api.graphnet.logic.NetLogicEntry;
-import gregtech.api.graphnet.logic.NetLogicRegistrationEvent;
 import gregtech.api.graphnet.logic.NetLogicType;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IntIdentityHashBiMap;
@@ -14,10 +10,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
 import java.util.Set;
 
 public final class GraphClassRegistry {
@@ -94,5 +90,4 @@ public final class GraphClassRegistry {
     }
 
     private GraphClassRegistry() {}
-
 }

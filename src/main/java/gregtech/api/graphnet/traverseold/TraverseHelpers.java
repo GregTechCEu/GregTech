@@ -1,8 +1,8 @@
 package gregtech.api.graphnet.traverseold;
 
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.traverseold.util.FlowConsumptionStack;
 import gregtech.api.util.GTUtility;

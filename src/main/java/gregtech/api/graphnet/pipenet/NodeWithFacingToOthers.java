@@ -9,5 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface NodeWithFacingToOthers {
 
-    @Nullable EnumFacing getFacingToOther(@NotNull NetNode other);
+    @Nullable
+    EnumFacing getFacingToOther(@NotNull NetNode other);
 }

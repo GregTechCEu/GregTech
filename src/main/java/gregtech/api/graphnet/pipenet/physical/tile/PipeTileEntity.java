@@ -785,5 +785,4 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             }
         }
     }
-
 }

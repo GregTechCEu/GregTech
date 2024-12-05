@@ -3,10 +3,8 @@ package gregtech.api.graphnet;
 import gregtech.api.graphnet.logic.INetLogicEntryListener;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
-
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetNode;
-
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;

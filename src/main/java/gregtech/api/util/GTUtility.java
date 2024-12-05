@@ -933,9 +933,9 @@ public class GTUtility {
     }
 
     /**
-     * @param minValue the minimum possible succeeding value
-     * @param maxValue the maximum possible succeeding value
-     * @param test the predicate to query for success
+     * @param minValue  the minimum possible succeeding value
+     * @param maxValue  the maximum possible succeeding value
+     * @param test      the predicate to query for success
      * @param ascending determines the direction of search
      * @return the smallest succeeding value if ascending, or the largest succeeding value if descending.
      */
@@ -1023,7 +1023,8 @@ public class GTUtility {
 
     public static void spawnParticles(World world, EnumFacing direction, EnumParticleTypes particleType, BlockPos pos,
                                       int particleCount) {
-        spawnParticles(world, direction, particleType, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, particleCount);
+        spawnParticles(world, direction, particleType, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                particleCount);
     }
 
     public static void spawnParticles(World world, EnumFacing direction, EnumParticleTypes particleType, Entity entity,
@@ -1032,7 +1033,8 @@ public class GTUtility {
         spawnParticles(world, direction, particleType, vec.x, vec.y, vec.y, particleCount);
     }
 
-    public static void spawnParticles(World world, EnumFacing direction, EnumParticleTypes particleType, double x, double y, double z,
+    public static void spawnParticles(World world, EnumFacing direction, EnumParticleTypes particleType, double x,
+                                      double y, double z,
                                       int particleCount) {
         if (world instanceof WorldServer server) {
             server.spawnParticle(particleType,

@@ -1,11 +1,10 @@
 package gregtech.api.graphnet.traverse;
 
-import gregtech.api.graphnet.net.IGraphNet;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.util.function.ToBooleanFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,8 @@ public class RRTraverse extends AbstractMinCostTraverse {
 
     protected Pair<NetNode, NetNode> nextPair;
 
-    public static void roundRobin(@NotNull IGraphNet net, Supplier<@Nullable Pair<NetNode, NetNode>> nextNodePairSupplier,
+    public static void roundRobin(@NotNull IGraphNet net,
+                                  Supplier<@Nullable Pair<NetNode, NetNode>> nextNodePairSupplier,
                                   @NotNull ObjIntConsumer<NetNode> flowReporterNode,
                                   @NotNull ObjIntConsumer<NetEdge> flowReporterEdge,
                                   @NotNull ToIntFunction<NetEdge> capacityFunction,

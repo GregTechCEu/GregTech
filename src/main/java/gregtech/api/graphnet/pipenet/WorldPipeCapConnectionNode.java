@@ -4,16 +4,13 @@ import gregtech.api.GTValues;
 import gregtech.api.graphnet.GraphClassType;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetNode;
-
 import gregtech.api.util.FacingPos;
-
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +20,8 @@ public class WorldPipeCapConnectionNode extends NetNode implements NodeWithFacin
 
     public static final int SORTING_KEY = 432;
 
-    public static final GraphClassType<WorldPipeCapConnectionNode> TYPE = new GraphClassType<>(GTValues.MODID, "WorldPipeCapConnectionNode",
+    public static final GraphClassType<WorldPipeCapConnectionNode> TYPE = new GraphClassType<>(GTValues.MODID,
+            "WorldPipeCapConnectionNode",
             WorldPipeCapConnectionNode::resolve);
 
     private FacingPos posAndFacing;
@@ -35,7 +33,8 @@ public class WorldPipeCapConnectionNode extends NetNode implements NodeWithFacin
 
     private static WorldPipeCapConnectionNode resolve(IGraphNet net) {
         if (net instanceof WorldPipeNet w) return new WorldPipeCapConnectionNode(w);
-        GTLog.logger.fatal("Attempted to initialize a WorldPipeCapConnectionNode to a non-WorldPipeNet. If relevant NPEs occur later, this is most likely the cause.");
+        GTLog.logger.fatal(
+                "Attempted to initialize a WorldPipeCapConnectionNode to a non-WorldPipeNet. If relevant NPEs occur later, this is most likely the cause.");
         return null;
     }
 

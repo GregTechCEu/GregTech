@@ -3,9 +3,9 @@ package gregtech.common.pipelike.net.fluid;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.graphnet.GraphClassType;
-import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
@@ -18,12 +18,11 @@ import gregtech.common.covers.FluidFilterMode;
 import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.net.item.WorldItemNet;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

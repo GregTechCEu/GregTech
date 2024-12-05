@@ -5,9 +5,7 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import org.jetbrains.annotations.NotNull;

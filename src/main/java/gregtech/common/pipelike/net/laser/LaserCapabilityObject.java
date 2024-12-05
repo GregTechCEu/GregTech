@@ -2,8 +2,8 @@ package gregtech.common.pipelike.net.laser;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserRelay;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.group.PathCacheGroupData;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.path.SingletonNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;

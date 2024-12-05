@@ -1,10 +1,10 @@
 package gregtech.common.pipelike.net.energy;
 
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.PathBuilder;
 import gregtech.api.graphnet.path.SingletonNetPath;
 import gregtech.api.graphnet.path.StandardNetPath;
@@ -272,7 +272,7 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
         private final long voltage;
         private final Runnable[] report;
 
-        public StandardReport(long amperage, long voltage, @NotNull Runnable @NotNull ... report) {
+        public StandardReport(long amperage, long voltage, @NotNull Runnable @NotNull... report) {
             this.amperage = amperage;
             this.voltage = voltage;
             this.report = report;

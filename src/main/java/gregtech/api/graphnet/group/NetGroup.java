@@ -1,9 +1,9 @@
 package gregtech.api.graphnet.group;
 
-import gregtech.api.graphnet.net.IGraphNet;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.traverse.iter.EdgeDirection;
 import gregtech.api.graphnet.traverse.iter.NetBreadthIterator;
 

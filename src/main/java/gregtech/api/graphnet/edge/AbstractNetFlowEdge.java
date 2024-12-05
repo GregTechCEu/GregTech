@@ -1,8 +1,8 @@
 package gregtech.api.graphnet.edge;
 
-import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.ThroughputLogic;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import org.jetbrains.annotations.Nullable;

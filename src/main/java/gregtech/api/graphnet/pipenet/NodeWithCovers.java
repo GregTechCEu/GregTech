@@ -6,5 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface NodeWithCovers {
 
-    @Nullable CoverableView getCoverableView();
+    @Nullable
+    CoverableView getCoverableView();
 }

@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockPosNode extends NetNode {
 
-    public static final GraphClassType<BlockPosNode> TYPE = new GraphClassType<>(GTValues.MODID, "BlockPosNode", BlockPosNode::new);
+    public static final GraphClassType<BlockPosNode> TYPE = new GraphClassType<>(GTValues.MODID, "BlockPosNode",
+            BlockPosNode::new);
 
     private BlockPos pos;
 
