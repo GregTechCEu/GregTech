@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
@@ -12,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.FixedIntArraySyncValue;
+import gregtech.api.mui.widget.GregtechDisplayScreen;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -189,15 +189,13 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     @Override
     protected MultiblockUIFactory createUIFactory() {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
+        boolean noRotor = getRotorHolder() == null;
         IntSyncValue efficiency = new IntSyncValue(
-                () -> 0, null,
-                () -> getRotorHolder().getRotorEfficiency(), null);
+                () -> noRotor ? 0 : getRotorHolder().getRotorEfficiency(), null);
         IntSyncValue total = new IntSyncValue(
-                () -> 0, null,
-                () -> getRotorHolder().getTotalEfficiency(), null);
+                () -> noRotor ? 0 : getRotorHolder().getTotalEfficiency(), null);
         IntSyncValue durability = new IntSyncValue(
-                () -> 0, null,
-                () -> getRotorHolder().getRotorDurabilityPercent(), null);
+                () -> noRotor ? 0 : getRotorHolder().getRotorDurabilityPercent(), null);
         BooleanSyncValue rotorFree = new BooleanSyncValue(
                 this::isRotorFaceFree, null);
         StringSyncValue fuelAmount = new StringSyncValue(recipeLogic::getRecipeFluidInputInfo, null);
@@ -210,6 +208,22 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                 .syncValue("dura", rotorFree)
                 .syncValue("fuel_amount", fuelAmount)
                 .syncValue("prev_duration", prevDuration)
+                .customScreen(() -> new GregtechDisplayScreen(this)
+                        .padding(4)
+                        .energy(this::getMaxVoltage, recipeLogic::getRecipeEUt)
+                        .addLine(buffer -> {
+                            buffer.writeBoolean(isStructureFormed());
+                            if (isStructureFormed())
+                                buffer.writeInt(noRotor ? -1 : getRotorHolder().getTotalEfficiency());
+                        }, buffer -> {
+                            if (!buffer.readBoolean()) return null;
+                            int i = buffer.readInt();
+                            if (i < 0) return null;
+                            return KeyUtil.lang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.turbine.efficiency", i);
+                        })
+                        .fuelNeeded(recipeLogic::getRecipeFluidInputInfo, recipeLogic::getPreviousRecipeDuration)
+                        .status())
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
                         .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
