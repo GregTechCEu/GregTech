@@ -181,18 +181,23 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
 
     public GregtechDisplayScreen status() {
         addLine(buffer -> {
-            int i = 0;
             var arl = mte.getRecipeLogic();
-            if (arl != null && !arl.isWorkingEnabled()) {
+            int i;
+            if (arl == null) {
+                i = 0;
+            } else if (!arl.isWorkingEnabled()) {
                 i = 1;
-            } else if (arl != null && arl.isActive()) {
+            } else if (arl.isActive()) {
                 i = 2;
+            } else {
+                i = 3;
             }
             buffer.writeVarInt(i);
         }, buffer -> switch (buffer.readVarInt()) {
             case 1 -> KeyUtil.lang(TextFormatting.GOLD, "gregtech.multiblock.work_paused");
             case 2 -> KeyUtil.lang(TextFormatting.GREEN, "gregtech.multiblock.running");
-            default -> KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.idling");
+            case 3 -> KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.idling");
+            default -> null;
         });
         return getThis();
     }
