@@ -1,18 +1,23 @@
 package gregtech.common.pipelike.net.fluid;
 
+import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.attribute.AttributedFluid;
+import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
+import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
-import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.pipenet.WorldPipeNet;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.net.NetNode;
+import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.traverseold.ITraverseData;
-import gregtech.api.graphnet.traverseold.TraverseDataProvider;
-import gregtech.api.graphnet.traverseold.TraverseGuide;
-import gregtech.api.graphnet.traverseold.TraverseHelpers;
+import gregtech.api.graphnet.traverse.FDTraverse;
+
+import gregtech.api.util.GTUtility;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,126 +32,172 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.function.LongConsumer;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandler, IFluidTankProperties,
-                                   IFluidTraverseGuideProvider {
+public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandler, IFluidTankProperties {
 
-    private final WorldPipeNet net;
-    private @Nullable PipeTileEntity tile;
+    private PipeTileEntity tile;
+    private NodeManagingPCW capabilityWrapper;
 
     private final EnumMap<EnumFacing, Wrapper> wrappers = new EnumMap<>(EnumFacing.class);
-    private final WorldPipeNetNode node;
+    private final WorldPipeNode node;
     private final IFluidTankProperties[] properties;
 
     private boolean transferring = false;
 
-    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> FluidCapabilityObject(@NotNull N net,
-                                                                                          WorldPipeNetNode node) {
-        this.net = net;
+    public FluidCapabilityObject(WorldPipeNode node) {
         this.node = node;
         properties = new IFluidTankProperties[node.getData().getLogicEntryDefaultable(ChannelCountLogic.TYPE)
                 .getValue()];
         Arrays.fill(properties, this);
         for (EnumFacing facing : EnumFacing.VALUES) {
-            AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
-            edge.setData(NetLogicData.union(node.getData(), (NetLogicData) null));
-            wrappers.put(facing, new Wrapper(facing, edge));
+            wrappers.put(facing, new Wrapper(facing));
         }
     }
 
-    private FlowWorldPipeNetPath.Provider getProvider() {
-        return (FlowWorldPipeNetPath.Provider) net;
+    @Override
+    public void init(@NotNull PipeTileEntity tile, @NotNull PipeCapabilityWrapper wrapper) {
+        this.tile = tile;
+        if (!(wrapper instanceof NodeManagingPCW p))
+            throw new IllegalArgumentException("FluidCapabilityObjects must be initialized to NodeManagingPCWs!");
+        this.capabilityWrapper = p;
     }
 
     private boolean inputDisallowed(EnumFacing side) {
         if (side == null) return false;
-        if (tile == null) return true;
         else return tile.isBlocked(side);
     }
 
-    private Iterator<FlowWorldPipeNetPath> getPaths(@NotNull ITraverseData<?, ?> data) {
-        assert tile != null;
-        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
-                data.getQueryTick());
-    }
-
     @Override
-    public void setTile(@Nullable PipeTileEntity tile) {
-        this.tile = tile;
-    }
-
-    @Override
-    public Capability<?>[] getCapabilities() {
-        return WorldFluidNet.CAPABILITIES;
-    }
-
-    @Override
-    public <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing) {
-        if (facing == null) return null; // hard override to prevent TOP from displaying a tank.
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        // can't expose the sided capability if there is no node to interact with
+        if (facing != null && capabilityWrapper.getNodeForFacing(facing) == null) return null;
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            // noinspection ConstantValue
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(facing == null ? this : wrappers.get(facing));
         }
         return null;
     }
 
+    protected @Nullable NetNode getRelevantNode(EnumFacing facing) {
+        return facing == null ? node : capabilityWrapper.getNodeForFacing(facing);
+    }
+
+    protected int fill(FluidStack resource, boolean doFill, EnumFacing side) {
+        if (this.transferring || inputDisallowed(side)) return 0;
+        NetNode node = getRelevantNode(side);
+        if (node == null) return 0;
+        this.transferring = true;
+
+        int flow = resource.amount;
+        SimulatorKey key = doFill ? null : SimulatorKey.getNewSimulatorInstance();
+        FluidTestObject testObject = new FluidTestObject(resource);
+        AtomicInteger report = new AtomicInteger();
+        FDTraverse.flood(node.getNet(),
+                (n, f) -> {
+                    if (n == node) report.addAndGet(f);
+                    else if (doFill) reportFlow(n, f, testObject);
+                },
+                (e, f) -> reportFlow(e, f, testObject, key, true),
+                e -> e instanceof AbstractNetFlowEdge n && e.test(testObject) ?
+                        GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, node.getNet(), getQueryTick(), key)) : 0,
+                n -> n == node ? flow : getSupply(n, testObject, false),
+                n -> n.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE).handles(testObject));
+
+        this.transferring = false;
+        return report.get();
+    }
+
+    protected FluidStack drain(int maxDrain, boolean doDrain, EnumFacing side) {
+        // TODO expose connected fluidnet through capability & allow untyped draining
+        return null;
+    }
+
+    protected FluidStack drain(FluidStack resource, boolean doDrain, EnumFacing side) {
+        if (this.transferring) return null;
+        NetNode node = getRelevantNode(side);
+        if (node == null) return null;
+        this.transferring = true;
+
+        int flow = resource.amount;
+        SimulatorKey key = doDrain ? null : SimulatorKey.getNewSimulatorInstance();
+        FluidTestObject testObject = new FluidTestObject(resource);
+        AtomicInteger report = new AtomicInteger();
+        FDTraverse.flood(node.getNet(),
+                (n, f) -> {
+                    if (n == node) report.addAndGet(f);
+                    else if (doDrain) reportFlow(n, f, testObject);
+                },
+                (e, f) -> reportFlow(e, f, testObject, key, false),
+                e -> e instanceof AbstractNetFlowEdge n ?
+                        GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, node.getNet(), getQueryTick(), key)) : 0,
+                n -> n == node ? flow : getSupply(n, testObject, true),
+                n -> n.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE).handles(testObject));
+
+        this.transferring = false;
+        return testObject.recombine(report.get());
+    }
+
+    protected void reportFlow(NetEdge edge, int flow, FluidTestObject testObject, SimulatorKey key, boolean sourceBias) {
+        if (edge instanceof AbstractNetFlowEdge n)
+            n.consumeFlowLimit(testObject, node.getNet(), flow, getQueryTick(), key);
+        if (key == null) {
+            NetNode node = sourceBias ? edge.getSource() : edge.getTarget();
+            if (node == null) return;
+            FluidFlowLogic logic = node.getData().getLogicEntryNullable(FluidFlowLogic.TYPE);
+            if (logic == null) {
+                logic = FluidFlowLogic.TYPE.getNew();
+                node.getData().setLogicEntry(logic);
+            }
+            logic.recordFlow(getQueryTick(), testObject.recombine(flow));
+        }
+    }
+
+
+    protected void reportFlow(NetNode node, int flow, FluidTestObject testObject) {
+        if (flow == 0) return;
+        FluidContainmentLogic logic = node.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE);
+        if (!logic.handles(testObject)) {
+            FluidStack stack = testObject.recombine(flow);
+            // failing attributes take priority over state
+            for (FluidAttribute attribute : FluidAttribute.inferAttributes(stack)) {
+                if (!logic.contains(attribute)) {
+                    attribute.handleFailure(tile.getWorld(), tile.getPos(), stack);
+                    return;
+                }
+            }
+            FluidState state = FluidState.inferState(stack);
+            if (!logic.contains(state)) state.handleFailure(tile.getWorld(), tile.getPos(), stack);
+        } else if (node instanceof NodeExposingCapabilities exposer) {
+            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, exposer.exposedFacing());
+            if (handler != null) {
+                // positive flow is supply, aka we pulled flow from this node
+                if (flow > 0) {
+                    handler.drain(testObject.recombine(flow), true);
+                } else {
+                    handler.fill(testObject.recombine(flow), true);
+                }
+            }
+        }
+    }
+
+    protected int getSupply(NetNode node, FluidTestObject testObject, boolean supply) {
+        if (node instanceof NodeExposingCapabilities exposer) {
+            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, exposer.exposedFacing());
+            if (handler != null) {
+                if (supply) {
+                    FluidStack s = handler.drain(testObject.recombine(Integer.MAX_VALUE), false);
+                    return s == null ? 0 : s.amount;
+                } else {
+                    return -handler.fill(testObject.recombine(Integer.MAX_VALUE), false);
+                }
+            }
+        }
+        return 0;
+    }
+
     @Override
     public int fill(FluidStack resource, boolean doFill) {
         return fill(resource, doFill, null);
-    }
-
-    public int fill(FluidStack resource, boolean doFill, EnumFacing side) {
-        if (this.transferring) return 0;
-        this.transferring = true;
-
-        var guide = getGuide(FluidTraverseData::new, new FluidTestObject(resource), resource.amount, !doFill, side);
-        if (guide == null) return 0;
-        int accepted = (int) TraverseHelpers.traverseFlood(guide.getData(), guide.getPaths(), guide.getFlow());
-        guide.reportConsumedFlow(accepted);
-
-        this.transferring = false;
-        return accepted;
-    }
-
-    @Override
-    public @Nullable <
-            D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                                                                                                                                               TraverseDataProvider<D, FluidTestObject> provider,
-                                                                                                                                               FluidTestObject testObject,
-                                                                                                                                               long flow,
-                                                                                                                                               boolean simulate) {
-        return getGuide(provider, testObject, flow, simulate, null);
-    }
-
-    public @Nullable <
-            D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                                                                                                                                               TraverseDataProvider<D, FluidTestObject> provider,
-                                                                                                                                               FluidTestObject testObject,
-                                                                                                                                               long flow,
-                                                                                                                                               boolean simulate,
-                                                                                                                                               EnumFacing side) {
-        if (tile == null || inputDisallowed(side)) return null;
-        SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
-        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-        D data = provider.of(net, testObject, simulator, tick, tile.getPos(), side);
-
-        LongConsumer flowReport = null;
-        Wrapper wrapper = this.wrappers.get(side);
-        if (wrapper != null) {
-            AbstractNetFlowEdge internalBuffer = wrapper.getBuffer();
-            if (internalBuffer != null) {
-                long limit = internalBuffer.getFlowLimit(testObject, net, tick, simulator);
-                if (limit <= 0) {
-                    this.transferring = false;
-                    return null;
-                }
-                flow = Math.min(limit, flow);
-                flowReport = l -> data.consumeFlowLimit(internalBuffer, node, l);
-            }
-        }
-        return new TraverseGuide<>(data, () -> getPaths(data), flow, flowReport);
     }
 
     @Override
@@ -156,12 +207,12 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        return null;
+        return drain(maxDrain, doDrain, null);
     }
 
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain) {
-        return null;
+        return drain(resource, doDrain, null);
     }
 
     @Override
@@ -181,7 +232,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public boolean canDrain() {
-        return false;
+        return true;
     }
 
     @Override
@@ -191,34 +242,18 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public boolean canDrainFluidType(FluidStack fluidStack) {
-        return false;
+        return true;
     }
 
-    protected class Wrapper implements IFluidHandler, IFluidTankProperties, IFluidTraverseGuideProvider {
+    protected class Wrapper implements IFluidHandler, IFluidTankProperties {
 
         private final EnumFacing facing;
-        private final AbstractNetFlowEdge buffer;
         private final IFluidTankProperties[] properties;
 
-        public Wrapper(EnumFacing facing, AbstractNetFlowEdge buffer) {
+        public Wrapper(EnumFacing facing) {
             this.facing = facing;
-            this.buffer = buffer;
             properties = new IFluidTankProperties[FluidCapabilityObject.this.properties.length];
             Arrays.fill(properties, this);
-        }
-
-        @Override
-        public @Nullable <
-                D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                                                                                                                                                   TraverseDataProvider<D, FluidTestObject> provider,
-                                                                                                                                                   FluidTestObject testObject,
-                                                                                                                                                   long flow,
-                                                                                                                                                   boolean simulate) {
-            return FluidCapabilityObject.this.getGuide(provider, testObject, flow, simulate, facing);
-        }
-
-        public AbstractNetFlowEdge getBuffer() {
-            return buffer;
         }
 
         @Override
@@ -233,12 +268,12 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
         @Override
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            return null;
+            return FluidCapabilityObject.this.drain(resource, doDrain, facing);
         }
 
         @Override
         public FluidStack drain(int maxDrain, boolean doDrain) {
-            return null;
+            return FluidCapabilityObject.this.drain(maxDrain, doDrain, facing);
         }
 
         @Override
@@ -248,7 +283,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
         @Override
         public int getCapacity() {
-            return (int) Math.min(Integer.MAX_VALUE, buffer.getThroughput());
+            return Integer.MAX_VALUE;
         }
 
         @Override
@@ -258,7 +293,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
         @Override
         public boolean canDrain() {
-            return false;
+            return true;
         }
 
         @Override
@@ -268,7 +303,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
         @Override
         public boolean canDrainFluidType(FluidStack fluidStack) {
-            return false;
+            return true;
         }
     }
 }

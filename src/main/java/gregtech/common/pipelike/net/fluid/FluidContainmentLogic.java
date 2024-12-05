@@ -5,6 +5,7 @@ import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicType;
+import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +15,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
+import net.minecraftforge.fluids.FluidStack;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,6 +71,18 @@ public final class FluidContainmentLogic extends NetLogicEntry<FluidContainmentL
 
     public boolean contains(@NotNull FluidAttribute attribute) {
         return this.containableAttributes.contains(attribute.getResourceLocation());
+    }
+
+    public boolean handles(FluidTestObject testObject) {
+        return handles(testObject.recombine());
+    }
+
+    public boolean handles(FluidStack stack) {
+        if (!contains(FluidState.inferState(stack))) return false;
+        for (FluidAttribute attribute : FluidAttribute.inferAttributes(stack)) {
+            if (!contains(attribute)) return false;
+        }
+        return true;
     }
 
     public void setMaximumTemperature(int maximumTemperature) {

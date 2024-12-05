@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 
@@ -55,12 +55,12 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     }
 
     @Override
-    public @NotNull Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos,
-                                                                     IPipeStructure structure) {
-        List<WorldPipeNetNode> list = new ObjectArrayList<>();
+    public @NotNull Collection<WorldPipeNode> getOrCreateFromNets(World world, BlockPos pos,
+                                                                  IPipeStructure structure) {
+        List<WorldPipeNode> list = new ObjectArrayList<>();
         for (IPipeNetMaterialProperty p : properties.values()) {
             if (p.supportsStructure(structure)) {
-                WorldPipeNetNode node = p.getOrCreateFromNet(world, pos, structure);
+                WorldPipeNode node = p.getOrCreateFromNet(world, pos, structure);
                 if (node != null) list.add(node);
             }
         }
@@ -68,11 +68,11 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     }
 
     @Override
-    public @NotNull Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
-        List<WorldPipeNetNode> list = new ObjectArrayList<>();
+    public @NotNull Collection<WorldPipeNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
+        List<WorldPipeNode> list = new ObjectArrayList<>();
         for (IPipeNetMaterialProperty p : properties.values()) {
             if (p.supportsStructure(structure)) {
-                WorldPipeNetNode node = p.getFromNet(world, pos, structure);
+                WorldPipeNode node = p.getFromNet(world, pos, structure);
                 if (node != null) list.add(node);
             }
         }
@@ -105,10 +105,10 @@ public class PipeNetProperties implements IMaterialProperty, IPipeNetNodeHandler
     public interface IPipeNetMaterialProperty extends IMaterialProperty {
 
         @Nullable
-        WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure);
+        WorldPipeNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure);
 
         @Nullable
-        WorldPipeNetNode getFromNet(World world, BlockPos pos, IPipeStructure structure);
+        WorldPipeNode getFromNet(World world, BlockPos pos, IPipeStructure structure);
 
         void mutateData(NetLogicData data, IPipeStructure structure);
 

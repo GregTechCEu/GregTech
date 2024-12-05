@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.net.energy;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.path.PathBuilder;

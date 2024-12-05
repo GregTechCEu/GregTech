@@ -1,8 +1,6 @@
 package gregtech.common.pipelike.net.energy;
 
-import com.github.bsideup.jabel.Desugar;
-
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.logic.NetLogicData;
@@ -26,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class StandardEnergyPath extends StandardNetPath implements EnergyPath {

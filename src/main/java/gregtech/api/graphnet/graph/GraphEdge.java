@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public final class GraphEdge extends DefaultWeightedEdge {
 
+    @ApiStatus.Internal
     public final NetEdge wrapped;
 
     public GraphEdge(@NotNull NetEdge wrapped) {
@@ -35,6 +36,12 @@ public final class GraphEdge extends DefaultWeightedEdge {
     @Override
     public GraphVertex getTarget() {
         return (GraphVertex) super.getTarget();
+    }
+
+    public @Nullable GraphVertex getOppositeVertex(@NotNull GraphVertex node) {
+        if (getSource() == node) return getTarget();
+        else if (getTarget() == node) return getSource();
+        else return null;
     }
 
     /**

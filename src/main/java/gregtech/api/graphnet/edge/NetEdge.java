@@ -1,7 +1,9 @@
 package gregtech.api.graphnet.edge;
 
-import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.GTValues;
+import gregtech.api.graphnet.GraphClassType;
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.predicate.EdgePredicateHandler;
@@ -16,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class NetEdge implements INBTSerializable<NBTTagCompound> {
+
+    public static final GraphClassType<NetEdge> TYPE = new GraphClassType<>(GTValues.MODID, "NetEdge", n -> new NetEdge());
 
     /**
      * For interacting with the internal graph representation ONLY, do not use or set this field otherwise.
@@ -78,11 +82,6 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
         else return predicateHandler.test(object);
     }
 
-    public double getDynamicWeight(IPredicateTestObject channel, IGraphNet graph, @Nullable SimulatorKey simulator,
-                                   long queryTick, double defaultWeight) {
-        return defaultWeight;
-    }
-
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
@@ -98,5 +97,9 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
             this.predicateHandler = new EdgePredicateHandler();
             this.predicateHandler.deserializeNBT((NBTTagList) nbt.getTag("Predicate"));
         }
+    }
+
+    public GraphClassType<? extends NetEdge> getType() {
+        return TYPE;
     }
 }

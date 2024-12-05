@@ -13,12 +13,12 @@ public final class NodeLossResult {
 
     public static final NodeLossResult IDENTITY = new NodeLossResult(null, ReversibleLossOperator.IDENTITY);
 
-    private final @Nullable Consumer<WorldPipeNetNode> postAction;
+    private final @Nullable Consumer<WorldPipeNode> postAction;
     private final @NotNull ReversibleLossOperator lossFunction;
 
     boolean simulated = true;
 
-    public NodeLossResult(@Nullable Consumer<WorldPipeNetNode> postAction,
+    public NodeLossResult(@Nullable Consumer<WorldPipeNode> postAction,
                           @NotNull ReversibleLossOperator lossFunction) {
         this.postAction = postAction;
         this.lossFunction = lossFunction;
@@ -28,7 +28,7 @@ public final class NodeLossResult {
     public static NodeLossResult combine(@Nullable NodeLossResult a, @Nullable NodeLossResult b) {
         if (a == null) return b;
         if (b == null) return a;
-        Consumer<WorldPipeNetNode> postAction = a.postAction;
+        Consumer<WorldPipeNode> postAction = a.postAction;
         if (b.postAction != null) {
             if (postAction == null) postAction = b.postAction;
             else postAction = postAction.andThen(b.postAction);
@@ -40,7 +40,7 @@ public final class NodeLossResult {
         return postAction != null;
     }
 
-    public @Nullable Consumer<WorldPipeNetNode> getPostAction() {
+    public @Nullable Consumer<WorldPipeNode> getPostAction() {
         return postAction;
     }
 
@@ -48,7 +48,7 @@ public final class NodeLossResult {
         return new NodeLossResult(postAction, lossFunction);
     }
 
-    public void triggerPostAction(WorldPipeNetNode node) {
+    public void triggerPostAction(WorldPipeNode node) {
         if (postAction == null) return;
         this.postAction.accept(node);
     }

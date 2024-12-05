@@ -1,17 +1,27 @@
 package gregtech.api.graphnet.pipenet.physical;
 
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public interface IPipeCapabilityObject {
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
-    void setTile(PipeTileEntity tile);
+import org.jetbrains.annotations.NotNull;
 
-    Capability<?>[] getCapabilities();
+public interface IPipeCapabilityObject extends ICapabilityProvider {
 
-    <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing);
+    void init(@NotNull PipeTileEntity tile, @NotNull PipeCapabilityWrapper wrapper);
+
+    @Override
+    default boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
+        return getCapability(capability, facing) != null;
+    }
+
+    default long getQueryTick() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+    }
 }

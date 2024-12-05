@@ -1,16 +1,16 @@
-package gregtech.api.graphnet.worldnet;
+package gregtech.api.graphnet.net;
 
 import gregtech.api.graphnet.GraphNetBacker;
-import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.graph.NetDirectedGraph;
 import gregtech.api.graphnet.graph.NetUndirectedGraph;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
 
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
+
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,32 +18,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public abstract class WorldNet extends WorldSavedData implements IGraphNet {
+public abstract class WorldSavedNet extends WorldSavedData implements IGraphNet {
 
     protected final GraphNetBacker backer;
-    private World world;
-    private int fallbackDimensionID;
 
-    public WorldNet(String name, @NotNull Function<IGraphNet, INetGraph> graphBuilder) {
+    public WorldSavedNet(String name, @NotNull Function<IGraphNet, INetGraph> graphBuilder) {
         super(name);
         this.backer = new GraphNetBacker(this, graphBuilder.apply(this));
     }
 
-    public WorldNet(String name, boolean directed) {
+    public WorldSavedNet(String name, boolean directed) {
         this(name, directed ? NetDirectedGraph.standardBuilder() : NetUndirectedGraph.standardBuilder());
-    }
-
-    public void setWorld(World world) {
-        this.world = world;
-    }
-
-    public World getWorld() {
-        return world;
     }
 
     @Override
     public void addNode(@NotNull NetNode node) {
-        nodeClassCheck(node);
         this.backer.addNode(node);
     }
 
@@ -54,14 +43,11 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet {
 
     @Override
     public void removeNode(@NotNull NetNode node) {
-        nodeClassCheck(node);
         this.backer.removeNode(node);
     }
 
     @Override
     public NetEdge addEdge(@NotNull NetNode source, @NotNull NetNode target, boolean bothWays) {
-        nodeClassCheck(source);
-        nodeClassCheck(target);
         double weight = source.getData().getLogicEntryDefaultable(WeightFactorLogic.TYPE).getValue() +
                 target.getData().getLogicEntryDefaultable(WeightFactorLogic.TYPE).getValue();
         NetEdge edge = backer.addEdge(source, target, weight);
@@ -75,35 +61,24 @@ public abstract class WorldNet extends WorldSavedData implements IGraphNet {
 
     @Override
     public @Nullable NetEdge getEdge(@NotNull NetNode source, @NotNull NetNode target) {
-        nodeClassCheck(source);
-        nodeClassCheck(target);
         return backer.getEdge(source, target);
     }
 
     @Override
     public void removeEdge(@NotNull NetNode source, @NotNull NetNode target, boolean bothWays) {
-        nodeClassCheck(source);
-        nodeClassCheck(target);
         this.backer.removeEdge(source, target);
         if (bothWays && this.getGraph().isDirected()) {
             this.backer.removeEdge(target, source);
         }
     }
 
-    protected int getDimension() {
-        if (world == null) return fallbackDimensionID;
-        else return world.provider.getDimension();
-    }
-
     @Override
     public void readFromNBT(@NotNull NBTTagCompound nbt) {
-        fallbackDimensionID = nbt.getInteger("Dimension");
         backer.readFromNBT(nbt);
     }
 
     @Override
     public @NotNull NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
-        compound.setInteger("Dimension", getDimension());
         return backer.writeToNBT(compound);
     }
 

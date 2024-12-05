@@ -9,7 +9,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithItemFilter;
-import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.transfer.TransferControl;
 import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
@@ -27,11 +27,11 @@ import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.covers.filter.MatchResult;
 import gregtech.common.covers.filter.MergabilityInfo;
-import gregtech.common.pipelike.net.item.IItemTransferController;
-import gregtech.common.pipelike.net.item.IItemTraverseGuideProvider;
-import gregtech.common.pipelike.net.item.ItemEQTraverseData;
-import gregtech.common.pipelike.net.item.ItemRRTraverseData;
-import gregtech.common.pipelike.net.item.ItemTraverseData;
+import gregtech.common.pipelike.net.itemold.IItemTransferController;
+import gregtech.common.pipelike.net.itemold.IItemTraverseGuideProvider;
+import gregtech.common.pipelike.net.itemold.ItemEQTraverseData;
+import gregtech.common.pipelike.net.itemold.ItemRRTraverseData;
+import gregtech.common.pipelike.net.itemold.ItemTraverseData;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -88,8 +88,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
 
-public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithItemFilter,
-                           TransferControlProvider, IItemTransferController {
+public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithItemFilter {
 
     public final int tier;
     public final int maxItemTransferRate;

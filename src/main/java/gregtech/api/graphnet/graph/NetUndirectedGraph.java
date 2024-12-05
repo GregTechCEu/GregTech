@@ -1,9 +1,6 @@
 package gregtech.api.graphnet.graph;
 
-import gregtech.api.graphnet.GraphNetBacker;
-import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
+import gregtech.api.graphnet.net.IGraphNet;
 
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -22,7 +19,7 @@ public class NetUndirectedGraph extends SimpleWeightedGraph<GraphVertex, GraphEd
     }
 
     public static Function<IGraphNet, INetGraph> standardBuilder() {
-        return iGraphNet -> new NetUndirectedGraph(() -> new GraphVertex(iGraphNet.getNewNode()),
-                () -> new GraphEdge(iGraphNet.getNewEdge()));
+        return iGraphNet -> new NetUndirectedGraph(() -> new GraphVertex(iGraphNet.getDefaultNodeType().getNew(iGraphNet)),
+                () -> new GraphEdge(iGraphNet.getDefaultEdgeType().getNew(iGraphNet)));
     }
 }

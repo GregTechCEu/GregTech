@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.handlers;
 
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.common.pipelike.block.laser.LaserStructure;
 import gregtech.common.pipelike.net.laser.WorldLaserNet;
@@ -23,8 +23,8 @@ public final class LaserNetHandler implements IPipeNetNodeHandler {
     public static final LaserNetHandler INSTANCE = new LaserNetHandler();
 
     @Override
-    public @NotNull Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos,
-                                                                     IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNode> getOrCreateFromNets(World world, BlockPos pos,
+                                                                  IPipeStructure structure) {
         if (structure instanceof LaserStructure) {
             return Collections.singletonList(WorldLaserNet.getWorldNet(world).getOrCreateNode(pos));
         }
@@ -32,9 +32,9 @@ public final class LaserNetHandler implements IPipeNetNodeHandler {
     }
 
     @Override
-    public @NotNull Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
+    public @NotNull Collection<WorldPipeNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof LaserStructure) {
-            WorldPipeNetNode node = WorldLaserNet.getWorldNet(world).getNode(pos);
+            WorldPipeNode node = WorldLaserNet.getWorldNet(world).getNode(pos);
             if (node != null) return Collections.singletonList(node);
         }
         return Collections.emptyList();
@@ -44,7 +44,7 @@ public final class LaserNetHandler implements IPipeNetNodeHandler {
     public void removeFromNets(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof LaserStructure) {
             WorldLaserNet net = WorldLaserNet.getWorldNet(world);
-            WorldPipeNetNode node = net.getNode(pos);
+            WorldPipeNode node = net.getNode(pos);
             if (node != null) net.removeNode(node);
         }
     }

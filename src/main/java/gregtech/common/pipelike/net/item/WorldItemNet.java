@@ -2,19 +2,24 @@ package gregtech.common.pipelike.net.item;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.filter.CoverWithItemFilter;
-import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.GraphClassType;
+import gregtech.api.graphnet.edge.FlowBufferTickProvider;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.NetFlowEdge;
-import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
-import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 import gregtech.common.covers.ItemFilterMode;
 import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.net.fluid.WorldFluidNet;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,9 +28,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-
-public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.Provider {
+public class WorldItemNet extends WorldPipeNet implements FlowBufferTickProvider {
 
     public static final Capability<?>[] CAPABILITIES = new Capability[] {
             CapabilityItemHandler.ITEM_HANDLER_CAPABILITY };
@@ -45,11 +48,6 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
 
     public WorldItemNet(String name) {
         super(name, true);
-    }
-
-    @Override
-    public boolean supportsPredication() {
-        return true;
     }
 
     @Override
@@ -83,34 +81,30 @@ public class WorldItemNet extends WorldPipeNet implements FlowWorldPipeNetPath.P
     }
 
     @Override
-    public boolean usesDynamicWeights(int algorithmID) {
-        return true;
-    }
-
-    @Override
     public boolean clashesWith(IGraphNet net) {
         return net instanceof WorldFluidNet;
     }
 
     @Override
-    public Capability<?>[] getTargetCapabilities() {
-        return CAPABILITIES;
+    public PipeCapabilityWrapper buildCapabilityWrapper(@NotNull PipeTileEntity owner, @NotNull WorldPipeNode node) {
+        Object2ObjectOpenHashMap<Capability<?>, IPipeCapabilityObject> map = new Object2ObjectOpenHashMap<>();
+        map.put(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, new ItemCapabilityObject(node));
+        return new NodeManagingPCW(owner, node, map, 0, 0);
     }
 
     @Override
-    public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
-        return new IPipeCapabilityObject[] { new ItemCapabilityObject(this, node) };
+    public @NotNull GraphClassType<? extends NetEdge> getDefaultEdgeType() {
+        return NetFlowEdge.TYPE;
     }
 
     @Override
-    public Iterator<FlowWorldPipeNetPath> getPaths(WorldPipeNetNode node, IPredicateTestObject testObject,
-                                                   @Nullable SimulatorKey simulator, long queryTick) {
-        return backer.getPaths(node, 0, FlowWorldPipeNetPath.MAPPER, testObject, simulator, queryTick);
+    public int getFlowBufferTicks() {
+        return 2;
     }
 
     @Override
-    public @NotNull NetFlowEdge getNewEdge() {
-        return new NetFlowEdge(2, 5);
+    public int getRegenerationTime() {
+        return 5;
     }
 
     @Override

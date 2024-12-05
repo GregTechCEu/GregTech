@@ -1,6 +1,8 @@
 package gregtech.api.graphnet.edge;
 
-import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.GTValues;
+import gregtech.api.graphnet.GraphClassType;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
@@ -11,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 public class NetFlowEdge extends AbstractNetFlowEdge {
+
+    public static final GraphClassType<NetFlowEdge> TYPE = new GraphClassType<>(GTValues.MODID, "NetFlowEdge",
+            n -> n instanceof FlowBufferTickProvider p ? new NetFlowEdge(p.getFlowBufferTicks(), p.getRegenerationTime()) : new NetFlowEdge(10));
 
     private final int flowBufferTicks;
     private final int regenerationTime;

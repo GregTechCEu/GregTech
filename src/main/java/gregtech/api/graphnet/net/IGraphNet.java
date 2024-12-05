@@ -1,5 +1,8 @@
-package gregtech.api.graphnet;
+package gregtech.api.graphnet.net;
 
+import gregtech.api.graphnet.GraphClassType;
+import gregtech.api.graphnet.GraphNetBacker;
+import gregtech.api.graphnet.MultiNodeHelper;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.group.GroupData;
@@ -10,26 +13,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 public interface IGraphNet {
-
-    /**
-     * Controls whether dynamic weight lookup will be used.
-     * Dynamic weight lookup can be more expensive, so this should not be enabled unless necessary.
-     */
-    default boolean usesDynamicWeights(int algorithmID) {
-        return false;
-    }
-
-    /**
-     * Controls whether predication of edges is allowed for this net. When false, path caching is improved by
-     * skipping the recomputation required in order to compensate for predication.
-     * 
-     * @return whether predication should be allowed for this net.
-     */
-    default boolean supportsPredication() {
-        return false;
-    }
 
     /**
      * Adds a node to the graphnet.
@@ -90,8 +76,7 @@ public interface IGraphNet {
      * 
      * @return the backing net graph
      */
-    @ApiStatus.Internal
-    default INetGraph getGraph() {
+    default @UnmodifiableView INetGraph getGraph() {
         return getBacker().getGraph();
     }
 
@@ -120,6 +105,7 @@ public interface IGraphNet {
      * @return A default node data object.
      */
     @NotNull
+    @Contract("->new")
     default NetLogicData getDefaultNodeData() {
         return new NetLogicData().setLogicEntry(WeightFactorLogic.TYPE.getWith(1));
     }
@@ -146,34 +132,17 @@ public interface IGraphNet {
     }
 
     /**
-     * @return the class all registered nodes are expected to be children of.
-     */
-    Class<? extends NetNode> getNodeClass();
-
-    /**
-     * While this is crude, it does allow for avoiding generics literally everywhere.
-     * The systems that make up a graphnet intertwine such that generics would be needed in basically every class.
-     * Basically, instead of a bunch of generics everywhere, we just instate an honor system that crashes the game if
-     * you violate it.
-     */
-    default void nodeClassCheck(NetNode node) {
-        if (!(getNodeClass().isInstance(node)))
-            throw new IllegalArgumentException("Cannot provide a " + this.getClass().getSimpleName() +
-                    " with a " + node.getClass().getSimpleName() + " node!");
-    }
-
-    /**
      * @return a new node with no data, to be either nbt deserialized or initialized in some other way.
      */
     @NotNull
-    NetNode getNewNode();
+    GraphClassType<? extends NetNode> getDefaultNodeType();
 
     /**
      * @return a new edge with no data, to be either nbt deserialized or initialized in some other way.
      */
     @NotNull
-    default NetEdge getNewEdge() {
-        return new NetEdge();
+    default GraphClassType<? extends NetEdge> getDefaultEdgeType() {
+        return NetEdge.TYPE;
     }
 
     /**

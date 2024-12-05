@@ -5,7 +5,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.IPipeChanneledStructure;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
@@ -292,14 +292,14 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         boolean blocked1 = tile.isBlocked(facing);
         boolean blocked2 = tileAcross.isBlocked(facing.getOpposite());
 
-        Map<WorldPipeNet, WorldPipeNetNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
-        for (WorldPipeNetNode node : getNodesForTile(tileAcross)) {
+        Map<WorldPipeNet, WorldPipeNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
+        for (WorldPipeNode node : getNodesForTile(tileAcross)) {
             tile2Nodes.put(node.getNet(), node);
         }
 
-        for (WorldPipeNetNode node : getNodesForTile(tile)) {
+        for (WorldPipeNode node : getNodesForTile(tile)) {
             WorldPipeNet net = node.getNet();
-            WorldPipeNetNode other = tile2Nodes.get(net);
+            WorldPipeNode other = tile2Nodes.get(net);
             if (other == null) continue;
             if (!blocked1 && !blocked2) {
                 net.addEdge(node, other, true);
@@ -317,14 +317,14 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         tileAcross.setDisconnected(facing.getOpposite());
         if (tile.getWorld().isRemote) return;
 
-        Map<WorldPipeNet, WorldPipeNetNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
-        for (WorldPipeNetNode node : getNodesForTile(tileAcross)) {
+        Map<WorldPipeNet, WorldPipeNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
+        for (WorldPipeNode node : getNodesForTile(tileAcross)) {
             tile2Nodes.put(node.getNet(), node);
         }
 
-        for (WorldPipeNetNode node : getNodesForTile(tile)) {
+        for (WorldPipeNode node : getNodesForTile(tile)) {
             WorldPipeNet net = node.getNet();
-            WorldPipeNetNode other = tile2Nodes.get(net);
+            WorldPipeNode other = tile2Nodes.get(net);
             if (other == null) continue;
             net.removeEdge(node, other, true);
         }
@@ -334,14 +334,14 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         tile.setBlocked(facing);
         if (tileAcross == null || tile.getWorld().isRemote) return;
 
-        Map<WorldPipeNet, WorldPipeNetNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
-        for (WorldPipeNetNode node : getNodesForTile(tileAcross)) {
+        Map<WorldPipeNet, WorldPipeNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
+        for (WorldPipeNode node : getNodesForTile(tileAcross)) {
             tile2Nodes.put(node.getNet(), node);
         }
 
-        for (WorldPipeNetNode node : getNodesForTile(tile)) {
+        for (WorldPipeNode node : getNodesForTile(tile)) {
             WorldPipeNet net = node.getNet();
-            WorldPipeNetNode other = tile2Nodes.get(net);
+            WorldPipeNode other = tile2Nodes.get(net);
             if (other == null) continue;
             net.removeEdge(other, node, false);
         }
@@ -352,14 +352,14 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         tile.setUnblocked(facing);
         if (tileAcross == null || tile.getWorld().isRemote) return;
 
-        Map<WorldPipeNet, WorldPipeNetNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
-        for (WorldPipeNetNode node : getNodesForTile(tileAcross)) {
+        Map<WorldPipeNet, WorldPipeNode> tile2Nodes = new Object2ObjectOpenHashMap<>();
+        for (WorldPipeNode node : getNodesForTile(tileAcross)) {
             tile2Nodes.put(node.getNet(), node);
         }
 
-        for (WorldPipeNetNode node : getNodesForTile(tile)) {
+        for (WorldPipeNode node : getNodesForTile(tile)) {
             WorldPipeNet net = node.getNet();
-            WorldPipeNetNode other = tile2Nodes.get(net);
+            WorldPipeNode other = tile2Nodes.get(net);
             if (other == null) continue;
             net.addEdge(other, node, false);
         }
@@ -369,7 +369,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         return true;
     }
 
-    public static Collection<WorldPipeNetNode> getNodesForTile(PipeTileEntity tile) {
+    public static Collection<WorldPipeNode> getNodesForTile(PipeTileEntity tile) {
         assert !tile.getWorld().isRemote;
         return tile.getBlockType().getHandler(tile)
                 .getOrCreateFromNets(tile.getWorld(), tile.getPos(), tile.getStructure());

@@ -19,7 +19,7 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
-import gregtech.common.pipelike.net.fluid.IFluidTransferController;
+import gregtech.common.pipelike.net.fluidold.IFluidTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

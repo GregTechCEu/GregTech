@@ -3,19 +3,19 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.SimpleFluidFilter;
-import gregtech.common.pipelike.net.fluid.FluidEQTraverseData;
-import gregtech.common.pipelike.net.fluid.FluidRRTraverseData;
-import gregtech.common.pipelike.net.fluid.FluidTraverseData;
-import gregtech.common.pipelike.net.fluid.IFluidTransferController;
+import gregtech.common.pipelike.net.fluidold.FluidEQTraverseData;
+import gregtech.common.pipelike.net.fluidold.FluidRRTraverseData;
+import gregtech.common.pipelike.net.fluidold.FluidTraverseData;
+import gregtech.common.pipelike.net.fluidold.IFluidTransferController;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -291,7 +291,7 @@ public class CoverFluidRegulator extends CoverPump {
         }
 
         @Override
-        public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
+        public long finalizeAtDestination(@NotNull WorldPipeNode destination, long flowReachingDestination) {
             long availableFlow = flowReachingDestination;
             for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
                 if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
@@ -324,7 +324,7 @@ public class CoverFluidRegulator extends CoverPump {
         }
 
         @Override
-        protected void compute(@NotNull WorldPipeNetNode destination) {
+        protected void compute(@NotNull WorldPipeNode destination) {
             this.destCount = 0;
             this.maxMinFlow = 0;
             for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
@@ -352,7 +352,7 @@ public class CoverFluidRegulator extends CoverPump {
         }
 
         @Override
-        public long finalizeAtDestination(@NotNull WorldPipeNetNode node, long flowReachingNode,
+        public long finalizeAtDestination(@NotNull WorldPipeNode node, long flowReachingNode,
                                           int expectedDestinations) {
             long availableFlow = flowReachingNode;
             long flowPerDestination = flowReachingNode / expectedDestinations;
@@ -389,7 +389,7 @@ public class CoverFluidRegulator extends CoverPump {
 
         @Override
         public long finalizeAtDestination(@NotNull SimpleTileRoundRobinData<IFluidHandler> data,
-                                          @NotNull WorldPipeNetNode destination, long flowReachingDestination) {
+                                          @NotNull WorldPipeNode destination, long flowReachingDestination) {
             long availableFlow = flowReachingDestination;
             EnumFacing pointerFacing = data.getPointerFacing(getSimulatorKey());
             // anti insert-to-our-source logic

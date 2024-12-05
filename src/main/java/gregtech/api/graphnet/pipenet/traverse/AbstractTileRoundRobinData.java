@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.pipenet.traverse;
 
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.traverseold.IRoundRobinData;
 
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public abstract class AbstractTileRoundRobinData implements IRoundRobinData<WorldPipeNetNode> {
+public abstract class AbstractTileRoundRobinData implements IRoundRobinData<WorldPipeNode> {
 
     private final MutableByte pointer = new MutableByte();
 
@@ -26,7 +26,7 @@ public abstract class AbstractTileRoundRobinData implements IRoundRobinData<Worl
 
     @Override
     @MustBeInvokedByOverriders
-    public void resetIfFinished(WorldPipeNetNode node, @Nullable SimulatorKey simulator) {
+    public void resetIfFinished(WorldPipeNode node, @Nullable SimulatorKey simulator) {
         if (!hasNextInternalDestination(node, simulator)) getPointer(simulator).setValue(0);
     }
 
@@ -54,13 +54,13 @@ public abstract class AbstractTileRoundRobinData implements IRoundRobinData<Worl
         return EnumFacing.VALUES[pointer.byteValue()];
     }
 
-    public boolean hasCapabilityAtPointer(@NotNull Capability<?> capability, WorldPipeNetNode node,
+    public boolean hasCapabilityAtPointer(@NotNull Capability<?> capability, WorldPipeNode node,
                                           @Nullable SimulatorKey simulator) {
         return getCapabilityAtPointer(capability, node, simulator) != null;
     }
 
     @Nullable
-    public <E> E getCapabilityAtPointer(@NotNull Capability<E> capability, WorldPipeNetNode node,
+    public <E> E getCapabilityAtPointer(@NotNull Capability<E> capability, WorldPipeNode node,
                                         @Nullable SimulatorKey simulator) {
         if (pointerFinished(simulator)) return null;
         PipeCapabilityWrapper wrapper = node.getTileEntity().getWrapperForNode(node);

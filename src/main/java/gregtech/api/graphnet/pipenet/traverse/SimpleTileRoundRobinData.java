@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.pipenet.traverse;
 
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -17,7 +17,7 @@ public class SimpleTileRoundRobinData<T> extends AbstractTileRoundRobinData {
     }
 
     @Override
-    public boolean hasNextInternalDestination(WorldPipeNetNode node, @Nullable SimulatorKey simulator) {
+    public boolean hasNextInternalDestination(WorldPipeNode node, @Nullable SimulatorKey simulator) {
         MutableByte pointer = getPointer(simulator);
         byte val = pointer.byteValue();
         progressToNextInternalDestination(node, simulator);
@@ -27,7 +27,7 @@ public class SimpleTileRoundRobinData<T> extends AbstractTileRoundRobinData {
     }
 
     @Override
-    public void progressToNextInternalDestination(WorldPipeNetNode node, @Nullable SimulatorKey simulator) {
+    public void progressToNextInternalDestination(WorldPipeNode node, @Nullable SimulatorKey simulator) {
         MutableByte pointer = getPointer(simulator);
         pointer.increment();
         while (!pointerFinished(pointer) && !hasCapabilityAtPointer(cap, node, simulator)) {
@@ -35,7 +35,7 @@ public class SimpleTileRoundRobinData<T> extends AbstractTileRoundRobinData {
         }
     }
 
-    public @Nullable T getAtPointer(WorldPipeNetNode node, @Nullable SimulatorKey simulator) {
+    public @Nullable T getAtPointer(WorldPipeNode node, @Nullable SimulatorKey simulator) {
         return getCapabilityAtPointer(cap, node, simulator);
     }
 }

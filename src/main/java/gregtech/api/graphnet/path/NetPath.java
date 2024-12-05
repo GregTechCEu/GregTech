@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.path;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
 
@@ -13,23 +13,23 @@ public interface NetPath {
 
     @NotNull
     @Unmodifiable
-    <N extends NetNode> ImmutableCollection<N> getOrderedNodes();
+    ImmutableCollection<NetNode> getOrderedNodes();
 
     @NotNull
-    default <N extends NetNode> N getSourceNode() {
+    default NetNode getSourceNode() {
         ImmutableCollection<NetNode> nodes = getOrderedNodes();
-        return (N) nodes.asList().get(0);
+        return nodes.asList().get(0);
     }
 
     @NotNull
-    default <N extends NetNode> N getTargetNode() {
+    default NetNode getTargetNode() {
         ImmutableCollection<NetNode> nodes = getOrderedNodes();
-        return (N) nodes.asList().get(nodes.size() - 1);
+        return nodes.asList().get(nodes.size() - 1);
     }
 
     @NotNull
     @Unmodifiable
-    <E extends NetEdge> ImmutableCollection<E> getOrderedEdges();
+    ImmutableCollection<NetEdge> getOrderedEdges();
 
     double getWeight();
 

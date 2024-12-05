@@ -1,7 +1,8 @@
 package gregtech.common.pipelike.net;
 
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.NetPath;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.util.TaskScheduler;
 import gregtech.api.util.function.Task;
@@ -91,22 +92,25 @@ public class SlowActiveWalker implements Task {
         return true;
     }
 
-    protected @Nullable WorldPipeNetNode getSafe(int index) {
+    protected @Nullable WorldPipeNode getSafe(int index) {
         if (index >= path.getOrderedNodes().size()) return null;
         else if (index < 0) return null;
-        else return getNodes().asList().get(index);
+        else {
+            NetNode n = getNodes().asList().get(index);
+            return n instanceof WorldPipeNode p ? p : null;
+        }
     }
 
-    protected ImmutableCollection<WorldPipeNetNode> getNodes() {
+    protected ImmutableCollection<NetNode> getNodes() {
         return path.getOrderedNodes();
     }
 
-    protected void step(@Nullable WorldPipeNetNode previous, @Nullable WorldPipeNetNode next) {
+    protected void step(@Nullable WorldPipeNode previous, @Nullable WorldPipeNode next) {
         if (previous != null) activate(previous, false);
         if (next != null) activate(next, true);
     }
 
-    protected void activate(@NotNull WorldPipeNetNode node, boolean active) {
+    protected void activate(@NotNull WorldPipeNode node, boolean active) {
         if (node.getTileEntity() instanceof PipeActivableTileEntity activable) {
             activable.setActive(active);
         }

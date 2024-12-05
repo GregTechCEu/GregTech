@@ -1,6 +1,5 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
@@ -8,8 +7,9 @@ import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicRegistry;
 import gregtech.api.graphnet.logic.NetLogicType;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.IInsulatable;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
@@ -26,24 +26,18 @@ import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
@@ -93,7 +87,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     protected final PipeCoverHolder covers = new PipeCoverHolder(this);
     private final Object2ObjectOpenHashMap<Capability<?>, IPipeCapabilityObject> capabilities = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectOpenCustomHashMap<WorldPipeNetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet
+    private final Object2ObjectOpenCustomHashMap<NetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet
             .getSensitiveHashMap();
 
     @Nullable
@@ -347,7 +341,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
      * @param node the node for this tile entity. Used to identify the capabilities to match.
      * @return a map of facings to tile entities.
      */
-    public @NotNull EnumMap<EnumFacing, TileEntity> getTargetsWithCapabilities(WorldPipeNetNode node) {
+    public @NotNull EnumMap<EnumFacing, TileEntity> getTargetsWithCapabilities(WorldPipeNode node) {
         PipeCapabilityWrapper wrapper = netCapabilities.get(node);
         EnumMap<EnumFacing, TileEntity> caps = new EnumMap<>(EnumFacing.class);
         if (wrapper == null) return caps;
@@ -363,14 +357,14 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     }
 
     @Override
-    public @Nullable TileEntity getTargetWithCapabilities(WorldPipeNetNode node, EnumFacing facing) {
+    public @Nullable TileEntity getTargetWithCapabilities(WorldPipeNode node, EnumFacing facing) {
         PipeCapabilityWrapper wrapper = netCapabilities.get(node);
         if (wrapper == null || !wrapper.isActive(facing)) return null;
         else return getNeighbor(facing);
     }
 
     @Override
-    public PipeCapabilityWrapper getWrapperForNode(WorldPipeNetNode node) {
+    public PipeCapabilityWrapper getWrapperForNode(WorldPipeNode node) {
         return netCapabilities.get(node);
     }
 
@@ -401,7 +395,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
         boolean oneActive = false;
         for (var netCapability : netCapabilities.entrySet()) {
-            for (Capability<?> cap : netCapability.getValue().capabilities) {
+            for (Capability<?> cap : netCapability.getValue().capabilities.keySet()) {
                 if (tile.hasCapability(cap, facing.getOpposite())) {
                     oneActive = true;
                     netCapability.getValue().setActive(facing);
@@ -420,19 +414,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     // capability //
 
-    private void addCapabilities(IPipeCapabilityObject[] capabilities) {
-        for (IPipeCapabilityObject capabilityObject : capabilities) {
-            capabilityObject.setTile(this);
-            for (Capability<?> capability : capabilityObject.getCapabilities()) {
-                this.capabilities.put(capability, capabilityObject);
-            }
-        }
-    }
-
     public <T> T getCapabilityCoverQuery(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         // covers have access to the capability objects no matter the connection status
         IPipeCapabilityObject object = capabilities.get(capability);
-        return object == null ? null : object.getCapabilityForSide(capability, facing);
+        return object == null ? null : object.getCapability(capability, facing);
     }
 
     @Override
@@ -447,7 +432,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         }
         T pipeCapability;
         IPipeCapabilityObject object = capabilities.get(capability);
-        if (object == null || (pipeCapability = object.getCapabilityForSide(capability, facing)) == null)
+        if (object == null || (pipeCapability = object.getCapability(capability, facing)) == null)
             pipeCapability = super.getCapability(capability, facing);
 
         Cover cover = facing == null ? null : getCoverHolder().getCoverAtSide(facing);
@@ -499,10 +484,10 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             this.capabilities.clear();
             this.netCapabilities.clear();
             this.listeners.clear();
-            for (WorldPipeNetNode node : PipeBlock.getNodesForTile(this)) {
-                this.addCapabilities(node.getNet().getNewCapabilityObjects(node));
-                this.netCapabilities.put(node, new PipeCapabilityWrapper(this, node));
-                int networkID = node.getNet().getNetworkID();
+            for (WorldPipeNode node : PipeBlock.getNodesForTile(this)) {
+                WorldPipeNet net = node.getNet();
+                this.netCapabilities.put(node, net.buildCapabilityWrapper(this, node));
+                int networkID = net.getNetworkID();
                 netLogicDatas.put(networkID, node.getData());
                 listeners.add(node.getData().addListener((e, r, f) -> writeLogicData(networkID, e, r, f)));
                 for (NetLogicEntry<?, ?> entry : node.getData().getEntries()) {
@@ -702,21 +687,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return overheatParticle != null && overheatParticle.isAlive();
     }
 
-    @Override
-    public void spawnParticles(EnumFacing direction, EnumParticleTypes particleType, int particleCount) {
-        if (getWorld() instanceof WorldServer server) {
-            server.spawnParticle(particleType,
-                    getPos().getX() + 0.5,
-                    getPos().getY() + 0.5,
-                    getPos().getZ() + 0.5,
-                    particleCount,
-                    direction.getXOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
-                    direction.getYOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
-                    direction.getZOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
-                    0.1);
-        }
-    }
-
     // misc overrides //
 
     @Override
@@ -747,7 +717,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         markDirty();
         // this most notably gets called when the covers of a pipe get updated, aka the edge predicates need syncing.
         for (var node : this.netCapabilities.keySet()) {
-            node.getNet().updatePredication(node, this);
+            if (node instanceof WorldPipeNode n) n.getNet().updatePredication(n, this);
         }
     }
 
@@ -816,39 +786,4 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         }
     }
 
-    @Override
-    public void dealAreaDamage(int size, Consumer<EntityLivingBase> damageFunction) {
-        long timer = getOffsetTimer();
-        if (timer >= this.nextDamageTime) {
-            List<EntityLivingBase> entities = getWorld().getEntitiesWithinAABB(EntityLivingBase.class,
-                    new AxisAlignedBB(getPos()).grow(size));
-            entities.forEach(damageFunction);
-            this.nextDamageTime = timer + 20;
-        }
-    }
-
-    public void playLossSound() {
-        long timer = getOffsetTimer();
-        if (timer >= this.nextSoundTime) {
-            getWorld().playSound(null, pos, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
-            this.nextSoundTime = timer + 20;
-        }
-    }
-
-    public void visuallyExplode() {
-        getWorld().createExplosion(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                1.0f + GTValues.RNG.nextFloat(), false);
-    }
-
-    public void setNeighborsToFire() {
-        for (EnumFacing side : EnumFacing.VALUES) {
-            if (!GTValues.RNG.nextBoolean()) continue;
-            BlockPos blockPos = getPos().offset(side);
-            IBlockState blockState = getWorld().getBlockState(blockPos);
-            if (blockState.getBlock().isAir(blockState, getWorld(), blockPos) ||
-                    blockState.getBlock().isFlammable(getWorld(), blockPos, side.getOpposite())) {
-                getWorld().setBlockState(blockPos, Blocks.FIRE.getDefaultState());
-            }
-        }
-    }
 }

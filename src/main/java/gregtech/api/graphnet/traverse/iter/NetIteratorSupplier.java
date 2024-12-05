@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.traverse.iter;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 
 import org.jetbrains.annotations.NotNull;
 

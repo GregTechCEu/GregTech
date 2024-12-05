@@ -38,6 +38,11 @@ public class ItemTestObject implements IPredicateTestObject, Predicate<ItemStack
     }
 
     @Contract("_ -> new")
+    public ItemStack recombineSafe(int amount) {
+        return recombine(Math.min(getStackLimit(), Math.max(0, amount)));
+    }
+
+    @Contract("_ -> new")
     public ItemStack recombine(int amount) {
         assert amount <= getStackLimit() && amount > 0;
         ItemStack stack = new ItemStack(item, amount, meta);

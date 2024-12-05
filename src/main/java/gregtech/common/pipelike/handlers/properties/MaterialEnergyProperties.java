@@ -3,10 +3,10 @@ package gregtech.common.pipelike.handlers.properties;
 import gregtech.api.GTValues;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.store.FluidStorageKeys;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
@@ -159,15 +159,15 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     @Override
     @Nullable
-    public WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
+    public WorldPipeNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof CableStructure) {
-            WorldPipeNetNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
+            WorldPipeNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), structure);
             return node;
         } else if (structure instanceof MaterialPipeStructure pipe) {
             long amperage = amperageLimit * pipe.material() / 2;
             if (amperage == 0) return null; // skip pipes that are too small
-            WorldPipeNetNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
+            WorldPipeNode node = WorldEnergyNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), pipe);
             return node;
         }
@@ -235,7 +235,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
 
     @Override
     @Nullable
-    public WorldPipeNetNode getFromNet(World world, BlockPos pos, IPipeStructure structure) {
+    public WorldPipeNode getFromNet(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof CableStructure || structure instanceof MaterialPipeStructure)
             return WorldEnergyNet.getWorldNet(world).getNode(pos);
         else return null;

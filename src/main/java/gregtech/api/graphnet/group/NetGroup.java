@@ -1,12 +1,14 @@
 package gregtech.api.graphnet.group;
 
-import gregtech.api.graphnet.IGraphNet;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.traverse.iter.EdgeDirection;
 import gregtech.api.graphnet.traverse.iter.NetBreadthIterator;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import org.jgrapht.Graphs;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,12 +30,12 @@ public final class NetGroup {
 
     private final @NotNull Set<NetNode> nodes;
 
-    private final @NotNull Set<NetNode> activeNodes;
+    private final @NotNull Int2ObjectMap<Set<NetNode>> sortingNodes;
 
     private @Nullable GroupData data;
 
     public NetGroup(IGraphNet net) {
-        this(net, new ObjectOpenHashSet<>(), new ObjectOpenHashSet<>());
+        this(net, new ObjectOpenHashSet<>(), new Int2ObjectOpenHashMap<>());
     }
 
     public NetGroup(@NotNull IGraphNet net, @NotNull Set<NetNode> nodes) {
@@ -40,33 +43,46 @@ public final class NetGroup {
     }
 
     public NetGroup(@NotNull IGraphNet net, @NotNull Set<NetNode> nodes, @Nullable GroupData data) {
-        this(net, nodes, nodes.stream().filter(NetNode::isActive)
-                .collect(ObjectOpenHashSet::new, ObjectOpenHashSet::add, ObjectOpenHashSet::addAll), data);
+        this(net, nodes, new Int2ObjectOpenHashMap<>(), data);
+        for (NetNode node : nodes) {
+            initialSort(node);
+        }
     }
 
-    public NetGroup(@NotNull IGraphNet net, @NotNull Set<NetNode> nodes, @NotNull Set<NetNode> activeNodes) {
-        this(net, nodes, activeNodes, net.getBlankGroupData());
+    public NetGroup(@NotNull IGraphNet net, @NotNull Set<NetNode> nodes,
+                    @NotNull Int2ObjectMap<Set<NetNode>> sortingNodes) {
+        this(net, nodes, sortingNodes, net.getBlankGroupData());
     }
 
-    public NetGroup(@NotNull IGraphNet net, @NotNull Set<NetNode> nodes, @NotNull Set<NetNode> activeNodes,
-                    @Nullable GroupData data) {
+    public NetGroup(@NotNull IGraphNet net, @NotNull Set<NetNode> nodes,
+                    @NotNull Int2ObjectMap<Set<NetNode>> sortingNodes, @Nullable GroupData data) {
         this.net = net;
         this.data = data;
         if (data != null) data.withGroup(this);
         this.nodes = nodes;
-        this.activeNodes = activeNodes;
+        this.sortingNodes = sortingNodes;
         nodes.forEach(this::onAddedToGroup);
+    }
+
+    private void initialSort(NetNode node) {
+        int key = node.getSortingKey();
+        Set<NetNode> s = this.sortingNodes.get(key);
+        if (s == null) this.sortingNodes.put(key, s = new ObjectOpenHashSet<>());
+        s.add(node);
     }
 
     public void addNode(NetNode node) {
         this.nodes.add(node);
-        this.onAddedToGroup(node);
-        if (node.isActive()) activeNodes.add(node);
+        onAddedToGroup(node);
+        initialSort(node);
     }
 
     private void addNodes(Collection<NetNode> nodes) {
         this.nodes.addAll(nodes);
-        nodes.stream().peek(this::onAddedToGroup).filter(NetNode::isActive).forEach(this.activeNodes::add);
+        for (NetNode node : nodes) {
+            onAddedToGroup(node);
+            initialSort(node);
+        }
     }
 
     @ApiStatus.Internal
@@ -86,9 +102,15 @@ public final class NetGroup {
         node.setGroup(this);
     }
 
-    public void notifyActiveChange(NetNode node, boolean active) {
-        if (active) activeNodes.add(node);
-        else activeNodes.remove(node);
+    public void notifySortingChange(NetNode node, int oldKey, int newKey) {
+        Set<NetNode> old = this.sortingNodes.get(oldKey);
+        if (old != null) {
+            old.remove(node);
+            if (old.size() == 0) this.sortingNodes.remove(oldKey);
+        }
+        Set<NetNode> n = this.sortingNodes.get(newKey);
+        if (n == null) this.sortingNodes.put(newKey, n = new ObjectOpenHashSet<>());
+        n.add(node);
     }
 
     public static MergeDirection isEdgeAllowed(@NotNull NetNode source, @NotNull NetNode target) {
@@ -218,8 +240,15 @@ public final class NetGroup {
 
     @NotNull
     @UnmodifiableView
-    public Set<NetNode> getActiveNodes() {
-        return activeNodes;
+    public Set<NetNode> getNodesUnderKey(int key) {
+        Set<NetNode> set = sortingNodes.get(key);
+        return set == null ? Collections.emptySet() : set;
+    }
+
+    @NotNull
+    @UnmodifiableView
+    public Int2ObjectMap<Set<NetNode>> getSortingNodes() {
+        return sortingNodes;
     }
 
     public @Nullable GroupData getData() {

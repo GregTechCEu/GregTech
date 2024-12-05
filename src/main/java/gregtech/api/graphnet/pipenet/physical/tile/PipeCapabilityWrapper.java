@@ -1,51 +1,84 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
+
+import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+public class PipeCapabilityWrapper implements ICapabilityProvider {
 
-public class PipeCapabilityWrapper {
+    protected byte activeMask;
+    protected final PipeTileEntity owner;
+    protected final WorldPipeNode node;
 
-    private byte activeMask;
-    private final PipeTileEntity owner;
-    private final WorldPipeNetNode node;
-    public final Capability<?>[] capabilities;
+    protected final Object2ObjectMap<Capability<?>, IPipeCapabilityObject> capabilities;
 
-    public PipeCapabilityWrapper(PipeTileEntity owner, @NotNull WorldPipeNetNode node) {
+    protected final int inactiveKey;
+    protected final int activeKey;
+
+    public PipeCapabilityWrapper(@NotNull PipeTileEntity owner, @NotNull WorldPipeNode node,
+                                 Object2ObjectMap<Capability<?>, IPipeCapabilityObject> capabilities,
+                                 int inactiveKey, int activeKey) {
         this.owner = owner;
         this.node = node;
-        this.capabilities = node.getNet().getTargetCapabilities();
-    }
-
-    public boolean supports(Capability<?> capability) {
-        for (Capability<?> cap : capabilities) {
-            if (Objects.equals(cap, capability)) return true;
+        this.inactiveKey = inactiveKey;
+        this.activeKey = activeKey;
+        this.capabilities = capabilities;
+        for (IPipeCapabilityObject o : capabilities.values()) {
+            o.init(owner, this);
         }
-        return false;
     }
 
     public void setActive(@NotNull EnumFacing facing) {
         if (!isActive(facing)) {
-            this.activeMask |= 1 << facing.ordinal();
-            this.node.setActive(this.activeMask > 0);
-            this.owner.notifyBlockUpdate();
+            setActiveInternal(facing);
         }
+    }
+
+    protected void setActiveInternal(@NotNull EnumFacing facing) {
+        this.activeMask |= 1 << facing.ordinal();
+        this.node.setSortingKey(this.activeMask > 0 ? activeKey : inactiveKey);
+        this.owner.notifyBlockUpdate();
     }
 
     public void setIdle(@NotNull EnumFacing facing) {
         if (isActive(facing)) {
-            this.activeMask &= ~(1 << facing.ordinal());
-            this.node.setActive(this.activeMask > 0);
-            this.owner.notifyBlockUpdate();
+            setIdleInternal(facing);
         }
+    }
+
+    protected void setIdleInternal(@NotNull EnumFacing facing) {
+        this.activeMask &= ~(1 << facing.ordinal());
+        this.node.setSortingKey(this.activeMask > 0 ? activeKey : inactiveKey);
+        this.owner.notifyBlockUpdate();
     }
 
     public boolean isActive(@NotNull EnumFacing facing) {
         return (this.activeMask & 1 << facing.ordinal()) > 0;
+    }
+
+    @Override
+    public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
+        if (facing != null && !isActive(facing)) return false;
+        IPipeCapabilityObject obj = capabilities.get(capability);
+        if (obj == null) return false;
+        return obj.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
+        if (facing != null && !isActive(facing)) return null;
+        IPipeCapabilityObject obj = capabilities.get(capability);
+        if (obj == null) return null;
+        return obj.getCapability(capability, facing);
     }
 }

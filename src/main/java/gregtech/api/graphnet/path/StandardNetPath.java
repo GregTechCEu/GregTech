@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.path;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
 
@@ -63,13 +63,13 @@ public class StandardNetPath implements NetPath {
     }
 
     @Override
-    public @NotNull @Unmodifiable <N extends NetNode> ImmutableCollection<N> getOrderedNodes() {
-        return (ImmutableCollection<N>) nodes;
+    public @NotNull @Unmodifiable ImmutableCollection<NetNode> getOrderedNodes() {
+        return nodes;
     }
 
     @Override
-    public @NotNull @Unmodifiable <E extends NetEdge> ImmutableCollection<E> getOrderedEdges() {
-        return (ImmutableCollection<E>) edges;
+    public @NotNull @Unmodifiable ImmutableCollection<NetEdge> getOrderedEdges() {
+        return edges;
     }
 
     @Override

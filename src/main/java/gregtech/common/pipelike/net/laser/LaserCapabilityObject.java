@@ -2,12 +2,13 @@ package gregtech.common.pipelike.net.laser;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserRelay;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.path.SingletonNetPath;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.common.pipelike.net.SlowActiveWalker;
 
@@ -22,14 +23,16 @@ import java.util.Set;
 
 public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay {
 
-    protected final WorldPipeNetNode node;
+    public static final int ACTIVE_KEY = 122;
+
+    protected final WorldPipeNode node;
     private @Nullable PipeTileEntity tile;
 
     private final EnumMap<EnumFacing, Wrapper> wrappers = new EnumMap<>(EnumFacing.class);
 
     private boolean transmitting;
 
-    public LaserCapabilityObject(@NotNull WorldPipeNetNode node) {
+    public LaserCapabilityObject(@NotNull WorldPipeNode node) {
         this.node = node;
         for (EnumFacing facing : EnumFacing.VALUES) {
             wrappers.put(facing, new Wrapper(facing));
@@ -37,7 +40,7 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
     }
 
     @Override
-    public void setTile(@Nullable PipeTileEntity tile) {
+    public void init(@NotNull PipeTileEntity tile, @NotNull PipeCapabilityWrapper wrapper) {
         this.tile = tile;
     }
 
@@ -54,7 +57,7 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
         if (node.getGroupUnsafe() == null || node.getGroupSafe().getNodes().size() == 1)
             path = new SingletonNetPath(node);
         else if (node.getGroupSafe().getData() instanceof PathCacheGroupData cache) {
-            Set<NetNode> actives = node.getGroupSafe().getActiveNodes();
+            Set<NetNode> actives = node.getGroupSafe().getNodesUnderKey(ACTIVE_KEY);
             if (actives.size() > 2) return 0; // single-destination contract violated
             var iter = actives.iterator();
             NetNode target = iter.next();
@@ -62,12 +65,13 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
                 if (!iter.hasNext()) return 0; // no destinations
                 target = iter.next();
             }
+            if (!(target instanceof WorldPipeNode)) return 0; // useless target
             path = cache.getOrCreate(node).getOrCompute(target);
             if (path == null) return 0; // no path
         } else return 0; // no cache to lookup with
 
         long available = laserAmperage;
-        WorldPipeNetNode destination = path.getTargetNode();
+        WorldPipeNode destination = (WorldPipeNode) path.getTargetNode();
         for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
             if (destination == node && capability.getKey() == facing) continue; // anti insert-to-our-source logic
             ILaserRelay laser = capability.getValue()
@@ -91,12 +95,7 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
     }
 
     @Override
-    public Capability<?>[] getCapabilities() {
-        return WorldLaserNet.CAPABILITIES;
-    }
-
-    @Override
-    public <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == GregtechTileCapabilities.CAPABILITY_LASER) {
             return GregtechTileCapabilities.CAPABILITY_LASER.cast(facing == null ? this : wrappers.get(facing));
         }

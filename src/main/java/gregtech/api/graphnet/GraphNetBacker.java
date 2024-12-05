@@ -7,6 +7,12 @@ import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.group.MergeDirection;
 import gregtech.api.graphnet.group.NetGroup;
 
+import gregtech.api.graphnet.net.IGraphNet;
+
+import gregtech.api.graphnet.net.NetNode;
+
+import gregtech.api.graphnet.traverse.iter.EdgeDirection;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -17,6 +23,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * The bridge between JGraphT graphs and graphnet abstractions.
@@ -41,8 +51,9 @@ public final class GraphNetBacker {
 
     public void addNode(NetNode node) {
         GraphVertex vertex = new GraphVertex(node);
+        GraphVertex existing = this.vertexMap.put(node.getEquivalencyData(), vertex);
+        if (existing != null) getGraph().removeVertex(existing);
         getGraph().addVertex(vertex);
-        this.vertexMap.put(node.getEquivalencyData(), vertex);
         backedNet.markDirty();
     }
 
@@ -73,6 +84,7 @@ public final class GraphNetBacker {
     @ApiStatus.Internal
     public void removeVertex(GraphVertex vertex) {
         if (this.getGraph().removeVertex(vertex)) {
+            if (vertex.wrapped == null) return;
             this.vertexMap.remove(vertex.wrapped.getEquivalencyData());
             vertex.wrapped.onRemove();
             backedNet.markDirty();
@@ -86,6 +98,7 @@ public final class GraphNetBacker {
         GraphEdge graphEdge = getGraph().addEdge(source.wrapper, target.wrapper);
         if (graphEdge != null) {
             getGraph().setEdgeWeight(graphEdge, weight);
+            assert graphEdge.wrapped != null;
             NetGroup.mergeEdge(graphEdge.wrapped, direction);
             backedNet.markDirty();
         }
@@ -96,6 +109,12 @@ public final class GraphNetBacker {
     public NetEdge getEdge(@NotNull NetNode source, @NotNull NetNode target) {
         GraphEdge graphEdge = getGraph().getEdge(source.wrapper, target.wrapper);
         return graphEdge == null ? null : graphEdge.wrapped;
+    }
+
+    @NotNull
+    public Iterable<NetEdge> getTouchingEdges(@NotNull NetNode node, @NotNull EdgeDirection direction) {
+        return direction.selectEdges(getGraph(), node.wrapper).stream()
+                .map(GraphEdge::getWrapped).filter(Objects::nonNull)::iterator;
     }
 
     public boolean removeEdge(@NotNull NetNode source, NetNode target) {
@@ -162,7 +181,9 @@ public final class GraphNetBacker {
         Int2ObjectOpenHashMap<GraphVertex> vertexMap = new Int2ObjectOpenHashMap<>(vertexCount);
         for (int i = 0; i < vertexCount; i++) {
             NBTTagCompound tag = vertices.getCompoundTagAt(i);
-            NetNode node = this.backedNet.getNewNode();
+            GraphClassType<?> type = GraphClassRegistry.getTypeNullable(tag.getString("ClassType"));
+            Object o = type == null ? null : type.getNew(backedNet);
+            NetNode node = o instanceof NetNode n ? n : backedNet.getDefaultNodeType().getNew(backedNet);
             node.deserializeNBT(tag);
             if (tag.hasKey("GroupID")) {
                 int id = tag.getInteger("GroupID");
@@ -183,9 +204,13 @@ public final class GraphNetBacker {
         int edgeCount = edges.tagCount();
         for (int i = 0; i < edgeCount; i++) {
             NBTTagCompound tag = edges.getCompoundTagAt(i);
-            GraphEdge graphEdge = this.getGraph().addEdge(vertexMap.get(tag.getInteger("SourceID")),
-                    vertexMap.get(tag.getInteger("TargetID")));
+            GraphClassType<?> type = GraphClassRegistry.getTypeNullable(tag.getString("ClassType"));
+            Object o = type == null ? null : type.getNew(backedNet);
+            GraphEdge graphEdge = new GraphEdge(o instanceof NetEdge e ? e : backedNet.getDefaultEdgeType().getNew(backedNet));
+            this.getGraph().addEdge(vertexMap.get(tag.getInteger("SourceID")),
+                    vertexMap.get(tag.getInteger("TargetID")), graphEdge);
             this.getGraph().setEdgeWeight(graphEdge, tag.getDouble("Weight"));
+            assert graphEdge.wrapped != null;
             graphEdge.wrapped.deserializeNBT(tag);
         }
     }
@@ -201,9 +226,11 @@ public final class GraphNetBacker {
         int g = 0;
         NBTTagList vertices = new NBTTagList();
         for (GraphVertex graphVertex : this.getGraph().vertexSet()) {
+            if (graphVertex.wrapped == null) continue;
             vertexMap.put(graphVertex, i);
             NetGroup group = graphVertex.wrapped.getGroupUnsafe();
             NBTTagCompound tag = graphVertex.wrapped.serializeNBT();
+            tag.setString("ClassType", graphVertex.wrapped.getType().getName());
             if (group != null) {
                 int groupID;
                 if (!groupMap.containsKey(group)) {
@@ -220,10 +247,12 @@ public final class GraphNetBacker {
 
         NBTTagList edges = new NBTTagList();
         for (GraphEdge graphEdge : this.getGraph().edgeSet()) {
+            if (graphEdge.wrapped == null) continue;
             NBTTagCompound tag = graphEdge.wrapped.serializeNBT();
             tag.setInteger("SourceID", vertexMap.getInt(graphEdge.getSource()));
             tag.setInteger("TargetID", vertexMap.getInt(graphEdge.getTarget()));
             tag.setDouble("Weight", graphEdge.getWeight());
+            tag.setString("ClassType", graphEdge.wrapped.getType().getName());
             edges.appendTag(tag);
         }
         compound.setTag("Edges", edges);

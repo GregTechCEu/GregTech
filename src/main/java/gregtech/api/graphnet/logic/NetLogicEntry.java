@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.logic;
 
 import gregtech.api.graphnet.MultiNodeHelper;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.network.IPacket;
 

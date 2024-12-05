@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.path;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
@@ -29,22 +29,22 @@ public class SingletonNetPath implements NetPath {
     }
 
     @Override
-    public @NotNull @Unmodifiable <N extends NetNode> ImmutableCollection<N> getOrderedNodes() {
-        return (ImmutableCollection<N>) singleton;
+    public @NotNull @Unmodifiable ImmutableCollection<NetNode> getOrderedNodes() {
+        return singleton;
     }
 
     @Override
-    public <N extends NetNode> @NotNull N getSourceNode() {
-        return (N) node;
+    public @NotNull NetNode getSourceNode() {
+        return node;
     }
 
     @Override
-    public <N extends NetNode> @NotNull N getTargetNode() {
-        return (N) node;
+    public @NotNull NetNode getTargetNode() {
+        return node;
     }
 
     @Override
-    public @NotNull @Unmodifiable <E extends NetEdge> ImmutableCollection<E> getOrderedEdges() {
+    public @NotNull @Unmodifiable ImmutableCollection<NetEdge> getOrderedEdges() {
         return ImmutableSet.of();
     }
 

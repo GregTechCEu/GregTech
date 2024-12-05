@@ -4,12 +4,13 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.data.query.DataAccessFormat;
 import gregtech.api.capability.data.query.DataQueryObject;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.path.SingletonNetPath;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.common.pipelike.net.SlowActiveWalker;
 
@@ -24,13 +25,15 @@ import java.util.Set;
 
 public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess {
 
-    private final WorldPipeNetNode node;
+    public static final int ACTIVE_KEY = 122;
+
+    private final WorldPipeNode node;
 
     private @Nullable PipeTileEntity tile;
 
     private final EnumMap<EnumFacing, Wrapper> wrappers = new EnumMap<>(EnumFacing.class);
 
-    public DataCapabilityObject(@NotNull WorldPipeNetNode node) {
+    public DataCapabilityObject(@NotNull WorldPipeNode node) {
         this.node = node;
         for (EnumFacing facing : EnumFacing.VALUES) {
             wrappers.put(facing, new Wrapper(facing));
@@ -38,7 +41,7 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
     }
 
     @Override
-    public void setTile(@Nullable PipeTileEntity tile) {
+    public void init(@NotNull PipeTileEntity tile, @NotNull PipeCapabilityWrapper wrapper) {
         this.tile = tile;
     }
 
@@ -54,7 +57,7 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
         if (node.getGroupUnsafe() == null || node.getGroupSafe().getNodes().size() == 1)
             path = new SingletonNetPath(node);
         else if (node.getGroupSafe().getData() instanceof PathCacheGroupData cache) {
-            Set<NetNode> actives = node.getGroupSafe().getActiveNodes();
+            Set<NetNode> actives = node.getGroupSafe().getNodesUnderKey(ACTIVE_KEY);
             if (actives.size() > 2) return false; // single-destination contract violated
             var iter = actives.iterator();
             NetNode target = iter.next();
@@ -62,11 +65,12 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
                 if (!iter.hasNext()) return false; // no destinations
                 target = iter.next();
             }
+            if (!(target instanceof WorldPipeNode)) return false; // useless target
             path = cache.getOrCreate(node).getOrCompute(target);
             if (path == null) return false; // no path
         } else return false; // no cache to lookup with
 
-        WorldPipeNetNode destination = path.getTargetNode();
+        WorldPipeNode destination = (WorldPipeNode) path.getTargetNode();
         for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
             if (destination == node && capability.getKey() == facing) continue; // anti insert-to-our-source logic
             IDataAccess access = capability.getValue()
@@ -93,12 +97,7 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
     }
 
     @Override
-    public Capability<?>[] getCapabilities() {
-        return WorldOpticalNet.CAPABILITIES;
-    }
-
-    @Override
-    public <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == GregtechTileCapabilities.CAPABILITY_DATA_ACCESS) {
             return GregtechTileCapabilities.CAPABILITY_DATA_ACCESS.cast(facing == null ? this : wrappers.get(facing));
         }

@@ -64,14 +64,14 @@ public class NodeLossCache implements Task {
         return true;
     }
 
-    public static Key key(WorldPipeNetNode node, IPredicateTestObject testObject) {
+    public static Key key(WorldPipeNode node, IPredicateTestObject testObject) {
         return new Key(node, testObject);
     }
 
-    public static Key key(WorldPipeNetNode node, ITraverseData<?, ?> data) {
+    public static Key key(WorldPipeNode node, ITraverseData<?, ?> data) {
         return new Key(node, data.getTestObject());
     }
 
     @Desugar
-    public record Key(WorldPipeNetNode node, IPredicateTestObject testObject) {}
+    public record Key(WorldPipeNode node, IPredicateTestObject testObject) {}
 }

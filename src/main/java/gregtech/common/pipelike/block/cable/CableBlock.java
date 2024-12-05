@@ -2,7 +2,7 @@ package gregtech.common.pipelike.block.cable;
 
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeMaterialTileEntity;
@@ -98,7 +98,7 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
         if (worldIn.isRemote || getStructure().isInsulated() || !(entityIn instanceof EntityLivingBase living)) return;
         PipeTileEntity tile = getTileEntity(worldIn, pos);
         if (tile != null && tile.getFrameMaterial() == null && tile.getOffsetTimer() % 10 == 0) {
-            WorldPipeNetNode node = WorldEnergyNet.getWorldNet(worldIn).getNode(pos);
+            WorldPipeNode node = WorldEnergyNet.getWorldNet(worldIn).getNode(pos);
             if (node != null) {
                 if (node.getData().getLogicEntryNullable(SuperconductorLogic.TYPE) != null) return;
                 EnergyFlowLogic logic = node.getData().getLogicEntryNullable(EnergyFlowLogic.TYPE);

@@ -1,5 +1,6 @@
-package gregtech.api.graphnet;
+package gregtech.api.graphnet.net;
 
+import gregtech.api.graphnet.GraphClassType;
 import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.logic.NetLogicData;
@@ -22,7 +23,7 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     @ApiStatus.Internal
     public GraphVertex wrapper;
 
-    private boolean isActive = false;
+    protected int sortingKey = 0;
 
     private final @NotNull IGraphNet net;
     private final @NotNull NetLogicData data;
@@ -38,20 +39,20 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     }
 
     /**
-     * Determines whether the node should be treated as a valid destination of pathing algorithms
+     * Sorts nodes into distinct groups in NetGroups for later use.
      */
-    public boolean isActive() {
-        return isActive;
+    public int getSortingKey() {
+        return sortingKey;
     }
 
     /**
-     * Sets whether the node should be treated as a valid destination of pathing algorithms
+     * Sets the distinct group in a NetGroup this node will be sorted into.
      */
-    public void setActive(boolean active) {
-        if (isActive != active) {
-            isActive = active;
+    public void setSortingKey(int key) {
+        if (key != sortingKey) {
             NetGroup group = getGroupUnsafe();
-            if (group != null) group.notifyActiveChange(this, active);
+            if (group != null) group.notifySortingChange(this, sortingKey, key);
+            sortingKey = key;
         }
     }
 
@@ -91,13 +92,13 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setTag("Data", this.data.serializeNBT());
-        tag.setBoolean("IsActive", this.isActive());
+        tag.setInteger("SortingKey", sortingKey);
         return tag;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        this.isActive = nbt.getBoolean("IsActive");
+        this.sortingKey = nbt.getInteger("SortingKey");
         this.data.clearData();
         this.data.deserializeNBT((NBTTagList) nbt.getTag("Data"));
     }
@@ -108,7 +109,9 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
      * 
      * @return equivalency data. Needs to work with {@link Objects#equals(Object, Object)}
      */
-    public abstract Object getEquivalencyData();
+    public abstract @NotNull Object getEquivalencyData();
+
+    public abstract @NotNull GraphClassType<? extends NetNode> getType();
 
     @Override
     public boolean equals(Object o) {

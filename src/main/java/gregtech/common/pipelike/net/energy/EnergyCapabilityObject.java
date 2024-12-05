@@ -2,12 +2,13 @@ package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.group.PathCacheGroupData;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.GTLog;
 
@@ -23,13 +24,15 @@ import java.util.List;
 
 public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyContainer {
 
+    public static final int ACTIVE_KEY = 122;
+
     private @Nullable PipeTileEntity tile;
 
-    private final @NotNull WorldPipeNetNode node;
+    private final @NotNull WorldPipeNode node;
 
     private boolean transferring = false;
 
-    public EnergyCapabilityObject(@NotNull WorldPipeNetNode node) {
+    public EnergyCapabilityObject(@NotNull WorldPipeNode node) {
         this.node = node;
     }
 
@@ -48,8 +51,8 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         this.transferring = true;
 
         PathCacheGroupData.SecondaryCache cache = data.getOrCreate(node);
-        List<EnergyPath> paths = new ObjectArrayList<>(group.getActiveNodes().size());
-        for (NetNode dest : group.getActiveNodes()) {
+        List<EnergyPath> paths = new ObjectArrayList<>(group.getNodesUnderKey(ACTIVE_KEY).size());
+        for (NetNode dest : group.getNodesUnderKey(ACTIVE_KEY)) {
             EnergyPath path = (EnergyPath) cache.getOrCompute(dest);
             if (path == null) continue;
             // construct the path list in order of ascending weight
@@ -108,17 +111,12 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
     }
 
     @Override
-    public void setTile(@Nullable PipeTileEntity tile) {
+    public void init(@NotNull PipeTileEntity tile, @NotNull PipeCapabilityWrapper wrapper) {
         this.tile = tile;
     }
 
     @Override
-    public Capability<?>[] getCapabilities() {
-        return WorldEnergyNet.CAPABILITIES;
-    }
-
-    @Override
-    public <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
         }

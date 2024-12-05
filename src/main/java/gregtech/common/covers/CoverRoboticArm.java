@@ -3,9 +3,9 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.mui.GTGuiTextures;
@@ -14,10 +14,10 @@ import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.ItemFilterContainer;
-import gregtech.common.pipelike.net.item.IItemTransferController;
-import gregtech.common.pipelike.net.item.ItemEQTraverseData;
-import gregtech.common.pipelike.net.item.ItemRRTraverseData;
-import gregtech.common.pipelike.net.item.ItemTraverseData;
+import gregtech.common.pipelike.net.itemold.IItemTransferController;
+import gregtech.common.pipelike.net.itemold.ItemEQTraverseData;
+import gregtech.common.pipelike.net.itemold.ItemRRTraverseData;
+import gregtech.common.pipelike.net.itemold.ItemTraverseData;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -306,7 +306,7 @@ public class CoverRoboticArm extends CoverConveyor {
         }
 
         @Override
-        public long finalizeAtDestination(@NotNull WorldPipeNetNode destination, long flowReachingDestination) {
+        public long finalizeAtDestination(@NotNull WorldPipeNode destination, long flowReachingDestination) {
             long availableFlow = flowReachingDestination;
             for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
                 if (GTUtility.arePosEqual(destination.getEquivalencyData(), sourcePos) &&
@@ -338,7 +338,7 @@ public class CoverRoboticArm extends CoverConveyor {
         }
 
         @Override
-        protected void compute(@NotNull WorldPipeNetNode destination) {
+        protected void compute(@NotNull WorldPipeNode destination) {
             this.destCount = 0;
             this.maxMinFlow = 0;
             for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
@@ -366,7 +366,7 @@ public class CoverRoboticArm extends CoverConveyor {
         }
 
         @Override
-        public long finalizeAtDestination(@NotNull WorldPipeNetNode node, long flowReachingNode,
+        public long finalizeAtDestination(@NotNull WorldPipeNode node, long flowReachingNode,
                                           int expectedDestinations) {
             long availableFlow = flowReachingNode;
             long flowPerDestination = flowReachingNode / expectedDestinations;
@@ -403,7 +403,7 @@ public class CoverRoboticArm extends CoverConveyor {
 
         @Override
         public long finalizeAtDestination(@NotNull SimpleTileRoundRobinData<IItemHandler> data,
-                                          @NotNull WorldPipeNetNode destination,
+                                          @NotNull WorldPipeNode destination,
                                           long flowReachingDestination) {
             long availableFlow = flowReachingDestination;
             EnumFacing pointerFacing = data.getPointerFacing(getSimulatorKey());

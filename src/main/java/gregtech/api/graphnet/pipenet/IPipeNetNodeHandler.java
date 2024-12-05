@@ -16,10 +16,10 @@ import java.util.List;
 public interface IPipeNetNodeHandler {
 
     @NotNull
-    Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos, IPipeStructure structure);
+    Collection<WorldPipeNode> getOrCreateFromNets(World world, BlockPos pos, IPipeStructure structure);
 
     @NotNull
-    Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure);
+    Collection<WorldPipeNode> getFromNets(World world, BlockPos pos, IPipeStructure structure);
 
     void removeFromNets(World world, BlockPos pos, IPipeStructure structure);
 
@@ -30,13 +30,13 @@ public interface IPipeNetNodeHandler {
     IPipeNetNodeHandler EMPTY = new IPipeNetNodeHandler() {
 
         @Override
-        public @NotNull Collection<WorldPipeNetNode> getOrCreateFromNets(World world, BlockPos pos,
-                                                                         IPipeStructure structure) {
+        public @NotNull Collection<WorldPipeNode> getOrCreateFromNets(World world, BlockPos pos,
+                                                                      IPipeStructure structure) {
             return Collections.emptyList();
         }
 
         @Override
-        public @NotNull Collection<WorldPipeNetNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
+        public @NotNull Collection<WorldPipeNode> getFromNets(World world, BlockPos pos, IPipeStructure structure) {
             return Collections.emptyList();
         }
 

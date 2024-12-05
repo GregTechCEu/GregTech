@@ -1,21 +1,29 @@
 package gregtech.api.graphnet.pipenet;
 
 import gregtech.api.cover.Cover;
-import gregtech.api.graphnet.IGraphNet;
+import gregtech.api.cover.CoverableView;
+import gregtech.api.graphnet.GraphClassType;
+import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.MultiNodeHelper;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
+import gregtech.api.graphnet.net.WorldSavedNet;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.predicate.NetPredicateType;
-import gregtech.api.graphnet.worldnet.WorldPosNet;
+import gregtech.api.graphnet.traverse.iter.EdgeDirection;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.reference.WeakHashSet;
 import gregtech.common.covers.CoverShutter;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -30,17 +38,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public abstract class WorldPipeNet extends WorldPosNet {
+public abstract class WorldPipeNet extends WorldSavedNet {
 
     public static final int MULTI_NET_TIMEOUT = 10;
 
     private static final Int2ObjectOpenHashMap<Set<WorldPipeNet>> dimensionNets = new Int2ObjectOpenHashMap<>();
+
+    private World world;
+    private int fallbackDimensionID;
 
     public WorldPipeNet(String name, Function<IGraphNet, INetGraph> graphBuilder) {
         super(name, graphBuilder);
@@ -50,10 +62,9 @@ public abstract class WorldPipeNet extends WorldPosNet {
         super(name, directed);
     }
 
-    @Override
     public void setWorld(World world) {
         if (getWorld() == world) return;
-        super.setWorld(world);
+        this.world = world;
         dimensionNets.compute(getDimension(), (k, v) -> {
             if (v == null) v = new WeakHashSet<>();
             v.add(this);
@@ -61,28 +72,52 @@ public abstract class WorldPipeNet extends WorldPosNet {
         });
     }
 
-    public final void updatePredication(@NotNull WorldPipeNetNode node, @NotNull PipeTileEntity tile) {
-        if (supportsPredication()) updatePredicationInternal(node, tile);
+    public World getWorld() {
+        return world;
+    }
+
+    protected int getDimension() {
+        if (world == null) return fallbackDimensionID;
+        else return world.provider.getDimension();
+    }
+
+    @Override
+    public void readFromNBT(@NotNull NBTTagCompound nbt) {
+        fallbackDimensionID = nbt.getInteger("Dimension");
+        super.readFromNBT(nbt);
+    }
+
+    @Override
+    public @NotNull NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound) {
+        compound.setInteger("Dimension", getDimension());
+        return super.writeToNBT(compound);
     }
 
     /**
      * Called when a PipeTileEntity is marked dirty through {@link IDirtyNotifiable#markAsDirty()}, which is generally
      * when the state of its covers is changed.
-     * 
+     *
      * @param tile the tile marked dirty.
      * @param node the associated node.
      */
-    protected void updatePredicationInternal(@NotNull WorldPipeNetNode node, @NotNull PipeTileEntity tile) {
+    public void updatePredication(@NotNull WorldPipeNode node, @NotNull PipeTileEntity tile) {
         boolean dirty = false;
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            PipeTileEntity neighbor = tile.getPipeNeighbor(facing, false);
+        for (NetEdge edge : getBacker().getTouchingEdges(node, EdgeDirection.ALL)) {
+            NetNode neighbor = edge.getOppositeNode(node);
             if (neighbor == null) continue;
-            WorldPipeNetNode neighborNode = this.getNode(neighbor.getPos());
-            if (neighborNode == null) continue;
-            NetEdge edge = getEdge(node, neighborNode);
-            if (edge == null) continue;
-            dirty |= predicateEdge(edge, node, tile.getCoverHolder().getCoverAtSide(facing), neighborNode,
-                    neighbor.getCoverHolder().getCoverAtSide(facing.getOpposite()));
+            Cover cNode = null;
+            Cover cNeighbor = null;
+            if (neighbor instanceof NodeWithFacingToOthers n) {
+                EnumFacing facing = n.getFacingToOther(node);
+                if (facing != null) {
+                    cNode = node.getTileEntity().getCoverHolder().getCoverAtSide(facing.getOpposite());
+                    CoverableView view;
+                    if (neighbor instanceof NodeWithCovers c && (view = c.getCoverableView()) != null) {
+                        cNeighbor = view.getCoverAtSide(facing);
+                    }
+                }
+            }
+            dirty |= predicateEdge(edge, node, cNode, neighbor, cNeighbor);
         }
         if (dirty) markDirty();
     }
@@ -97,9 +132,9 @@ public abstract class WorldPipeNet extends WorldPosNet {
      * @param coverTarget the cover on the target facing the source.
      * @return whether the predication state has changed and this net needs to be marked dirty.
      */
-    protected boolean predicateEdge(@NotNull NetEdge edge, @NotNull WorldPipeNetNode source,
+    protected boolean predicateEdge(@NotNull NetEdge edge, @NotNull NetNode source,
                                     @Nullable Cover coverSource,
-                                    @NotNull WorldPipeNetNode target, @Nullable Cover coverTarget) {
+                                    @NotNull NetNode target, @Nullable Cover coverTarget) {
         Map<NetPredicateType<?>, EdgePredicate<?, ?>> prevValue = new Object2ObjectOpenHashMap<>(
                 edge.getPredicateHandler().getPredicateSet());
         edge.getPredicateHandler().clearPredicates();
@@ -137,18 +172,23 @@ public abstract class WorldPipeNet extends WorldPosNet {
         }
     }
 
-    public abstract Capability<?>[] getTargetCapabilities();
-
-    public abstract IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node);
-
-    @Override
-    public @NotNull WorldPipeNetNode getOrCreateNode(@NotNull BlockPos pos) {
-        return (WorldPipeNetNode) super.getOrCreateNode(pos);
+    public Capability<?>[] getTargetCapabilities() {
+        return null;
     }
 
+    public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNode node) {
+        return null;
+    }
+
+    public abstract PipeCapabilityWrapper buildCapabilityWrapper(@NotNull PipeTileEntity owner, @NotNull WorldPipeNode node);
+
     @Override
-    public @Nullable WorldPipeNetNode getNode(@NotNull BlockPos equivalencyData) {
-        return (WorldPipeNetNode) getNode((Object) equivalencyData);
+    public @NotNull GraphClassType<? extends NetNode> getDefaultNodeType() {
+        return WorldPipeNode.TYPE;
+    }
+
+    public @Nullable WorldPipeNode getNode(@NotNull BlockPos equivalencyData) {
+        return (WorldPipeNode) getNode((Object) equivalencyData);
     }
 
     protected Stream<@NotNull WorldPipeNet> sameDimensionNetsStream() {
@@ -156,7 +196,7 @@ public abstract class WorldPipeNet extends WorldPosNet {
                 .filter(Objects::nonNull);
     }
 
-    public void synchronizeNode(WorldPipeNetNode node) {
+    public void synchronizeNode(WorldPipeNode node) {
         // basically, if another net has a node in the exact same position, then we know it's the same block.
         // thus, we set up a multi net node handler for the node in order to manage the overlap
         // this is disk-load safe, since this method is called during nbt deserialization.
@@ -195,32 +235,22 @@ public abstract class WorldPipeNet extends WorldPosNet {
      */
     public abstract int getNetworkID();
 
-    @Override
-    public final Class<? extends NetNode> getNodeClass() {
-        return WorldPipeNetNode.class;
-    }
-
-    @Override
-    public final @NotNull WorldPipeNetNode getNewNode() {
-        return new WorldPipeNetNode(this);
-    }
-
     @Contract(value = " -> new", pure = true)
-    public static <T> @NotNull Object2ObjectOpenCustomHashMap<WorldPipeNetNode, T> getSensitiveHashMap() {
+    public static <T> @NotNull Object2ObjectOpenCustomHashMap<NetNode, T> getSensitiveHashMap() {
         return new Object2ObjectOpenCustomHashMap<>(SensitiveStrategy.INSTANCE);
     }
 
-    protected static class SensitiveStrategy implements Hash.Strategy<WorldPipeNetNode> {
+    protected static class SensitiveStrategy implements Hash.Strategy<NetNode> {
 
         public static final SensitiveStrategy INSTANCE = new SensitiveStrategy();
 
         @Override
-        public int hashCode(WorldPipeNetNode o) {
+        public int hashCode(NetNode o) {
             return Objects.hash(o, o.getNet());
         }
 
         @Override
-        public boolean equals(WorldPipeNetNode a, WorldPipeNetNode b) {
+        public boolean equals(NetNode a, NetNode b) {
             return a.equals(b) && a.getNet().equals(b.getNet());
         }
     }

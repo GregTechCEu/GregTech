@@ -1,26 +1,24 @@
-package gregtech.api.graphnet.worldnet;
+package gregtech.api.graphnet.net;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.GTValues;
+import gregtech.api.graphnet.GraphClassType;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 
-public class WorldPosNetNode extends NetNode {
+public class BlockPosNode extends NetNode {
+
+    public static final GraphClassType<BlockPosNode> TYPE = new GraphClassType<>(GTValues.MODID, "BlockPosNode", BlockPosNode::new);
 
     private BlockPos pos;
 
-    public WorldPosNetNode(WorldPosNet net) {
+    public BlockPosNode(IGraphNet net) {
         super(net);
     }
 
-    @Override
-    public @NotNull WorldPosNet getNet() {
-        return (WorldPosNet) super.getNet();
-    }
-
-    public WorldPosNetNode setPos(BlockPos pos) {
+    public BlockPosNode setPos(BlockPos pos) {
         this.pos = pos;
         return this;
     }
@@ -39,7 +37,12 @@ public class WorldPosNetNode extends NetNode {
     }
 
     @Override
-    public BlockPos getEquivalencyData() {
+    public @NotNull BlockPos getEquivalencyData() {
         return pos;
+    }
+
+    @Override
+    public @NotNull GraphClassType<? extends BlockPosNode> getType() {
+        return TYPE;
     }
 }

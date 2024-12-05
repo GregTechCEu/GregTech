@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.traverseold;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.path.NetPath;
@@ -51,8 +51,8 @@ public final class TraverseHelpers {
             P path = paths.next();
             if (data.prepareForPathWalk(path, pathFlow)) continue;
 
-            List<N> nodes = path.getOrderedNodes();
-            List<E> edges = path.getOrderedEdges();
+            List<N> nodes = path.getOrderedNodes().asList();
+            List<E> edges = path.getOrderedEdges().asList();
             assert nodes.size() == edges.size() + 1;
 
             FlowConsumptionStack stack = new FlowConsumptionStack(data.traverseToNode(nodes.get(0), pathFlow));

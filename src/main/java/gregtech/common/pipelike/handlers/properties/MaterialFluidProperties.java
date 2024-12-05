@@ -4,12 +4,12 @@ import gregtech.api.capability.IPropertyFluidFilter;
 import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLossFunction;
 import gregtech.api.graphnet.pipenet.physical.IPipeMaterialStructure;
@@ -167,9 +167,9 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
 
     @Override
     @Nullable
-    public WorldPipeNetNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
+    public WorldPipeNode getOrCreateFromNet(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof MaterialPipeStructure) {
-            WorldPipeNetNode node = WorldFluidNet.getWorldNet(world).getOrCreateNode(pos);
+            WorldPipeNode node = WorldFluidNet.getWorldNet(world).getOrCreateNode(pos);
             mutateData(node.getData(), structure);
             return node;
         }
@@ -210,7 +210,7 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
     }
 
     @Override
-    public @Nullable WorldPipeNetNode getFromNet(World world, BlockPos pos, IPipeStructure structure) {
+    public @Nullable WorldPipeNode getFromNet(World world, BlockPos pos, IPipeStructure structure) {
         if (structure instanceof MaterialPipeStructure)
             return WorldFluidNet.getWorldNet(world).getNode(pos);
         else return null;

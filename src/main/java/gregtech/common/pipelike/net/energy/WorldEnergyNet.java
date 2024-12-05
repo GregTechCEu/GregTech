@@ -1,12 +1,15 @@
 package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -36,23 +39,10 @@ public final class WorldEnergyNet extends WorldPipeNet {
     }
 
     @Override
-    public boolean usesDynamicWeights(int algorithmID) {
-        return true;
-    }
-
-    @Override
-    public Capability<?>[] getTargetCapabilities() {
-        return CAPABILITIES;
-    }
-
-    @Override
-    public IPipeCapabilityObject[] getNewCapabilityObjects(WorldPipeNetNode node) {
-        return new IPipeCapabilityObject[] { new EnergyCapabilityObject(node) };
-    }
-
-    @Override
-    public @NotNull NetFlowEdge getNewEdge() {
-        return new NetFlowEdge(1);
+    public PipeCapabilityWrapper buildCapabilityWrapper(@NotNull PipeTileEntity owner, @NotNull WorldPipeNode node) {
+        Object2ObjectOpenHashMap<Capability<?>, IPipeCapabilityObject> map = new Object2ObjectOpenHashMap<>();
+        map.put(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, new EnergyCapabilityObject(node));
+        return new PipeCapabilityWrapper(owner, node, map, 0, EnergyCapabilityObject.ACTIVE_KEY);
     }
 
     @Override

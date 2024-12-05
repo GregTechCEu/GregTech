@@ -1,17 +1,22 @@
 package gregtech.common.pipelike.net.item;
 
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
+import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.pipenet.WorldPipeNet;
-import gregtech.api.graphnet.pipenet.WorldPipeNetNode;
+import gregtech.api.graphnet.net.NetNode;
+import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
+import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverseold.ITraverseData;
-import gregtech.api.graphnet.traverseold.TraverseDataProvider;
-import gregtech.api.graphnet.traverseold.TraverseGuide;
-import gregtech.api.graphnet.traverseold.TraverseHelpers;
+import gregtech.api.graphnet.traverse.FDTraverse;
+
+import gregtech.api.util.GTUtility;
+
+import gregtech.common.pipelike.net.fluid.FluidFlowLogic;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -24,116 +29,143 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.function.LongConsumer;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler, IItemTraverseGuideProvider {
+public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler {
 
-    private final WorldPipeNet net;
-    private @Nullable PipeTileEntity tile;
+    private PipeTileEntity tile;
+    private NodeManagingPCW capabilityWrapper;
 
     private final EnumMap<EnumFacing, Wrapper> wrappers = new EnumMap<>(EnumFacing.class);
-    private final WorldPipeNetNode node;
+    private final WorldPipeNode node;
 
     private boolean transferring = false;
 
-    public <N extends WorldPipeNet & FlowWorldPipeNetPath.Provider> ItemCapabilityObject(@NotNull N net,
-                                                                                         WorldPipeNetNode node) {
-        this.net = net;
+    public ItemCapabilityObject(WorldPipeNode node) {
         this.node = node;
         for (EnumFacing facing : EnumFacing.VALUES) {
-            AbstractNetFlowEdge edge = (AbstractNetFlowEdge) net.getNewEdge();
-            edge.setData(NetLogicData.union(node.getData(), (NetLogicData) null));
-            wrappers.put(facing, new Wrapper(facing, edge));
+            wrappers.put(facing, new Wrapper(facing));
         }
     }
 
-    private FlowWorldPipeNetPath.Provider getProvider() {
-        return (FlowWorldPipeNetPath.Provider) net;
+    @Override
+    public void init(@NotNull PipeTileEntity tile, @NotNull PipeCapabilityWrapper wrapper) {
+        this.tile = tile;
+        if (!(wrapper instanceof NodeManagingPCW p))
+            throw new IllegalArgumentException("ItemCapabilityObjects must be initialized to NodeManagingPCWs!");
+        this.capabilityWrapper = p;
     }
 
     private boolean inputDisallowed(EnumFacing side) {
         if (side == null) return false;
-        if (tile == null) return true;
         else return tile.isBlocked(side);
     }
 
-    private Iterator<FlowWorldPipeNetPath> getPaths(@NotNull ITraverseData<?, ?> data) {
-        assert tile != null;
-        return getProvider().getPaths(net.getNode(tile.getPos()), data.getTestObject(), data.getSimulatorKey(),
-                data.getQueryTick());
-    }
-
     @Override
-    public void setTile(@Nullable PipeTileEntity tile) {
-        this.tile = tile;
-    }
-
-    @Override
-    public Capability<?>[] getCapabilities() {
-        return WorldItemNet.CAPABILITIES;
-    }
-
-    @Override
-    public <T> T getCapabilityForSide(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(facing == null ? this : wrappers.get(facing));
         }
         return null;
     }
 
-    public @NotNull ItemStack insertItem(@NotNull ItemStack stack, boolean simulate, EnumFacing side) {
-        if (this.transferring) return stack;
+    protected @Nullable NetNode getRelevantNode(EnumFacing facing) {
+        return facing == null ? node : capabilityWrapper.getNodeForFacing(facing);
+    }
+
+    protected @NotNull ItemStack insertItem(@NotNull ItemStack stack, boolean simulate, EnumFacing side) {
+        if (this.transferring || inputDisallowed(side)) return stack;
+        NetNode node = getRelevantNode(side);
+        if (node == null) return stack;
         this.transferring = true;
 
-        var guide = getGuide(ItemTraverseData::new, new ItemTestObject(stack), stack.getCount(), simulate, side);
-        if (guide == null) return stack;
-        int consumed = (int) TraverseHelpers.traverseFlood(guide.getData(), guide.getPaths(), guide.getFlow());
-        guide.reportConsumedFlow(consumed);
+        int flow = stack.getCount();
+        long queryTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        SimulatorKey key = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
+        ItemTestObject testObject = new ItemTestObject(stack);
+        AtomicInteger report = new AtomicInteger();
+        FDTraverse.flood(node.getNet(),
+                (n, f) -> {
+                    if (n == node) report.addAndGet(f);
+                    else if (!simulate) reportFlow(n, f, testObject);
+                },
+                (e, f) -> reportFlow(e, f, testObject, key, true),
+                e -> e instanceof AbstractNetFlowEdge n ?
+                        GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, node.getNet(), queryTick, key)) : 0,
+                n -> n == node ? flow : getSupply(n, testObject, false), null);
 
         this.transferring = false;
-        return guide.getData().getTestObject().recombine(stack.getCount() - consumed);
+        return testObject.recombine(stack.getCount() - report.get());
     }
 
-    @Nullable
-    @Override
-    public <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                                                                                                                                               TraverseDataProvider<D, ItemTestObject> provider,
-                                                                                                                                               ItemTestObject testObject,
-                                                                                                                                               long flow,
-                                                                                                                                               boolean simulate) {
-        return getGuide(provider, testObject, flow, simulate, null);
+    protected @NotNull ItemStack extractItem(int slot, int amount, boolean simulate, EnumFacing side) {
+        // TODO expose connected itemnet through capability & allow extraction
+        return ItemStack.EMPTY;
     }
 
-    @Nullable
-    protected <
-            D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                                                                                                                                               TraverseDataProvider<D, ItemTestObject> provider,
-                                                                                                                                               ItemTestObject testObject,
-                                                                                                                                               long flow,
-                                                                                                                                               boolean simulate,
-                                                                                                                                               EnumFacing side) {
-        if (tile == null || inputDisallowed(side)) return null;
+    protected void reportFlow(NetEdge edge, int flow, ItemTestObject testObject, SimulatorKey key, boolean sourceBias) {
+        if (edge instanceof AbstractNetFlowEdge n)
+            n.consumeFlowLimit(testObject, node.getNet(), flow, getQueryTick(), key);
+        if (key == null) {
+            NetNode node = sourceBias ? edge.getSource() : edge.getTarget();
+            if (node == null) return;
+            ItemFlowLogic logic = node.getData().getLogicEntryNullable(ItemFlowLogic.TYPE);
+            if (logic == null) {
+                logic = ItemFlowLogic.TYPE.getNew();
+                node.getData().setLogicEntry(logic);
+            }
+            logic.recordFlow(getQueryTick(), testObject.recombine(flow));
+        }
+    }
 
-        SimulatorKey simulator = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
-        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-        D data = provider.of(net, testObject, simulator, tick, tile.getPos(), side);
-
-        LongConsumer flowReport = null;
-        Wrapper wrapper = this.wrappers.get(side);
-        if (wrapper != null) {
-            AbstractNetFlowEdge internalBuffer = wrapper.getBuffer();
-            if (internalBuffer != null) {
-                long limit = internalBuffer.getFlowLimit(testObject, net, tick, simulator);
-                if (limit <= 0) {
-                    this.transferring = false;
-                    return null;
+    protected void reportFlow(NetNode node, int flow, ItemTestObject testObject) {
+        if (flow == 0) return;
+        if (node instanceof NodeExposingCapabilities exposer) {
+            IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, exposer.exposedFacing());
+            if (handler != null) {
+                // positive flow is supply, aka we pulled flow from this node
+                if (flow > 0) {
+                    for (int i = 0; i < handler.getSlots(); i++) {
+                        ItemStack stack = handler.extractItem(i, flow, true);
+                        if (testObject.test(stack)) {
+                            stack = handler.extractItem(i, flow, false);
+                            flow -= stack.getCount();
+                        }
+                        if (flow == 0) return;
+                    }
+                } else {
+                    for (int i = 0; i < handler.getSlots() ; i++) {
+                        ItemStack stack = testObject.recombineSafe(flow);
+                        flow -= stack.getCount() - handler.insertItem(i, stack, false).getCount();
+                        if (flow == 0) return;
+                    }
                 }
-                flow = Math.min(limit, flow);
-                flowReport = l -> data.consumeFlowLimit(internalBuffer, node, l);
             }
         }
-        return new TraverseGuide<>(data, () -> getPaths(data), flow, flowReport);
+    }
+
+    protected int getSupply(NetNode node, ItemTestObject testObject, boolean supply) {
+        if (node instanceof NodeExposingCapabilities exposer) {
+            IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, exposer.exposedFacing());
+            if (handler != null) {
+                if (supply) {
+                    int sum = 0;
+                    for (int i = 0; i < handler.getSlots() ; i++) {
+                        ItemStack stack = handler.extractItem(i, Integer.MAX_VALUE, true);
+                        if (testObject.test(stack)) sum += stack.getCount();
+                    }
+                    return sum;
+                } else {
+                    int sum = 0;
+                    for (int i = 0; i < handler.getSlots() ; i++) {
+                        ItemStack stack = testObject.recombineSafe(Integer.MAX_VALUE);
+                        sum += stack.getCount() - handler.insertItem(i, stack, true).getCount();
+                    }
+                    return sum;
+                }
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -153,7 +185,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     @Override
     public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-        return ItemStack.EMPTY;
+        return extractItem(slot, amount, simulate, null);
     }
 
     @Override
@@ -161,28 +193,12 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         return 64;
     }
 
-    protected class Wrapper implements IItemHandler, IItemTraverseGuideProvider {
+    protected class Wrapper implements IItemHandler {
 
         private final EnumFacing facing;
-        private final AbstractNetFlowEdge buffer;
 
-        public Wrapper(EnumFacing facing, AbstractNetFlowEdge buffer) {
+        public Wrapper(EnumFacing facing) {
             this.facing = facing;
-            this.buffer = buffer;
-        }
-
-        @Nullable
-        @Override
-        public <D extends ITraverseData<WorldPipeNetNode, FlowWorldPipeNetPath>> TraverseGuide<WorldPipeNetNode, FlowWorldPipeNetPath, D> getGuide(
-                                                                                                                                                   TraverseDataProvider<D, ItemTestObject> provider,
-                                                                                                                                                   ItemTestObject testObject,
-                                                                                                                                                   long flow,
-                                                                                                                                                   boolean simulate) {
-            return ItemCapabilityObject.this.getGuide(provider, testObject, flow, simulate, facing);
-        }
-
-        public AbstractNetFlowEdge getBuffer() {
-            return buffer;
         }
 
         @Override
@@ -202,7 +218,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
         @Override
         public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return ItemStack.EMPTY;
+            return ItemCapabilityObject.this.extractItem(slot, amount, simulate, facing);
         }
 
         @Override

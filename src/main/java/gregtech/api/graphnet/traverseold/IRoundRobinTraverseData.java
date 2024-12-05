@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.traverseold;
 
-import gregtech.api.graphnet.NetNode;
+import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.NetPath;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
