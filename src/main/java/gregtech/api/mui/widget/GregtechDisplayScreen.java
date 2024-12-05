@@ -20,6 +20,7 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
@@ -81,17 +82,17 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
 
     @Override
     public void draw(GuiContext context, WidgetTheme widgetTheme) {
-        drawKeys();
-    }
-
-    private void drawKeys() {
         // draw the keys
         int x = getArea().getPadding().left;
-        int y = getArea().getPadding().top;
+        int y = getArea().getPadding().top - scroll.getScrollY().getScroll();
+
+        textRenderer.setShadow(widgetTheme.getTextShadow());
+        textRenderer.setAlignment(Alignment.CenterLeft, getArea().width, 12);
+        textRenderer.setScale(1f);
+
         for (var key : syncHandler.builtKeys) {
             if (key == null) continue;
-
-            textRenderer.setPos(x, y - scroll.getScrollY().getScroll());
+            textRenderer.setPos(x, y);
             textRenderer.draw(key.get());
             y += 12;
         }
