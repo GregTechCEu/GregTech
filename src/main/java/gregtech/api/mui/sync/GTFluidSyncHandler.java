@@ -1,6 +1,7 @@
 package gregtech.api.mui.sync;
 
 import gregtech.api.util.GTUtility;
+import gregtech.common.covers.filter.readers.SimpleFluidFilterReader;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,6 +52,7 @@ public class GTFluidSyncHandler extends SyncHandler {
             lastFluid = current == null ? null : current.copy();
             syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, current));
         } else if (current.amount != lastFluid.amount) {
+            lastFluid.amount = current.amount;
             syncToClient(UPDATE_AMOUNT, buffer -> buffer.writeInt(current.amount));
         }
     }
@@ -85,8 +87,13 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public void setAmount(int amount) {
-        if (getFluid() == null) return;
-        getFluid().amount = amount;
+        if (this.tank instanceof SimpleFluidFilterReader.WritableFluidTank writableFluidTank) {
+            writableFluidTank.setFluidAmount(amount);
+            return;
+        }
+        FluidStack stack = getFluid();
+        if (stack == null) return;
+        stack.amount = amount;
     }
 
     public int getCapacity() {
@@ -149,6 +156,14 @@ public class GTFluidSyncHandler extends SyncHandler {
             case UPDATE_TANK -> setFluid(NetworkUtils.readFluidStack(buf));
             case UPDATE_AMOUNT -> setAmount(buf.readInt());
         }
+    }
+
+    public void handlePhantomScroll(MouseData data) {
+        syncToServer(PHANTOM_SCROLL, data::writeToPacket);
+    }
+
+    public void handleClick(MouseData data) {
+        syncToServer(TRY_CLICK_CONTAINER, data::writeToPacket);
     }
 
     @Override

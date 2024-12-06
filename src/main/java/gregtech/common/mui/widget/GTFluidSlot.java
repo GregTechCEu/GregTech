@@ -119,10 +119,10 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
 
         if (content != null && this.syncHandler.showAmount()) {
-            String s = NumberFormat.formatWithMaxDigits(getBaseUnitAmount(content.amount)) + getBaseUnit();
+            String amount = NumberFormat.formatWithMaxDigits(content.amount, 3) + "L";
             this.textRenderer.setAlignment(Alignment.CenterRight, getArea().width - 1f);
             this.textRenderer.setPos(0, 12);
-            this.textRenderer.draw(s);
+            this.textRenderer.draw(amount);
         }
 
         if (isHovering()) {
@@ -132,25 +132,15 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         }
     }
 
-    private double getBaseUnitAmount(double amount) {
-        return amount / 1000;
-    }
-
-    private String getBaseUnit() {
-        return "kL";
-    }
-
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
         var data = MouseData.create(mouseButton);
         if (this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
-            this.syncHandler.syncToServer(GTFluidSyncHandler.TRY_CLICK_CONTAINER, data::writeToPacket);
-            Interactable.playButtonClickSound();
+            this.syncHandler.handleClick(data);
             return Result.SUCCESS;
 
         } else if (this.syncHandler.canLockFluid()) {
             this.syncHandler.toggleLockFluid();
-            Interactable.playButtonClickSound();
             return Result.SUCCESS;
         }
         return Result.IGNORE;
@@ -164,7 +154,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             return false;
         }
         MouseData mouseData = MouseData.create(scrollDirection.modifier);
-        this.syncHandler.syncToServer(GTFluidSyncHandler.PHANTOM_SCROLL, mouseData::writeToPacket);
+        this.syncHandler.handlePhantomScroll(mouseData);
         return true;
     }
 
