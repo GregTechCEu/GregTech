@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IVentable;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -213,6 +214,11 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     @Override
     protected long getEnergyCapacity() {
         return (long) Math.floor(steamFluidTank.getCapacity() * conversionRate);
+    }
+
+    @Override
+    protected IEnergyContainer getEnergyContainer() {
+        return IEnergyContainer.DEFAULT;
     }
 
     @Override
