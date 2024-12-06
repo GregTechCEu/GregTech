@@ -86,7 +86,7 @@ public class BatteryRecipes {
         // EV
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[HV])
                 .input(cableGtSingle, Aluminium, 2)
-                .input(plate, BlueSteel, 2)
+                .input(plate, RedSteel, 2)
                 .fluidInputs(Polytetrafluoroethylene.getFluid(144))
                 .output(BATTERY_HULL_SMALL_VANADIUM)
                 .buildAndRegister();
@@ -102,7 +102,7 @@ public class BatteryRecipes {
         // LuV
         ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(VA[IV])
                 .input(cableGtSingle, NiobiumTitanium, 2)
-                .input(plate, RedSteel, 18)
+                .input(plate, BlueSteel, 18)
                 .fluidInputs(Polybenzimidazole.getFluid(144))
                 .output(BATTERY_HULL_LARGE_VANADIUM)
                 .buildAndRegister();
@@ -281,7 +281,7 @@ public class BatteryRecipes {
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(ENERGIUM_DUST, 9)
-                .fluidInputs(BlueSteel.getFluid(L / 2))
+                .fluidInputs(RedSteel.getFluid(L / 2))
                 .output(ENERGIUM_CRYSTAL)
                 .duration(150).EUt(192).buildAndRegister();
 
@@ -307,13 +307,13 @@ public class BatteryRecipes {
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(dust, Lapotron, 15)
-                .fluidInputs(BlueSteel.getFluid(L * 2))
+                .fluidInputs(RedSteel.getFluid(L * 2))
                 .output(gem, Lapotron)
                 .duration(300).EUt(256).buildAndRegister();
 
         AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(dust, Lapotron, 15)
-                .fluidInputs(RedSteel.getFluid(L / 2))
+                .fluidInputs(BlueSteel.getFluid(L / 2))
                 .output(gem, Lapotron)
                 .duration(150).EUt(192).buildAndRegister();
 
