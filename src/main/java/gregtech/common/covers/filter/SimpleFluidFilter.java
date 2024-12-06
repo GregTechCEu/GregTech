@@ -58,9 +58,11 @@ public class SimpleFluidFilter extends BaseFilter {
                                 "FFF",
                                 "FFF")
                         .key('F', i -> new GTFluidSlot()
+                                // todo need to pass information about base unit from regulator
+                                //  and voiding cover
                                 .syncHandler(GTFluidSlot.sync(filterReader.getFluidTank(i))
                                         .phantom(true)
-                                        .showAmount(false)))
+                                        .showAmount(getFilterReader()::shouldShowAmount)))
                         .build().marginRight(4))
                 .child(createBlacklistUI());
     }

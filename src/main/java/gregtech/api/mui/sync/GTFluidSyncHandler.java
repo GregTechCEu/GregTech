@@ -19,6 +19,7 @@ import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class GTFluidSyncHandler extends SyncHandler {
@@ -36,7 +37,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     private boolean canDrainSlot = true;
     private boolean canFillSlot = true;
     private boolean phantom;
-    private boolean showAmount = true;
+    private BooleanSupplier showAmount = () -> true;
 
     public GTFluidSyncHandler(IFluidTank tank) {
         this.tank = tank;
@@ -118,6 +119,11 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public GTFluidSyncHandler showAmount(boolean showAmount) {
+        this.showAmount = () -> showAmount;
+        return this;
+    }
+
+    public GTFluidSyncHandler showAmount(BooleanSupplier showAmount) {
         this.showAmount = showAmount;
         return this;
     }
@@ -125,7 +131,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     public boolean showAmount() {
         if (!isPhantom() && phantomFluid != null)
             return false;
-        return this.showAmount;
+        return this.showAmount.getAsBoolean();
     }
 
     public @NotNull String getFormattedFluidAmount() {
@@ -183,9 +189,9 @@ public class GTFluidSyncHandler extends SyncHandler {
                     }
                 } else {
                     FluidStack cellFluid = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
-                    if ((this.showAmount || currentFluid == null) && cellFluid != null) {
+                    if ((this.showAmount.getAsBoolean() || currentFluid == null) && cellFluid != null) {
                         if (this.canFillSlot()) {
-                            if (!this.showAmount) {
+                            if (!this.showAmount.getAsBoolean()) {
                                 cellFluid.amount = 1;
                             }
                             if (this.tank.fill(cellFluid, true) > 0) {
@@ -202,14 +208,14 @@ public class GTFluidSyncHandler extends SyncHandler {
             case 1 -> {
                 if (this.canFillSlot()) {
                     if (currentFluid != null) {
-                        if (this.showAmount) {
+                        if (this.showAmount.getAsBoolean()) {
                             FluidStack toFill = currentFluid.copy();
                             toFill.amount = 1000;
                             this.tank.fill(toFill, true);
                         }
                     } else if (this.phantomFluid != null) {
                         FluidStack toFill = this.phantomFluid.copy();
-                        toFill.amount = this.showAmount ? 1 : toFill.amount;
+                        toFill.amount = this.showAmount.getAsBoolean() ? 1 : toFill.amount;
                         this.tank.fill(toFill, true);
                     }
                 }
