@@ -228,7 +228,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmount(false)
-                .accessibility(false, false)
+                .accessibility(true, false)
                 .onLockFluid(stack -> {
                     if (!isExportHatch) return;
 
