@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.sync.GTFluidSyncHandler;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
@@ -50,7 +49,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
                                       implements IMultiblockAbilityPart<IFluidTank>, IControllable {
@@ -278,7 +276,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .alignment(Alignment.TopLeft)
                         .autoUpdate(true)
                         .textBuilder(richText -> {
-                            richText.add(IKey.lang("gregtech.gui.fluid_amount")).newLine();
+                            richText.addLine(IKey.lang("gregtech.gui.fluid_amount"));
                             String name = null;
                             FluidStack fluid = fluidSyncHandler.getFluid();
                             if (fluid != null) {
@@ -289,8 +287,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                             if (name == null) return;
                             if (name.length() > 25) name = name.substring(0, 25) + "...";
 
-                            richText.add(name).newLine();
-                            richText.add(fluidSyncHandler.getFormattedFluidAmount()).newLine();
+                            richText.addLine(IKey.str(name));
+                            richText.addLine(IKey.str(fluidSyncHandler.getFormattedFluidAmount()));
                         }))
                 .child(new GTFluidSlot()
                         .disableBackground()
@@ -310,14 +308,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                                 })
                                 .accessibility(true, true)))
                 .bindPlayerInventory();
-    }
-
-    protected Supplier<String> getFluidName(GTFluidSyncHandler syncHandler) {
-        return () -> {
-            if (syncHandler.getFluid() == null && lockedFluid != null)
-                return lockedFluid.getLocalizedName();
-            return syncHandler.getFluidLocalizedName();
-        };
     }
 
     @Override
