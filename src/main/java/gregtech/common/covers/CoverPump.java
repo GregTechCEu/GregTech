@@ -225,7 +225,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .left(0).width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val, true, true);
+                                throughput.setValue(val);
                                 Interactable.playButtonClickSound();
                                 return true;
                             })
@@ -240,7 +240,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .right(0).width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val, true, true);
+                                throughput.setValue(val);
                                 Interactable.playButtonClickSound();
                                 return true;
                             })
