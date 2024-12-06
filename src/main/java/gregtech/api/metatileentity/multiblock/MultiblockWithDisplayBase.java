@@ -5,7 +5,6 @@ import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -13,6 +12,7 @@ import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -33,10 +33,14 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
@@ -46,6 +50,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
+    private static final int UI_SYNC = GregtechDataCodes.assignId();
+    private MultiblockUIFactory uiFactory;
 
     private boolean voidingItems = false;
     private boolean voidingFluids = false;
@@ -201,6 +207,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         this.variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
         replaceVariantBlocksActive(false);
+        if (uiFactory != null)
+            writeCustomData(UI_SYNC, uiFactory::writeInitialSync);;
     }
 
     @Override
@@ -458,7 +466,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (shouldShowVoidingModeButton()) {
             builder.widget(new ImageCycleButtonWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_MULTIBLOCK,
                     4, this::getVoidingMode, this::setVoidingMode)
-                            .setTooltipHoverString(MultiblockWithDisplayBase::getVoidingModeTooltip));
+                            .setTooltipHoverString(this::getVoidingModeTooltip));
         } else {
             builder.widget(new ImageWidget(173, 161, 18, 18, GuiTextures.BUTTON_VOID_NONE)
                     .setTooltip("gregtech.gui.multiblock_voiding_not_supported"));
@@ -483,15 +491,17 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     * Add a custom third button to the Multiblock UI. By default, this is a placeholder
-     * stating that there is no additional functionality for this Multiblock.
+     * Add a custom third button to the Multiblock UI. By default, this is a placeholder stating that there is no
+     * additional functionality for this Multiblock.
      * <br>
      * <br>
      * Parameters should be passed directly to the created widget. Size will be 18x18.
+     *
+     * @deprecated override {@link MultiblockUIFactory#createFlexButton(BiFunction)}
      */
+    @Deprecated
     @SuppressWarnings("SameParameterValue")
-    @NotNull
-    protected Widget getFlexButton(int x, int y, int width, int height) {
+    protected gregtech.api.gui.@NotNull Widget getFlexButton(int x, int y, int width, int height) {
         return new ImageWidget(x, y, width, height, GuiTextures.BUTTON_NO_FLEX)
                 .setTooltip("gregtech.multiblock.universal.no_flex_button");
     }
@@ -526,15 +536,15 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
     }
 
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return true;
     }
 
-    protected int getVoidingMode() {
+    public final int getVoidingMode() {
         return voidingMode.ordinal();
     }
 
-    protected void setVoidingMode(int mode) {
+    public final void setVoidingMode(int mode) {
         this.voidingMode = VoidingMode.VALUES[mode];
 
         this.voidingFluids = mode >= 2;
@@ -551,8 +561,24 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         markDirty();
     }
 
-    protected static String getVoidingModeTooltip(int mode) {
+    public @NotNull String getVoidingModeTooltip(int mode) {
         return VoidingMode.VALUES[mode].getName();
+    }
+
+    @Override
+    public boolean usesMui2() {
+        return true;
+    }
+
+    protected MultiblockUIFactory createUIFactory() {
+        return new MultiblockUIFactory(this);
+    }
+
+    @Override
+    public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
+        if (uiFactory == null) return null;
+        writeCustomData(UI_SYNC, uiFactory::writeInitialSync); // is this too early to sync?
+        return this.uiFactory.buildUI(guiData, panelSyncManager);
     }
 
     @Override
@@ -599,6 +625,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         buf.writeBoolean(voidingFluids);
         buf.writeBoolean(voidingItems);
         buf.writeInt(voidingMode.ordinal());
+        if (uiFactory == null) uiFactory = createUIFactory();
+        this.uiFactory.writeInitialSync(buf);
     }
 
     @Override
@@ -609,6 +637,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         voidingFluids = buf.readBoolean();
         voidingItems = buf.readBoolean();
         voidingMode = VoidingMode.values()[buf.readInt()];
+        if (uiFactory == null) uiFactory = createUIFactory();
+        this.uiFactory.readInitialSync(buf);
     }
 
     @Override
@@ -648,6 +678,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         if (dataId == IS_WORKING) {
             lastActive = buf.readBoolean();
+        }
+        if (dataId == UI_SYNC) {
+            uiFactory.readInitialSync(buf);
+            uiFactory.markDirty();
         }
     }
 
