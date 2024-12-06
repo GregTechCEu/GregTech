@@ -1,6 +1,7 @@
 package gregtech.mixins.minecraft;
 
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.items.toolitem.ToolHelper;
 
 import net.minecraft.inventory.InventoryCrafting;
@@ -36,7 +37,8 @@ public class RecipeRepairItemMixin {
         ItemStack itemstack1 = list.get(0);
         if (itemstack.getItem() instanceof IGTTool first &&
                 itemstack1.getItem() instanceof IGTTool second) {
-            if (first.isElectric() || second.isElectric()) {
+            if (first.isElectric() || second.isElectric() ||
+                    first instanceof ItemGTToolbelt || second instanceof ItemGTToolbelt) {
                 cir.setReturnValue(false);
             } else {
                 cir.setReturnValue(first.getToolMaterial(itemstack) == second.getToolMaterial(itemstack1));

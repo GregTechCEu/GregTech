@@ -47,6 +47,7 @@ public class HoeGroundBehavior implements IToolBehavior {
         if (facing == EnumFacing.DOWN) return EnumActionResult.PASS;
 
         ItemStack stack = player.getHeldItem(hand);
+
         AoESymmetrical aoeDefinition = ToolHelper.getAoEDefinition(stack);
 
         Set<BlockPos> blocks;
