@@ -253,9 +253,10 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 .childIf(isExportHatch, new ToggleButton()
                         .pos(7, 63)
                         // todo lock overlay
+                        .overlay(GTGuiTextures.BUTTON_LOCK)
                         .value(new BooleanSyncValue(this::isLocked, this::setLocked))
-                        // todo tooltip is not working for some reason, fixed in rc3
-                        .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.fluid_lock.tooltip"))))
+                        .addTooltip(true, IKey.lang("gregtech.gui.fluid_lock.tooltip.enabled"))
+                        .addTooltip(false, IKey.lang("gregtech.gui.fluid_lock.tooltip.disabled")))
 
                 // import specific
                 .childIf(!isExportHatch, GTGuiTextures.TANK_ICON.asWidget()
