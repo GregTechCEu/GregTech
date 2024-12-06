@@ -133,7 +133,7 @@ public class SimpleItemFilter extends BaseFilter {
                                                 .getInteger(SimpleItemFilterReader.COUNT);
                                         if (count > 0)
                                             tooltip.addLine(
-                                                    IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                                    IKey.str("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                     }
                                 })
                                 .slot(SyncHandlers.phantomItemSlot(this.filterReader, index)
