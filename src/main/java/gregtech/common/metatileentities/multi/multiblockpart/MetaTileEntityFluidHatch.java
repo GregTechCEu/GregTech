@@ -39,11 +39,12 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -252,7 +253,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                                 .accessibility(false, true)))
                 .childIf(isExportHatch, new ToggleButton()
                         .pos(7, 63)
-                        // todo lock overlay
                         .overlay(GTGuiTextures.BUTTON_LOCK)
                         .value(new BooleanSyncValue(this::isLocked, this::setLocked))
                         .addTooltip(true, IKey.lang("gregtech.gui.fluid_lock.tooltip.enabled"))
@@ -269,30 +269,29 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                                 .accessibility(false, true)))
 
                 // common ui
-                .child(Flow.column()
-                        .crossAxisAlignment(Alignment.CrossAxis.START)
-                        .size(81, isExportHatch ? 46 : 55)
-                        .padding(3, 4)
-                        .background(GTGuiTextures.DISPLAY)
-                        .pos(7, 16)
-                        .child(IKey.lang("gregtech.gui.fluid_amount").asWidget()
-                                .widthRel(1f)
-                                .height(10))
-                        // IKey's do not like empty strings...
-                        .child(IKey.dynamic(getFluidName(fluidSyncHandler))
-                                .asWidget()
-                                .widthRel(1f)
-                                .setEnabledIf(textWidget -> {
-                                    var tank = fluidSyncHandler.getFluid();
-                                    if (tank == null) tank = fluidSyncHandler.getLockedFluid();
-                                    return tank != null;
-                                })
-                                .height(10))
-                        .child(IKey.dynamic(fluidSyncHandler::getFormattedFluidAmount)
-                                .asWidget()
-                                .setEnabledIf(textWidget -> fluidSyncHandler.getFluid() != null)
-                                .widthRel(1f)
-                                .height(10)))
+                .child(new RichTextWidget()
+                        .size(81 - 6, (isExportHatch ? 46 : 55) - 8)
+                        // .padding(3, 4)
+                        .background(GTGuiTextures.DISPLAY.asIcon().size(81, isExportHatch ? 46 : 55))
+                        .pos(7 + 3, 16 + 4)
+                        .textColor(Color.WHITE.main)
+                        .alignment(Alignment.TopLeft)
+                        .autoUpdate(true)
+                        .textBuilder(richText -> {
+                            richText.add(IKey.lang("gregtech.gui.fluid_amount")).newLine();
+                            String name = null;
+                            FluidStack fluid = fluidSyncHandler.getFluid();
+                            if (fluid != null) {
+                                name = fluid.getLocalizedName();
+                            } else if (lockedFluid != null) {
+                                name = lockedFluid.getLocalizedName();
+                            }
+                            if (name == null) return;
+                            if (name.length() > 25) name = name.substring(0, 25) + "...";
+
+                            richText.add(name).newLine();
+                            richText.add(fluidSyncHandler.getFormattedFluidAmount()).newLine();
+                        }))
                 .child(new GTFluidSlot()
                         .disableBackground()
                         .pos(69, isExportHatch ? 43 : 52)
