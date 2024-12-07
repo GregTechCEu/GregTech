@@ -142,11 +142,17 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public @NotNull String getFormattedFluidAmount() {
-        return String.format("%,d", tank.getFluid() == null ? 0 : tank.getFluid().amount);
+        var tankFluid = this.tank.getFluid();
+        return String.format("%,d", tankFluid == null ? 0 : tankFluid.amount);
     }
 
     public @NotNull String getFluidLocalizedName() {
-        return tank.getFluid() == null ? "Empty" : tank.getFluid().getLocalizedName();
+        var tankFluid = this.tank.getFluid();
+
+        if (tankFluid == null && getLockedFluid() != null)
+            return getLockedFluid().getLocalizedName();
+
+        return tankFluid == null ? "" : tankFluid.getLocalizedName();
     }
 
     @Override
