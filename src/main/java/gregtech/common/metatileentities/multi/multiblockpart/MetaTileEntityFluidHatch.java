@@ -272,7 +272,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                         .textBuilder(richText -> {
                             richText.addLine(IKey.lang("gregtech.gui.fluid_amount"));
                             String name = fluidSyncHandler.getFluidLocalizedName();
-                            if (name.isEmpty()) return;
+                            if (name == null) return;
                             if (name.length() > 25) name = name.substring(0, 25) + "...";
 
                             richText.addLine(IKey.str(name));

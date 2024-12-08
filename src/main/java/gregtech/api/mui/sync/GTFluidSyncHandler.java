@@ -20,6 +20,7 @@ import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.DynamicValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -154,13 +155,14 @@ public class GTFluidSyncHandler extends SyncHandler {
         return String.format("%,d", tankFluid == null ? 0 : tankFluid.amount);
     }
 
-    public @NotNull String getFluidLocalizedName() {
+    public @Nullable String getFluidLocalizedName() {
         var tankFluid = this.tank.getFluid();
+        var lockedFluid = this.lockedFluid.getValue();
 
-        if (tankFluid == null && getLockedFluid() != null)
-            return getLockedFluid().getLocalizedName();
+        if (tankFluid == null && lockedFluid != null)
+            return lockedFluid.getLocalizedName();
 
-        return tankFluid == null ? "" : tankFluid.getLocalizedName();
+        return tankFluid == null ? null : tankFluid.getLocalizedName();
     }
 
     @Override
