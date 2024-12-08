@@ -60,6 +60,11 @@ dependencies {
     // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.
     // Uncomment any of these to test them in-game.
 
+    //Implemented Dependencies
+    //This is temporary, will be removed pre-merge
+
+    implementation rfg.deobf("curse.maven:avaritia-261348:3143349") // Avaritia 3.3.0.37
+
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:beebetteratbees-244516:2627215") // BeeBetterAtBees 2.0.3 (recommended to enable when testing Forestry compat)
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:jei-bees-248370:2490058") // JEIBees 0.9.0.5 (recommended to enable when testing Forestry compat)
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:binnies-mods-223525:2916129") // Binnie 2.5.1.203

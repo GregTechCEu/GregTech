@@ -1,7 +1,10 @@
 package gregtech;
 
+import codechicken.lib.texture.TextureUtils;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.persistence.PersistentData;
 import gregtech.api.util.Mods;
@@ -67,6 +70,7 @@ public class GregTechMod {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         moduleManager.onPreInit(event);
+        TextureUtils.addIconRegister(new MetaItem.MetaValueItem.CosmicTexture());
     }
 
     @EventHandler

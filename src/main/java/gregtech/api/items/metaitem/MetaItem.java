@@ -1,5 +1,10 @@
 package gregtech.api.items.metaitem;
 
+import codechicken.lib.model.ModelRegistryHelper;
+
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.util.TransformUtils;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
@@ -21,12 +26,22 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
+import gregtech.client.renderer.item.CosmicItemRenderer;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
 
+import morph.avaritia.api.ICosmicRenderItem;
+import morph.avaritia.api.IHaloRenderItem;
+import morph.avaritia.api.registration.IModelRegister;
+
+import morph.avaritia.init.AvaritiaTextures;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -77,6 +92,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -96,10 +112,11 @@ import java.util.Set;
  * rechargeable) LV battery with initial capacity 10000 EU
  */
 @Optional.Interface(
-                    modid = Mods.Names.ENDER_CORE,
-                    iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
+        modid = Mods.Names.ENDER_CORE,
+        iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
 public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
-                              implements ItemUIFactory, IOverlayRenderAware {
+        implements ItemUIFactory, IOverlayRenderAware, IHaloRenderItem, ICosmicRenderItem,
+                   IModelRegister {
 
     private static final List<MetaItem<?>> META_ITEMS = new ArrayList<>();
 
@@ -143,6 +160,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     ResourceLocation resourceLocation = createItemModelPath(metaValueItem, "/" + (i + 1));
                     ModelBakery.registerItemVariants(this, resourceLocation);
                     resourceLocations[i] = new ModelResourceLocation(resourceLocation, "inventory");
+                    ModelResourceLocation location = new ModelResourceLocation(resourceLocation, "inventory");
+                    IBakedModel wrapped = new CosmicItemRenderer(TransformUtils.DEFAULT_ITEM, (modelRegistry) -> modelRegistry.getObject(location));
+                    ModelRegistryHelper.register(location, wrapped);
                 }
                 specialItemsModels.put((short) (metaItemOffset + itemMetaKey), resourceLocations);
                 continue;
@@ -153,6 +173,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             }
             metaItemsModels.put((short) (metaItemOffset + itemMetaKey),
                     new ModelResourceLocation(resourceLocation, "inventory"));
+            ModelResourceLocation location = new ModelResourceLocation(resourceLocation, "inventory");
+            IBakedModel wrapped = new CosmicItemRenderer(TransformUtils.DEFAULT_ITEM, (modelRegistry) -> modelRegistry.getObject(location));
+            ModelRegistryHelper.register(location, wrapped);
         }
     }
 
@@ -587,6 +610,69 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return super.getItemStackDisplayName(stack);
     }
 
+    @Override @SideOnly(Side.CLIENT)
+    public boolean shouldDrawHalo(ItemStack stack) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem == null){
+            return false;
+        }
+        return metaValueItem.registerHalo(stack);
+    }
+
+    @Override @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getHaloTexture(ItemStack stack) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem.registerHaloTexture(stack) == null) {
+            return AvaritiaTextures.HALO;
+        }
+        return MetaValueItem.CosmicTexture.haloTextures.get(metaValueItem.registerHaloTexture(stack));
+    }
+
+    @Override @SideOnly(Side.CLIENT)
+    public int getHaloColour(ItemStack stack) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem == null){
+            return 0;
+        }
+        return metaValueItem.registerHaloColour(stack);
+    }
+
+    @Override @SideOnly(Side.CLIENT)
+    public int getHaloSize(ItemStack stack) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem == null){
+            return 0;
+        }
+        return metaValueItem.registerHaloSize(stack);
+    }
+
+    @Override @SideOnly(Side.CLIENT)
+    public boolean shouldDrawPulse(ItemStack stack) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem == null){
+            return false;
+        }
+        return metaValueItem.registerHaloPulse(stack);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getMaskTexture(ItemStack stack, EntityLivingBase player) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem.registerMaskTexture(stack) == null) {
+            return AvaritiaTextures.INFINITY_SWORD_MASK;
+        }
+        return MetaValueItem.CosmicTexture.maskTextures.get(metaValueItem.registerMaskTexture(stack));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public float getMaskOpacity(ItemStack stack, EntityLivingBase player) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem == null){
+            return 0.0f;
+        }
+        return metaValueItem.registerMaskOpacity(stack);
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
@@ -774,6 +860,14 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private int maxStackSize = 64;
         private int modelAmount = 1;
 
+        private boolean drawHalo;
+        private String haloPath;
+        private int haloColour;
+        private int haloSize;
+        private boolean haloPulse;
+        private String maskPath;
+        private float maskOpacity;
+
         @Nullable
         private CreativeTabs[] creativeTabsOverride;
 
@@ -866,6 +960,52 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         public MetaValueItem addComponents(IItemComponent... stats) {
             addItemComponentsInternal(stats);
+            return this;
+        }
+
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexturePath, int haloColourInt, int haloSizeInt) {
+            this.drawHalo = shouldDrawHalo;
+            this.haloPath = haloTexturePath;
+            this.haloColour = haloColourInt;
+            this.haloSize = haloSizeInt;
+            if (haloTexturePath == null) {
+                throw new IllegalArgumentException("Cannot add null HaloTexturePath.");
+            }
+            CosmicTexture.registerHaloIcon(haloTexturePath);
+            return this;
+        }
+
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexturePath, int haloColourInt, int haloSizeInt, boolean shouldDrawHaloPulse) {
+            this.drawHalo = shouldDrawHalo;
+            this.haloPath = haloTexturePath;
+            this.haloColour = haloColourInt;
+            this.haloSize = haloSizeInt;
+            this.haloPulse = shouldDrawHaloPulse;
+            if (haloTexturePath == null) {
+                throw new IllegalArgumentException("Cannot add null HaloTexturePath.");
+            }
+            CosmicTexture.registerHaloIcon(haloTexturePath);
+            return this;
+        }
+
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTextureString, int haloColourInt, int haloSizeInt, boolean shouldDrawHaloPulse, String maskTextureString, float maskOpacityFloat) {
+            this.drawHalo = shouldDrawHalo;
+            this.haloPath = haloTextureString;
+            this.haloColour = haloColourInt;
+            this.haloSize = haloSizeInt;
+            this.haloPulse = shouldDrawHaloPulse;
+            this.maskPath = maskTextureString;
+            this.maskOpacity = maskOpacityFloat;
+            if (haloTextureString == null) {
+                throw new IllegalArgumentException("Cannot add null HaloTexturePath.");
+            } else {
+                CosmicTexture.registerHaloIcon(haloTextureString);
+            }
+            if (maskTextureString == null) {
+                throw new IllegalArgumentException("Cannot add null MaskTextureString.");
+            } else {
+                CosmicTexture.registerMaskIcon(maskTextureString);
+            }
             return this;
         }
 
@@ -1070,6 +1210,61 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     .append("metaValue", metaValue)
                     .append("unlocalizedName", unlocalizedName)
                     .toString();
+        }
+
+        public boolean registerHalo (ItemStack stack) {
+            return drawHalo;
+        }
+
+        public String registerHaloTexture(ItemStack stack) {
+            return haloPath;
+
+        }
+
+        public int registerHaloColour (ItemStack stack) {
+            return haloColour;
+        }
+
+        public int registerHaloSize (ItemStack stack) {
+            return haloSize;
+        }
+
+        public boolean registerHaloPulse (ItemStack stack) {
+            return haloPulse;
+        }
+
+        public String registerMaskTexture (ItemStack stack) {
+            return maskPath;
+        }
+
+        public float registerMaskOpacity (ItemStack stack) {
+            return maskOpacity;
+        }
+
+        public static class CosmicTexture implements TextureUtils.IIconRegister {
+            public static Map<String, TextureAtlasSprite> haloTextures = new HashMap<>();
+            public static Map<String, TextureAtlasSprite> maskTextures = new HashMap<>();
+            public static ArrayList<String> haloPath = new ArrayList<>();
+            public static ArrayList<String> cosmicPath = new ArrayList<>();
+
+
+            public static void registerHaloIcon(String path) {
+                haloPath.add(path);
+            }
+
+            public static void registerMaskIcon(String path) {
+                cosmicPath.add(path);
+            }
+
+            @Override
+            public void registerIcons(TextureMap textureMap) {
+                haloPath.forEach(halo -> {
+                    haloTextures.put(halo, textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/halo/" + halo)));
+                });
+                cosmicPath.forEach(mask -> {
+                    maskTextures.put(mask, textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/mask/" + mask)));
+                });
+            }
         }
     }
 }
