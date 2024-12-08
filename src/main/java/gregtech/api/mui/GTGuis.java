@@ -9,7 +9,6 @@ import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
 import net.minecraft.item.ItemStack;
 
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -18,6 +17,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class GTGuis {
+
+    public static final int DEFAULT_WIDTH = 176, DEFAULT_HIEGHT = 166;
 
     @ApiStatus.Internal
     public static void registerFactories() {
@@ -39,9 +40,35 @@ public class GTGuis {
     }
 
     public static ModularPanel createPanel(ItemStack stack, int width, int height) {
-        MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
-        if (valueItem == null) throw new IllegalArgumentException("Item must be a meta item!");
-        return createPanel(valueItem.unlocalizedName, width, height);
+        String locale;
+        if (stack.getItem() instanceof MetaItem<?>metaItem) {
+            var valueItem = metaItem.getItem(stack);
+            if (valueItem == null) throw new IllegalArgumentException("Item must be a meta item!");
+            locale = valueItem.unlocalizedName;
+        } else {
+            locale = stack.getTranslationKey();
+        }
+        return createPanel(locale, width, height);
+    }
+
+    public static ModularPanel createPanel(String name) {
+        return ModularPanel.defaultPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT);
+    }
+
+    public static ModularPanel defaultPanel(MetaTileEntity mte) {
+        return createPanel(mte.metaTileEntityId.getPath());
+    }
+
+    public static ModularPanel defaultPanel(Cover cover) {
+        return createPanel(cover.getDefinition().getResourceLocation().getPath());
+    }
+
+    public static ModularPanel defaultPanel(ItemStack stack) {
+        return createPanel(stack, DEFAULT_WIDTH, DEFAULT_HIEGHT);
+    }
+
+    public static ModularPanel defaultPanel(MetaItem<?>.MetaValueItem valueItem) {
+        return createPanel(valueItem.unlocalizedName);
     }
 
     public static ModularPanel createPopupPanel(String name, int width, int height) {
@@ -51,6 +78,15 @@ public class GTGuis {
     public static ModularPanel createPopupPanel(String name, int width, int height, boolean disableBelow,
                                                 boolean closeOnOutsideClick) {
         return new PopupPanel(name, width, height, disableBelow, closeOnOutsideClick);
+    }
+
+    public static ModularPanel defaultPopupPanel(String name) {
+        return defaultPopupPanel(name, false, false);
+    }
+
+    public static ModularPanel defaultPopupPanel(String name, boolean disableBelow,
+                                                 boolean closeOnOutsideClick) {
+        return new PopupPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT, disableBelow, closeOnOutsideClick);
     }
 
     private static class PopupPanel extends ModularPanel {
@@ -67,7 +103,6 @@ public class GTGuis {
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
                             this.closeIfOpen(true);
-                            Interactable.playButtonClickSound();
                             return true;
                         }
                         return false;
