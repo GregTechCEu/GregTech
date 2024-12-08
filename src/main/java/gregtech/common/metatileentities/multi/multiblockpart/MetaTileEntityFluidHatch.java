@@ -227,17 +227,9 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmount(false)
                 .accessibility(true, false)
-                .onLockFluid(stack -> {
+                .onLockFluid(() -> this.lockedFluid, stack -> {
                     if (!isExportHatch) return;
-
-                    if (stack == null) {
-                        this.setLocked(false);
-                        this.lockedFluid = null;
-                    } else {
-                        this.setLocked(true);
-                        this.lockedFluid = stack.copy();
-                        this.lockedFluid.amount = 1;
-                    }
+                    setLocked(stack);
                 });
 
         return GTGuis.createPanel(this, 176, 166)
@@ -252,7 +244,9 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 .childIf(isExportHatch, new ToggleButton()
                         .pos(7, 63)
                         .overlay(GTGuiTextures.BUTTON_LOCK)
-                        .value(new BooleanSyncValue(this::isLocked, this::setLocked))
+                        // todo doing things this way causes flickering if it fails
+                        // due to sync value cache
+                        .value(new BooleanSyncValue(this::isLocked, b -> fluidSyncHandler.lockFluid(b, false)))
                         .addTooltip(true, IKey.lang("gregtech.gui.fluid_lock.tooltip.enabled"))
                         .addTooltip(false, IKey.lang("gregtech.gui.fluid_lock.tooltip.disabled")))
 
@@ -326,20 +320,15 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         return this.locked;
     }
 
-    private void setLocked(boolean locked) {
-        if (this.locked == locked) return;
-        this.locked = locked;
+    private void setLocked(FluidStack fluidStack) {
+        this.locked = fluidStack != null;
+        this.lockedFluid = fluidStack == null ? null : fluidStack.copy();
+        if (this.lockedFluid != null)
+            this.lockedFluid.amount = 1;
+        fluidTank.onContentsChanged();
         if (!getWorld().isRemote) {
             markDirty();
         }
-        if (locked && fluidTank.getFluid() != null) {
-            this.lockedFluid = fluidTank.getFluid().copy();
-            this.lockedFluid.amount = 1;
-            fluidTank.onContentsChanged();
-            return;
-        }
-        this.lockedFluid = null;
-        fluidTank.onContentsChanged();
     }
 
     protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {

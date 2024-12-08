@@ -141,10 +141,10 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         var data = MouseData.create(mouseButton);
         if (this.syncHandler.canFillSlot() || this.syncHandler.canDrainSlot()) {
             this.syncHandler.handleClick(data);
-            return Result.SUCCESS;
 
-        } else if (this.syncHandler.canLockFluid()) {
-            this.syncHandler.toggleLockFluid();
+            if (this.syncHandler.canLockFluid())
+                this.syncHandler.toggleLockFluid();
+
             return Result.SUCCESS;
         }
         return Result.IGNORE;
@@ -187,7 +187,7 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             this.syncHandler.syncToServer(GTFluidSyncHandler.UPDATE_TANK,
                     buffer -> NetworkUtils.writeFluidStack(buffer, ingredient));
         } else {
-            this.syncHandler.lockFluid(ingredient);
+            this.syncHandler.lockFluid(ingredient, true);
         }
     }
 

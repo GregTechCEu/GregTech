@@ -17,11 +17,13 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.MouseData;
+import com.cleanroommc.modularui.value.DynamicValue;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class GTFluidSyncHandler extends SyncHandler {
 
@@ -32,7 +34,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     public static final int LOCK_FLUID = 5;
 
     private final IFluidTank tank;
-    private Consumer<FluidStack> onLocked;
+    private DynamicValue<FluidStack> lockedFluid;
     private FluidStack lastFluid;
     private FluidStack phantomFluid;
     private boolean canDrainSlot = true;
@@ -57,15 +59,21 @@ public class GTFluidSyncHandler extends SyncHandler {
         }
     }
 
-    public void lockFluid(FluidStack stack) {
-        final var f = stack == null || stack.amount < 1 ? null : stack;
-        this.onLocked.accept(f);
-        this.phantomFluid = f;
-        syncToServer(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, f));
+    public void lockFluid(FluidStack stack, boolean sync) {
+        if (!canLockFluid()) return;
+        this.lockedFluid.setValue(stack);
+        if (sync) sync(LOCK_FLUID, buffer -> NetworkUtils.writeFluidStack(buffer, stack));
     }
 
-    public GTFluidSyncHandler onLockFluid(Consumer<FluidStack> onLocked) {
-        this.onLocked = onLocked;
+    public void lockFluid(boolean locked, boolean sync) {
+        if (locked == (getLockedFluid() != null)) return;
+        var f = locked ? getFluid() : null;
+        if (locked && f == null) return;
+        lockFluid(f, sync);
+    }
+
+    public GTFluidSyncHandler onLockFluid(Supplier<FluidStack> supplier, Consumer<FluidStack> consumer) {
+        this.lockedFluid = new DynamicValue<>(supplier, consumer);
         return this;
     }
 
@@ -161,6 +169,7 @@ public class GTFluidSyncHandler extends SyncHandler {
             case TRY_CLICK_CONTAINER -> replaceCursorItemStack(NetworkUtils.readItemStack(buf));
             case UPDATE_TANK -> setFluid(NetworkUtils.readFluidStack(buf));
             case UPDATE_AMOUNT -> setAmount(buf.readInt());
+            case LOCK_FLUID -> lockFluid(NetworkUtils.readFluidStack(buf), false);
         }
     }
 
@@ -190,8 +199,7 @@ public class GTFluidSyncHandler extends SyncHandler {
             tryScrollPhantom(MouseData.readPacket(buf));
         } else if (id == LOCK_FLUID) {
             var f = NetworkUtils.readFluidStack(buf);
-            this.onLocked.accept(f);
-            this.phantomFluid = f;
+            lockFluid(f, false);
         }
     }
 
@@ -446,11 +454,11 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public FluidStack getLockedFluid() {
-        return !isPhantom() ? phantomFluid : null;
+        return !isPhantom() ? lockedFluid.getValue() : null;
     }
 
     public boolean canLockFluid() {
-        return onLocked != null;
+        return lockedFluid != null;
     }
 
     public void toggleLockFluid() {
@@ -464,9 +472,9 @@ public class GTFluidSyncHandler extends SyncHandler {
 
             var fluidStack = fluidHandler.getTankProperties()[0].getContents();
             if (fluidStack == null) return;
-            lockFluid(fluidStack.copy());
+            lockFluid(fluidStack.copy(), true);
         } else {
-            lockFluid(null);
+            lockFluid(null, true);
         }
     }
 }
