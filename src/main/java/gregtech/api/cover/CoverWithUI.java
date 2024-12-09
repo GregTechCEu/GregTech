@@ -22,6 +22,7 @@ import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
@@ -29,7 +30,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiData> {
@@ -98,12 +99,14 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
     /**
      * Create the Title bar widget for a Cover.
      */
-    static Row createTitleRow(ItemStack stack) {
-        return new Row()
+    static Flow createTitleRow(ItemStack stack) {
+        return Flow.row()
                 .pos(4, 4)
                 .height(16).coverChildrenWidth()
                 .child(new ItemDrawable(stack).asWidget().size(16).marginRight(4))
-                .child(IKey.str(stack.getDisplayName()).color(UI_TITLE_COLOR).asWidget().heightRel(1.0f));
+                .child(IKey.str(stack.getDisplayName())
+                        .color(UI_TITLE_COLOR)
+                        .asWidget().heightRel(1.0f));
     }
 
     /**
@@ -135,6 +138,7 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
             scale = 0.5f;
         }
         return IKey.str(builder.toString())
+                .color(Color.WHITE.main)
                 .scale(scale);
     }
 
@@ -204,8 +208,8 @@ public interface CoverWithUI extends Cover, IUIHolder, IGuiHolder<SidedPosGuiDat
             return new BoolValue.Dynamic(() -> syncValue.getValue() == value, $ -> syncValue.setValue(value));
         }
 
-        public Row build() {
-            var row = new Row().marginBottom(2).coverChildrenHeight().widthRel(1f);
+        public Flow build() {
+            var row = Flow.row().marginBottom(2).coverChildrenHeight().widthRel(1f);
             if (this.enumValue != null && this.syncValue != null) {
                 for (var enumVal : enumValue.getEnumConstants()) {
                     var button = new ToggleButton().size(18).marginRight(2)

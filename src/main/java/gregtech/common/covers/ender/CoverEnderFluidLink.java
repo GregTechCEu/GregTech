@@ -29,11 +29,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -119,27 +118,20 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
     }
 
     @Override
-    protected PanelSyncHandler createEntrySelector(ModularPanel panel) {
-        return new EntrySelectorSH(panel, EntryTypes.ENDER_FLUID) {
+    protected IWidget createSlotWidget(VirtualTank entry) {
+        var fluidTank = GTFluidSlot.sync(entry)
+                .accessibility(false, false);
 
-            @Override
-            protected IWidget createSlotWidget(VirtualTank entry) {
-                var fluidTank = GTFluidSlot.sync(entry)
-                        .canFillSlot(false)
-                        .canDrainSlot(false);
+        return new GTFluidSlot()
+                .size(18)
+                .background(GTGuiTextures.FLUID_SLOT)
+                .syncHandler(fluidTank)
+                .marginRight(2);
+    }
 
-                return new GTFluidSlot()
-                        .size(18)
-                        .background(GTGuiTextures.FLUID_SLOT)
-                        .syncHandler(fluidTank)
-                        .marginRight(2);
-            }
-
-            @Override
-            protected void deleteEntry(UUID uuid, String name) {
-                VirtualEnderRegistry.deleteEntry(uuid, getType(), name, tank -> tank.getFluidAmount() == 0);
-            }
-        };
+    @Override
+    protected void deleteEntry(UUID uuid, String name) {
+        VirtualEnderRegistry.deleteEntry(uuid, getType(), name, tank -> tank.getFluidAmount() == 0);
     }
 
     @Override
@@ -151,15 +143,15 @@ public class CoverEnderFluidLink extends CoverAbstractEnderLink<VirtualTank>
                 .marginRight(2);
     }
 
-    protected Column createWidgets(ModularPanel panel, PanelSyncManager syncManager) {
+    protected Flow createWidgets(GuiData data, PanelSyncManager syncManager) {
         getFluidFilterContainer().setMaxTransferSize(1);
 
         var pumpMode = new EnumSyncValue<>(CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode);
         syncManager.syncValue("pump_mode", pumpMode);
         pumpMode.updateCacheFromSource(true);
 
-        return super.createWidgets(panel, syncManager)
-                .child(getFluidFilterContainer().initUI(panel, syncManager))
+        return super.createWidgets(data, syncManager)
+                .child(getFluidFilterContainer().initUI(data, syncManager))
                 .child(new EnumRowBuilder<>(CoverPump.PumpMode.class)
                         .value(pumpMode)
                         .overlay(GTGuiTextures.CONVEYOR_MODE_OVERLAY)
