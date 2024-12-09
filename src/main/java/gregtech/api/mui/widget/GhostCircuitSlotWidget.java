@@ -1,7 +1,5 @@
 package gregtech.api.mui.widget;
 
-import com.cleanroommc.modularui.api.widget.Interactable;
-
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -14,6 +12,7 @@ import net.minecraftforge.items.IItemHandler;
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -121,16 +120,16 @@ public class GhostCircuitSlotWidget extends ItemSlot {
                 }
             }
             return panel.child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
-                                    .child(circuitPreview.asIcon().size(16).asWidget()
-                                            .size(18)
-                                            .top(19).alignX(0.5f)
-                                            .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
-                                    .child(new Grid()
-                                            .left(7).right(7).top(41).height(4 * 18)
-                                            .matrix(options)
-                                            .minColWidth(18).minRowHeight(18)
-                                            .minElementMargin(0, 0));
-                        }, true).openPanel();
+                    .child(circuitPreview.asIcon().size(16).asWidget()
+                            .size(18)
+                            .top(19).alignX(0.5f)
+                            .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
+                    .child(new Grid()
+                            .left(7).right(7).top(41).height(4 * 18)
+                            .matrix(options)
+                            .minColWidth(18).minRowHeight(18)
+                            .minElementMargin(0, 0));
+        }, true).openPanel();
     }
 
     private static class GhostCircuitSyncHandler extends ItemSlotSH {

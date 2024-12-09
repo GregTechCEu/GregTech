@@ -1,7 +1,5 @@
 package gregtech.common.items.behaviors;
 
-import com.cleanroommc.modularui.api.widget.Interactable;
-
 import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -23,6 +21,7 @@ import net.minecraft.world.World;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
