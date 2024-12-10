@@ -8,7 +8,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -52,13 +51,14 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
     }
 
     @Override
-    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
-                                             EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!isBucket) return pass(stack);
 
         var result = rayTrace(world, player);
         if (result == null) return pass(stack);
+        var pos = result.getBlockPos();
+        var facing = result.sideHit;
 
         ItemStack cellStack = GTUtility.copy(1, stack);
         var cellHandler = FluidUtil.getFluidHandler(cellStack);
