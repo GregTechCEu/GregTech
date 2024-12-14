@@ -1,8 +1,11 @@
 package gregtech.common.metatileentities.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -22,6 +25,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -36,17 +40,20 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
 
 public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
-                                 implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch> {
+                                 implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch>,
+                                 IControllable {
 
     protected IEnergyContainer energyContainer;
 
     private static final String AMP_NBT_KEY = "amp_mode";
     private int amps;
+    private boolean isWorkingEnabled;
 
     public MetaTileEntityDiode(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         amps = 1;
         reinitializeEnergyContainer();
+        isWorkingEnabled = true;
     }
 
     @Override
@@ -58,6 +65,7 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setInteger(AMP_NBT_KEY, amps);
+        data.setBoolean("IsWorkingEnabled", isWorkingEnabled);
         return data;
     }
 
@@ -65,6 +73,7 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.amps = data.getInteger(AMP_NBT_KEY);
+        this.isWorkingEnabled = data.getBoolean("IsWorkingEnabled");
         reinitializeEnergyContainer();
     }
 
@@ -125,8 +134,8 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean onSoftMalletClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
-                                     CuboidRayTraceResult hitResult) {
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
         if (getWorld().isRemote) {
             scheduleRenderUpdate();
             return true;
@@ -153,9 +162,9 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
 
     @Override
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
+        tooltip.add(I18n.format("gregtech.machine.diode.tooltip_tool_usage_screwdriver"));
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
-        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.toggle_mode"));
+        tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
         super.addToolUsages(stack, world, tooltip, advanced);
     }
 
@@ -173,5 +182,29 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     @Override
     public Class<?> getPassthroughType() {
         return IEnergyContainer.class;
+    }
+
+    @Override
+    protected boolean shouldUpdate(MTETrait trait) {
+        return !(trait instanceof EnergyContainerHandler) || isWorkingEnabled;
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return isWorkingEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        this.isWorkingEnabled = isWorkingAllowed;
     }
 }

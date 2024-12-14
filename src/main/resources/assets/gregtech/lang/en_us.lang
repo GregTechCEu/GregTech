@@ -4240,9 +4240,9 @@ gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Power Trans
 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Mallet to change Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage_screwdriver=§8Use Screwdriver to change Amperage flow or access Covers
 gregtech.machine.diode.tooltip_general=Allows Energy Flow in one direction and limits Amperage
-gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Soft Mallet to change
+gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Screwdriver to change
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
