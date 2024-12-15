@@ -221,6 +221,29 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
         };
     }
 
+    @Override
+    public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean lineBreak) {
+        StringBuilder stb = new StringBuilder("FluidTankList[").append(this.tanks.length).append(";");
+        for (int i = 0; i < this.tanks.length; i++) {
+            if (i != 0) stb.append(',');
+            stb.append(lineBreak ? "\n  " : " ");
+
+            FluidStack fluid = this.tanks[i].getFluid();
+            if (fluid == null || fluid.amount == 0) {
+                stb.append("None 0 / ").append(this.tanks[i].getCapacity());
+            } else {
+                stb.append(fluid.getFluid().getName()).append(' ').append(fluid.amount)
+                        .append(" / ").append(this.tanks[i].getCapacity());
+            }
+        }
+        if (lineBreak) stb.append('\n');
+        return stb.append(']').toString();
+    }
+
     private TankWrapper wrap(IFluidTank tank) {
         return tank instanceof TankWrapper ? (TankWrapper) tank : new TankWrapper(tank, allowSameFluidFill);
     }
@@ -240,7 +263,7 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
 
             @Override
             public boolean canFill() {
-                return allowSameFluidFill;
+                return true;
             }
 
             @Override
@@ -263,7 +286,7 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
 
     public static class TankWrapper implements IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound> {
 
-        final IFluidTank tank;
+        private final IFluidTank tank;
         private final boolean allowSameFluidFill;
 
         private TankWrapper(IFluidTank tank, boolean allowSameFluidFill) {
