@@ -31,6 +31,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 
+import static gregtech.api.util.Mods.Avaritia;
+
 @Mod(modid = GTValues.MODID,
      name = GTValues.MOD_NAME,
      acceptedMinecraftVersions = "[1.12.2,1.13)",
@@ -70,7 +72,9 @@ public class GregTechMod {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         moduleManager.onPreInit(event);
-        TextureUtils.addIconRegister(new MetaItem.MetaValueItem.CosmicTexture());
+        if (Avaritia.isModLoaded()) {
+            TextureUtils.addIconRegister(new MetaItem.MetaValueItem.CosmicTexture());
+        }
     }
 
     @EventHandler

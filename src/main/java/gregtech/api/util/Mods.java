@@ -24,6 +24,7 @@ public enum Mods {
 
     AdvancedRocketry(Names.ADVANCED_ROCKETRY),
     AppliedEnergistics2(Names.APPLIED_ENERGISTICS2),
+    Avaritia(Names.AVARITIA),
     Baubles(Names.BAUBLES),
     BinnieCore(Names.BINNIE_CORE),
     BiomesOPlenty(Names.BIOMES_O_PLENTY),
@@ -94,6 +95,7 @@ public enum Mods {
 
         public static final String ADVANCED_ROCKETRY = "advancedrocketry";
         public static final String APPLIED_ENERGISTICS2 = "appliedenergistics2";
+        public static final String AVARITIA = "avaritia";
         public static final String BAUBLES = "baubles";
         public static final String BINNIE_CORE = "binniecore";
         public static final String BIOMES_O_PLENTY = "biomesoplenty";

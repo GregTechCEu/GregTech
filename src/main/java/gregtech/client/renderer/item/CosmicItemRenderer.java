@@ -6,10 +6,14 @@ import codechicken.lib.model.bakedmodels.ModelProperties;
 import codechicken.lib.model.bakedmodels.PerspectiveAwareBakedModel;
 import codechicken.lib.util.TransformUtils;
 import com.google.common.collect.ImmutableList;
+
+import gregtech.api.util.Mods;
+
 import morph.avaritia.api.ICosmicRenderItem;
 import morph.avaritia.api.IHaloRenderItem;
 import morph.avaritia.client.render.item.WrappedItemRenderer;
 import morph.avaritia.client.render.shader.CosmicShaderHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,11 +28,24 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.fml.common.Optional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+@Optional.Interface(
+        modid = Mods.Names.AVARITIA,
+        iface = "morph.avaritia.api.ICosmicRenderItem")
+@Optional.Interface(
+        modid = Mods.Names.AVARITIA,
+        iface = "morph.avaritia.api.IHaloRenderItem")
+@Optional.Interface(
+        modid = Mods.Names.AVARITIA,
+        iface = "morph.avaritia.client.render.item.WrappedItemRenderer")
+@Optional.Interface(
+        modid = Mods.Names.AVARITIA,
+        iface = "morph.avaritia.client.render.shader.CosmicShaderHelper")
 public class CosmicItemRenderer extends WrappedItemRenderer {
     private static final HashMap<TextureAtlasSprite, IBakedModel> spriteQuadCache = new HashMap();
     private Random randy = new Random();

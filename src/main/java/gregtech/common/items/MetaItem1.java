@@ -1101,7 +1101,7 @@ public class MetaItem1 extends StandardMetaItem {
         }
 
         // Misc 1000+
-        NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC).cosmicProperties(true, "halo_noise", -1711276033, 10);
+        NAN_CERTIFICATE = addItem(1000, "nan.certificate").setRarity(EnumRarity.EPIC);
         FERTILIZER = addItem(1001, "fertilizer").addComponents(new FertilizerBehavior());
         BLACKLIGHT = addItem(1002, "blacklight");
 
