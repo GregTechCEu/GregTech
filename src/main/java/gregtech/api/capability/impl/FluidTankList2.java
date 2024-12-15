@@ -3,6 +3,9 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IFilter;
 import gregtech.api.capability.IFilteredFluidContainer;
 
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.IMultipleTankHandler2;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -20,33 +23,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCompound>, Iterable<IFluidTank> {
-
-    public static Comparator<TankWrapper> ENTRY_COMPARATOR = (o1, o2) -> {
-        // #1: non-empty tank first
-        boolean empty1 = o1.getFluidAmount() <= 0;
-        boolean empty2 = o2.getFluidAmount() <= 0;
-        if (empty1 != empty2) return empty1 ? 1 : -1;
-
-        // #2: filter priority
-        IFilter<FluidStack> filter1 = o1.getFilter();
-        IFilter<FluidStack> filter2 = o2.getFilter();
-        if (filter1 == null) return filter2 == null ? 0 : 1;
-        if (filter2 == null) return -1;
-        return IFilter.FILTER_COMPARATOR.compare(filter1, filter2);
-    };
+public class FluidTankList2 implements IMultipleTankHandler2 {
 
     private final boolean allowSameFluidFill;
-    private TankWrapper[] tanks = new TankWrapper[0];
+    private Entry[] tanks = new Entry[0];
     private IFluidTankProperties[] properties = new IFluidTankProperties[0];
 
     public FluidTankList2(boolean allowSameFluidFill, IFluidTank... fluidTanks) {
         if (!ArrayUtils.isEmpty(fluidTanks)) {
-            tanks = new TankWrapper[fluidTanks.length];
+            tanks = new Entry[fluidTanks.length];
             properties = new IFluidTankProperties[fluidTanks.length];
             Arrays.setAll(tanks, value -> {
                 var tank = wrap(fluidTanks[value]);
@@ -97,7 +87,7 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
                 }
                 // regardless of whether the insertion succeeded, presence of identical fluid in
                 // a slot prevents distinct fill to other slots
-                if (!tank.allowSameFluidFill) {
+                if (!tank.allowSameFluidFill()) {
                     distinctSlotVisited = true;
                 }
             }
@@ -106,7 +96,7 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
         for (var tank : fluidTanks) {
             // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
             // received the fluid, skip this tank
-            boolean usesDistinctFluidFill = tank.allowSameFluidFill;
+            boolean usesDistinctFluidFill = tank.allowSameFluidFill();
             if ((usesDistinctFluidFill || !distinctSlotVisited) && tank.getFluidAmount() == 0) {
                 int inserted = tank.fill(resource, doFill);
                 if (inserted > 0) {
@@ -192,7 +182,7 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
     public NBTTagCompound serializeNBT() {
         NBTTagCompound fluidInventory = new NBTTagCompound();
         NBTTagList tanks = new NBTTagList();
-        for (TankWrapper tank : this.tanks) {
+        for (Entry tank : this.tanks) {
             tanks.appendTag(tank.serializeNBT());
         }
         fluidInventory.setTag("Tanks", tanks);
@@ -208,17 +198,23 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
     }
 
     @Override
-    public @NotNull Iterator<IFluidTank> iterator() {
-        return new AbstractIterator<>() {
+    public @NotNull List<Entry> getFluidTanks() {
+        return Collections.unmodifiableList(Arrays.asList(this.tanks));
+    }
 
-            final int length = tanks.length;
-            int index = 0;
+    @Override
+    public int getTanks() {
+        return tanks.length;
+    }
 
-            @Override
-            protected IFluidTank computeNext() {
-                return index < length ? tanks[index++] : endOfData();
-            }
-        };
+    @Override
+    public @NotNull IMultipleTankHandler2.Entry getTankAt(int index) {
+        return tanks[index];
+    }
+
+    @Override
+    public boolean allowSameFluidFill() {
+        return allowSameFluidFill;
     }
 
     @Override
@@ -245,10 +241,10 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
     }
 
     private TankWrapper wrap(IFluidTank tank) {
-        return tank instanceof TankWrapper ? (TankWrapper) tank : new TankWrapper(tank, allowSameFluidFill);
+        return tank instanceof TankWrapper ? (TankWrapper) tank : new TankWrapper(tank, this);
     }
 
-    private IFluidTankProperties createProp(IFluidTank tank) {
+    protected static IFluidTankProperties createProp(IFluidTank tank) {
         return new IFluidTankProperties() {
 
             @Override
@@ -284,70 +280,33 @@ public class FluidTankList2 implements IFluidHandler, INBTSerializable<NBTTagCom
         };
     }
 
-    public static class TankWrapper implements IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound> {
+    public static class TankWrapper implements Entry {
 
         private final IFluidTank tank;
-        private final boolean allowSameFluidFill;
+        private final IMultipleTankHandler2 parent;
+        private final IFluidTankProperties[] props;
 
-        private TankWrapper(IFluidTank tank, boolean allowSameFluidFill) {
-            this.allowSameFluidFill = allowSameFluidFill;
+        private TankWrapper(IFluidTank tank, IMultipleTankHandler2 parent) {
             this.tank = tank;
+            this.parent = parent;
+            this.props = new IFluidTankProperties[] {
+                    createProp(this)
+            };
         }
 
         @Override
-        public FluidStack getFluid() {
-            return tank.getFluid();
+        public @NotNull IMultipleTankHandler2 getParentHandler() {
+            return parent;
         }
 
         @Override
-        public int getFluidAmount() {
-            return tank.getFluidAmount();
+        public @NotNull IFluidTank getDelegate() {
+            return tank;
         }
 
         @Override
-        public int getCapacity() {
-            return tank.getCapacity();
-        }
-
-        @Override
-        public FluidTankInfo getInfo() {
-            return tank.getInfo();
-        }
-
-        @Override
-        public int fill(FluidStack resource, boolean doFill) {
-            return tank.fill(resource, doFill);
-        }
-
-        @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
-            return tank.drain(maxDrain, doDrain);
-        }
-
-        @Override
-        public @Nullable IFilter<FluidStack> getFilter() {
-            return tank instanceof IFilteredFluidContainer filter ? filter.getFilter() : null;
-        }
-
-        @SuppressWarnings("rawtypes")
-        @Override
-        public NBTTagCompound serializeNBT() {
-            if (tank instanceof FluidTank fluidTank) {
-                return fluidTank.writeToNBT(new NBTTagCompound());
-            } else if (tank instanceof INBTSerializable serializable) {
-                return (NBTTagCompound) serializable.serializeNBT();
-            }
-            return new NBTTagCompound();
-        }
-
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        @Override
-        public void deserializeNBT(NBTTagCompound nbt) {
-            if (tank instanceof FluidTank fluidTank) {
-                fluidTank.readFromNBT(nbt);
-            } else if (tank instanceof INBTSerializable serializable) {
-                serializable.deserializeNBT(nbt);
-            }
+        public IFluidTankProperties[] getTankProperties() {
+            return this.props;
         }
     }
 }
