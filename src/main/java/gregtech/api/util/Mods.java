@@ -26,6 +26,10 @@ public enum Mods {
     AppliedEnergistics2(Names.APPLIED_ENERGISTICS2),
     Avaritia(Names.AVARITIA),
     Baubles(Names.BAUBLES),
+    BetterQuestingUnofficial(Names.BETTER_QUESTING, mod -> {
+        var container = Loader.instance().getIndexedModList().get(Names.BETTER_QUESTING);
+        return container.getVersion().startsWith("4.");
+    }),
     BinnieCore(Names.BINNIE_CORE),
     BiomesOPlenty(Names.BIOMES_O_PLENTY),
     BuildCraftCore(Names.BUILD_CRAFT_CORE),
@@ -55,6 +59,7 @@ public enum Mods {
     InventoryTweaks(Names.INVENTORY_TWEAKS),
     JourneyMap(Names.JOURNEY_MAP),
     JustEnoughItems(Names.JUST_ENOUGH_ITEMS),
+    LittleTiles(Names.LITTLE_TILES),
     MagicBees(Names.MAGIC_BEES),
     Nothirium(Names.NOTHIRIUM),
     NuclearCraft(Names.NUCLEAR_CRAFT, versionExcludes("2o")),
@@ -97,6 +102,7 @@ public enum Mods {
         public static final String APPLIED_ENERGISTICS2 = "appliedenergistics2";
         public static final String AVARITIA = "avaritia";
         public static final String BAUBLES = "baubles";
+        public static final String BETTER_QUESTING = "betterquesting";
         public static final String BINNIE_CORE = "binniecore";
         public static final String BIOMES_O_PLENTY = "biomesoplenty";
         public static final String BUILD_CRAFT_CORE = "buildcraftcore";
@@ -126,6 +132,7 @@ public enum Mods {
         public static final String INVENTORY_TWEAKS = "inventorytweaks";
         public static final String JOURNEY_MAP = "journeymap";
         public static final String JUST_ENOUGH_ITEMS = "jei";
+        public static final String LITTLE_TILES = "littletiles";
         public static final String MAGIC_BEES = "magicbees";
         public static final String NOTHIRIUM = "nothirium";
         public static final String NUCLEAR_CRAFT = "nuclearcraft";

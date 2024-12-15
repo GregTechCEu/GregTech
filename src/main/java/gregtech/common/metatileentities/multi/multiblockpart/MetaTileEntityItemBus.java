@@ -4,18 +4,15 @@ import gregtech.api.capability.*;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.widget.GhostCircuitSlotWidget;
 import gregtech.api.util.GTHashMaps;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -38,6 +35,20 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -126,8 +137,8 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 // Exclude the ghost circuit inventory from the auto collapse, so it does not extract any ghost circuits
                 // from the slot
                 IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : super.getImportItems());
-                if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) :
-                        this.getNotifiedItemInputList().contains(inventory)) {
+                if (!isAttachedToMultiBlock() || (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) :
+                        this.getNotifiedItemInputList().contains(inventory))) {
                     collapseInventorySlotContents(inventory);
                 }
             }
@@ -249,66 +260,94 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int rowSize = (int) Math.sqrt(getInventorySize());
-        return createUITemplate(entityPlayer, rowSize)
-                .build(getHolder(), entityPlayer);
+    public boolean usesMui2() {
+        return true;
     }
 
-    private ModularUI.Builder createUITemplate(EntityPlayer player, int gridSize) {
-        int backgroundWidth = gridSize > 6 ? 176 + (gridSize - 6) * 18 : 176;
-        int center = backgroundWidth / 2;
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        int rowSize = (int) Math.sqrt(getInventorySize());
+        guiSyncManager.registerSlotGroup("item_inv", rowSize);
 
-        int gridStartX = center - (gridSize * 9);
+        int backgroundWidth = Math.max(
+                9 * 18 + 18 + 14 + 5,   // Player Inv width
+                rowSize * 18 + 14); // Bus Inv width
+        int backgroundHeight = 18 + 18 * rowSize + 94;
 
-        int inventoryStartX = center - 9 - 4 * 18;
-        int inventoryStartY = 18 + 18 * gridSize + 12;
-
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, backgroundWidth, 18 + 18 * gridSize + 94)
-                .label(10, 5, getMetaFullName());
-
-        for (int y = 0; y < gridSize; y++) {
-            for (int x = 0; x < gridSize; x++) {
-                int index = y * gridSize + x;
-
-                builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index,
-                        gridStartX + x * 18, 18 + y * 18, true, !isExportHatch)
-                                .setBackgroundTexture(GuiTextures.SLOT));
+        List<List<IWidget>> widgets = new ArrayList<>();
+        for (int i = 0; i < rowSize; i++) {
+            widgets.add(new ArrayList<>());
+            for (int j = 0; j < rowSize; j++) {
+                int index = i * rowSize + j;
+                IItemHandlerModifiable handler = isExportHatch ? exportItems : importItems;
+                widgets.get(i)
+                        .add(new ItemSlot()
+                                .slot(SyncHandlers.itemSlot(handler, index)
+                                        .slotGroup("item_inv")
+                                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                                            if (onlyAmountChanged &&
+                                                    handler instanceof GTItemStackHandler gtHandler) {
+                                                gtHandler.onContentsChanged(index);
+                                            }
+                                        })
+                                        .accessibility(!isExportHatch, true)));
             }
         }
 
-        if (hasGhostCircuitInventory() && this.circuitInventory != null) {
-            int circuitX = gridSize > 6 ? gridStartX + gridSize * 18 + 9 : inventoryStartX + 8 * 18;
-            int circuitY = gridSize * 18;
+        BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
+        guiSyncManager.syncValue("working_state", workingStateValue);
+        BooleanSyncValue collapseStateValue = new BooleanSyncValue(() -> autoCollapse, val -> autoCollapse = val);
+        guiSyncManager.syncValue("collapse_state", collapseStateValue);
 
-            SlotWidget circuitSlot = new GhostCircuitSlotWidget(circuitInventory, 0, circuitX, circuitY)
-                    .setBackgroundTexture(GuiTextures.SLOT, getCircuitSlotOverlay());
-            builder.widget(circuitSlot.setConsumer(this::getCircuitSlotTooltip));
-        }
+        boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
 
-        return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, inventoryStartX, inventoryStartY);
+        return GTGuis.createPanel(this, backgroundWidth, backgroundHeight)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(new Grid()
+                        .top(18).height(rowSize * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .alignX(0.5f)
+                        .matrix(widgets))
+                .child(new Column()
+                        .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
+                        .width(18).height(18 * 4 + 5)
+                        .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))
+                        .child(new ToggleButton()
+                                .top(18 * 2)
+                                .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
+                                        workingStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
+                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                        .addLine(isExportHatch ?
+                                                (workingStateValue.getBoolValue() ?
+                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")) :
+                                                (workingStateValue.getBoolValue() ?
+                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.enabled") :
+                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.disabled")))))
+                        .child(new ToggleButton()
+                                .top(18)
+                                .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,
+                                        collapseStateValue::setBoolValue))
+                                .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
+                                .tooltipBuilder(t -> t.setAutoUpdate(true)
+                                        .addLine(collapseStateValue.getBoolValue() ?
+                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
+                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
+                        .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
+                                .slot(SyncHandlers.itemSlot(circuitInventory, 0))
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
+                        .childIf(!hasGhostCircuit, new Widget<>()
+                                .background(GTGuiTextures.SLOT, GTGuiTextures.BUTTON_X)
+                                .tooltip(t -> t.addLine(
+                                        IKey.lang("gregtech.gui.configurator_slot.unavailable.tooltip")))));
     }
 
     @Override
     public boolean hasGhostCircuitInventory() {
         return !this.isExportHatch;
-    }
-
-    // Method provided to override
-    protected TextureArea getCircuitSlotOverlay() {
-        return GuiTextures.INT_CIRCUIT_OVERLAY;
-    }
-
-    // Method provided to override
-    protected void getCircuitSlotTooltip(@NotNull SlotWidget widget) {
-        String configString;
-        if (circuitInventory == null || circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
-            configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value").getFormattedText();
-        } else {
-            configString = String.valueOf(circuitInventory.getCircuitValue());
-        }
-
-        widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
     }
 
     private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
@@ -352,21 +391,13 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
-        boolean isAttached = false;
-        if (this.isAttachedToMultiBlock()) {
-            setAutoCollapse(!this.autoCollapse);
-            isAttached = true;
-        }
+        setAutoCollapse(!this.autoCollapse);
 
         if (!getWorld().isRemote) {
-            if (isAttached) {
-                if (this.autoCollapse) {
-                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_true"), true);
-                } else {
-                    playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_false"), true);
-                }
+            if (this.autoCollapse) {
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_true"), true);
             } else {
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse.error"), true);
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.bus.collapse_false"), true);
             }
         }
         return true;

@@ -23,12 +23,11 @@ public class GregtechDataCodes {
     public static final int UPDATE_AUTO_OUTPUT_FLUIDS = assignId();
     public static final int UPDATE_IS_VOIDING = assignId();
 
+    // Robotic Arm
+    public static final int UPDATE_TRANSFER_MODE = assignId();
+
     // Drum
     public static final int UPDATE_AUTO_OUTPUT = assignId();
-
-    // Safe
-    public static final int UPDATE_LOCKED_STATE = assignId();
-    public static final int UPDATE_CONTENTS_SEED = assignId();
 
     // Steam Machines
     public static final int NEEDS_VENTING = assignId();
@@ -141,6 +140,11 @@ public class GregtechDataCodes {
     public static final int UPDATE_ITEM_COUNT = assignId();
     public static final int UPDATE_FLUID_AMOUNT = assignId();
 
+    // Quantum Storage Controller
+    public static final int UPDATE_CONTROLLER_POS = assignId();
+    public static final int REMOVE_CONTROLLER = assignId();
+    public static final int LOCATE_CONTROLLER = assignId();
+
     // Detector Covers
     public static final int UPDATE_INVERTED = assignId();
 
@@ -153,6 +157,8 @@ public class GregtechDataCodes {
 
     // From MetaTileEntityHolder
     public static final String CUSTOM_NAME = "CustomName";
+    public static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
+    public static final String TAG_KEY_MTE = "MetaTileEntity";
 
     // From MetaTileEntity
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";

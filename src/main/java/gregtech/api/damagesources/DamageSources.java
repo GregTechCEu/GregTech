@@ -49,23 +49,17 @@ public class DamageSources {
         return TURBINE;
     }
 
-    // accessed via ASM
-    @SuppressWarnings("unused")
     public static DamageSource getPlayerDamage(@Nullable EntityPlayer source) {
         ItemStack stack = source != null ? source.getHeldItemMainhand() : ItemStack.EMPTY;
-        if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
-            IGTTool tool = (IGTTool) stack.getItem();
+        if (!stack.isEmpty() && stack.getItem() instanceof IGTTool tool) {
             return new DamageSourceTool("player", source, String.format("death.attack.%s", tool.getToolId()));
         }
         return new EntityDamageSource("player", source);
     }
 
-    // accessed via ASM
-    @SuppressWarnings("unused")
     public static DamageSource getMobDamage(@Nullable EntityLivingBase source) {
         ItemStack stack = source != null ? source.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND) : ItemStack.EMPTY;
-        if (!stack.isEmpty() && stack.getItem() instanceof IGTTool) {
-            IGTTool tool = (IGTTool) stack.getItem();
+        if (!stack.isEmpty() && stack.getItem() instanceof IGTTool tool) {
             return new DamageSourceTool("mob", source, String.format("death.attack.%s", tool.getToolId()));
         }
         return new EntityDamageSource("mob", source);

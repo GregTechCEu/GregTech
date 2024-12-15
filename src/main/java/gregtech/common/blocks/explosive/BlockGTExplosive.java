@@ -1,6 +1,6 @@
 package gregtech.common.blocks.explosive;
 
-import gregtech.api.GregTechAPI;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.entities.EntityGTExplosive;
 
 import net.minecraft.block.Block;
@@ -47,7 +47,7 @@ public abstract class BlockGTExplosive extends Block {
         this.canRedstoneActivate = canRedstoneActivate;
         this.explodeOnMine = explodeOnMine;
         this.fuseLength = fuseLength;
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_TOOLS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_TOOLS);
     }
 
     protected abstract EntityGTExplosive createEntity(World world, BlockPos pos, EntityLivingBase exploder);

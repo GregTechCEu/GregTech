@@ -4,8 +4,8 @@ import gregtech.api.items.metaitem.stats.IDataItem;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.ResearchProperty;
-import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
+import gregtech.api.recipes.properties.impl.ResearchProperty;
+import gregtech.api.recipes.properties.impl.ResearchPropertyData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -14,7 +14,6 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,40 +44,39 @@ public class AssemblyLineRecipeBuilder extends RecipeBuilder<AssemblyLineRecipeB
     }
 
     @Override
-    public boolean applyProperty(@NotNull String key, @Nullable Object value) {
+    public boolean applyPropertyCT(@NotNull String key, @NotNull Object value) {
         if (key.equals(ResearchProperty.KEY)) {
             if (value instanceof ItemStack itemStack) {
                 scannerResearch(itemStack);
                 return true;
             }
+            return false;
         }
-        return super.applyProperty(key, value);
+        return super.applyPropertyCT(key, value);
     }
 
     private boolean applyResearchProperty(ResearchPropertyData.ResearchEntry researchEntry) {
         if (!ConfigHolder.machines.enableResearch) return false;
         if (researchEntry == null) {
-            GTLog.logger.error("Assembly Line Research Entry cannot be empty.", new IllegalArgumentException());
+            GTLog.logger.error("Assembly Line Research Entry cannot be empty.", new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
 
         if (!generatingRecipes) {
             GTLog.logger.error("Cannot generate recipes when using researchWithoutRecipe()",
-                    new IllegalArgumentException());
+                    new Throwable());
             recipeStatus = EnumValidationResult.INVALID;
             return false;
         }
 
-        if (recipePropertyStorage != null && recipePropertyStorage.hasRecipeProperty(ResearchProperty.getInstance())) {
-            ResearchPropertyData property = recipePropertyStorage.getRecipePropertyValue(ResearchProperty.getInstance(),
-                    null);
-            if (property == null) throw new IllegalStateException("Property storage has a null property");
+        ResearchPropertyData property = recipePropertyStorage.get(ResearchProperty.getInstance(), null);
+        if (property != null) {
             property.add(researchEntry);
             return true;
         }
 
-        ResearchPropertyData property = new ResearchPropertyData();
+        property = new ResearchPropertyData();
         if (applyProperty(ResearchProperty.getInstance(), property)) {
             property.add(researchEntry);
             return true;

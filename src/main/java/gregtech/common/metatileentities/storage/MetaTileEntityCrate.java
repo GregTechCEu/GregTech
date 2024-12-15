@@ -1,12 +1,10 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
@@ -21,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,9 +30,19 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
@@ -44,20 +51,22 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
     private final Material material;
     private final int inventorySize;
+    private final int rowSize;
     protected ItemStackHandler inventory;
     private boolean isTaped;
     private final String TAPED_NBT = "Taped";
 
-    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize) {
+    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize, int rowSize) {
         super(metaTileEntityId);
         this.material = material;
         this.inventorySize = inventorySize;
+        this.rowSize = rowSize;
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize);
+        return new MetaTileEntityCrate(metaTileEntityId, material, inventorySize, rowSize);
     }
 
     @Override
@@ -78,7 +87,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         if (!isTaped) {
             clearInventory(itemBuffer, inventory);
         }
@@ -126,18 +135,31 @@ public class MetaTileEntityCrate extends MetaTileEntity {
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        int factor = inventorySize / 9 > 8 ? 18 : 9;
-        Builder builder = ModularUI
-                .builder(GuiTextures.BACKGROUND, 176 + (factor == 18 ? 176 : 0), 8 + inventorySize / factor * 18 + 104)
-                .label(5, 5, getMetaFullName());
-        for (int i = 0; i < inventorySize; i++) {
-            builder.slot(inventory, i, 7 * (factor == 18 ? 2 : 1) + i % factor * 18, 18 + i / factor * 18,
-                    GuiTextures.SLOT);
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.registerSlotGroup("item_inv", rowSize);
+
+        int rows = inventorySize / rowSize;
+        List<List<IWidget>> widgets = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            widgets.add(new ArrayList<>());
+            for (int j = 0; j < this.rowSize; j++) {
+                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(inventory, i * rowSize + j)
+                        .slotGroup("item_inv")));
+            }
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + (factor == 18 ? 88 : 0),
-                18 + inventorySize / factor * 18 + 11);
-        return builder.build(getHolder(), entityPlayer);
+        return GTGuis.createPanel(this, rowSize * 18 + 14, 18 + 4 * 18 + 5 + 14 + 18 * rows)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .bindPlayerInventory()
+                .child(new Grid()
+                        .top(18).left(7).right(7).height(rows * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .matrix(widgets));
     }
 
     @Override

@@ -1,8 +1,8 @@
 package gregtech.common.blocks.wood;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.SoundType;
@@ -35,7 +35,7 @@ public abstract class BlockGregWoodSlab extends BlockSlab {
         setResistance(5.0F);
         setSoundType(SoundType.WOOD);
         setHarvestLevel(ToolClasses.AXE, 0);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
         this.useNeighborBrightness = true;
     }
 

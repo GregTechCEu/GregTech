@@ -5,7 +5,6 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IFilteredFluidContainer;
@@ -16,7 +15,18 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
-import gregtech.api.items.metaitem.stats.*;
+import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
+import gregtech.api.items.metaitem.stats.IFoodBehavior;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
+import gregtech.api.items.metaitem.stats.IItemColorProvider;
+import gregtech.api.items.metaitem.stats.IItemComponent;
+import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
+import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
+import gregtech.api.items.metaitem.stats.IItemNameProvider;
+import gregtech.api.items.metaitem.stats.IItemUseManager;
+import gregtech.api.items.metaitem.stats.ISubItemHandler;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
@@ -28,6 +38,8 @@ import gregtech.api.util.Mods;
 import gregtech.client.renderer.item.CosmicItemRenderer;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
+import gregtech.common.covers.filter.IFilter;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import morph.avaritia.api.ICosmicRenderItem;
 import morph.avaritia.api.IHaloRenderItem;
@@ -54,7 +66,12 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -145,7 +162,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     protected final short metaItemOffset;
 
-    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[] { GregTechAPI.TAB_GREGTECH };
+    private CreativeTabs[] defaultCreativeTabs = new CreativeTabs[] { GTCreativeTabs.TAB_GREGTECH };
     private final Set<CreativeTabs> additionalCreativeTabs = new ObjectArraySet<>();
 
     private String translationKey = "metaitem";
@@ -870,6 +887,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private final List<IItemBehaviour> behaviours = new ArrayList<>();
         private IItemUseManager useManager;
         private ItemUIFactory uiManager;
+        private IFilter.Factory filterBehavior;
         private IItemColorProvider colorProvider;
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
@@ -1117,9 +1135,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 if (itemComponent instanceof IFoodBehavior) {
                     this.useManager = new FoodUseManager((IFoodBehavior) itemComponent);
                 }
-                if (itemComponent instanceof ItemUIFactory)
+                if (itemComponent instanceof ItemUIFactory) {
                     this.uiManager = (ItemUIFactory) itemComponent;
-
+                }
+                if (itemComponent instanceof IFilter.Factory) {
+                    this.filterBehavior = (IFilter.Factory) itemComponent;
+                }
                 if (itemComponent instanceof IItemColorProvider) {
                     this.colorProvider = (IItemColorProvider) itemComponent;
                 }
@@ -1163,6 +1184,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         @Nullable
         public ItemUIFactory getUIManager() {
             return uiManager;
+        }
+
+        @Nullable
+        public IFilter.Factory getFilterFactory() {
+            return filterBehavior;
         }
 
         @Nullable

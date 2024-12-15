@@ -24,6 +24,10 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
+import gregtech.api.mui.GTGuiTheme;
+import gregtech.api.mui.GregTechGuiScreen;
+import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
@@ -31,7 +35,10 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
 
 import net.minecraft.block.Block;
@@ -40,6 +47,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -81,9 +89,13 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -99,17 +111,20 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable {
+public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, IVoidable, IGuiHolder<PosGuiData> {
 
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
 
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_MUFFLED = "Muffled";
+
+    private final MTERegistry registry;
 
     public final ResourceLocation metaTileEntityId;
     IGregTechTileEntity holder;
@@ -148,8 +163,12 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
 
-    public MetaTileEntity(ResourceLocation metaTileEntityId) {
+    @Nullable
+    private UUID owner = null;
+
+    protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
+        this.registry = GregTechAPI.mteManager.getRegistry(metaTileEntityId.getNamespace());
         initializeInventory();
     }
 
@@ -251,7 +270,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+        return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
     }
 
     /**
@@ -277,7 +296,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      */
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
+        TextureAtlasSprite atlasSprite = RenderUtil.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -343,7 +362,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return creativeTab == CreativeTabs.SEARCH || creativeTab == GregTechAPI.TAB_GREGTECH_MACHINES;
+        return creativeTab == CreativeTabs.SEARCH || creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES;
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -435,10 +454,34 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param entityPlayer player opening inventory
      * @return freshly created UI instance
      */
-    protected abstract ModularUI createUI(EntityPlayer entityPlayer);
+    @Deprecated
+    protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return null;
+    }
 
+    @Deprecated
     public ModularUI getModularUI(EntityPlayer entityPlayer) {
         return createUI(entityPlayer);
+    }
+
+    @ApiStatus.Experimental
+    public boolean usesMui2() {
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public final ModularScreen createScreen(PosGuiData posGuiData, ModularPanel mainPanel) {
+        return new GregTechGuiScreen(mainPanel, getUITheme());
+    }
+
+    public GTGuiTheme getUITheme() {
+        return GTGuiTheme.STANDARD;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        return null;
     }
 
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
@@ -464,7 +507,15 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
-                MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                if (usesMui2()) {
+                    MetaTileEntityGuiFactory.open(playerIn, this);
+                } else {
+                    MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
+                }
+
+                if (getOwner() == null) {
+                    this.owner = playerIn.getUniqueID();
+                }
             }
             return true;
         } else {
@@ -532,6 +583,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
         if (toolClasses.contains(ToolClasses.HARD_HAMMER)) {
             return onHardHammerClick(playerIn, hand, gridSideHit, hitResult);
+        }
+        if (toolClasses.contains(ToolClasses.WIRE_CUTTER)) {
+            return onWireCutterClick(playerIn, hand, gridSideHit, hitResult);
         }
         return false;
     }
@@ -611,6 +665,16 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                     "gregtech.machine.muffle.on" : "gregtech.machine.muffle.off"), true);
         }
         return true;
+    }
+
+    /**
+     * Called when player clicks a wire cutter on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
+        return false;
     }
 
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
@@ -847,13 +911,22 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    public final ItemStack getStackForm(int amount) {
-        int metaTileEntityIntId = GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntityId);
-        return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
+    public final @NotNull ItemStack getStackForm(int amount) {
+        int metaTileEntityIntId = registry.getIdByObjectName(metaTileEntityId);
+        return new ItemStack(registry.getBlock(), amount, metaTileEntityIntId);
     }
 
-    public final ItemStack getStackForm() {
+    @Override
+    public final @NotNull ItemStack getStackForm() {
         return getStackForm(1);
+    }
+
+    public final @NotNull MTERegistry getRegistry() {
+        return registry;
+    }
+
+    public final @NotNull BlockMachine getBlock() {
+        return registry.getBlock();
     }
 
     /**
@@ -865,17 +938,18 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * @param dropsList list of meta tile entity drops
      * @param harvester harvester of this meta tile entity, or null
      */
-    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {}
+    public void getDrops(@NotNull List<@NotNull ItemStack> dropsList, @Nullable EntityPlayer harvester) {}
 
     public final ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
+        final boolean isCreativePickBlock = player.isCreative() && TooltipHelper.isCtrlDown();
         if (hitCuboid.data instanceof CoverRayTracer.CoverSideData coverSideData) {
             Cover cover = getCoverAtSide(coverSideData.side);
-            return cover == null ? ItemStack.EMPTY : cover.getPickItem();
+            return cover == null || isCreativePickBlock ? ItemStack.EMPTY : cover.getPickItem();
         } else if (hitCuboid.data == null || hitCuboid.data instanceof CoverRayTracer.PrimaryBoxData) {
             // data is null -> MetaTileEntity hull hit
             Cover cover = getCoverAtSide(result.sideHit);
-            if (cover != null) {
+            if (cover != null && !isCreativePickBlock) {
                 return cover.getPickItem();
             }
             return getPickItem(player);
@@ -1243,6 +1317,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.writeCoverNBT(data, this);
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
+
+        if (owner != null)
+            data.setUniqueId("Owner", owner);
+
         return data;
     }
 
@@ -1268,6 +1346,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
+
+        if (data.hasKey("Owner"))
+            this.owner = data.getUniqueId("Owner");
     }
 
     @Override
@@ -1275,12 +1356,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return getHolder() != null && getHolder().isValid();
     }
 
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);
         clearInventory(itemBuffer, exportItems);
     }
 
-    public static void clearInventory(NonNullList<ItemStack> itemBuffer, IItemHandlerModifiable inventory) {
+    public static void clearInventory(@NotNull List<@NotNull ItemStack> itemBuffer,
+                                      @NotNull IItemHandlerModifiable inventory) {
         for (int i = 0; i < inventory.getSlots(); i++) {
             ItemStack stackInSlot = inventory.getStackInSlot(i);
             if (!stackInSlot.isEmpty()) {
@@ -1295,12 +1377,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     /**
-     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner by UUID
      * <p>
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement() {}
+    public void onPlacement(@Nullable EntityLivingBase placer) {
+        if (placer instanceof EntityPlayer player) {
+            this.owner = player.getUniqueID();
+        }
+    }
+
+    /**
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner of Null
+     * <p>
+     * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
+     * this should be manually called immediately afterwards
+     */
+    public final void onPlacement() {
+        onPlacement(null);
+    }
 
     /**
      * Called from breakBlock right before meta tile entity destruction
@@ -1398,6 +1496,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public boolean getWitherProof() {
         return false;
+    }
+
+    @Nullable
+    public UUID getOwner() {
+        return owner;
     }
 
     public final void toggleMuffled() {

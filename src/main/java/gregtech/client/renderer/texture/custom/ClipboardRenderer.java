@@ -1,6 +1,7 @@
 package gregtech.client.renderer.texture.custom;
 
 import gregtech.client.renderer.texture.Textures;
+import gregtech.client.texture.IconRegistrar;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 
 import net.minecraft.client.Minecraft;
@@ -17,17 +18,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class ClipboardRenderer implements IIconRegister {
+public class ClipboardRenderer implements IconRegistrar {
 
     private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0,
             0.3 / 16.0);
@@ -57,7 +58,7 @@ public class ClipboardRenderer implements IIconRegister {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap textureMap) {
+    public void registerIcons(@NotNull TextureMap textureMap) {
         this.textures[0] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/wood"));
         boxTextureMap.put(boardBox, this.textures[0]);
         this.textures[1] = textureMap.registerSprite(new ResourceLocation("gregtech:blocks/clipboard/clip"));

@@ -103,9 +103,11 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
             yOffset = FONT_HEIGHT;
 
         ModularUI.Builder builder;
-        if (handlesRecipeOutputs) builder = workableRecipeMap.createUITemplate(workable::getProgressPercent,
-                importItems, exportItems, importFluids, exportFluids, yOffset);
-        else builder = workableRecipeMap.createUITemplateNoOutputs(workable::getProgressPercent, importItems,
+        if (handlesRecipeOutputs)
+            builder = workableRecipeMap.getRecipeMapUI().createUITemplate(workable::getProgressPercent,
+                    importItems, exportItems, importFluids, exportFluids, yOffset);
+        else builder = workableRecipeMap.getRecipeMapUI().createUITemplateNoOutputs(workable::getProgressPercent,
+                importItems,
                 exportItems, importFluids, exportFluids, yOffset);
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);

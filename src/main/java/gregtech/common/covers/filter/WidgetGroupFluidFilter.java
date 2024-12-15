@@ -1,19 +1,29 @@
 package gregtech.common.covers.filter;
 
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
+import org.jetbrains.annotations.ApiStatus;
+
+import java.io.IOException;
 import java.util.function.Supplier;
 
+/**
+ * @deprecated in favor of new MUI
+ */
+@Deprecated
+@ApiStatus.ScheduledForRemoval(inVersion = "2.10")
 public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
 
-    private final Supplier<FluidFilter> fluidFilterSupplier;
+    private final Supplier<BaseFilter> fluidFilterSupplier;
     private final Supplier<Boolean> showTipSupplier;
-    private FluidFilter fluidFilter;
+    private BaseFilter fluidFilter;
 
-    public WidgetGroupFluidFilter(int yPosition, Supplier<FluidFilter> fluidFilterSupplier,
+    public WidgetGroupFluidFilter(int yPosition, Supplier<BaseFilter> fluidFilterSupplier,
                                   Supplier<Boolean> showTipSupplier) {
         super(new Position(18 + 5, yPosition));
         this.fluidFilterSupplier = fluidFilterSupplier;
@@ -23,7 +33,7 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        FluidFilter newFluidFilter = fluidFilterSupplier.get();
+        BaseFilter newFluidFilter = fluidFilterSupplier.get();
         if (fluidFilter != newFluidFilter) {
             clearAllWidgets();
             this.fluidFilter = newFluidFilter;
@@ -33,17 +43,16 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
             writeUpdateInfo(2, buffer -> {
                 if (fluidFilter != null) {
                     buffer.writeBoolean(true);
-                    int filterId = FilterTypeRegistry.getIdForFluidFilter(fluidFilter);
-                    buffer.writeVarInt(filterId);
+                    buffer.writeItemStack(fluidFilter.getContainerStack());
                 } else {
                     buffer.writeBoolean(false);
                 }
             });
         }
-        if (fluidFilter != null && showTipSupplier != null && fluidFilter.showTip != showTipSupplier.get()) {
-            fluidFilter.showTip = showTipSupplier.get();
-            writeUpdateInfo(3, buffer -> buffer.writeBoolean(fluidFilter.showTip));
-        }
+        // if (fluidFilter != null && showTipSupplier != null && fluidFilter.showTip != showTipSupplier.get()) {
+        // fluidFilter.showTip = showTipSupplier.get();
+        // writeUpdateInfo(3, buffer -> buffer.writeBoolean(fluidFilter.showTip));
+        // }
     }
 
     @Override
@@ -52,12 +61,18 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
         if (id == 2) {
             clearAllWidgets();
             if (buffer.readBoolean()) {
-                int filterId = buffer.readVarInt();
-                this.fluidFilter = FilterTypeRegistry.createFluidFilterById(filterId);
+                ItemStack stack;
+                try {
+                    stack = buffer.readItemStack();
+                } catch (IOException e) {
+                    GTLog.logger.warn(e);
+                    return;
+                }
+                this.fluidFilter = BaseFilter.getFilterFromStack(stack);
                 this.fluidFilter.initUI(this::addWidget);
             }
         } else if (id == 3) {
-            fluidFilter.showTip = buffer.readBoolean();
+            // fluidFilter.showTip = buffer.readBoolean();
         }
     }
 }

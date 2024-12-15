@@ -1,7 +1,7 @@
 package gregtech.api.items.toolitem;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.util.LocalizationUtils;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -14,7 +14,12 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -59,7 +64,7 @@ public class ItemGTHoe extends ItemHoe implements IGTTool {
         this.secondaryOreDicts = secondaryOreDicts;
         this.markerItem = markerItem;
         setMaxStackSize(1);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_TOOLS);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         setTranslationKey("gt.tool." + id + ".name");
         setRegistryName(domain, id);
     }

@@ -216,7 +216,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
                 if (fuelBurnTimeLeft % 2 == 0 && currentTemperature < getMaxTemperate())
                     currentTemperature++;
                 fuelBurnTimeLeft -= isHighPressure ? 2 : 1;
-                if (fuelBurnTimeLeft == 0) {
+                if (fuelBurnTimeLeft <= 0) {
                     this.fuelMaxBurnTime = 0;
                     this.timeBeforeCoolingDown = getCooldownInterval();
                     // boiler has no fuel now, so queue burning state update
@@ -306,6 +306,10 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
         return currentTemperature / (getMaxTemperate() * 1.0);
     }
 
+    public int getCurrentTemperature() {
+        return currentTemperature;
+    }
+
     public double getFuelLeftPercent() {
         return fuelMaxBurnTime == 0 ? 0.0 : fuelBurnTimeLeft / (fuelMaxBurnTime * 1.0);
     }
@@ -372,7 +376,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         super.clearMachineInventory(itemBuffer);
         clearInventory(itemBuffer, containerInventory);
     }

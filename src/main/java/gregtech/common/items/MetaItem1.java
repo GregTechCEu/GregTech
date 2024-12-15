@@ -3,11 +3,14 @@ package gregtech.common.items;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.impl.CommonFluidFilters;
-import gregtech.api.items.metaitem.*;
+import gregtech.api.items.metaitem.ElectricStats;
+import gregtech.api.items.metaitem.FilteredFluidStats;
+import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.MusicDiscStats;
+import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.items.metaitem.stats.ItemFluidContainer;
-import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -22,8 +25,35 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.covers.filter.IFilter;
+import gregtech.common.covers.filter.OreDictionaryItemFilter;
+import gregtech.common.covers.filter.SimpleFluidFilter;
+import gregtech.common.covers.filter.SimpleItemFilter;
+import gregtech.common.covers.filter.SmartItemFilter;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.entities.GTBoatEntity.GTBoatType;
-import gregtech.common.items.behaviors.*;
+import gregtech.common.items.behaviors.ClipboardBehavior;
+import gregtech.common.items.behaviors.ColorSprayBehaviour;
+import gregtech.common.items.behaviors.DataItemBehavior;
+import gregtech.common.items.behaviors.DoorBehavior;
+import gregtech.common.items.behaviors.DynamiteBehaviour;
+import gregtech.common.items.behaviors.FacadeItem;
+import gregtech.common.items.behaviors.FertilizerBehavior;
+import gregtech.common.items.behaviors.FoamSprayerBehavior;
+import gregtech.common.items.behaviors.GTBoatBehavior;
+import gregtech.common.items.behaviors.IntCircuitBehaviour;
+import gregtech.common.items.behaviors.ItemMagnetBehavior;
+import gregtech.common.items.behaviors.LighterBehaviour;
+import gregtech.common.items.behaviors.MultiblockBuilderBehavior;
+import gregtech.common.items.behaviors.NanoSaberBehavior;
+import gregtech.common.items.behaviors.ProspectorScannerBehavior;
+import gregtech.common.items.behaviors.TooltipBehavior;
+import gregtech.common.items.behaviors.TricorderBehavior;
+import gregtech.common.items.behaviors.TurbineRotorBehavior;
+import gregtech.common.items.behaviors.filter.OreDictFilterUIManager;
+import gregtech.common.items.behaviors.filter.SimpleFilterUIManager;
+import gregtech.common.items.behaviors.filter.SimpleFluidFilterUIManager;
+import gregtech.common.items.behaviors.filter.SmartFilterUIManager;
 import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
@@ -149,53 +179,53 @@ public class MetaItem1 extends StandardMetaItem {
         // out of registry order so it can reference the Empty Spray Can
         SPRAY_SOLVENT = addItem(60, "spray.solvent").setMaxStackSize(1)
                 .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 1024, -1))
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             SPRAY_CAN_DYES[i] = addItem(62 + i, "spray.can.dyes." + EnumDyeColor.values()[i].getName())
                     .setMaxStackSize(1)
                     .addComponents(new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 512, i))
-                    .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                    .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         }
 
         // Fluid Cells: ID 78-88
         FLUID_CELL = addItem(78, "fluid_cell")
                 .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, false),
                         new ItemFluidContainer())
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal")
                 .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, true),
                         new ItemFluidContainer())
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
                 .addComponents(new FilteredFluidStats(8000,
                         Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
                         false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
                 .addComponents(new FilteredFluidStats(32000,
                         Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
                         false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
                 .addComponents(new FilteredFluidStats(64000,
                         Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
                         true, true, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
                 .addComponents(new FilteredFluidStats(128000,
                         Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true,
                         false, false, true), new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
                 .addComponents(new FilteredFluidStats(512000,
@@ -203,36 +233,36 @@ public class MetaItem1 extends StandardMetaItem {
                         true, false, false, true), new ItemFluidContainer())
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
                 .addComponents(new FilteredFluidStats(1000, 1200, false, true, false, false, true),
                         new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))) // small dust
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         // Limited-Use Items: ID 89-95
 
         TOOL_MATCHES = addItem(89, "tool.matches")
                 .addComponents(new LighterBehaviour(false, false, false))
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TOOL_MATCHBOX = addItem(90, "tool.matchbox")
                 .addComponents(new LighterBehaviour(false, true, false, Items.PAPER, 16))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TOOL_LIGHTER_INVAR = addItem(91, "tool.lighter.invar")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Invar, M * 2)))
                 .addComponents(new LighterBehaviour(GTUtility.gregtechId("lighter_open"), true, true, true))
                 .addComponents(new FilteredFluidStats(100, true, CommonFluidFilters.LIGHTER_FUEL))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TOOL_LIGHTER_PLATINUM = addItem(92, "tool.lighter.platinum")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2)))
                 .addComponents(new LighterBehaviour(GTUtility.gregtechId("lighter_open"), true, true, true))
                 .addComponents(new FilteredFluidStats(1000, true, CommonFluidFilters.LIGHTER_FUEL))
                 .setMaxStackSize(1)
                 .setRarity(EnumRarity.UNCOMMON)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         BOTTLE_PURPLE_DRINK = addItem(93, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true,
                 new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
@@ -247,7 +277,7 @@ public class MetaItem1 extends StandardMetaItem {
         VOLTAGE_COIL_HV = addItem(99, "voltage_coil.hv").setMaterialInfo(new ItemMaterialInfo(
                 new MaterialStack(Materials.BlackSteel, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
         VOLTAGE_COIL_EV = addItem(100, "voltage_coil.ev")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 2),
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2),
                         new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
         VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(
                 new MaterialStack(Materials.Iridium, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
@@ -556,14 +586,18 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Filters: ID 290-300
         FLUID_FILTER = addItem(290, "fluid_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
+                .addComponents(new SimpleFluidFilterUIManager(), IFilter.factory(SimpleFluidFilter::new));
         ITEM_FILTER = addItem(291, "item_filter")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2),
-                        new MaterialStack(Materials.Steel, M)));
+                        new MaterialStack(Materials.Steel, M)))
+                .addComponents(new SimpleFilterUIManager(), IFilter.factory(SimpleItemFilter::new));
         ORE_DICTIONARY_FILTER = addItem(292, "ore_dictionary_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 2)))
+                .addComponents(new OreDictFilterUIManager(), IFilter.factory(OreDictionaryItemFilter::new));
         SMART_FILTER = addItem(293, "smart_item_filter")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Zinc, M * 3 / 2)))
+                .addComponents(new SmartFilterUIManager(), IFilter.factory(SmartItemFilter::new));
 
         // Functional Covers: ID 301-330
         COVER_MACHINE_CONTROLLER = addItem(301, "cover.controller");
@@ -737,69 +771,68 @@ public class MetaItem1 extends StandardMetaItem {
         // Usable Items: ID 460-490
         DYNAMITE = addItem(460, "dynamite")
                 .addComponents(new DynamiteBehaviour())
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         INTEGRATED_CIRCUIT = addItem(461, "circuit.integrated").addComponents(new IntCircuitBehaviour())
                 .setModelAmount(33);
         FOAM_SPRAYER = addItem(462, "foam_sprayer").addComponents(new FoamSprayerBehavior())
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         NANO_SABER = addItem(463, "nano_saber").addComponents(ElectricStats.createElectricItem(4_000_000L, GTValues.HV))
                 .addComponents(new NanoSaberBehavior())
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         NANO_SABER.getMetaItem().addPropertyOverride(NanoSaberBehavior.OVERRIDE_KEY_LOCATION,
                 (stack, worldIn, entityIn) -> NanoSaberBehavior.isItemActive(stack) ? 1.0f : 0.0f);
 
         CLIPBOARD = addItem(464, "clipboard")
                 .addComponents(new ClipboardBehavior())
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TERMINAL = addItem(465, "terminal")
-                .addComponents(new HardwareProvider(), new TerminalBehaviour())
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         PROSPECTOR_LV = addItem(466, "prospector.lv")
                 .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV),
                         new ProspectorScannerBehavior(2, GTValues.LV))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         PROSPECTOR_HV = addItem(467, "prospector.hv")
                 .addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV),
                         new ProspectorScannerBehavior(3, GTValues.HV))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         PROSPECTOR_LUV = addItem(468, "prospector.luv")
                 .addComponents(ElectricStats.createElectricItem(1_000_000_000L, GTValues.LuV),
                         new ProspectorScannerBehavior(5, GTValues.LuV))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TRICORDER_SCANNER = addItem(469, "tricorder_scanner")
                 .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.MV), new TricorderBehavior(2))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         DEBUG_SCANNER = addItem(470, "debug_scanner")
                 .addComponents(new TricorderBehavior(3))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         ITEM_MAGNET_LV = addItem(471, "item_magnet.lv")
                 .addComponents(ElectricStats.createElectricItem(100_000L, GTValues.LV), new ItemMagnetBehavior(8))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         ITEM_MAGNET_HV = addItem(472, "item_magnet.hv")
                 .addComponents(ElectricStats.createElectricItem(1_600_000L, GTValues.HV), new ItemMagnetBehavior(32))
                 .setMaxStackSize(1)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         RUBBER_WOOD_BOAT = addItem(473, "rubber_wood_boat")
                 .addComponents(new GTBoatBehavior(GTBoatType.RUBBER_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
         TREATED_WOOD_BOAT = addItem(474, "treated_wood_boat")
                 .addComponents(new GTBoatBehavior(GTBoatType.TREATED_WOOD_BOAT)).setMaxStackSize(1).setBurnValue(400);
         RUBBER_WOOD_DOOR = addItem(475, "rubber_wood_door").addComponents(new DoorBehavior(MetaBlocks.RUBBER_WOOD_DOOR))
-                .setBurnValue(200).setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+                .setBurnValue(200).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
         TREATED_WOOD_DOOR = addItem(476, "treated_wood_door")
                 .addComponents(new DoorBehavior(MetaBlocks.TREATED_WOOD_DOOR)).setBurnValue(200)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_DECORATIONS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_DECORATIONS);
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
@@ -977,105 +1010,105 @@ public class MetaItem1 extends StandardMetaItem {
         // Batteries: 731-775
         BATTERY_ULV_TANTALUM = addItem(731, "battery.re.ulv.tantalum")
                 .addComponents(ElectricStats.createRechargeableBattery(1000, GTValues.ULV))
-                .setUnificationData(OrePrefix.battery, Tier.ULV).setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setUnificationData(OrePrefix.battery, Tier.ULV).setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         BATTERY_LV_SODIUM = addItem(732, "battery.re.lv.sodium")
                 .addComponents(ElectricStats.createRechargeableBattery(80000, GTValues.LV))
                 .setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_MV_SODIUM = addItem(733, "battery.re.mv.sodium")
                 .addComponents(ElectricStats.createRechargeableBattery(360000, GTValues.MV))
                 .setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_HV_SODIUM = addItem(734, "battery.re.hv.sodium")
                 .addComponents(ElectricStats.createRechargeableBattery(1200000, GTValues.HV))
                 .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         BATTERY_LV_LITHIUM = addItem(735, "battery.re.lv.lithium")
                 .addComponents(ElectricStats.createRechargeableBattery(120000, GTValues.LV))
                 .setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_MV_LITHIUM = addItem(736, "battery.re.mv.lithium")
                 .addComponents(ElectricStats.createRechargeableBattery(420000, GTValues.MV))
                 .setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_HV_LITHIUM = addItem(737, "battery.re.hv.lithium")
                 .addComponents(ElectricStats.createRechargeableBattery(1800000, GTValues.HV))
                 .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         BATTERY_LV_CADMIUM = addItem(738, "battery.re.lv.cadmium")
                 .addComponents(ElectricStats.createRechargeableBattery(100000, GTValues.LV))
                 .setUnificationData(OrePrefix.battery, Tier.LV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_MV_CADMIUM = addItem(739, "battery.re.mv.cadmium")
                 .addComponents(ElectricStats.createRechargeableBattery(400000, GTValues.MV))
                 .setUnificationData(OrePrefix.battery, Tier.MV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_HV_CADMIUM = addItem(740, "battery.re.hv.cadmium")
                 .addComponents(ElectricStats.createRechargeableBattery(1600000, GTValues.HV))
                 .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         ENERGIUM_CRYSTAL = addItem(741, "energy_crystal")
                 .addComponents(ElectricStats.createRechargeableBattery(6_400_000L, GTValues.HV))
                 .setUnificationData(OrePrefix.battery, Tier.HV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         LAPOTRON_CRYSTAL = addItem(742, "lapotron_crystal")
                 .addComponents(ElectricStats.createRechargeableBattery(25_000_000L, GTValues.EV))
                 .setUnificationData(OrePrefix.battery, Tier.EV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         BATTERY_EV_VANADIUM = addItem(743, "battery.ev.vanadium")
                 .addComponents(ElectricStats.createRechargeableBattery(10_240_000L, GTValues.EV))
                 .setUnificationData(OrePrefix.battery, Tier.EV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_IV_VANADIUM = addItem(744, "battery.iv.vanadium")
                 .addComponents(ElectricStats.createRechargeableBattery(40_960_000L, GTValues.IV))
                 .setUnificationData(OrePrefix.battery, Tier.IV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_LUV_VANADIUM = addItem(745, "battery.luv.vanadium")
                 .addComponents(ElectricStats.createRechargeableBattery(163_840_000L, GTValues.LuV))
                 .setUnificationData(OrePrefix.battery, Tier.LuV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         BATTERY_ZPM_NAQUADRIA = addItem(746, "battery.zpm.naquadria")
                 .addComponents(ElectricStats.createRechargeableBattery(655_360_000L, GTValues.ZPM))
                 .setUnificationData(OrePrefix.battery, Tier.ZPM).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria")
                 .addComponents(ElectricStats.createRechargeableBattery(2_621_440_000L, GTValues.UV))
                 .setUnificationData(OrePrefix.battery, Tier.UV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronic_orb")
                 .addComponents(ElectricStats.createRechargeableBattery(250_000_000L, GTValues.IV))
                 .setUnificationData(OrePrefix.battery, Tier.IV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         ENERGY_LAPOTRONIC_ORB_CLUSTER = addItem(749, "energy.lapotronic_orb_cluster")
                 .addComponents(ElectricStats.createRechargeableBattery(1_000_000_000L, GTValues.LuV))
                 .setUnificationData(OrePrefix.battery, Tier.LuV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         ENERGY_MODULE = addItem(750, "energy.module")
                 .addComponents(
                         new IItemComponent[] { ElectricStats.createRechargeableBattery(4_000_000_000L, GTValues.ZPM) })
                 .setUnificationData(OrePrefix.battery, Tier.ZPM).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         ENERGY_CLUSTER = addItem(751, "energy.cluster")
                 .addComponents(
                         new IItemComponent[] { ElectricStats.createRechargeableBattery(20_000_000_000L, GTValues.UV) })
                 .setUnificationData(OrePrefix.battery, Tier.UV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         ZERO_POINT_MODULE = addItem(752, "zpm")
                 .addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true)).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         ULTIMATE_BATTERY = addItem(753, "max.battery")
                 .addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.UHV))
                 .setUnificationData(OrePrefix.battery, Tier.UHV).setModelAmount(8)
-                .setCreativeTabs(GregTechAPI.TAB_GREGTECH_TOOLS);
+                .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         POWER_THRUSTER = addItem(776, "power_thruster").setRarity(EnumRarity.UNCOMMON);
         POWER_THRUSTER_ADVANCED = addItem(777, "power_thruster_advanced").setRarity(EnumRarity.RARE);

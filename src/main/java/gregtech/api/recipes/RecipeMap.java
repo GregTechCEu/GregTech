@@ -4,18 +4,23 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
-import gregtech.api.gui.widgets.RecipeProgressWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.category.GTRecipeCategory;
 import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.recipes.map.*;
+import gregtech.api.recipes.map.AbstractMapIngredient;
+import gregtech.api.recipes.map.Branch;
+import gregtech.api.recipes.map.Either;
+import gregtech.api.recipes.map.MapFluidIngredient;
+import gregtech.api.recipes.map.MapItemStackIngredient;
+import gregtech.api.recipes.map.MapItemStackNBTIngredient;
+import gregtech.api.recipes.map.MapOreDictIngredient;
+import gregtech.api.recipes.map.MapOreDictNBTIngredient;
+import gregtech.api.recipes.ui.RecipeMapUI;
+import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
@@ -34,6 +39,7 @@ import gregtech.modules.GregTechModules;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -47,8 +53,6 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -56,12 +60,23 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import stanhebben.zenscript.annotations.*;
+import org.jetbrains.annotations.UnmodifiableView;
 import stanhebben.zenscript.annotations.Optional;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenGetter;
+import stanhebben.zenscript.annotations.ZenMethod;
+import stanhebben.zenscript.annotations.ZenSetter;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.DoubleSupplier;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -73,12 +88,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new Object2ReferenceOpenHashMap<>();
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU = Comparator.comparingInt(Recipe::getDuration)
-            .thenComparingInt(Recipe::getEUt)
+            .thenComparingLong(Recipe::getEUt)
             .thenComparing(Recipe::hashCode);
 
     private static boolean foundInvalidRecipe = false;
 
     public static final ChanceBoostFunction DEFAULT_CHANCE_FUNCTION = ChanceBoostFunction.OVERCLOCK;
+    protected RecipeMapUI<?> recipeMapUI;
 
     public ChanceBoostFunction chanceFunction = DEFAULT_CHANCE_FUNCTION;
 
@@ -89,16 +105,13 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private int maxOutputs;
     private int maxFluidInputs;
     private int maxFluidOutputs;
-    private final boolean modifyItemInputs;
-    private final boolean modifyItemOutputs;
-    private final boolean modifyFluidInputs;
-    private final boolean modifyFluidOutputs;
-    protected final Byte2ObjectMap<TextureArea> slotOverlays;
-    protected TextureArea specialTexture;
-    protected int[] specialTexturePosition;
-    protected TextureArea progressBarTexture;
-    protected MoveType moveType;
-    public final boolean isHidden;
+
+    /**
+     * @deprecated {@link RecipeMapUI#isJEIVisible()}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    public final boolean isHidden = false;
 
     private boolean allowEmptyOutput;
 
@@ -111,9 +124,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private final Map<GTRecipeCategory, List<Recipe>> recipeByCategory = new Object2ObjectOpenHashMap<>();
 
-    private Consumer<R> onRecipeBuildAction;
-    protected SoundEvent sound;
-    private RecipeMap<?> smallRecipeMap;
+    private final Map<ResourceLocation, RecipeBuildAction<R>> recipeBuildActions = new Object2ObjectOpenHashMap<>();
+    protected @Nullable SoundEvent sound;
+    private @Nullable RecipeMap<?> smallRecipeMap;
 
     /**
      * Create and register new instance of RecipeMap with specified properties. All
@@ -126,7 +139,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param maxFluidOutputs      the maximum fluid outputs
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
+     *
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public RecipeMap(@NotNull String unlocalizedName,
                      int maxInputs, int maxOutputs, int maxFluidInputs, int maxFluidOutputs,
                      @NotNull R defaultRecipeBuilder,
@@ -151,7 +168,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param modifyFluidOutputs   if modification of the maximum fluid output is permitted
      * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
      * @param isHidden             if the RecipeMap should have a category in JEI
+     *
+     * @deprecated {@link RecipeMap#RecipeMap(String, R, RecipeMapUIFunction, int, int, int, int)}
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public RecipeMap(@NotNull String unlocalizedName,
                      int maxInputs, boolean modifyItemInputs,
                      int maxOutputs, boolean modifyItemOutputs,
@@ -160,21 +181,49 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                      @NotNull R defaultRecipeBuilder,
                      boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
-        this.slotOverlays = new Byte2ObjectOpenHashMap<>();
-        this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
-        this.moveType = MoveType.HORIZONTAL;
 
         this.maxInputs = maxInputs;
         this.maxFluidInputs = maxFluidInputs;
         this.maxOutputs = maxOutputs;
         this.maxFluidOutputs = maxFluidOutputs;
 
-        this.modifyItemInputs = modifyItemInputs;
-        this.modifyItemOutputs = modifyItemOutputs;
-        this.modifyFluidInputs = modifyFluidInputs;
-        this.modifyFluidOutputs = modifyFluidOutputs;
+        defaultRecipeBuilder.setRecipeMap(this);
+        defaultRecipeBuilder
+                .category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
+        this.recipeBuilderSample = defaultRecipeBuilder;
 
-        this.isHidden = isHidden;
+        this.recipeMapUI = new RecipeMapUI<>(this, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
+                modifyFluidOutputs, false);
+        this.recipeMapUI.setJEIVisible(!isHidden);
+
+        RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
+
+        this.grsVirtualizedRecipeMap = GregTechAPI.moduleManager.isModuleEnabled(GregTechModules.MODULE_GRS) ?
+                new VirtualizedRecipeMap(this) : null;
+    }
+
+    /**
+     * Create and register new instance of RecipeMap with specified properties.
+     *
+     * @param unlocalizedName      the unlocalized name for the RecipeMap
+     * @param defaultRecipeBuilder the default RecipeBuilder for the RecipeMap
+     * @param recipeMapUI          the ui to represent this recipemap
+     * @param maxInputs            the maximum item inputs
+     * @param maxOutputs           the maximum item outputs
+     * @param maxFluidInputs       the maximum fluid inputs
+     * @param maxFluidOutputs      the maximum fluid outputs
+     */
+    public RecipeMap(@NotNull String unlocalizedName, @NotNull R defaultRecipeBuilder,
+                     @NotNull RecipeMapUIFunction recipeMapUI, int maxInputs, int maxOutputs, int maxFluidInputs,
+                     int maxFluidOutputs) {
+        this.unlocalizedName = unlocalizedName;
+        this.recipeMapUI = recipeMapUI.apply(this);
+
+        this.maxInputs = maxInputs;
+        this.maxFluidInputs = maxFluidInputs;
+        this.maxOutputs = maxOutputs;
+        this.maxFluidOutputs = maxFluidOutputs;
+
         defaultRecipeBuilder.setRecipeMap(this);
         defaultRecipeBuilder
                 .category(GTRecipeCategory.create(GTValues.MODID, unlocalizedName, getTranslationKey(), this));
@@ -186,12 +235,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @ZenMethod
-    public static List<RecipeMap<?>> getRecipeMaps() {
+    public static List<RecipeMap<? extends RecipeBuilder<?>>> getRecipeMaps() {
         return ImmutableList.copyOf(RECIPE_MAP_REGISTRY.values());
     }
 
     @ZenMethod
-    public static RecipeMap<?> getByName(String unlocalizedName) {
+    public static RecipeMap<? extends RecipeBuilder<?>> getByName(String unlocalizedName) {
         return RECIPE_MAP_REGISTRY.get(unlocalizedName);
     }
 
@@ -205,7 +254,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public static void setFoundInvalidRecipe(boolean foundInvalidRecipe) {
-        RecipeMap.foundInvalidRecipe |= foundInvalidRecipe;
+        RecipeMap.foundInvalidRecipe = RecipeMap.foundInvalidRecipe || foundInvalidRecipe;
         OrePrefix currentOrePrefix = OrePrefix.getCurrentProcessingPrefix();
         if (currentOrePrefix != null) {
             Material currentMaterial = OrePrefix.getCurrentMaterial();
@@ -216,19 +265,39 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
     }
 
+    /**
+     * @deprecated {@link RecipeMapUI#setProgressBar(TextureArea, MoveType)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public RecipeMap<R> setProgressBar(TextureArea progressBar, MoveType moveType) {
-        this.progressBarTexture = progressBar;
-        this.moveType = moveType;
+        this.recipeMapUI.setProgressBar(progressBar, moveType);
         return this;
     }
 
+    /**
+     * @deprecated {@link RecipeMapUI#setItemSlotOverlay(TextureArea, boolean, boolean)}
+     *             {@link RecipeMapUI#setFluidSlotOverlay(TextureArea, boolean, boolean)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, TextureArea slotOverlay) {
         return this.setSlotOverlay(isOutput, isFluid, false, slotOverlay).setSlotOverlay(isOutput, isFluid, true,
                 slotOverlay);
     }
 
+    /**
+     * @deprecated {@link RecipeMapUI#setItemSlotOverlay(TextureArea, boolean, boolean)}
+     *             {@link RecipeMapUI#setFluidSlotOverlay(TextureArea, boolean, boolean)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
-        this.slotOverlays.put((byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0)), slotOverlay);
+        if (isFluid) {
+            this.recipeMapUI.setFluidSlotOverlay(slotOverlay, isOutput, isLast);
+        } else {
+            this.recipeMapUI.setItemSlotOverlay(slotOverlay, isOutput, isLast);
+        }
         return this;
     }
 
@@ -242,9 +311,44 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Consumer<R> consumer) {
-        onRecipeBuildAction = consumer;
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param name   the unique name of the action
+     * @param action the action to perform
+     * @return this
+     */
+    public RecipeMap<R> onRecipeBuild(@NotNull ResourceLocation name, @NotNull RecipeBuildAction<R> action) {
+        if (recipeBuildActions.containsKey(name)) {
+            throw new IllegalArgumentException("Cannot register RecipeBuildAction with duplicate name: " + name);
+        }
+        recipeBuildActions.put(name, action);
         return this;
+    }
+
+    /**
+     * @param name the name of the build action to remove
+     */
+    public void removeBuildAction(@NotNull ResourceLocation name) {
+        recipeBuildActions.remove(name);
+    }
+
+    /**
+     * Add a recipe build action to be performed upon this RecipeMap's builder's recipe registration.
+     *
+     * @param actions the actions to perform
+     */
+    @ApiStatus.Internal
+    protected void onRecipeBuild(@NotNull Map<ResourceLocation, RecipeBuildAction<R>> actions) {
+        recipeBuildActions.putAll(actions);
+    }
+
+    /**
+     * @return the build actions for this RecipeMap's default RecipeBuilder
+     */
+    @ApiStatus.Internal
+    protected @UnmodifiableView @NotNull Map<ResourceLocation, RecipeBuildAction<R>> getBuildActions() {
+        return this.recipeBuildActions;
     }
 
     public RecipeMap<R> allowEmptyOutput() {
@@ -257,7 +361,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<?> getSmallRecipeMap() {
+    public RecipeMap<? extends RecipeBuilder<?>> getSmallRecipeMap() {
         return smallRecipeMap;
     }
 
@@ -333,7 +437,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @see GTRecipeHandler#removeAllRecipes(RecipeMap)
      */
     @ApiStatus.Internal
-    void removeAllRecipes() {
+    protected void removeAllRecipes() {
         if (GroovyScriptModule.isCurrentlyRunning()) {
             this.lookup.getRecipes(false).forEach(this.getGroovyScriptRecipeMap()::addBackup);
         }
@@ -358,11 +462,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
         boolean emptyInputs = recipe.getInputs().isEmpty() && recipe.getFluidInputs().isEmpty();
         if (emptyInputs) {
-            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+            GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.");
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -370,11 +472,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 recipe.getFluidOutputs().isEmpty() && recipe.getChancedOutputs().getChancedEntries().isEmpty() &&
                 recipe.getChancedFluidOutputs().getChancedEntries().isEmpty();
         if (emptyOutputs) {
-            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.");
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+            GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.", new Throwable());
             if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.");
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.",
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -382,12 +483,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int amount = recipe.getInputs().size();
         if (amount > getMaxInputs()) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                    getMaxInputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(String.format(
-                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Inputs"));
+                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -395,13 +495,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getOutputs().size() + recipe.getChancedOutputs().getChancedEntries().size();
         if (amount > getMaxOutputs()) {
             GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                    getMaxOutputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI
                         .logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxOutputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Outputs"));
+                                amount, getMaxOutputs()), new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -409,13 +507,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getFluidInputs().size();
         if (amount > getMaxFluidInputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxFluidInputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+                    getMaxFluidInputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(
                         String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidInputs()));
-                CraftTweakerAPI.logError("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Inputs"));
+                                amount, getMaxFluidInputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -423,14 +520,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         amount = recipe.getFluidOutputs().size() + recipe.getChancedFluidOutputs().getChancedEntries().size();
         if (amount > getMaxFluidOutputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount,
-                    getMaxFluidOutputs());
-            GTLog.logger.error("Stacktrace:", new IllegalArgumentException("Invalid number of Fluid Outputs"));
+                    getMaxFluidOutputs(), new Throwable());
             if (recipe.getIsCTRecipe()) {
                 CraftTweakerAPI.logError(
                         String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidOutputs()));
-                CraftTweakerAPI.logError("Stacktrace:",
-                        new IllegalArgumentException("Invalid number of Fluid Outputs"));
+                                amount, getMaxFluidOutputs()),
+                        new Throwable());
             }
             recipeStatus = EnumValidationResult.INVALID;
         }
@@ -796,153 +891,82 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
+    /**
+     * @deprecated {@link RecipeMapUI#createJeiUITemplate(IItemHandlerModifiable, IItemHandlerModifiable, FluidTankList, FluidTankList, int)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems,
                                                  FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new RecipeProgressWidget(200, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
-        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
-        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
-        if (this.specialTexture != null && this.specialTexturePosition != null) addSpecialTexture(builder);
-        return builder;
+        return recipeMapUI.createJeiUITemplate(importItems, exportItems, importFluids, exportFluids, yOffset);
     }
 
-    // this DOES NOT include machine control widgets or binds player inventory
+    /**
+     * @deprecated {@link RecipeMapUI#createUITemplate(DoubleSupplier, IItemHandlerModifiable, IItemHandlerModifiable, FluidTankList, FluidTankList, int)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems,
                                               IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                               FluidTankList exportFluids, int yOffset) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
-                moveType, this));
-        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
-        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
-        if (this.specialTexture != null && this.specialTexturePosition != null) addSpecialTexture(builder);
-        return builder;
+        return recipeMapUI.createUITemplate(progressSupplier, importItems, exportItems, importFluids, exportFluids,
+                yOffset);
     }
 
-    // this DOES NOT include machine control widgets or binds player inventory
+    /**
+     * @deprecated {@link RecipeMapUI#createUITemplateNoOutputs(DoubleSupplier, IItemHandlerModifiable, IItemHandlerModifiable, FluidTankList, FluidTankList, int)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     public ModularUI.Builder createUITemplateNoOutputs(DoubleSupplier progressSupplier,
                                                        IItemHandlerModifiable importItems,
                                                        IItemHandlerModifiable exportItems, FluidTankList importFluids,
                                                        FluidTankList exportFluids, int yOffset) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture,
-                moveType, this));
-        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
-        if (this.specialTexture != null && this.specialTexturePosition != null) addSpecialTexture(builder);
-        return builder;
-    }
-
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler,
-                                         FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
-        int itemInputsCount = itemHandler.getSlots();
-        int fluidInputsCount = fluidHandler.getTanks();
-        boolean invertFluids = false;
-        if (itemInputsCount == 0) {
-            int tmp = itemInputsCount;
-            itemInputsCount = fluidInputsCount;
-            fluidInputsCount = tmp;
-            invertFluids = true;
-        }
-        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
-        int itemSlotsToLeft = inputSlotGrid[0];
-        int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
-        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
-        boolean wasGroup = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
-        if (wasGroup) startInputsY -= 9;
-        else if (itemHandler.getSlots() >= 6 && fluidHandler.getTanks() >= 2 && !isOutputs) startInputsY -= 9;
-        for (int i = 0; i < itemSlotsToDown; i++) {
-            for (int j = 0; j < itemSlotsToLeft; j++) {
-                int slotIndex = i * itemSlotsToLeft + j;
-                if (slotIndex >= itemInputsCount) break;
-                int x = startInputsX + 18 * j;
-                int y = startInputsY + 18 * i;
-                addSlot(builder, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
-            }
-        }
-        if (wasGroup) startInputsY += 2;
-        if (fluidInputsCount > 0 || invertFluids) {
-            if (itemSlotsToDown >= fluidInputsCount && itemSlotsToLeft < 3) {
-                int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    int y = startInputsY + 18 * i;
-                    addSlot(builder, startSpecX, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
-                }
-            } else {
-                int startSpecY = startInputsY + itemSlotsToDown * 18;
-                for (int i = 0; i < fluidInputsCount; i++) {
-                    int x = isOutputs ? startInputsX + 18 * (i % 3) :
-                            startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
-                    int y = startSpecY + (i / 3) * 18;
-                    addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
-                }
-            }
-        }
-    }
-
-    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
-                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
-        if (!isFluid) {
-            builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs).setBackgroundTexture(
-                    getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
-        } else {
-            builder.widget(new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18).setAlwaysShowFull(true)
-                    .setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1))
-                    .setContainerClicking(true, !isOutputs));
-        }
-    }
-
-    protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
-        TextureArea base = isFluid ? GuiTextures.FLUID_SLOT : GuiTextures.SLOT;
-        byte overlayKey = (byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0));
-        if (slotOverlays.containsKey(overlayKey)) {
-            return new TextureArea[] { base, slotOverlays.get(overlayKey) };
-        }
-        return new TextureArea[] { base };
-    }
-
-    protected static int[] determineSlotsGrid(int itemInputsCount) {
-        int itemSlotsToLeft;
-        int itemSlotsToDown;
-        double sqrt = Math.sqrt(itemInputsCount);
-        // if the number of input has an integer root
-        // return it.
-        if (sqrt % 1 == 0) {
-            itemSlotsToLeft = itemSlotsToDown = (int) sqrt;
-        } else if (itemInputsCount == 3) {
-            itemSlotsToLeft = 3;
-            itemSlotsToDown = 1;
-        } else {
-            // if we couldn't fit all into a perfect square,
-            // increase the amount of slots to the left
-            itemSlotsToLeft = (int) Math.ceil(sqrt);
-            itemSlotsToDown = itemSlotsToLeft - 1;
-            // if we still can't fit all the slots in a grid,
-            // increase the amount of slots on the bottom
-            if (itemInputsCount > itemSlotsToLeft * itemSlotsToDown) {
-                itemSlotsToDown = itemSlotsToLeft;
-            }
-        }
-        return new int[] { itemSlotsToLeft, itemSlotsToDown };
+        return recipeMapUI.createUITemplateNoOutputs(progressSupplier, importItems, exportItems, importFluids,
+                exportFluids, yOffset);
     }
 
     /**
-     * This height is used to determine size of background texture on JEI.
+     * @deprecated {@link RecipeMapUI#addInventorySlotGroup(ModularUI.Builder, IItemHandlerModifiable, FluidTankList, boolean, int)}
      */
-    public int getPropertyHeightShift() {
-        int maxPropertyCount = 0;
-        if (shouldShiftWidgets()) {
-            for (Recipe recipe : getRecipeList()) {
-                if (recipe.getPropertyCount() > maxPropertyCount)
-                    maxPropertyCount = recipe.getPropertyCount();
-            }
-        }
-        return maxPropertyCount * 10; // GTRecipeWrapper#LINE_HEIGHT
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler,
+                                         FluidTankList fluidHandler, boolean isOutputs, int yOffset) {}
+
+    /**
+     * @deprecated {@link RecipeMapUI#addSlot(ModularUI.Builder, int, int, int, IItemHandlerModifiable, FluidTankList, boolean, boolean)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler,
+                           FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {}
+
+    /**
+     * @deprecated {@link RecipeMapUI#getOverlaysForSlot(boolean, boolean, boolean)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    protected TextureArea[] getOverlaysForSlot(boolean isOutput, boolean isFluid, boolean isLast) {
+        return null;
     }
 
+    /**
+     * @deprecated {@link RecipeMapUI#getPropertyHeightShift()}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
+    public int getPropertyHeightShift() {
+        return recipeMapUI.getPropertyHeightShift();
+    }
+
+    /**
+     * @deprecated {@link RecipeMapUI#shouldShiftWidgets()}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     private boolean shouldShiftWidgets() {
-        return getMaxInputs() + getMaxOutputs() >= 6 ||
-                getMaxFluidInputs() + getMaxFluidOutputs() >= 6;
+        return false;
     }
 
     @Method(modid = Mods.Names.GROOVY_SCRIPT)
@@ -975,7 +999,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                                              @NotNull Branch branchMap, int index, int count) {
         if (count >= ingredients.size()) return true;
         if (index >= ingredients.size()) {
-            throw new RuntimeException("Index out of bounds for recurseItemTreeAdd, should not happen");
+            throw new IllegalStateException("Index out of bounds for recurseItemTreeAdd, should not happen");
         }
         // Loop through NUMBER_OF_INGREDIENTS times.
 
@@ -1264,16 +1288,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
     }
 
+    /**
+     * @deprecated {@link RecipeMapUI#setSpecialTexture(TextureArea, int, int, int, int)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     protected RecipeMap<R> setSpecialTexture(int x, int y, int width, int height, TextureArea area) {
-        this.specialTexturePosition = new int[] { x, y, width, height };
-        this.specialTexture = area;
+        recipeMapUI.setSpecialTexture(area, x, y, width, height);
         return this;
     }
 
+    /**
+     * @deprecated {@link RecipeMapUI#addSpecialTexture(ModularUI.Builder)}
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
+    @Deprecated
     protected ModularUI.Builder addSpecialTexture(ModularUI.Builder builder) {
-        builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2],
-                specialTexturePosition[3], specialTexture);
-        return builder;
+        return recipeMapUI.addSpecialTexture(builder);
     }
 
     public Collection<Recipe> getRecipeList() {
@@ -1282,7 +1313,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 .collect(Collectors.toList());
     }
 
-    public SoundEvent getSound() {
+    public @Nullable SoundEvent getSound() {
         return sound;
     }
 
@@ -1321,7 +1352,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
+        return recipeBuilderSample.copy();
     }
 
     /**
@@ -1331,10 +1362,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      * @param ingredients    list of input ingredients.
      * @param branchMap      the current branch in the recursion.
      */
-    @Nullable
-    private Recipe recurseIngredientTreeRemove(@NotNull Recipe recipeToRemove,
-                                               @NotNull List<List<AbstractMapIngredient>> ingredients,
-                                               @NotNull Branch branchMap, int depth) {
+    private @Nullable Recipe recurseIngredientTreeRemove(@NotNull Recipe recipeToRemove,
+                                                         @NotNull List<List<AbstractMapIngredient>> ingredients,
+                                                         @NotNull Branch branchMap, int depth) {
         // for every ingredient
         for (List<AbstractMapIngredient> current : ingredients) {
             // for all possibilities as keys
@@ -1402,10 +1432,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxInputs")
     public void setMaxInputs(int maxInputs) {
-        if (modifyItemInputs) {
-            this.maxInputs = Math.max(this.maxInputs, maxInputs);
-        } else {
-            throw new UnsupportedOperationException("Cannot change max item input amount for " + getUnlocalizedName());
+        this.maxInputs = Math.max(this.maxInputs, maxInputs);
+        if (!recipeMapUI.canModifyItemInputs()) {
+            GTLog.logger.warn(
+                    "RecipeMap {} ui does not support changing max item inputs. Replace with a supporting UI for proper behavior.",
+                    getUnlocalizedName(), new Throwable());
         }
     }
 
@@ -1416,10 +1447,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxOutputs")
     public void setMaxOutputs(int maxOutputs) {
-        if (modifyItemOutputs) {
-            this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
-        } else {
-            throw new UnsupportedOperationException("Cannot change max item output amount for " + getUnlocalizedName());
+        this.maxOutputs = Math.max(this.maxOutputs, maxOutputs);
+        if (!recipeMapUI.canModifyItemOutputs()) {
+            GTLog.logger.warn(
+                    "RecipeMap {} ui does not support changing max item outputs. Replace with a supporting UI for proper behavior.",
+                    getUnlocalizedName(), new Throwable());
         }
     }
 
@@ -1430,10 +1462,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxFluidInputs")
     public void setMaxFluidInputs(int maxFluidInputs) {
-        if (modifyFluidInputs) {
-            this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
-        } else {
-            throw new UnsupportedOperationException("Cannot change max fluid input amount for " + getUnlocalizedName());
+        this.maxFluidInputs = Math.max(this.maxFluidInputs, maxFluidInputs);
+        if (!recipeMapUI.canModifyFluidInputs()) {
+            GTLog.logger.warn(
+                    "RecipeMap {} ui does not support changing max fluid inputs. Replace with a supporting UI for proper behavior.",
+                    getUnlocalizedName(), new Throwable());
         }
     }
 
@@ -1444,11 +1477,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenSetter("maxFluidOutputs")
     public void setMaxFluidOutputs(int maxFluidOutputs) {
-        if (modifyFluidOutputs) {
-            this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
-        } else {
-            throw new UnsupportedOperationException(
-                    "Cannot change max fluid output amount for " + getUnlocalizedName());
+        this.maxFluidOutputs = Math.max(this.maxFluidOutputs, maxFluidOutputs);
+        if (!recipeMapUI.canModifyFluidOutputs()) {
+            GTLog.logger.warn(
+                    "RecipeMap {} ui does not support changing max fluid outputs. Replace with a supporting UI for proper behavior.",
+                    getUnlocalizedName(), new Throwable());
         }
     }
 
@@ -1463,10 +1496,28 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return Collections.unmodifiableMap(recipeByCategory);
     }
 
+    /**
+     * @return the current ui for the recipemap
+     */
+    public @NotNull RecipeMapUI<?> getRecipeMapUI() {
+        return recipeMapUI;
+    }
+
+    /**
+     * @param recipeMapUI the recipemap ui to set
+     */
+    public void setRecipeMapUI(@NotNull RecipeMapUI<?> recipeMapUI) {
+        if (this.recipeMapUI.recipeMap() != recipeMapUI.recipeMap()) {
+            throw new IllegalArgumentException("RecipeMap UI RecipeMap '" + recipeMapUI.recipeMap().unlocalizedName +
+                    "' does not match this RecipeMap '" + this.unlocalizedName + "'");
+        }
+        this.recipeMapUI = recipeMapUI;
+    }
+
     @Override
     @ZenMethod
     public String toString() {
-        return "RecipeMap{" + "unlocalizedName='" + unlocalizedName + '\'' + '}';
+        return "RecipeMap{" + unlocalizedName + '}';
     }
 
     @Override

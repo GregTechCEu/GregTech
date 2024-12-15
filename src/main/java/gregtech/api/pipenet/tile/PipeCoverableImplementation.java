@@ -85,7 +85,8 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @SuppressWarnings("unchecked")
-    public ItemStack getStackForm() {
+    @Override
+    public @NotNull ItemStack getStackForm() {
         BlockPipe pipeBlock = holder.getPipeBlock();
         return pipeBlock.getDropItem(holder);
     }

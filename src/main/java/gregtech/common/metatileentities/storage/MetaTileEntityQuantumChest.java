@@ -31,7 +31,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
@@ -40,6 +39,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -60,7 +61,7 @@ import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntity
+public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IItemHandler>
                                         implements ITieredMetaTileEntity, IActiveOutputSide, IFastRenderMetaTileEntity {
 
     private final int tier;
@@ -110,6 +111,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                 Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
             }
         }
+        renderIndicatorOverlay(renderState, translation, pipeline);
     }
 
     @Override
@@ -118,6 +120,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), getPaintingColorForRendering());
     }
@@ -157,7 +160,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
             }
 
             if (previousStack == null || !areItemStackIdentical(previousStack, virtualItemStack)) {
-                writeCustomData(UPDATE_ITEM, buf -> buf.writeItemStack(virtualItemStack));
+                writeCustomData(UPDATE_ITEM, buf -> {
+                    virtualItemStack.setCount(1);
+                    buf.writeItemStack(virtualItemStack);
+                });
                 previousStack = virtualItemStack;
             }
             if (previousStackSize != itemsStoredInside) {
@@ -185,7 +191,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_total", maxStoredItems));
 
         NBTTagCompound compound = stack.getTagCompound();
@@ -348,6 +353,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
                                 .shouldUseBaseBackground())
                 .bindPlayerInventory(entityPlayer.inventory);
 
+        builder.widget(createConnectedGui(64));
+
         return builder.build(getHolder(), entityPlayer);
     }
 
@@ -380,17 +387,18 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputItems);
+        this.virtualItemStack.setCount(1);
         buf.writeItemStack(virtualItemStack);
         buf.writeLong(itemsStoredInside);
         buf.writeBoolean(voiding);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputItems = buf.readBoolean();
@@ -412,7 +420,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
@@ -513,7 +521,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
     }
 
     @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+    public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);
     }
 
@@ -544,6 +552,16 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity
         if (!getWorld().isRemote) {
             markDirty();
         }
+    }
+
+    @Override
+    public Type getType() {
+        return Type.ITEM;
+    }
+
+    @Override
+    public IItemHandler getTypeValue() {
+        return this.combinedInventory;
     }
 
     @Override

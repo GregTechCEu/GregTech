@@ -12,8 +12,8 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.category.GTRecipeCategory;
-import gregtech.api.recipes.recipeproperties.ResearchProperty;
-import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
+import gregtech.api.recipes.properties.impl.ResearchProperty;
+import gregtech.api.recipes.properties.impl.ResearchPropertyData;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
@@ -70,7 +70,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         FluidTank[] exportFluidTanks = new FluidTank[recipeMap.getMaxFluidOutputs()];
         for (int i = 0; i < exportFluidTanks.length; i++)
             exportFluidTanks[i] = new FluidTank(16000);
-        this.modularUI = recipeMap.createJeiUITemplate(
+        this.modularUI = recipeMap.getRecipeMapUI().createJeiUITemplate(
                 (importItems = new ItemStackHandler(
                         recipeMap.getMaxInputs() + (recipeMap == RecipeMaps.ASSEMBLY_LINE_RECIPES ? 1 : 0))),
                 (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
@@ -79,7 +79,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 .build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
         this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(),
-                modularUI.getHeight() * 2 / 3 + recipeMap.getPropertyHeightShift());
+                modularUI.getHeight() * 2 / 3 + recipeMap.getRecipeMapUI().getPropertyHeightShift());
         gtCategories.put(category, this);
         recipeMapCategories.compute(recipeMap, (k, v) -> {
             if (v == null) v = new ArrayList<>();
@@ -213,9 +213,9 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
             if (data != null) {
                 List<ItemStack> dataItems = new ArrayList<>();
                 for (ResearchPropertyData.ResearchEntry entry : data) {
-                    ItemStack dataStick = entry.getDataItem().copy();
+                    ItemStack dataStick = entry.dataItem().copy();
                     AssemblyLineManager.writeResearchToNBT(GTUtility.getOrCreateNbtCompound(dataStick),
-                            entry.getResearchId());
+                            entry.researchId());
                     dataItems.add(dataStick);
                 }
                 itemStackGroup.set(16, dataItems);

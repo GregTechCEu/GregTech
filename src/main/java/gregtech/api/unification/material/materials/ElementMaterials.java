@@ -306,8 +306,11 @@ public class ElementMaterials {
                 .build();
 
         Hafnium = new Material.Builder(42, gregtechId("hafnium"))
+                .ingot()
                 .color(0x99999A).iconSet(SHINY)
                 .element(Elements.Hf)
+                .blast(b -> b.temp(2227, GasTier.HIGH)
+                        .blastStats(GTValues.VA[GTValues.EV], 2000))
                 .build();
 
         Hassium = new Material.Builder(43, gregtechId("hassium"))
@@ -391,8 +394,7 @@ public class ElementMaterials {
 
         Krypton = new Material.Builder(52, gregtechId("krypton"))
                 .gas(new FluidBuilder()
-                        .customStill()
-                        .translation("gregtech.fluid.generic"))
+                        .customStill())
                 .color(0x80FF80)
                 .element(Elements.Kr)
                 .build();
@@ -611,10 +613,9 @@ public class ElementMaterials {
                 .itemPipeProperties(512, 4.0f)
                 .build();
 
-        Plutonium239 = new Material.Builder(81, gregtechId("plutonium"))
+        Plutonium239 = new Material.Builder(81, gregtechId("plutonium_239"))
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
-                .ore(true)
                 .color(0xF03232).iconSet(METALLIC)
                 .element(Elements.Pu239)
                 .build();
@@ -623,7 +624,7 @@ public class ElementMaterials {
                 .ingot(3)
                 .liquid(new FluidBuilder().temperature(913))
                 .color(0xFA4646).iconSet(SHINY)
-                .flags(EXT_METAL, GENERATE_DOUBLE_PLATE)
+                .flags(GENERATE_DOUBLE_PLATE)
                 .element(Elements.Pu241)
                 .build();
 
@@ -865,19 +866,17 @@ public class ElementMaterials {
                         .vacuumStats(VA[HV], 300))
                 .build();
 
-        Uranium238 = new Material.Builder(116, gregtechId("uranium"))
-                .ingot(3)
+        Uranium = new Material.Builder(116, gregtechId("uranium"))
+                .dust(3)
                 .liquid(new FluidBuilder().temperature(1405))
                 .color(0x32F032).iconSet(METALLIC)
-                .flags(EXT_METAL)
-                .element(Elements.U238)
+                .element(Elements.U)
                 .build();
 
         Uranium235 = new Material.Builder(117, gregtechId("uranium_235"))
-                .ingot(3)
+                .dust(3)
                 .liquid(new FluidBuilder().temperature(1405))
                 .color(0x46FA46).iconSet(SHINY)
-                .flags(EXT_METAL)
                 .element(Elements.U235)
                 .build();
 
@@ -915,8 +914,11 @@ public class ElementMaterials {
                 .build();
 
         Zirconium = new Material.Builder(123, gregtechId("zirconium"))
+                .ingot()
                 .color(0xC8FFFF).iconSet(METALLIC)
                 .element(Elements.Zr)
+                .blast(b -> b.temp(2125, GasTier.MID)
+                        .blastStats(GTValues.VA[GTValues.EV], 1200))
                 .build();
 
         Naquadah = new Material.Builder(124, gregtechId("naquadah"))
@@ -1006,6 +1008,17 @@ public class ElementMaterials {
                         .temp(7200, GasTier.HIGH)
                         .blastStats(VA[LuV], 1500)
                         .vacuumStats(VA[IV], 300))
+                .build();
+
+        Uranium238 = new Material.Builder(131, gregtechId("uranium_238"))
+                .dust(3)
+                .color(0x46FA46).iconSet(ROUGH)
+                .element(Elements.U238)
+                .build();
+
+        Plutonium = new Material.Builder(132, gregtechId("plutonium"))
+                .color(0xF03232).iconSet(ROUGH)
+                .element(Elements.Pu)
                 .build();
     }
 }

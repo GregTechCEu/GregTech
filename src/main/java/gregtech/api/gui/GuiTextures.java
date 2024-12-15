@@ -21,8 +21,10 @@ public class GuiTextures {
     // BASE TEXTURES
     public static final TextureArea BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/background.png", 176,
             166, 3, 3);
+    // todo try to remove
     public static final TextureArea BORDERED_BACKGROUND = AdoptableTextureArea
             .fullImage("textures/gui/base/bordered_background.png", 195, 136, 4, 4);
+    // todo try to remove
     public static final TextureArea BOXED_BACKGROUND = AdoptableTextureArea
             .fullImage("textures/gui/base/boxed_background.png", 256, 174, 11, 11);
     public static final SteamTexture BACKGROUND_STEAM = SteamTexture.fullImage("textures/gui/base/background_%s.png",
@@ -379,8 +381,6 @@ public class GuiTextures {
             .fullImage("textures/gui/progress_bar/progress_bar_slice.png");
     public static final SteamTexture PROGRESS_BAR_SOLAR_STEAM = SteamTexture
             .fullImage("textures/gui/progress_bar/progress_bar_solar_%s.png");
-    public static final TextureArea PROGRESS_BAR_UNLOCK = TextureArea
-            .fullImage("textures/gui/progress_bar/progress_bar_unlock.png");
     public static final TextureArea PROGRESS_BAR_UNPACKER = TextureArea
             .fullImage("textures/gui/progress_bar/progress_bar_unpacker.png");
     public static final TextureArea PROGRESS_BAR_WIREMILL = TextureArea
@@ -474,9 +474,6 @@ public class GuiTextures {
             .fullImage("textures/gui/terminal/icon/appearance_hover.png");
     public final static TextureArea ICON_CALCULATOR = TextureArea
             .fullImage("textures/gui/terminal/icon/calculator_hover.png");
-    public final static TextureArea UI_FRAME_SIDE_UP = TextureArea.fullImage("textures/gui/terminal/frame_side_up.png");
-    public final static TextureArea UI_FRAME_SIDE_DOWN = TextureArea
-            .fullImage("textures/gui/terminal/frame_side_down.png");
 
     // Texture Areas
     public static final TextureArea BUTTON_FLUID = TextureArea

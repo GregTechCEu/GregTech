@@ -40,8 +40,8 @@
 dependencies {
     // Published dependencies
     api("codechicken:codechickenlib:3.2.3.358")
-    api("com.cleanroommc:modularui:2.4.3") { transitive = false }
-    api("com.cleanroommc:groovyscript:1.1.1") { transitive = false }
+    api("com.cleanroommc:modularui:2.5.0-rc1") { transitive = false }
+    api("com.cleanroommc:groovyscript:1.2.0-hotfix1") { transitive = false }
     api("CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.700")
     api("appeng:ae2-uel:v0.56.4") { transitive = false }
     api rfg.deobf("curse.maven:ctm-267602:2915363") // CTM 1.0.2.31
@@ -57,32 +57,17 @@ dependencies {
     compileOnly rfg.deobf("curse.maven:baubles-227083:2518667") // Baubles 1.5.2
     compileOnly rfg.deobf("curse.maven:forestry-59751:2684780") // Forestry 5.8.2.387
     compileOnly rfg.deobf("curse.maven:chisel-235279:2915375") // Chisel 1.0.2.45
+    compileOnly rfg.deobf("curse.maven:littletiles-257818:4750222") // LittleTiles 1.5.82-1.12.2
+    compileOnly rfg.deobf("curse.maven:creativecore-257814:4722163") // Creative Core 1.10.71
 
     // Mods with Soft compat but which have no need to be in code, such as isModLoaded() checks and getModItem() recipes.
     // Uncomment any of these to test them in-game.
 
-    // runtimeOnlyNonPublishable rfg.deobf("curse.maven:avaritia-261348:3143349") // Avaritia 3.3.0.37
+     runtimeOnlyNonPublishable rfg.deobf("curse.maven:avaritia-261348:3143349") // Avaritia 3.3.0.37
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:beebetteratbees-244516:2627215") // BeeBetterAtBees 2.0.3 (recommended to enable when testing Forestry compat)
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:jei-bees-248370:2490058") // JEIBees 0.9.0.5 (recommended to enable when testing Forestry compat)
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:binnies-mods-223525:2916129") // Binnie 2.5.1.203
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:magic-bees-65764:2855061") // Magic Bees 3.2.25
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:gendustry-70492:2516215") // Gendustry 1.6.5.8
     // runtimeOnlyNonPublishable rfg.deobf("curse.maven:bdlib-70496:2518031") // BdLib 1.14.3.12
-}
-
-minecraft {
-    injectedTags.put('DEP_VERSION_STRING', "required-after:gregtech@[${modVersion},);")
-}
-
-configurations {
-    compileOnly {
-        // exclude GNU trove, FastUtil is superior and still updated
-        exclude group: "net.sf.trove4j", module: "trove4j"
-        // exclude javax.annotation from findbugs, jetbrains annotations are superior
-        exclude group: "com.google.code.findbugs", module: "jsr305"
-        // exclude scala as we don't use it for anything and causes import confusion
-        exclude group: "org.scala-lang"
-        exclude group: "org.scala-lang.modules"
-        exclude group: "org.scala-lang.plugins"
-    }
 }

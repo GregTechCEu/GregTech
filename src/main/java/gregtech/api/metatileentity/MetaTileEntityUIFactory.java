@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * {@link UIFactory} implementation for {@link MetaTileEntity}
  */
+@Deprecated
 public class MetaTileEntityUIFactory extends UIFactory<IGregTechTileEntity> {
 
     public static final MetaTileEntityUIFactory INSTANCE = new MetaTileEntityUIFactory();

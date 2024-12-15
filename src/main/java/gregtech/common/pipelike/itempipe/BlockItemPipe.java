@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.itempipe;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -10,6 +9,7 @@ import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
@@ -44,7 +44,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
 
     public BlockItemPipe(ItemPipeType itemPipeType, MaterialRegistry registry) {
         super(itemPipeType, registry);
-        setCreativeTab(GregTechAPI.TAB_GREGTECH_PIPES);
+        setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
         setHarvestLevel(ToolClasses.WRENCH, 1);
     }
 
@@ -77,6 +77,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         return ItemPipeRenderer.INSTANCE.getParticleTexture((TileEntityItemPipe) world.getTileEntity(blockPos));
     }

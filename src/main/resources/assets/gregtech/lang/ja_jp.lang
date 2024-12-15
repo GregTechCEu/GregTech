@@ -1,7 +1,7 @@
 # Japanese translate by MrKo_no & GTModpackTeam
 # 日本語ローカライズ担当： MrKo_no & GTModpackTeam
-# Corresponding Version: 2.8.10 - beta
-# 対応バージョン: 2.8.10 - beta
+# Corresponding Version: 2.8.1 - beta
+# 対応バージョン: 2.8.1 - beta
 
 death.attack.heat=%s は熱さを感じなくなった。
 death.attack.frost=%s のふとんがふっとんだ。
@@ -50,8 +50,8 @@ gregtech.multiblock.steam.low_steam=蒸気不足!
 gregtech.multiblock.steam.steam_stored=蒸気: %s
 gregtech.machine.steam_hatch.name=蒸気用ハッチ
 gregtech.machine.steam.steam_hatch.tooltip=受入液体: §f蒸気
-gregtech.machine.steam_import_bus.name=搬入バス (蒸気用)
-gregtech.machine.steam_export_bus.name=搬出バス (蒸気用)
+gregtech.machine.steam_import_bus.name=蒸気用搬入バス
+gregtech.machine.steam_export_bus.name=蒸気用搬出バス
 gregtech.machine.steam_bus.tooltip=非蒸気式のマルチブロックでは使用不可
 gregtech.machine.steam_oven.name=蒸気式オーブン
 gregtech.multiblock.steam_oven.description=蒸気時代のマルチスメルター。ブロンズ製外装が最低6個必要。通常のハッチ/バスは使えず、専用の蒸気用のものが必要。蒸気ハッチは最下段に一つだけ置ける。
@@ -109,22 +109,7 @@ gregtech.top.ld_pipe_output=搬出
 gregtech.top.ld_pipe_input_endpoint=搬入口:
 gregtech.top.ld_pipe_output_endpoint=搬出口:
 
-option.gregtech.block_ore=鉱石ブロック
-option.gregtech.controllable=機械の状態
-option.gregtech.converter=エネルギー変換機
-option.gregtech.diode=ダイオード
-option.gregtech.energy=蓄電量
-option.gregtech.block_lamp=ランプ
-option.gregtech.maintenance=メンテナンスの問題
-option.gregtech.multi_recipemap=機械モード
-option.gregtech.multiblock=マルチブロック
-option.gregtech.primitive_pump=初歩的なポンプ
-option.gregtech.recipe_logic=レシピ
-option.gregtech.steam_boiler=ボイラー
-option.gregtech.transformer=変圧器
-option.gregtech.workable=進捗
-
-gregtech.waila.energy_stored=エネルギー: %d EU / %d EU
+gregtech.waila.energy_stored=エネルギー: %s EU / %s EU
 gregtech.waila.progress_idle=停止中
 gregtech.waila.progress_tick=進捗: %d t / %d t
 gregtech.waila.progress_sec=進捗: %d s / %d s
@@ -164,7 +149,7 @@ gregtech.tooltip.hold_ctrl=CTRLを押して詳細を表示
 gregtech.tooltip.fluid_pipe_hold_shift=SHIFTで耐流体性能を表示
 gregtech.tooltip.tool_fluid_hold_shift=SHIFTで耐流体性能とツール情報を表示
 
-metaitem.generic.fluid_container.tooltip=%3$s %1$,d/%2$,dL
+metaitem.generic.fluid_container.tooltip=%,d/%,dL %s
 metaitem.generic.electric_item.tooltip=%,d/%,d EU - Tier %s
 metaitem.electric.discharge_mode.enabled=§e放電:有効
 metaitem.electric.discharge_mode.disabled=§e放電:無効
@@ -552,7 +537,7 @@ metaitem.tool.datamodule.tooltip=とても複雑なデータの保管に/n§cデ
 metaitem.circuit.integrated.name=プログラム回路
 metaitem.circuit.integrated.tooltip=使うと設定画面を開く/n/nプログラム回路スロットを持つ機械に/nシフト右クリックをすると/nこの回路の番号に設定される/n
 metaitem.circuit.integrated.gui=プログラム回路設定
-metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます。\n番号はプログラム回路の一覧タブで選択できます。
+metaitem.circuit.integrated.jei_description=JEIでは設定した番号のレシピのみが表示されます。/n番号はプログラム回路の一覧タブで選択できます。
 
 item.glass.lens=白いガラスレンズ
 metaitem.glass_lens.orange.name=橙色のガラスレンズ
@@ -1028,9 +1013,6 @@ item.gt.tool.screwdriver_lv.name=LVの%s製スクリュードライバー
 item.gt.tool.screwdriver_lv.tooltip=§8カバーと機械の設定に
 item.gt.tool.plunger.name=%s製ラバーカップ
 item.gt.tool.plunger.tooltip=§8機械から液体を撤去
-item.gt.tool.wire_cutter_lv.name=LVの%s製カッター
-item.gt.tool.wire_cutter_hv.name=HVの%s製カッター
-item.gt.tool.wire_cutter_iv.name=IVの%s製カッター
 
 
 item.gt.tool.tooltip.crafting_uses=§aあと§l%s§r§a回クラフトに利用できる
@@ -1198,7 +1180,7 @@ cover.filter.blacklist.disabled=ホワイトリスト
 cover.filter.blacklist.enabled=ブラックリスト
 
 cover.ore_dictionary_filter.title=鉱石辞書フィルター
-cover.ore_dictionary_filter.info=§b論理式の比較演算子/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r グループ化/n§6*§r ワイルドカード (0文字以上の任意文字列)/n§6?§r 任意の1文字/n§6()§r 空の項目（鉱石辞書がない項目も含む）に適合/n§6$c§r 大文字・小文字を区別する場合に式の先頭に付ける/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが、二重プレートは該当しない。
+cover.ore_dictionary_filter.info=§b論理式の比較演算子/n§6a & b§r = AND/n§6a | b§r = OR/n§6a ^ b§r = XOR/n§6! abc§r = NOT/n§6( abc )§r グループ化/n§6*§r ワイルドカード (0文字以上の任意文字列)/n§6?§r 任意の1文字/n§6()§r 空の項目（鉱石辞書がない項目も含む）に適合/n§6$c§r 大文字・小文字を区別する場合に式の先頭に付ける。/n§b例:/n§6dust*Gold | (plate* & !*Double*)/n全てのサイズの金の粉または全てのプレートが該当するが、二重プレートは該当しない。
 cover.ore_dictionary_filter.test_slot.info=フィルタ式に一致するかどうかのテスト用スロット
 cover.ore_dictionary_filter.test_slot.matches=§a* %s
 cover.ore_dictionary_filter.test_slot.matches_not=§c* %s
@@ -1209,10 +1191,6 @@ cover.ore_dictionary_filter.status.err_warn=§c%s個のエラーと%s個の警�
 cover.ore_dictionary_filter.status.warn=§7%s個の警告
 cover.ore_dictionary_filter.status.no_issues=§a問題ナシ
 cover.ore_dictionary_filter.status.explain=フィルターの合致状況:
-cover.ore_dictionary_filter.button.case_sensitive.disabled=部分一致
-cover.ore_dictionary_filter.button.case_sensitive.enabled=完全一致
-cover.ore_dictionary_filter.button.match_all.disabled=複数の鉱石辞書のうちのどれか
-cover.ore_dictionary_filter.button.match_all.enabled=複数の鉱石辞書全て
 
 cover.ore_dictionary_filter.preview.next=<text>の次に右を含むもの: </text>
 cover.ore_dictionary_filter.preview.match=<node>'<value>%s</value>'</node>
@@ -1560,7 +1538,8 @@ gregtech.material.palladium=パラジウム
 gregtech.material.phosphorus=リン
 gregtech.material.polonium=ポロニウム
 gregtech.material.platinum=プラチナ
-gregtech.material.plutonium=プルトニウム239
+gregtech.material.plutonium=プルトニウム
+gregtech.material.plutonium_239=プルトニウム239
 gregtech.material.plutonium_241=プルトニウム241
 gregtech.material.potassium=カリウム
 gregtech.material.praseodymium=プラセオジム
@@ -1595,8 +1574,9 @@ gregtech.material.tin=錫
 gregtech.material.titanium=チタン
 gregtech.material.tritium=三重水素
 gregtech.material.tungsten=タングステン
-gregtech.material.uranium=ウラン238
+gregtech.material.uranium=ウラン
 gregtech.material.uranium_235=ウラン235
+gregtech.material.uranium_238=ウラン238
 gregtech.material.vanadium=バナジウム
 gregtech.material.xenon=キセノン
 gregtech.material.ytterbium=イッテルビウム
@@ -1914,29 +1894,29 @@ gregtech.material.diesel=ディーゼル
 gregtech.material.rocket_fuel=ロケット燃料
 gregtech.material.glue=ノリ
 gregtech.material.lubricant=潤滑剤
-gregtech.material.mc_guffium_239=McGuffium 239
+gregtech.material.mc_guffium_239=Mc Guffium 239
 gregtech.material.indium_concentrate=濃縮インジウム
 gregtech.material.seed_oil=種油
 gregtech.material.drilling_fluid=掘削油
 gregtech.material.construction_foam=建築用フォーム
 
-gregtech.material.oil=石油
-gregtech.material.oil_heavy=石油 (高密度)
-gregtech.material.oil_medium=石油 (中密度)
-gregtech.material.oil_light=石油 (低密度)
+gregtech.material.oil=原油
+gregtech.material.oil_heavy=重油
+gregtech.material.oil_medium=原料油
+gregtech.material.oil_light=軽油
 gregtech.material.natural_gas=天然ガス
-gregtech.material.sulfuric_heavy_fuel=硫化重油
-gregtech.material.heavy_fuel=重油
-gregtech.material.lightly_hydrocracked_heavy_fuel=軽く水素で分解された重油
-gregtech.material.severely_hydrocracked_heavy_fuel=十分に水素で分解された重油
-gregtech.material.lightly_steamcracked_heavy_fuel=軽く蒸気で分解された重油
-gregtech.material.severely_steamcracked_heavy_fuel=十分に蒸気で分解された重油
-gregtech.material.sulfuric_light_fuel=硫化軽油
-gregtech.material.light_fuel=軽油
-gregtech.material.lightly_hydrocracked_light_fuel=軽く水素で分解された軽油
-gregtech.material.severely_hydrocracked_light_fuel=十分に水素で分解された軽油
-gregtech.material.lightly_steamcracked_light_fuel=軽く蒸気で分解された軽油
-gregtech.material.severely_steamcracked_light_fuel=十分に蒸気で分解された軽油
+gregtech.material.sulfuric_heavy_fuel=硫化重質燃料
+gregtech.material.heavy_fuel=重質燃料
+gregtech.material.lightly_hydrocracked_heavy_fuel=軽く水素で分解された重質燃料
+gregtech.material.severely_hydrocracked_heavy_fuel=十分に水素で分解された重質燃料
+gregtech.material.lightly_steamcracked_heavy_fuel=軽く蒸気で分解された重質燃料
+gregtech.material.severely_steamcracked_heavy_fuel=十分に蒸気で分解された重質燃料
+gregtech.material.sulfuric_light_fuel=硫化軽質燃料
+gregtech.material.light_fuel=軽質燃料
+gregtech.material.lightly_hydrocracked_light_fuel=軽く水素で分解された軽質燃料
+gregtech.material.severely_hydrocracked_light_fuel=十分に水素で分解された軽質燃料
+gregtech.material.lightly_steamcracked_light_fuel=軽く蒸気で分解された軽質燃料
+gregtech.material.severely_steamcracked_light_fuel=十分に蒸気で分解された軽質燃料
 gregtech.material.sulfuric_naphtha=硫化ナフサ
 gregtech.material.naphtha=ナフサ
 gregtech.material.lightly_hydrocracked_naphtha=軽く水素で分解されたナフサ
@@ -2071,8 +2051,8 @@ gregtech.material.naquadah_alloy=ナクアダ合金
 gregtech.material.sulfuric_nickel_solution=硫酸ニッケル溶液
 gregtech.material.sulfuric_copper_solution=硫酸銅溶液
 gregtech.material.lead_zinc_solution=鉛-亜鉛溶液
-gregtech.material.nitration_mixture=ニトロ化混合物
 gregtech.material.diluted_sulfuric_acid=希硫酸
+gregtech.material.nitration_mixture=ニトロ化混合物
 gregtech.material.diluted_hydrochloric_acid=希塩酸
 gregtech.material.flint=火打石
 gregtech.material.air=空気
@@ -2370,17 +2350,6 @@ tile.treated_wood_fence.name=防腐木材のフェンス
 tile.rubber_wood_fence_gate.name=ゴムの木材のフェンスゲート
 tile.treated_wood_fence_gate.name=防腐木材のフェンスゲート
 
-tile.gt_explosive.breaking_tooltip=壊すと着火する。スニークしながら壊すと回収できる。
-tile.gt_explosive.lighting_tooltip=赤石信号では着火できない
-
-tile.powderbarrel.name=樽爆弾
-tile.powderbarrel.drops_tooltip=TNTよりほんの少し広範囲を破壊する。破壊されたものは全てドロップする。
-entity.Powderbarrel.name=樽爆弾
-
-tile.itnt.name=工業用TNT
-tile.itnt.drops_tooltip=TNTより広範囲を破壊する。破壊されたものは全てドロップする。
-entity.ITNT.name=工業用TNT
-
 tile.brittle_charcoal.name=脆い木炭
 tile.brittle_charcoal.tooltip.1=炭窯で製造される。
 tile.brittle_charcoal.tooltip.2=採掘すると木炭を得られる。
@@ -2406,8 +2375,8 @@ metaitem.tricorder_scanner.tooltip=トライコーダー
 metaitem.debug_scanner.name=デバッグスキャナー
 metaitem.debug_scanner.tooltip=トライコーダー
 behavior.tricorder.position=----- X: %s Y: %s Z: %s D: %s -----
-behavior.tricorder.block_hardness=硬さ: %s 爆破耐性: %s
-behavior.tricorder.block_name=名称: %s MetaData: %s
+behavior.tricorder.block_hardness=硬さ: %s / 爆破耐性: %s
+behavior.tricorder.block_name=名称: %s / MetaData: %s
 behavior.tricorder.state=%s: %s
 behavior.tricorder.divider==========================
 behavior.tricorder.tank=タンク %s: %s L / %s L %s
@@ -2581,7 +2550,7 @@ tile.studs.green.name=緑色のスタッド
 tile.studs.red.name=赤のスタッド
 tile.studs.black.name=黒のスタッド
 
-# Lamps(ON)
+# Lampss(ON)
 tile.gregtech_lamp.white.name=白のランプ
 tile.gregtech_lamp.orange.name=橙色のランプ
 tile.gregtech_lamp.magenta.name=赤紫色のランプ
@@ -2755,11 +2724,6 @@ gregtech.machine.crate.stainless_steel.name=ステンレススチール製クレ
 gregtech.machine.crate.titanium.name=チタン製クレート
 gregtech.machine.crate.tungstensteel.name=タングステンスチール製クレート
 gregtech.crate.tooltip.taped_movement=テープを使うと撤去時に中身を保持できる
-
-# Safe
-gregtech.machine.locked_safe.name=金庫
-gregtech.machine.locked_safe.malfunctioning=§c故障中!
-gregtech.machine.locked_safe.requirements=§7要交換部品:
 
 # Workbench
 gregtech.machine.workbench.name=クラフティングステーション
@@ -4976,6 +4940,7 @@ gregtech.machine.item_bus.export.uhv.name=UHV搬出バス
 
 gregtech.bus.collapse_true=バス内でアイテムを整頓を行う
 gregtech.bus.collapse_false=バス内でアイテムを整頓を行わない
+gregtech.bus.collapse.error=バスをマルチブロックに接続してください
 
 gregtech.machine.fluid_hatch.import.tooltip=マルチブロックへの液体搬入
 
@@ -5279,34 +5244,17 @@ gregtech.machine.laser_hatch.target.tooltip1=遠くからエネルギーを受�
 gregtech.machine.laser_hatch.tooltip2=§cレーザーケーブルは直線でなければなりません!!§7
 
 gregtech.machine.fluid_tank.max_multiblock=最大サイズ: %,dx%,dx%,d
-gregtech.machine.fluid_tank.fluid=内容物:%2$s %1$s L
+gregtech.machine.fluid_tank.fluid=内容物: %s L の %s
 
-# ME Parts //TODO
-gregtech.machine.me_import_item_bus.name=ME 搬入バス
-gregtech.machine.me.item_import.tooltip=特定のアイテムをMEネットワークから自動搬出
-gregtech.machine.me_stocking_item_bus.name=ME 在庫搬入バス
-gregtech.machine.me.stocking_item.tooltip=MEネットワークからアイテムを直接受け取る
-gregtech.machine.me.stocking_item.tooltip.2=MEモードからの自動搬入により、MEシステムの最初の16種類のアイテムが自動的に保持され、5秒ごとに更新される
-gregtech.machine.me_import_item_hatch.configs.tooltip=16種類のアイテムを保持
-gregtech.machine.me_import_fluid_hatch.name=ME 搬入ハッチ
-gregtech.machine.me.fluid_import.tooltip=MEネットワークから液体を自動搬出
-gregtech.machine.me_stocking_fluid_hatch.name=ME 在庫搬入ハッチ
-gregtech.machine.me.stocking_fluid.tooltip=MEネットワークからアイテムを直接受け取る
-gregtech.machine.me.stocking_fluid.tooltip.2=MEモードからの自動搬入により、MEシステムの最初の16種類の液体が自動的に保持され、5秒ごとに更新される
-gregtech.machine.me_import_fluid_hatch.configs.tooltip=16種類の液体を保持
-gregtech.machine.me_export_item_bus.name=ME 搬出バス
-gregtech.machine.me.item_export.tooltip=MEネットワークにアイテムを直接保存
-gregtech.machine.me.item_export.tooltip.2=アイテム格納量は無限
 gregtech.machine.me_export_fluid_hatch.name=ME 搬出ハッチ
-gregtech.machine.me.fluid_export.tooltip=MEネットワークに液体を直接保存
-gregtech.machine.me.fluid_export.tooltip.2=液体格納量は無限
-gregtech.machine.me.stocking_auto_pull_enabled=自動搬入を有効化 (現在は無効)
-gregtech.machine.me.stocking_auto_pull_disabled=自動搬入を無効化 (現在は有効)
-gregtech.machine.me.copy_paste.tooltip=左クリックでデータスティックの設定をコピー。右クリックで反映
-gregtech.machine.me.import_copy_settings=設定をデータスティックに保存しました
-gregtech.machine.me.import_paste_settings=データスティックの設定を反映しました
-gregtech.machine.me.item_import.data_stick.name=§oME 搬入バス設定データ
-gregtech.machine.me.fluid_import.data_stick.name=§oME 搬出バス設定データ
+gregtech.machine.me_export_item_bus.name=ME 搬出バス
+gregtech.machine.me_import_fluid_hatch.name=ME在庫搬入ハッチ
+gregtech.machine.me_import_item_bus.name=ME在庫搬入バス
+gregtech.machine.me.fluid_export.tooltip=MEネットワークに液体を自動搬入
+gregtech.machine.me.item_export.tooltip=MEネットワークにアイテムを自動搬入
+gregtech.machine.me.fluid_import.tooltip=MEネットワークから液体を自動搬出
+gregtech.machine.me.item_import.tooltip=MEネットワークからアイテムを自動搬出
+gregtech.machine.me.export.tooltip=MEネットワーク接続前は無限の容量を持つ。
 
 # Universal tooltips
 gregtech.universal.tooltip.voltage_in=§a入力電圧: §f%,d EU/t (%s§f)
@@ -5425,12 +5373,9 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=液体自動搬出を無効化 (�
 gregtech.gui.fluid_auto_output.tooltip.disabled=液体自動搬出を有効化 (現在は無効)
 gregtech.gui.item_auto_output.tooltip.enabled=アイテム自動搬出を無効化 (現在は有効)
 gregtech.gui.item_auto_output.tooltip.disabled=アイテム自動搬出を有効化 (現在は無効)
-gregtech.gui.item_auto_collapse.tooltip.enabled=アイテムの整頓を有効化 (現在は無効)
-gregtech.gui.item_auto_collapse.tooltip.disabled=アイテムの整頓を無効化 (現在は有効)
 gregtech.gui.charger_slot.tooltip=§f充電スロット§r/n%s§7バッテリーからエネルギーを吸い取る。§r/n%s§7の電動ツールとバッテリーを充電できる。
 gregtech.gui.configurator_slot.tooltip=§fプログラム回路スロット§r/n§a設定番号: §f%d§7/n/n§7右/左クリック/スクロールで値を変更する。/n§7シフト右クリックでやり直し。
 gregtech.gui.configurator_slot.no_value=なし
-gregtech.gui.configurator_slot.unavailable.tooltip=プログラム回路スロットは使いません
 gregtech.gui.fluid_lock.tooltip.enabled=液体ロックを無効化 (現在は有効)
 gregtech.gui.fluid_lock.tooltip.disabled=液体ロックを有効化 (現在は無効)
 gregtech.gui.fluid_voiding.tooltip.enabled=超過分の廃棄を無効化 (現在は有効)
@@ -5447,12 +5392,8 @@ gregtech.gui.me_network.offline=ネットワーク状態: §4オフライン§r
 gregtech.gui.waiting_list=送信待:
 gregtech.gui.config_slot=§f設定スロット§r
 gregtech.gui.config_slot.set=§7クリックで設定スロットを§b設定/選択§7。§r
-gregtech.gui.config_slot.set_only=§7クリックして§b設定§7スロットをセット§r
-gregtech.gui.config_slot.scroll=§7スクロールで設定量を§a変更§7§r
-gregtech.gui.config_slot.remove=§7右クリックで設定スロットを§4初期化§7§r
-gregtech.gui.config_slot.auto_pull_managed=§4無効化：§7 自動搬出により管理
-gregtech.gui.me_bus.extra_slot=追加スロット/n§7レシピの追加アイテムを置くスロット。例えば型やレンズなど
-gregtech.gui.me_bus.auto_pull_button=MEからの自動アイテム引き出しを切り替えるためにクリック
+gregtech.gui.config_slot.scroll=§7スクロールで設定量を§a変更§7。§r
+gregtech.gui.config_slot.remove=§7右クリックで設定スロットを§4初期化§7。§r
 gregtech.gui.alarm.radius=半径:
 
 
@@ -5706,10 +5647,8 @@ gregtech.multiblock.computation.not_enough_computation=計算力がたりない!
 gregtech.multiblock.power_substation.stored=蓄電量: %s
 gregtech.multiblock.power_substation.capacity=最大蓄電量: %s
 gregtech.multiblock.power_substation.passive_drain=損失量: %s
-gregtech.multiblock.power_substation.average_in=平均入力量: %s
-gregtech.multiblock.power_substation.average_out=平均出力量: %s
-gregtech.multiblock.power_substation.average_in_hover=大型蓄電器への入力量の平均値
-gregtech.multiblock.power_substation.average_out_hover=大型蓄電器からの出力量と、損失量の合計の平均値。
+gregtech.multiblock.power_substation.average_io=平均入出力: %s
+gregtech.multiblock.power_substation.average_io_hover=大型蓄電器の平均エネルギー変化量
 gregtech.multiblock.power_substation.time_to_fill=満タンまで: %s
 gregtech.multiblock.power_substation.time_to_drain=枯渇まで: %s
 gregtech.multiblock.power_substation.time_seconds=%s 秒
@@ -6111,7 +6050,6 @@ metaitem.electrode.tin.name=錫の真空管
 item.gt.tool.scoop.name=%s製虫取り網
 item.gt.tool.behavior.scoop=§d樹木医: §f左クリックで蝶を捕獲
 gt.tool.class.scoop=虫取り網
-
 # Drops
 item.gt.honey_drop.oil.name=石油の雫
 item.gt.honey_drop.biomass.name=バイオマスの雫
@@ -6278,6 +6216,3 @@ gregtech.scanner.forestry.larvae=§o解析済みの幼虫
 gregtech.scanner.forestry.serum=§o解析済みの漿液
 gregtech.scanner.forestry.caterpillar=§o解析済みの幼虫
 gregtech.scanner.forestry.pollen=§o解析済みの花粉
-
-# Mutation
-gregtech.mutation.block_of=%sブロック

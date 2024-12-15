@@ -6,11 +6,11 @@ import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.GTRecipeOreInput;
-import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
-import gregtech.api.terminal.TerminalRegistry;
+import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.properties.DustProperty;
@@ -21,7 +21,16 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
-import gregtech.common.blocks.*;
+import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
+import gregtech.common.blocks.BlockLamp;
+import gregtech.common.blocks.BlockOre;
+import gregtech.common.blocks.BlockSurfaceRock;
+import gregtech.common.blocks.LampItemBlock;
+import gregtech.common.blocks.MaterialItemBlock;
+import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.OreItemBlock;
+import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
 import gregtech.common.pipelike.cable.BlockCable;
@@ -34,6 +43,7 @@ import gregtech.common.pipelike.laser.BlockLaserPipe;
 import gregtech.common.pipelike.laser.ItemBlockLaserPipe;
 import gregtech.common.pipelike.optical.BlockOpticalPipe;
 import gregtech.common.pipelike.optical.ItemBlockOpticalPipe;
+import gregtech.datafix.GTDataFixers;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
@@ -77,7 +87,9 @@ public class CommonProxy {
         GTLog.logger.info("Registering Blocks...");
         IForgeRegistry<Block> registry = event.getRegistry();
 
-        registry.register(MACHINE);
+        for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {
+            registry.register(r.getBlock());
+        }
 
         StoneType.init();
 
@@ -222,7 +234,9 @@ public class CommonProxy {
 
         GTRecipeManager.preLoad();
 
-        registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
+        for (MTERegistry r : GregTechAPI.mteManager.getRegistries()) {
+            registry.register(createItemBlock(r.getBlock(), MachineItemBlock::new));
+        }
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
             for (BlockCable cable : CABLES.get(materialRegistry.getModid()))
@@ -390,11 +404,11 @@ public class CommonProxy {
 
     public void onPreLoad() {}
 
-    public void onLoad() {}
+    public void onLoad() {
+        GTDataFixers.init();
+    }
 
     public void onPostLoad() {
-        TerminalRegistry.init();
-
         if (ConfigHolder.compat.removeSmeltingForEBFMetals) {
             ModHandler.removeSmeltingEBFMetals();
         }

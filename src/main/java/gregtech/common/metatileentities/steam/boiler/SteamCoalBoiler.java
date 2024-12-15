@@ -7,6 +7,7 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.category.ICategoryOverride;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +19,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
 
-public class SteamCoalBoiler extends SteamBoiler {
+public class SteamCoalBoiler extends SteamBoiler implements ICategoryOverride {
 
     public SteamCoalBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
         super(metaTileEntityId, isHighPressure, Textures.COAL_BOILER_OVERLAY);
@@ -91,5 +92,10 @@ public class SteamCoalBoiler extends SteamBoiler {
                 .progressBar(this::getFuelLeftPercent, 115, 44, 18, 18,
                         GuiTextures.PROGRESS_BAR_BOILER_FUEL.get(isHighPressure), MoveType.VERTICAL)
                 .build(getHolder(), player);
+    }
+
+    @Override
+    public @NotNull String @NotNull [] getJEICategoryOverrides() {
+        return new String[] { "minecraft.fuel" };
     }
 }

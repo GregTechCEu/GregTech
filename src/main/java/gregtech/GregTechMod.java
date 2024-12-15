@@ -7,9 +7,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.persistence.PersistentData;
-import gregtech.api.util.Mods;
 import gregtech.client.utils.BloomEffectUtil;
-import gregtech.client.utils.BloomEffectVintagiumUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 
@@ -38,9 +36,10 @@ import static gregtech.api.util.Mods.Avaritia;
      acceptedMinecraftVersions = "[1.12.2,1.13)",
      version = GTInternalTags.VERSION,
      dependencies = "required:forge@[14.23.5.2847,);" + "required-after:codechickenlib@[3.2.3,);" +
-             "after:appliedenergistics2;" + "after:forestry;" + "after:extrabees;" + "after:extratrees;" +
-             "after:genetics;" + "after:magicbees;" + "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" +
-             "after:groovyscript@[1.1.0,);" + "after:theoneprobe;" + "after:hwyla;")
+             "required-after:modularui@[2.3,);" + "required-after:mixinbooter@[8.0,);" + "after:appliedenergistics2;" +
+             "after:forestry;" + "after:extrabees;" + "after:extratrees;" + "after:genetics;" + "after:magicbees;" +
+             "after:jei@[4.15.0,);" + "after:crafttweaker@[4.1.20,);" + "after:groovyscript@[1.2.0,);" +
+             "after:theoneprobe;" + "after:hwyla;")
 public class GregTechMod {
 
     // Hold this so that we can reference non-interface methods without
