@@ -7,7 +7,9 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.modules.ModuleContainerRegistryEvent;
 import gregtech.api.persistence.PersistentData;
+import gregtech.api.util.Mods;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.BloomEffectVintagiumUtil;
 import gregtech.modules.GregTechModules;
 import gregtech.modules.ModuleManager;
 
