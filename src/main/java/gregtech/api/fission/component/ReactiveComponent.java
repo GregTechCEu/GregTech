@@ -6,10 +6,15 @@ package gregtech.api.fission.component;
 public interface ReactiveComponent extends FissionComponent {
 
     /**
+     * @return if the component is able to react
+     */
+    boolean canReact();
+
+    /**
      * @param amount the amount of incoming neutrons
      * @return the amount of neutrons that reacted
      */
-    int react(int amount);
+    float react(float amount);
 
     /**
      * @return the amount of emitted heat per fission

@@ -1,8 +1,10 @@
 package gregtech.api.fission.component.impl.data;
 
+import gregtech.api.fission.component.FissionComponentData;
+
 import net.minecraftforge.fluids.FluidStack;
 
-public class CoolantData {
+public class CoolantData implements FissionComponentData {
     public float heatPerCoolant;
     public float coldCoolantHeat;
 

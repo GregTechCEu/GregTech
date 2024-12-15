@@ -26,5 +26,5 @@ public interface ReactorPathWalker {
      */
     void walkPath(@NotNull List<NeutronPathData> neutronData, @NotNull List<ReactivityPathData> reactivityData,
                   @NotNull FissionComponent source, @NotNull ComponentDirection direction, int startR, int startC,
-                  int neutrons);
+                  float neutrons);
 }

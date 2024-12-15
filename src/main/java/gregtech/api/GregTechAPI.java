@@ -6,6 +6,7 @@ import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
+import gregtech.api.fission.component.FissionComponentRegistry;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.metatileentity.registry.MTEManager;
@@ -58,6 +59,8 @@ public class GregTechAPI {
     /** GT's data migrations API */
     public static final MigrationAPI MIGRATIONS = new MigrationAPI();
     public static final RecipePropertyRegistry RECIPE_PROPERTIES = new RecipePropertyRegistry();
+    /** Will be available at the Pre-Initialization stage */
+    public static final FissionComponentRegistry FISSION_COMPONENT_REGISTRY = new FissionComponentRegistry();
 
     /** Will be available at the Pre-Initialization stage */
     private static boolean highTier;

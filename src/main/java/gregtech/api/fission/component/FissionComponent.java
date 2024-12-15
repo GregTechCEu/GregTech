@@ -6,6 +6,10 @@ import gregtech.api.fission.reactor.pathdata.NeutronPathData;
 
 import gregtech.api.fission.reactor.pathdata.ReactivityPathData;
 
+import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraft.util.math.BlockPos;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -14,14 +18,23 @@ public interface FissionComponent {
 
     /**
      * @param amount the amount to reduce by
-     * @return if the component ran out of durability
      */
-    boolean reduceDurability(int amount);
+    void reduceDurability(int amount);
 
     /**
      * @return the component's durability
      */
     int durability();
+
+    /**
+     * Lock the internal data of the component
+     */
+    void lock();
+
+    /**
+     * Unlock the internal data of the component
+     */
+    void unlock();
 
     /**
      * Process neutrons as they move down a path in the reactor
@@ -37,5 +50,7 @@ public interface FissionComponent {
      */
     void processNeutronPath(@NotNull ReactorPathWalker walker, @NotNull List<NeutronPathData> neutronData,
                             @NotNull List<ReactivityPathData> reactivityData, @NotNull FissionComponent source,
-                            @NotNull ComponentDirection direction, int r, int c, int neutrons);
+                            @NotNull ComponentDirection direction, int r, int c, float neutrons);
+
+    BlockPos getPos();
 }

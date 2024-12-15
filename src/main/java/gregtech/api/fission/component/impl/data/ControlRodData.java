@@ -1,7 +1,11 @@
 package gregtech.api.fission.component.impl.data;
 
-public class ControlRodData {
-    public float reactivityReduction;
+import gregtech.api.fission.component.FissionComponentData;
+
+public class ControlRodData implements FissionComponentData {
+
+    public float reactivityMultiplier;
+    public float heatMultiplier;
     public int durability;
 
 }

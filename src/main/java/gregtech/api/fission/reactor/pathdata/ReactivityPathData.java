@@ -1,11 +1,18 @@
 package gregtech.api.fission.reactor.pathdata;
 
-import com.github.bsideup.jabel.Desugar;
-
-import gregtech.api.fission.component.FissionComponent;
+import gregtech.api.util.function.FloatSupplier;
 
 import org.jetbrains.annotations.NotNull;
 
-@Desugar
-public record ReactivityPathData(@NotNull FissionComponent component, float reactivity) {
+public interface ReactivityPathData {
+
+    static @NotNull ReactivityPathData of(@NotNull FloatSupplier neutrons) {
+        return new DynamicReactivityPathData(neutrons);
+    }
+
+    static @NotNull ReactivityPathData of(float neutrons) {
+        return new StaticReactivityPathData(neutrons);
+    }
+
+    float getReactivity();
 }

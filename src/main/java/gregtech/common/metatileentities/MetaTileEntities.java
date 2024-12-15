@@ -72,6 +72,7 @@ import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEn
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
+import gregtech.common.metatileentities.multi.fission.MTEFissionReactor;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityAutoMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityCleaningMaintenanceHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityComputationHatch;
@@ -97,6 +98,12 @@ import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEnti
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEOutputHatch;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingBus;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.MetaTileEntityMEStockingHatch;
+import gregtech.common.metatileentities.multi.multiblockpart.fission.MTEControlRod;
+import gregtech.common.metatileentities.multi.multiblockpart.fission.MTECoolantChannel;
+import gregtech.common.metatileentities.multi.multiblockpart.fission.MTEEmptyFissionComponent;
+import gregtech.common.metatileentities.multi.multiblockpart.fission.MTEFissionFuel;
+import gregtech.common.metatileentities.multi.multiblockpart.fission.MTEModerator;
+import gregtech.common.metatileentities.multi.multiblockpart.fission.MTENeutronReflector;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCABridge;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCAComputation;
 import gregtech.common.metatileentities.multi.multiblockpart.hpca.MetaTileEntityHPCACooler;
@@ -1193,6 +1200,14 @@ public class MetaTileEntities {
             NONUPLE_EXPORT_HATCH[index + 1] = registerMetaTileEntity(1795 + index,
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
         }
+
+        registerMetaTileEntity(1900, new MTEFissionReactor(gregtechId("fission_reactor")));
+        registerMetaTileEntity(1901, new MTEEmptyFissionComponent(gregtechId("empty_fission_component")));
+        registerMetaTileEntity(1902, new MTEControlRod(gregtechId("control_rod")));
+        registerMetaTileEntity(1903, new MTECoolantChannel(gregtechId("coolant_channel")));
+        registerMetaTileEntity(1904, new MTEFissionFuel(gregtechId("fission_fuel")));
+        registerMetaTileEntity(1905, new MTEModerator(gregtechId("neutron_moderator")));
+        registerMetaTileEntity(1906, new MTENeutronReflector(gregtechId("neutron_reflector")));
 
         /*
          * FOR ADDON DEVELOPERS:

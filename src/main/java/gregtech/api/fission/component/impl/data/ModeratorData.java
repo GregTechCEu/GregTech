@@ -1,6 +1,9 @@
 package gregtech.api.fission.component.impl.data;
 
-public class ModeratorData {
+import gregtech.api.fission.component.FissionComponentData;
+
+public class ModeratorData implements FissionComponentData {
+
     public float reactivity;
     public int durability;
 }

@@ -1,18 +1,21 @@
 package gregtech.api.fission.component;
 
-import gregtech.api.fission.reactor.ReactionSite;
-
-import org.jetbrains.annotations.NotNull;
-
 public interface CoolantChannel extends FissionComponent {
 
     /**
-     * @param site the site to apply cooling to
+     * @param heat the site to apply cooling to
+     * @return the amount of heat cooled
      */
-    void applyCooling(@NotNull ReactionSite site);
+    float applyCooling(float heat);
 
     /**
      * @return the passive heat from the coolant
      */
     float coolantHeat();
+
+    /**
+     * @param neutrons the neutrons produced by a site to adjust
+     * @return the adjusted value
+     */
+    float adjustNeutrons(float neutrons);
 }
