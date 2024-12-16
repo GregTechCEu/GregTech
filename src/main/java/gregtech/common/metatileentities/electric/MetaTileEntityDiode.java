@@ -73,7 +73,9 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.amps = data.getInteger(AMP_NBT_KEY);
-        this.isWorkingEnabled = data.getBoolean("IsWorkingEnabled");
+        if (data.hasKey("IsWorkingEnabled")) {
+            this.isWorkingEnabled = data.getBoolean("IsWorkingEnabled");
+        }
         reinitializeEnergyContainer();
     }
 
