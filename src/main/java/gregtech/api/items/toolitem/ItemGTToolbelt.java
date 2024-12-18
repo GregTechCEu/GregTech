@@ -76,7 +76,7 @@ import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 
 public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
-    private static final ThreadLocal<Integer> slotThread = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> slotThread = ThreadLocal.withInitial(() -> -999);
 
     public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
         super(domain, id, -1,
