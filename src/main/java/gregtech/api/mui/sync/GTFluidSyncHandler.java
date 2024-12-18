@@ -35,7 +35,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     public static final int LOCK_FLUID = 5;
 
     private final IFluidTank tank;
-    private DynamicValue<FluidStack> lockedFluid;
+    private DynamicValue<FluidStack> lockedFluid = new DynamicValue<>(() -> null, null);
     private FluidStack lastFluid;
     private FluidStack phantomFluid;
     private boolean canDrainSlot = true;
