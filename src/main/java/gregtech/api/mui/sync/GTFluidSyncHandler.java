@@ -35,7 +35,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     public static final int LOCK_FLUID = 5;
 
     private final IFluidTank tank;
-    private DynamicValue<FluidStack> lockedFluid = new DynamicValue<>(() -> null, null);
+    private DynamicValue<FluidStack> lockedFluid;
     private FluidStack lastFluid;
     private FluidStack phantomFluid;
     private boolean canDrainSlot = true;
@@ -157,10 +157,8 @@ public class GTFluidSyncHandler extends SyncHandler {
 
     public @Nullable String getFluidLocalizedName() {
         var tankFluid = this.tank.getFluid();
-        var lockedFluid = this.lockedFluid.getValue();
-
-        if (tankFluid == null && lockedFluid != null)
-            return lockedFluid.getLocalizedName();
+        if (tankFluid == null && canLockFluid())
+            tankFluid = this.lockedFluid.getValue();
 
         return tankFluid == null ? null : tankFluid.getLocalizedName();
     }
@@ -456,7 +454,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     }
 
     public FluidStack getLockedFluid() {
-        return !isPhantom() ? lockedFluid.getValue() : null;
+        return !isPhantom() && canLockFluid() ? lockedFluid.getValue() : null;
     }
 
     public boolean canLockFluid() {
