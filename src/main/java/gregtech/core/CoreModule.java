@@ -66,6 +66,7 @@ import gregtech.core.network.packets.PacketNotifyCapeChange;
 import gregtech.core.network.packets.PacketPluginSynced;
 import gregtech.core.network.packets.PacketRecoverMTE;
 import gregtech.core.network.packets.PacketReloadShaders;
+import gregtech.core.network.packets.PacketToolbeltSelectionChange;
 import gregtech.core.network.packets.PacketUIClientAction;
 import gregtech.core.network.packets.PacketUIOpen;
 import gregtech.core.network.packets.PacketUIWidgetUpdate;
@@ -245,6 +246,8 @@ public class CoreModule implements IGregTechModule {
         GregTechAPI.networkHandler.registerPacket(PacketNotifyCapeChange.class);
         GregTechAPI.networkHandler.registerPacket(PacketReloadShaders.class);
         GregTechAPI.networkHandler.registerPacket(PacketClipboardNBTUpdate.class);
+        GregTechAPI.networkHandler.registerPacket(PacketToolbeltSelectionChange.Server.class);
+        GregTechAPI.networkHandler.registerPacket(PacketToolbeltSelectionChange.Client.class);
     }
 
     @Override
