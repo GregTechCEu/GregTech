@@ -37,7 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -76,7 +75,8 @@ import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 
 public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
-    private static final ThreadLocal<Integer> slotThread = ThreadLocal.withInitial(() -> -999);
+    private static final ThreadLocal<Integer> lastSlot = ThreadLocal.withInitial(() -> -999);
+    private static final ThreadLocal<EntityPlayer> lastPlayer = ThreadLocal.withInitial(() -> null);
 
     public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
         super(domain, id, -1,
@@ -391,8 +391,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         int match = getHandler(stack).checkIngredientAgainstTools(ingredient);
         if (match != -1) {
             setSelectedTool(match, stack);
-            PacketToolbeltSelectionChange.toClient(match, slotThread.get(),
-                    (EntityPlayerMP) ForgeHooks.getCraftingPlayer());
+            PacketToolbeltSelectionChange.toClient(match,
+                    lastSlot.get(), (EntityPlayerMP) lastPlayer.get());
         }
     }
 
@@ -525,8 +525,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return false;
     }
 
-    public static void setCraftingSlot(int slot) {
-        slotThread.set(slot);
+    public static void setCraftingSlot(int slot, EntityPlayer player) {
+        lastSlot.set(slot);
+        lastPlayer.set(player);
     }
 
     public static boolean checkToolAgainstToolbelt(@NotNull ItemStack toolbelt, @NotNull ItemStack tool) {

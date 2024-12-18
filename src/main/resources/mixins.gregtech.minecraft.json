@@ -9,7 +9,7 @@
   },
   "mixins": [
     "BlockConcretePowderMixin",
-    "NetworkHandlerMixin",
+    "ContainerMixin",
     "BlockRenderLayerMixin",
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",

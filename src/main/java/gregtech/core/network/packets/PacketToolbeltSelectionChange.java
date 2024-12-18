@@ -39,6 +39,7 @@ public abstract class PacketToolbeltSelectionChange implements IPacket {
     }
 
     public static void toClient(int slot, int matrixSlot, EntityPlayerMP player) {
+        if (player == null) return;
         GregTechAPI.networkHandler.sendTo(new Client(slot, matrixSlot), player);
     }
 
