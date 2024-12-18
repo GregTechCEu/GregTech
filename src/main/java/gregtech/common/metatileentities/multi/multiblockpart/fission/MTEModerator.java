@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.fission;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.capability.impl.NotifiableFilteredItemHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.fission.component.ComponentDirection;
 import gregtech.api.fission.component.FissionComponent;
@@ -12,7 +14,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-
 import gregtech.api.util.function.FloatSupplier;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,15 +37,21 @@ public class MTEModerator extends MTEFissionItemComponent<ModeratorData> {
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        // TODO lockable, filter
-        return new NotifiableItemStackHandler(this, 1, this, false);
+        return new NotifiableFilteredItemHandler(this, 1, this, false)
+                .setFillPredicate(s -> GregTechAPI.FISSION_COMPONENT_REGISTRY.getData(ModeratorData.class, s) != null);
+    }
+
+    @Override
+    protected IItemHandlerModifiable createExportItemHandler() {
+        return new NotifiableItemStackHandler(this, 1, this, true);
     }
 
     @Override
     protected ModularUI createUI(@NotNull EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
                 .label(5, 5, getMetaFullName())
-                .slot(importItems, 0, 176 / 2 - 9, 40, GuiTextures.SLOT)
+                .slot(importItems, 0, 176 / 2 - 9 - 36, 40, GuiTextures.SLOT)
+                .slot(exportItems, 0, 176 / 2 + 9 + 18, 40, GuiTextures.SLOT)
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }

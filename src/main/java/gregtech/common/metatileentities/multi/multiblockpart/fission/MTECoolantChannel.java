@@ -13,16 +13,13 @@ import gregtech.api.fission.reactor.pathdata.NeutronPathData;
 import gregtech.api.fission.reactor.pathdata.ReactivityPathData;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.FluidStack;
-
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +40,7 @@ public class MTECoolantChannel extends AbstractMTEFissionComponent<CoolantData> 
     @Override
     protected FluidTankList createImportFluidHandler() {
         return new FluidTankList(true, new NotifiableFilteredFluidHandler(8000, this, false)
-                .setFilter(stack -> true)); // TODO coolant filter
+                .setFilter(stack -> GregTechAPI.FISSION_COMPONENT_REGISTRY.getData(CoolantData.class, stack) != null));
     }
 
     @Override
@@ -129,7 +126,8 @@ public class MTECoolantChannel extends AbstractMTEFissionComponent<CoolantData> 
             return 0;
         }
 
-        exportFluids.fill(new FluidStack(componentData.hotCoolant, usableCoolant * componentData.hotPerColdCoolant), true);
+        exportFluids.fill(new FluidStack(componentData.hotCoolant, usableCoolant * componentData.hotPerColdCoolant),
+                true);
 
         return componentData.heatPerCoolant * usableCoolant;
     }

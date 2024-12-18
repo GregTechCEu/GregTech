@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.fission;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.fission.FissionReactorController;
 import gregtech.api.fission.component.FissionComponentData;
 
 import net.minecraft.item.ItemStack;
@@ -34,7 +35,8 @@ public abstract class MTEFissionItemComponent<T extends FissionComponentData> ex
             return;
         }
 
-        if (this.componentData == null && !locked) {
+        if (this.componentData == null && getController() instanceof FissionReactorController controller &&
+                !controller.isLocked()) {
             for (IItemHandlerModifiable notified : getNotifiedItemInputList()) {
                 ItemStack stack = notified.extractItem(0, 1, true);
                 if (!stack.isEmpty()) {
@@ -119,7 +121,8 @@ public abstract class MTEFissionItemComponent<T extends FissionComponentData> ex
     }
 
     private void clearStored() {
-        if (!locked && componentData != null) {
+        if (getController() instanceof FissionReactorController controller && !controller.isLocked() &&
+                componentData != null) {
             this.componentData = null;
         }
     }

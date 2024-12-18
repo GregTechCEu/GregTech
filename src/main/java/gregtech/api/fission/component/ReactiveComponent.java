@@ -20,4 +20,9 @@ public interface ReactiveComponent extends FissionComponent {
      * @return the amount of emitted heat per fission
      */
     float heatPerFission();
+
+    /**
+     * @return the durability as a percentage of the total
+     */
+    float durabilityPercent();
 }

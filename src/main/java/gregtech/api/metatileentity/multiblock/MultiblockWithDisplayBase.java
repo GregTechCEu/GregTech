@@ -19,6 +19,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.multi.fission.MTEFissionReactor;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -465,7 +466,9 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
 
         // Distinct Buses Button
-        if (this instanceof IDistinctBusController distinct && distinct.canBeDistinct()) {
+        // TODO HACK get rid of this
+        if (!(this instanceof MTEFissionReactor) && this instanceof IDistinctBusController distinct &&
+                distinct.canBeDistinct()) {
             builder.widget(new ImageCycleButtonWidget(173, 143, 18, 18, GuiTextures.BUTTON_DISTINCT_BUSES,
                     distinct::isDistinct, distinct::setDistinct)
                             .setTooltipHoverString(i -> "gregtech.multiblock.universal.distinct_" +

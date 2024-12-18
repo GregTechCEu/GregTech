@@ -5821,6 +5821,16 @@ gregtech.multiblock.hpca.info_coolant_name=PCB Coolant
 gregtech.multiblock.hpca.info_bridging_enabled=Bridging Enabled
 gregtech.multiblock.hpca.info_bridging_disabled=Bridging Disabled
 
+gregtech.multiblock.fission.work_paused=Unstarted.
+gregtech.multiblock.fission.running=Running perfectly.
+gregtech.multiblock.fission.idling=Unlocked.
+gregtech.multiblock.fission.size=Size: %d x %d
+gregtech.multiblock.fission.heat=Heat: %d / %d
+gregtech.multiblock.fission.site=Site %d: Heat: %d, Target: %d, Lifespan: %d%%
+gregtech.multiblock.fission.lock=Lock Reactor Structure.
+gregtech.multiblock.fission.start=Start Reactor.
+gregtech.multiblock.fission.failure=Failure.
+
 gregtech.command.usage=Usage: /gregtech <worldgen/hand/recipecheck/datafix>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
 gregtech.command.worldgen.reload.usage=Usage: /gregtech worldgen reload

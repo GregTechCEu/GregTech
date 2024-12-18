@@ -6,7 +6,6 @@ import gregtech.api.fission.component.FissionComponentData;
 import gregtech.api.fission.reactor.ReactorPathWalker;
 import gregtech.api.fission.reactor.pathdata.NeutronPathData;
 import gregtech.api.fission.reactor.pathdata.ReactivityPathData;
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -45,29 +44,25 @@ public class MTENeutronReflector extends AbstractMTEFissionComponent<FissionComp
                 .widget(new CycleButtonWidget(176 / 2 - 9 - 36, 40, 18, 18,
                         DirectionState.class,
                         () -> directions[ComponentDirection.LEFT.ordinal()],
-                        v -> updateDirection(v, ComponentDirection.LEFT))
-                )
+                        v -> updateDirection(v, ComponentDirection.LEFT)))
                 .widget(new CycleButtonWidget(176 / 2 + 9 + 18, 40, 18, 18,
                         DirectionState.class,
                         () -> directions[ComponentDirection.RIGHT.ordinal()],
-                        v ->  updateDirection(v, ComponentDirection.RIGHT))
-                )
+                        v -> updateDirection(v, ComponentDirection.RIGHT)))
                 .widget(new CycleButtonWidget(176 / 2 - 9, 5 + 9, 18, 18,
                         DirectionState.class,
                         () -> directions[ComponentDirection.UP.ordinal()],
-                        v ->  updateDirection(v, ComponentDirection.UP))
-                )
+                        v -> updateDirection(v, ComponentDirection.UP)))
                 .widget(new CycleButtonWidget(176 / 2 - 9, 84 - 18 - 9, 18, 18,
                         DirectionState.class,
                         () -> directions[ComponentDirection.DOWN.ordinal()],
-                        v ->  updateDirection(v, ComponentDirection.DOWN))
-                )
+                        v -> updateDirection(v, ComponentDirection.DOWN)))
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
 
     private void updateDirection(@NotNull DirectionState state, @NotNull ComponentDirection direction) {
-        if (locked) {
+        if (isLocked()) {
             return;
         }
         int i = direction.ordinal();
@@ -133,6 +128,7 @@ public class MTENeutronReflector extends AbstractMTEFissionComponent<FissionComp
     }
 
     private enum DirectionState implements IStringSerializable {
+
         IN,
         OUT,
         NONE;

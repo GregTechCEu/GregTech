@@ -77,14 +77,20 @@ public class MultiblockAbility<T> {
             "hpca_component");
     public static final MultiblockAbility<IObjectHolder> OBJECT_HOLDER = new MultiblockAbility<>("object_holder");
 
-//    public static final MultiblockAbility<EmptyComponent> EMPTY_FISSION_COMPONENT = new MultiblockAbility<>("empty_fission_component");
-//    public static final MultiblockAbility<ControlRodComponent> CONTROL_ROD = new MultiblockAbility<>("control_rod");
-//    public static final MultiblockAbility<CoolingComponent> COOLING_COMPONENT = new MultiblockAbility<>("cooling_component");
-//    public static final MultiblockAbility<FuelComponent> FISSION_FUEL = new MultiblockAbility<>("fission_fuel");
-//    public static final MultiblockAbility<ModeratorComponent> NEUTRON_MODERATOR = new MultiblockAbility<>("neutron_moderator");
-//    public static final MultiblockAbility<NeutronEmitter> NEUTRON_EMITTER = new MultiblockAbility<>("neutron_emitter");
-//    public static final MultiblockAbility<ReflectorComponent> NEUTRON_REFLECTOR = new MultiblockAbility<>("neutron_reflector");
-    public static final MultiblockAbility<FissionComponent> FISSION_COMPONENT = new MultiblockAbility<>("fission_component");
+    // public static final MultiblockAbility<EmptyComponent> EMPTY_FISSION_COMPONENT = new
+    // MultiblockAbility<>("empty_fission_component");
+    // public static final MultiblockAbility<ControlRodComponent> CONTROL_ROD = new MultiblockAbility<>("control_rod");
+    // public static final MultiblockAbility<CoolingComponent> COOLING_COMPONENT = new
+    // MultiblockAbility<>("cooling_component");
+    // public static final MultiblockAbility<FuelComponent> FISSION_FUEL = new MultiblockAbility<>("fission_fuel");
+    // public static final MultiblockAbility<ModeratorComponent> NEUTRON_MODERATOR = new
+    // MultiblockAbility<>("neutron_moderator");
+    // public static final MultiblockAbility<NeutronEmitter> NEUTRON_EMITTER = new
+    // MultiblockAbility<>("neutron_emitter");
+    // public static final MultiblockAbility<ReflectorComponent> NEUTRON_REFLECTOR = new
+    // MultiblockAbility<>("neutron_reflector");
+    public static final MultiblockAbility<FissionComponent> FISSION_COMPONENT = new MultiblockAbility<>(
+            "fission_component");
 
     public static void registerMultiblockAbility(MultiblockAbility<?> ability, MetaTileEntity part) {
         if (!REGISTRY.containsKey(ability)) {

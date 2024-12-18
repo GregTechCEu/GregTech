@@ -2,9 +2,7 @@ package gregtech.api.fission.reactor;
 
 import gregtech.api.fission.component.ComponentDirection;
 import gregtech.api.fission.component.FissionComponent;
-
 import gregtech.api.fission.reactor.pathdata.NeutronPathData;
-
 import gregtech.api.fission.reactor.pathdata.ReactivityPathData;
 
 import org.jetbrains.annotations.NotNull;

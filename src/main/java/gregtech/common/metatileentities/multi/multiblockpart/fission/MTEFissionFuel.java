@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.fission;
 
+import gregtech.api.GregTechAPI;
+import gregtech.api.capability.impl.NotifiableFilteredItemHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.fission.component.ComponentDirection;
 import gregtech.api.fission.component.FissionComponent;
@@ -11,17 +13,14 @@ import gregtech.api.fission.reactor.pathdata.NeutronPathData;
 import gregtech.api.fission.reactor.pathdata.ReactivityPathData;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-
 import gregtech.api.util.GTTransferUtils;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MTEFissionFuel extends MTEFissionItemComponent<FuelData> implements NeutronEmitter,
-                                                                                 ReactiveComponent {
+                            ReactiveComponent {
 
     private boolean isOutputFull;
 
@@ -45,8 +44,8 @@ public class MTEFissionFuel extends MTEFissionItemComponent<FuelData> implements
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        // TODO lockable, filter
-        return new NotifiableItemStackHandler(this, 1, this, false);
+        return new NotifiableFilteredItemHandler(this, 1, this, false)
+                .setFillPredicate(s -> GregTechAPI.FISSION_COMPONENT_REGISTRY.getData(FuelData.class, s) != null);
     }
 
     @Override
@@ -183,6 +182,14 @@ public class MTEFissionFuel extends MTEFissionItemComponent<FuelData> implements
     public float heatPerFission() {
         assert componentData != null;
         return componentData.heatPerFission;
+    }
+
+    @Override
+    public float durabilityPercent() {
+        if (componentData == null) {
+            return 0;
+        }
+        return durability / (float) componentData.durability;
     }
 
     @Override

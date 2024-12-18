@@ -3,6 +3,7 @@ package gregtech.api.fission.component;
 import org.jetbrains.annotations.NotNull;
 
 public enum ComponentDirection {
+
     LEFT,
     RIGHT,
     UP,

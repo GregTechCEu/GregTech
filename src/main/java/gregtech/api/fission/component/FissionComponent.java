@@ -1,12 +1,8 @@
 package gregtech.api.fission.component;
 
 import gregtech.api.fission.reactor.ReactorPathWalker;
-
 import gregtech.api.fission.reactor.pathdata.NeutronPathData;
-
 import gregtech.api.fission.reactor.pathdata.ReactivityPathData;
-
-import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraft.util.math.BlockPos;
 
@@ -25,16 +21,6 @@ public interface FissionComponent {
      * @return the component's durability
      */
     int durability();
-
-    /**
-     * Lock the internal data of the component
-     */
-    void lock();
-
-    /**
-     * Unlock the internal data of the component
-     */
-    void unlock();
 
     /**
      * Process neutrons as they move down a path in the reactor

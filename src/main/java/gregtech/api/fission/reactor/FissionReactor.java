@@ -1,16 +1,16 @@
 package gregtech.api.fission.reactor;
 
 import gregtech.api.fission.component.ComponentDirection;
+import gregtech.api.fission.component.ControlRod;
 import gregtech.api.fission.component.CoolantChannel;
 import gregtech.api.fission.component.FissionComponent;
-
 import gregtech.api.fission.component.NeutronEmitter;
 import gregtech.api.fission.component.ReactiveComponent;
-
-import gregtech.api.fission.component.ControlRod;
 import gregtech.api.fission.reactor.pathdata.NeutronPathData;
 import gregtech.api.fission.reactor.pathdata.ReactivityPathData;
 import gregtech.api.util.math.Vec2i;
+
+import net.minecraft.nbt.NBTTagCompound;
 
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
@@ -26,6 +26,7 @@ import java.util.Map;
 public class FissionReactor implements ReactorPathWalker {
 
     private final Map<Vec2i, ReactionSite> sites = new Object2ReferenceOpenHashMap<>();
+    private final List<ReactionSite> sitesOrdered = new ArrayList<>();
     private final float[] radiatedNeutronsCached = new float[ComponentDirection.VALUES.length];
     private final List<NeutronPathData> radiatedNeutrons = new ArrayList<>();
 
@@ -98,6 +99,7 @@ public class FissionReactor implements ReactorPathWalker {
                     ReactionSite site = new ReactionSite(reactiveComponent, coolantChannels, controlRods);
                     sites.put(new Vec2i(r, c), site);
                     componentSites.put(reactiveComponent, site);
+                    sitesOrdered.add(site);
                 }
                 if (component instanceof NeutronEmitter emitter) {
                     emitters.put(new Vec2i(r, c), emitter);
@@ -161,7 +163,8 @@ public class FissionReactor implements ReactorPathWalker {
     }
 
     @Override
-    public void walkPath(@NotNull List<NeutronPathData> neutronData, @NotNull List<ReactivityPathData> reactivityData, @NotNull FissionComponent source,
+    public void walkPath(@NotNull List<NeutronPathData> neutronData, @NotNull List<ReactivityPathData> reactivityData,
+                         @NotNull FissionComponent source,
                          @NotNull ComponentDirection direction, int startR, int startC, float neutrons) {
         int r = startR + direction.offsetY();
         if (r < 0 || r >= size) {
@@ -260,5 +263,29 @@ public class FissionReactor implements ReactorPathWalker {
 
     public int size() {
         return this.size;
+    }
+
+    public int maxHeat() {
+        return maxHeat;
+    }
+
+    public float avgHeat() {
+        float sum = 0;
+        for (ReactionSite site : sites.values()) {
+            sum += site.heat();
+        }
+        return sum / sites.size();
+    }
+
+    public @NotNull List<ReactionSite> sites() {
+        return sitesOrdered;
+    }
+
+    public void writeToNBT(@NotNull NBTTagCompound tag) {
+        // TODO
+    }
+
+    public void readFromNBT(@NotNull NBTTagCompound tag) {
+        // TODO
     }
 }
