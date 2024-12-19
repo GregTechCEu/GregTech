@@ -806,6 +806,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     public void renderItemOverlayIntoGUI(@NotNull ItemStack stack, int xPosition, int yPosition) {
         ToolChargeBarRenderer.renderBarsItem(this, stack, xPosition, yPosition);
     }
+
     @Override @SideOnly(Side.CLIENT)
     public boolean shouldDrawHalo(ItemStack stack) {
         T metaValueItem = getItem(stack);
