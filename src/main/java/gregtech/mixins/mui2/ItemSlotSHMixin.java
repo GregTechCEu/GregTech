@@ -75,10 +75,8 @@ public abstract class ItemSlotSHMixin extends SyncHandler {
         }
     }
 
-    @Inject(method = "readOnClient",
-            at = @At(value = "INVOKE",
-                     target = "Lcom/cleanroommc/modularui/widgets/slot/ModularSlot;onSlotChangedReal(Lnet/minecraft/item/ItemStack;ZZZ)V"))
-    protected void asdf(int id, PacketBuffer buf, CallbackInfo ci) {
+    @Inject(method = "readOnClient", at = @At("HEAD"))
+    protected void handlePhantomScroll(int id, PacketBuffer buf, CallbackInfo ci) {
         if (id == 3) {
             this.lastStoredPhantomItem = NetworkUtils.readItemStack(buf);
             getSlot().putStack(this.lastStoredPhantomItem.copy());
@@ -86,7 +84,7 @@ public abstract class ItemSlotSHMixin extends SyncHandler {
     }
 
     @Inject(method = "phantomScroll", at = @At("TAIL"))
-    protected void asdf(MouseData mouseData, CallbackInfo ci) {
+    protected void syncPhantomScroll(MouseData mouseData, CallbackInfo ci) {
         syncToClient(3, buffer -> NetworkUtils.writeItemStack(buffer, this.lastStoredPhantomItem));
     }
 
