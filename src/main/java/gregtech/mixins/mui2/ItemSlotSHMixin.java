@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.ItemSlotSH;
@@ -16,6 +17,8 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.IOException;
 
@@ -70,6 +73,21 @@ public abstract class ItemSlotSHMixin extends SyncHandler {
             if (!isPhantom()) return;
             gregTech$phantomClick(MouseData.create(0), buf.readItemStack());
         }
+    }
+
+    @Inject(method = "readOnClient",
+            at = @At(value = "INVOKE",
+                     target = "Lcom/cleanroommc/modularui/widgets/slot/ModularSlot;onSlotChangedReal(Lnet/minecraft/item/ItemStack;ZZZ)V"))
+    protected void asdf(int id, PacketBuffer buf, CallbackInfo ci) {
+        if (id == 3) {
+            this.lastStoredPhantomItem = NetworkUtils.readItemStack(buf);
+            getSlot().putStack(this.lastStoredPhantomItem.copy());
+        }
+    }
+
+    @Inject(method = "phantomScroll", at = @At("TAIL"))
+    protected void asdf(MouseData mouseData, CallbackInfo ci) {
+        syncToClient(3, buffer -> NetworkUtils.writeItemStack(buffer, this.lastStoredPhantomItem));
     }
 
     /**
