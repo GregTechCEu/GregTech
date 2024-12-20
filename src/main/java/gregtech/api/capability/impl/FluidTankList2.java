@@ -1,48 +1,31 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredFluidContainer;
-
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IMultipleTankHandler2;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import com.google.common.collect.AbstractIterator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 public class FluidTankList2 implements IMultipleTankHandler2 {
 
     private final boolean allowSameFluidFill;
     private Entry[] tanks = new Entry[0];
-    private IFluidTankProperties[] properties = new IFluidTankProperties[0];
 
     public FluidTankList2(boolean allowSameFluidFill, IFluidTank... fluidTanks) {
         if (!ArrayUtils.isEmpty(fluidTanks)) {
             tanks = new Entry[fluidTanks.length];
-            properties = new IFluidTankProperties[fluidTanks.length];
-            Arrays.setAll(tanks, value -> {
-                var tank = wrap(fluidTanks[value]);
-                properties[value] = createProp(tank);
-                return tank;
-            });
+            Arrays.setAll(tanks, value -> wrap(fluidTanks[value]));
         }
         this.allowSameFluidFill = allowSameFluidFill;
     }
@@ -53,7 +36,7 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        return properties;
+        return this.tanks;
     }
 
     @Override
@@ -244,42 +227,6 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
         return tank instanceof TankWrapper ? (TankWrapper) tank : new TankWrapper(tank, this);
     }
 
-    protected static IFluidTankProperties createProp(IFluidTank tank) {
-        return new IFluidTankProperties() {
-
-            @Override
-            public FluidStack getContents() {
-                return tank.getFluid() == null ? null : tank.getFluid().copy();
-            }
-
-            @Override
-            public int getCapacity() {
-                return tank.getCapacity();
-            }
-
-            @Override
-            public boolean canFill() {
-                return true;
-            }
-
-            @Override
-            public boolean canDrain() {
-                return true;
-            }
-
-            @Override
-            public boolean canFillFluidType(FluidStack fluidStack) {
-                // special logic
-                return false;
-            }
-
-            @Override
-            public boolean canDrainFluidType(FluidStack fluidStack) {
-                return true;
-            }
-        };
-    }
-
     public static class TankWrapper implements Entry {
 
         private final IFluidTank tank;
@@ -289,9 +236,7 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
         private TankWrapper(IFluidTank tank, IMultipleTankHandler2 parent) {
             this.tank = tank;
             this.parent = parent;
-            this.props = new IFluidTankProperties[] {
-                    createProp(this)
-            };
+            this.props = new IFluidTankProperties[] { this };
         }
 
         @Override
@@ -307,6 +252,19 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
         @Override
         public IFluidTankProperties[] getTankProperties() {
             return this.props;
+        }
+
+        @Override
+        public boolean canFillFluidType(FluidStack fluidStack) {
+            if (allowSameFluidFill() || fluidStack == null) return true;
+            int i = parent.getIndexOfFluid(fluidStack);
+            var tank = parent.getTankAt(i);
+            return tank.getFluidAmount() < tank.getCapacity();
+        }
+
+        @Override
+        public boolean canDrainFluidType(FluidStack fluidStack) {
+            return true;
         }
     }
 }
