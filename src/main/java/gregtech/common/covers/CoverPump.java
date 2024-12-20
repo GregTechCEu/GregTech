@@ -9,10 +9,10 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
+import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
@@ -24,7 +24,6 @@ import gregtech.api.graphnet.traverse.EQTraverse;
 import gregtech.api.graphnet.traverse.FDTraverse;
 import gregtech.api.graphnet.traverse.RRTraverse;
 import gregtech.api.graphnet.traverse.iter.EdgeDirection;
-import gregtech.api.graphnet.traverse.iter.EdgeSelector;
 import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
 import gregtech.api.graphnet.traverse.iter.NetIterator;
 import gregtech.api.mui.GTGuiTextures;
@@ -88,7 +87,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
-import java.util.function.Predicate;
 
 public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter {
 
@@ -321,42 +319,35 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                     @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
         // first, evaluate whether we're the only bridge between two areas in a group
         NetEdge bridge = sourceNode.getNet().getEdge(sourceNode, destNode);
-        GraphEdge b1 = GraphEdge.unwrap(bridge);
-        GraphEdge b2 = GraphEdge.unwrap(sourceNode.getNet().getEdge(destNode, sourceNode));
-        Predicate<Object> predicate = g -> g != b1 && g != b2;
+        if (bridge == null || !GraphNetUtility.isOnlyBridge(bridge)) return 0;
+        // second, build frontier information. If we have no candidates for either frontier, exit early.
         NetClosestIterator sourceFrontier = new NetClosestIterator(sourceNode,
-                EdgeSelector.filtered(EdgeDirection.INCOMING, predicate));
-        NetClosestIterator destFrontier = new NetClosestIterator(destNode,
-                EdgeSelector.filtered(EdgeDirection.OUTGOING, predicate));
+                GraphNetUtility.bridgeFiltered(EdgeDirection.INCOMING, sourceNode, destNode));
         Map<NetNode, IFluidHandler> sourceCandidates = new Object2ObjectOpenHashMap<>();
-        Map<NetNode, IFluidHandler> destinationCandidates = new Object2ObjectOpenHashMap<>();
-        // note that if we checked all edges instead of only incoming for one and outgoing for the other,
-        // we would be able to know that we're the only bridge once either frontier exhausted, not both.
-        while (sourceFrontier.hasNext() || destFrontier.hasNext()) {
-            if (sourceFrontier.hasNext()) {
-                NetNode next = sourceFrontier.next();
-                // the dest frontier has seen the next node in the source frontier, we are not the only bridge.
-                if (destFrontier.getSpanningTreeEdge(next) != null) return 0;
-                if (next instanceof NodeExposingCapabilities cap) {
-                    IFluidHandler handler = cap.getProvider()
-                            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
-                    if (handler != null && !(handler instanceof FluidCapabilityObject))
-                        sourceCandidates.put(next, handler);
-                }
-            }
-            if (destFrontier.hasNext()) {
-                NetNode next = destFrontier.next();
-                // the source frontier has seen the next node in the dest frontier, we are not the only bridge.
-                if (sourceFrontier.getSpanningTreeEdge(next) != null) return 0;
-                if (next instanceof NodeExposingCapabilities cap) {
-                    IFluidHandler handler = cap.getProvider()
-                            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
-                    if (handler != null && !(handler instanceof FluidCapabilityObject))
-                        destinationCandidates.put(next, handler);
-                }
+        while (sourceFrontier.hasNext()) {
+            NetNode next = sourceFrontier.next();
+            if (next instanceof NodeExposingCapabilities cap) {
+                IFluidHandler handler = cap.getProvider()
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
+                if (handler != null && !(handler instanceof FluidCapabilityObject))
+                    sourceCandidates.put(next, handler);
             }
         }
-        // if we reach this point, we know we are the only bridge and can commence traverse.
+        if (sourceCandidates.isEmpty()) return 0;
+        NetClosestIterator destFrontier = new NetClosestIterator(destNode,
+                GraphNetUtility.bridgeFiltered(EdgeDirection.OUTGOING, sourceNode, destNode));
+        Map<NetNode, IFluidHandler> destinationCandidates = new Object2ObjectOpenHashMap<>();
+        while (destFrontier.hasNext()) {
+            NetNode next = destFrontier.next();
+            if (next instanceof NodeExposingCapabilities cap) {
+                IFluidHandler handler = cap.getProvider()
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
+                if (handler != null && !(handler instanceof FluidCapabilityObject))
+                    destinationCandidates.put(next, handler);
+            }
+        }
+        if (destinationCandidates.isEmpty()) return 0;
+        // third, build merge information from source candidates
         FluidFilterContainer filter = this.getFluidFilter();
         byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
         Object2IntOpenHashMap<FluidTestObject> contained = new Object2IntOpenHashMap<>();
@@ -369,7 +360,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         }
         var iter = contained.object2IntEntrySet().fastIterator();
         int totalTransfer = 0;
-
+        // fourth, perform transfer based on merge information
         while (iter.hasNext()) {
             var content = iter.next();
             FluidStack contents = content.getKey().recombine(content.getIntValue());

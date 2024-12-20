@@ -3,7 +3,9 @@ package gregtech.api.graphnet.graph;
 import gregtech.api.graphnet.net.NetNode;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -24,6 +26,12 @@ public final class GraphVertex {
 
     public NetNode getWrapped() {
         return wrapped;
+    }
+
+    @Nullable
+    @Contract("null->null")
+    public static GraphVertex unwrap(NetNode n) {
+        return n == null ? null : n.wrapper;
     }
 
     @Override

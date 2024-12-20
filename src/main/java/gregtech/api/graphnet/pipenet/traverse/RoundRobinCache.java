@@ -4,24 +4,25 @@ import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.traverse.iter.NetIterator;
 
 import com.github.bsideup.jabel.Desugar;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @Desugar
-public record RoundRobinCache(LinkedHashSet<NetNode> sourceCache, LinkedHashSet<NetNode> destCache) {
+public record RoundRobinCache(ObjectLinkedOpenHashSet<NetNode> sourceCache,
+                              ObjectLinkedOpenHashSet<NetNode> destCache) {
 
     public static RoundRobinCache create() {
-        return new RoundRobinCache(new LinkedHashSet<>(), new LinkedHashSet<>());
+        return new RoundRobinCache(new ObjectLinkedOpenHashSet<>(), new ObjectLinkedOpenHashSet<>());
     }
 
     public Supplier<Predicate<NetNode>> buildSupplier(Collection<NetNode> sourceCandidates,
                                                       Collection<NetNode> destCandidates) {
-        return new CacheSupplier(sourceCandidates, destCandidates);
+        return sourceCandidates.isEmpty() || destCandidates.isEmpty() ? () -> null :
+                new CacheSupplier(sourceCandidates, destCandidates);
     }
 
     public RoundRobinCache refresh(NetIterator sources, NetIterator targets) {
@@ -41,42 +42,62 @@ public record RoundRobinCache(LinkedHashSet<NetNode> sourceCache, LinkedHashSet<
     }
 
     public RoundRobinCache copy() {
-        return new RoundRobinCache(new LinkedHashSet<>(sourceCache), new LinkedHashSet<>(destCache));
+        return new RoundRobinCache(sourceCache.clone(), destCache.clone());
     }
 
-    private static final class CacheSupplier implements Supplier<Predicate<NetNode>> {
+    private final class CacheSupplier implements Supplier<Predicate<NetNode>> {
 
-        private final Iterator<NetNode> sourceIterator;
-        private final Collection<NetNode> destCandidates;
-        private NetNode nextSource;
-        private Iterator<NetNode> destIterator;
+        private final ArrayDeque<NetNode> sources;
+        private ArrayDeque<NetNode> dests;
+        private ArrayDeque<NetNode> destBacklog;
 
         public CacheSupplier(Collection<NetNode> sourceCandidates, Collection<NetNode> destCandidates) {
-            this.destCandidates = destCandidates;
-            this.destIterator = destCandidates.iterator();
-            if (!destIterator.hasNext()) {
-                sourceIterator = Collections.emptyIterator();
-                nextSource = null;
-            } else {
-                sourceIterator = sourceCandidates.iterator();
-                this.nextSource = sourceIterator.hasNext() ? sourceIterator.next() : null;
-            }
+            this.sources = new ArrayDeque<>(sourceCandidates);
+            this.dests = new ArrayDeque<>(destCandidates);
+            this.destBacklog = new ArrayDeque<>(destCandidates.size());
         }
 
         @Override
         public Predicate<NetNode> get() {
-            if (nextSource == null) {
-                if (sourceIterator.hasNext()) nextSource = sourceIterator.next();
-                if (nextSource == null) return null;
+            if (dests.isEmpty()) {
+                ArrayDeque<NetNode> queue = dests;
+                dests = destBacklog;
+                destBacklog = queue;
+                sources.removeFirst();
+                if (sources.isEmpty()) return null;
+                int i = 0;
+                while (true) {
+                    NetNode s = sources.peekFirst();
+                    // yeet the first if we've gone through the entire deque without a match
+                    if (i >= sources.size()) {
+                        sourceCache.removeFirst();
+                        i = 0;
+                    }
+                    if (!sourceCache.contains(s) || sourceCache.first() == s) break;
+                    i++;
+                    sources.addLast(sources.removeFirst());
+                }
             }
-            if (!destIterator.hasNext()) {
-                destIterator = destCandidates.iterator();
-                if (!destIterator.hasNext()) return null;
-                nextSource = null;
-                return get();
+            NetNode s = sources.peekFirst();
+            NetNode d;
+            int i = 0;
+            while (true) {
+                d = dests.removeFirst();
+                // yeet the first if we've gone through the entire deque without a match
+                if (i >= dests.size()) {
+                    destCache.removeFirst();
+                    i = 0;
+                }
+                if (!destCache.contains(d) || destCache.first() == d) break;
+                i++;
+                dests.addLast(d);
+
             }
-            NetNode node = destIterator.next();
-            return n -> n == nextSource || n == node;
+            destBacklog.addLast(d);
+            sourceCache.addAndMoveToLast(s);
+            destCache.addAndMoveToLast(d);
+            NetNode finalD = d;
+            return n -> n == s || n == finalD;
         }
     }
 }
