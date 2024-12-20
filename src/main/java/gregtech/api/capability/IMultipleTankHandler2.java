@@ -7,6 +7,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,8 @@ import java.util.List;
  *
  * @see gregtech.api.capability.impl.FluidTankList FluidTankList
  */
-public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultipleTankHandler2.Entry>, INBTSerializable<NBTTagCompound> {
+public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultipleTankHandler2.Entry>,
+                                       INBTSerializable<NBTTagCompound> {
 
     /**
      * Comparator for entries that can be used in insertion logic
@@ -88,7 +90,8 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
      * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler2} for accessing
      * information such as {@link IMultipleTankHandler2#allowSameFluidFill()}.
      */
-    interface Entry extends IFluidTank, IFluidHandler, IFilteredFluidContainer, INBTSerializable<NBTTagCompound> {
+    interface Entry extends IFluidTank, IFluidHandler, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
+                    IFluidTankProperties {
 
         @NotNull
         IMultipleTankHandler2 getParentHandler();
@@ -125,6 +128,21 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
         @Override
         default FluidTankInfo getInfo() {
             return getDelegate().getInfo();
+        }
+
+        @Override
+        default FluidStack getContents() {
+            return getFluid() == null ? null : getFluid().copy();
+        }
+
+        @Override
+        default boolean canFill() {
+            return true;
+        }
+
+        @Override
+        default boolean canDrain() {
+            return true;
         }
 
         @Override
