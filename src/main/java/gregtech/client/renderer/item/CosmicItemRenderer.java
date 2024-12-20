@@ -47,8 +47,14 @@ import java.util.Random;
         modid = Mods.Names.AVARITIA,
         iface = "morph.avaritia.client.render.shader.CosmicShaderHelper")
 public class CosmicItemRenderer extends WrappedItemRenderer {
+
     private static final HashMap<TextureAtlasSprite, IBakedModel> spriteQuadCache = new HashMap();
-    private Random randy = new Random();
+
+    private Random random = new Random();
+
+    // Had to use Avaritia's render and modify it to allow for Cosmic Render With Halo and Pulse Effect
+    // I Didn't create these methods here, these are Avaritia's (Some of which have been cleaned/modified)
+    // Avalible here -> https://www.curseforge.com/minecraft/mc-mods/avaritia-1-10
 
     public CosmicItemRenderer(IModelState state, IBakedModel model) {
         super(state, model);
@@ -59,10 +65,8 @@ public class CosmicItemRenderer extends WrappedItemRenderer {
     }
 
     public void renderItem(ItemStack stack, ItemCameraTransforms.TransformType transformType) {
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder buffer = tess.getBuffer();
-        this.processLightLevel(transformType);
         if (stack.getItem() instanceof IHaloRenderItem && transformType == ItemCameraTransforms.TransformType.GUI) {
             IHaloRenderItem hri = (IHaloRenderItem)stack.getItem();
             GlStateManager.pushMatrix();
@@ -90,7 +94,7 @@ public class CosmicItemRenderer extends WrappedItemRenderer {
 
             if (hri.shouldDrawPulse(stack)) {
                 GlStateManager.pushMatrix();
-                double scale = this.randy.nextDouble() * 0.15 + 0.95;
+                double scale = this.random.nextDouble() * 0.15 + 0.95;
                 double trans = (1.0 - scale) / 2.0;
                 GlStateManager.translate(trans, trans, 0.0);
                 GlStateManager.scale(scale, scale, 1.0001);
@@ -113,8 +117,8 @@ public class CosmicItemRenderer extends WrappedItemRenderer {
         } else {
             this.renderSimple(stack, this.renderEntity);
         }
-
     }
+
     protected void renderSimple(ItemStack stack, EntityLivingBase player) {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
@@ -178,30 +182,5 @@ public class CosmicItemRenderer extends WrappedItemRenderer {
         GlStateManager.enableDepth();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
-    }
-    protected void processLightLevel(ItemCameraTransforms.TransformType transformType) {
-        switch (transformType) {
-            case GROUND:
-                if (this.entityPos != null) {
-                    CosmicShaderHelper.setLightFromLocation(this.world, this.entityPos);
-                    return;
-                }
-                break;
-            case THIRD_PERSON_LEFT_HAND:
-            case THIRD_PERSON_RIGHT_HAND:
-            case FIRST_PERSON_LEFT_HAND:
-            case FIRST_PERSON_RIGHT_HAND:
-            case HEAD:
-                if (this.renderEntity != null) {
-                    CosmicShaderHelper.setLightFromLocation(this.world, this.entityPos);
-                    return;
-                }
-                break;
-            case GUI:
-                CosmicShaderHelper.setLightLevel(1.2F);
-                return;
-        }
-
-        CosmicShaderHelper.setLightLevel(1.0F);
     }
 }
