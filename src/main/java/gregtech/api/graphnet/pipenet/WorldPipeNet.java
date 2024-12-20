@@ -188,6 +188,15 @@ public abstract class WorldPipeNet extends WorldSavedNet {
         return (WorldPipeNode) getNode((Object) equivalencyData);
     }
 
+    public @NotNull WorldPipeNode getOrCreateNode(@NotNull BlockPos pos) {
+        WorldPipeNode node = getNode(pos);
+        if (node == null) {
+            node = new WorldPipeNode(this);
+            addNode(node);
+        }
+        return node;
+    }
+
     protected Stream<@NotNull WorldPipeNet> sameDimensionNetsStream() {
         return dimensionNets.getOrDefault(this.getDimension(), Collections.emptySet()).stream()
                 .filter(Objects::nonNull);

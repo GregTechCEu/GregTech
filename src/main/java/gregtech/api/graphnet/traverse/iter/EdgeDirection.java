@@ -4,12 +4,13 @@ import org.jgrapht.Graph;
 
 import java.util.Set;
 
-public enum EdgeDirection {
+public enum EdgeDirection implements EdgeSelector {
 
     OUTGOING,
     INCOMING,
     ALL;
 
+    @Override
     public <V, E> Set<E> selectEdges(Graph<V, E> graph, V vertex) {
         return switch (this) {
             case ALL -> graph.edgesOf(vertex);

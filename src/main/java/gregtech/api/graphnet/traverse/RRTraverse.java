@@ -10,62 +10,67 @@ import gregtech.api.util.function.ToBooleanFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.Graph;
-import org.jgrapht.alg.util.Pair;
 
 import java.util.function.ObjIntConsumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
-public class RRTraverse extends AbstractMinCostTraverse {
+public class RRTraverse extends FDTraverse {
 
-    protected final Graph<GraphVertex, GraphEdge> graph;
-    protected final ToIntFunction<NetEdge> capacityFunction;
-    protected final ToIntFunction<NetNode> supplyFunction;
-    protected final ToBooleanFunction<NetNode> lossyNodes;
+    protected Predicate<NetNode> nextPredicate;
 
-    protected Pair<NetNode, NetNode> nextPair;
-
-    public static void roundRobin(@NotNull IGraphNet net,
-                                  Supplier<@Nullable Pair<NetNode, NetNode>> nextNodePairSupplier,
-                                  @NotNull ObjIntConsumer<NetNode> flowReporterNode,
-                                  @NotNull ObjIntConsumer<NetEdge> flowReporterEdge,
-                                  @NotNull ToIntFunction<NetEdge> capacityFunction,
-                                  @NotNull ToIntFunction<NetNode> supplyFunction,
-                                  @Nullable ToBooleanFunction<NetNode> lossyNodes) {
+    /**
+     * Perform round robin traverse. Round robin traverse asks repeatedly for a node predicate;
+     * each predicate will be evaluated independently using flood traverse, where only nodes that match the predicate
+     * or have loss are allowed to have supply/demand.
+     *
+     * @param net                       the net
+     * @param nextNodePredicateSupplier supplier for next predicate. Will be repeatedly queried until it returns null,
+     *                                  at which point the traverse will exit.
+     * @param flowReporterNode          flow reporter for nodes. Positive values mean draw, negative values mean sink.
+     * @param flowReporterEdge          flow reporter for edges. Always positive.
+     * @param capacityFunction          capacity function for edges.
+     * @param supplyFunction            supply function for nodes. Positive values mean available draw, negative values
+     *                                  mean available sink.
+     * @param lossyNodes                optional function that marks nodes as lossy. Lossy nodes will eat up to
+     *                                  {@link Short#MIN_VALUE} flow and their normal supply will be ignored.
+     * @param lossReporter              optional reporter for loss. Always negative. Does nothing if lossy nodes is
+     *                                  {@code null}.
+     * @return the total draw/sink after evaluation.
+     */
+    public static int roundRobin(@NotNull IGraphNet net,
+                                 Supplier<@Nullable Predicate<NetNode>> nextNodePredicateSupplier,
+                                 @NotNull ObjIntConsumer<NetNode> flowReporterNode,
+                                 @NotNull ObjIntConsumer<NetEdge> flowReporterEdge,
+                                 @NotNull ToIntFunction<NetEdge> capacityFunction,
+                                 @NotNull ToIntFunction<NetNode> supplyFunction,
+                                 @Nullable ToBooleanFunction<NetNode> lossyNodes,
+                                 @Nullable ObjIntConsumer<NetNode> lossReporter) {
         if (!net.getGraph().isDirected()) {
             throw new IllegalArgumentException("Cannot perform RR traverse logic on undirected graph!");
         }
         RRTraverse traverse = new RRTraverse(net.getGraph(), capacityFunction, supplyFunction, lossyNodes);
-        while ((traverse.nextPair = nextNodePairSupplier.get()) != null) {
+
+        int flow = 0;
+        while ((traverse.nextPredicate = nextNodePredicateSupplier.get()) != null) {
             EvaluationResult result = traverse.evaluate();
             if (result.isEmpty()) continue;
             result.getFlowMap().forEach(flowReporterEdge::accept);
-            result.getSupplyMap().forEach(flowReporterNode::accept);
+            flow += reportFlow(flowReporterNode, lossyNodes, lossReporter, result);
         }
+        return flow;
     }
 
     protected RRTraverse(Graph<GraphVertex, GraphEdge> graph, ToIntFunction<NetEdge> capacityFunction,
                          ToIntFunction<NetNode> supplyFunction, @Nullable ToBooleanFunction<NetNode> lossyNodes) {
-        this.graph = graph;
-        this.capacityFunction = capacityFunction;
-        this.supplyFunction = supplyFunction;
-        this.lossyNodes = lossyNodes != null ? lossyNodes : n -> false;
+        super(graph, capacityFunction, supplyFunction, lossyNodes);
     }
 
     @Override
     protected int getSupply(NetNode node) {
         if (lossyNodes.applyAsBool(node)) return Short.MIN_VALUE;
-        if (nextPair == null || nextPair.hasElement(node)) return 0;
+        if (nextPredicate == null || nextPredicate.test(node)) return 0;
         return supplyFunction.applyAsInt(node);
-    }
-
-    @Override
-    protected int getCapacity(NetEdge edge) {
-        return capacityFunction.applyAsInt(edge);
-    }
-
-    @Override
-    public Graph<GraphVertex, GraphEdge> getGraph() {
-        return graph;
     }
 }

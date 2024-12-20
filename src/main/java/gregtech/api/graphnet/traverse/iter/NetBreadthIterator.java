@@ -21,12 +21,12 @@ public class NetBreadthIterator implements NetIterator {
      * 
      * @param origin the node to start at
      */
-    public NetBreadthIterator(@NotNull NetNode origin, @NotNull EdgeDirection direction) {
+    public NetBreadthIterator(@NotNull NetNode origin, @NotNull EdgeSelector selector) {
         this.backer = new BreadthFirstIterator<>(origin.getNet().getGraph(), origin.wrapper) {
 
             @Override
             protected Set<GraphEdge> selectOutgoingEdges(GraphVertex vertex) {
-                return direction.selectEdges(graph, vertex);
+                return selector.selectEdges(graph, vertex);
             }
         };
     }

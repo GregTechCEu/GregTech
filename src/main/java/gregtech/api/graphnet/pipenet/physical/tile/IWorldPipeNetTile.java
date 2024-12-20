@@ -5,6 +5,8 @@ import gregtech.api.graphnet.pipenet.WorldPipeNode;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,4 +26,8 @@ public interface IWorldPipeNetTile extends ICapabilityProvider {
 
     @NotNull
     CoverableView getCoverHolder();
+
+    World getWorld();
+
+    BlockPos getPos();
 }

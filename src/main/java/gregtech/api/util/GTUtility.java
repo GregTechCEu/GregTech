@@ -56,6 +56,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -1044,5 +1045,9 @@ public class GTUtility {
                     direction.getZOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
                     0.1);
         }
+    }
+
+    public static long getTick() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
     }
 }

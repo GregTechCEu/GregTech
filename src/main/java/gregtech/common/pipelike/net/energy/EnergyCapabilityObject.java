@@ -11,6 +11,7 @@ import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.GTLog;
+import gregtech.common.covers.CoverShutter;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -66,22 +67,22 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         long available = amperage;
         for (EnergyPath path : paths) {
             NetNode target = path.getTargetNode();
-            for (var capability : node.getTileEntity().getTargetsWithCapabilities(node).entrySet()) {
-                if (node == target && capability.getKey() == side) continue; // anti insert-to-our-source logic
+            if (!(target instanceof WorldPipeNode n)) continue;
+            for (var capability : n.getTileEntity().getTargetsWithCapabilities(n).entrySet()) {
+                if (n == node && capability.getKey() == side) continue; // anti insert-to-our-source logic
 
                 IEnergyContainer container = capability.getValue().getCapability(
                         GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, capability.getKey().getOpposite());
-                if (container != null) {
-                    IEnergyTransferController controller = IEnergyTransferController.CONTROL
-                            .get(tile.getCoverHolder().getCoverAtSide(capability.getKey()));
-                    long allowed = controller.insertToHandler(voltage, available, container, capability.getKey(), true);
+                if (container != null && !(n.getTileEntity().getCoverHolder()
+                        .getCoverAtSide(capability.getKey()) instanceof CoverShutter)) {
+                    long allowed = container.acceptEnergyFromNetwork(capability.getKey(), voltage, amperage, true);
                     EnergyPath.PathFlowReport flow = path.traverse(voltage, allowed);
                     if (flow.euOut() > 0) {
                         available -= allowed;
                         if (!simulate) {
                             flow.report();
-                            controller.insertToHandler(flow.voltageOut(), flow.amperageOut(), container,
-                                    capability.getKey(), false);
+                            container.acceptEnergyFromNetwork(capability.getKey(), flow.voltageOut(),
+                                    flow.amperageOut(), false);
                         }
                     }
                 }

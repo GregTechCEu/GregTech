@@ -8,5 +8,5 @@ import org.jetbrains.annotations.NotNull;
 public interface NetIteratorSupplier {
 
     @NotNull
-    NetIterator create(@NotNull NetNode origin, @NotNull EdgeDirection direction);
+    NetIterator create(@NotNull NetNode origin, @NotNull EdgeSelector direction);
 }

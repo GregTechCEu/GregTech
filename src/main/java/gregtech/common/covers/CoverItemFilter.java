@@ -6,9 +6,6 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithItemFilter;
-import gregtech.api.graphnet.pipenet.transfer.TransferControl;
-import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
-import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -19,7 +16,6 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.ItemFilterContainer;
-import gregtech.common.pipelike.net.itemold.IItemTransferController;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -52,8 +48,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CoverItemFilter extends CoverBase implements CoverWithUI, CoverWithItemFilter, TransferControlProvider,
-                             IItemTransferController {
+public class CoverItemFilter extends CoverBase implements CoverWithUI, CoverWithItemFilter {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -229,34 +224,6 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI, CoverWith
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
         }
         return defaultValue;
-    }
-
-    @Override
-    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
-        if (control == IItemTransferController.CONTROL) {
-            return control.cast(this);
-        }
-        return null;
-    }
-
-    @Override
-    public int insertToHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler destHandler,
-                               boolean simulate) {
-        if (getFilterMode() == ItemFilterMode.FILTER_INSERT) // insert to handler is an extract from us
-            return IItemTransferController.super.insertToHandler(testObject, amount, destHandler, simulate);
-        if (getItemFilter().test(testObject.recombine())) {
-            return IItemTransferController.super.insertToHandler(testObject, amount, destHandler, simulate);
-        } else return amount;
-    }
-
-    @Override
-    public int extractFromHandler(@NotNull ItemTestObject testObject, int amount, @NotNull IItemHandler sourceHandler,
-                                  boolean simulate) {
-        if (getFilterMode() == ItemFilterMode.FILTER_EXTRACT) // extract from handler is an insert to us
-            return IItemTransferController.super.extractFromHandler(testObject, amount, sourceHandler, simulate);
-        if (getItemFilter().test(testObject.recombine())) {
-            return IItemTransferController.super.extractFromHandler(testObject, amount, sourceHandler, simulate);
-        } else return 0;
     }
 
     private class ItemHandlerFiltered extends ItemHandlerDelegate {

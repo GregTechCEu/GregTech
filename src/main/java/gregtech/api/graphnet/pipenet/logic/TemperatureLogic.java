@@ -7,11 +7,9 @@ import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicType;
 import gregtech.api.graphnet.net.NetNode;
-import gregtech.api.graphnet.pipenet.NodeLossResult;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.IFreezable;
-import gregtech.api.graphnet.traverseold.util.CompleteLossOperator;
-import gregtech.api.graphnet.traverseold.util.MultLossOperator;
+import gregtech.api.util.GTUtility;
 import gregtech.client.particle.GTOverheatParticle;
 
 import net.minecraft.block.state.IBlockState;
@@ -92,42 +90,27 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
         return temperature < getTemperatureMinimum();
     }
 
-    @Nullable
-    public NodeLossResult getLossResult(long tick) {
-        int temp = getTemperature(tick);
+    public void defaultHandleTemperature(World world, BlockPos pos) {
+        int temp = getTemperature(GTUtility.getTick());
         if (isUnderMinimum(temp)) {
-            return new NodeLossResult(n -> {
-                World world = n.getNet().getWorld();
-                BlockPos pos = n.getEquivalencyData();
-                IBlockState state = world.getBlockState(pos);
-                if (state.getBlock() instanceof IFreezable freezable) {
-                    freezable.fullyFreeze(state, world, pos);
-                } else {
-                    world.setBlockToAir(pos);
-                }
-            }, CompleteLossOperator.INSTANCE);
+            IBlockState state = world.getBlockState(pos);
+            if (state.getBlock() instanceof IFreezable freezable) {
+                freezable.fullyFreeze(state, world, pos);
+            } else {
+                world.setBlockToAir(pos);
+            }
         } else if (isOverMaximum(temp)) {
-            return new NodeLossResult(n -> {
-                World world = n.getNet().getWorld();
-                BlockPos pos = n.getEquivalencyData();
-                IBlockState state = world.getBlockState(pos);
-                if (state.getBlock() instanceof IBurnable burnable) {
-                    burnable.fullyBurn(state, world, pos);
-                } else {
-                    world.setBlockToAir(pos);
-                }
-            }, CompleteLossOperator.INSTANCE);
+            IBlockState state = world.getBlockState(pos);
+            if (state.getBlock() instanceof IBurnable burnable) {
+                burnable.fullyBurn(state, world, pos);
+            } else {
+                world.setBlockToAir(pos);
+            }
         } else if (isOverPartialBurnThreshold(temp)) {
-            return new NodeLossResult(n -> {
-                World world = n.getNet().getWorld();
-                BlockPos pos = n.getEquivalencyData();
-                IBlockState state = world.getBlockState(pos);
-                if (state.getBlock() instanceof IBurnable burnable) {
-                    burnable.partialBurn(state, world, pos);
-                }
-            }, MultLossOperator.TENTHS[5]);
-        } else {
-            return null;
+            IBlockState state = world.getBlockState(pos);
+            if (state.getBlock() instanceof IBurnable burnable) {
+                burnable.partialBurn(state, world, pos);
+            }
         }
     }
 

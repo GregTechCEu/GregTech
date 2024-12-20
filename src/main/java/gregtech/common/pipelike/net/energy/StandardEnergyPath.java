@@ -8,6 +8,7 @@ import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.PathBuilder;
 import gregtech.api.graphnet.path.SingletonNetPath;
 import gregtech.api.graphnet.path.StandardNetPath;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
@@ -99,6 +100,9 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
                             data.getLogicEntryDefaultable(VoltageLimitLogic.TYPE).getValue());
                     float heat = (float) computeHeat(voltage, endVoltage, finalResultAmperage, correctedAmperage);
                     if (heat > 0) tempLogic.applyThermalEnergy(heat, tick);
+                    if (node instanceof WorldPipeNode n) {
+                        tempLogic.defaultHandleTemperature(n.getNet().getWorld(), n.getEquivalencyData());
+                    }
                 }
                 finalEnergyFlow.recordFlow(tick, new EnergyFlowData(correctedAmperage, finalResultVoltage));
             });
@@ -238,6 +242,9 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
                             data.getLogicEntryDefaultable(VoltageLimitLogic.TYPE).getValue());
                     float heat = (float) computeHeat(voltage, endVoltage, resultAmperage, resultAmperage);
                     if (heat > 0) tempLogic.applyThermalEnergy(heat, tick);
+                    if (node instanceof WorldPipeNode n) {
+                        tempLogic.defaultHandleTemperature(n.getNet().getWorld(), n.getEquivalencyData());
+                    }
                 }
                 finalEnergyFlow.recordFlow(tick, new EnergyFlowData(resultAmperage, finalResultVoltage));
 

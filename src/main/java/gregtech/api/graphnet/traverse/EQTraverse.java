@@ -32,12 +32,29 @@ public class EQTraverse extends AbstractMinCostTraverse {
     protected final Set<NetNode> consumers;
     protected TestCase testCase;
 
-    public static void equalDistribution(@NotNull IGraphNet net,
-                                         @NotNull ObjIntConsumer<NetNode> flowReporterNode,
-                                         @NotNull ObjIntConsumer<NetEdge> flowReporterEdge,
-                                         @NotNull ToIntFunction<NetEdge> capacityFunction,
-                                         @NotNull ToIntFunction<NetNode> supplyFunction,
-                                         @Nullable ToBooleanFunction<NetNode> lossyNodes) {
+    /**
+     * Perform equal distribution traverse. Equal distribution traverse draws the same amount from all sources,
+     * and deposits a separately calculated amount to all sinks. Drawn and deposited amounts will be maximized,
+     * and loss will be ignored until the final stage of traverse and reporting.
+     *
+     * @param net              the net
+     * @param flowReporterNode flow reporter for nodes. Positive values mean draw, negative values mean sink.
+     * @param flowReporterEdge flow reporter for edges. Always positive.
+     * @param capacityFunction capacity function for edges.
+     * @param supplyFunction   supply function for nodes. Positive values mean available draw, negative values mean
+     *                         available sink.
+     * @param lossyNodes       optional function that marks nodes as lossy. Lossy nodes will eat up to
+     *                         {@link Short#MIN_VALUE} flow and their normal supply will be ignored.
+     * @param lossReporter     optional reporter for loss. Always negative. Does nothing if lossy nodes is {@code null}.
+     * @return the total draw/sink after evaluation.
+     */
+    public static int equalDistribution(@NotNull IGraphNet net,
+                                        @NotNull ObjIntConsumer<NetNode> flowReporterNode,
+                                        @NotNull ObjIntConsumer<NetEdge> flowReporterEdge,
+                                        @NotNull ToIntFunction<NetEdge> capacityFunction,
+                                        @NotNull ToIntFunction<NetNode> supplyFunction,
+                                        @Nullable ToBooleanFunction<NetNode> lossyNodes,
+                                        @Nullable ObjIntConsumer<NetNode> lossReporter) {
         if (!net.getGraph().isDirected()) {
             throw new IllegalArgumentException("Cannot perform equal distribution traverse logic on undirected graph!");
         }
@@ -57,7 +74,7 @@ public class EQTraverse extends AbstractMinCostTraverse {
                 }
             }
         }
-        if (suppliers.size() == 0 || consumers.size() == 0) return;
+        if (suppliers.size() == 0 || consumers.size() == 0) return 0;
         // do some math to determine the working multiples that need to be tested
         // supplier count * test supply must equal consumer count * test consumption for all tests
         // naive brute force search for now
@@ -88,9 +105,9 @@ public class EQTraverse extends AbstractMinCostTraverse {
         traverse.testCase = arr[solution];
         traverse.lossyNodes = lossyNodes;
         EvaluationResult result = traverse.evaluate();
-        if (result.isEmpty()) return;
+        if (result.isEmpty()) return 0;
         result.getFlowMap().forEach(flowReporterEdge::accept);
-        result.getSupplyMap().forEach(flowReporterNode::accept);
+        return FDTraverse.reportFlow(flowReporterNode, lossyNodes, lossReporter, result);
     }
 
     protected EQTraverse(Graph<GraphVertex, GraphEdge> graph, ToIntFunction<NetEdge> capacityFunction,

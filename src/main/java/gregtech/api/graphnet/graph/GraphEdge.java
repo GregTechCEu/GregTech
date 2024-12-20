@@ -3,6 +3,7 @@ package gregtech.api.graphnet.graph;
 import gregtech.api.graphnet.edge.NetEdge;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -17,6 +18,12 @@ public final class GraphEdge extends DefaultWeightedEdge {
     public GraphEdge(@NotNull NetEdge wrapped) {
         this.wrapped = wrapped;
         wrapped.wrapper = this;
+    }
+
+    @Nullable
+    @Contract("null->null")
+    public static GraphEdge unwrap(NetEdge e) {
+        return e == null ? null : e.wrapper;
     }
 
     @ApiStatus.Internal

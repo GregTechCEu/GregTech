@@ -10,6 +10,7 @@ import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
+import gregtech.common.covers.CoverShutter;
 import gregtech.common.pipelike.net.SlowActiveWalker;
 
 import net.minecraft.util.EnumFacing;
@@ -76,9 +77,9 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
             if (destination == node && capability.getKey() == facing) continue; // anti insert-to-our-source logic
             ILaserRelay laser = capability.getValue()
                     .getCapability(GregtechTileCapabilities.CAPABILITY_LASER, capability.getKey().getOpposite());
-            if (laser != null) {
-                long transmitted = ILaserTransferController.CONTROL.get(destination.getTileEntity().getCoverHolder()
-                        .getCoverAtSide(capability.getKey())).insertToHandler(laserVoltage, laserAmperage, laser);
+            if (laser != null && !(destination.getTileEntity().getCoverHolder()
+                    .getCoverAtSide(capability.getKey()) instanceof CoverShutter)) {
+                long transmitted = laser.receiveLaser(laserVoltage, laserAmperage);
                 if (transmitted > 0) {
                     SlowActiveWalker.dispatch(tile.getWorld(), path, 1, 2, 2);
                     available -= transmitted;

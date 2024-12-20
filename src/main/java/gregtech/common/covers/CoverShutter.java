@@ -5,8 +5,6 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.graphnet.pipenet.transfer.TransferControl;
-import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
@@ -26,9 +24,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class CoverShutter extends CoverBase implements IControllable, TransferControlProvider {
+public class CoverShutter extends CoverBase implements IControllable {
 
     private boolean isWorkingAllowed = true;
 
@@ -118,11 +115,5 @@ public class CoverShutter extends CoverBase implements IControllable, TransferCo
     public void readFromNBT(@NotNull NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
-    }
-
-    @Override
-    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
-        if (!isWorkingEnabled()) return null;
-        else return control.getNoPassage();
     }
 }

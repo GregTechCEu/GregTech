@@ -12,6 +12,7 @@ import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
+import gregtech.common.covers.CoverShutter;
 import gregtech.common.pipelike.net.SlowActiveWalker;
 
 import net.minecraft.util.EnumFacing;
@@ -76,12 +77,10 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
             IDataAccess access = capability.getValue()
                     .getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
                             capability.getKey().getOpposite());
-            if (access != null) {
+            if (access != null && !(destination.getTileEntity().getCoverHolder()
+                    .getCoverAtSide(capability.getKey()) instanceof CoverShutter)) {
                 queryObject.setShouldTriggerWalker(false);
-                boolean cancelled = IOpticalTransferController.CONTROL
-                        .get(destination.getTileEntity().getCoverHolder()
-                                .getCoverAtSide(capability.getKey()))
-                        .queryHandler(queryObject, access);
+                boolean cancelled = access.accessData(queryObject);
                 if (queryObject.shouldTriggerWalker()) {
                     SlowActiveWalker.dispatch(tile.getWorld(), path, 1);
                 }

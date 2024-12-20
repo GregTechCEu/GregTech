@@ -9,15 +9,27 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
+import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
+import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
+import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.net.IGraphNet;
-import gregtech.api.graphnet.pipenet.transfer.TransferControl;
-import gregtech.api.graphnet.pipenet.transfer.TransferControlProvider;
-import gregtech.api.graphnet.pipenet.traverse.SimpleTileRoundRobinData;
+import gregtech.api.graphnet.net.NetNode;
+import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
+import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
+import gregtech.api.graphnet.pipenet.traverse.RoundRobinCache;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.traverseold.TraverseHelpers;
+import gregtech.api.graphnet.traverse.EQTraverse;
+import gregtech.api.graphnet.traverse.FDTraverse;
+import gregtech.api.graphnet.traverse.RRTraverse;
+import gregtech.api.graphnet.traverse.iter.EdgeDirection;
+import gregtech.api.graphnet.traverse.iter.EdgeSelector;
+import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
+import gregtech.api.graphnet.traverse.iter.NetIterator;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.BiIntConsumer;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
@@ -25,11 +37,7 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.MatchResult;
-import gregtech.common.pipelike.net.fluidold.FluidEQTraverseData;
-import gregtech.common.pipelike.net.fluidold.FluidRRTraverseData;
-import gregtech.common.pipelike.net.fluidold.FluidTraverseData;
-import gregtech.common.pipelike.net.fluidold.IFluidTransferController;
-import gregtech.common.pipelike.net.fluidold.IFluidTraverseGuideProvider;
+import gregtech.common.pipelike.net.fluid.FluidCapabilityObject;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,7 +51,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
@@ -75,15 +82,15 @@ import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import org.jetbrains.annotations.Contract;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.function.IntUnaryOperator;
+import java.util.function.Predicate;
 
-public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter,
-                       TransferControlProvider, IFluidTransferController {
+public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter {
 
     public final int tier;
     public final int maxFluidTransferRate;
@@ -97,7 +104,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected FluidFilterContainer fluidFilterContainer;
     protected BucketMode bucketMode = BucketMode.MILLI_BUCKET;
 
-    protected final Object2ObjectLinkedOpenHashMap<Object, SimpleTileRoundRobinData<IFluidHandler>> roundRobinCache = new Object2ObjectLinkedOpenHashMap<>();
+    protected final RoundRobinCache roundRobinCache = RoundRobinCache.create();
 
     protected @Nullable CoverRenderer rendererInverted;
 
@@ -170,6 +177,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     public void setDistributionMode(DistributionMode distributionMode) {
         this.distributionMode = distributionMode;
+        this.roundRobinCache.clear();
+        markDirty();
     }
 
     public void setBucketMode(BucketMode bucketMode) {
@@ -253,6 +262,204 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected int performTransfer(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler,
                                   boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
                                   @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
+        // if the source handler or the dest handler is a pipe, perform a pipenet transfer. Otherwise, do a simple one.
+        if (sourceHandler instanceof FluidCapabilityObject s) {
+            if (destHandler instanceof FluidCapabilityObject d) {
+                return transferWithinNet(s.getNode(), d.getNode(), byFilterSlot, minTransfer, maxTransfer,
+                        transferReport);
+            } else {
+                PipeCapabilityWrapper wrapper = s.getNode().getTileEntity().getWrapperForNode(s.getNode());
+                if (wrapper instanceof NodeManagingPCW managingPCW) {
+                    // if export, we know we're on the pipe; otherwise, we're on the tile.
+                    EnumFacing facing = pumpMode == PumpMode.EXPORT ? getAttachedSide() :
+                            getAttachedSide().getOpposite();
+                    NetNode node = managingPCW.getNodeForFacing(facing);
+                    if (node == null) return 0;
+                    return transferWithinNet(s.getNode(), node, byFilterSlot, minTransfer, maxTransfer, transferReport);
+                }
+                return 0;
+            }
+        } else {
+            if (destHandler instanceof FluidCapabilityObject d) {
+                PipeCapabilityWrapper wrapper = d.getNode().getTileEntity().getWrapperForNode(d.getNode());
+                if (wrapper instanceof NodeManagingPCW managingPCW) {
+                    // if import, we know we're on the pipe; otherwise, we're on the tile.
+                    EnumFacing facing = pumpMode == PumpMode.IMPORT ? getAttachedSide() :
+                            getAttachedSide().getOpposite();
+                    NetNode node = managingPCW.getNodeForFacing(facing);
+                    if (node == null) return 0;
+                    return transferWithinNet(node, d.getNode(), byFilterSlot, minTransfer, maxTransfer, transferReport);
+                }
+                return 0;
+            } else {
+                return simpleTransfer(sourceHandler, destHandler, byFilterSlot, minTransfer, maxTransfer,
+                        transferReport);
+            }
+        }
+    }
+
+    protected RoundRobinCache getRoundRobinCache(boolean simulate) {
+        return simulate ? roundRobinCache.copy() : roundRobinCache;
+    }
+
+    /**
+     * Performs transfer between two nodes of a pipenet.
+     *
+     * @param sourceNode     the node to pull from
+     * @param destNode       the node to push to
+     * @param byFilterSlot   whether to perform the transfer by filter slot.
+     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
+     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
+     * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
+     *                       Each filter slot will report its transfer before the next slot is calculated.
+     * @return how much was transferred in total.
+     */
+    protected int transferWithinNet(@NotNull NetNode sourceNode, @NotNull NetNode destNode,
+                                    boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
+                                    @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
+        // first, evaluate whether we're the only bridge between two areas in a group
+        NetEdge bridge = sourceNode.getNet().getEdge(sourceNode, destNode);
+        GraphEdge b1 = GraphEdge.unwrap(bridge);
+        GraphEdge b2 = GraphEdge.unwrap(sourceNode.getNet().getEdge(destNode, sourceNode));
+        Predicate<Object> predicate = g -> g != b1 && g != b2;
+        NetClosestIterator sourceFrontier = new NetClosestIterator(sourceNode,
+                EdgeSelector.filtered(EdgeDirection.INCOMING, predicate));
+        NetClosestIterator destFrontier = new NetClosestIterator(destNode,
+                EdgeSelector.filtered(EdgeDirection.OUTGOING, predicate));
+        Map<NetNode, IFluidHandler> sourceCandidates = new Object2ObjectOpenHashMap<>();
+        Map<NetNode, IFluidHandler> destinationCandidates = new Object2ObjectOpenHashMap<>();
+        // note that if we checked all edges instead of only incoming for one and outgoing for the other,
+        // we would be able to know that we're the only bridge once either frontier exhausted, not both.
+        while (sourceFrontier.hasNext() || destFrontier.hasNext()) {
+            if (sourceFrontier.hasNext()) {
+                NetNode next = sourceFrontier.next();
+                // the dest frontier has seen the next node in the source frontier, we are not the only bridge.
+                if (destFrontier.getSpanningTreeEdge(next) != null) return 0;
+                if (next instanceof NodeExposingCapabilities cap) {
+                    IFluidHandler handler = cap.getProvider()
+                            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
+                    if (handler != null && !(handler instanceof FluidCapabilityObject))
+                        sourceCandidates.put(next, handler);
+                }
+            }
+            if (destFrontier.hasNext()) {
+                NetNode next = destFrontier.next();
+                // the source frontier has seen the next node in the dest frontier, we are not the only bridge.
+                if (sourceFrontier.getSpanningTreeEdge(next) != null) return 0;
+                if (next instanceof NodeExposingCapabilities cap) {
+                    IFluidHandler handler = cap.getProvider()
+                            .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
+                    if (handler != null && !(handler instanceof FluidCapabilityObject))
+                        destinationCandidates.put(next, handler);
+                }
+            }
+        }
+        // if we reach this point, we know we are the only bridge and can commence traverse.
+        FluidFilterContainer filter = this.getFluidFilter();
+        byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
+        Object2IntOpenHashMap<FluidTestObject> contained = new Object2IntOpenHashMap<>();
+        for (IFluidHandler handler : sourceCandidates.values()) {
+            var tanks = handler.getTankProperties();
+            for (IFluidTankProperties tank : tanks) {
+                FluidStack contents = tank.getContents();
+                if (contents != null) contained.merge(new FluidTestObject(contents), contents.amount, Integer::sum);
+            }
+        }
+        var iter = contained.object2IntEntrySet().fastIterator();
+        int totalTransfer = 0;
+
+        while (iter.hasNext()) {
+            var content = iter.next();
+            FluidStack contents = content.getKey().recombine(content.getIntValue());
+            MatchResult match = null;
+            if (filter == null || (match = filter.match(contents)).isMatched()) {
+                int filterSlot = -1;
+                if (byFilterSlot) {
+                    assert filter != null; // we know it is not null, because if it were byFilterSlot would be false.
+                    filterSlot = match.getFilterIndex();
+                }
+                int min = minTransfer.applyAsInt(filterSlot);
+                int max = maxTransfer.applyAsInt(filterSlot);
+                if (max < min || max <= 0) continue;
+
+                if (contents.amount < min) continue;
+                int transfer = Math.min(contents.amount, max);
+                if (min > 0) {
+                    transfer = attemptNetTransfer(sourceNode.getNet(), bridge, transfer, content.getKey(),
+                            sourceFrontier, sourceCandidates, destFrontier, destinationCandidates,
+                            SimulatorKey.getNewSimulatorInstance());
+                    if (transfer < min) continue;
+                }
+                transfer = attemptNetTransfer(sourceNode.getNet(), bridge, transfer, content.getKey(),
+                        sourceFrontier, sourceCandidates, destFrontier, destinationCandidates, null);
+                if (transferReport != null) transferReport.accept(filterSlot, transfer);
+                totalTransfer += transfer;
+            }
+        }
+        return totalTransfer;
+    }
+
+    protected int attemptNetTransfer(IGraphNet net, NetEdge bridge, int limit, FluidTestObject testObject,
+                                     NetIterator sources, Map<NetNode, IFluidHandler> sourceCandidates,
+                                     NetIterator targets, Map<NetNode, IFluidHandler> destCandidates,
+                                     @Nullable SimulatorKey key) {
+        return switch (distributionMode) {
+            case FLOOD -> FDTraverse.flood(net,
+                    (n, f) -> {
+                        if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
+                    },
+                    (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
+                    e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
+                            GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) : 0,
+                    n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null), null, null);
+            case EQUALIZED -> EQTraverse.equalDistribution(net,
+                    (n, f) -> {
+                        if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
+                    },
+                    (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
+                    e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
+                            GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) : 0,
+                    n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null), null, null);
+            case ROUND_ROBIN -> {
+                roundRobinCache.refresh(sources, targets);
+                yield RRTraverse.roundRobin(net, getRoundRobinCache(key != null)
+                        .buildSupplier(sourceCandidates.keySet(), destCandidates.keySet()),
+                        (n, f) -> {
+                            if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
+                        },
+                        (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
+                        e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
+                                GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) :
+                                0,
+                        n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null),
+                        null, null);
+            }
+        };
+    }
+
+    protected int getSupply(NetNode node, FluidTestObject testObject, boolean supply) {
+        return FluidCapabilityObject.getSupply(node, testObject, supply);
+    }
+
+    /**
+     * Performs transfer without involving the pipenet
+     *
+     * @param sourceHandler  the handler to pull from
+     * @param destHandler    the handler to push to
+     * @param byFilterSlot   whether to perform the transfer by filter slot.
+     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
+     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
+     *                       transferring by slot, a filter slot of -1 will be passed in.
+     * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
+     *                       Each filter slot will report its transfer before the next slot is calculated.
+     * @return how much was transferred in total.
+     */
+    protected int simpleTransfer(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler,
+                                 boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
+                                 @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
         FluidFilterContainer filter = this.getFluidFilter();
         byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
         Object2IntOpenHashMap<FluidTestObject> contained = new Object2IntOpenHashMap<>();
@@ -281,77 +488,16 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 int transfer = Math.min(contents.amount, max);
                 FluidStack extracted = sourceHandler.drain(content.getKey().recombine(transfer), false);
                 if (extracted == null || extracted.amount < min) continue;
-                transfer = insertToHandler(destHandler, content.getKey(), extracted.amount, true);
+                transfer = simpleInsert(destHandler, content.getKey(), extracted.amount, true);
                 if (transfer <= 0 || transfer < min) continue;
                 extracted = sourceHandler.drain(content.getKey().recombine(transfer), true);
                 if (extracted == null) continue;
-                transfer = insertToHandler(destHandler, content.getKey(), extracted.amount, false);
+                transfer = simpleInsert(destHandler, content.getKey(), extracted.amount, false);
                 if (transferReport != null) transferReport.accept(filterSlot, transfer);
                 totalTransfer += transfer;
             }
         }
         return totalTransfer;
-    }
-
-    protected int insertToHandler(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count,
-                                  boolean simulate) {
-        if (!(destHandler instanceof IFluidTraverseGuideProvider provider)) {
-            return simpleInsert(destHandler, testObject, count, simulate);
-        }
-        switch (distributionMode) {
-            case FLOOD -> {
-                var guide = provider.getGuide(this::getTD, testObject, count, simulate);
-                if (guide == null) return 0;
-                int consumed = (int) TraverseHelpers.traverseFlood(guide.getData(), guide.getPaths(), guide.getFlow());
-                guide.reportConsumedFlow(consumed);
-                return consumed;
-            }
-            case EQUALIZED -> {
-                var guide = provider.getGuide(this::getEQTD, testObject, count, simulate);
-                if (guide == null) return 0;
-                int consumed = (int) TraverseHelpers.traverseEqualDistribution(guide.getData(),
-                        guide.getPathsSupplier(), guide.getFlow(), true);
-                guide.reportConsumedFlow(consumed);
-                return consumed;
-            }
-            case ROUND_ROBIN -> {
-                var guide = provider
-                        .getGuide(
-                                (net, testObject1, simulator, queryTick, sourcePos, inputFacing) -> getRRTD(net,
-                                        testObject1, simulator, queryTick, sourcePos, inputFacing, simulate),
-                                testObject, count, simulate);
-                if (guide == null) return 0;
-                int consumed = (int) TraverseHelpers.traverseRoundRobin(guide.getData(), guide.getPaths(),
-                        guide.getFlow(), true);
-                guide.reportConsumedFlow(consumed);
-                return consumed;
-            }
-        }
-        return 0;
-    }
-
-    @Contract("_, _, _, _, _, _ -> new")
-    protected @NotNull FluidTraverseData getTD(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
-                                               long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
-        return new FluidTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing);
-    }
-
-    @Contract("_, _, _, _, _, _ -> new")
-    protected @NotNull FluidEQTraverseData getEQTD(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
-                                                   long queryTick, BlockPos sourcePos, EnumFacing inputFacing) {
-        return new FluidEQTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing);
-    }
-
-    @Contract("_, _, _, _, _, _, _ -> new")
-    protected @NotNull FluidRRTraverseData getRRTD(IGraphNet net, FluidTestObject testObject, SimulatorKey simulator,
-                                                   long queryTick, BlockPos sourcePos, EnumFacing inputFacing,
-                                                   boolean simulate) {
-        return new FluidRRTraverseData(net, testObject, simulator, queryTick, sourcePos, inputFacing,
-                getRoundRobinCache(simulate));
-    }
-
-    protected Object2ObjectLinkedOpenHashMap<Object, SimpleTileRoundRobinData<IFluidHandler>> getRoundRobinCache(boolean simulate) {
-        return simulate ? roundRobinCache.clone() : roundRobinCache;
     }
 
     protected int simpleInsert(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count,
@@ -630,40 +776,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     @SideOnly(Side.CLIENT)
     protected @NotNull TextureAtlasSprite getPlateSprite() {
         return Textures.VOLTAGE_CASINGS[this.tier].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
-    }
-
-    @Override
-    public <T> @Nullable T getControllerForControl(TransferControl<T> control) {
-        if (control == IFluidTransferController.CONTROL) {
-            return control.cast(this);
-        }
-        return null;
-    }
-
-    @Override
-    public int insertToHandler(@NotNull FluidTestObject testObject, int amount, @NotNull IFluidHandler destHandler,
-                               boolean doFill) {
-        if (getManualImportExportMode() == ManualImportExportMode.DISABLED) return 0;
-        if (getManualImportExportMode() == ManualImportExportMode.UNFILTERED ||
-                getFilterMode() == FluidFilterMode.FILTER_FILL) // insert to handler is a drain for us
-            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
-        FluidFilterContainer filter = getFluidFilter();
-        if (filter == null || filter.test(testObject.recombine())) {
-            return IFluidTransferController.super.insertToHandler(testObject, amount, destHandler, doFill);
-        } else return 0;
-    }
-
-    @Override
-    public @Nullable FluidStack extractFromHandler(@Nullable FluidTestObject testObject, int amount,
-                                                   IFluidHandler sourceHandler, boolean doDrain) {
-        if (getManualImportExportMode() == ManualImportExportMode.DISABLED) return null;
-        if (testObject == null || getManualImportExportMode() == ManualImportExportMode.UNFILTERED ||
-                getFilterMode() == FluidFilterMode.FILTER_DRAIN) // extract from handler is an insert to us
-            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
-        FluidFilterContainer filter = getFluidFilter();
-        if (filter == null || filter.test(testObject.recombine())) {
-            return IFluidTransferController.super.extractFromHandler(testObject, amount, sourceHandler, doDrain);
-        } else return null;
     }
 
     public enum PumpMode implements IStringSerializable, IIOMode {

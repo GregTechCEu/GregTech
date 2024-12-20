@@ -18,7 +18,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     private final Map<IItemHandler, Integer> baseIndexOffset = new IdentityHashMap<>();
 
-    public ItemHandlerList(List<? extends IItemHandler> itemHandlerList) {
+    public ItemHandlerList(Iterable<? extends IItemHandler> itemHandlerList) {
         int currentSlotIndex = 0;
         for (IItemHandler itemHandler : itemHandlerList) {
             if (baseIndexOffset.containsKey(itemHandler)) {

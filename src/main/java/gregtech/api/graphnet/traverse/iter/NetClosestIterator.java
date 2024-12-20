@@ -16,14 +16,14 @@ public class NetClosestIterator implements NetIterator {
 
     protected final ClosestFirstIterator<GraphVertex, GraphEdge> backer;
 
-    protected final EdgeDirection direction;
+    protected final EdgeSelector selector;
 
     /**
      * Creates a closest-first iterator that traverses a connected component, starting at the given node.
      * 
      * @param origin the node to start at
      */
-    public NetClosestIterator(@NotNull NetNode origin, EdgeDirection direction) {
+    public NetClosestIterator(@NotNull NetNode origin, EdgeSelector selector) {
         this.backer = new ClosestFirstIterator<>(origin.getNet().getGraph(), origin.wrapper) {
 
             @Override
@@ -31,7 +31,7 @@ public class NetClosestIterator implements NetIterator {
                 return selectEdges(graph, vertex);
             }
         };
-        this.direction = direction;
+        this.selector = selector;
     }
 
     public ClosestFirstIterator<GraphVertex, GraphEdge> getBacker() {
@@ -39,7 +39,7 @@ public class NetClosestIterator implements NetIterator {
     }
 
     protected Set<GraphEdge> selectEdges(Graph<GraphVertex, GraphEdge> graph, GraphVertex vertex) {
-        return direction.selectEdges(graph, vertex);
+        return selector.selectEdges(graph, vertex);
     }
 
     @Override
