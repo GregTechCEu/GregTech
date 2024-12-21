@@ -87,8 +87,13 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
                 energyFlow = new EnergyFlowLogic();
                 data.setLogicEntry(energyFlow);
             }
+            long sum = 0L;
+            for (EnergyFlowData energyFlowData : energyFlow.getFlow(tick)) {
+                long amperaged = energyFlowData.amperage();
+                sum += amperaged;
+            }
             long correctedAmperage = Math.min(data.getLogicEntryDefaultable(AmperageLimitLogic.TYPE).getValue() -
-                    energyFlow.getFlow(tick).stream().mapToLong(EnergyFlowData::amperage).sum(), resultAmperage);
+                    sum, resultAmperage);
 
             EnergyFlowLogic finalEnergyFlow = energyFlow;
             long finalResultVoltage = resultVoltage;
@@ -190,8 +195,13 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
 
         @Override
         public StandardEnergyPath build() {
+            double sum = 0.0;
+            for (NetEdge edge : edges) {
+                double edgeWeight = edge.getWeight();
+                sum += edgeWeight;
+            }
             return new StandardEnergyPath(ImmutableSet.copyOf(nodes), ImmutableSet.copyOf(edges),
-                    edges.stream().mapToDouble(NetEdge::getWeight).sum(), voltageLimitInfo, (long) Math.ceil(loss));
+                    sum, voltageLimitInfo, (long) Math.ceil(loss));
         }
     }
 
@@ -230,8 +240,12 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
                 data.setLogicEntry(energyFlow);
             }
             long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-            long resultAmperage = Math.min(amperageLimit -
-                    energyFlow.getFlow(tick).stream().mapToLong(EnergyFlowData::amperage).sum(), amperage);
+            long sum = 0L;
+            for (EnergyFlowData energyFlowData : energyFlow.getFlow(tick)) {
+                long amperaged = energyFlowData.amperage();
+                sum += amperaged;
+            }
+            long resultAmperage = Math.min(amperageLimit - sum, amperage);
 
             EnergyFlowLogic finalEnergyFlow = energyFlow;
             long finalResultVoltage = resultVoltage;

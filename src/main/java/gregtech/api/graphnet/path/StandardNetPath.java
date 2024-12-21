@@ -86,8 +86,17 @@ public class StandardNetPath implements NetPath {
             } else if (nodes.size() == 2) {
                 unifiedNodeData = NetLogicData.union(nodesList.get(0).getData(), nodesList.get(1).getData());
             } else {
-                unifiedNodeData = NetLogicData.union(nodesList.get(0).getData(),
-                        nodes.stream().skip(1).map(NetNode::getData).toArray(NetLogicData[]::new));
+                ObjectArrayList<NetLogicData> list = new ObjectArrayList<>(nodes.size());
+                boolean first = true;
+                for (NetNode node : nodes) {
+                    if (first) {
+                        first = false;
+                        continue;
+                    }
+                    NetLogicData data = node.getData();
+                    list.add(data);
+                }
+                unifiedNodeData = NetLogicData.union(nodesList.get(0).getData(), list.elements());
             }
         }
         return unifiedNodeData;
@@ -105,8 +114,17 @@ public class StandardNetPath implements NetPath {
             } else if (edges.size() == 2) {
                 unifiedEdgeData = NetLogicData.union(edgesList.get(0).getData(), edgesList.get(1).getData());
             } else {
-                unifiedEdgeData = NetLogicData.union(edgesList.get(0).getData(),
-                        edges.stream().skip(1).map(NetEdge::getData).toArray(NetLogicData[]::new));
+                ObjectArrayList<NetLogicData> list = new ObjectArrayList<>();
+                boolean first = true;
+                for (NetEdge edge : edges) {
+                    if (first) {
+                        first = false;
+                        continue;
+                    }
+                    NetLogicData data = edge.getData();
+                    list.add(data);
+                }
+                unifiedEdgeData = NetLogicData.union(edgesList.get(0).getData(), list.elements());
             }
         }
         return unifiedEdgeData;
@@ -176,8 +194,12 @@ public class StandardNetPath implements NetPath {
 
         @Override
         public StandardNetPath build() {
-            return new StandardNetPath(ImmutableSet.copyOf(nodes), ImmutableSet.copyOf(edges),
-                    edges.stream().mapToDouble(NetEdge::getWeight).sum());
+            double sum = 0.0;
+            for (NetEdge edge : edges) {
+                double edgeWeight = edge.getWeight();
+                sum += edgeWeight;
+            }
+            return new StandardNetPath(ImmutableSet.copyOf(nodes), ImmutableSet.copyOf(edges), sum);
         }
     }
 }
