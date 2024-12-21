@@ -51,7 +51,7 @@ public class CosmicItemRenderer extends WrappedItemRenderer {
 
     // Had to use Avaritia's render and modify it to allow for Cosmic Render With Halo and Pulse Effect
     // I Didn't create these methods here, these are Avaritia's (Some of which have been cleaned/modified)
-    // Avalible here -> https://www.curseforge.com/minecraft/mc-mods/avaritia-1-10
+    // Available here -> https://github.com/Morpheus1101/Avaritia
 
     public CosmicItemRenderer(IModelState state, IBakedModel model) {
         super(state, model);
