@@ -56,7 +56,8 @@ public class CosmicProperty implements IMaterialProperty {
      */
     private Float maskOpacity;
 
-    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize, boolean shouldDrawPulse, boolean shouldDrawCosmic, Float maskOpacity) {
+    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
+                          boolean shouldDrawPulse, boolean shouldDrawCosmic, Float maskOpacity) {
         if (Avaritia.isModLoaded()) {
             this.shouldDrawHalo = shouldDrawHalo;
             this.haloTexture = haloTexture;
@@ -69,7 +70,8 @@ public class CosmicProperty implements IMaterialProperty {
         }
     }
 
-    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize, boolean shouldDrawPulse) {
+    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
+                          boolean shouldDrawPulse) {
         if (Avaritia.isModLoaded()) {
             this.shouldDrawHalo = shouldDrawHalo;
             this.haloTexture = haloTexture;
@@ -95,7 +97,6 @@ public class CosmicProperty implements IMaterialProperty {
             this.shouldDrawCosmic = shouldDrawCosmic;
             this.maskOpacity = maskOpacity;
         }
-
     }
 
     public CosmicProperty(boolean shouldDrawPulse) {
@@ -127,9 +128,11 @@ public class CosmicProperty implements IMaterialProperty {
     public boolean shouldDrawCosmic() {
         return shouldDrawCosmic;
     }
+
     public Float getMaskOpacity() {
         return maskOpacity;
     }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         properties.ensureSet(PropertyKey.DUST, true);
@@ -156,22 +159,27 @@ public class CosmicProperty implements IMaterialProperty {
             this.haloTexture = haloTexture;
             return this;
         }
+
         public Builder haloColour(String haloColour) {
             this.haloColour = haloColour;
             return this;
         }
+
         public Builder haloSize(int haloSize) {
             this.haloSize = haloSize;
             return this;
         }
+
         public Builder shouldDrawPulse(boolean shouldDrawPulse) {
             this.shouldDrawPulse = shouldDrawPulse;
             return this;
         }
+
         public Builder shouldDrawCosmic(boolean shouldDrawCosmic) {
             this.shouldDrawCosmic = shouldDrawCosmic;
             return this;
         }
+
         public Builder maskOpacity(Float maskOpacity) {
             this.maskOpacity = maskOpacity;
             return this;

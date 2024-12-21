@@ -1,7 +1,5 @@
 package gregtech;
 
-import codechicken.lib.texture.TextureUtils;
-
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.items.metaitem.MetaItem;
@@ -30,6 +28,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+
+import codechicken.lib.texture.TextureUtils;
 
 import static gregtech.api.util.Mods.Avaritia;
 

@@ -1,9 +1,5 @@
 package gregtech.api.items.metaitem;
 
-import codechicken.lib.model.ModelRegistryHelper;
-import codechicken.lib.texture.TextureUtils;
-import codechicken.lib.util.TransformUtils;
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
@@ -40,11 +36,6 @@ import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.covers.filter.IFilter;
 import gregtech.common.creativetab.GTCreativeTabs;
-
-import morph.avaritia.api.ICosmicRenderItem;
-import morph.avaritia.api.IHaloRenderItem;
-import morph.avaritia.api.registration.IModelRegister;
-import morph.avaritia.init.AvaritiaTextures;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -86,6 +77,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 
+import codechicken.lib.model.ModelRegistryHelper;
+import codechicken.lib.texture.TextureUtils;
+import codechicken.lib.util.TransformUtils;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
@@ -95,6 +89,10 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+import morph.avaritia.api.ICosmicRenderItem;
+import morph.avaritia.api.IHaloRenderItem;
+import morph.avaritia.api.registration.IModelRegister;
+import morph.avaritia.init.AvaritiaTextures;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -129,23 +127,23 @@ import static gregtech.api.util.Mods.Avaritia;
  * rechargeable) LV battery with initial capacity 10000 EU
  */
 @Optional.Interface(
-        modid = Mods.Names.ENDER_CORE,
-        iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
+                    modid = Mods.Names.ENDER_CORE,
+                    iface = "com.enderio.core.common.interfaces.IOverlayRenderAware")
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.api.ICosmicRenderItem")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.api.ICosmicRenderItem")
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.api.IHaloRenderItem")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.api.IHaloRenderItem")
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.api.registration.IModelRegister")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.api.registration.IModelRegister")
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.init.AvaritiaTextures")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.init.AvaritiaTextures")
 public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
-        implements ItemUIFactory, IOverlayRenderAware, IHaloRenderItem, ICosmicRenderItem,
-                   IModelRegister {
+                              implements ItemUIFactory, IOverlayRenderAware, IHaloRenderItem, ICosmicRenderItem,
+                              IModelRegister {
 
     private static final List<MetaItem<?>> META_ITEMS = new ArrayList<>();
 
@@ -646,7 +644,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return super.getItemStackDisplayName(stack);
     }
 
-
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(@NotNull ItemStack itemStack, @Nullable World worldIn, @NotNull List<String> lines,
@@ -807,16 +804,18 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         ToolChargeBarRenderer.renderBarsItem(this, stack, xPosition, yPosition);
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldDrawHalo(ItemStack stack) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem == null){
+        if (metaValueItem == null) {
             return false;
         }
         return metaValueItem.registerHalo(stack);
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getHaloTexture(ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem.registerHaloTexture(stack) == null) {
@@ -825,28 +824,31 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return MetaValueItem.CosmicTexture.haloTextures.get(metaValueItem.registerHaloTexture(stack));
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public int getHaloColour(ItemStack stack) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem == null){
+        if (metaValueItem == null) {
             return 0;
         }
         return Integer.decode("0x7F" + metaValueItem.registerHaloColour(stack));
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public int getHaloSize(ItemStack stack) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem == null){
+        if (metaValueItem == null) {
             return 0;
         }
         return metaValueItem.registerHaloSize(stack);
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldDrawPulse(ItemStack stack) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem == null){
+        if (metaValueItem == null) {
             return false;
         }
         return metaValueItem.registerHaloPulse(stack);
@@ -864,7 +866,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     @SideOnly(Side.CLIENT)
     public float getMaskOpacity(ItemStack stack, EntityLivingBase player) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem == null){
+        if (metaValueItem == null) {
             return 0.0f;
         }
         return metaValueItem.registerMaskOpacity(stack);
@@ -1003,18 +1005,25 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         /**
          * This function requires the latest version of Avaritia to be Installed
-         * <a href="https://www.curseforge.com/minecraft/mc-mods/avaritia-1-10/files/all?page=1&pageSize=20&version=1.12.2">...</a>
+         * <a href=
+         * "https://www.curseforge.com/minecraft/mc-mods/avaritia-1-10/files/all?page=1&pageSize=20&version=1.12.2">...</a>
          *
-         * @param shouldDrawHalo enables the Halo effect for a specified MetaItem.<br>
-         * @param haloTexture the Halo Texture for a specified MetaItem in the form of a String : Example "halo".<br>
-         * @param haloColour the Colour the Halo will have in the form of a Hex String : Example "00FF00" (hex color for green).<br>
-         * @param haloSize The size of the halo : Example 10.<br>
+         * @param shouldDrawHalo  enables the Halo effect for a specified MetaItem.<br>
+         * @param haloTexture     the Halo Texture for a specified MetaItem in the form of a String : Example
+         *                        "halo".<br>
+         * @param haloColour      the Colour the Halo will have in the form of a Hex String : Example "00FF00" (hex
+         *                        color for green).<br>
+         * @param haloSize        The size of the halo : Example 10.<br>
          * @param shouldDrawPulse Whether the MetaItem will pulse like Avaritia's Infinity Ingot : Example true.<br>
-         * @param maskTexture The String Location of the Mask texture the MetaItem will use as a Cosmic Effect : Example "nan".<br>
-         * @param maskOpacity The Opacity of the Cosmic Effect, Use in combination with maskTexture : Example 1.0f.<br>
+         * @param maskTexture     The String Location of the Mask texture the MetaItem will use as a Cosmic Effect :
+         *                        Example "nan".<br>
+         * @param maskOpacity     The Opacity of the Cosmic Effect, Use in combination with maskTexture : Example
+         *                        1.0f.<br>
          */
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize, boolean shouldDrawPulse, String maskTexture, float maskOpacity) {
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+                                              int haloSize, boolean shouldDrawPulse, String maskTexture,
+                                              float maskOpacity) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
@@ -1038,7 +1047,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize, String maskTexture, float maskOpacity) {
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+                                              int haloSize, String maskTexture, float maskOpacity) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
@@ -1061,7 +1071,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize, boolean shouldDrawPulse) {
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+                                              int haloSize, boolean shouldDrawPulse) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
@@ -1077,7 +1088,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize) {
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+                                              int haloSize) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
@@ -1111,7 +1123,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             }
             return this;
         }
-
 
         protected void addItemComponentsInternal(IItemComponent... stats) {
             for (IItemComponent itemComponent : stats) {
@@ -1324,36 +1335,36 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     .toString();
         }
 
-        public boolean registerHalo (ItemStack stack) {
+        public boolean registerHalo(ItemStack stack) {
             return drawHalo;
         }
 
         public String registerHaloTexture(ItemStack stack) {
             return haloPath;
-
         }
 
-        public String registerHaloColour (ItemStack stack) {
+        public String registerHaloColour(ItemStack stack) {
             return haloColour;
         }
 
-        public int registerHaloSize (ItemStack stack) {
+        public int registerHaloSize(ItemStack stack) {
             return haloSize;
         }
 
-        public boolean registerHaloPulse (ItemStack stack) {
+        public boolean registerHaloPulse(ItemStack stack) {
             return haloPulse;
         }
 
-        public String registerMaskTexture (ItemStack stack) {
+        public String registerMaskTexture(ItemStack stack) {
             return maskPath;
         }
 
-        public float registerMaskOpacity (ItemStack stack) {
+        public float registerMaskOpacity(ItemStack stack) {
             return maskOpacity;
         }
 
         public static class CosmicTexture implements TextureUtils.IIconRegister {
+
             public static Map<String, TextureAtlasSprite> haloTextures = new HashMap<>();
             public static Map<String, TextureAtlasSprite> maskTextures = new HashMap<>();
             public static Map<String, TextureAtlasSprite> specialMaskTextures = new HashMap<>();
@@ -1376,15 +1387,18 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             @Override
             public void registerIcons(TextureMap textureMap) {
                 haloPath.forEach(halo -> {
-                    haloTextures.put(halo, textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/halo/" + halo)));
+                    haloTextures.put(halo,
+                            textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/halo/" + halo)));
                 });
                 cosmicPath.forEach(mask -> {
-                    maskTextures.put(mask, textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/mask/" + mask)));
+                    maskTextures.put(mask,
+                            textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/mask/" + mask)));
                 });
 
                 specialCosmicPath.forEach((key, value) -> {
                     specialMaskTextures.put(key, textureMap.registerSprite(new ResourceLocation(value)));
-                    specialMaskTextures.put("fallback", textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/mask/fallback")));
+                    specialMaskTextures.put("fallback",
+                            textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/mask/fallback")));
                 });
             }
         }

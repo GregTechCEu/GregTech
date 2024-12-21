@@ -1,13 +1,10 @@
 package gregtech.api.items.materialitem;
 
-import codechicken.lib.model.ModelRegistryHelper;
-import codechicken.lib.util.TransformUtils;
-
 import gregtech.api.GTValues;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.armor.ArmorMetaItem;
-import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem.CosmicTexture;
+import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -19,15 +16,9 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.creativetab.GTCreativeTabs;
-
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.item.CosmicItemRenderer;
-
-import morph.avaritia.api.ICosmicRenderItem;
-import morph.avaritia.api.IHaloRenderItem;
-import morph.avaritia.api.registration.IModelRegister;
-import morph.avaritia.init.AvaritiaTextures;
+import gregtech.common.creativetab.GTCreativeTabs;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -48,7 +39,13 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.model.ModelRegistryHelper;
+import codechicken.lib.util.TransformUtils;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+import morph.avaritia.api.ICosmicRenderItem;
+import morph.avaritia.api.IHaloRenderItem;
+import morph.avaritia.api.registration.IModelRegister;
+import morph.avaritia.init.AvaritiaTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,19 +54,19 @@ import java.util.*;
 import static gregtech.api.util.Mods.Avaritia;
 
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.api.ICosmicRenderItem")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.api.ICosmicRenderItem")
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.api.IHaloRenderItem")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.api.IHaloRenderItem")
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.api.registration.IModelRegister")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.api.registration.IModelRegister")
 @Optional.Interface(
-        modid = Mods.Names.AVARITIA,
-        iface = "morph.avaritia.init.AvaritiaTextures")
+                    modid = Mods.Names.AVARITIA,
+                    iface = "morph.avaritia.init.AvaritiaTextures")
 public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem, ICosmicRenderItem,
-                                    IModelRegister {
+                            IModelRegister {
 
     private final MaterialRegistry registry;
     private final OrePrefix prefix;
@@ -154,10 +151,10 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
                 ModelBakery.registerItemVariants(this, resourceLocation);
                 alreadyRegistered.put(registrationKey, new ModelResourceLocation(resourceLocation, "inventory"));
 
-
                 if (Avaritia.isModLoaded()) {
                     ModelResourceLocation location = new ModelResourceLocation(resourceLocation, "inventory");
-                    IBakedModel wrapped = new CosmicItemRenderer(TransformUtils.DEFAULT_ITEM, (modelRegistry) -> modelRegistry.getObject(location));
+                    IBakedModel wrapped = new CosmicItemRenderer(TransformUtils.DEFAULT_ITEM,
+                            (modelRegistry) -> modelRegistry.getObject(location));
                     ModelRegistryHelper.register(location, wrapped);
 
                     String processedLocation = resourceLocation.toString().replace("gregtech:", "gregtech:items/");
@@ -312,9 +309,9 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
         }
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldDrawHalo(ItemStack stack) {
-
         Material material = getMaterial(stack);
         assert material != null;
 
@@ -327,9 +324,9 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
         }
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getHaloTexture(ItemStack stack) {
-
         Material material = getMaterial(stack);
         assert material != null;
 
@@ -342,9 +339,9 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
         }
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public int getHaloColour(ItemStack stack) {
-
         Material material = getMaterial(stack);
         assert material != null;
 
@@ -357,9 +354,9 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
         }
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public int getHaloSize(ItemStack stack) {
-
         Material material = getMaterial(stack);
         assert material != null;
 
@@ -370,10 +367,10 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
         } else {
             return 0;
         }
-
     }
 
-    @Override @SideOnly(Side.CLIENT)
+    @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldDrawPulse(ItemStack stack) {
         Material material = getMaterial(stack);
         assert material != null;
