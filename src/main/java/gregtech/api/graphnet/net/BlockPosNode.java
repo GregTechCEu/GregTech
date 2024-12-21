@@ -13,10 +13,11 @@ public class BlockPosNode extends NetNode {
     public static final GraphClassType<BlockPosNode> TYPE = new GraphClassType<>(GTValues.MODID, "BlockPosNode",
             BlockPosNode::new);
 
-    private BlockPos pos;
+    private @NotNull BlockPos pos;
 
     public BlockPosNode(IGraphNet net) {
         super(net);
+        pos = BlockPos.ORIGIN;
     }
 
     public BlockPosNode setPos(BlockPos pos) {

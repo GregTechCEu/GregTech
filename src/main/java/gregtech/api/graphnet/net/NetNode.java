@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +63,12 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
 
     public boolean traverse(long queryTick, boolean simulate) {
         return true;
+    }
+
+    @Nullable
+    @Contract("null->null")
+    public static NetNode unwrap(GraphVertex n) {
+        return n == null ? null : n.wrapped;
     }
 
     @NotNull

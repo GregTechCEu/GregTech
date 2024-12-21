@@ -259,7 +259,7 @@ public class MaterialPropertyExpansion {
 
     @ZenMethod
     public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock,
-                                @Optional int superconductorTemp) {
+                                @Optional boolean superconductor) {
         if (checkFrozen("add Wires to a material")) return;
         PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
         if (properties == null) {
@@ -267,6 +267,6 @@ public class MaterialPropertyExpansion {
             m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
         }
         properties.setProperty(MaterialEnergyProperties.create(voltage, baseAmperage, lossPerBlock,
-                superconductorTemp));
+                superconductor));
     }
 }

@@ -80,7 +80,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         int flow = stack.getCount();
         SimulatorKey key = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
         ItemTestObject testObject = new ItemTestObject(stack);
-        int report = FDTraverse.flood(node.getNet(),
+        int report = FDTraverse.flood(node.getGroupSafe(),
                 (n, f) -> {
                     if (n != node && !simulate) reportFlow(n, f, testObject);
                 },
@@ -135,8 +135,8 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     }
                 } else {
                     for (int i = 0; i < handler.getSlots(); i++) {
-                        ItemStack stack = testObject.recombineSafe(flow);
-                        flow -= stack.getCount() - handler.insertItem(i, stack, false).getCount();
+                        ItemStack stack = testObject.recombineSafe(-flow);
+                        flow += stack.getCount() - handler.insertItem(i, stack, false).getCount();
                         if (flow == 0) return;
                     }
                 }
@@ -148,7 +148,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         if (node instanceof NodeExposingCapabilities exposer) {
             IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
                     exposer.exposedFacing());
-            if (handler != null) {
+            if (handler != null && !(handler instanceof ItemCapabilityObject)) {
                 if (supply) {
                     int sum = 0;
                     for (int i = 0; i < handler.getSlots(); i++) {

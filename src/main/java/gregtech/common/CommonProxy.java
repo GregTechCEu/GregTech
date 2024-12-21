@@ -4,10 +4,18 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.graphnet.GraphClassRegistrationEvent;
+import gregtech.api.graphnet.edge.NetEdge;
+import gregtech.api.graphnet.edge.NetFlowEdge;
+import gregtech.api.graphnet.edge.NetFlowSharedEdge;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.NetLogicRegistrationEvent;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
+import gregtech.api.graphnet.net.BlankNetNode;
+import gregtech.api.graphnet.net.BlockPosNode;
+import gregtech.api.graphnet.pipenet.WorldPipeCapConnectionNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistrationEvent;
 import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
@@ -53,6 +61,7 @@ import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
 import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
+import gregtech.common.pipelike.net.energy.AmperageLimitLogic;
 import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
 import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
@@ -405,6 +414,18 @@ public class CommonProxy {
         event.accept(WeightFactorLogic.TYPE);
         event.accept(VoltageLimitLogic.TYPE);
         event.accept(VoltageLossLogic.TYPE);
+        event.accept(AmperageLimitLogic.TYPE);
+    }
+
+    @SubscribeEvent
+    public static void registerGraphClasses(GraphClassRegistrationEvent event) {
+        event.accept(NetEdge.TYPE);
+        event.accept(NetFlowEdge.TYPE);
+        event.accept(NetFlowSharedEdge.TYPE);
+        event.accept(WorldPipeNode.TYPE);
+        event.accept(WorldPipeCapConnectionNode.TYPE);
+        event.accept(BlockPosNode.TYPE);
+        event.accept(BlankNetNode.TYPE);
     }
 
     @SubscribeEvent

@@ -3,6 +3,7 @@ package gregtech.api.graphnet.traverse;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
+import gregtech.api.graphnet.graph.TweakedCSMCF;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.util.GTUtility;
 
@@ -16,7 +17,7 @@ import java.util.function.Function;
 
 public abstract class AbstractMinCostTraverse implements MinimumCostFlowProblem<GraphVertex, GraphEdge> {
 
-    protected static final CapacityScalingMinimumCostFlow<GraphVertex, GraphEdge> MINCOST = new CapacityScalingMinimumCostFlow<>();
+    protected static final TweakedCSMCF MINCOST = new TweakedCSMCF();
 
     protected static final GraphVertex CORRECTOR = new GraphVertex();
 
@@ -34,9 +35,15 @@ public abstract class AbstractMinCostTraverse implements MinimumCostFlowProblem<
                         correction -= supply;
                         GraphEdge e = new GraphEdge();
                         if (supply < 0) {
-                            getGraph().addEdge(CORRECTOR, v, e);
+                            if (!getGraph().addEdge(CORRECTOR, v, e)) {
+                                getGraph().removeEdge(CORRECTOR, v);
+                                getGraph().addEdge(CORRECTOR, v, e);
+                            }
                         } else {
-                            getGraph().addEdge(v, CORRECTOR, e);
+                            if (!getGraph().addEdge(v, CORRECTOR, e)) {
+                                getGraph().removeEdge(v, CORRECTOR);
+                                getGraph().addEdge(v, CORRECTOR, e);
+                            }
                         }
                         getGraph().setEdgeWeight(e, CapacityScalingMinimumCostFlow.COST_INF - 1);
                         count++;
@@ -58,10 +65,11 @@ public abstract class AbstractMinCostTraverse implements MinimumCostFlowProblem<
                     result.reportFlow(e, entry.getValue().intValue());
                 }
             }
-            getGraph().removeVertex(CORRECTOR);
             return result;
         } catch (Exception ignored) {
             return EvaluationResult.EMPTY;
+        } finally {
+            getGraph().removeVertex(CORRECTOR);
         }
     }
 

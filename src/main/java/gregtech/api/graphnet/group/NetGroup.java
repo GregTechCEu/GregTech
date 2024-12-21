@@ -20,6 +20,7 @@ import org.jgrapht.Graphs;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,11 +29,13 @@ public final class NetGroup {
 
     public final IGraphNet net;
 
-    private final @NotNull Set<NetNode> nodes;
+    final @NotNull Set<NetNode> nodes;
 
     private final @NotNull Int2ObjectMap<Set<NetNode>> sortingNodes;
 
     private @Nullable GroupData data;
+
+    private GroupGraphView graphView;
 
     public NetGroup(IGraphNet net) {
         this(net, new ObjectOpenHashSet<>(), new Int2ObjectOpenHashMap<>());
@@ -117,8 +120,7 @@ public final class NetGroup {
         NetGroup sourceGroup = source.getGroupUnsafe();
         NetGroup targetGroup = target.getGroupUnsafe();
 
-        if (sourceGroup == null || targetGroup == null) return MergeDirection.NULL;
-
+        if (sourceGroup == null || targetGroup == null || sourceGroup == targetGroup) return MergeDirection.NULL;
         return GroupData.mergeAllowed(sourceGroup.getData(), targetGroup.getData());
     }
 
@@ -174,6 +176,7 @@ public final class NetGroup {
         if (data != null) stream = stream.peek(e -> data.notifyOfRemovedEdge(e.wrapped));
         ObjectLinkedOpenHashSet<NetNode> targets = stream
                 .map(a -> Graphs.getOppositeVertex(net.getGraph(), a, source.wrapper).getWrapped())
+                .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ObjectLinkedOpenHashSet::new));
         this.net.getBacker().removeVertex(source.wrapper);
         this.removeNode(source);
@@ -253,5 +256,10 @@ public final class NetGroup {
 
     public @Nullable GroupData getData() {
         return this.data;
+    }
+
+    public GroupGraphView getGraphView() {
+        if (graphView == null) graphView = new GroupGraphView(this);
+        return graphView;
     }
 }

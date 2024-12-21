@@ -4,13 +4,13 @@ import gregtech.api.graphnet.logic.NetLogicEntry;
 import gregtech.api.graphnet.logic.NetLogicType;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,13 +20,13 @@ public final class GraphClassRegistry {
 
     private static final Int2ObjectArrayMap<GraphClassType<?>> REGISTRY;
 
-    private static final IntIdentityHashBiMap<String> NAMES_TO_NETWORK_IDS;
+    private static final Object2IntOpenHashMap<String> NAMES_TO_NETWORK_IDS;
 
     static {
         GraphClassRegistrationEvent event = new GraphClassRegistrationEvent();
         MinecraftForge.EVENT_BUS.post(event);
         Set<GraphClassType<?>> gather = event.getGather();
-        NAMES_TO_NETWORK_IDS = new IntIdentityHashBiMap<>(gather.size());
+        NAMES_TO_NETWORK_IDS = new Object2IntOpenHashMap<>(gather.size());
         REGISTRY = new Int2ObjectArrayMap<>(gather.size());
         int id = 1;
         for (GraphClassType<?> type : gather) {
@@ -37,11 +37,11 @@ public final class GraphClassRegistry {
     }
 
     public static String getName(int networkID) {
-        return NAMES_TO_NETWORK_IDS.get(networkID);
+        return REGISTRY.get(networkID).getName();
     }
 
     public static int getNetworkID(@NotNull String name) {
-        return NAMES_TO_NETWORK_IDS.getId(name);
+        return NAMES_TO_NETWORK_IDS.getInt(name);
     }
 
     public static int getNetworkID(@NotNull NetLogicType<?> type) {

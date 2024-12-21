@@ -125,7 +125,7 @@ public class WorldPipeNode extends BlockPosNode
     }
 
     @Override
-    public ICapabilityProvider getProvider() {
+    public @NotNull ICapabilityProvider getProvider() {
         return getTileEntity();
     }
 }

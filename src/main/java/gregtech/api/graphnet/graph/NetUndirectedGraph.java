@@ -13,11 +13,6 @@ public class NetUndirectedGraph extends SimpleWeightedGraph<GraphVertex, GraphEd
         super(vertexSupplier, edgeSupplier);
     }
 
-    @Override
-    public boolean isDirected() {
-        return false;
-    }
-
     public static Function<IGraphNet, INetGraph> standardBuilder() {
         return iGraphNet -> new NetUndirectedGraph(
                 () -> new GraphVertex(iGraphNet.getDefaultNodeType().getNew(iGraphNet)),

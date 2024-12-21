@@ -29,10 +29,10 @@ public final class GraphNetUtility {
         while (sourceFrontier.hasNext() && destFrontier.hasNext()) {
             NetNode next = sourceFrontier.next();
             // the dest frontier has seen the next node in the source frontier, we are not the only bridge.
-            if (destFrontier.getSpanningTreeEdge(next) != null) return false;
+            if (destFrontier.hasSeen(next)) return false;
             next = destFrontier.next();
             // the source frontier has seen the next node in the dest frontier, we are not the only bridge.
-            if (sourceFrontier.getSpanningTreeEdge(next) != null) return false;
+            if (sourceFrontier.hasSeen(next)) return false;
         }
         return true;
     }

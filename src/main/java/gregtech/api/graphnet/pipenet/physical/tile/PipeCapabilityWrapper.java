@@ -9,6 +9,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PipeCapabilityWrapper implements ICapabilityProvider {
 
@@ -33,6 +34,8 @@ public class PipeCapabilityWrapper implements ICapabilityProvider {
             o.init(owner, this);
         }
     }
+
+    public void invalidate() {}
 
     public void setActive(@NotNull EnumFacing facing) {
         if (!isActive(facing)) {
@@ -60,6 +63,13 @@ public class PipeCapabilityWrapper implements ICapabilityProvider {
 
     public boolean isActive(@NotNull EnumFacing facing) {
         return (this.activeMask & 1 << facing.ordinal()) > 0;
+    }
+
+    public <T> T getCapabilityCoverQuery(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
+        // covers have access to the capability objects no matter the connection status
+        IPipeCapabilityObject object = capabilities.get(capability);
+        if (object == null) return null;
+        return object.getCapability(capability, facing);
     }
 
     @Override

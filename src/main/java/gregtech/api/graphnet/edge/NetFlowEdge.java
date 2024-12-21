@@ -162,4 +162,9 @@ public class NetFlowEdge extends AbstractNetFlowEdge {
             return map.keySet();
         }
     }
+
+    @Override
+    public GraphClassType<? extends NetEdge> getType() {
+        return TYPE;
+    }
 }

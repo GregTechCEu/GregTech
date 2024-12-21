@@ -67,7 +67,7 @@ public final class GraphEdge extends DefaultWeightedEdge {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GraphEdge graphEdge = (GraphEdge) o;
-        return Objects.equals(wrapped, graphEdge.wrapped);
+        return Objects.equals(getSource(), graphEdge.getSource()) && Objects.equals(getTarget(), graphEdge.getTarget());
     }
 
     @Override

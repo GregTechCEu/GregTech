@@ -31,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.function.ObjIntConsumer;
+import java.util.function.Predicate;
 
 public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandler, IFluidTankProperties {
 
@@ -93,7 +95,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         int flow = resource.amount;
         SimulatorKey key = doFill ? null : SimulatorKey.getNewSimulatorInstance();
         FluidTestObject testObject = new FluidTestObject(resource);
-        int report = FDTraverse.flood(node.getNet(),
+        int report = FDTraverse.flood(node.getGroupSafe(),
                 (n, f) -> {
                     if (n != node && doFill) reportFlow(n, f, testObject);
                 },
@@ -103,9 +105,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                                 n.getFlowLimit(testObject, node.getNet(), GTUtility.getTick(), key)) :
                         0,
                 n -> n == node ? flow : getSupply(n, testObject, false),
-                n -> n.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE).handles(testObject),
-                (n, f) -> handleLoss(n, f, testObject));
-
+                isLossyNode(testObject), handleLoss(testObject));
         this.transferring = false;
         return report;
     }
@@ -124,7 +124,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         int flow = resource.amount;
         SimulatorKey key = doDrain ? null : SimulatorKey.getNewSimulatorInstance();
         FluidTestObject testObject = new FluidTestObject(resource);
-        int report = FDTraverse.flood(node.getNet(),
+        int report = FDTraverse.flood(node.getGroupSafe(),
                 (n, f) -> {
                     if (n != node && doDrain) reportFlow(n, f, testObject);
                 },
@@ -134,11 +134,17 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                                 n.getFlowLimit(testObject, node.getNet(), GTUtility.getTick(), key)) :
                         0,
                 n -> n == node ? flow : getSupply(n, testObject, true),
-                n -> n.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE).handles(testObject),
-                (n, f) -> handleLoss(n, f, testObject));
+                isLossyNode(testObject), handleLoss(testObject));
 
         this.transferring = false;
         return testObject.recombine(report);
+    }
+
+    public static Predicate<NetNode> isLossyNode(FluidTestObject testObject) {
+        return n -> {
+            FluidContainmentLogic containmentLogic = n.getData().getLogicEntryNullable(FluidContainmentLogic.TYPE);
+            return containmentLogic != null && !containmentLogic.handles(testObject);
+        };
     }
 
     public static void reportFlow(NetEdge edge, int flow, FluidTestObject testObject, SimulatorKey key,
@@ -177,35 +183,37 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                 if (flow > 0) {
                     handler.drain(testObject.recombine(flow), true);
                 } else {
-                    handler.fill(testObject.recombine(flow), true);
+                    handler.fill(testObject.recombine(-flow), true);
                 }
             }
         }
     }
 
-    public static void handleLoss(NetNode node, int flow, FluidTestObject testObject) {
-        if (flow == 0) return;
-        FluidContainmentLogic logic = node.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE);
-        if (node instanceof WorldPipeNode n) {
-            IWorldPipeNetTile tile = n.getTileEntity();
-            FluidStack stack = testObject.recombine(flow);
-            // failing attributes take priority over state
-            for (FluidAttribute attribute : FluidAttribute.inferAttributes(stack)) {
-                if (!logic.contains(attribute)) {
-                    attribute.handleFailure(tile.getWorld(), tile.getPos(), stack);
-                    return;
+    public static ObjIntConsumer<NetNode> handleLoss(FluidTestObject testObject) {
+        return (node, f) -> {
+            if (f == 0) return;
+            FluidContainmentLogic logic = node.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE);
+            if (node instanceof WorldPipeNode n) {
+                IWorldPipeNetTile tile = n.getTileEntity();
+                FluidStack stack = testObject.recombine(f);
+                // failing attributes take priority over state
+                for (FluidAttribute attribute : FluidAttribute.inferAttributes(stack)) {
+                    if (!logic.contains(attribute)) {
+                        attribute.handleFailure(tile.getWorld(), tile.getPos(), stack);
+                        return;
+                    }
                 }
+                FluidState state = FluidState.inferState(stack);
+                if (!logic.contains(state)) state.handleFailure(tile.getWorld(), tile.getPos(), stack);
             }
-            FluidState state = FluidState.inferState(stack);
-            if (!logic.contains(state)) state.handleFailure(tile.getWorld(), tile.getPos(), stack);
-        }
+        };
     }
 
     public static int getSupply(NetNode node, FluidTestObject testObject, boolean supply) {
         if (node instanceof NodeExposingCapabilities exposer) {
             IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
                     exposer.exposedFacing());
-            if (handler != null) {
+            if (handler != null && !(handler instanceof FluidCapabilityObject)) {
                 if (supply) {
                     FluidStack s = handler.drain(testObject.recombine(Integer.MAX_VALUE), false);
                     return s == null ? 0 : s.amount;

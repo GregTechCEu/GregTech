@@ -54,25 +54,22 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     private final long amperageLimit;
     private int materialMeltTemperature;
     private final long lossPerAmp;
-    private final int superconductorCriticalTemperature;
+    private final boolean superconductor;
 
     /**
      * Generate a MaterialEnergyProperties
      * 
-     * @param voltageLimit                      the voltage limit for the cable
-     * @param amperageLimit                     the base amperage for the cable.
-     * @param lossPerAmp                        the base loss per amp per block traveled.
-     * @param superconductorCriticalTemperature the superconductor temperature. When the temperature is at or below
-     *                                          superconductor temperature, loss will be treated as zero. A
-     *                                          superconductor
-     *                                          temperature of 0 or less will be treated as not a superconductor.
+     * @param voltageLimit   the voltage limit for the cable
+     * @param amperageLimit  the base amperage for the cable.
+     * @param lossPerAmp     the base loss per amp per block traveled.
+     * @param superconductor whether the material will be treated as a superconductor. Does not override loss.
      */
     public MaterialEnergyProperties(long voltageLimit, long amperageLimit, long lossPerAmp,
-                                    int superconductorCriticalTemperature) {
+                                    boolean superconductor) {
         this.voltageLimit = voltageLimit;
         this.amperageLimit = amperageLimit;
         this.lossPerAmp = lossPerAmp;
-        this.superconductorCriticalTemperature = superconductorCriticalTemperature;
+        this.superconductor = superconductor;
     }
 
     public long getVoltageLimit() {
@@ -80,13 +77,12 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     }
 
     public static MaterialEnergyProperties create(long voltageLimit, long amperageLimit, long lossPerAmp,
-                                                  int superconductorCriticalTemperature) {
-        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp,
-                superconductorCriticalTemperature);
+                                                  boolean superconductor) {
+        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, superconductor);
     }
 
     public static MaterialEnergyProperties create(long voltageLimit, long amperageLimit, long lossPerAmp) {
-        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, 0);
+        return new MaterialEnergyProperties(voltageLimit, amperageLimit, lossPerAmp, false);
     }
 
     public static IOreRegistrationHandler registrationHandler(TriConsumer<OrePrefix, Material, MaterialEnergyProperties> handler) {
@@ -100,7 +96,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
     }
 
     public boolean isSuperconductor() {
-        return this.superconductorCriticalTemperature > 1;
+        return superconductor;
     }
 
     @Override
@@ -117,12 +113,8 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
         tooltip.add(I18n.format("gregtech.cable.voltage", voltageLimit, GTValues.VNF[tier]));
         tooltip.add(I18n.format("gregtech.cable.amperage", getAmperage(structure)));
 
-        long loss = isSuperconductor() && superconductorCriticalTemperature == Integer.MAX_VALUE ? 0 :
-                getLoss(structure);
+        long loss = getLoss(structure);
         tooltip.add(I18n.format("gregtech.cable.loss_per_block", loss));
-        if (isSuperconductor() && superconductorCriticalTemperature != Integer.MAX_VALUE) {
-            tooltip.add(I18n.format("gregtech.cable.superconductor_loss", superconductorCriticalTemperature));
-        }
     }
 
     @Override
@@ -193,8 +185,8 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                                     1,
                                     100 * cable.material(), cable.partialBurnThreshold())
                             .setInitialThermalEnergy(energy));
-            if (superconductorCriticalTemperature > 0) {
-                data.setLogicEntry(SuperconductorLogic.TYPE.getWith(superconductorCriticalTemperature));
+            if (superconductor) {
+                data.setLogicEntry(SuperconductorLogic.TYPE.getNew());
             }
         } else if (structure instanceof MaterialPipeStructure pipe) {
             long amperage = getAmperage(structure);
@@ -211,8 +203,8 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature, 1,
                                     50 * pipe.material(), null)
                             .setInitialThermalEnergy(energy));
-            if (superconductorCriticalTemperature > 0) {
-                data.setLogicEntry(SuperconductorLogic.TYPE.getWith(superconductorCriticalTemperature));
+            if (superconductor) {
+                data.setLogicEntry(SuperconductorLogic.TYPE.getNew());
             }
         }
     }

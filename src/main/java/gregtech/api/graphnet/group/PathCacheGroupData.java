@@ -78,7 +78,7 @@ public class PathCacheGroupData extends GroupData {
             while (frontierPosition < this.frontierPosition && targetFrontier.hasNext()) {
                 NetNode node = targetFrontier.next();
                 frontierPosition++;
-                if (searchFrontier.getSpanningTreeEdge(node) != null) {
+                if (searchFrontier.hasSeen(node)) {
                     NetPath built = buildPath(node, targetFrontier, searchFrontier);
                     this.put(target, built);
                     return built;
@@ -89,7 +89,7 @@ public class PathCacheGroupData extends GroupData {
                 searchFrontier.next();
                 NetNode node = targetFrontier.next();
                 this.frontierPosition++;
-                if (searchFrontier.getSpanningTreeEdge(node) != null) {
+                if (searchFrontier.hasSeen(node)) {
                     NetPath built = buildPath(node, targetFrontier, searchFrontier);
                     this.put(target, built);
                     return built;

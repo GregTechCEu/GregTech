@@ -14,7 +14,7 @@ import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
@@ -375,12 +375,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                     int transfer = Math.min(merge.getCount(), max);
                     // only simulate to test min if necessary
                     if (min > 0) {
-                        transfer = attemptNetTransfer(sourceNode.getNet(), bridge, transfer, merge.getTestObject(),
+                        transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer,
+                                merge.getTestObject(),
                                 sourceFrontier, sourceCandidates, destFrontier, destinationCandidates,
                                 SimulatorKey.getNewSimulatorInstance());
                         if (transfer < min) continue;
                     }
-                    transfer = attemptNetTransfer(sourceNode.getNet(), bridge, transfer, merge.getTestObject(),
+                    transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer, merge.getTestObject(),
                             sourceFrontier, sourceCandidates, destFrontier, destinationCandidates, null);
                     int remaining = max - transfer;
                     slotTransfer += transfer;
@@ -389,7 +390,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .getNonLargestMerges(merge)) {
                         transfer = Math.min(otherMerge.getCount(), remaining);
                         // we don't have to simulate here since we no longer need to respect the min
-                        transfer = attemptNetTransfer(sourceNode.getNet(), bridge, transfer, merge.getTestObject(),
+                        transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer,
+                                merge.getTestObject(),
                                 sourceFrontier, sourceCandidates, destFrontier, destinationCandidates, null);
                         remaining -= transfer;
                         slotTransfer += transfer;
@@ -403,39 +405,44 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return totalTransfer;
     }
 
-    protected int attemptNetTransfer(IGraphNet net, NetEdge bridge, int limit, ItemTestObject testObject,
+    protected int attemptNetTransfer(NetGroup group, NetEdge bridge, int limit, ItemTestObject testObject,
                                      NetIterator sources, Map<NetNode, IItemHandler> sourceCandidates,
                                      NetIterator targets, Map<NetNode, IItemHandler> destCandidates,
                                      @Nullable SimulatorKey key) {
         return switch (distributionMode) {
-            case FLOOD -> FDTraverse.flood(net,
+            case FLOOD -> FDTraverse.flood(group,
                     (n, f) -> {
                         if (key == null) ItemCapabilityObject.reportFlow(n, f, testObject);
                     },
                     (e, f) -> ItemCapabilityObject.reportFlow(e, f, testObject, key, true),
                     e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) : 0,
-                    n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null), null, null);
-            case EQUALIZED -> EQTraverse.equalDistribution(net,
+                            GTUtility.safeCastLongToInt(
+                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
+                            0,
+                    n -> getSupply(n, testObject, sources.hasSeen(n)), null, null);
+            case EQUALIZED -> EQTraverse.equalDistribution(group,
                     (n, f) -> {
                         if (key == null) ItemCapabilityObject.reportFlow(n, f, testObject);
                     },
                     (e, f) -> ItemCapabilityObject.reportFlow(e, f, testObject, key, true),
                     e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) : 0,
-                    n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null), null, null);
+                            GTUtility.safeCastLongToInt(
+                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
+                            0,
+                    n -> getSupply(n, testObject, sources.hasSeen(n)), null, null);
             case ROUND_ROBIN -> {
                 roundRobinCache.refresh(sources, targets);
-                yield RRTraverse.roundRobin(net, getRoundRobinCache(key != null)
+                yield RRTraverse.roundRobin(group, getRoundRobinCache(key != null)
                         .buildSupplier(sourceCandidates.keySet(), destCandidates.keySet()),
                         (n, f) -> {
                             if (key == null) ItemCapabilityObject.reportFlow(n, f, testObject);
                         },
                         (e, f) -> ItemCapabilityObject.reportFlow(e, f, testObject, key, true),
                         e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                                GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) :
+                                GTUtility.safeCastLongToInt(
+                                        n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
                                 0,
-                        n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null),
+                        n -> getSupply(n, testObject, sources.hasSeen(n)),
                         null, null);
             }
         };

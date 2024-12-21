@@ -51,48 +51,72 @@ public class LaserCapabilityObject implements IPipeCapabilityObject, ILaserRelay
     }
 
     protected long receiveLaser(long laserVoltage, long laserAmperage, EnumFacing facing) {
-        if (tile == null || this.transmitting) return 0;
-        this.transmitting = true;
-
-        NetPath path;
-        if (node.getGroupUnsafe() == null || node.getGroupSafe().getNodes().size() == 1)
-            path = new SingletonNetPath(node);
-        else if (node.getGroupSafe().getData() instanceof PathCacheGroupData cache) {
-            Set<NetNode> actives = node.getGroupSafe().getNodesUnderKey(ACTIVE_KEY);
-            if (actives.size() > 2) return 0; // single-destination contract violated
-            var iter = actives.iterator();
-            NetNode target = iter.next();
-            if (target == node) {
-                if (!iter.hasNext()) return 0; // no destinations
-                target = iter.next();
-            }
-            if (!(target instanceof WorldPipeNode)) return 0; // useless target
-            path = cache.getOrCreate(node).getOrCompute(target);
-            if (path == null) return 0; // no path
-        } else return 0; // no cache to lookup with
-
-        long available = laserAmperage;
-        WorldPipeNode destination = (WorldPipeNode) path.getTargetNode();
-        for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
-            if (destination == node && capability.getKey() == facing) continue; // anti insert-to-our-source logic
-            ILaserRelay laser = capability.getValue()
-                    .getCapability(GregtechTileCapabilities.CAPABILITY_LASER, capability.getKey().getOpposite());
-            if (laser != null && !(destination.getTileEntity().getCoverHolder()
-                    .getCoverAtSide(capability.getKey()) instanceof CoverShutter)) {
-                long transmitted = laser.receiveLaser(laserVoltage, laserAmperage);
-                if (transmitted > 0) {
-                    SlowActiveWalker.dispatch(tile.getWorld(), path, 1, 2, 2);
-                    available -= transmitted;
-                    if (available <= 0) {
-                        this.transmitting = false;
-                        return laserAmperage;
+        long result = 0;
+        boolean earlyReturn = false;
+        if (tile != null && !this.transmitting) {
+            this.transmitting = true;
+            NetPath path = null;
+            if (node.getGroupUnsafe() == null || node.getGroupSafe().getNodes().size() == 1)
+                path = new SingletonNetPath(node);
+            else if (node.getGroupSafe().getData() instanceof PathCacheGroupData cache) {
+                Set<NetNode> actives = node.getGroupSafe().getNodesUnderKey(ACTIVE_KEY);
+                if (actives.size() > 2) {
+                    earlyReturn = true;// single-destination contract violated
+                } else {
+                    var iter = actives.iterator();
+                    NetNode target = iter.next();
+                    if (target == node) {
+                        if (!iter.hasNext()) {
+                            earlyReturn = true;// no destinations
+                        } else {
+                            target = iter.next();
+                        }
+                    }
+                    if (!earlyReturn) {
+                        if (!(target instanceof WorldPipeNode)) {
+                            earlyReturn = true;// useless target
+                        } else {
+                            path = cache.getOrCreate(node).getOrCompute(target);
+                            if (path == null) {
+                                earlyReturn = true;// no path
+                            }
+                        }
                     }
                 }
+            } else {
+                earlyReturn = true;// no cache to lookup with
             }
+            if (!earlyReturn) {
+                long available = laserAmperage;
+                WorldPipeNode destination = (WorldPipeNode) path.getTargetNode();
+                for (var capability : destination.getTileEntity().getTargetsWithCapabilities(destination).entrySet()) {
+                    if (destination == node && capability.getKey() == facing)
+                        continue; // anti insert-to-our-source logic
+                    ILaserRelay laser = capability.getValue()
+                            .getCapability(GregtechTileCapabilities.CAPABILITY_LASER,
+                                    capability.getKey().getOpposite());
+                    if (laser != null && !(destination.getTileEntity().getCoverHolder()
+                            .getCoverAtSide(capability.getKey()) instanceof CoverShutter)) {
+                        long transmitted = laser.receiveLaser(laserVoltage, laserAmperage);
+                        if (transmitted > 0) {
+                            SlowActiveWalker.dispatch(tile.getWorld(), path, 1, 2, 2);
+                            available -= transmitted;
+                            if (available <= 0) {
+                                result = laserAmperage;
+                                earlyReturn = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!earlyReturn) {
+                    result = laserAmperage - available;
+                }
+            }
+            this.transmitting = false;
         }
-        this.transmitting = false;
 
-        return laserAmperage - available;
+        return result;
     }
 
     @Override

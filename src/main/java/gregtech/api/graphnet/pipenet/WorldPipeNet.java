@@ -192,6 +192,7 @@ public abstract class WorldPipeNet extends WorldSavedNet {
         WorldPipeNode node = getNode(pos);
         if (node == null) {
             node = new WorldPipeNode(this);
+            node.setPos(pos);
             addNode(node);
         }
         return node;

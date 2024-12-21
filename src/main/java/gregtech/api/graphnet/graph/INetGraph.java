@@ -4,5 +4,7 @@ import org.jgrapht.Graph;
 
 public interface INetGraph extends Graph<GraphVertex, GraphEdge> {
 
-    boolean isDirected();
+    default boolean isDirected() {
+        return getType().isDirected();
+    }
 }

@@ -1050,9 +1050,9 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder cableProperties(long voltage, long amperage, long loss, int superconductorTemperature) {
+        public Builder cableProperties(long voltage, long amperage, long loss, boolean superconductor) {
             getOrCreatePipeNetProperties()
-                    .setProperty(MaterialEnergyProperties.create(voltage, amperage, loss, superconductorTemperature));
+                    .setProperty(MaterialEnergyProperties.create(voltage, amperage, loss, superconductor));
             return this;
         }
 

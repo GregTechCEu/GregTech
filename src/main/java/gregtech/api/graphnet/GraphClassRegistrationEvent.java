@@ -13,7 +13,8 @@ public final class GraphClassRegistrationEvent extends Event {
 
     public void accept(GraphClassType<?> type) {
         if (!gather.add(type))
-            throw new IllegalStateException("Detected a name collision during Graph Class registration!");
+            throw new IllegalStateException(
+                    "Detected a name collision during Graph Class registration! Collision on name: " + type.getName());
     }
 
     ObjectRBTreeSet<GraphClassType<?>> getGather() {

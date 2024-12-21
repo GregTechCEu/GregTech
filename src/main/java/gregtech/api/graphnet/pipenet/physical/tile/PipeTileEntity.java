@@ -12,7 +12,6 @@ import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.IInsulatable;
-import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.block.RayTraceAABB;
@@ -48,7 +47,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -86,7 +84,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private final Set<ITickable> tickers = new ObjectOpenHashSet<>();
 
     protected final PipeCoverHolder covers = new PipeCoverHolder(this);
-    private final Object2ObjectOpenHashMap<Capability<?>, IPipeCapabilityObject> capabilities = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectOpenCustomHashMap<NetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet
             .getSensitiveHashMap();
 
@@ -123,9 +120,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     @Override
     public void invalidate() {
         super.invalidate();
-        if (!getWorld().isRemote) getBlockType().getHandler(this)
-                .removeFromNets(this.getWorld(), this.getPos(), this.getStructure());
-        else killOverheatParticle();
+        if (!getWorld().isRemote) {
+            getBlockType().getHandler(this)
+                    .removeFromNets(this.getWorld(), this.getPos(), this.getStructure());
+            netCapabilities.values().forEach(PipeCapabilityWrapper::invalidate);
+        } else killOverheatParticle();
         // TODO I hate this so much can someone please make it so that covers go through getDrops()?
         getCoverHolder().dropAllCovers();
     }
@@ -415,9 +414,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     // capability //
 
     public <T> T getCapabilityCoverQuery(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
-        // covers have access to the capability objects no matter the connection status
-        IPipeCapabilityObject object = capabilities.get(capability);
-        return object == null ? null : object.getCapability(capability, facing);
+        for (PipeCapabilityWrapper wrapper : netCapabilities.values()) {
+            T cap = wrapper.getCapabilityCoverQuery(capability, facing);
+            if (cap != null) return cap;
+        }
+        return null;
     }
 
     @Override
@@ -430,11 +431,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         if (capability == GregtechTileCapabilities.CAPABILITY_COVER_HOLDER) {
             return GregtechTileCapabilities.CAPABILITY_COVER_HOLDER.cast(getCoverHolder());
         }
-        T pipeCapability;
-        IPipeCapabilityObject object = capabilities.get(capability);
-        if (object == null || (pipeCapability = object.getCapability(capability, facing)) == null)
-            pipeCapability = super.getCapability(capability, facing);
-
+        T pipeCapability = null;
+        for (PipeCapabilityWrapper wrapper : netCapabilities.values()) {
+            if ((pipeCapability = wrapper.getCapability(capability, facing)) != null) break;
+        }
+        if (pipeCapability == null) pipeCapability = super.getCapability(capability, facing);
         Cover cover = facing == null ? null : getCoverHolder().getCoverAtSide(facing);
         if (cover == null) {
             if (facing == null || isConnected(facing)) {
@@ -481,7 +482,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public void initialize() {
         if (!getWorld().isRemote) {
             this.netLogicDatas.clear();
-            this.capabilities.clear();
             this.netCapabilities.clear();
             this.listeners.clear();
             for (WorldPipeNode node : PipeBlock.getNodesForTile(this)) {
@@ -514,7 +514,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 this.legacy = false;
             }
             this.netLogicDatas.trim();
-            this.capabilities.trim();
             this.netCapabilities.trim();
             this.listeners.trim();
             updateActiveStatus(null, false);

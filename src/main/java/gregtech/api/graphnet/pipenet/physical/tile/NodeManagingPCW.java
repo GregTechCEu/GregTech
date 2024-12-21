@@ -26,6 +26,13 @@ public class NodeManagingPCW extends PipeCapabilityWrapper {
     }
 
     @Override
+    public void invalidate() {
+        for (WorldPipeCapConnectionNode n : managed.values()) {
+            n.getNet().removeNode(n);
+        }
+    }
+
+    @Override
     protected void setActiveInternal(@NotNull EnumFacing facing) {
         super.setActiveInternal(facing);
         FacingPos pos = new FacingPos(node.getEquivalencyData(), facing);
@@ -35,6 +42,7 @@ public class NodeManagingPCW extends PipeCapabilityWrapper {
             connectionNode = c;
         } else {
             connectionNode = new WorldPipeCapConnectionNode(node.getNet());
+            connectionNode.setPosAndFacing(pos);
             connectionNode.getNet().addNode(connectionNode);
         }
         managed.put(facing, connectionNode);

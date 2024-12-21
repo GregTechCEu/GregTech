@@ -26,8 +26,8 @@ public record RoundRobinCache(ObjectLinkedOpenHashSet<NetNode> sourceCache,
     }
 
     public RoundRobinCache refresh(NetIterator sources, NetIterator targets) {
-        sourceCache.removeIf(n -> sources.getSpanningTreeEdge(n) == null);
-        destCache.removeIf(n -> targets.getSpanningTreeEdge(n) == null);
+        sourceCache.removeIf(n -> !sources.hasSeen(n));
+        destCache.removeIf(n -> !targets.hasSeen(n));
         return this;
     }
 

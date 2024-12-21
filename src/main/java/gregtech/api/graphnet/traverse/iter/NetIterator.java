@@ -10,6 +10,8 @@ import java.util.Iterator;
 
 public interface NetIterator extends Iterator<NetNode> {
 
+    boolean hasSeen(@NotNull NetNode node);
+
     @Nullable
     NetEdge getSpanningTreeEdge(@NotNull NetNode node);
 }

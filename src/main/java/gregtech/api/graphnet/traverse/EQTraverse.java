@@ -3,10 +3,9 @@ package gregtech.api.graphnet.traverse;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.function.ToBooleanFunction;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -19,6 +18,7 @@ import org.jgrapht.Graph;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.function.ObjIntConsumer;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 public class EQTraverse extends AbstractMinCostTraverse {
@@ -26,7 +26,7 @@ public class EQTraverse extends AbstractMinCostTraverse {
     protected final Graph<GraphVertex, GraphEdge> graph;
     protected final ToIntFunction<NetEdge> capacityFunction;
     protected final ToIntFunction<NetNode> supplyFunction;
-    protected @Nullable ToBooleanFunction<NetNode> lossyNodes;
+    protected @Nullable Predicate<NetNode> lossyNodes;
 
     protected final Set<NetNode> suppliers;
     protected final Set<NetNode> consumers;
@@ -37,7 +37,7 @@ public class EQTraverse extends AbstractMinCostTraverse {
      * and deposits a separately calculated amount to all sinks. Drawn and deposited amounts will be maximized,
      * and loss will be ignored until the final stage of traverse and reporting.
      *
-     * @param net              the net
+     * @param group            the net group the traverse takes place in
      * @param flowReporterNode flow reporter for nodes. Positive values mean draw, negative values mean sink.
      * @param flowReporterEdge flow reporter for edges. Always positive.
      * @param capacityFunction capacity function for edges.
@@ -48,21 +48,21 @@ public class EQTraverse extends AbstractMinCostTraverse {
      * @param lossReporter     optional reporter for loss. Always negative. Does nothing if lossy nodes is {@code null}.
      * @return the total draw/sink after evaluation.
      */
-    public static int equalDistribution(@NotNull IGraphNet net,
+    public static int equalDistribution(@NotNull NetGroup group,
                                         @NotNull ObjIntConsumer<NetNode> flowReporterNode,
                                         @NotNull ObjIntConsumer<NetEdge> flowReporterEdge,
                                         @NotNull ToIntFunction<NetEdge> capacityFunction,
                                         @NotNull ToIntFunction<NetNode> supplyFunction,
-                                        @Nullable ToBooleanFunction<NetNode> lossyNodes,
+                                        @Nullable Predicate<NetNode> lossyNodes,
                                         @Nullable ObjIntConsumer<NetNode> lossReporter) {
-        if (!net.getGraph().isDirected()) {
+        if (!group.getGraphView().getType().isDirected()) {
             throw new IllegalArgumentException("Cannot perform equal distribution traverse logic on undirected graph!");
         }
         int minSupplier = Integer.MAX_VALUE;
         Set<NetNode> suppliers = new ObjectOpenHashSet<>();
         int minConsumer = Integer.MIN_VALUE;
         Set<NetNode> consumers = new ObjectOpenHashSet<>();
-        for (GraphVertex v : net.getGraph().vertexSet()) {
+        for (GraphVertex v : group.getGraphView().vertexSet()) {
             if (v.getWrapped() != null) {
                 int supply = supplyFunction.applyAsInt(v.getWrapped());
                 if (supply > 0) {
@@ -89,7 +89,8 @@ public class EQTraverse extends AbstractMinCostTraverse {
         TestCase[] arr = cases.stream().sorted(Comparator.comparingInt(c -> suppliers.size() * c.supply))
                 .toArray(TestCase[]::new);
         // execute binary searching on test cases
-        EQTraverse traverse = new EQTraverse(net.getGraph(), capacityFunction, supplyFunction, suppliers, consumers);
+        EQTraverse traverse = new EQTraverse(group.getGraphView(), capacityFunction, supplyFunction, suppliers,
+                consumers);
         int solution = (int) GTUtility.binarySearch(0, arr.length - 1, l -> {
             traverse.testCase = arr[(int) l];
             EvaluationResult result = traverse.evaluate();
@@ -107,7 +108,7 @@ public class EQTraverse extends AbstractMinCostTraverse {
         EvaluationResult result = traverse.evaluate();
         if (result.isEmpty()) return 0;
         result.getFlowMap().forEach(flowReporterEdge::accept);
-        return FDTraverse.reportFlow(flowReporterNode, lossyNodes, lossReporter, result);
+        return FDTraverse.reportSupply(flowReporterNode, lossyNodes, lossReporter, result);
     }
 
     protected EQTraverse(Graph<GraphVertex, GraphEdge> graph, ToIntFunction<NetEdge> capacityFunction,
@@ -121,7 +122,7 @@ public class EQTraverse extends AbstractMinCostTraverse {
 
     @Override
     protected int getSupply(NetNode node) {
-        if (lossyNodes != null && lossyNodes.applyAsBool(node)) return Short.MIN_VALUE;
+        if (lossyNodes != null && lossyNodes.test(node)) return Short.MIN_VALUE;
         if (suppliers.contains(node)) return testCase.supply;
         if (consumers.contains(node)) return testCase.consumption;
         return 0;

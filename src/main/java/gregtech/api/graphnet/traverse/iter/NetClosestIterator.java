@@ -14,9 +14,7 @@ import java.util.Set;
 
 public class NetClosestIterator implements NetIterator {
 
-    protected final ClosestFirstIterator<GraphVertex, GraphEdge> backer;
-
-    protected final EdgeSelector selector;
+    protected final Iter backer;
 
     /**
      * Creates a closest-first iterator that traverses a connected component, starting at the given node.
@@ -24,22 +22,11 @@ public class NetClosestIterator implements NetIterator {
      * @param origin the node to start at
      */
     public NetClosestIterator(@NotNull NetNode origin, EdgeSelector selector) {
-        this.backer = new ClosestFirstIterator<>(origin.getNet().getGraph(), origin.wrapper) {
-
-            @Override
-            protected Set<GraphEdge> selectOutgoingEdges(GraphVertex vertex) {
-                return selectEdges(graph, vertex);
-            }
-        };
-        this.selector = selector;
+        this.backer = new Iter(origin.getNet().getGraph(), origin.wrapper, selector);
     }
 
     public ClosestFirstIterator<GraphVertex, GraphEdge> getBacker() {
         return backer;
-    }
-
-    protected Set<GraphEdge> selectEdges(Graph<GraphVertex, GraphEdge> graph, GraphVertex vertex) {
-        return selector.selectEdges(graph, vertex);
     }
 
     @Override
@@ -56,7 +43,31 @@ public class NetClosestIterator implements NetIterator {
         return backer.getShortestPathLength(node.wrapper);
     }
 
+    public boolean hasSeen(@NotNull NetNode node) {
+        return backer.hasSeen(node.wrapper);
+    }
+
     public @Nullable NetEdge getSpanningTreeEdge(@NotNull NetNode node) {
-        return backer.getSpanningTreeEdge(node.wrapper).getWrapped();
+        if (!backer.hasSeen(node.wrapper)) return null;
+        return NetEdge.unwrap(backer.getSpanningTreeEdge(node.wrapper));
+    }
+
+    protected static final class Iter extends ClosestFirstIterator<GraphVertex, GraphEdge> {
+
+        private final EdgeSelector selector;
+
+        public Iter(Graph<GraphVertex, GraphEdge> g, GraphVertex startVertex, EdgeSelector selector) {
+            super(g, startVertex);
+            this.selector = selector;
+        }
+
+        @Override
+        protected Set<GraphEdge> selectOutgoingEdges(GraphVertex vertex) {
+            return selector.selectEdges(graph, vertex);
+        }
+
+        public boolean hasSeen(GraphVertex vertex) {
+            return getSeenData(vertex) != null;
+        }
     }
 }

@@ -13,7 +13,7 @@ import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
 import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
@@ -378,12 +378,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 if (contents.amount < min) continue;
                 int transfer = Math.min(contents.amount, max);
                 if (min > 0) {
-                    transfer = attemptNetTransfer(sourceNode.getNet(), bridge, transfer, content.getKey(),
+                    transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer, content.getKey(),
                             sourceFrontier, sourceCandidates, destFrontier, destinationCandidates,
                             SimulatorKey.getNewSimulatorInstance());
                     if (transfer < min) continue;
                 }
-                transfer = attemptNetTransfer(sourceNode.getNet(), bridge, transfer, content.getKey(),
+                transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer, content.getKey(),
                         sourceFrontier, sourceCandidates, destFrontier, destinationCandidates, null);
                 if (transferReport != null) transferReport.accept(filterSlot, transfer);
                 totalTransfer += transfer;
@@ -392,40 +392,47 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         return totalTransfer;
     }
 
-    protected int attemptNetTransfer(IGraphNet net, NetEdge bridge, int limit, FluidTestObject testObject,
+    protected int attemptNetTransfer(NetGroup group, NetEdge bridge, int limit, FluidTestObject testObject,
                                      NetIterator sources, Map<NetNode, IFluidHandler> sourceCandidates,
                                      NetIterator targets, Map<NetNode, IFluidHandler> destCandidates,
                                      @Nullable SimulatorKey key) {
         return switch (distributionMode) {
-            case FLOOD -> FDTraverse.flood(net,
+            case FLOOD -> FDTraverse.flood(group,
                     (n, f) -> {
                         if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
                     },
                     (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
                     e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) : 0,
-                    n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null), null, null);
-            case EQUALIZED -> EQTraverse.equalDistribution(net,
+                            GTUtility.safeCastLongToInt(
+                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
+                            0,
+                    n -> getSupply(n, testObject, sources.hasSeen(n)), FluidCapabilityObject.isLossyNode(testObject),
+                    FluidCapabilityObject.handleLoss(testObject));
+            case EQUALIZED -> EQTraverse.equalDistribution(group,
                     (n, f) -> {
                         if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
                     },
                     (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
                     e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) : 0,
-                    n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null), null, null);
+                            GTUtility.safeCastLongToInt(
+                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
+                            0,
+                    n -> getSupply(n, testObject, sources.hasSeen(n)), FluidCapabilityObject.isLossyNode(testObject),
+                    FluidCapabilityObject.handleLoss(testObject));
             case ROUND_ROBIN -> {
                 roundRobinCache.refresh(sources, targets);
-                yield RRTraverse.roundRobin(net, getRoundRobinCache(key != null)
+                yield RRTraverse.roundRobin(group, getRoundRobinCache(key != null)
                         .buildSupplier(sourceCandidates.keySet(), destCandidates.keySet()),
                         (n, f) -> {
                             if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
                         },
                         (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
                         e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                                GTUtility.safeCastLongToInt(n.getFlowLimit(testObject, net, GTUtility.getTick(), key)) :
+                                GTUtility.safeCastLongToInt(
+                                        n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
                                 0,
-                        n -> getSupply(n, testObject, sources.getSpanningTreeEdge(n) != null),
-                        null, null);
+                        n -> getSupply(n, testObject, sources.hasSeen(n)),
+                        FluidCapabilityObject.isLossyNode(testObject), FluidCapabilityObject.handleLoss(testObject));
             }
         };
     }

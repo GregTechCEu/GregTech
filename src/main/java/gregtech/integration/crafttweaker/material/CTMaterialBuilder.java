@@ -240,8 +240,8 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss,
-                                             @Optional int superConTemperature) {
-        backingBuilder.cableProperties(voltage, amperage, loss, superConTemperature);
+                                             @Optional boolean superconductor) {
+        backingBuilder.cableProperties(voltage, amperage, loss, superconductor);
         return this;
     }
 

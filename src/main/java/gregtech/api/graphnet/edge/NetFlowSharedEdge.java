@@ -1,5 +1,7 @@
 package gregtech.api.graphnet.edge;
 
+import gregtech.api.GTValues;
+import gregtech.api.graphnet.GraphClassType;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
@@ -13,6 +15,11 @@ import java.util.List;
 import java.util.Set;
 
 public class NetFlowSharedEdge extends AbstractNetFlowEdge {
+
+    public static final GraphClassType<NetFlowSharedEdge> TYPE = new GraphClassType<>(GTValues.MODID,
+            "NetFlowSharedEdge",
+            n -> n instanceof FlowBufferTickProvider p ?
+                    new NetFlowSharedEdge(p.getFlowBufferTicks(), p.getRegenerationTime()) : new NetFlowSharedEdge(10));
 
     private final int flowBufferTicks;
     private final int regenerationTime;
@@ -165,5 +172,10 @@ public class NetFlowSharedEdge extends AbstractNetFlowEdge {
             recalculateFlowLimits(queryTick);
             return map.keySet();
         }
+    }
+
+    @Override
+    public GraphClassType<? extends NetEdge> getType() {
+        return TYPE;
     }
 }

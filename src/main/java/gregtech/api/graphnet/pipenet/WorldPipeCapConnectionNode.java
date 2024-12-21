@@ -11,6 +11,7 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,11 +25,12 @@ public class WorldPipeCapConnectionNode extends NetNode implements NodeWithFacin
             "WorldPipeCapConnectionNode",
             WorldPipeCapConnectionNode::resolve);
 
-    private FacingPos posAndFacing;
+    private @NotNull FacingPos posAndFacing;
 
     public WorldPipeCapConnectionNode(WorldPipeNet net) {
         super(net);
         sortingKey = SORTING_KEY;
+        posAndFacing = FacingPos.ORIGIN;
     }
 
     private static WorldPipeCapConnectionNode resolve(IGraphNet net) {
@@ -85,13 +87,28 @@ public class WorldPipeCapConnectionNode extends NetNode implements NodeWithFacin
     }
 
     @Override
-    public ICapabilityProvider getProvider() {
+    public @NotNull ICapabilityProvider getProvider() {
         WorldPipeNode parent = getParent();
-        return parent.getTileEntity().getTargetWithCapabilities(parent, posAndFacing.getFacing());
+        if (parent == null) return EMPTY;
+        ICapabilityProvider prov = parent.getTileEntity().getTargetWithCapabilities(parent, posAndFacing.getFacing());
+        return prov != null ? prov : EMPTY;
     }
 
     @Override
     public EnumFacing exposedFacing() {
         return posAndFacing.getFacing().getOpposite();
     }
+
+    private static final ICapabilityProvider EMPTY = new ICapabilityProvider() {
+
+        @Override
+        public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+            return false;
+        }
+
+        @Override
+        public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+            return null;
+        }
+    };
 }

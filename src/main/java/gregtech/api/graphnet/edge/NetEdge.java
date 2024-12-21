@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +31,12 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
     private @Nullable EdgePredicateHandler predicateHandler;
 
     private @Nullable NetLogicData data;
+
+    @Nullable
+    @Contract("null->null")
+    public static NetEdge unwrap(GraphEdge e) {
+        return e == null ? null : e.wrapped;
+    }
 
     public @Nullable NetNode getSource() {
         if (wrapper == null) return null;

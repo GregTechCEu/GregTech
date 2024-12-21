@@ -1,13 +1,13 @@
 package gregtech.api.graphnet.predicate;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,13 +17,13 @@ public final class NetPredicateRegistry {
 
     private static final Int2ObjectArrayMap<NetPredicateType<?>> REGISTRY;
 
-    private static final IntIdentityHashBiMap<String> NAMES_TO_NETWORK_IDS;
+    private static final Object2IntOpenHashMap<String> NAMES_TO_NETWORK_IDS;
 
     static {
         NetPredicateRegistrationEvent event = new NetPredicateRegistrationEvent();
         MinecraftForge.EVENT_BUS.post(event);
         Set<NetPredicateType<?>> gather = event.getGather();
-        NAMES_TO_NETWORK_IDS = new IntIdentityHashBiMap<>(gather.size());
+        NAMES_TO_NETWORK_IDS = new Object2IntOpenHashMap<>(gather.size());
         REGISTRY = new Int2ObjectArrayMap<>(gather.size());
         int id = 1;
         for (NetPredicateType<?> type : gather) {
@@ -34,11 +34,11 @@ public final class NetPredicateRegistry {
     }
 
     public static String getName(int networkID) {
-        return NAMES_TO_NETWORK_IDS.get(networkID);
+        return REGISTRY.get(networkID).getName();
     }
 
     public static int getNetworkID(@NotNull String name) {
-        return NAMES_TO_NETWORK_IDS.getId(name);
+        return NAMES_TO_NETWORK_IDS.getInt(name);
     }
 
     public static int getNetworkID(@NotNull NetPredicateType<?> type) {

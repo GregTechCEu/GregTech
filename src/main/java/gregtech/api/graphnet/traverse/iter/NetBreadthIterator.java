@@ -8,13 +8,14 @@ import gregtech.api.graphnet.net.NetNode;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jgrapht.Graph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import java.util.Set;
 
 public class NetBreadthIterator implements NetIterator {
 
-    protected BreadthFirstIterator<GraphVertex, GraphEdge> backer;
+    protected Iter backer;
 
     /**
      * Creates a breadth-first iterator that traverses a connected component, starting at the given node.
@@ -22,13 +23,7 @@ public class NetBreadthIterator implements NetIterator {
      * @param origin the node to start at
      */
     public NetBreadthIterator(@NotNull NetNode origin, @NotNull EdgeSelector selector) {
-        this.backer = new BreadthFirstIterator<>(origin.getNet().getGraph(), origin.wrapper) {
-
-            @Override
-            protected Set<GraphEdge> selectOutgoingEdges(GraphVertex vertex) {
-                return selector.selectEdges(graph, vertex);
-            }
-        };
+        this.backer = new Iter(origin.getNet().getGraph(), origin.wrapper, selector);
     }
 
     /**
@@ -37,13 +32,7 @@ public class NetBreadthIterator implements NetIterator {
      * @param graphNet the graph to traverse.
      */
     public NetBreadthIterator(@NotNull IGraphNet graphNet) {
-        this.backer = new BreadthFirstIterator<>(graphNet.getGraph(), (GraphVertex) null) {
-
-            @Override
-            protected Set<GraphEdge> selectOutgoingEdges(GraphVertex vertex) {
-                return graph.edgesOf(vertex);
-            }
-        };
+        this.backer = new Iter(graphNet.getGraph(), (GraphVertex) null, EdgeDirection.ALL);
     }
 
     public BreadthFirstIterator<GraphVertex, GraphEdge> getBacker() {
@@ -64,11 +53,35 @@ public class NetBreadthIterator implements NetIterator {
         return backer.getParent(node.wrapper).getWrapped();
     }
 
+    public boolean hasSeen(@NotNull NetNode node) {
+        return backer.hasSeen(node.wrapper);
+    }
+
     public @Nullable NetEdge getSpanningTreeEdge(@NotNull NetNode node) {
-        return backer.getSpanningTreeEdge(node.wrapper).getWrapped();
+        if (!backer.hasSeen(node.wrapper)) return null;
+        return NetEdge.unwrap(backer.getSpanningTreeEdge(node.wrapper));
     }
 
     public int getDepth(@NotNull NetNode node) {
         return backer.getDepth(node.wrapper);
+    }
+
+    protected static final class Iter extends BreadthFirstIterator<GraphVertex, GraphEdge> {
+
+        private final EdgeSelector selector;
+
+        public Iter(Graph<GraphVertex, GraphEdge> g, GraphVertex startVertex, EdgeSelector selector) {
+            super(g, startVertex);
+            this.selector = selector;
+        }
+
+        @Override
+        protected Set<GraphEdge> selectOutgoingEdges(GraphVertex vertex) {
+            return selector.selectEdges(graph, vertex);
+        }
+
+        public boolean hasSeen(GraphVertex vertex) {
+            return getSeenData(vertex) != null;
+        }
     }
 }

@@ -13,11 +13,6 @@ public class NetDirectedGraph extends SimpleDirectedWeightedGraph<GraphVertex, G
         super(vertexSupplier, edgeSupplier);
     }
 
-    @Override
-    public boolean isDirected() {
-        return true;
-    }
-
     public static Function<IGraphNet, INetGraph> standardBuilder() {
         return iGraphNet -> new NetDirectedGraph(
                 () -> new GraphVertex(iGraphNet.getDefaultNodeType().getNew(iGraphNet)),
