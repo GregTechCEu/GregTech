@@ -4,6 +4,9 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -34,12 +37,9 @@ public class BasicAisleStrategy extends AisleStrategy {
     protected int checkMultiAisle(int[] multi, int offset, boolean flip) {
         int aisleOffset = 0;
         int temp = 0;
-        // go from 0 to max repeat
         for (int i = 1; i <= multi[1]; i++) {
-            // check all aisles in the multi aisle
             for (int j = multi[2]; j < multi[3]; j++) {
                 int result = checkRepeatAisle(j, offset + temp, flip);
-                // same logic as normal aisle check
                 if (result == -1) {
                     if (i <= multi[0]) return -1;
                     multi[4] = i - 1;
@@ -68,11 +68,26 @@ public class BasicAisleStrategy extends AisleStrategy {
         return aisles.get(index).actualRepeats = aisle.maxRepeats;
     }
 
+    // todo more lang support(yay!), and actually use the map arg
+    @Override
+    public int @NotNull [] getDefaultAisles(Map<String, String> map) {
+        IntList list = new IntArrayList();
+        for (int[] multi : multiAisles) {
+            for (int i = 0; i < multi[0]; i++) {
+                for (int j = multi[2]; j < multi[3]; j++) {
+                    for (int k = 0; k < aisles.get(j).minRepeats; k++) list.add(j);
+                }
+            }
+        }
+        return list.toIntArray();
+    }
+
     @Override
     protected void finish(int[] dimensions, RelativeDirection[] directions, List<PatternAisle> aisles) {
         super.finish(dimensions, directions, aisles);
 
-        // maybe just set the reference? but then the field cant be final so idk
+        // maybe just set the reference? but then the field cant be final
+        // todo figure out some way to retrieve all repeats from multi aisles, currently only last repeats
         this.aisles.addAll(aisles);
 
         BitSet covered = new BitSet(aisles.size());
@@ -105,7 +120,7 @@ public class BasicAisleStrategy extends AisleStrategy {
 
     protected void multiAisleError() {
         GTLog.logger.error(
-                "multiAisles in the pattern, formatted as [ minRepeats, maxRepeats, startInclusive, endExclusive ] ");
+                "multiAisles in the pattern, formatted as [ minRepeats, maxRepeats, startInclusive, endExclusive, actualRepeats ] ");
         for (int[] arr : multiAisles) {
             GTLog.logger.error(Arrays.toString(arr));
         }

@@ -9,11 +9,6 @@ import net.minecraft.util.EnumFacing;
  */
 public class OriginOffset {
 
-    /**
-     * length 3 because the opposite directions cancel out, it stores amount with the first direction in each pair(an
-     * even
-     * ordinal).
-     */
     protected final int[] offset = new int[3];
 
     public OriginOffset move(RelativeDirection dir, int amount) {

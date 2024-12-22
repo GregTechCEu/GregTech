@@ -1,5 +1,6 @@
 package gregtech.api.pattern.pattern;
 
+import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.RelativeDirection;
@@ -72,24 +73,7 @@ public class FactoryBlockPattern {
         directions[0] = aisleDir;
         directions[1] = stringDir;
         directions[2] = charDir;
-        int flags = 0;
-        for (int i = 0; i < 3; i++) {
-            switch (directions[i]) {
-                case UP:
-                case DOWN:
-                    flags |= 0x1;
-                    break;
-                case LEFT:
-                case RIGHT:
-                    flags |= 0x2;
-                    break;
-                case FRONT:
-                case BACK:
-                    flags |= 0x4;
-                    break;
-            }
-        }
-        if (flags != 0x7) throw new IllegalArgumentException("Must have 3 different axes!");
+        GreggyBlockPos.validateFacingsArray(directions);
         this.symbolMap.put(' ', TraceabilityPredicate.ANY);
     }
 

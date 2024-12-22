@@ -12,13 +12,11 @@ import gregtech.api.util.RelativeDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.chars.Char2IntMap;
@@ -26,7 +24,6 @@ import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,45 +73,6 @@ public class MultiblockShapeInfo {
         this.dotMap = dotMap;
         this.directions = directions;
         symbols.defaultReturnValue(BlockInfo.EMPTY);
-    }
-
-    /**
-     * Builds the given multiblock. The world is gotten from the player's world variable.
-     * 
-     * @param src     The multiblock in world to build from.
-     * @param player  The player autobuilding and whos inventory will be used.
-     * @param partial If true, if the player does not have enough materials, the multiblock will be built as much as
-     *                possible until they run out of a block to place.
-     *                If false, the autobuild will only succeed if the player can build the entire multiblock at once.
-     * @return Whether the autobuild was successful. If partial is false, returns true only if the entire multiblock was
-     *         build. If partial is true, returns false only if no blocks were placed.
-     */
-    public boolean autoBuild(MultiblockControllerBase src, EntityPlayer player, boolean partial) {
-        World world = player.world;
-        GreggyBlockPos pos = whereController(src.getClass());
-
-        EnumFacing frontFacing = src.getFrontFacing();
-        EnumFacing upFacing = src.getUpwardsFacing();
-
-        EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, false);
-        EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, false);
-        EnumFacing absoluteChar = directions[2].getRelativeFacing(frontFacing, upFacing, false);
-
-        GreggyBlockPos start = new GreggyBlockPos(src.getPos())
-                .offset(absoluteAisle, pos.x())
-                .offset(absoluteString, pos.y())
-                .offset(absoluteChar, pos.y());
-
-        Object2IntMap<ItemStack> materials;
-        if (!partial) {
-            Char2IntMap count = getChars();
-            for (Char2IntMap.Entry entry : count.char2IntEntrySet()) {
-                BlockInfo info = symbols.get(entry.getCharKey());
-
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -320,7 +278,7 @@ public class MultiblockShapeInfo {
     public static MultiblockShapeInfo fromShape(IBlockPattern pattern) {
         Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicates = new Char2ObjectOpenHashMap<>();
         RelativeDirection[] directions = new RelativeDirection[3];
-        char[][][] shape = pattern.getDefaultShape(predicates, directions);
+        char[][][] shape = pattern.getDefaultShape(predicates, null, directions);
         if (shape == null) return null;
         return fromShape(directions, shape, predicates);
     }
@@ -336,24 +294,7 @@ public class MultiblockShapeInfo {
             directions[0] = aisleDir;
             directions[1] = stringDir;
             directions[2] = charDir;
-            int flags = 0;
-            for (int i = 0; i < 3; i++) {
-                switch (directions[i]) {
-                    case UP:
-                    case DOWN:
-                        flags |= 0x1;
-                        break;
-                    case LEFT:
-                    case RIGHT:
-                        flags |= 0x2;
-                        break;
-                    case FRONT:
-                    case BACK:
-                        flags |= 0x4;
-                        break;
-                }
-            }
-            if (flags != 0x7) throw new IllegalArgumentException("Must have 3 different axes!");
+            GreggyBlockPos.validateFacingsArray(directions);
         }
 
         public Builder aisle(String... data) {
@@ -415,6 +356,7 @@ public class MultiblockShapeInfo {
                 return this;
             }
 
+            // todo make lang a Function<Map<String, String>, String> to account for builder map
             dotMap.put(symbol, new Dot(dot, lang));
             return this;
         }

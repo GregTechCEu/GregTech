@@ -11,7 +11,6 @@ import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.function.QuadFunction;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -181,13 +180,11 @@ public class ExpandablePattern implements IBlockPattern {
 
     @Override
     public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map,
+                                                                     Map<String, String> keyMap,
                                                                      RelativeDirection[] directions) {
-        // todo maybe add this and autobuild
+        // todo maybe add this
         return null;
     }
-
-    @Override
-    public void autoBuild(EntityPlayer player, Map<String, String> map) {}
 
     @Override
     public PatternState getPatternState() {

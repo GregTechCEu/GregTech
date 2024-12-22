@@ -565,6 +565,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     .put(BlockPos.fromLong(pos), blockInfo.getPredicate()));
         }
 
+        // todo fix this sort
         List<ItemStack> sortedParts = gatherStructureBlocks(worldSceneRenderer.world, blockMap, parts).stream()
                 .sorted((one, two) -> {
                     if (one.isController) return -1;

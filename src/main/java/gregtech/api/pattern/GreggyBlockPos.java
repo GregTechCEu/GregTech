@@ -13,8 +13,7 @@ import java.util.Iterator;
 /**
  * A possibly saner(and mutable) alternative to BlockPos, where getters and setters use indices and axis instead of
  * separate names to avoid stupid code. All methods that return GreggyBlockPos return {@code this} whenever possible,
- * except for .copy() which returns
- * a new instance.
+ * finding the one method that returns a new instance will be left as an exercise to the reader.
  */
 public class GreggyBlockPos {
 
@@ -115,7 +114,6 @@ public class GreggyBlockPos {
     public GreggyBlockPos setAxisRelative(EnumFacing.Axis a1, EnumFacing.Axis a2, int p1, int p2, int p3) {
         set(a1, p1);
         set(a2, p2);
-        // the 3 ordinals add up to 3, so to find the third axis just subtract the other 2 ordinals from 3
         pos[3 - a1.ordinal() - a2.ordinal()] = p3;
         return this;
     }
@@ -131,7 +129,7 @@ public class GreggyBlockPos {
     }
 
     /**
-     * Sets this pos's position to be the same as the other one
+     * Sets this pos'sposition to be the same as the other one
      * 
      * @param other The other pos to get position from
      */
@@ -141,7 +139,7 @@ public class GreggyBlockPos {
     }
 
     /**
-     * BlockPos verion of {@link GreggyBlockPos#from(GreggyBlockPos)}
+     * BlockPos verison of {@link GreggyBlockPos#from(GreggyBlockPos)}
      */
     public GreggyBlockPos from(BlockPos other) {
         pos[0] = other.getX();
@@ -314,19 +312,17 @@ public class GreggyBlockPos {
     }
 
     /**
-     * Validates the facings argument to be of length 3 and use each pair of facings exactly once.
+     * Validates the enum array that each pair of enum ordinals happen exactly once(it is assumed the max ordinal is 5).
      */
-    public static void validateFacingsArray(EnumFacing... facings) {
+    public static <T extends Enum<T>> void validateFacingsArray(T[] facings) {
         if (facings.length != 3) throw new IllegalArgumentException("Facings must be array of length 3!");
 
-        // validate facings, int division so opposite facings mark the same element
-        boolean[] dirs = new boolean[3];
+        int x = 0;
         for (int i = 0; i < 3; i++) {
-            dirs[facings[i].ordinal() / 2] = true;
+            x |= 1 << (facings[i].ordinal() / 2);
         }
 
-        if (!(dirs[0] && dirs[1] && dirs[2]))
-            throw new IllegalArgumentException("The 3 facings must use each axis exactly once!");
+        if (x != 7) throw new IllegalArgumentException("The 3 facings must use each axis exactly once!");
     }
 
     /**
@@ -340,8 +336,6 @@ public class GreggyBlockPos {
         for (int i = 0; i < 3; i++) {
             int a = first.get(facings[i].getAxis());
             int b = second.get(facings[i].getAxis());
-
-            // multiplying by -1 reverses the direction of min(...)
             int mult = facings[i].getAxisDirection().getOffset();
 
             start.set(facings[i].getAxis(), Math.min(a * mult, b * mult) * mult);
@@ -376,13 +370,10 @@ public class GreggyBlockPos {
         for (int i = 0; i < 3; i++) {
             int a = first.get(facings[i].getAxis());
             int b = second.get(facings[i].getAxis());
-
-            // multiplying by -1 reverses the direction of min(...)
             int mult = facings[i].getAxisDirection().getOffset();
 
             start.set(facings[i].getAxis(), Math.min(a * mult, b * mult) * mult);
 
-            // length of the bounding box's axis
             length[i] = Math.abs(a - b);
         }
 
@@ -423,8 +414,7 @@ public class GreggyBlockPos {
     }
 
     /**
-     * BlockPos version of {@link GreggyBlockPos#get(EnumFacing.Axis)}, for if the operation is small enough
-     * allocating more BlockPos is acceptable.
+     * BlockPos version of {@link GreggyBlockPos#get(EnumFacing.Axis)}.
      */
     public static int getAxis(BlockPos pos, EnumFacing.Axis axis) {
         return switch (axis) {

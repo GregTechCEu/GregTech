@@ -75,7 +75,6 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -93,8 +92,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
 
-    // treeset here to get logn time for contains, and for automatically sorting itself
-    // prioritize the manually specified sorter first, defaulting to the hashcode for tiebreakers
     private final NavigableSet<IMultiblockPart> multiblockParts = new TreeSet<>(partComparator);
 
     protected EnumFacing upwardsFacing = EnumFacing.UP;
@@ -409,8 +406,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         GTLog.logger.info(
                 "structure check for " + getClass().getSimpleName() + " took " + (System.nanoTime() - time) + " nanos");
 
-        if (result.getState().isValid()) { // structure check succeeds
-            // if structure isn't formed or cache fails
+        if (result.getState().isValid()) {
             if (result.isFormed()) {
                 // fast rebuild parts
                 if (result.getState() == PatternState.EnumCheckState.VALID_UNCACHED) {
@@ -419,7 +415,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     List<IMultiblockAbilityPart<Object>> addedParts = new ArrayList<>();
 
                     forEachMultiblockPart(name, part -> {
-                        // this part is already added, so igore it
                         if (multiblockParts.contains(part)) return true;
 
                         // todo move below into separate check
@@ -447,20 +442,20 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 return;
             }
 
-            AtomicBoolean valid = new AtomicBoolean(true);
+            boolean[] valid = new boolean[1];
+            valid[0] = true;
 
             forEachMultiblockPart(name, part -> {
                 if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
-                    valid.set(false);
+                    valid[0] = false;
                     return false;
                 }
                 return true;
             });
 
             // since the structure isn't formed, don't invalidate, instead just don't form it
-            if (!valid.get()) return;
+            if (!valid[0]) return;
 
-            // normal rebuild parts
             forEachMultiblockPart(name, part -> {
                 // parts *should* not have this controller added
                 multiblockParts.add(part);
@@ -477,8 +472,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
 
             formStructure(name);
-        } else { // structure check fails
-            if (result.isFormed()) { // invalidate if not already
+        } else {
+            if (result.isFormed()) {
                 invalidateStructure(name);
             }
         }
@@ -640,15 +635,13 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(upwardsFacing.getIndex());
-        // todo see if necessary to sync this
-        // buf.writeLong(GTUtility.boolArrToLong(s));
+        // todo see if necessary to sync structure formed
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
-        // GTUtility.longToBoolArr(buf.readLong(), structuresFormed);
     }
 
     @Override
@@ -658,7 +651,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
         } else if (dataId == STRUCTURE_FORMED) {
-            // it forces me so uh yay
+            // todo rewrite this entire thing :skull:
             String name = buf.readString(65536);
             if ("null".equals(name)) {
                 for (IBlockPattern pattern : structures.values()) {
@@ -794,15 +787,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public List<MultiblockShapeInfo> getPreviewShapes(String substructureName) {
         List<MultiblockShapeInfo> infos = getMatchingShapes();
 
-        // if there is no overriden getMatchingShapes() just return the default one
         if (infos.isEmpty()) {
             // for jei and stuff
             if (getSubstructure(substructureName) == null) createStructurePatterns();
-
             MultiblockShapeInfo info = MultiblockShapeInfo.fromShape(getSubstructure(substructureName));
 
             if (info == null) return Collections.emptyList();
-
             return Collections.singletonList(info);
         }
 
@@ -812,21 +802,40 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * Autobuilds the multiblock, using the {@code substructure} string to select the substructure, or the main
      * structure if invalid.
-     * Then delegates to {@link IBlockPattern#autoBuild(EntityPlayer, Map)}
      */
     public void autoBuild(EntityPlayer player, Map<String, String> map) {
         // todo lang
         RelativeDirection[] directions = new RelativeDirection[3];
         Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicateMap = new Char2ObjectOpenHashMap<>();
-        IBlockPattern structure = getSubstructure(map.getOrDefault("substructure", "MAIN"), "MAIN");
-        char[][][] pattern = structure.getDefaultShape(predicateMap, directions);
-        // call another method so that subclasses can override this to handle the map without copying everything
-        autoBuildInternal(player, pattern, predicateMap, directions);
+        IBlockPattern structure = getSubstructure(map.getOrDefault("substructure", "MAIN"));
+        char[][][] pattern = structure.getDefaultShape(predicateMap, map, directions);
+
+        Char2ObjectMap<BlockInfo> buildCandidates = new Char2ObjectOpenHashMap<>();
+        for (Char2ObjectMap.Entry<TraceabilityPredicate.SimplePredicate> entry : predicateMap.char2ObjectEntrySet()) {
+            if (entry.getValue().buildFunction != null) {
+                buildCandidates.put(entry.getCharKey(), entry.getValue().buildFunction.apply(map));
+            }
+        }
     }
 
-    protected void autoBuildInternal(EntityPlayer player, char[][][] pattern,
-                                     Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicateMap,
-                                     RelativeDirection[] directions) {}
+    /**
+     * @return True iff the item has been successfully removed from the player's inventory(or AE system, satchels, etc)
+     *         or the player is in creative mode.
+     *         Currently only removes from the player's main inventory. The count of the passed in stack does not
+     *         matter, only 1 is removed from the player.
+     */
+    protected static boolean hasAndRemoveItem(EntityPlayer player, ItemStack stack) {
+        if (player.isCreative()) return true;
+
+        for (ItemStack ztack : player.inventory.mainInventory) {
+            if (!ztack.isEmpty() && ztack.isItemEqual(stack)) {
+                ztack.setCount(ztack.getCount() - 1);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     @SideOnly(Side.CLIENT)
     public String[] getDescription() {

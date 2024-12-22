@@ -753,19 +753,4 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                     .longValue();
         }
     }
-
-    private static class BatteryMatchWrapper {
-
-        private final IBatteryData partType;
-        private int amount;
-
-        public BatteryMatchWrapper(IBatteryData partType) {
-            this.partType = partType;
-        }
-
-        public BatteryMatchWrapper increment() {
-            amount++;
-            return this;
-        }
-    }
 }

@@ -6,7 +6,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -56,21 +55,15 @@ public interface IBlockPattern {
      * not exist.
      * 
      * @param map        Pass in an empty map to receive a populated map with the chars in the return mapping to a
-     *                   simpel predicate.
+     *                   simple predicate.
+     * @param keyMap     The map from multiblock builder for autobuild, or null if in other things like previews.
      * @param directions Pass in an array of length 3 to get the directions for the preview, or null if you don't want
      *                   it.
      */
-    // peak nullability, basically the return value can be null but if it is not then no arrays can be null
+    // peak nullability
     char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map,
+                                                              @Nullable Map<String, String> keyMap,
                                                               @Nullable RelativeDirection[] directions);
-
-    /**
-     * Autobuilds a pattern, using the player inventory(and maybe AE soontm) items if in survival.
-     * 
-     * @param player The player initiating this autobuild.
-     * @param map    The map from the multiblock builder.
-     */
-    void autoBuild(EntityPlayer player, Map<String, String> map);
 
     /**
      * Gets the internal pattern state, you should use the one returned from

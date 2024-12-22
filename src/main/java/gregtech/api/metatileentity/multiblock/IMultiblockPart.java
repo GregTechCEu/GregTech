@@ -8,7 +8,7 @@ public interface IMultiblockPart {
     boolean isAttachedToMultiBlock();
 
     /**
-     * Use {@link IMultiblockPart#addToMultiBlock(MultiblockControllerBase, String)} insead!
+     * Use {@link IMultiblockPart#addToMultiBlock(MultiblockControllerBase, String)} instead!
      */
     @Deprecated
     default void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
