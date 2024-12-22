@@ -348,8 +348,9 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                 return;
             }
             if (!importItems.getStackInSlot(0).isEmpty()) {
-                IFluidHandlerItem fluidHandler = importItems.getStackInSlot(0).copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-                if (fluidHandler == null){
+                IFluidHandlerItem fluidHandler = importItems.getStackInSlot(0).copy()
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                if (fluidHandler == null) {
                     return;
                 }
                 FluidStack heldFluid = fluidHandler.drain(Integer.MAX_VALUE, false);
