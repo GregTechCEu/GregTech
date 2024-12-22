@@ -3,7 +3,6 @@ package gregtech.api.graphnet.net;
 import gregtech.api.graphnet.GraphClassType;
 import gregtech.api.graphnet.GraphNetBacker;
 import gregtech.api.graphnet.MultiNodeHelper;
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.logic.NetLogicData;

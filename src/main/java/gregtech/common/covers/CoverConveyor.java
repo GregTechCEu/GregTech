@@ -4,32 +4,16 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
-import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithItemFilter;
-import gregtech.api.graphnet.GraphNetUtility;
-import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
-import gregtech.api.graphnet.edge.NetEdge;
-import gregtech.api.graphnet.edge.SimulatorKey;
-import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.net.NetNode;
-import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
-import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.traverse.RoundRobinCache;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.EQTraverse;
-import gregtech.api.graphnet.traverse.FDTraverse;
-import gregtech.api.graphnet.traverse.RRTraverse;
-import gregtech.api.graphnet.traverse.iter.EdgeDirection;
-import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
-import gregtech.api.graphnet.traverse.iter.NetIterator;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.function.BiIntConsumer;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
@@ -87,7 +71,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -244,237 +227,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
     protected int performTransfer(@NotNull IItemHandler sourceHandler, @NotNull IItemHandler destHandler,
                                   boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
                                   @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
-        // if the source handler or the dest handler is a pipe, perform a pipenet transfer. Otherwise, do a simple one.
-        if (sourceHandler instanceof ItemCapabilityObject s) {
-            if (destHandler instanceof ItemCapabilityObject d) {
-                return transferWithinNet(s.getNode(), d.getNode(), byFilterSlot, minTransfer, maxTransfer,
-                        transferReport);
-            } else {
-                PipeCapabilityWrapper wrapper = s.getNode().getTileEntity().getWrapperForNode(s.getNode());
-                if (wrapper instanceof NodeManagingPCW managingPCW) {
-                    // if export, we know we're on the pipe; otherwise, we're on the tile.
-                    EnumFacing facing = conveyorMode == ConveyorMode.EXPORT ? getAttachedSide() :
-                            getAttachedSide().getOpposite();
-                    NetNode node = managingPCW.getNodeForFacing(facing);
-                    if (node == null) return 0;
-                    return transferWithinNet(s.getNode(), node, byFilterSlot, minTransfer, maxTransfer, transferReport);
-                }
-                return 0;
-            }
-        } else {
-            if (destHandler instanceof ItemCapabilityObject d) {
-                PipeCapabilityWrapper wrapper = d.getNode().getTileEntity().getWrapperForNode(d.getNode());
-                if (wrapper instanceof NodeManagingPCW managingPCW) {
-                    // if import, we know we're on the pipe; otherwise, we're on the tile.
-                    EnumFacing facing = conveyorMode == ConveyorMode.IMPORT ? getAttachedSide() :
-                            getAttachedSide().getOpposite();
-                    NetNode node = managingPCW.getNodeForFacing(facing);
-                    if (node == null) return 0;
-                    return transferWithinNet(node, d.getNode(), byFilterSlot, minTransfer, maxTransfer, transferReport);
-                }
-                return 0;
-            } else {
-                return simpleTransfer(sourceHandler, destHandler, byFilterSlot, minTransfer, maxTransfer,
-                        transferReport);
-            }
-        }
-    }
-
-    protected RoundRobinCache getRoundRobinCache(boolean simulate) {
-        return simulate ? roundRobinCache.copy() : roundRobinCache;
-    }
-
-    /**
-     * Performs transfer between two nodes of a pipenet.
-     *
-     * @param sourceNode     the node to pull from
-     * @param destNode       the node to push to
-     * @param byFilterSlot   whether to perform the transfer by filter slot.
-     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
-     *                       Each filter slot will report its transfer before the next slot is calculated.
-     * @return how much was transferred in total.
-     */
-    protected int transferWithinNet(@NotNull NetNode sourceNode, @NotNull NetNode destNode,
-                                    boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
-                                    @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
-        // first, evaluate whether we're the only bridge between two areas in a group
-        NetEdge bridge = sourceNode.getNet().getEdge(sourceNode, destNode);
-        if (bridge == null || !GraphNetUtility.isOnlyBridge(bridge)) return 0;
-        // second, build frontier information. If we have no candidates for either frontier, exit early.
-        NetClosestIterator sourceFrontier = new NetClosestIterator(sourceNode,
-                GraphNetUtility.bridgeFiltered(EdgeDirection.INCOMING, sourceNode, destNode));
-        Map<NetNode, IItemHandler> sourceCandidates = new Object2ObjectOpenHashMap<>();
-        while (sourceFrontier.hasNext()) {
-            NetNode next = sourceFrontier.next();
-            if (next instanceof NodeExposingCapabilities cap) {
-                IItemHandler handler = cap.getProvider()
-                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, cap.exposedFacing());
-                if (handler != null && !(handler instanceof ItemCapabilityObject))
-                    sourceCandidates.put(next, handler);
-            }
-        }
-        if (sourceCandidates.isEmpty()) return 0;
-        NetClosestIterator destFrontier = new NetClosestIterator(destNode,
-                GraphNetUtility.bridgeFiltered(EdgeDirection.OUTGOING, sourceNode, destNode));
-        Map<NetNode, IItemHandler> destinationCandidates = new Object2ObjectOpenHashMap<>();
-        while (destFrontier.hasNext()) {
-            NetNode next = destFrontier.next();
-            if (next instanceof NodeExposingCapabilities cap) {
-                IItemHandler handler = cap.getProvider()
-                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, cap.exposedFacing());
-                if (handler != null && !(handler instanceof ItemCapabilityObject))
-                    destinationCandidates.put(next, handler);
-            }
-        }
-        if (destinationCandidates.isEmpty()) return 0;
-        // third, build merge information from source candidates
         ItemFilterContainer filter = this.getItemFilter();
         byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
-        Int2IntArrayMap extractableByFilterSlot = new Int2IntArrayMap();
-        Int2ObjectArrayMap<MergabilityInfo<ItemTestObject>> filterSlotToMergability = new Int2ObjectArrayMap<>();
-        ItemHandlerList handlerSourceCandidates = new ItemHandlerList(sourceCandidates.values());
-        for (int i = 0; i < handlerSourceCandidates.getSlots(); i++) {
-            ItemStack stack = handlerSourceCandidates.extractItem(i, Integer.MAX_VALUE, true);
-            int extracted = stack.getCount();
-            if (extracted == 0) continue;
-            MatchResult match = null;
-            if (filter == null || (match = filter.match(stack)).isMatched()) {
-                int filterSlot = -1;
-                if (byFilterSlot) {
-                    filterSlot = match.getFilterIndex();
-                }
-                extractableByFilterSlot.merge(filterSlot, extracted, Integer::sum);
-                final int handlerSlot = i;
-                filterSlotToMergability.compute(filterSlot, (k, v) -> {
-                    if (v == null) v = new MergabilityInfo<>();
-                    v.add(handlerSlot, new ItemTestObject(stack), extracted);
-                    return v;
-                });
-            }
-        }
-        var iter = extractableByFilterSlot.int2IntEntrySet().fastIterator();
-        int totalTransfer = 0;
-        // fourth, perform transfer based on merge information
-        while (iter.hasNext()) {
-            var next = iter.next();
-            int filterSlot = next.getIntKey();
-            int min = minTransfer.applyAsInt(filterSlot);
-            int max = maxTransfer.applyAsInt(filterSlot);
-            if (max < min || max <= 0) continue;
-            if (next.getIntValue() >= min) {
-                MergabilityInfo<ItemTestObject> mergabilityInfo = filterSlotToMergability.get(filterSlot);
-                MergabilityInfo<ItemTestObject>.Merge merge = mergabilityInfo.getLargestMerge();
-                // since we can't guarantee the transferability of multiple stack types while just simulating,
-                // if the largest merge is not large enough we have to give up.
-                if (merge.getCount() >= min) {
-                    int slotTransfer = 0;
-                    int transfer = Math.min(merge.getCount(), max);
-                    // only simulate to test min if necessary
-                    if (min > 0) {
-                        transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer,
-                                merge.getTestObject(),
-                                sourceFrontier, sourceCandidates, destFrontier, destinationCandidates,
-                                SimulatorKey.getNewSimulatorInstance());
-                        if (transfer < min) continue;
-                    }
-                    transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer, merge.getTestObject(),
-                            sourceFrontier, sourceCandidates, destFrontier, destinationCandidates, null);
-                    int remaining = max - transfer;
-                    slotTransfer += transfer;
-                    if (remaining <= 0) continue;
-                    for (MergabilityInfo<ItemTestObject>.Merge otherMerge : mergabilityInfo
-                            .getNonLargestMerges(merge)) {
-                        transfer = Math.min(otherMerge.getCount(), remaining);
-                        // we don't have to simulate here since we no longer need to respect the min
-                        transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer,
-                                merge.getTestObject(),
-                                sourceFrontier, sourceCandidates, destFrontier, destinationCandidates, null);
-                        remaining -= transfer;
-                        slotTransfer += transfer;
-                        if (remaining <= 0) break;
-                    }
-                    if (transferReport != null) transferReport.accept(filterSlot, slotTransfer);
-                    totalTransfer += slotTransfer;
-                }
-            }
-        }
-        return totalTransfer;
-    }
-
-    protected int attemptNetTransfer(NetGroup group, NetEdge bridge, int limit, ItemTestObject testObject,
-                                     NetIterator sources, Map<NetNode, IItemHandler> sourceCandidates,
-                                     NetIterator targets, Map<NetNode, IItemHandler> destCandidates,
-                                     @Nullable SimulatorKey key) {
-        return switch (distributionMode) {
-            case FLOOD -> FDTraverse.flood(group,
-                    (n, f) -> {
-                        if (key == null) ItemCapabilityObject.reportFlow(n, f, testObject);
-                    },
-                    (e, f) -> ItemCapabilityObject.reportFlow(e, f, testObject, key, true),
-                    e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(
-                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
-                            0,
-                    n -> getSupply(n, testObject, sources.hasSeen(n)), null, null);
-            case EQUALIZED -> EQTraverse.equalDistribution(group,
-                    (n, f) -> {
-                        if (key == null) ItemCapabilityObject.reportFlow(n, f, testObject);
-                    },
-                    (e, f) -> ItemCapabilityObject.reportFlow(e, f, testObject, key, true),
-                    e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(
-                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
-                            0,
-                    n -> getSupply(n, testObject, sources.hasSeen(n)), null, null);
-            case ROUND_ROBIN -> {
-                roundRobinCache.refresh(sources, targets);
-                yield RRTraverse.roundRobin(group, getRoundRobinCache(key != null)
-                        .buildSupplier(sourceCandidates.keySet(), destCandidates.keySet()),
-                        (n, f) -> {
-                            if (key == null) ItemCapabilityObject.reportFlow(n, f, testObject);
-                        },
-                        (e, f) -> ItemCapabilityObject.reportFlow(e, f, testObject, key, true),
-                        e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                                GTUtility.safeCastLongToInt(
-                                        n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
-                                0,
-                        n -> getSupply(n, testObject, sources.hasSeen(n)),
-                        null, null);
-            }
-        };
-    }
-
-    protected int getSupply(NetNode node, ItemTestObject testObject, boolean supply) {
-        return ItemCapabilityObject.getSupply(node, testObject, supply);
-    }
-
-    /**
-     * Performs transfer without involving the pipenet
-     *
-     * @param sourceHandler  the handler to pull from
-     * @param destHandler    the handler to push to
-     * @param byFilterSlot   whether to perform the transfer by filter slot.
-     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
-     *                       Each filter slot will report its transfer before the next slot is calculated.
-     * @return how much was transferred in total.
-     */
-    protected int simpleTransfer(@NotNull IItemHandler sourceHandler, @NotNull IItemHandler destHandler,
-                                 boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
-                                 @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
-        ItemFilterContainer filter = this.getItemFilter();
-        byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
-        Int2IntArrayMap extractableByFilterSlot = new Int2IntArrayMap();
+        Int2IntArrayMap containedByFilterSlot = new Int2IntArrayMap();
         Int2ObjectArrayMap<MergabilityInfo<ItemTestObject>> filterSlotToMergability = new Int2ObjectArrayMap<>();
         for (int i = 0; i < sourceHandler.getSlots(); i++) {
-            ItemStack stack = sourceHandler.extractItem(i, Integer.MAX_VALUE, true);
+            ItemStack stack = sourceHandler.getStackInSlot(i);
             int extracted = stack.getCount();
             if (extracted == 0) continue;
             MatchResult match = null;
@@ -483,7 +241,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 if (byFilterSlot) {
                     filterSlot = match.getFilterIndex();
                 }
-                extractableByFilterSlot.merge(filterSlot, extracted, Integer::sum);
+                containedByFilterSlot.merge(filterSlot, extracted, Integer::sum);
                 final int handlerSlot = i;
                 filterSlotToMergability.compute(filterSlot, (k, v) -> {
                     if (v == null) v = new MergabilityInfo<>();
@@ -492,7 +250,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 });
             }
         }
-        var iter = extractableByFilterSlot.int2IntEntrySet().fastIterator();
+        var iter = containedByFilterSlot.int2IntEntrySet().fastIterator();
         int totalTransfer = 0;
         while (iter.hasNext()) {
             var next = iter.next();
@@ -508,27 +266,27 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 // if the largest merge is not large enough we have to give up.
                 if (merge.getCount() >= min) {
                     int transfer = Math.min(merge.getCount(), max);
-                    transfer = simpleInsert(destHandler, merge.getTestObject(), transfer, true);
+                    transfer = doInsert(destHandler, merge.getTestObject(), transfer, true);
                     if (transfer < min) continue;
                     int toExtract = transfer;
                     for (int handlerSlot : merge.getHandlerSlots()) {
                         toExtract -= sourceHandler.extractItem(handlerSlot, toExtract, false).getCount();
                         if (toExtract == 0) break;
                     }
-                    simpleInsert(destHandler, merge.getTestObject(), transfer - toExtract, false);
+                    doInsert(destHandler, merge.getTestObject(), transfer - toExtract, false);
                     int remaining = max - transfer + toExtract;
                     slotTransfer += transfer;
                     if (remaining <= 0) continue;
                     for (MergabilityInfo<ItemTestObject>.Merge otherMerge : mergabilityInfo
                             .getNonLargestMerges(merge)) {
                         transfer = Math.min(otherMerge.getCount(), remaining);
-                        transfer = simpleInsert(destHandler, merge.getTestObject(), transfer, true);
+                        transfer = doInsert(destHandler, merge.getTestObject(), transfer, true);
                         toExtract = transfer;
                         for (int handlerSlot : otherMerge.getHandlerSlots()) {
                             toExtract -= sourceHandler.extractItem(handlerSlot, toExtract, false).getCount();
                             if (toExtract == 0) break;
                         }
-                        simpleInsert(destHandler, otherMerge.getTestObject(), transfer - toExtract, false);
+                        doInsert(destHandler, otherMerge.getTestObject(), transfer - toExtract, false);
                         remaining -= transfer;
                         slotTransfer += transfer;
                         if (remaining <= 0) break;
@@ -541,12 +299,27 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         return totalTransfer;
     }
 
-    protected int simpleInsert(@NotNull IItemHandler destHandler, ItemTestObject testObject, int count,
+    protected RoundRobinCache getRoundRobinCache(boolean simulate) {
+        return simulate ? roundRobinCache.copy() : roundRobinCache;
+    }
+
+    protected int getSupplyOrDemand(NetNode node, ItemTestObject testObject, boolean supply) {
+        return ItemCapabilityObject.getSupplyOrDemand(node, testObject, supply);
+    }
+
+    protected int doExtract(@NotNull IItemHandler handler, ItemTestObject testObject, int count, boolean simulate) {}
+
+    protected int simpleExtract(@NotNull IItemHandler handler, ItemTestObject testObject, int count,
+                                boolean simulate) {}
+
+    protected int doInsert(@NotNull IItemHandler handler, ItemTestObject testObject, int count, boolean simulate) {}
+
+    protected int simpleInsert(@NotNull IItemHandler handler, ItemTestObject testObject, int count,
                                boolean simulate) {
         int available = count;
-        for (int i = 0; i < destHandler.getSlots(); i++) {
-            ItemStack toInsert = testObject.recombine(Math.min(available, destHandler.getSlotLimit(i)));
-            available -= toInsert.getCount() - destHandler.insertItem(i, toInsert, simulate).getCount();
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack toInsert = testObject.recombine(Math.min(available, handler.getSlotLimit(i)));
+            available -= toInsert.getCount() - handler.insertItem(i, toInsert, simulate).getCount();
             if (available == 0) return count;
         }
         return count - available;

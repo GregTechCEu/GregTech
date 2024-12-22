@@ -42,7 +42,7 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
             }
             if (tileEntity instanceof PipeTileEntity pipeTile) {
                 String builder = "{" +
-                        ", mark: " + pipeTile.getPaintingColor() +
+                        ", mark: " + pipeTile.getVisualColor() +
                         ", open: " + pipeTile.getConnectionMask() +
                         ", blocked: " + pipeTile.getBlockedMask() +
                         "}";

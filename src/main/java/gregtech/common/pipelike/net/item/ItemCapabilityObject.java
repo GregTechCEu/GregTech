@@ -1,8 +1,8 @@
 package gregtech.common.pipelike.net.item;
 
-import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
-import gregtech.api.graphnet.edge.NetEdge;
-import gregtech.api.graphnet.edge.SimulatorKey;
+import gregtech.api.graphnet.logic.ChannelCountLogic;
+import gregtech.api.graphnet.logic.ThroughputLogic;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
@@ -11,8 +11,11 @@ import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.graphnet.traverse.FDTraverse;
+import gregtech.api.graphnet.traverse.iter.EdgeDirection;
+import gregtech.api.graphnet.traverse.iter.EdgeSelector;
+import gregtech.api.graphnet.traverse.iter.ResilientNetClosestIterator;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.MapUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -20,9 +23,12 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.EnumMap;
 
 public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler {
@@ -78,21 +84,53 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         this.transferring = true;
 
         int flow = stack.getCount();
-        SimulatorKey key = simulate ? SimulatorKey.getNewSimulatorInstance() : null;
         ItemTestObject testObject = new ItemTestObject(stack);
-        int report = FDTraverse.flood(node.getGroupSafe(),
-                (n, f) -> {
-                    if (n != node && !simulate) reportFlow(n, f, testObject);
-                },
-                (e, f) -> reportFlow(e, f, testObject, key, true),
-                e -> e instanceof AbstractNetFlowEdge n ?
-                        GTUtility.safeCastLongToInt(
-                                n.getFlowLimit(testObject, node.getNet(), GTUtility.getTick(), key)) :
-                        0,
-                n -> n == node ? flow : getSupply(n, testObject, false), null, null);
-
+        ResilientNetClosestIterator iter = new ResilientNetClosestIterator(node,
+                EdgeSelector.filtered(EdgeDirection.OUTGOING, NetEdge.standardBlacklist(testObject)));
+        Object2IntOpenHashMap<NetNode> availableDemandCache = new Object2IntOpenHashMap<>();
+        Object2IntOpenHashMap<NetNode> flowLimitCache = new Object2IntOpenHashMap<>();
+        main:
+        while (iter.hasNext()) {
+            if (flow <= 0) break;
+            final NetNode next = iter.next();
+            int limit = Math.min(MapUtil.computeIfAbsent(flowLimitCache, next, n -> getFlowLimit(n, testObject)), flow);
+            if (limit <= 0) {
+                iter.markInvalid(next);
+                continue;
+            }
+            int demand = MapUtil.computeIfAbsent(availableDemandCache, next,
+                    n -> getSupplyOrDemand(n, testObject, false));
+            if (demand <= 0) continue;
+            demand = Math.min(demand, limit);
+            NetEdge span;
+            NetNode trace = next;
+            ArrayDeque<NetNode> seen = new ArrayDeque<>();
+            seen.add(next);
+            while ((span = iter.getSpanningTreeEdge(trace)) != null) {
+                trace = span.getOppositeNode(trace);
+                if (trace == null) continue main;
+                int l = MapUtil.computeIfAbsent(flowLimitCache, trace, n -> getFlowLimit(n, testObject));
+                if (l == 0) {
+                    iter.markInvalid(node);
+                    continue main;
+                }
+                demand = Math.min(demand, l);
+                seen.addFirst(trace);
+            }
+            flow -= demand;
+            for (NetNode n : seen) {
+                if (!simulate) reportFlow(n, demand, testObject);
+                int remaining = flowLimitCache.getInt(n) - demand;
+                flowLimitCache.put(n, remaining);
+                if (remaining <= 0) {
+                    iter.markInvalid(n);
+                }
+            }
+            if (!simulate) reportExtractedInserted(next, demand, testObject, false);
+            availableDemandCache.put(next, availableDemandCache.getInt(next) - demand);
+        }
         this.transferring = false;
-        return testObject.recombine(stack.getCount() - report);
+        return testObject.recombine(flow);
     }
 
     protected @NotNull ItemStack extractItem(int slot, int amount, boolean simulate, EnumFacing side) {
@@ -100,31 +138,38 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         return ItemStack.EMPTY;
     }
 
-    public static void reportFlow(NetEdge edge, int flow, ItemTestObject testObject, SimulatorKey key,
-                                  boolean sourceBias) {
-        NetNode node = sourceBias ? edge.getSource() : edge.getTarget();
-        if (node == null) return;
-        if (edge instanceof AbstractNetFlowEdge n) {
-            n.consumeFlowLimit(testObject, node.getNet(), flow, GTUtility.getTick(), key);
+    protected int getFlowLimit(NetNode node, ItemTestObject testObject) {
+        ThroughputLogic throughput = node.getData().getLogicEntryNullable(ThroughputLogic.TYPE);
+        if (throughput == null) return Integer.MAX_VALUE;
+        ItemFlowLogic history = node.getData().getLogicEntryNullable(ItemFlowLogic.TYPE);
+        if (history == null) return GTUtility.safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT);
+        Object2LongMap<ItemTestObject> sum = history.getSum();
+        if (sum.isEmpty()) return GTUtility.safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT);
+        if (sum.size() < node.getData().getLogicEntryDefaultable(ChannelCountLogic.TYPE).getValue() ||
+                sum.containsKey(testObject)) {
+            return GTUtility
+                    .safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT - sum.getLong(testObject));
         }
-        if (key == null) {
-            ItemFlowLogic logic = node.getData().getLogicEntryNullable(ItemFlowLogic.TYPE);
-            if (logic == null) {
-                logic = ItemFlowLogic.TYPE.getNew();
-                node.getData().setLogicEntry(logic);
-            }
-            logic.recordFlow(GTUtility.getTick(), testObject.recombine(flow));
-        }
+        return 0;
     }
 
     public static void reportFlow(NetNode node, int flow, ItemTestObject testObject) {
+        ItemFlowLogic logic = node.getData().getLogicEntryNullable(ItemFlowLogic.TYPE);
+        if (logic == null) {
+            logic = ItemFlowLogic.TYPE.getNew();
+            node.getData().setLogicEntry(logic);
+        }
+        logic.recordFlow(GTUtility.getTick(), testObject.recombine(flow));
+    }
+
+    public static void reportExtractedInserted(NetNode node, int flow, ItemTestObject testObject, boolean extracted) {
         if (flow == 0) return;
         if (node instanceof NodeExposingCapabilities exposer) {
             IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
                     exposer.exposedFacing());
             if (handler != null) {
                 // positive flow is supply, aka we pulled flow from this node
-                if (flow > 0) {
+                if (extracted) {
                     for (int i = 0; i < handler.getSlots(); i++) {
                         ItemStack stack = handler.extractItem(i, flow, true);
                         if (testObject.test(stack)) {
@@ -135,16 +180,16 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     }
                 } else {
                     for (int i = 0; i < handler.getSlots(); i++) {
-                        ItemStack stack = testObject.recombineSafe(-flow);
-                        flow += stack.getCount() - handler.insertItem(i, stack, false).getCount();
-                        if (flow == 0) return;
+                        ItemStack stack = testObject.recombineSafe(flow);
+                        flow -= stack.getCount() - handler.insertItem(i, stack, false).getCount();
+                        if (flow <= 0) return;
                     }
                 }
             }
         }
     }
 
-    public static int getSupply(NetNode node, ItemTestObject testObject, boolean supply) {
+    public static int getSupplyOrDemand(NetNode node, ItemTestObject testObject, boolean supply) {
         if (node instanceof NodeExposingCapabilities exposer) {
             IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
                     exposer.exposedFacing());
@@ -162,7 +207,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     for (int i = 0; i < handler.getSlots(); i++) {
                         sum += stack.getCount() - handler.insertItem(i, stack, true).getCount();
                     }
-                    return -sum;
+                    return sum;
                 }
             }
         }

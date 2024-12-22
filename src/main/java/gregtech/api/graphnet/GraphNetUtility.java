@@ -1,18 +1,14 @@
 package gregtech.api.graphnet;
 
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.traverse.iter.EdgeDirection;
 import gregtech.api.graphnet.traverse.iter.EdgeSelector;
 import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
-import org.jgrapht.Graph;
-
-import java.util.Set;
 
 public final class GraphNetUtility {
 
@@ -43,17 +39,6 @@ public final class GraphNetUtility {
         GraphEdge e2 = GraphEdge.unwrap(sourceNode.getNet().getEdge(destNode, sourceNode));
         GraphVertex v1 = GraphVertex.unwrap(sourceNode);
         GraphVertex v2 = GraphVertex.unwrap(destNode);
-        return new EdgeSelector() {
-
-            @Override
-            public <V, E> Set<E> selectEdges(Graph<V, E> graph, V vertex) {
-                Set<E> s = basis.selectEdges(graph, vertex);
-                if (vertex == v1 || vertex == v2) {
-                    s = new ObjectOpenHashSet<>(s);
-                    s.removeIf(e -> e == e1 || e == e2);
-                }
-                return s;
-            }
-        };
+        return null;
     }
 }

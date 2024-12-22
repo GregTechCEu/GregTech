@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.graph;
 
-import gregtech.api.graphnet.edge.NetEdge;
+import gregtech.api.graphnet.net.NetEdge;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;

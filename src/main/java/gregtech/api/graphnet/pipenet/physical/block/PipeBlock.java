@@ -129,7 +129,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                         connectTile(tile, null, facing);
                 }
                 // second check -- connect to matching mark pipes if side matches or config allows.
-                else if (tile.getPaintingColor() == other.getPaintingColor() && (facing == placedBlockSearchSide ||
+                else if (tile.getPaintedColor() == other.getPaintedColor() && (facing == placedBlockSearchSide ||
                         !ConfigHolder.machines.gt6StylePipesCables)) {
                             if (coverCheck(tile, other, facing)) connectTile(tile, other, facing);
                         }
@@ -446,7 +446,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                                 @NotNull EnumDyeColor color) {
         if (getStructure().isPaintable()) {
             PipeTileEntity tile = getTileEntity(world, pos);
-            if (tile != null && tile.getPaintingColor() != color.colorValue) {
+            if (tile != null && tile.getVisualColor() != color.colorValue) {
                 tile.setPaintingColor(color.colorValue, false);
                 return true;
             }
@@ -463,7 +463,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         PipeTileEntity tile = getTileEntity(world, blockPos);
         if (tile != null) {
-            return getStructure().getModel().getParticleTexture(tile.getPaintingColor(), null);
+            return getStructure().getModel().getParticleTexture(tile.getVisualColor(), null);
         }
         return null;
     }

@@ -106,19 +106,19 @@ public class CoverRoboticArm extends CoverConveyor {
     }
 
     @Override
-    protected int simpleInsert(@NotNull IItemHandler destHandler, ItemTestObject testObject, int count,
+    protected int simpleInsert(@NotNull IItemHandler handler, ItemTestObject testObject, int count,
                                boolean simulate) {
         if (transferMode == TransferMode.KEEP_EXACT) {
             assert getItemFilter() != null;
             int kept = getItemFilter().getTransferLimit(testObject.recombine());
-            count = Math.min(count, kept - computeContained(destHandler, testObject));
+            count = Math.min(count, kept - computeContained(handler, testObject));
         }
-        return super.simpleInsert(destHandler, testObject, count, simulate);
+        return super.simpleInsert(handler, testObject, count, simulate);
     }
 
     @Override
-    protected int getSupply(NetNode node, ItemTestObject testObject, boolean supply) {
-        if (transferMode != TransferMode.KEEP_EXACT || supply) return super.getSupply(node, testObject, supply);
+    protected int getSupplyOrDemand(NetNode node, ItemTestObject testObject, boolean supply) {
+        if (transferMode != TransferMode.KEEP_EXACT || supply) return super.getSupplyOrDemand(node, testObject, supply);
         if (node instanceof NodeExposingCapabilities exposer) {
             IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
                     exposer.exposedFacing());

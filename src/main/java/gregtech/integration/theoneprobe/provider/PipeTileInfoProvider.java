@@ -21,7 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -92,16 +92,11 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
                     .text(" " + logic.getLast().getLocalizedName());
         }
 
-        Object2IntOpenHashMap<FluidTestObject> counts = new Object2IntOpenHashMap<>();
-        for (var memory : logic.getMemory().values()) {
-            for (FluidStack stack : memory) {
-                counts.merge(new FluidTestObject(stack), stack.amount, Integer::sum);
-            }
-        }
+        Object2LongMap<FluidTestObject> counts = logic.getSum();
 
-        for (var entry : counts.object2IntEntrySet()) {
+        for (var entry : counts.object2LongEntrySet()) {
             FluidStack stack = entry.getKey().recombine();
-            String value = TextFormattingUtil.formatNumbers(entry.getIntValue() * 20L / FluidFlowLogic.MEMORY_TICKS);
+            String value = TextFormattingUtil.formatNumbers(20 * entry.getLongValue() / FluidFlowLogic.MEMORY_TICKS);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .element(new FluidStackElement(stack))
                     .text(" §b" + value + " L/s §f" + stack.getLocalizedName());
@@ -119,16 +114,11 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
                     .text(" " + logic.getLast().getDisplayName());
         }
 
-        Object2IntOpenHashMap<ItemTestObject> counts = new Object2IntOpenHashMap<>();
-        for (var memory : logic.getMemory().values()) {
-            for (ItemStack stack : memory) {
-                counts.merge(new ItemTestObject(stack), stack.getCount(), Integer::sum);
-            }
-        }
+        Object2LongMap<ItemTestObject> counts = logic.getSum();
 
-        for (var entry : counts.object2IntEntrySet()) {
+        for (var entry : counts.object2LongEntrySet()) {
             ItemStack stack = entry.getKey().recombine();
-            String value = TextFormattingUtil.formatNumbers(entry.getIntValue() * 20L / ItemFlowLogic.MEMORY_TICKS);
+            String value = TextFormattingUtil.formatNumbers(20 * entry.getLongValue() / ItemFlowLogic.MEMORY_TICKS);
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .item(stack)
                     .text(" §b" + value + " /s §f" + stack.getDisplayName());

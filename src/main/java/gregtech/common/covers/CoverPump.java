@@ -10,25 +10,19 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.graphnet.GraphNetUtility;
-import gregtech.api.graphnet.edge.AbstractNetFlowEdge;
-import gregtech.api.graphnet.edge.NetEdge;
-import gregtech.api.graphnet.edge.SimulatorKey;
 import gregtech.api.graphnet.group.NetGroup;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.traverse.RoundRobinCache;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.traverse.EQTraverse;
-import gregtech.api.graphnet.traverse.FDTraverse;
-import gregtech.api.graphnet.traverse.RRTraverse;
 import gregtech.api.graphnet.traverse.iter.EdgeDirection;
 import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
 import gregtech.api.graphnet.traverse.iter.NetIterator;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.BiIntConsumer;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
@@ -396,49 +390,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                                      NetIterator sources, Map<NetNode, IFluidHandler> sourceCandidates,
                                      NetIterator targets, Map<NetNode, IFluidHandler> destCandidates,
                                      @Nullable SimulatorKey key) {
-        return switch (distributionMode) {
-            case FLOOD -> FDTraverse.flood(group,
-                    (n, f) -> {
-                        if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
-                    },
-                    (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
-                    e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(
-                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
-                            0,
-                    n -> getSupply(n, testObject, sources.hasSeen(n)), FluidCapabilityObject.isLossyNode(testObject),
-                    FluidCapabilityObject.handleLoss(testObject));
-            case EQUALIZED -> EQTraverse.equalDistribution(group,
-                    (n, f) -> {
-                        if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
-                    },
-                    (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
-                    e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                            GTUtility.safeCastLongToInt(
-                                    n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
-                            0,
-                    n -> getSupply(n, testObject, sources.hasSeen(n)), FluidCapabilityObject.isLossyNode(testObject),
-                    FluidCapabilityObject.handleLoss(testObject));
-            case ROUND_ROBIN -> {
-                roundRobinCache.refresh(sources, targets);
-                yield RRTraverse.roundRobin(group, getRoundRobinCache(key != null)
-                        .buildSupplier(sourceCandidates.keySet(), destCandidates.keySet()),
-                        (n, f) -> {
-                            if (key == null) FluidCapabilityObject.reportFlow(n, f, testObject);
-                        },
-                        (e, f) -> FluidCapabilityObject.reportFlow(e, f, testObject, key, true),
-                        e -> e == bridge ? limit : e instanceof AbstractNetFlowEdge n ?
-                                GTUtility.safeCastLongToInt(
-                                        n.getFlowLimit(testObject, group.net, GTUtility.getTick(), key)) :
-                                0,
-                        n -> getSupply(n, testObject, sources.hasSeen(n)),
-                        FluidCapabilityObject.isLossyNode(testObject), FluidCapabilityObject.handleLoss(testObject));
-            }
-        };
+        return 0;
     }
 
     protected int getSupply(NetNode node, FluidTestObject testObject, boolean supply) {
-        return FluidCapabilityObject.getSupply(node, testObject, supply);
+        return FluidCapabilityObject.getSupplyOrDemand(node, testObject, supply);
     }
 
     /**

@@ -1,10 +1,9 @@
-package gregtech.api.graphnet.edge;
+package gregtech.api.graphnet.net;
 
 import gregtech.api.GTValues;
 import gregtech.api.graphnet.GraphClassType;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
-import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.predicate.EdgePredicateHandler;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
 
@@ -16,6 +15,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 public class NetEdge implements INBTSerializable<NBTTagCompound> {
 
@@ -108,5 +109,9 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
 
     public GraphClassType<? extends NetEdge> getType() {
         return TYPE;
+    }
+
+    public static Predicate<Object> standardBlacklist(IPredicateTestObject testObject) {
+        return o -> o instanceof NetEdge e && !e.test(testObject);
     }
 }

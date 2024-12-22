@@ -2,11 +2,8 @@ package gregtech.common.pipelike.net.item;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.filter.CoverWithItemFilter;
-import gregtech.api.graphnet.GraphClassType;
-import gregtech.api.graphnet.edge.FlowBufferTickProvider;
-import gregtech.api.graphnet.edge.NetEdge;
-import gregtech.api.graphnet.edge.NetFlowEdge;
 import gregtech.api.graphnet.net.IGraphNet;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
@@ -27,7 +24,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WorldItemNet extends WorldPipeNet implements FlowBufferTickProvider {
+public class WorldItemNet extends WorldPipeNet {
 
     public static final Capability<?>[] CAPABILITIES = new Capability[] {
             CapabilityItemHandler.ITEM_HANDLER_CAPABILITY };
@@ -91,18 +88,11 @@ public class WorldItemNet extends WorldPipeNet implements FlowBufferTickProvider
         return new NodeManagingPCW(owner, node, map, 0, 0);
     }
 
-    @Override
-    public @NotNull GraphClassType<? extends NetEdge> getDefaultEdgeType() {
-        return NetFlowEdge.TYPE;
+    public static int getBufferTicks() {
+        return 10;
     }
 
-    @Override
-    public int getFlowBufferTicks() {
-        return 2;
-    }
-
-    @Override
-    public int getRegenerationTime() {
+    public static int getBufferRegenerationFactor() {
         return 5;
     }
 

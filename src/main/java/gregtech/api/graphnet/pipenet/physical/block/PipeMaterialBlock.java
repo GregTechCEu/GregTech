@@ -128,7 +128,7 @@ public abstract class PipeMaterialBlock extends PipeBlock {
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         PipeMaterialTileEntity tile = getTileEntity(world, blockPos);
         if (tile != null) {
-            return getStructure().getModel().getParticleTexture(tile.getPaintingColor(), tile.getMaterial());
+            return getStructure().getModel().getParticleTexture(tile.getVisualColor(), tile.getMaterial());
         }
         return null;
     }

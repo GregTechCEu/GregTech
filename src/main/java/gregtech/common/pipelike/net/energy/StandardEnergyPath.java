@@ -1,9 +1,9 @@
 package gregtech.common.pipelike.net.energy;
 
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.group.NetGroup;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.PathBuilder;
 import gregtech.api.graphnet.path.SingletonNetPath;

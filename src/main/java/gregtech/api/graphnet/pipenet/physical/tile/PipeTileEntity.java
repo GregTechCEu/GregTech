@@ -191,6 +191,15 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
                 (cover = getCoverHolder().getCoverAtSide(facing)) != null && cover.forcePipeRenderConnection();
     }
 
+    public void setRenderClosed(EnumFacing facing, boolean closed) {
+        if (closed) {
+            this.renderMask |= 1 << facing.ordinal();
+        } else {
+            this.renderMask &= ~(1 << facing.ordinal());
+        }
+        syncConnected();
+    }
+
     public boolean renderClosed(EnumFacing facing) {
         return (this.renderMask & 1 << facing.ordinal()) > 0;
     }
@@ -237,7 +246,11 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     // paint //
 
-    public int getPaintingColor() {
+    public int getPaintedColor() {
+        return paintingColor;
+    }
+
+    public int getVisualColor() {
         return isPainted() ? paintingColor : getDefaultPaintingColor();
     }
 
@@ -388,6 +401,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
         TileEntity tile = getNeighbor(facing);
         if (tile == null || tile instanceof PipeTileEntity) {
+            if (tile == null) setRenderClosed(facing, false);
             setAllIdle(facing);
             return;
         }
@@ -747,7 +761,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         return state.withProperty(AbstractPipeModel.THICKNESS_PROPERTY, this.getStructure().getRenderThickness())
                 .withProperty(AbstractPipeModel.CLOSED_MASK_PROPERTY, renderMask)
                 .withProperty(AbstractPipeModel.BLOCKED_MASK_PROPERTY, blockedMask)
-                .withProperty(AbstractPipeModel.COLOR_PROPERTY, getPaintingColor())
+                .withProperty(AbstractPipeModel.COLOR_PROPERTY, getVisualColor())
                 .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
                 .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask)
                 .withProperty(CoverRendererPackage.PROPERTY, getCoverHolder().createPackage());

@@ -1,6 +1,6 @@
 package gregtech.api.graphnet.group;
 
-import gregtech.api.graphnet.edge.NetEdge;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -50,7 +50,7 @@ public abstract class GroupData {
     public static MergeDirection mergeAllowed(@Nullable GroupData source, @Nullable GroupData target) {
         if (source != null && source.mergeAllowed(target)) return MergeDirection.SOURCE;
         if (target != null && target.mergeAllowed(source)) return MergeDirection.TARGET;
-        return MergeDirection.NONE;
+        return (source == null && target == null) ? MergeDirection.NULL : MergeDirection.NONE;
     }
 
     /**

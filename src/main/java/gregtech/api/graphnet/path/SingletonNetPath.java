@@ -1,8 +1,8 @@
 package gregtech.api.graphnet.path;
 
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.logic.NetLogicData;
 import gregtech.api.graphnet.logic.WeightFactorLogic;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 
 import com.google.common.collect.ImmutableCollection;

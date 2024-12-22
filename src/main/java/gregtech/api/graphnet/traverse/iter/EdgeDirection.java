@@ -18,4 +18,13 @@ public enum EdgeDirection implements EdgeSelector {
             case OUTGOING -> graph.outgoingEdgesOf(vertex);
         };
     }
+
+    @Override
+    public <V, E> Set<E> selectReversedEdges(Graph<V, E> graph, V vertex) {
+        return switch (this) {
+            case ALL -> graph.edgesOf(vertex);
+            case OUTGOING -> graph.incomingEdgesOf(vertex);
+            case INCOMING -> graph.outgoingEdgesOf(vertex);
+        };
+    }
 }

@@ -1,4 +1,7 @@
-package gregtech.api.graphnet.graph;
+package gregtech.api.graphnet.traverse;
+
+import gregtech.api.graphnet.graph.GraphEdge;
+import gregtech.api.graphnet.graph.GraphVertex;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.flow.mincost.CapacityScalingMinimumCostFlow;

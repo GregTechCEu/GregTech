@@ -1,7 +1,6 @@
 package gregtech.api.graphnet.net;
 
 import gregtech.api.graphnet.GraphNetBacker;
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.INetGraph;
 import gregtech.api.graphnet.graph.NetDirectedGraph;
 import gregtech.api.graphnet.graph.NetUndirectedGraph;

@@ -1,9 +1,8 @@
 package gregtech.api.graphnet.traverse;
 
-import gregtech.api.graphnet.edge.NetEdge;
 import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.graph.GraphVertex;
-import gregtech.api.graphnet.graph.TweakedCSMCF;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.util.GTUtility;
 

@@ -82,7 +82,8 @@ public class DataCapabilityObject implements IPipeCapabilityObject, IDataAccess 
                 queryObject.setShouldTriggerWalker(false);
                 boolean cancelled = access.accessData(queryObject);
                 if (queryObject.shouldTriggerWalker()) {
-                    SlowActiveWalker.dispatch(tile.getWorld(), path, 1);
+                    // since we are a pull-based system, we need to reverse the path for it to look correct
+                    SlowActiveWalker.dispatch(tile.getWorld(), path.reversed(), 1, 1, 5);
                 }
                 if (cancelled) return true;
             }

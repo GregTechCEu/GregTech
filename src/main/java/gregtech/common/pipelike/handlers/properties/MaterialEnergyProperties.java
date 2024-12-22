@@ -131,7 +131,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
         this.materialMeltTemperature = computeMaterialMeltTemperature(properties);
     }
 
-    public static int computeMaterialMeltTemperature(@NotNull MaterialProperties properties) {
+    private static int computeMaterialMeltTemperature(@NotNull MaterialProperties properties) {
         if (properties.hasProperty(PropertyKey.FLUID)) {
             // autodetermine melt temperature from registered fluid
             FluidProperty prop = properties.getProperty(PropertyKey.FLUID);
