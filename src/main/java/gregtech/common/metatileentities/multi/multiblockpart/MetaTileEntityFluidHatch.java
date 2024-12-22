@@ -1,13 +1,23 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IFilter;
+import gregtech.api.capability.IFilteredFluidContainer;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.FluidContainerSlotWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.PhantomTankWidget;
+import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -33,6 +43,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
@@ -329,11 +340,30 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         if (!getWorld().isRemote) {
             markDirty();
         }
-        if (locked && fluidTank.getFluid() != null) {
-            this.lockedFluid = fluidTank.getFluid().copy();
-            this.lockedFluid.amount = 1;
-            fluidTank.onContentsChanged();
-            return;
+        if (locked) {
+            if (fluidTank.getFluid() != null) {
+                this.lockedFluid = fluidTank.getFluid().copy();
+                this.lockedFluid.amount = 1;
+                fluidTank.onContentsChanged();
+                return;
+            }
+            if (!importItems.getStackInSlot(0).isEmpty()) {
+                IFluidHandlerItem fluidHandler = importItems.getStackInSlot(0).copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                if (fluidHandler == null){
+                    return;
+                }
+                FluidStack heldFluid = fluidHandler.drain(Integer.MAX_VALUE, false);
+                if (heldFluid == null) {
+                    return;
+                }
+                if (heldFluid.amount <= 0) {
+                    return;
+                }
+                this.lockedFluid = heldFluid;
+                this.lockedFluid.amount = 1;
+                fluidTank.onContentsChanged();
+                return;
+            }
         }
         this.lockedFluid = null;
         fluidTank.onContentsChanged();
