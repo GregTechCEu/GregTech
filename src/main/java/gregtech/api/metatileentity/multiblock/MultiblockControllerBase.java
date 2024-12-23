@@ -54,9 +54,10 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
+import com.google.common.collect.AbstractIterator;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.ArrayUtils;
@@ -70,6 +71,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -651,7 +653,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
         } else if (dataId == STRUCTURE_FORMED) {
-            // todo rewrite this entire thing :skull:
+            // todo rewrite this entire thing :skull:(including the server side code)
             String name = buf.readString(65536);
             if ("null".equals(name)) {
                 for (IBlockPattern pattern : structures.values()) {
@@ -780,23 +782,26 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Get the default preview shape for JEI and in world previews.
+     * Called in either JEI or in-world previews to specify what maps they should be autobuilt with.
+     * Default impl returns a singleton iterator with {@code null}.
+     * 
+     * @return An iterator, you can return the same map but mutated. Iterator can be empty but why would you.
      */
-    // todo add use for the keyMap with the multiblock builder
-    // todo maybe add name arg for building substructures
-    public List<MultiblockShapeInfo> getPreviewShapes(String substructureName) {
-        List<MultiblockShapeInfo> infos = getMatchingShapes();
+    @NotNull
+    public Iterator<Map<String, String>> getPreviewBuilds() {
+        return new AbstractIterator<>() {
 
-        if (infos.isEmpty()) {
-            // for jei and stuff
-            if (getSubstructure(substructureName) == null) createStructurePatterns();
-            MultiblockShapeInfo info = MultiblockShapeInfo.fromShape(getSubstructure(substructureName));
+            private boolean used;
 
-            if (info == null) return Collections.emptyList();
-            return Collections.singletonList(info);
-        }
-
-        return infos;
+            @Override
+            protected Map<String, String> computeNext() {
+                if (!used) {
+                    used = true;
+                    return null;
+                }
+                return endOfData();
+            }
+        };
     }
 
     /**
@@ -804,37 +809,133 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * structure if invalid.
      */
     public void autoBuild(EntityPlayer player, Map<String, String> map) {
-        // todo lang
-        RelativeDirection[] directions = new RelativeDirection[3];
-        Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicateMap = new Char2ObjectOpenHashMap<>();
-        IBlockPattern structure = getSubstructure(map.getOrDefault("substructure", "MAIN"));
-        char[][][] pattern = structure.getDefaultShape(predicateMap, map, directions);
+        if (getWorld().isRemote) throw new IllegalArgumentException("client side call wuh");
 
-        Char2ObjectMap<BlockInfo> buildCandidates = new Char2ObjectOpenHashMap<>();
-        for (Char2ObjectMap.Entry<TraceabilityPredicate.SimplePredicate> entry : predicateMap.char2ObjectEntrySet()) {
-            if (entry.getValue().buildFunction != null) {
-                buildCandidates.put(entry.getCharKey(), entry.getValue().buildFunction.apply(map));
+        Long2ObjectMap<TraceabilityPredicate> predicates = getSubstructure("MAIN").getDefaultShape(this, map);
+
+        // for each symbol, which simple predicate is being used
+        // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
+        // preview counts are treated as exactly that many
+        Object2IntMap<TraceabilityPredicate> simpleIndex = new Object2IntOpenHashMap<>();
+        Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCache = new Object2IntOpenHashMap<>();
+        Map<TraceabilityPredicate.SimplePredicate, BlockInfo> cache = new HashMap<>();
+
+        BiPredicate<Long, BlockInfo> place = (l, info) -> {
+            BlockPos pos = BlockPos.fromLong(l);
+
+            // don't stop build if its air, or maybe do?
+            if (!getWorld().isAirBlock(pos)) return true;
+
+            IBlockState state = info.getBlockState();
+
+            if (info.getTileEntity() instanceof MetaTileEntityHolder holder) {
+                ItemStack removed = hasAndRemoveItem(player, holder.getMetaTileEntity().getStackForm());
+                if (holder.getMetaTileEntity() != this && !removed.isEmpty()) {
+                    getWorld().setBlockState(pos, state);
+
+                    MetaTileEntityHolder newHolder = new MetaTileEntityHolder();
+                    newHolder.setMetaTileEntity(holder.getMetaTileEntity());
+                    newHolder.getMetaTileEntity().onPlacement();
+                    if (removed.hasTagCompound())
+                        newHolder.getMetaTileEntity().initFromItemStackData(removed.getTagCompound());
+
+                    // todo add relative facing fix to make hatches face air
+                    // // get the relative direction from the part facing, then use that to get the real enum facing
+                    // EnumFacing newFacing = FACING_MAP.get(holder.getMetaTileEntity().getFrontFacing())
+                    // .getRelativeFacing(frontFacing, upwardsFacing, false);
+                    // newHolder.getMetaTileEntity().setFrontFacing(newFacing);
+                    //
+                    // if (holder.getMetaTileEntity() instanceof MultiblockControllerBase holderBase) {
+                    // MultiblockControllerBase mteBase = (MultiblockControllerBase) newHolder.getMetaTileEntity();
+                    //
+                    // EnumFacing newUpFacing = FACING_MAP.get(holderBase.getUpwardsFacing())
+                    // .getRelativeFacing(frontFacing, upwardsFacing, false);
+                    // mteBase.setUpwardsFacing(newUpFacing);
+                    // }
+                } else return false;
+            } else {
+                if (!hasAndRemoveItem(player, GTUtility.toItem(info.getBlockState())).isEmpty())
+                    getWorld().setBlockState(pos, state);
+                else return false;
             }
+
+            return true;
+        };
+
+        for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
+            // todo add autobuild key params here, also remove layer stuff from rest of the code elsewehre
+            TraceabilityPredicate pred = entry.getValue();
+            if (simpleIndex.getInt(pred) >= pred.simple.size()) continue;
+
+            TraceabilityPredicate.SimplePredicate simple = pred.simple.get(simpleIndex.getInt(pred));
+            int count = globalCache.getInt(simple);
+
+            while ((simple.previewCount == -1 || count == simple.previewCount) &&
+                    (simple.minGlobalCount == -1 || count == simple.minGlobalCount)) {
+                // if the current predicate is used, move until the next free one
+                int newIndex = simpleIndex.put(pred, simpleIndex.getInt(pred) + 1) + 1;
+                if (newIndex >= pred.simple.size()) break;
+                simple = pred.simple.get(newIndex);
+                count = globalCache.getInt(simple);
+            }
+            globalCache.put(simple, globalCache.getInt(simple) + 1);
+
+            if (simple.candidates == null) continue;
+
+            TraceabilityPredicate.SimplePredicate finalSimple = simple;
+            cache.computeIfAbsent(simple, k -> finalSimple.candidates.get()[0]);
+
+            if (!place.test(entry.getLongKey(), cache.get(simple))) return;
+        }
+
+        for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
+            TraceabilityPredicate pred = entry.getValue();
+            if (simpleIndex.getInt(pred) >= pred.simple.size()) continue;
+
+            TraceabilityPredicate.SimplePredicate simple = pred.simple.get(simpleIndex.getInt(pred));
+            int count = globalCache.getInt(simple);
+
+            while ((simple.previewCount != -1 && count == simple.previewCount) ||
+                    (simple.maxGlobalCount != -1 && count == simple.maxGlobalCount)) {
+                // if the current predicate is used, move until the next free one
+                int newIndex = simpleIndex.put(pred, simpleIndex.getInt(pred) + 1) + 1;
+                if (newIndex >= pred.simple.size()) {
+                    GTLog.logger.warn("Failed to generate default structure pattern.",
+                            new Throwable());
+                    return;
+                }
+                simple = pred.simple.get(newIndex);
+                count = globalCache.getInt(simple);
+            }
+            globalCache.put(simple, globalCache.getInt(simple) + 1);
+
+            if (simple.candidates == null) continue;
+
+            TraceabilityPredicate.SimplePredicate finalSimple = simple;
+            cache.computeIfAbsent(simple, k -> finalSimple.candidates.get()[0]);
+
+            if (!place.test(entry.getLongKey(), cache.get(simple))) return;
         }
     }
 
     /**
-     * @return True iff the item has been successfully removed from the player's inventory(or AE system, satchels, etc)
-     *         or the player is in creative mode.
+     * @return The item stack that is removed from the player's inventory(or AE system, satchels, etc).
+     *         If the player is in creative mode, return a copy of the input stack.
      *         Currently only removes from the player's main inventory. The count of the passed in stack does not
      *         matter, only 1 is removed from the player.
      */
-    protected static boolean hasAndRemoveItem(EntityPlayer player, ItemStack stack) {
-        if (player.isCreative()) return true;
+    protected static ItemStack hasAndRemoveItem(EntityPlayer player, ItemStack stack) {
+        if (stack.isEmpty()) return ItemStack.EMPTY;
+        if (player.isCreative()) return stack.copy();
 
         for (ItemStack ztack : player.inventory.mainInventory) {
             if (!ztack.isEmpty() && ztack.isItemEqual(stack)) {
                 ztack.setCount(ztack.getCount() - 1);
-                return true;
+                return ztack.copy();
             }
         }
 
-        return false;
+        return ItemStack.EMPTY;
     }
 
     @SideOnly(Side.CLIENT)

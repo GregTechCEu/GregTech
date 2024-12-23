@@ -1,6 +1,5 @@
 package gregtech.client.utils;
 
-import gregtech.api.util.BlockInfo;
 import gregtech.api.util.world.DummyWorld;
 
 import net.minecraft.block.state.IBlockState;
@@ -14,7 +13,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -49,17 +47,6 @@ public class TrackedDummyWorld extends DummyWorld {
         proxyWorld = world;
     }
 
-    public void addBlocks(Map<BlockPos, BlockInfo> renderedBlocks) {
-        renderedBlocks.forEach(this::addBlock);
-    }
-
-    public void addBlock(BlockPos pos, BlockInfo blockInfo) {
-        if (blockInfo.getBlockState().getBlock() == Blocks.AIR)
-            return;
-        this.renderedBlocks.add(pos);
-        blockInfo.apply(this, pos);
-    }
-
     @Override
     public TileEntity getTileEntity(@NotNull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
@@ -83,6 +70,7 @@ public class TrackedDummyWorld extends DummyWorld {
         maxPos.setX(Math.max(maxPos.getX(), pos.getX()));
         maxPos.setY(Math.max(maxPos.getY(), pos.getY()));
         maxPos.setZ(Math.max(maxPos.getZ(), pos.getZ()));
+        renderedBlocks.add(pos);
         return super.setBlockState(pos, newState, flags);
     }
 

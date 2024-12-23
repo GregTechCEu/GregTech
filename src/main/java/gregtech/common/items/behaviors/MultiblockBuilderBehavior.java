@@ -178,8 +178,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
             if (!multiblock.isStructureFormed("MAIN")) {
-                // multiblock.auto("MAIN", getMap(player.getHeldItem(hand))).get(0).getMap(multiblock,
-                // new BlockPos(0, 128, 0), new HashMap<>());
+                multiblock.autoBuild(player, getMap(player.getHeldItem(hand)));
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;

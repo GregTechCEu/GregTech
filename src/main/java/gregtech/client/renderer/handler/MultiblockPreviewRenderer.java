@@ -4,9 +4,11 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.GreggyBlockPos;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GregFakePlayer;
+import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.utils.TrackedDummyWorld;
+import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -36,8 +38,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
+
+import static gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper.SOURCE;
 
 @SideOnly(Side.CLIENT)
 public class MultiblockPreviewRenderer {
@@ -78,23 +82,24 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-    public static void renderMultiBlockPreview(MultiblockControllerBase controller, EntityPlayer player,
+    public static void renderMultiBlockPreview(MultiblockControllerBase src, EntityPlayer player,
                                                long durTimeMillis) {
-        if (!controller.getPos().equals(mbpPos)) {
+        if (!src.getPos().equals(mbpPos)) {
             layer = 0;
         } else {
             if (mbpEndTime - System.currentTimeMillis() < 200) return;
             layer++;
         }
         resetMultiblockRender();
-        mbpPos = controller.getPos();
+        mbpPos = src.getPos();
         mbpEndTime = System.currentTimeMillis() + durTimeMillis;
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
-        List<MultiblockShapeInfo> shapes = controller.getPreviewShapes("MAIN");
-        if (!shapes.isEmpty()) {
-            renderControllerInList(controller, shapes.get(0), layer);
-            shapes.get(0).sendDotMessage(player);
+        Iterator<Map<String, String>> iter = src.getPreviewBuilds();
+        if (iter.hasNext()) {
+            renderControllerInList(src, iter.next(), layer);
+            // todo add dots again
+            // shapes.get(0).sendDotMessage(player);
         }
         GlStateManager.glEndList();
     }
@@ -108,19 +113,27 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-    public static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo,
+    public static void renderControllerInList(MultiblockControllerBase src, Map<String, String> keyMap,
                                               int layer) {
-        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        BlockPos controllerPos = shapeInfo.getMap(controllerBase, new BlockPos(0, 128, 0), blockMap);
-        MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap
-                .get(controllerPos).getTileEntity()).getMetaTileEntity();
-
-        EnumFacing facing = controllerBase.getFrontFacing();
-        EnumFacing upwardsFacing = controllerBase.getUpwardsFacing();
-
         TrackedDummyWorld world = new TrackedDummyWorld();
-        world.addBlocks(blockMap);
-        int finalMaxY = layer % (shapeInfo.getUpCount(facing, upwardsFacing) + 1);
+        ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
+        worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
+
+        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
+
+        // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can
+        // work
+        MetaTileEntityHolder holder = new MetaTileEntityHolder();
+        world.setBlockState(SOURCE, src.getBlock().getDefaultState());
+        holder.setMetaTileEntity(src);
+        holder.getMetaTileEntity().onPlacement();
+
+        world.setTileEntity(SOURCE, holder);
+
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), keyMap);
+
+        // todo fix
+        int finalMaxY = layer % 5;
         world.setRenderFilter(pos -> pos.getY() - 127 == finalMaxY || finalMaxY == 0);
 
         Minecraft mc = Minecraft.getMinecraft();
@@ -128,18 +141,18 @@ public class MultiblockPreviewRenderer {
         Tessellator tes = Tessellator.getInstance();
         BufferBuilder buff = tes.getBuffer();
 
-        if (controller != null) controller.checkStructurePattern();
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).checkStructurePattern();
 
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
 
         GreggyBlockPos greg = new GreggyBlockPos();
-        GreggyBlockPos offset = new GreggyBlockPos(controllerPos);
+        GreggyBlockPos offset = new GreggyBlockPos(SOURCE);
         GreggyBlockPos temp = new GreggyBlockPos();
 
         for (BlockPos pos : blockMap.keySet()) {
             targetBA.setPos(pos);
-            greg.from(controllerBase.getPos()).add(temp.from(pos)).subtract(offset);
+            greg.from(src.getPos()).add(temp.from(pos)).subtract(offset);
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(greg.x(), greg.y(), greg.z());

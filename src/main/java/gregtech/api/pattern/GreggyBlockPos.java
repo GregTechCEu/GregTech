@@ -17,13 +17,14 @@ import java.util.Iterator;
  */
 public class GreggyBlockPos {
 
-    protected final int[] pos;
     public static final int NUM_X_BITS = 1 + MathHelper.log2(MathHelper.smallestEncompassingPowerOfTwo(30000000));
     public static final int NUM_Z_BITS = NUM_X_BITS, NUM_Y_BITS = 64 - 2 * NUM_X_BITS;
     public static final int Y_SHIFT = NUM_Z_BITS;
     public static final int X_SHIFT = Y_SHIFT + NUM_Y_BITS;
     public static final long Z_MASK = (1L << NUM_Z_BITS) - 1;
     public static final long Y_MASK = (1L << (NUM_Z_BITS + NUM_Y_BITS)) - 1;
+
+    protected final int[] pos;
 
     public GreggyBlockPos() {
         this(0, 0, 0);
@@ -309,6 +310,13 @@ public class GreggyBlockPos {
         }
 
         return false;
+    }
+
+    /**
+     * Static version of {@link GreggyBlockPos#toLong()}
+     */
+    public static long toLong(int x, int y, int z) {
+        return (long) x << X_SHIFT | ((long) y << Y_SHIFT) & Y_MASK | (z & Z_MASK);
     }
 
     /**

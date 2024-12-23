@@ -3,7 +3,6 @@ package gregtech.api.pattern;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.pattern.pattern.PatternAisle;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
@@ -22,7 +21,6 @@ import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.chars.Char2IntMap;
 import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
-import it.unimi.dsi.fastutil.chars.Char2ObjectMaps;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 
 import java.util.ArrayList;
@@ -176,7 +174,7 @@ public class MultiblockShapeInfo {
 
     /**
      * Gets where the controller is in the pattern.
-     * 
+     *
      * @param clazz The class of the controller.
      * @return A pos where {@code aisles[pos.x()].getCharAt(pos.y(), pos.z())} would return where the controller char
      *         was.
@@ -258,31 +256,6 @@ public class MultiblockShapeInfo {
         return builder(RelativeDirection.FRONT, RelativeDirection.UP, RelativeDirection.RIGHT);
     }
 
-    public static MultiblockShapeInfo fromShape(RelativeDirection[] directions, char[][][] shape,
-                                                Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicates) {
-        if (shape == null) return null;
-        Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
-        for (Char2ObjectMap.Entry<TraceabilityPredicate.SimplePredicate> entry : predicates.char2ObjectEntrySet()) {
-            if (entry.getValue().candidates == null) {
-                candidates.put(entry.getCharKey(), BlockInfo.EMPTY);
-            } else {
-                candidates.put(entry.getCharKey(), entry.getValue().candidates.get()[0]);
-            }
-        }
-
-        return new MultiblockShapeInfo(Arrays.stream(shape).map(PatternAisle::new).toArray(PatternAisle[]::new),
-                candidates,
-                Char2ObjectMaps.emptyMap(), directions);
-    }
-
-    public static MultiblockShapeInfo fromShape(IBlockPattern pattern) {
-        Char2ObjectMap<TraceabilityPredicate.SimplePredicate> predicates = new Char2ObjectOpenHashMap<>();
-        RelativeDirection[] directions = new RelativeDirection[3];
-        char[][][] shape = pattern.getDefaultShape(predicates, null, directions);
-        if (shape == null) return null;
-        return fromShape(directions, shape, predicates);
-    }
-
     public static class Builder {
 
         private List<PatternAisle> shape = new ArrayList<>();
@@ -344,7 +317,7 @@ public class MultiblockShapeInfo {
 
         /**
          * Adds a dot block to represent the char.
-         * 
+         *
          * @param symbol The symbol in the pattern to put.
          * @param dot    The amount of dots on the block, 0-15
          * @param lang   The lang to show for the block, pass in the lang key and it will format.

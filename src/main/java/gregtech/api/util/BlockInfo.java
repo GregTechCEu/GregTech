@@ -6,8 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import com.google.common.base.Preconditions;
 
@@ -56,12 +54,5 @@ public class BlockInfo {
 
     public TraceabilityPredicate getPredicate() {
         return predicate;
-    }
-
-    public void apply(World world, BlockPos pos) {
-        world.setBlockState(pos, blockState);
-        if (tileEntity != null) {
-            world.setTileEntity(pos, tileEntity);
-        }
     }
 }

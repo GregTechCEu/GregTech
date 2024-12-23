@@ -1,6 +1,7 @@
 package gregtech.api.pattern.pattern;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.OriginOffset;
@@ -16,13 +17,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -179,11 +180,10 @@ public class ExpandablePattern implements IBlockPattern {
     }
 
     @Override
-    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map,
-                                                                     Map<String, String> keyMap,
-                                                                     RelativeDirection[] directions) {
-        // todo maybe add this
-        return null;
+    public Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
+                                                                       Map<String, String> keyMap) {
+        // todo add this
+        return Long2ObjectSortedMaps.emptyMap();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package gregtech.api.pattern.pattern;
 
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.GreggyBlockPos;
 import gregtech.api.pattern.OriginOffset;
@@ -21,6 +22,8 @@ import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
 import it.unimi.dsi.fastutil.objects.Object2CharMap;
 import it.unimi.dsi.fastutil.objects.Object2CharOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -174,7 +177,6 @@ public class BlockPattern implements IBlockPattern {
     @Override
     public boolean checkPatternAt(World world, BlockPos centerPos, EnumFacing frontFacing,
                                   EnumFacing upwardsFacing, boolean isFlipped) {
-        // todo still need to rework this to have a temporary global cache
         this.globalCount.clear();
         this.layerCount.clear();
         cache.clear();
@@ -278,121 +280,35 @@ public class BlockPattern implements IBlockPattern {
     }
 
     @Override
-    public char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map,
-                                                                     Map<String, String> keyMap,
-                                                                     @Nullable RelativeDirection[] directions) {
-        // for each symbol, which simple predicate is being used
-        // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
-        // preview counts are treated as exactly that many
-        Char2IntMap predicateIndex = new Char2IntOpenHashMap();
-        // candidates to be passed into MultiblockShapeInfo
-        // Char2ObjectMap<BlockInfo> candidates = new Char2ObjectOpenHashMap<>();
-        // cache for candidates
-        Object2CharMap<TraceabilityPredicate.SimplePredicate> infos = new Object2CharOpenHashMap<>();
-        Object2IntMap<TraceabilityPredicate.SimplePredicate> globalCache = new Object2IntOpenHashMap<>();
-        Object2IntMap<TraceabilityPredicate.SimplePredicate> layerCache = new Object2IntOpenHashMap<>();
+    public Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
+                                                                       Map<String, String> keyMap) {
+        Long2ObjectSortedMap<TraceabilityPredicate> map = new Long2ObjectRBTreeMap<>();
+        EnumFacing absoluteAisle = directions[0].getRelativeFacing(src.getFrontFacing(), src.getUpwardsFacing());
+        EnumFacing absoluteString = directions[1].getRelativeFacing(src.getFrontFacing(), src.getUpwardsFacing());
+        EnumFacing absoluteChar = directions[2].getRelativeFacing(src.getFrontFacing(), src.getUpwardsFacing());
 
-        List<char[][]> pattern = new ArrayList<>(dimensions[0]);
-
-        // 0 is reserved for air
-        char currentChar = 1;
-
-        for (TraceabilityPredicate predicate : predicates.values()) {
-            for (TraceabilityPredicate.SimplePredicate simple : predicate.simple) {
-                if (infos.put(simple, currentChar) == 0) {
-                    map.put(currentChar, simple);
-                    currentChar++;
-                }
-            }
-        }
+        GreggyBlockPos pos = new GreggyBlockPos(src.getPos());
+        GreggyBlockPos start = startPos(pos, src.getFrontFacing(), src.getUpwardsFacing(), false);
+        GreggyBlockPos serial = new GreggyBlockPos().from(start);
 
         int[] order = aisleStrategy.getDefaultAisles(keyMap);
-
-        // first pass fills in all the minimum counts
-        for (int aisleOffset = 0; aisleOffset < order.length; aisleOffset++) {
-            pattern.add(new char[dimensions[1]][dimensions[2]]);
-            layerCache.clear();
-            for (int stringI = 0; stringI < dimensions[1]; stringI++) {
-                for (int charI = 0; charI < dimensions[2]; charI++) {
-                    char c = aisles[order[aisleOffset]].charAt(stringI, charI);
-                    TraceabilityPredicate predicate = predicates.get(c);
-                    // we used up all the simple predicates, just let the second pass fill them in
-                    if (predicateIndex.get(c) >= predicate.simple.size()) continue;
-                    TraceabilityPredicate.SimplePredicate simple = predicate.simple.get(predicateIndex.get(c));
-
-                    if (simple.candidates == null) continue;
-
-                    char info = infos.getChar(simple);
-                    int layerCount = layerCache.put(simple, layerCache.getInt(simple) + 1) + 1;
-                    int globalCount = globalCache.put(simple, globalCache.getInt(simple) + 1) + 1;
-
-                    pattern.get(aisleOffset)[stringI][charI] = info;
-
-                    TraceabilityPredicate.SimplePredicate next = simple;
-
-                    // don't need inequalities since everything is incremented once at a time
-                    // only put the minimum amount of parts possible
-                    // missing parts will be filled in the second pass
-                    while ((next.previewCount == -1 || globalCount == next.previewCount) &&
-                            (next.minLayerCount == -1 || layerCount == next.minLayerCount) &&
-                            (next.minGlobalCount == -1 || globalCount == next.minGlobalCount)) {
-                        // if the current predicate is used, move until the next free one
-                        int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
-                        if (newIndex >= predicate.simple.size()) break;
-                        next = predicate.simple.get(newIndex);
-                        globalCount = globalCache.getInt(next);
-                        layerCount = layerCache.getInt(next);
-                    }
+        for (int i = 0; i < order.length; i++) {
+            for (int j = 0; j < dimensions[1]; j++) {
+                for (int k = 0; k < dimensions[2]; k++) {
+                    TraceabilityPredicate pred = predicates.get(aisles[order[i]].charAt(j, k));
+                    if (pred != TraceabilityPredicate.ANY && pred != TraceabilityPredicate.AIR)
+                        map.put(serial.toLong(), predicates.get(aisles[order[i]].charAt(j, k)));
+                    serial.offset(absoluteChar);
                 }
+                serial.offset(absoluteString);
+                serial.offset(absoluteChar.getOpposite(), dimensions[2]);
             }
+
+            serial.from(start);
+            serial.offset(absoluteAisle, i + 1);
         }
 
-        predicateIndex.clear();
-
-        // second pass fills everything else
-        for (int aisleOffset = 0; aisleOffset < order.length; aisleOffset++) {
-            layerCache.clear();
-            for (int stringI = 0; stringI < dimensions[1]; stringI++) {
-                for (int charI = 0; charI < dimensions[2]; charI++) {
-                    // skip if populated by first pass
-                    if (pattern.get(aisleOffset)[stringI][charI] != 0) continue;
-
-                    char c = aisles[order[aisleOffset]].charAt(stringI, charI);
-                    TraceabilityPredicate predicate = predicates.get(c);
-                    TraceabilityPredicate.SimplePredicate next = predicate.simple.get(predicateIndex.get(c));
-
-                    int layerCount = layerCache.getInt(next);
-                    int globalCount = globalCache.getInt(next);
-
-                    // do this first because the first pass could have left some predicates already used
-                    while ((next.previewCount != -1 && globalCount == next.previewCount) ||
-                            (next.maxLayerCount != -1 && layerCount == next.maxLayerCount) ||
-                            (next.maxGlobalCount != -1 && globalCount == next.maxGlobalCount)) {
-                        // if the current predicate is used, move until the next free one
-                        int newIndex = predicateIndex.put(c, predicateIndex.get(c) + 1) + 1;
-                        if (newIndex >= predicate.simple.size()) {
-                            GTLog.logger.warn("Failed to generate default structure pattern.",
-                                    new Throwable());
-                            newIndex = 0;
-                        }
-                        next = predicate.simple.get(newIndex);
-                        globalCount = globalCache.getInt(next);
-                        layerCount = layerCache.getInt(next);
-                    }
-
-                    if (next.candidates == null) continue;
-
-                    char info = infos.getChar(next);
-                    layerCache.put(next, layerCount + 1);
-                    globalCache.put(next, globalCount + 1);
-
-                    pattern.get(aisleOffset)[stringI][charI] = info;
-                }
-            }
-        }
-
-        if (directions != null) System.arraycopy(this.directions, 0, directions, 0, 3);
-        return pattern.toArray(new char[0][][]);
+        return map;
     }
 
     @Override

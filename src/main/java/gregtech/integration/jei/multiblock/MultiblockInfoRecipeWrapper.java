@@ -6,10 +6,10 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.BlockWorldState;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GregFakePlayer;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
@@ -56,6 +56,7 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.gui.recipes.RecipeLayout;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -67,6 +68,7 @@ import javax.vecmath.Vector3f;
 
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
+    public static final BlockPos SOURCE = new BlockPos(0, 128, 0);
     private static final int MAX_PARTS = 18;
     private static final int PARTS_HEIGHT = 36;
     private static final int SLOT_SIZE = 18;
@@ -122,9 +124,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     public MultiblockInfoRecipeWrapper(@NotNull MultiblockControllerBase controller) {
         this.controller = controller;
         Set<ItemStack> drops = new ObjectOpenCustomHashSet<>(ItemStackHashStrategy.comparingAllButCount());
-        this.patterns = controller.getPreviewShapes("MAIN").stream()
-                .map(it -> initializePattern(it, drops))
-                .toArray(MBPattern[]::new);
+        List<MBPattern> temp = new ArrayList<>();
+        for (Iterator<Map<String, String>> iter = controller.getPreviewBuilds(); iter.hasNext();) {
+            temp.add(initializePattern(controller, iter.next(), drops));
+        }
+        this.patterns = temp.toArray(new MBPattern[0]);
         allItemStackInputs.addAll(drops);
         this.nextLayerButton = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
         this.buttonPreviousPattern = new GuiButton(0, 176 - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE,
@@ -524,18 +528,24 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     @NotNull
     // todo substructure support
-    private MBPattern initializePattern(@NotNull MultiblockShapeInfo shapeInfo, @NotNull Set<ItemStack> parts) {
-        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can
-        // work
-        BlockPos controllerPos = shapeInfo.getMap(this.controller, new BlockPos(0, 128, 0), blockMap);
-        MultiblockControllerBase controller = (MultiblockControllerBase) ((MetaTileEntityHolder) blockMap
-                .get(controllerPos).getTileEntity()).getMetaTileEntity();
-
+    private MBPattern initializePattern(@NotNull MultiblockControllerBase src, @Nullable Map<String, String> keyMap,
+                                        @NotNull Set<ItemStack> parts) {
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
-        world.addBlocks(blockMap);
+
+        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
+
+        // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can
+        // work
+        MetaTileEntityHolder holder = new MetaTileEntityHolder();
+        world.setBlockState(SOURCE, src.getBlock().getDefaultState());
+        holder.setMetaTileEntity(src);
+        holder.getMetaTileEntity().onPlacement();
+
+        world.setTileEntity(SOURCE, holder);
+
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), keyMap);
 
         Vector3f size = world.getSize();
         Vector3f minPos = world.getMinPos();

@@ -10,8 +10,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,17 +53,13 @@ public interface IBlockPattern {
     /**
      * Gets the default shape, if the multiblock does not specify one. Return null to represent the default shape does
      * not exist.
-     * 
-     * @param map        Pass in an empty map to receive a populated map with the chars in the return mapping to a
-     *                   simple predicate.
-     * @param keyMap     The map from multiblock builder for autobuild, or null if in other things like previews.
-     * @param directions Pass in an array of length 3 to get the directions for the preview, or null if you don't want
-     *                   it.
+     *
+     * @param keyMap The map from multiblock builder for autobuild.
+     * @return The long key is using {@link gregtech.api.pattern.GreggyBlockPos#toLong(int, int, int)} with x, y, z
+     *         respectively being. The map is sorted using the natural ordering(thus with x, y, z order).
      */
-    // peak nullability
-    char @Nullable [] @NotNull [] @NotNull [] getDefaultShape(Char2ObjectMap<TraceabilityPredicate.SimplePredicate> map,
-                                                              @Nullable Map<String, String> keyMap,
-                                                              @Nullable RelativeDirection[] directions);
+    Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
+                                                                @Nullable Map<String, String> keyMap);
 
     /**
      * Gets the internal pattern state, you should use the one returned from
