@@ -1,5 +1,6 @@
 package gregtech.api.capability.impl;
 
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IMultipleTankHandler2;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,24 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
 
     public FluidTankList2(boolean allowSameFluidFill, @NotNull List<? extends IFluidTank> fluidTanks) {
         this(allowSameFluidFill, fluidTanks.toArray(new IFluidTank[0]));
+    }
+
+    public FluidTankList2(boolean allowSameFluidFill, @NotNull IMultipleTankHandler2 parent,
+                         IFluidTank... additionalTanks) {
+        int tanks = parent.getTanks();
+        int additional = 0;
+
+        if (!ArrayUtils.isEmpty(additionalTanks))
+            additional = additionalTanks.length;
+
+        this.tanks = new Entry[tanks + additional];
+
+        Arrays.setAll(this.tanks, value -> {
+            if (value < tanks) return parent.getTankAt(value);
+            else return wrap(additionalTanks[value - tanks]);
+        });
+
+        this.allowSameFluidFill = allowSameFluidFill;
     }
 
     @Override
