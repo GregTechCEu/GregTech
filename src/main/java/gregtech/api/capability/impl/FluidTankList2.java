@@ -41,61 +41,53 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        if (resource == null || resource.amount <= 0) {
+        if (resource == null || resource.amount <= 0)
             return 0;
-        }
+
         int totalInserted = 0;
         boolean inputFluidCopied = false;
-        // flag value indicating whether the fluid was stored in 'distinct' slot at least once
-        boolean distinctSlotVisited = false;
 
         var fluidTanks = this.tanks.clone();
         Arrays.sort(fluidTanks, ENTRY_COMPARATOR);
 
         // search for tanks with same fluid type first
         for (var tank : fluidTanks) {
+            if (!resource.isFluidEqual(tank.getFluid()))
+                continue;
+
             // if the fluid to insert matches the tank, insert the fluid
-            if (resource.isFluidEqual(tank.getFluid())) {
-                int inserted = tank.fill(resource, doFill);
-                if (inserted > 0) {
-                    totalInserted += inserted;
-                    if (resource.amount - inserted <= 0) {
-                        return totalInserted;
-                    }
-                    if (!inputFluidCopied) {
-                        inputFluidCopied = true;
-                        resource = resource.copy();
-                    }
-                    resource.amount -= inserted;
-                }
-                // regardless of whether the insertion succeeded, presence of identical fluid in
-                // a slot prevents distinct fill to other slots
-                if (!tank.allowSameFluidFill()) {
-                    distinctSlotVisited = true;
-                }
+            int inserted = tank.fill(resource, doFill);
+            if (inserted <= 0) continue;
+
+            totalInserted += inserted;
+            if (resource.amount - inserted <= 0) {
+                return totalInserted;
             }
+            if (!inputFluidCopied) {
+                inputFluidCopied = true;
+                resource = resource.copy();
+            }
+            resource.amount -= inserted;
         }
+
         // if we still have fluid to insert, loop through empty tanks until we find one that can accept the fluid
-        for (var tank : fluidTanks) {
+        for (Entry tank : fluidTanks) {
             // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
             // received the fluid, skip this tank
-            boolean usesDistinctFluidFill = tank.allowSameFluidFill();
-            if ((usesDistinctFluidFill || !distinctSlotVisited) && tank.getFluidAmount() == 0) {
-                int inserted = tank.fill(resource, doFill);
-                if (inserted > 0) {
-                    totalInserted += inserted;
-                    if (resource.amount - inserted <= 0) {
-                        return totalInserted;
-                    }
-                    if (!inputFluidCopied) {
-                        inputFluidCopied = true;
-                        resource = resource.copy();
-                    }
-                    resource.amount -= inserted;
-                    if (!usesDistinctFluidFill) {
-                        distinctSlotVisited = true;
-                    }
+            if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(resource)) {
+                continue;
+            }
+            int inserted = tank.fill(resource, doFill);
+            if (inserted > 0) {
+                totalInserted += inserted;
+                if (resource.amount - inserted <= 0) {
+                    return totalInserted;
                 }
+                if (!inputFluidCopied) {
+                    inputFluidCopied = true;
+                    resource = resource.copy();
+                }
+                resource.amount -= inserted;
             }
         }
         // return the amount of fluid that was inserted
@@ -231,12 +223,12 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
 
         private final IFluidTank tank;
         private final IMultipleTankHandler2 parent;
-        private final IFluidTankProperties[] props;
+//        private final IFluidTankProperties[] props;
 
         private TankWrapper(IFluidTank tank, IMultipleTankHandler2 parent) {
             this.tank = tank;
             this.parent = parent;
-            this.props = new IFluidTankProperties[] { this };
+//            this.props = new IFluidTankProperties[] { this };
         }
 
         @Override
@@ -249,10 +241,10 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
             return tank;
         }
 
-        @Override
-        public IFluidTankProperties[] getTankProperties() {
-            return this.props;
-        }
+//        @Override
+//        public IFluidTankProperties[] getTankProperties() {
+//            return this.props;
+//        }
 
         @Override
         public boolean canFillFluidType(FluidStack fluidStack) {

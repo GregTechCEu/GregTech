@@ -82,7 +82,7 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
     }
 
     @Override
-    default Iterator<Entry> iterator() {
+    default @NotNull Iterator<Entry> iterator() {
         return getFluidTanks().iterator();
     }
 
@@ -90,7 +90,7 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
      * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler2} for accessing
      * information such as {@link IMultipleTankHandler2#allowSameFluidFill()}.
      */
-    interface Entry extends IFluidTank, IFluidHandler, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
+    interface Entry extends IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
                     IFluidTankProperties {
 
         @NotNull
@@ -150,19 +150,19 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
             return getDelegate().fill(resource, doFill);
         }
 
-        @Nullable
-        @Override
-        default FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) {
-                return null;
-            }
-            if (getDelegate() instanceof IFluidHandler fluidHandler) {
-                return fluidHandler.drain(resource, doDrain);
-            }
-            // just imitate the logic
-            FluidStack fluid = getFluid();
-            return fluid != null && fluid.isFluidEqual(resource) ? drain(resource.amount, doDrain) : null;
-        }
+//        @Nullable
+//        @Override
+//        default FluidStack drain(FluidStack resource, boolean doDrain) {
+//            if (resource == null || resource.amount <= 0) {
+//                return null;
+//            }
+//            if (getDelegate() instanceof IFluidHandler fluidHandler) {
+//                return fluidHandler.drain(resource, doDrain);
+//            }
+//            // just imitate the logic
+//            FluidStack fluid = getFluid();
+//            return fluid != null && fluid.isFluidEqual(resource) ? drain(resource.amount, doDrain) : null;
+//        }
 
         @Nullable
         @Override

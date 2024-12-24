@@ -169,6 +169,35 @@ public class GTTransferUtils {
     }
 
     /**
+     * Simulates the insertion of fluid into a target fluid handler, then optionally performs the insertion. <br /> <br
+     * /> Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
+     * without modifying anything. This method should be called with {@code simulate} {@code true} first, then
+     * {@code simulate} {@code false}, only if it returned {@code true}.
+     *
+     * @param fluidStacks  the items to insert into {@code fluidHandler}.
+     * @param fluidHandler the target inventory
+     * @param simulate     whether to simulate ({@code true}) or actually perform the insertion ({@code false})
+     * @return {@code true} if the insertion succeeded, {@code false} otherwise.
+     */
+    public static boolean addFluidsToFluidHandler(List<@NotNull FluidStack> fluidStacks,
+                                                  IFluidHandler fluidHandler,
+                                                  boolean simulate) {
+        if (simulate) {
+            for (FluidStack stack : fluidStacks) {
+                int filled = fluidHandler.fill(stack, false);
+                if (filled < stack.amount)
+                    return false;
+            }
+            return true;
+        }
+
+        for (FluidStack fluidStack : fluidStacks) {
+            fluidHandler.fill(fluidStack, true);
+        }
+        return true;
+    }
+
+    /**
      * Inserts items by trying to fill slots with the same item first, and then fill empty slots.
      */
     public static ItemStack insertItem(IItemHandler handler, ItemStack stack, boolean simulate) {
