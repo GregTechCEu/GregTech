@@ -44,50 +44,43 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
         if (resource == null || resource.amount <= 0)
             return 0;
 
+        FluidStack copy = resource.copy();
+
         int totalInserted = 0;
-        boolean inputFluidCopied = false;
 
         var fluidTanks = this.tanks.clone();
         Arrays.sort(fluidTanks, ENTRY_COMPARATOR);
 
         // search for tanks with same fluid type first
-        for (var tank : fluidTanks) {
-            if (!resource.isFluidEqual(tank.getFluid()))
+        for (Entry tank : fluidTanks) {
+            if (!copy.isFluidEqual(tank.getFluid()))
                 continue;
 
             // if the fluid to insert matches the tank, insert the fluid
-            int inserted = tank.fill(resource, doFill);
+            int inserted = tank.fill(copy, doFill);
             if (inserted <= 0) continue;
 
             totalInserted += inserted;
-            if (resource.amount - inserted <= 0) {
+            copy.amount -= inserted;
+            if (copy.amount <= 0) {
                 return totalInserted;
             }
-            if (!inputFluidCopied) {
-                inputFluidCopied = true;
-                resource = resource.copy();
-            }
-            resource.amount -= inserted;
         }
 
         // if we still have fluid to insert, loop through empty tanks until we find one that can accept the fluid
         for (Entry tank : fluidTanks) {
             // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
             // received the fluid, skip this tank
-            if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(resource)) {
+            if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(copy))
                 continue;
-            }
-            int inserted = tank.fill(resource, doFill);
-            if (inserted > 0) {
-                totalInserted += inserted;
-                if (resource.amount - inserted <= 0) {
-                    return totalInserted;
-                }
-                if (!inputFluidCopied) {
-                    inputFluidCopied = true;
-                    resource = resource.copy();
-                }
-                resource.amount -= inserted;
+
+            int inserted = tank.fill(copy, doFill);
+            if (inserted <= 0) continue;
+
+            totalInserted += inserted;
+            copy.amount -= inserted;
+            if (copy.amount <= 0) {
+                return totalInserted;
             }
         }
         // return the amount of fluid that was inserted
