@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -59,7 +58,7 @@ public interface IBlockPattern {
      *         respectively being. The map is sorted using the natural ordering(thus with x, y, z order).
      */
     Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
-                                                                @Nullable Map<String, String> keyMap);
+                                                                @NotNull Map<String, String> keyMap);
 
     /**
      * Gets the internal pattern state, you should use the one returned from

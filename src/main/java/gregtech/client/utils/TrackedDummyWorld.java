@@ -49,16 +49,15 @@ public class TrackedDummyWorld extends DummyWorld {
 
     @Override
     public TileEntity getTileEntity(@NotNull BlockPos pos) {
-        if (renderFilter != null && !renderFilter.test(pos))
-            return null;
+        if (renderFilter != null && !renderFilter.test(pos)) return null;
         return proxyWorld != null ? proxyWorld.getTileEntity(pos) : super.getTileEntity(pos);
     }
 
     @NotNull
     @Override
     public IBlockState getBlockState(@NotNull BlockPos pos) {
-        if (renderFilter != null && !renderFilter.test(pos))
-            return Blocks.AIR.getDefaultState(); // return air if not rendering this block
+        // return air if not rendering this block
+        if (renderFilter != null && !renderFilter.test(pos)) return Blocks.AIR.getDefaultState();
         return proxyWorld != null ? proxyWorld.getBlockState(pos) : super.getBlockState(pos);
     }
 

@@ -1,7 +1,10 @@
 package gregtech.api.pattern.pattern;
 
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
+
+import net.minecraft.util.math.MathHelper;
 
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -68,14 +71,19 @@ public class BasicAisleStrategy extends AisleStrategy {
         return aisles.get(index).actualRepeats = aisle.maxRepeats;
     }
 
-    // todo more lang support(yay!), and actually use the map arg
+    // todo more lang support(yay!)
     @Override
     public int @NotNull [] getDefaultAisles(Map<String, String> map) {
         IntList list = new IntArrayList();
-        for (int[] multi : multiAisles) {
-            for (int i = 0; i < multi[0]; i++) {
-                for (int j = multi[2]; j < multi[3]; j++) {
-                    for (int k = 0; k < aisles.get(j).minRepeats; k++) list.add(j);
+        for (int i = 0; i < multiAisles.size(); i++) {
+            int[] multi = multiAisles.get(i);
+            int multiRepeats = MathHelper.clamp(GTUtility.parseInt(map.get("multi." + i)), multi[0], multi[1]);
+            for (int j = 0; j < multiRepeats; j++) {
+                for (int k = multi[2]; k < multi[3]; k++) {
+                    int aisleRepeats = MathHelper.clamp(
+                            GTUtility.parseInt(map.get("multi." + i + "." + (k - multi[2]))), aisles.get(k).minRepeats,
+                            aisles.get(k).maxRepeats);
+                    for (int l = 0; l < aisleRepeats; l++) list.add(k);
                 }
             }
         }

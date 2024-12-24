@@ -160,7 +160,7 @@ public class ExpandablePattern implements IBlockPattern {
             if (predicate != TraceabilityPredicate.ANY) {
                 TileEntity te = worldState.getTileEntity();
                 cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(),
-                        !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
+                        !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null));
             }
 
             PatternError result = predicate.test(worldState, globalCount, null);
@@ -181,7 +181,7 @@ public class ExpandablePattern implements IBlockPattern {
 
     @Override
     public Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
-                                                                       Map<String, String> keyMap) {
+                                                                       @NotNull Map<String, String> keyMap) {
         // todo add this
         return Long2ObjectSortedMaps.emptyMap();
     }

@@ -150,7 +150,7 @@ public class FactoryBlockPattern {
      * @param blockMatcher The predicate to put
      */
     public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
-        this.symbolMap.put(symbol, new TraceabilityPredicate(blockMatcher).sort());
+        this.symbolMap.put(symbol, blockMatcher);
         if (blockMatcher.isCenter()) centerChar = symbol;
         return this;
     }

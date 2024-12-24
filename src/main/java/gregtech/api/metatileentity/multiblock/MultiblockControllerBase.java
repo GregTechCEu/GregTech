@@ -584,10 +584,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return structures.get(name);
     }
 
-    public IBlockPattern getSubstructure(String name, String defult) {
-        return structures.get(structures.containsKey(name) ? name : defult);
-    }
-
     @Override
     public void onRemoval() {
         super.onRemoval();
@@ -797,7 +793,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             protected Map<String, String> computeNext() {
                 if (!used) {
                     used = true;
-                    return null;
+                    return Collections.emptyMap();
                 }
                 return endOfData();
             }
@@ -812,6 +808,18 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (getWorld().isRemote) throw new IllegalArgumentException("client side call wuh");
 
         Long2ObjectMap<TraceabilityPredicate> predicates = getSubstructure("MAIN").getDefaultShape(this, map);
+        if (predicates == null) return;
+
+        autoBuild(player, map, predicates);
+    }
+
+    /**
+     * Autobuild the multiblock, this is like {@link MultiblockControllerBase#autoBuild(EntityPlayer, Map)} but if
+     * you have the predicate map for other uses. This does mutate the map passed in.
+     */
+    public void autoBuild(EntityPlayer player, Map<String, String> map,
+                          Long2ObjectMap<TraceabilityPredicate> predicates) {
+        if (getWorld().isRemote) throw new IllegalArgumentException("client side call wuh");
 
         // for each symbol, which simple predicate is being used
         // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
@@ -823,21 +831,20 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         BiPredicate<Long, BlockInfo> place = (l, info) -> {
             BlockPos pos = BlockPos.fromLong(l);
 
-            // don't stop build if its air, or maybe do?
+            // don't stop build if its air
             if (!getWorld().isAirBlock(pos)) return true;
-
-            IBlockState state = info.getBlockState();
 
             if (info.getTileEntity() instanceof MetaTileEntityHolder holder) {
                 ItemStack removed = hasAndRemoveItem(player, holder.getMetaTileEntity().getStackForm());
-                if (holder.getMetaTileEntity() != this && !removed.isEmpty()) {
-                    getWorld().setBlockState(pos, state);
-
+                if (!removed.isEmpty()) {
                     MetaTileEntityHolder newHolder = new MetaTileEntityHolder();
                     newHolder.setMetaTileEntity(holder.getMetaTileEntity());
                     newHolder.getMetaTileEntity().onPlacement();
                     if (removed.hasTagCompound())
                         newHolder.getMetaTileEntity().initFromItemStackData(removed.getTagCompound());
+
+                    getWorld().setBlockState(pos, holder.getMetaTileEntity().getBlock().getDefaultState());
+                    getWorld().setTileEntity(pos, newHolder);
 
                     // todo add relative facing fix to make hatches face air
                     // // get the relative direction from the part facing, then use that to get the real enum facing
@@ -855,29 +862,37 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 } else return false;
             } else {
                 if (!hasAndRemoveItem(player, GTUtility.toItem(info.getBlockState())).isEmpty())
-                    getWorld().setBlockState(pos, state);
+                    getWorld().setBlockState(pos, info.getBlockState());
                 else return false;
             }
 
             return true;
         };
 
-        for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
-            // todo add autobuild key params here, also remove layer stuff from rest of the code elsewehre
+        for (Iterator<Long2ObjectMap.Entry<TraceabilityPredicate>> iter = predicates.long2ObjectEntrySet()
+                .iterator(); iter.hasNext();) {
+            Long2ObjectMap.Entry<TraceabilityPredicate> entry = iter.next();
+            // todo add autobuild key params here, also remove layer stuff from rest of the code elsewhere
             TraceabilityPredicate pred = entry.getValue();
             if (simpleIndex.getInt(pred) >= pred.simple.size()) continue;
 
-            TraceabilityPredicate.SimplePredicate simple = pred.simple.get(simpleIndex.getInt(pred));
+            int pointer = simpleIndex.getInt(pred);
+            TraceabilityPredicate.SimplePredicate simple = pred.simple.get(pointer);
             int count = globalCache.getInt(simple);
 
-            while ((simple.previewCount == -1 || count == simple.previewCount) &&
-                    (simple.minGlobalCount == -1 || count == simple.minGlobalCount)) {
-                // if the current predicate is used, move until the next free one
-                int newIndex = simpleIndex.put(pred, simpleIndex.getInt(pred) + 1) + 1;
-                if (newIndex >= pred.simple.size()) break;
-                simple = pred.simple.get(newIndex);
-                count = globalCache.getInt(simple);
+            try {
+                while ((simple.previewCount == -1 || count == simple.previewCount) &&
+                        (simple.minGlobalCount == -1 || count == simple.minGlobalCount)) {
+                    // if the current predicate is used, move until the next free one
+                    pointer++;
+                    simple = pred.simple.get(pointer);
+                    count = globalCache.getInt(simple);
+                }
+                simpleIndex.put(pred, pointer);
+            } catch (IndexOutOfBoundsException e) {
+                continue;
             }
+
             globalCache.put(simple, globalCache.getInt(simple) + 1);
 
             if (simple.candidates == null) continue;
@@ -886,7 +901,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             cache.computeIfAbsent(simple, k -> finalSimple.candidates.get()[0]);
 
             if (!place.test(entry.getLongKey(), cache.get(simple))) return;
+
+            iter.remove();
         }
+
+        simpleIndex.clear();
 
         for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
             TraceabilityPredicate pred = entry.getValue();
@@ -895,8 +914,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             TraceabilityPredicate.SimplePredicate simple = pred.simple.get(simpleIndex.getInt(pred));
             int count = globalCache.getInt(simple);
 
-            while ((simple.previewCount != -1 && count == simple.previewCount) ||
-                    (simple.maxGlobalCount != -1 && count == simple.maxGlobalCount)) {
+            while (count == simple.previewCount || count == simple.maxGlobalCount) {
                 // if the current predicate is used, move until the next free one
                 int newIndex = simpleIndex.put(pred, simpleIndex.getInt(pred) + 1) + 1;
                 if (newIndex >= pred.simple.size()) {

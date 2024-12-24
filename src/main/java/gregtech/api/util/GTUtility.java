@@ -669,8 +669,8 @@ public class GTUtility {
 
         // first check if the block is a GT machine
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof IGregTechTileEntity) {
-            stack = ((IGregTechTileEntity) tileEntity).getMetaTileEntity().getStackForm();
+        if (tileEntity instanceof IGregTechTileEntity igtte) {
+            stack = igtte.getMetaTileEntity().getStackForm();
         }
 
         if (stack.isEmpty()) {
@@ -975,5 +975,16 @@ public class GTUtility {
      */
     public static int safeCastLongToInt(long v) {
         return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    }
+
+    /**
+     * Parse the string as an int and return, or return -1 if the string is not an int.
+     */
+    public static int parseInt(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 }

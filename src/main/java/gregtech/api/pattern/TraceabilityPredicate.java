@@ -85,13 +85,6 @@ public class TraceabilityPredicate {
         return isCenter;
     }
 
-    public TraceabilityPredicate sort() {
-        // reverse so that all min layer and global counts are at the front
-        simple.sort(Collections
-                .reverseOrder(Comparator.comparingInt(a -> ((a.minLayerCount + 1) * 100 + a.minGlobalCount))));
-        return this;
-    }
-
     /**
      * Add tooltips for candidates. They are shown in JEI Pages.
      * Do NOT pass {@link I18n#format(String, Object...)} calls here! Everything is will be translated when it's needed.
@@ -302,6 +295,7 @@ public class TraceabilityPredicate {
         public PatternError testGlobal(BlockWorldState worldState, Object2IntMap<SimplePredicate> cache) {
             PatternError result = predicate.apply(worldState);
 
+            if (cache != null && !cache.containsKey(this)) cache.put(this, 0);
             if ((minGlobalCount == -1 && maxGlobalCount == -1) || cache == null || result != null) return result;
 
             int count = cache.put(this, cache.getInt(this) + 1) + 1;

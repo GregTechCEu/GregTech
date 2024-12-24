@@ -4,7 +4,6 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.GreggyBlockPos;
-import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.utils.TrackedDummyWorld;
@@ -37,7 +36,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -119,29 +117,25 @@ public class MultiblockPreviewRenderer {
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
         worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
 
-        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-
-        // absolutely dog way of doing this, just setting the center at 128 so that both patterns going down and up can
-        // work
         MetaTileEntityHolder holder = new MetaTileEntityHolder();
-        world.setBlockState(SOURCE, src.getBlock().getDefaultState());
         holder.setMetaTileEntity(src);
         holder.getMetaTileEntity().onPlacement();
+        holder.getMetaTileEntity().setFrontFacing(src.getFrontFacing());
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).setUpwardsFacing(src.getUpwardsFacing());
 
+        world.setBlockState(SOURCE, src.getBlock().getDefaultState());
         world.setTileEntity(SOURCE, holder);
 
         ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), keyMap);
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).checkStructurePattern();
 
-        // todo fix
-        int finalMaxY = layer % 5;
-        world.setRenderFilter(pos -> pos.getY() - 127 == finalMaxY || finalMaxY == 0);
+        int finalMaxY = (int) (layer % (world.getMaxPos().y - world.getMinPos().y + 2));
+        world.setRenderFilter(pos -> pos.getY() - (int) world.getMinPos().y + 1 == finalMaxY || finalMaxY == 0);
 
         Minecraft mc = Minecraft.getMinecraft();
         BlockRendererDispatcher brd = mc.getBlockRendererDispatcher();
         Tessellator tes = Tessellator.getInstance();
         BufferBuilder buff = tes.getBuffer();
-
-        ((MultiblockControllerBase) holder.getMetaTileEntity()).checkStructurePattern();
 
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
         TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
@@ -150,7 +144,7 @@ public class MultiblockPreviewRenderer {
         GreggyBlockPos offset = new GreggyBlockPos(SOURCE);
         GreggyBlockPos temp = new GreggyBlockPos();
 
-        for (BlockPos pos : blockMap.keySet()) {
+        for (BlockPos pos : world.renderedBlocks) {
             targetBA.setPos(pos);
             greg.from(src.getPos()).add(temp.from(pos)).subtract(offset);
 

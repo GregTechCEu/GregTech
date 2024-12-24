@@ -17,15 +17,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import it.unimi.dsi.fastutil.chars.Char2IntMap;
-import it.unimi.dsi.fastutil.chars.Char2IntOpenHashMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
-import it.unimi.dsi.fastutil.objects.Object2CharMap;
-import it.unimi.dsi.fastutil.objects.Object2CharOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -242,7 +238,7 @@ public class BlockPattern implements IBlockPattern {
                     // todo it caused an exception twice but never reproduced, maybe figure out or just remove
                     try {
                         cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(),
-                                !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null, predicate));
+                                !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null));
                     } catch (IllegalArgumentException e) {
                         GTLog.logger.error("bruh");
                         throw e;
@@ -281,7 +277,7 @@ public class BlockPattern implements IBlockPattern {
 
     @Override
     public Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
-                                                                       Map<String, String> keyMap) {
+                                                                       @NotNull Map<String, String> keyMap) {
         Long2ObjectSortedMap<TraceabilityPredicate> map = new Long2ObjectRBTreeMap<>();
         EnumFacing absoluteAisle = directions[0].getRelativeFacing(src.getFrontFacing(), src.getUpwardsFacing());
         EnumFacing absoluteString = directions[1].getRelativeFacing(src.getFrontFacing(), src.getUpwardsFacing());
