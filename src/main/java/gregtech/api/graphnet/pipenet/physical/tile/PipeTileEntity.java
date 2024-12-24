@@ -429,7 +429,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public <T> T getCapabilityCoverQuery(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         for (PipeCapabilityWrapper wrapper : netCapabilities.values()) {
-            T cap = wrapper.getCapabilityCoverQuery(capability, facing);
+            T cap = wrapper.getCapability(capability, facing);
             if (cap != null) return cap;
         }
         return null;

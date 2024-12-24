@@ -9,7 +9,7 @@ public class GTUtilityTest {
         for (int i = 0; i < 1000; i++) {
             int finalI = i;
 
-            long result = GTUtility.binarySearch(0, 10000, l -> l >= finalI, true);
+            long result = GTUtility.binarySearchLong(0, 10000, l -> l >= finalI, true);
 
             if (result != finalI) {
                 throw new AssertionError("Got " + result + " when desiring " + finalI);
@@ -18,7 +18,7 @@ public class GTUtilityTest {
         for (int i = 0; i < 1000; i++) {
             int finalI = i;
 
-            long result = GTUtility.binarySearch(0, 10000, l -> l <= finalI, false);
+            long result = GTUtility.binarySearchLong(0, 10000, l -> l <= finalI, false);
 
             if (result != finalI) {
                 throw new AssertionError("Got " + result + " when desiring " + finalI);

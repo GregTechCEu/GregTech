@@ -4,8 +4,8 @@ import gregtech.api.graphnet.graph.GraphEdge;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
-import gregtech.api.graphnet.traverse.iter.EdgeDirection;
-import gregtech.api.graphnet.traverse.iter.NetBreadthIterator;
+import gregtech.api.graphnet.traverse.EdgeDirection;
+import gregtech.api.graphnet.traverse.NetBreadthIterator;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;

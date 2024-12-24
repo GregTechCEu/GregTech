@@ -15,7 +15,7 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
 import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.predicate.NetPredicateType;
-import gregtech.api.graphnet.traverse.iter.EdgeDirection;
+import gregtech.api.graphnet.traverse.EdgeDirection;
 import gregtech.api.util.IDirtyNotifiable;
 import gregtech.api.util.reference.WeakHashSet;
 import gregtech.common.covers.CoverShutter;
@@ -135,21 +135,21 @@ public abstract class WorldPipeNet extends WorldSavedNet {
                 edge.getPredicateHandler().getPredicateSet());
         edge.getPredicateHandler().clearPredicates();
         coverPredication(edge, coverSource, coverTarget);
-        boolean edgeSame = !prevValue.equals(edge.getPredicateHandler().getPredicateSet());
+        boolean edgeDifferent = !prevValue.equals(edge.getPredicateHandler().getPredicateSet());
         if (getGraph().isDirected()) {
             edge = getEdge(target, source);
-            if (edge == null) return edgeSame;
-            if (edgeSame) {
+            if (edge == null) return edgeDifferent;
+            if (edgeDifferent) {
                 prevValue.clear();
                 prevValue.putAll(edge.getPredicateHandler().getPredicateSet());
             }
             edge.getPredicateHandler().clearPredicates();
             coverPredication(edge, coverSource, coverTarget);
-            if (edgeSame) {
-                edgeSame = !prevValue.equals(edge.getPredicateHandler().getPredicateSet());
+            if (!edgeDifferent) {
+                edgeDifferent = !prevValue.equals(edge.getPredicateHandler().getPredicateSet());
             }
         }
-        return edgeSame;
+        return edgeDifferent;
     }
 
     /**

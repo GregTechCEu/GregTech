@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class WorldFluidNet extends WorldPipeNet {
 
-    public static final Capability<?>[] CAPABILITIES = new Capability[] {
-            CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY };
-
     private static final String DATA_ID_BASE = "gregtech.world_fluid_net";
 
     public static @NotNull WorldFluidNet getWorldNet(World world) {

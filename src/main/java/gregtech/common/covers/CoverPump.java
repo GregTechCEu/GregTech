@@ -4,25 +4,23 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
+import gregtech.api.capability.impl.FluidHandlerList;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.graphnet.GraphNetUtility;
-import gregtech.api.graphnet.group.NetGroup;
-import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
-import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
-import gregtech.api.graphnet.pipenet.traverse.RoundRobinCache;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.traverse.iter.EdgeDirection;
-import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
-import gregtech.api.graphnet.traverse.iter.NetIterator;
+import gregtech.api.graphnet.traverse.EdgeDirection;
+import gregtech.api.graphnet.traverse.EdgeSelector;
+import gregtech.api.graphnet.traverse.NetClosestIterator;
+import gregtech.api.graphnet.traverse.ResilientNetClosestIterator;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.BiIntConsumer;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
@@ -74,13 +72,18 @@ import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.function.IntUnaryOperator;
+import java.util.function.Predicate;
 
 public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter {
 
@@ -96,7 +99,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected FluidFilterContainer fluidFilterContainer;
     protected BucketMode bucketMode = BucketMode.MILLI_BUCKET;
 
-    protected final RoundRobinCache roundRobinCache = RoundRobinCache.create();
+    protected final ObjectLinkedOpenHashSet<IFluidHandler> extractionRoundRobinCache = new ObjectLinkedOpenHashSet<>();
+    protected final ObjectLinkedOpenHashSet<IFluidHandler> insertionRoundRobinCache = new ObjectLinkedOpenHashSet<>();
 
     protected @Nullable CoverRenderer rendererInverted;
 
@@ -169,7 +173,10 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
 
     public void setDistributionMode(DistributionMode distributionMode) {
         this.distributionMode = distributionMode;
-        this.roundRobinCache.clear();
+        this.extractionRoundRobinCache.clear();
+        this.extractionRoundRobinCache.trim(16);
+        this.insertionRoundRobinCache.clear();
+        this.insertionRoundRobinCache.trim(16);
         markDirty();
     }
 
@@ -201,12 +208,12 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     public void update() {
         long timer = getOffsetTimer();
         if (isWorkingAllowed && getFluidsLeftToTransfer() > 0) {
-            TileEntity tileEntity = getNeighbor(getAttachedSide());
+            EnumFacing side = getAttachedSide();
+            TileEntity tileEntity = getNeighbor(side);
             IFluidHandler fluidHandler = tileEntity == null ? null : tileEntity
-                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide().getOpposite());
+                    .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
             IFluidHandler myFluidHandler = getCoverableView().getCapability(
-                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
-                    getAttachedSide());
+                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
             if (myFluidHandler != null && fluidHandler != null) {
                 if (pumpMode == PumpMode.EXPORT) {
                     performTransferOnUpdate(myFluidHandler, fluidHandler);
@@ -254,166 +261,6 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected int performTransfer(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler,
                                   boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
                                   @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
-        // if the source handler or the dest handler is a pipe, perform a pipenet transfer. Otherwise, do a simple one.
-        if (sourceHandler instanceof FluidCapabilityObject s) {
-            if (destHandler instanceof FluidCapabilityObject d) {
-                return transferWithinNet(s.getNode(), d.getNode(), byFilterSlot, minTransfer, maxTransfer,
-                        transferReport);
-            } else {
-                PipeCapabilityWrapper wrapper = s.getNode().getTileEntity().getWrapperForNode(s.getNode());
-                if (wrapper instanceof NodeManagingPCW managingPCW) {
-                    // if export, we know we're on the pipe; otherwise, we're on the tile.
-                    EnumFacing facing = pumpMode == PumpMode.EXPORT ? getAttachedSide() :
-                            getAttachedSide().getOpposite();
-                    NetNode node = managingPCW.getNodeForFacing(facing);
-                    if (node == null) return 0;
-                    return transferWithinNet(s.getNode(), node, byFilterSlot, minTransfer, maxTransfer, transferReport);
-                }
-                return 0;
-            }
-        } else {
-            if (destHandler instanceof FluidCapabilityObject d) {
-                PipeCapabilityWrapper wrapper = d.getNode().getTileEntity().getWrapperForNode(d.getNode());
-                if (wrapper instanceof NodeManagingPCW managingPCW) {
-                    // if import, we know we're on the pipe; otherwise, we're on the tile.
-                    EnumFacing facing = pumpMode == PumpMode.IMPORT ? getAttachedSide() :
-                            getAttachedSide().getOpposite();
-                    NetNode node = managingPCW.getNodeForFacing(facing);
-                    if (node == null) return 0;
-                    return transferWithinNet(node, d.getNode(), byFilterSlot, minTransfer, maxTransfer, transferReport);
-                }
-                return 0;
-            } else {
-                return simpleTransfer(sourceHandler, destHandler, byFilterSlot, minTransfer, maxTransfer,
-                        transferReport);
-            }
-        }
-    }
-
-    protected RoundRobinCache getRoundRobinCache(boolean simulate) {
-        return simulate ? roundRobinCache.copy() : roundRobinCache;
-    }
-
-    /**
-     * Performs transfer between two nodes of a pipenet.
-     *
-     * @param sourceNode     the node to pull from
-     * @param destNode       the node to push to
-     * @param byFilterSlot   whether to perform the transfer by filter slot.
-     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
-     *                       Each filter slot will report its transfer before the next slot is calculated.
-     * @return how much was transferred in total.
-     */
-    protected int transferWithinNet(@NotNull NetNode sourceNode, @NotNull NetNode destNode,
-                                    boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
-                                    @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
-        // first, evaluate whether we're the only bridge between two areas in a group
-        NetEdge bridge = sourceNode.getNet().getEdge(sourceNode, destNode);
-        if (bridge == null || !GraphNetUtility.isOnlyBridge(bridge)) return 0;
-        // second, build frontier information. If we have no candidates for either frontier, exit early.
-        NetClosestIterator sourceFrontier = new NetClosestIterator(sourceNode,
-                GraphNetUtility.bridgeFiltered(EdgeDirection.INCOMING, sourceNode, destNode));
-        Map<NetNode, IFluidHandler> sourceCandidates = new Object2ObjectOpenHashMap<>();
-        while (sourceFrontier.hasNext()) {
-            NetNode next = sourceFrontier.next();
-            if (next instanceof NodeExposingCapabilities cap) {
-                IFluidHandler handler = cap.getProvider()
-                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
-                if (handler != null && !(handler instanceof FluidCapabilityObject))
-                    sourceCandidates.put(next, handler);
-            }
-        }
-        if (sourceCandidates.isEmpty()) return 0;
-        NetClosestIterator destFrontier = new NetClosestIterator(destNode,
-                GraphNetUtility.bridgeFiltered(EdgeDirection.OUTGOING, sourceNode, destNode));
-        Map<NetNode, IFluidHandler> destinationCandidates = new Object2ObjectOpenHashMap<>();
-        while (destFrontier.hasNext()) {
-            NetNode next = destFrontier.next();
-            if (next instanceof NodeExposingCapabilities cap) {
-                IFluidHandler handler = cap.getProvider()
-                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, cap.exposedFacing());
-                if (handler != null && !(handler instanceof FluidCapabilityObject))
-                    destinationCandidates.put(next, handler);
-            }
-        }
-        if (destinationCandidates.isEmpty()) return 0;
-        // third, build merge information from source candidates
-        FluidFilterContainer filter = this.getFluidFilter();
-        byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
-        Object2IntOpenHashMap<FluidTestObject> contained = new Object2IntOpenHashMap<>();
-        for (IFluidHandler handler : sourceCandidates.values()) {
-            var tanks = handler.getTankProperties();
-            for (IFluidTankProperties tank : tanks) {
-                FluidStack contents = tank.getContents();
-                if (contents != null) contained.merge(new FluidTestObject(contents), contents.amount, Integer::sum);
-            }
-        }
-        var iter = contained.object2IntEntrySet().fastIterator();
-        int totalTransfer = 0;
-        // fourth, perform transfer based on merge information
-        while (iter.hasNext()) {
-            var content = iter.next();
-            FluidStack contents = content.getKey().recombine(content.getIntValue());
-            MatchResult match = null;
-            if (filter == null || (match = filter.match(contents)).isMatched()) {
-                int filterSlot = -1;
-                if (byFilterSlot) {
-                    assert filter != null; // we know it is not null, because if it were byFilterSlot would be false.
-                    filterSlot = match.getFilterIndex();
-                }
-                int min = minTransfer.applyAsInt(filterSlot);
-                int max = maxTransfer.applyAsInt(filterSlot);
-                if (max < min || max <= 0) continue;
-
-                if (contents.amount < min) continue;
-                int transfer = Math.min(contents.amount, max);
-                if (min > 0) {
-                    transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer, content.getKey(),
-                            sourceFrontier, sourceCandidates, destFrontier, destinationCandidates,
-                            SimulatorKey.getNewSimulatorInstance());
-                    if (transfer < min) continue;
-                }
-                transfer = attemptNetTransfer(sourceNode.getGroupSafe(), bridge, transfer, content.getKey(),
-                        sourceFrontier, sourceCandidates, destFrontier, destinationCandidates, null);
-                if (transferReport != null) transferReport.accept(filterSlot, transfer);
-                totalTransfer += transfer;
-            }
-        }
-        return totalTransfer;
-    }
-
-    protected int attemptNetTransfer(NetGroup group, NetEdge bridge, int limit, FluidTestObject testObject,
-                                     NetIterator sources, Map<NetNode, IFluidHandler> sourceCandidates,
-                                     NetIterator targets, Map<NetNode, IFluidHandler> destCandidates,
-                                     @Nullable SimulatorKey key) {
-        return 0;
-    }
-
-    protected int getSupply(NetNode node, FluidTestObject testObject, boolean supply) {
-        return FluidCapabilityObject.getSupplyOrDemand(node, testObject, supply);
-    }
-
-    /**
-     * Performs transfer without involving the pipenet
-     *
-     * @param sourceHandler  the handler to pull from
-     * @param destHandler    the handler to push to
-     * @param byFilterSlot   whether to perform the transfer by filter slot.
-     * @param minTransfer    the minimum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param maxTransfer    the maximum allowed transfer amount, when given a filter slot. If no filter exists or not
-     *                       transferring by slot, a filter slot of -1 will be passed in.
-     * @param transferReport where transfer is reported; a is the filter slot, b is the amount of transfer.
-     *                       Each filter slot will report its transfer before the next slot is calculated.
-     * @return how much was transferred in total.
-     */
-    protected int simpleTransfer(@NotNull IFluidHandler sourceHandler, @NotNull IFluidHandler destHandler,
-                                 boolean byFilterSlot, @NotNull IntUnaryOperator minTransfer,
-                                 @NotNull IntUnaryOperator maxTransfer, @Nullable BiIntConsumer transferReport) {
         FluidFilterContainer filter = this.getFluidFilter();
         byFilterSlot = byFilterSlot && filter != null; // can't be by filter slot if there is no filter
         Object2IntOpenHashMap<FluidTestObject> contained = new Object2IntOpenHashMap<>();
@@ -426,27 +273,26 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         int totalTransfer = 0;
         while (iter.hasNext()) {
             var content = iter.next();
-            FluidStack contents = content.getKey().recombine(content.getIntValue());
             MatchResult match = null;
-            if (filter == null || (match = filter.match(contents)).isMatched()) {
+            if (filter == null ||
+                    (match = filter.match(content.getKey().recombine(content.getIntValue()))).isMatched()) {
                 int filterSlot = -1;
                 if (byFilterSlot) {
                     assert filter != null; // we know it is not null, because if it were byFilterSlot would be false.
                     filterSlot = match.getFilterIndex();
                 }
-                int min = minTransfer.applyAsInt(filterSlot);
+                int min = Math.max(minTransfer.applyAsInt(filterSlot), 1);
                 int max = maxTransfer.applyAsInt(filterSlot);
-                if (max < min || max <= 0) continue;
+                if (max < min) continue;
 
-                if (contents.amount < min) continue;
-                int transfer = Math.min(contents.amount, max);
-                FluidStack extracted = sourceHandler.drain(content.getKey().recombine(transfer), false);
-                if (extracted == null || extracted.amount < min) continue;
-                transfer = simpleInsert(destHandler, content.getKey(), extracted.amount, true);
-                if (transfer <= 0 || transfer < min) continue;
-                extracted = sourceHandler.drain(content.getKey().recombine(transfer), true);
-                if (extracted == null) continue;
-                transfer = simpleInsert(destHandler, content.getKey(), extracted.amount, false);
+                if (content.getIntValue() < min) continue;
+                int transfer = Math.min(content.getIntValue(), max);
+                transfer = doInsert(destHandler, content.getKey(), transfer, true);
+                if (transfer < min) continue;
+                transfer = doExtract(sourceHandler, content.getKey(), transfer, true);
+                if (transfer < min) continue;
+                doExtract(sourceHandler, content.getKey(), transfer, false);
+                doInsert(destHandler, content.getKey(), transfer, false);
                 if (transferReport != null) transferReport.accept(filterSlot, transfer);
                 totalTransfer += transfer;
             }
@@ -454,9 +300,317 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         return totalTransfer;
     }
 
+    protected ObjectLinkedOpenHashSet<IFluidHandler> getRoundRobinCache(boolean extract, boolean simulate) {
+        ObjectLinkedOpenHashSet<IFluidHandler> set = extract ? extractionRoundRobinCache : insertionRoundRobinCache;
+        return simulate ? set.clone() : set;
+    }
+
+    protected int doExtract(@NotNull IFluidHandler handler, FluidTestObject testObject, int count,
+                            boolean simulate) {
+        FluidCapabilityObject cap;
+        if (distributionMode == DistributionMode.FLOOD || (cap = FluidCapabilityObject.instanceOf(handler)) == null)
+            return simpleExtract(handler, testObject, count, simulate);
+        NetNode origin = cap.getNode();
+        Predicate<Object> filter = GraphNetUtility.standardEdgeBlacklist(testObject);
+        // if you find yourself here because you added a new distribution mode and now it won't compile,
+        // good luck.
+        return switch (distributionMode) {
+            case ROUND_ROBIN -> {
+                FluidHandlerList view = cap.getNetworkView();
+                Iterator<IFluidHandler> iter = view.getBackingHandlers().iterator();
+                ObjectLinkedOpenHashSet<IFluidHandler> cache = getRoundRobinCache(true, simulate);
+                Set<IFluidHandler> backlog = new ObjectOpenHashSet<>();
+                Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
+                int available = count;
+                while (available > 0) {
+                    if (!cache.isEmpty() && backlog.remove(cache.first())) {
+                        IFluidHandler candidate = cache.first();
+                        NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                        if (linked == null) {
+                            cache.removeFirst();
+                            continue;
+                        } else {
+                            cache.addAndMoveToLast(candidate);
+                        }
+                        available = rrExtract(testObject, simulate, origin, filter, flows, available, candidate,
+                                linked);
+                        continue;
+                    }
+                    if (iter.hasNext()) {
+                        IFluidHandler candidate = iter.next();
+                        boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
+                        if (frontOfCache || !cache.contains(candidate)) {
+                            NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                            if (linked == null) {
+                                if (frontOfCache) cache.removeFirst();
+                                continue;
+                            } else {
+                                cache.addAndMoveToLast(candidate);
+                            }
+                            available = rrExtract(testObject, simulate, origin, filter, flows, available, candidate,
+                                    linked);
+                        } else {
+                            backlog.add(candidate);
+                        }
+                    } else if (backlog.isEmpty()) {
+                        // we have finished the iterator and backlog
+                        break;
+                    } else {
+                        if (!cache.isEmpty()) {
+                            if (view.getBackingHandlers().contains(cache.first()))
+                                break; // we've already visited the next node in the cache
+                            else {
+                                // the network view does not contain the node in the front of the cache, so yeet it.
+                                cache.removeFirst();
+                            }
+                        } else {
+                            break; // cache is empty and iterator is empty, something is weird, just exit.
+                        }
+                    }
+                }
+                while (iter.hasNext()) {
+                    cache.add(iter.next());
+                }
+                if (!simulate) {
+                    for (var entry : flows.object2IntEntrySet()) {
+                        FluidCapabilityObject.reportFlow(entry.getKey(), entry.getIntValue(), testObject);
+                    }
+                }
+                yield count - available;
+            }
+            case EQUALIZED -> {
+                NetClosestIterator gather = new NetClosestIterator(origin,
+                        EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
+                Object2ObjectOpenHashMap<NetNode, IFluidHandler> candidates = new Object2ObjectOpenHashMap<>();
+                while (gather.hasNext()) {
+                    NetNode node = gather.next();
+                    if (node instanceof NodeExposingCapabilities exposer) {
+                        IFluidHandler h = exposer.getProvider().getCapability(
+                                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                                exposer.exposedFacing());
+                        if (h != null && FluidCapabilityObject.instanceOf(h) == null) {
+                            candidates.put(node, h);
+                        }
+                    }
+                }
+                int largestMin = count / candidates.size();
+                if (largestMin <= 0) yield 0;
+                for (IFluidHandler value : candidates.values()) {
+                    largestMin = Math.min(largestMin, simpleExtract(value, testObject, largestMin, true));
+                    if (largestMin <= 0) yield 0;
+                }
+                // binary search for largest scale that doesn't exceed flow limits
+                Int2ObjectArrayMap<Object2IntOpenHashMap<NetNode>> flows = new Int2ObjectArrayMap<>();
+                largestMin = GTUtility.binarySearchInt(0, largestMin, l -> {
+                    if (flows.containsKey(l) && flows.get(l) == null) return false;
+                    ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
+                            EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
+                    Object2IntOpenHashMap<NetNode> localFlows = new Object2IntOpenHashMap<>();
+                    for (NetNode node : candidates.keySet()) {
+                        ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(node,
+                                EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
+                        if (GraphNetUtility.p2pWalk(simulate, l,
+                                n -> FluidCapabilityObject.getFlowLimit(n, testObject) - localFlows.getInt(n),
+                                (n, i) -> localFlows.put(n, localFlows.getInt(n) + i),
+                                forwardFrontier, backwardFrontier) < l)
+                            return false;
+                    }
+                    flows.put(l, localFlows);
+                    return true;
+                }, false);
+                if (largestMin <= 0 || flows.get(largestMin) == null) yield 0;
+                if (!simulate) {
+                    for (IFluidHandler value : candidates.values()) {
+                        simpleExtract(value, testObject, largestMin, false);
+                    }
+                    for (var e : flows.get(largestMin).object2IntEntrySet()) {
+                        FluidCapabilityObject.reportFlow(e.getKey(), e.getIntValue(), testObject);
+                    }
+                }
+                yield largestMin * candidates.size();
+            }
+            case FLOOD -> 0; // how are you here?
+        };
+    }
+
+    protected int rrExtract(FluidTestObject testObject, boolean simulate, NetNode origin, Predicate<Object> filter,
+                            Object2IntOpenHashMap<NetNode> flows, int available, IFluidHandler candidate,
+                            NetNode linked) {
+        int accepted = simpleExtract(candidate, testObject, available, true);
+        if (accepted > 0) {
+            ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
+                    EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
+            ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(linked,
+                    EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
+            accepted = GraphNetUtility.p2pWalk(simulate, accepted,
+                    n -> FluidCapabilityObject.getFlowLimit(n, testObject) - flows.getInt(n),
+                    (n, i) -> flows.put(n, flows.getInt(n) + i),
+                    forwardFrontier, backwardFrontier);
+            if (accepted > 0) {
+                available -= accepted;
+                if (!simulate) simpleExtract(candidate, testObject, accepted, false);
+            }
+        }
+        return available;
+    }
+
+    protected int simpleExtract(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count,
+                                boolean simulate) {
+        FluidStack ext = destHandler.drain(testObject.recombine(count), !simulate);
+        return ext == null ? 0 : ext.amount;
+    }
+
+    protected int doInsert(@NotNull IFluidHandler handler, FluidTestObject testObject, int count,
+                           boolean simulate) {
+        FluidCapabilityObject cap;
+        if (distributionMode == DistributionMode.FLOOD || (cap = FluidCapabilityObject.instanceOf(handler)) == null)
+            return simpleInsert(handler, testObject, count, simulate);
+        NetNode origin = cap.getNode();
+        Predicate<Object> filter = GraphNetUtility.standardEdgeBlacklist(testObject);
+        // if you find yourself here because you added a new distribution mode and now it won't compile,
+        // good luck.
+        return switch (distributionMode) {
+            case ROUND_ROBIN -> {
+                FluidHandlerList view = cap.getNetworkView();
+                Iterator<IFluidHandler> iter = view.getBackingHandlers().iterator();
+                ObjectLinkedOpenHashSet<IFluidHandler> cache = getRoundRobinCache(false, simulate);
+                Set<IFluidHandler> backlog = new ObjectOpenHashSet<>();
+                Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
+                int available = count;
+                while (available > 0) {
+                    if (!cache.isEmpty() && backlog.remove(cache.first())) {
+                        IFluidHandler candidate = cache.first();
+                        NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                        if (linked == null) {
+                            cache.removeFirst();
+                            continue;
+                        } else {
+                            cache.addAndMoveToLast(candidate);
+                        }
+                        available = rrInsert(testObject, simulate, origin, filter, flows, available, candidate, linked);
+                        continue;
+                    }
+                    if (iter.hasNext()) {
+                        IFluidHandler candidate = iter.next();
+                        boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
+                        if (frontOfCache || !cache.contains(candidate)) {
+                            NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                            if (linked == null) {
+                                if (frontOfCache) cache.removeFirst();
+                                continue;
+                            } else {
+                                cache.addAndMoveToLast(candidate);
+                            }
+                            available = rrInsert(testObject, simulate, origin, filter, flows, available, candidate,
+                                    linked);
+                        } else {
+                            backlog.add(candidate);
+                        }
+                    } else if (backlog.isEmpty()) {
+                        // we have finished the iterator and backlog
+                        break;
+                    } else {
+                        if (!cache.isEmpty()) {
+                            if (view.getBackingHandlers().contains(cache.first()))
+                                break; // we've already visited the next node in the cache
+                            else {
+                                // the network view does not contain the node in the front of the cache, so yeet it.
+                                cache.removeFirst();
+                            }
+                        } else {
+                            break; // cache is empty and iterator is empty, something is weird, just exit.
+                        }
+                    }
+                }
+                while (iter.hasNext()) {
+                    cache.add(iter.next());
+                }
+                if (!simulate) {
+                    for (var entry : flows.object2IntEntrySet()) {
+                        FluidCapabilityObject.reportFlow(entry.getKey(), entry.getIntValue(), testObject);
+                    }
+                }
+                yield count - available;
+            }
+            case EQUALIZED -> {
+                NetClosestIterator gather = new NetClosestIterator(origin,
+                        EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
+                Object2ObjectOpenHashMap<NetNode, IFluidHandler> candidates = new Object2ObjectOpenHashMap<>();
+                while (gather.hasNext()) {
+                    NetNode node = gather.next();
+                    if (node instanceof NodeExposingCapabilities exposer) {
+                        IFluidHandler h = exposer.getProvider().getCapability(
+                                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                                exposer.exposedFacing());
+                        if (h != null && FluidCapabilityObject.instanceOf(h) == null) {
+                            candidates.put(node, h);
+                        }
+                    }
+                }
+                int largestMin = count / candidates.size();
+                if (largestMin <= 0) yield 0;
+                for (IFluidHandler value : candidates.values()) {
+                    largestMin = Math.min(largestMin, simpleInsert(value, testObject, largestMin, true));
+                    if (largestMin <= 0) yield 0;
+                }
+                // binary search for largest scale that doesn't exceed flow limits
+                Int2ObjectArrayMap<Object2IntOpenHashMap<NetNode>> flows = new Int2ObjectArrayMap<>();
+                largestMin = GTUtility.binarySearchInt(0, largestMin, l -> {
+                    if (flows.containsKey(l) && flows.get(l) == null) return false;
+                    ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
+                            EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
+                    Object2IntOpenHashMap<NetNode> localFlows = new Object2IntOpenHashMap<>();
+                    for (NetNode node : candidates.keySet()) {
+                        ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(node,
+                                EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
+                        if (GraphNetUtility.p2pWalk(simulate, l,
+                                n -> FluidCapabilityObject.getFlowLimit(n, testObject) - localFlows.getInt(n),
+                                (n, i) -> localFlows.put(n, localFlows.getInt(n) + i),
+                                forwardFrontier, backwardFrontier) < l)
+                            return false;
+                    }
+                    flows.put(l, localFlows);
+                    return true;
+                }, false);
+                if (largestMin <= 0 || flows.get(largestMin) == null) yield 0;
+                if (!simulate) {
+                    for (IFluidHandler value : candidates.values()) {
+                        simpleInsert(value, testObject, largestMin, false);
+                    }
+                    for (var e : flows.get(largestMin).object2IntEntrySet()) {
+                        FluidCapabilityObject.reportFlow(e.getKey(), e.getIntValue(), testObject);
+                    }
+                }
+                yield largestMin * candidates.size();
+            }
+            case FLOOD -> 0; // how are you here?
+        };
+    }
+
+    protected int rrInsert(FluidTestObject testObject, boolean simulate, NetNode origin, Predicate<Object> filter,
+                           Object2IntOpenHashMap<NetNode> flows, int available, IFluidHandler candidate,
+                           NetNode linked) {
+        int accepted = simpleInsert(candidate, testObject, available, true);
+        if (accepted > 0) {
+            ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
+                    EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
+            ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(linked,
+                    EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
+            accepted = GraphNetUtility.p2pWalk(simulate, accepted,
+                    n -> FluidCapabilityObject.getFlowLimit(n, testObject) - flows.getInt(n),
+                    (n, i) -> flows.put(n, flows.getInt(n) + i),
+                    forwardFrontier, backwardFrontier);
+            if (accepted > 0) {
+                available -= accepted;
+                if (!simulate) simpleInsert(candidate, testObject, accepted, false);
+            }
+        }
+        return available;
+    }
+
     protected int simpleInsert(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count,
                                boolean simulate) {
-        return count - destHandler.fill(testObject.recombine(count), !simulate);
+        return destHandler.fill(testObject.recombine(count), !simulate);
     }
 
     protected boolean checkInputFluid(FluidStack fluidStack) {

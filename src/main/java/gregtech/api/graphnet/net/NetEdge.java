@@ -16,8 +16,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
-
 public class NetEdge implements INBTSerializable<NBTTagCompound> {
 
     public static final GraphClassType<NetEdge> TYPE = new GraphClassType<>(GTValues.MODID, "NetEdge",
@@ -109,9 +107,5 @@ public class NetEdge implements INBTSerializable<NBTTagCompound> {
 
     public GraphClassType<? extends NetEdge> getType() {
         return TYPE;
-    }
-
-    public static Predicate<Object> standardBlacklist(IPredicateTestObject testObject) {
-        return o -> o instanceof NetEdge e && !e.test(testObject);
     }
 }

@@ -7,7 +7,7 @@ import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
-import gregtech.api.graphnet.traverse.iter.NetClosestIterator;
+import gregtech.api.graphnet.traverse.NetClosestIterator;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;

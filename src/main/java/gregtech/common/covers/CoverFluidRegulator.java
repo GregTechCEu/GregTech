@@ -3,8 +3,6 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.graphnet.net.NetNode;
-import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -14,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
@@ -87,22 +84,6 @@ public class CoverFluidRegulator extends CoverPump {
             count = Math.min(count, kept - computeContained(destHandler, testObject));
         }
         return super.simpleInsert(destHandler, testObject, count, simulate);
-    }
-
-    @Override
-    protected int getSupply(NetNode node, FluidTestObject testObject, boolean supply) {
-        if (transferMode != TransferMode.KEEP_EXACT || supply) return super.getSupply(node, testObject, supply);
-        if (node instanceof NodeExposingCapabilities exposer) {
-            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
-                    exposer.exposedFacing());
-            if (handler != null) {
-                assert getFluidFilter() != null;
-                int kept = getFluidFilter().getTransferLimit(testObject.recombine());
-                return -Math.min(handler.fill(testObject.recombine(Integer.MAX_VALUE), false),
-                        kept - computeContained(handler, testObject));
-            }
-        }
-        return 0;
     }
 
     public void setTransferMode(TransferMode transferMode) {

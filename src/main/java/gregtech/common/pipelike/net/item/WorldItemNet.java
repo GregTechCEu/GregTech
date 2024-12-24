@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class WorldItemNet extends WorldPipeNet {
 
-    public static final Capability<?>[] CAPABILITIES = new Capability[] {
-            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY };
-
     private static final String DATA_ID_BASE = "gregtech.world_item_net";
 
     public static @NotNull WorldItemNet getWorldNet(World world) {

@@ -4,7 +4,7 @@ import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.path.PathBuilder;
-import gregtech.api.graphnet.traverse.iter.NetIteratorSupplier;
+import gregtech.api.graphnet.traverse.NetIteratorSupplier;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;

@@ -9,7 +9,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PipeCapabilityWrapper implements ICapabilityProvider {
 
@@ -65,16 +64,8 @@ public class PipeCapabilityWrapper implements ICapabilityProvider {
         return (this.activeMask & 1 << facing.ordinal()) > 0;
     }
 
-    public <T> T getCapabilityCoverQuery(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
-        // covers have access to the capability objects no matter the connection status
-        IPipeCapabilityObject object = capabilities.get(capability);
-        if (object == null) return null;
-        return object.getCapability(capability, facing);
-    }
-
     @Override
     public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
-        if (facing != null && !isActive(facing)) return false;
         IPipeCapabilityObject obj = capabilities.get(capability);
         if (obj == null) return false;
         return obj.hasCapability(capability, facing);
@@ -82,7 +73,6 @@ public class PipeCapabilityWrapper implements ICapabilityProvider {
 
     @Override
     public <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing) {
-        if (facing != null && !isActive(facing)) return null;
         IPipeCapabilityObject obj = capabilities.get(capability);
         if (obj == null) return null;
         return obj.getCapability(capability, facing);

@@ -1,7 +1,9 @@
 package gregtech.common.pipelike.net.fluid;
 
+import gregtech.api.capability.impl.FluidHandlerList;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttribute;
+import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.net.NetEdge;
@@ -15,9 +17,9 @@ import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
-import gregtech.api.graphnet.traverse.iter.EdgeDirection;
-import gregtech.api.graphnet.traverse.iter.EdgeSelector;
-import gregtech.api.graphnet.traverse.iter.ResilientNetClosestIterator;
+import gregtech.api.graphnet.traverse.EdgeDirection;
+import gregtech.api.graphnet.traverse.EdgeSelector;
+import gregtech.api.graphnet.traverse.ResilientNetClosestIterator;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.MapUtil;
 
@@ -31,6 +33,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +53,10 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     private final IFluidTankProperties[] properties;
 
     private boolean transferring = false;
+
+    private @Nullable FluidHandlerList networkView;
+    private long networkViewGatherTick;
+    private final Object2ObjectOpenHashMap<IFluidHandler, NetNode> handlerToNodeMap = new Object2ObjectOpenHashMap<>();
 
     public FluidCapabilityObject(WorldPipeNode node) {
         this.node = node;
@@ -79,7 +86,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
         // can't expose the sided capability if there is no node to interact with
         if (facing != null && capabilityWrapper.getNodeForFacing(facing) == null) return null;
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
@@ -95,13 +102,13 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     protected int fill(FluidStack resource, boolean doFill, EnumFacing side) {
         if (this.transferring || inputDisallowed(side)) return 0;
         NetNode node = getRelevantNode(side);
-        if (node == null) return 0;
+        if (node == null) node = this.node;
         this.transferring = true;
 
         int flow = resource.amount;
         FluidTestObject testObject = new FluidTestObject(resource);
         ResilientNetClosestIterator iter = new ResilientNetClosestIterator(node,
-                EdgeSelector.filtered(EdgeDirection.OUTGOING, e -> e instanceof NetEdge n && !n.test(testObject)));
+                EdgeSelector.filtered(EdgeDirection.OUTGOING, GraphNetUtility.standardEdgeBlacklist(testObject)));
         Object2IntOpenHashMap<NetNode> availableDemandCache = new Object2IntOpenHashMap<>();
         Object2IntOpenHashMap<NetNode> flowLimitCache = new Object2IntOpenHashMap<>();
         Object2BooleanOpenHashMap<NetNode> lossyCache = new Object2BooleanOpenHashMap<>();
@@ -162,20 +169,21 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     }
 
     protected FluidStack drain(int maxDrain, boolean doDrain, EnumFacing side) {
-        // TODO expose connected fluidnet through capability & allow untyped draining
-        return null;
+        FluidStack stack = getNetworkView().drain(maxDrain, false);
+        if (stack == null) return null;
+        return drain(stack, doDrain, side);
     }
 
     protected FluidStack drain(FluidStack resource, boolean doDrain, EnumFacing side) {
         if (this.transferring) return null;
         NetNode node = getRelevantNode(side);
-        if (node == null) return null;
+        if (node == null) node = this.node;
         this.transferring = true;
 
         int flow = resource.amount;
         FluidTestObject testObject = new FluidTestObject(resource);
         ResilientNetClosestIterator iter = new ResilientNetClosestIterator(node,
-                EdgeSelector.filtered(EdgeDirection.INCOMING, e -> e instanceof NetEdge n && !n.test(testObject)));
+                EdgeSelector.filtered(EdgeDirection.INCOMING, GraphNetUtility.standardEdgeBlacklist(testObject)));
         Object2IntOpenHashMap<NetNode> availableSupplyCache = new Object2IntOpenHashMap<>();
         Object2IntOpenHashMap<NetNode> flowLimitCache = new Object2IntOpenHashMap<>();
         Object2BooleanOpenHashMap<NetNode> lossyCache = new Object2BooleanOpenHashMap<>();
@@ -235,7 +243,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         return testObject.recombine(total);
     }
 
-    protected int getFlowLimit(NetNode node, FluidTestObject testObject) {
+    public static int getFlowLimit(NetNode node, FluidTestObject testObject) {
         ThroughputLogic throughput = node.getData().getLogicEntryNullable(ThroughputLogic.TYPE);
         if (throughput == null) return Integer.MAX_VALUE;
         FluidFlowLogic history = node.getData().getLogicEntryNullable(FluidFlowLogic.TYPE);
@@ -311,7 +319,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         if (node instanceof NodeExposingCapabilities exposer) {
             IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
                     exposer.exposedFacing());
-            if (handler != null && !(handler instanceof FluidCapabilityObject)) {
+            if (handler != null && instanceOf(handler) == null) {
                 if (supply) {
                     FluidStack s = handler.drain(testObject.recombine(Integer.MAX_VALUE), false);
                     return s == null ? 0 : s.amount;
@@ -321,6 +329,31 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             }
         }
         return 0;
+    }
+
+    public @NotNull FluidHandlerList getNetworkView() {
+        long tick = GTUtility.getTick();
+        if (networkView == null || tick > networkViewGatherTick) {
+            handlerToNodeMap.clear();
+            for (NetNode node : this.node.getGroupSafe().getNodes()) {
+                if (node instanceof NodeExposingCapabilities exposer) {
+                    IFluidHandler handler = exposer.getProvider().getCapability(
+                            CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                            exposer.exposedFacing());
+                    if (handler != null && instanceOf(handler) == null) {
+                        handlerToNodeMap.put(handler, node);
+                    }
+                }
+            }
+            networkView = new FluidHandlerList(handlerToNodeMap.keySet());
+            networkViewGatherTick = tick;
+        }
+        return networkView;
+    }
+
+    public Object2ObjectOpenHashMap<IFluidHandler, NetNode> getHandlerToNodeMap() {
+        getNetworkView();
+        return handlerToNodeMap;
     }
 
     @Override
@@ -371,6 +404,13 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     @Override
     public boolean canDrainFluidType(FluidStack fluidStack) {
         return true;
+    }
+
+    @Nullable
+    public static FluidCapabilityObject instanceOf(IFluidHandler handler) {
+        if (handler instanceof FluidCapabilityObject f) return f;
+        if (handler instanceof Wrapper w) return w.getParent();
+        return null;
     }
 
     protected class Wrapper implements IFluidHandler, IFluidTankProperties {
@@ -432,6 +472,10 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         @Override
         public boolean canDrainFluidType(FluidStack fluidStack) {
             return true;
+        }
+
+        public FluidCapabilityObject getParent() {
+            return FluidCapabilityObject.this;
         }
     }
 }

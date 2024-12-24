@@ -3,8 +3,6 @@ package gregtech.common.covers;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
-import gregtech.api.graphnet.net.NetNode;
-import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
@@ -17,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import codechicken.lib.render.CCRenderState;
@@ -114,31 +111,6 @@ public class CoverRoboticArm extends CoverConveyor {
             count = Math.min(count, kept - computeContained(handler, testObject));
         }
         return super.simpleInsert(handler, testObject, count, simulate);
-    }
-
-    @Override
-    protected int getSupplyOrDemand(NetNode node, ItemTestObject testObject, boolean supply) {
-        if (transferMode != TransferMode.KEEP_EXACT || supply) return super.getSupplyOrDemand(node, testObject, supply);
-        if (node instanceof NodeExposingCapabilities exposer) {
-            IItemHandler handler = exposer.getProvider().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
-                    exposer.exposedFacing());
-            if (handler != null) {
-                int sum = 0;
-                assert getItemFilter() != null;
-                int kept = getItemFilter().getTransferLimit(testObject.recombine());
-                ItemStack stack = testObject.recombineSafe(Integer.MAX_VALUE);
-                for (int i = 0; i < handler.getSlots(); i++) {
-                    sum += stack.getCount() - handler.insertItem(i, stack, true).getCount();
-                    ItemStack contained = handler.getStackInSlot(i);
-                    if (testObject.test(contained)) {
-                        kept -= contained.getCount();
-                        if (kept <= 0) return 0;
-                    }
-                }
-                return -Math.min(kept, sum);
-            }
-        }
-        return 0;
     }
 
     public void setTransferMode(TransferMode transferMode) {

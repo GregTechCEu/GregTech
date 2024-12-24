@@ -6,7 +6,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -16,9 +18,9 @@ import java.util.*;
 public class ItemHandlerList implements IItemHandlerModifiable {
 
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
-    private final Map<IItemHandler, Integer> baseIndexOffset = new IdentityHashMap<>();
+    private final Reference2IntOpenHashMap<IItemHandler> baseIndexOffset = new Reference2IntOpenHashMap<>();
 
-    public ItemHandlerList(Iterable<? extends IItemHandler> itemHandlerList) {
+    public ItemHandlerList(Collection<? extends IItemHandler> itemHandlerList) {
         int currentSlotIndex = 0;
         for (IItemHandler itemHandler : itemHandlerList) {
             if (baseIndexOffset.containsKey(itemHandler)) {
@@ -40,42 +42,50 @@ public class ItemHandlerList implements IItemHandlerModifiable {
 
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
+        IItemHandler itemHandler = getHandlerBySlot(slot);
         if (!(itemHandler instanceof IItemHandlerModifiable))
             throw new UnsupportedOperationException("Handler " + itemHandler + " does not support this method");
-        ((IItemHandlerModifiable) itemHandler).setStackInSlot(slot - baseIndexOffset.get(itemHandler), stack);
+        ((IItemHandlerModifiable) itemHandler).setStackInSlot(slot - getOffsetByHandler(itemHandler), stack);
     }
 
     @NotNull
     @Override
     public ItemStack getStackInSlot(int slot) {
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        int realSlot = slot - baseIndexOffset.get(itemHandler);
-        return itemHandler.getStackInSlot(slot - baseIndexOffset.get(itemHandler));
+        IItemHandler itemHandler = getHandlerBySlot(slot);
+        return itemHandler.getStackInSlot(slot - getOffsetByHandler(itemHandler));
     }
 
     @Override
     public int getSlotLimit(int slot) {
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.getSlotLimit(slot - baseIndexOffset.get(itemHandler));
+        IItemHandler itemHandler = getHandlerBySlot(slot);
+        return itemHandler.getSlotLimit(slot - getOffsetByHandler(itemHandler));
     }
 
     @NotNull
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.insertItem(slot - baseIndexOffset.get(itemHandler), stack, simulate);
+        IItemHandler itemHandler = getHandlerBySlot(slot);
+        return itemHandler.insertItem(slot - getOffsetByHandler(itemHandler), stack, simulate);
     }
 
     @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        IItemHandler itemHandler = handlerBySlotIndex.get(slot);
-        return itemHandler.extractItem(slot - baseIndexOffset.get(itemHandler), amount, simulate);
+        IItemHandler itemHandler = getHandlerBySlot(slot);
+        return itemHandler.extractItem(slot - getOffsetByHandler(itemHandler), amount, simulate);
     }
 
     @NotNull
+    @UnmodifiableView
     public Collection<IItemHandler> getBackingHandlers() {
-        return Collections.unmodifiableCollection(handlerBySlotIndex.values());
+        return handlerBySlotIndex.values();
+    }
+
+    public IItemHandler getHandlerBySlot(int slot) {
+        return handlerBySlotIndex.get(slot);
+    }
+
+    public int getOffsetByHandler(IItemHandler handler) {
+        return baseIndexOffset.getInt(handler);
     }
 }

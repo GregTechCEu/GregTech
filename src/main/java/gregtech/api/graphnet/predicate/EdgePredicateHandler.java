@@ -103,10 +103,7 @@ public final class EdgePredicateHandler implements INBTSerializable<NBTTagList>,
         for (int i = 0; i < nbt.tagCount(); i++) {
             NBTTagCompound tag = nbt.getCompoundTagAt(i);
             NetPredicateType<?> type = NetPredicateRegistry.getType(tag.getString("Type"));
-            EdgePredicate<?, ?> entry = this.predicateSet.get(type);
-            if (entry == null) {
-                entry = type.getNew();
-            }
+            EdgePredicate<?, ?> entry = this.predicateSet.computeIfAbsent(type, NetPredicateType::getNew);
             entry.deserializeNBTNaive(tag.getTag("Tag"));
         }
     }

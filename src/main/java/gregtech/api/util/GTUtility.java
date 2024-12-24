@@ -82,6 +82,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
@@ -940,9 +941,29 @@ public class GTUtility {
      * @param ascending determines the direction of search
      * @return the smallest succeeding value if ascending, or the largest succeeding value if descending.
      */
-    public static long binarySearch(long minValue, long maxValue, LongPredicate test, boolean ascending) {
+    public static long binarySearchLong(long minValue, long maxValue, LongPredicate test, boolean ascending) {
         while (maxValue - minValue > 1) {
             long middle = (minValue + maxValue) / 2;
+            // XOR
+            if (test.test(middle) ^ !ascending) {
+                maxValue = middle;
+            } else {
+                minValue = middle;
+            }
+        }
+        return test.test(ascending ? minValue : maxValue) ^ ascending ? maxValue : minValue;
+    }
+
+    /**
+     * @param minValue  the minimum possible succeeding value
+     * @param maxValue  the maximum possible succeeding value
+     * @param test      the predicate to query for success
+     * @param ascending determines the direction of search
+     * @return the smallest succeeding value if ascending, or the largest succeeding value if descending.
+     */
+    public static int binarySearchInt(int minValue, int maxValue, IntPredicate test, boolean ascending) {
+        while (maxValue - minValue > 1) {
+            int middle = (minValue + maxValue) / 2;
             // XOR
             if (test.test(middle) ^ !ascending) {
                 maxValue = middle;

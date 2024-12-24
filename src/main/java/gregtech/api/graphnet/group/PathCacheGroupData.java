@@ -6,9 +6,9 @@ import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.path.PathBuilder;
 import gregtech.api.graphnet.path.SingletonNetPath;
 import gregtech.api.graphnet.path.StandardNetPath;
-import gregtech.api.graphnet.traverse.iter.EdgeDirection;
-import gregtech.api.graphnet.traverse.iter.NetIterator;
-import gregtech.api.graphnet.traverse.iter.NetIteratorSupplier;
+import gregtech.api.graphnet.traverse.EdgeDirection;
+import gregtech.api.graphnet.traverse.NetIterator;
+import gregtech.api.graphnet.traverse.NetIteratorSupplier;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;

@@ -1,4 +1,4 @@
-package gregtech.api.graphnet.traverse.iter;
+package gregtech.api.graphnet.traverse;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jgrapht.Graph;
