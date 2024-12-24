@@ -1,7 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -14,7 +12,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-
 import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -32,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -46,6 +44,7 @@ import java.util.List;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaTileEntity {
+
     private final int tier;
     private FluidTankList fluidTankList;
     private ItemStackHandler itemStackHandler;
@@ -116,12 +115,12 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
         }
         builder.widget(new ToggleButtonWidget(8, 18 * invTier + 21, 18, 18,
                 GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                .setTooltipText("gregtech.gui.item_auto_output.tooltip")
-                .shouldUseBaseBackground());
+                        .setTooltipText("gregtech.gui.item_auto_output.tooltip")
+                        .shouldUseBaseBackground());
         builder.widget(new ToggleButtonWidget(26, 18 * invTier + 21, 18, 18,
                 GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                .setTooltipText("gregtech.gui.item_auto_output.tooltip")
-                .shouldUseBaseBackground());
+                        .setTooltipText("gregtech.gui.item_auto_output.tooltip")
+                        .shouldUseBaseBackground());
         return builder.label(6, 6, getMetaFullName())
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 8, 42 + 18 * invTier)
                 .build(getHolder(), entityPlayer);
@@ -303,11 +302,13 @@ public class MetaTileEntityBuffer extends MetaTileEntity implements ITieredMetaT
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip, boolean advanced) {
+    public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
+                               boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.buffer.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", (int) Math.pow(tier + 2, 2)));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", tier + 2, (int) (1000 * Math.pow(2, tier))));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity_mult", tier + 2,
+                (int) (1000 * Math.pow(2, tier))));
     }
 
     @Override
