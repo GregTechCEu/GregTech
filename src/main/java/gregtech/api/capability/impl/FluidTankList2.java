@@ -35,11 +35,6 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties() {
-        return this.tanks;
-    }
-
-    @Override
     public int fill(FluidStack resource, boolean doFill) {
         if (resource == null || resource.amount <= 0)
             return 0;
@@ -166,6 +161,11 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
     }
 
     @Override
+    public IFluidTankProperties[] getTankProperties() {
+        return this.tanks;
+    }
+
+    @Override
     public @NotNull List<Entry> getFluidTanks() {
         return Collections.unmodifiableList(Arrays.asList(this.tanks));
     }
@@ -206,50 +206,5 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
         }
         if (lineBreak) stb.append('\n');
         return stb.append(']').toString();
-    }
-
-    private TankWrapper wrap(IFluidTank tank) {
-        return tank instanceof TankWrapper ? (TankWrapper) tank : new TankWrapper(tank, this);
-    }
-
-    public static class TankWrapper implements Entry {
-
-        private final IFluidTank tank;
-        private final IMultipleTankHandler2 parent;
-//        private final IFluidTankProperties[] props;
-
-        private TankWrapper(IFluidTank tank, IMultipleTankHandler2 parent) {
-            this.tank = tank;
-            this.parent = parent;
-//            this.props = new IFluidTankProperties[] { this };
-        }
-
-        @Override
-        public @NotNull IMultipleTankHandler2 getParentHandler() {
-            return parent;
-        }
-
-        @Override
-        public @NotNull IFluidTank getDelegate() {
-            return tank;
-        }
-
-//        @Override
-//        public IFluidTankProperties[] getTankProperties() {
-//            return this.props;
-//        }
-
-        @Override
-        public boolean canFillFluidType(FluidStack fluidStack) {
-            if (allowSameFluidFill() || fluidStack == null) return true;
-            int i = parent.getIndexOfFluid(fluidStack);
-            var tank = parent.getTankAt(i);
-            return tank.getFluidAmount() < tank.getCapacity();
-        }
-
-        @Override
-        public boolean canDrainFluidType(FluidStack fluidStack) {
-            return true;
-        }
     }
 }

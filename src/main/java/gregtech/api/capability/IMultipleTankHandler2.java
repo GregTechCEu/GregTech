@@ -86,93 +86,106 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
         return getFluidTanks().iterator();
     }
 
+    default Entry wrap(IFluidTank tank) {
+        return tank instanceof Entry ? (Entry) tank : new Entry(tank, this);
+    }
+
     /**
      * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler2} for accessing
      * information such as {@link IMultipleTankHandler2#allowSameFluidFill()}.
      */
-    interface Entry extends IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
+    class Entry implements IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
                     IFluidTankProperties {
 
-        @NotNull
-        IMultipleTankHandler2 getParentHandler();
+        private final IFluidTank tank;
+        private final IMultipleTankHandler2 parent;
 
-        @NotNull
-        IFluidTank getDelegate();
+        private Entry(IFluidTank tank, IMultipleTankHandler2 parent) {
+            this.tank = tank;
+            this.parent = parent;
+        }
 
-        default boolean allowSameFluidFill() {
+        public @NotNull IMultipleTankHandler2 getParentHandler() {
+            return parent;
+        }
+
+        public @NotNull IFluidTank getDelegate() {
+            return tank;
+        }
+
+        public boolean allowSameFluidFill() {
             return getParentHandler().allowSameFluidFill();
         }
 
         @Nullable
         @Override
-        default IFilter<FluidStack> getFilter() {
+        public IFilter<FluidStack> getFilter() {
             return getDelegate() instanceof IFilteredFluidContainer filtered ? filtered.getFilter() : null;
         }
 
         @Nullable
         @Override
-        default FluidStack getFluid() {
+        public FluidStack getFluid() {
             return getDelegate().getFluid();
         }
 
         @Override
-        default int getFluidAmount() {
+        public int getFluidAmount() {
             return getDelegate().getFluidAmount();
         }
 
         @Override
-        default int getCapacity() {
+        public int getCapacity() {
             return getDelegate().getCapacity();
         }
 
         @Override
-        default FluidTankInfo getInfo() {
+        public FluidTankInfo getInfo() {
             return getDelegate().getInfo();
         }
 
         @Override
-        default FluidStack getContents() {
+        public FluidStack getContents() {
             return getFluid() == null ? null : getFluid().copy();
         }
 
         @Override
-        default boolean canFill() {
+        public boolean canFill() {
             return true;
         }
 
         @Override
-        default boolean canDrain() {
+        public boolean canDrain() {
             return true;
         }
 
         @Override
-        default int fill(FluidStack resource, boolean doFill) {
+        public boolean canFillFluidType(FluidStack fluidStack) {
+            if (allowSameFluidFill() || fluidStack == null) return true;
+            int i = parent.getIndexOfFluid(fluidStack);
+            var tank = parent.getTankAt(i);
+            return tank.getFluidAmount() < tank.getCapacity();
+        }
+
+        @Override
+        public boolean canDrainFluidType(FluidStack fluidStack) {
+            return true;
+        }
+
+        @Override
+        public int fill(FluidStack resource, boolean doFill) {
             return getDelegate().fill(resource, doFill);
         }
 
-//        @Nullable
-//        @Override
-//        default FluidStack drain(FluidStack resource, boolean doDrain) {
-//            if (resource == null || resource.amount <= 0) {
-//                return null;
-//            }
-//            if (getDelegate() instanceof IFluidHandler fluidHandler) {
-//                return fluidHandler.drain(resource, doDrain);
-//            }
-//            // just imitate the logic
-//            FluidStack fluid = getFluid();
-//            return fluid != null && fluid.isFluidEqual(resource) ? drain(resource.amount, doDrain) : null;
-//        }
-
         @Nullable
         @Override
-        default FluidStack drain(int maxDrain, boolean doDrain) {
+        public FluidStack drain(int maxDrain, boolean doDrain) {
             return getDelegate().drain(maxDrain, doDrain);
         }
 
         @SuppressWarnings("rawtypes")
         @Override
-        default NBTTagCompound serializeNBT() {
+        public NBTTagCompound serializeNBT() {
             if (getDelegate() instanceof FluidTank fluidTank) {
                 return fluidTank.writeToNBT(new NBTTagCompound());
             } else if (getDelegate() instanceof INBTSerializable serializable) {
@@ -183,7 +196,7 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override
-        default void deserializeNBT(NBTTagCompound nbt) {
+        public void deserializeNBT(NBTTagCompound nbt) {
             if (getDelegate() instanceof FluidTank fluidTank) {
                 fluidTank.readFromNBT(nbt);
             } else if (getDelegate() instanceof INBTSerializable serializable) {
