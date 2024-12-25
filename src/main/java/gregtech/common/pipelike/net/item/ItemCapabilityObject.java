@@ -1,11 +1,9 @@
 package gregtech.common.pipelike.net.item;
 
-import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.net.NetNode;
-import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
@@ -24,7 +22,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,10 +37,6 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
     private final WorldPipeNode node;
 
     private boolean transferring = false;
-
-    private @Nullable ItemHandlerList networkView;
-    private long networkViewGatherTick;
-    private Object2ObjectOpenHashMap<IItemHandler, NetNode> handlerToNodeMap = new Object2ObjectOpenHashMap<>();
 
     public ItemCapabilityObject(WorldPipeNode node) {
         this.node = node;
@@ -88,11 +81,11 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
             NetNode node = getRelevantNode(side);
             if (node == null) node = this.node;
             this.transferring = true;
-            ItemHandlerList networkView = getNetworkView();
-            IItemHandler targetHandler = networkView.getHandlerBySlot(slot);
-            NetNode targetNode = handlerToNodeMap.get(targetHandler);
+            ItemNetworkView networkView = getNetworkView();
+            IItemHandler targetHandler = networkView.handler().getHandlerBySlot(slot);
+            NetNode targetNode = networkView.handlerNetNodeBiMap().get(targetHandler);
             if (targetNode != null) {
-                int handlerSlot = slot - networkView.getOffsetByHandler(targetHandler);
+                int handlerSlot = slot - networkView.handler().getOffsetByHandler(targetHandler);
                 int insertable = stack.getCount() - targetHandler.insertItem(handlerSlot, stack, true).getCount();
                 if (insertable > 0) {
                     final ItemTestObject testObject = new ItemTestObject(stack);
@@ -120,11 +113,11 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
             NetNode node = getRelevantNode(side);
             if (node == null) node = this.node;
             this.transferring = true;
-            ItemHandlerList networkView = getNetworkView();
-            IItemHandler targetHandler = networkView.getHandlerBySlot(slot);
-            NetNode targetNode = handlerToNodeMap.get(targetHandler);
+            ItemNetworkView networkView = getNetworkView();
+            IItemHandler targetHandler = networkView.handler().getHandlerBySlot(slot);
+            NetNode targetNode = networkView.handlerNetNodeBiMap().get(targetHandler);
             if (targetNode != null) {
-                int handlerSlot = slot - networkView.getOffsetByHandler(targetHandler);
+                int handlerSlot = slot - networkView.handler().getOffsetByHandler(targetHandler);
                 ItemStack stack = targetHandler.extractItem(handlerSlot, amount, true);
                 int extractable = stack.getCount();
                 if (extractable > 0) {
@@ -170,39 +163,21 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         logic.recordFlow(GTUtility.getTick(), testObject.recombine(flow));
     }
 
-    public @NotNull ItemHandlerList getNetworkView() {
-        long tick = GTUtility.getTick();
-        if (networkView == null || tick > networkViewGatherTick) {
-            handlerToNodeMap.clear();
-            for (NetNode node : this.node.getGroupSafe().getNodes()) {
-                if (node instanceof NodeExposingCapabilities exposer) {
-                    IItemHandler handler = exposer.getProvider().getCapability(
-                            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
-                            exposer.exposedFacing());
-                    if (handler != null && instanceOf(handler) == null) {
-                        handlerToNodeMap.put(handler, node);
-                    }
-                }
-            }
-            networkView = new ItemHandlerList(handlerToNodeMap.keySet());
-            networkViewGatherTick = tick;
+    public @NotNull ItemNetworkView getNetworkView() {
+        if (node.getGroupSafe().getData() instanceof ItemNetworkViewGroupData data) {
+            return data.getOrCreate(node);
         }
-        return networkView;
-    }
-
-    public Object2ObjectOpenHashMap<IItemHandler, NetNode> getHandlerToNodeMap() {
-        getNetworkView();
-        return handlerToNodeMap;
+        return ItemNetworkView.EMPTY;
     }
 
     @Override
     public int getSlots() {
-        return getNetworkView().getSlots();
+        return getNetworkView().handler().getSlots();
     }
 
     @Override
     public @NotNull ItemStack getStackInSlot(int slot) {
-        return getNetworkView().getStackInSlot(slot);
+        return getNetworkView().handler().getStackInSlot(slot);
     }
 
     @Override
@@ -217,7 +192,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     @Override
     public int getSlotLimit(int slot) {
-        return getNetworkView().getSlotLimit(slot);
+        return getNetworkView().handler().getSlotLimit(slot);
     }
 
     @Nullable

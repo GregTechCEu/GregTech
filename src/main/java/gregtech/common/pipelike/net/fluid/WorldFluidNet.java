@@ -2,6 +2,7 @@ package gregtech.common.pipelike.net.fluid;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
+import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
@@ -92,5 +93,10 @@ public class WorldFluidNet extends WorldPipeNet {
     @Override
     public int getNetworkID() {
         return 1;
+    }
+
+    @Override
+    public @Nullable GroupData getBlankGroupData() {
+        return new FluidNetworkViewGroupData();
     }
 }

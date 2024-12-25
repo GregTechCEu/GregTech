@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.ItemHandlerDelegate;
-import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
@@ -31,6 +30,7 @@ import gregtech.common.covers.filter.ItemFilterContainer;
 import gregtech.common.covers.filter.MatchResult;
 import gregtech.common.covers.filter.MergabilityInfo;
 import gregtech.common.pipelike.net.item.ItemCapabilityObject;
+import gregtech.common.pipelike.net.item.ItemNetworkView;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -329,8 +329,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
-                ItemHandlerList view = cap.getNetworkView();
-                Iterator<IItemHandler> iter = view.getBackingHandlers().iterator();
+                ItemNetworkView view = cap.getNetworkView();
+                Iterator<IItemHandler> iter = view.handler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IItemHandler> cache = getRoundRobinCache(true, simulate);
                 Set<IItemHandler> backlog = new ObjectOpenHashSet<>();
                 Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
@@ -338,7 +338,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
                         IItemHandler candidate = cache.first();
-                        NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                        NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                         if (linked == null) {
                             cache.removeFirst();
                             continue;
@@ -353,7 +353,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         IItemHandler candidate = iter.next();
                         boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
                         if (frontOfCache || !cache.contains(candidate)) {
-                            NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                            NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                             if (linked == null) {
                                 if (frontOfCache) cache.removeFirst();
                                 continue;
@@ -370,7 +370,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         break;
                     } else {
                         if (!cache.isEmpty()) {
-                            if (view.getBackingHandlers().contains(cache.first()))
+                            if (view.handler().getBackingHandlers().contains(cache.first()))
                                 break; // we've already visited the next node in the cache
                             else {
                                 // the network view does not contain the node in the front of the cache, so yeet it.
@@ -491,8 +491,8 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
-                ItemHandlerList view = cap.getNetworkView();
-                Iterator<IItemHandler> iter = view.getBackingHandlers().iterator();
+                ItemNetworkView view = cap.getNetworkView();
+                Iterator<IItemHandler> iter = view.handler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IItemHandler> cache = getRoundRobinCache(false, simulate);
                 Set<IItemHandler> backlog = new ObjectOpenHashSet<>();
                 Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
@@ -500,7 +500,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
                         IItemHandler candidate = cache.first();
-                        NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                        NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                         if (linked == null) {
                             cache.removeFirst();
                             continue;
@@ -514,7 +514,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         IItemHandler candidate = iter.next();
                         boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
                         if (frontOfCache || !cache.contains(candidate)) {
-                            NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                            NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                             if (linked == null) {
                                 if (frontOfCache) cache.removeFirst();
                                 continue;
@@ -531,7 +531,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         break;
                     } else {
                         if (!cache.isEmpty()) {
-                            if (view.getBackingHandlers().contains(cache.first()))
+                            if (view.handler().getBackingHandlers().contains(cache.first()))
                                 break; // we've already visited the next node in the cache
                             else {
                                 // the network view does not contain the node in the front of the cache, so yeet it.

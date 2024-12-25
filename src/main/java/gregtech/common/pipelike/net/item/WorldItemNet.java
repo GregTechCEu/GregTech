@@ -2,6 +2,7 @@ package gregtech.common.pipelike.net.item;
 
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.filter.CoverWithItemFilter;
+import gregtech.api.graphnet.group.GroupData;
 import gregtech.api.graphnet.net.IGraphNet;
 import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.pipenet.WorldPipeNet;
@@ -96,5 +97,10 @@ public class WorldItemNet extends WorldPipeNet {
     @Override
     public int getNetworkID() {
         return 2;
+    }
+
+    @Override
+    public @Nullable GroupData getBlankGroupData() {
+        return new ItemNetworkViewGroupData();
     }
 }

@@ -5,7 +5,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -22,7 +22,8 @@ public class FluidHandlerList implements IFluidHandler {
     private final Set<IFluidHandler> list;
 
     public FluidHandlerList(Collection<? extends IFluidHandler> handlers) {
-        list = new ObjectOpenHashSet<>(handlers);
+        // use a linked set to preserve iteration order
+        list = new ObjectLinkedOpenHashSet<>(handlers);
     }
 
     @Override

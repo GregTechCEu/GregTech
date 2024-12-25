@@ -4,7 +4,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
-import gregtech.api.capability.impl.FluidHandlerList;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
@@ -29,6 +28,7 @@ import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.MatchResult;
 import gregtech.common.pipelike.net.fluid.FluidCapabilityObject;
+import gregtech.common.pipelike.net.fluid.FluidNetworkView;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -316,8 +316,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
-                FluidHandlerList view = cap.getNetworkView();
-                Iterator<IFluidHandler> iter = view.getBackingHandlers().iterator();
+                FluidNetworkView view = cap.getNetworkView();
+                Iterator<IFluidHandler> iter = view.handler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IFluidHandler> cache = getRoundRobinCache(true, simulate);
                 Set<IFluidHandler> backlog = new ObjectOpenHashSet<>();
                 Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
@@ -325,7 +325,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
                         IFluidHandler candidate = cache.first();
-                        NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                        NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                         if (linked == null) {
                             cache.removeFirst();
                             continue;
@@ -340,7 +340,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         IFluidHandler candidate = iter.next();
                         boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
                         if (frontOfCache || !cache.contains(candidate)) {
-                            NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                            NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                             if (linked == null) {
                                 if (frontOfCache) cache.removeFirst();
                                 continue;
@@ -357,7 +357,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         break;
                     } else {
                         if (!cache.isEmpty()) {
-                            if (view.getBackingHandlers().contains(cache.first()))
+                            if (view.handler().getBackingHandlers().contains(cache.first()))
                                 break; // we've already visited the next node in the cache
                             else {
                                 // the network view does not contain the node in the front of the cache, so yeet it.
@@ -471,8 +471,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
-                FluidHandlerList view = cap.getNetworkView();
-                Iterator<IFluidHandler> iter = view.getBackingHandlers().iterator();
+                FluidNetworkView view = cap.getNetworkView();
+                Iterator<IFluidHandler> iter = view.handler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IFluidHandler> cache = getRoundRobinCache(false, simulate);
                 Set<IFluidHandler> backlog = new ObjectOpenHashSet<>();
                 Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
@@ -480,7 +480,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
                         IFluidHandler candidate = cache.first();
-                        NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                        NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                         if (linked == null) {
                             cache.removeFirst();
                             continue;
@@ -494,7 +494,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         IFluidHandler candidate = iter.next();
                         boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
                         if (frontOfCache || !cache.contains(candidate)) {
-                            NetNode linked = cap.getHandlerToNodeMap().get(candidate);
+                            NetNode linked = view.handlerNetNodeBiMap().get(candidate);
                             if (linked == null) {
                                 if (frontOfCache) cache.removeFirst();
                                 continue;
@@ -511,7 +511,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         break;
                     } else {
                         if (!cache.isEmpty()) {
-                            if (view.getBackingHandlers().contains(cache.first()))
+                            if (view.handler().getBackingHandlers().contains(cache.first()))
                                 break; // we've already visited the next node in the cache
                             else {
                                 // the network view does not contain the node in the front of the cache, so yeet it.
