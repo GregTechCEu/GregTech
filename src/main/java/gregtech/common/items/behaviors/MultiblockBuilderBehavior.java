@@ -9,8 +9,10 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.pattern.PatternError;
+import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.util.GTUtility;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -43,6 +45,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -163,7 +166,6 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
     }
 
     @Override
-    // todo full substructure debug and autobuild support
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX,
                                            float hitY, float hitZ, EnumHand hand) {
         // Initial checks
@@ -174,18 +176,21 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
         if (!player.canPlayerEdit(pos, side, player.getHeldItem(hand))) return EnumActionResult.FAIL;
         if (world.isRemote) return EnumActionResult.SUCCESS;
 
+        Map<String, String> map = getMap(player.getHeldItem(hand));
+        String structure = multiblock.trySubstructure(map).iterator().next();
+
         if (player.isSneaking()) {
             // If sneaking, try to build the multiblock.
             // Only try to auto-build if the structure is not already formed
-            if (!multiblock.isStructureFormed("MAIN")) {
-                multiblock.autoBuild(player, getMap(player.getHeldItem(hand)));
+            if (!multiblock.isStructureFormed(structure)) {
+                multiblock.autoBuild(player, map, structure);
                 return EnumActionResult.SUCCESS;
             }
             return EnumActionResult.PASS;
         } else {
             // If not sneaking, try to show structure debug info (if any) in chat.
-            if (!multiblock.isStructureFormed("MAIN")) {
-                PatternError error = multiblock.getSubstructure("MAIN").getPatternState().getError();
+            if (!multiblock.isStructureFormed(structure)) {
+                PatternError error = multiblock.getSubstructure(structure).getPatternState().getError();
                 if (error != null) {
                     player.sendMessage(
                             new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));

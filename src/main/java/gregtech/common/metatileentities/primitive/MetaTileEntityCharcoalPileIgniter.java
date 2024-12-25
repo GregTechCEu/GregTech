@@ -43,6 +43,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -67,8 +68,10 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,7 +104,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     /**
      * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
      */
-    private final Map<EnumFacing, RelativeDirection> facingMap = new HashMap<>();
+    private final Map<EnumFacing, RelativeDirection> facingMap = new EnumMap<>(EnumFacing.class);
 
     public MetaTileEntityCharcoalPileIgniter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -255,7 +258,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
-        // todo add general direction lang(applies for cleanroom as well)
         if (!playerIn.isSneaking()) {
             if (getWorld().isRemote) return true;
 
@@ -265,7 +267,10 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                 bounds[dir.ordinal()] = (dir == RelativeDirection.DOWN ? MIN_DEPTH : MIN_RADIUS);
             }
 
-            playerIn.sendMessage(new TextComponentString(facing.name() + " radius: " + bounds[dir.ordinal()]));
+            playerIn.sendMessage(
+                    new TextComponentTranslation("gregtech.direction." + facing.name().toLowerCase(Locale.ROOT))
+                            .appendText(" ")
+                            .appendSibling(new TextComponentTranslation("gregtech.machine.miner.radius", bounds[dir.ordinal()])));
             getSubstructure("MAIN").clearCache();
             return true;
         }

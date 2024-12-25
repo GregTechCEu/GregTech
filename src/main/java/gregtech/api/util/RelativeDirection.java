@@ -1,5 +1,7 @@
 package gregtech.api.util;
 
+import gregtech.api.pattern.GreggyBlockPos;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -97,29 +99,12 @@ public enum RelativeDirection {
      * Offset a BlockPos relatively in any direction by any amount. Pass negative values to offset down, right or
      * backwards.
      */
-    // todo rework/remove this also
     public static BlockPos offsetPos(BlockPos pos, EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped,
                                      int upOffset, int leftOffset, int forwardOffset) {
-        if (upOffset == 0 && leftOffset == 0 && forwardOffset == 0) {
-            return pos;
-        }
-
-        int oX = 0, oY = 0, oZ = 0;
-        final EnumFacing relUp = UP.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
-        oX += relUp.getXOffset() * upOffset;
-        oY += relUp.getYOffset() * upOffset;
-        oZ += relUp.getZOffset() * upOffset;
-
-        final EnumFacing relLeft = LEFT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
-        oX += relLeft.getXOffset() * leftOffset;
-        oY += relLeft.getYOffset() * leftOffset;
-        oZ += relLeft.getZOffset() * leftOffset;
-
-        final EnumFacing relForward = FRONT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
-        oX += relForward.getXOffset() * forwardOffset;
-        oY += relForward.getYOffset() * forwardOffset;
-        oZ += relForward.getZOffset() * forwardOffset;
-
-        return pos.add(oX, oY, oZ);
+        GreggyBlockPos greg = new GreggyBlockPos(pos);
+        greg.offset(UP.getRelativeFacing(frontFacing, upwardsFacing, isFlipped), upOffset);
+        greg.offset(LEFT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped), leftOffset);
+        greg.offset(FRONT.getRelativeFacing(frontFacing, upwardsFacing, isFlipped), forwardOffset);
+        return greg.immutable();
     }
 }

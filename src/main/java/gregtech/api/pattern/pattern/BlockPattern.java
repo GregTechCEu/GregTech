@@ -235,14 +235,8 @@ public class BlockPattern implements IBlockPattern {
 
                 if (predicate != TraceabilityPredicate.ANY) {
                     TileEntity te = worldState.getTileEntity();
-                    // todo it caused an exception twice but never reproduced, maybe figure out or just remove
-                    try {
-                        cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(),
-                                !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null));
-                    } catch (IllegalArgumentException e) {
-                        GTLog.logger.error("bruh");
-                        throw e;
-                    }
+                    cache.put(charPos.toLong(), new BlockInfo(worldState.getBlockState(),
+                            !(te instanceof IGregTechTileEntity gtTe) || gtTe.isValid() ? te : null));
                 }
 
                 // GTLog.logger.info("Checked pos at " + charPos + " with flip " + flip);

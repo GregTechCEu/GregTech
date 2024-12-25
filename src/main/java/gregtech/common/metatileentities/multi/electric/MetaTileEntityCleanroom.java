@@ -84,9 +84,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
@@ -117,7 +119,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     /**
      * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
      */
-    private final Map<EnumFacing, RelativeDirection> facingMap = new HashMap<>();
+    private final Map<EnumFacing, RelativeDirection> facingMap = new EnumMap<>(EnumFacing.class);
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -172,10 +174,9 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
-        // todo fix
-        // this.cleanroomLogic.setMaxProgress(Math.max(100,
-        // ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
-        this.cleanroomLogic.setMaxProgress(100);
+        int leftRight = bounds[2] + bounds[3] + 1;
+        int frontBack = bounds[4] + bounds[5] + 1;
+        this.cleanroomLogic.setMaxProgress(leftRight * frontBack * bounds[1]);
         this.cleanroomLogic.setMinEnergyTier(cleanroomFilter.getMinTier());
     }
 
@@ -396,30 +397,28 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                 .addCustom(tl -> {
                     if (isStructureFormed("MAIN")) return;
 
-                    // todo lang translations
-                    tl.add(getWithButton("North: ", EnumFacing.NORTH));
-                    tl.add(getWithButton("West: ", EnumFacing.WEST));
-                    tl.add(getWithButton("South: ", EnumFacing.SOUTH));
-                    tl.add(getWithButton("East: ", EnumFacing.EAST));
-                    tl.add(getWithButton("Height: ", EnumFacing.DOWN));
+                    tl.add(getWithButton(EnumFacing.NORTH));
+                    tl.add(getWithButton(EnumFacing.WEST));
+                    tl.add(getWithButton(EnumFacing.SOUTH));
+                    tl.add(getWithButton(EnumFacing.EAST));
+                    tl.add(getWithButton(EnumFacing.DOWN));
 
-                    tl.add(withButton(new TextComponentString(renderingAABB ? "[Disable Outline]" : "[Enable Outline]"),
-                            "render:" +
-                                    renderingAABB));
+                    tl.add(withButton(new TextComponentTranslation("gregtech.multiblock.render." + renderingAABB), "render:" + renderingAABB));
                 })
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
                 .addWorkingStatusLine()
                 .addProgressLine(getProgressPercent() / 100.0);
     }
 
-    protected ITextComponent getWithButton(String text, EnumFacing facing) {
+    protected ITextComponent getWithButton(EnumFacing facing) {
         RelativeDirection relative = facing == EnumFacing.DOWN ? RelativeDirection.DOWN : facingMap.get(facing);
         if (relative == null)
             return new TextComponentString("null value at facingMap.get(EnumFacing." + facing.getName() + ")");
 
         String name = relative.name();
 
-        ITextComponent button = new TextComponentString(text + bounds[relative.ordinal()]);
+        ITextComponent button = new TextComponentTranslation("gregtech.direction." + facing.getName().toLowerCase(
+                Locale.ROOT)).appendText(": " + bounds[relative.ordinal()]);
         button.appendText(" ");
         button.appendSibling(withButton(new TextComponentString("[-]"), name + ":-"));
         button.appendText(" ");

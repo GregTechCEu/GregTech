@@ -166,7 +166,6 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
         return controllers;
     }
 
-    // todo either remove the cache or fix it, currently doesn't render update properly(see large boiler active)
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {

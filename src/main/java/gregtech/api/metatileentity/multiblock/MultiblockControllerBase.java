@@ -71,11 +71,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
@@ -136,7 +138,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     /**
      * @return structure pattern of this multiblock
      */
-    // todo fix vacuum freezer
     @NotNull
     protected abstract IBlockPattern createStructurePattern();
 
@@ -412,6 +413,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (result.isFormed()) {
                 // fast rebuild parts
                 if (result.getState() == PatternState.EnumCheckState.VALID_UNCACHED) {
+                    forEachMultiblockPart(name, part -> {
+                        if (multiblockParts.contains(part)) return true;
+
+                        if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
+                            invalidateStructure(name);
+                            return false;
+                        }
+                        return true;
+                    });
+
                     // add any new parts, because removal of parts is impossible
                     // it is possible for old parts to persist, so check that
                     List<IMultiblockAbilityPart<Object>> addedParts = new ArrayList<>();
@@ -419,11 +430,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     forEachMultiblockPart(name, part -> {
                         if (multiblockParts.contains(part)) return true;
 
-                        // todo move below into separate check
-                        if (part.isAttachedToMultiBlock() && !part.canPartShare(this, name)) {
-                            invalidateStructure(name);
-                            return false;
-                        }
                         part.addToMultiBlock(this, name);
                         if (part instanceof IMultiblockAbilityPart<?>abilityPart) {
                             // noinspection unchecked
@@ -584,6 +590,21 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return structures.get(name);
     }
 
+    public String trySubstructure(String name) {
+        if (structures.get(name) != null) return name;
+        return "MAIN";
+    }
+
+    public Set<String> trySubstructure(Map<String, String> map) {
+        // maybe lang?
+        Set<String> set = new HashSet<>();
+        for (String key : map.keySet()) {
+            if (key.startsWith("substructure")) set.add(trySubstructure(map.get(key)));
+        }
+        if (set.isEmpty()) set.add("MAIN");
+        return set;
+    }
+
     @Override
     public void onRemoval() {
         super.onRemoval();
@@ -633,7 +654,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(upwardsFacing.getIndex());
-        // todo see if necessary to sync structure formed
     }
 
     @Override
@@ -649,7 +669,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
         } else if (dataId == STRUCTURE_FORMED) {
-            // todo rewrite this entire thing :skull:(including the server side code)
+            // todo rewrite this entire thing :skull:(including the server side code for multiblock abilities)
             String name = buf.readString(65536);
             if ("null".equals(name)) {
                 for (IBlockPattern pattern : structures.values()) {
@@ -804,17 +824,19 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * Autobuilds the multiblock, using the {@code substructure} string to select the substructure, or the main
      * structure if invalid.
      */
-    public void autoBuild(EntityPlayer player, Map<String, String> map) {
+    public void autoBuild(EntityPlayer player, Map<String, String> map, String substructure) {
         if (getWorld().isRemote) throw new IllegalArgumentException("client side call wuh");
 
-        Long2ObjectMap<TraceabilityPredicate> predicates = getSubstructure("MAIN").getDefaultShape(this, map);
+        IBlockPattern structure = getSubstructure(trySubstructure(substructure));
+
+        Long2ObjectMap<TraceabilityPredicate> predicates = structure.getDefaultShape(this, map);
         if (predicates == null) return;
 
         autoBuild(player, map, predicates);
     }
 
     /**
-     * Autobuild the multiblock, this is like {@link MultiblockControllerBase#autoBuild(EntityPlayer, Map)} but if
+     * Autobuild the multiblock, this is like {@link MultiblockControllerBase#autoBuild(EntityPlayer, Map, String)} but if
      * you have the predicate map for other uses. This does mutate the map passed in.
      */
     public void autoBuild(EntityPlayer player, Map<String, String> map,
@@ -843,22 +865,28 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     if (removed.hasTagCompound())
                         newHolder.getMetaTileEntity().initFromItemStackData(removed.getTagCompound());
 
+                    if (predicates.containsKey(pos.offset(newHolder.getMetaTileEntity().getFrontFacing()).toLong())) {
+                        EnumFacing valid = null;
+                        for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+                            if (!predicates.containsKey(pos.offset(facing).toLong())) {
+                                valid = facing;
+                                break;
+                            }
+                        }
+                        if (valid != null) newHolder.getMetaTileEntity().setFrontFacing(valid);
+                        else {
+                            if (!predicates.containsKey(pos.offset(EnumFacing.UP).toLong())) {
+                                newHolder.getMetaTileEntity().setFrontFacing(EnumFacing.UP);
+                            } else if (!predicates.containsKey(pos.offset(EnumFacing.DOWN).toLong())) {
+                                newHolder.getMetaTileEntity().setFrontFacing(EnumFacing.DOWN);
+                            }
+                        }
+                    }
+
                     getWorld().setBlockState(pos, holder.getMetaTileEntity().getBlock().getDefaultState());
                     getWorld().setTileEntity(pos, newHolder);
 
                     // todo add relative facing fix to make hatches face air
-                    // // get the relative direction from the part facing, then use that to get the real enum facing
-                    // EnumFacing newFacing = FACING_MAP.get(holder.getMetaTileEntity().getFrontFacing())
-                    // .getRelativeFacing(frontFacing, upwardsFacing, false);
-                    // newHolder.getMetaTileEntity().setFrontFacing(newFacing);
-                    //
-                    // if (holder.getMetaTileEntity() instanceof MultiblockControllerBase holderBase) {
-                    // MultiblockControllerBase mteBase = (MultiblockControllerBase) newHolder.getMetaTileEntity();
-                    //
-                    // EnumFacing newUpFacing = FACING_MAP.get(holderBase.getUpwardsFacing())
-                    // .getRelativeFacing(frontFacing, upwardsFacing, false);
-                    // mteBase.setUpwardsFacing(newUpFacing);
-                    // }
                 } else return false;
             } else {
                 if (!hasAndRemoveItem(player, GTUtility.toItem(info.getBlockState())).isEmpty())
@@ -869,9 +897,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             return true;
         };
 
-        for (Iterator<Long2ObjectMap.Entry<TraceabilityPredicate>> iter = predicates.long2ObjectEntrySet()
-                .iterator(); iter.hasNext();) {
-            Long2ObjectMap.Entry<TraceabilityPredicate> entry = iter.next();
+        for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
             // todo add autobuild key params here, also remove layer stuff from rest of the code elsewhere
             TraceabilityPredicate pred = entry.getValue();
             if (simpleIndex.getInt(pred) >= pred.simple.size()) continue;
@@ -902,14 +928,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
             if (!place.test(entry.getLongKey(), cache.get(simple))) return;
 
-            iter.remove();
+            entry.setValue(null);
         }
 
         simpleIndex.clear();
 
         for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
             TraceabilityPredicate pred = entry.getValue();
-            if (simpleIndex.getInt(pred) >= pred.simple.size()) continue;
+            if (pred == null || simpleIndex.getInt(pred) >= pred.simple.size()) continue;
 
             TraceabilityPredicate.SimplePredicate simple = pred.simple.get(simpleIndex.getInt(pred));
             int count = globalCache.getInt(simple);

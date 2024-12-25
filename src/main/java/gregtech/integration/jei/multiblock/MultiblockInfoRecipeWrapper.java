@@ -470,8 +470,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @NotNull
-    // todo substructure support
-    private MBPattern initializePattern(@NotNull MultiblockControllerBase src, @NotNull Map<String, String> keyMap,
+    private MBPattern initializePattern(@NotNull MultiblockControllerBase src, @NotNull Map<String, String> map,
                                         @NotNull Set<ItemStack> parts) {
         Map<ItemStack, ItemStack> partsMap = new Object2ObjectOpenCustomHashMap<>(
                 ItemStackHashStrategy.comparingAllButCount());
@@ -487,11 +486,17 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         world.setBlockState(SOURCE, src.getBlock().getDefaultState());
         world.setTileEntity(SOURCE, holder);
 
-        Long2ObjectMap<TraceabilityPredicate> predicates = ((MultiblockControllerBase) holder.getMetaTileEntity())
-                .getSubstructure("MAIN").getDefaultShape((MultiblockControllerBase) holder.getMetaTileEntity(), keyMap);
-        Long2ObjectMap<TraceabilityPredicate> copy = new Long2ObjectOpenHashMap<>(predicates);
-        ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), keyMap,
-                predicates);
+        Set<String> structures = src.trySubstructure(map);
+
+        Long2ObjectMap<TraceabilityPredicate> copy = new Long2ObjectOpenHashMap<>();
+        for (String  structure : structures) {
+            Long2ObjectMap<TraceabilityPredicate> predicates = ((MultiblockControllerBase) holder.getMetaTileEntity())
+                    .getSubstructure(structure)
+                    .getDefaultShape((MultiblockControllerBase) holder.getMetaTileEntity(), map);
+            copy.putAll(predicates);
+            ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), map,
+                    predicates);
+        }
 
         Vector3f size = world.getSize();
         Vector3f minPos = world.getMinPos();

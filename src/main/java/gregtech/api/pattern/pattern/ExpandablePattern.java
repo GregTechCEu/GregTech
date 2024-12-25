@@ -11,6 +11,8 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.function.QuadFunction;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -182,8 +184,43 @@ public class ExpandablePattern implements IBlockPattern {
     @Override
     public Long2ObjectSortedMap<TraceabilityPredicate> getDefaultShape(MultiblockControllerBase src,
                                                                        @NotNull Map<String, String> keyMap) {
-        // todo add this
-        return Long2ObjectSortedMaps.emptyMap();
+        EnumFacing front = src.getFrontFacing();
+        EnumFacing up = src.getUpwardsFacing();
+
+        int[] bounds = boundsFunction.apply(src.getWorld(), new GreggyBlockPos(src.getPos()), front, up);
+        if (bounds == null) return Long2ObjectSortedMaps.emptyMap();
+
+        Long2ObjectSortedMap<TraceabilityPredicate> predicates = new Long2ObjectRBTreeMap<>();
+
+        GreggyBlockPos negativeCorner = new GreggyBlockPos();
+        GreggyBlockPos positiveCorner = new GreggyBlockPos();
+
+        EnumFacing[] absolutes = new EnumFacing[3];
+
+        for (int i = 0; i < 3; i++) {
+            RelativeDirection selected = directions[i];
+
+            absolutes[i] = selected.getRelativeFacing(front, up, false);
+
+            negativeCorner.set(i, -bounds[selected.oppositeOrdinal()]);
+            positiveCorner.set(i, bounds[selected.ordinal()]);
+        }
+
+        GreggyBlockPos translation = new GreggyBlockPos(src.getPos());
+
+        for (GreggyBlockPos pos : GreggyBlockPos.allInBox(negativeCorner, positiveCorner, EnumFacing.SOUTH,
+                EnumFacing.UP, EnumFacing.EAST)) {
+            TraceabilityPredicate predicate = predicateFunction.apply(pos, bounds);
+
+            int[] arr = pos.getAll();
+            pos.zero().offset(absolutes[0], arr[0]).offset(absolutes[1], arr[1]).offset(absolutes[2], arr[2]).add(translation);
+
+            if (predicate != TraceabilityPredicate.ANY && predicate != TraceabilityPredicate.AIR) {
+                predicates.put(pos.toLong(), predicate);
+            }
+        }
+
+        return predicates;
     }
 
     @Override

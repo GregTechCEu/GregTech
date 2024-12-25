@@ -10,25 +10,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TierByVoltageTest {
-
-    @Test
-    public void temp() {
-        // todo remove this
-        int iters = 0;
-        // for (GreggyBlockPos a : GreggyBlockPos.allInBox(new GreggyBlockPos(0, 0, 0), new GreggyBlockPos(2, 3, 4),
-        // EnumFacing.NORTH, EnumFacing.UP, EnumFacing.WEST)) {
-        // System.out.println(a);
-        // iters++;
-        // }
-
-        for (BlockPos.MutableBlockPos a : BlockPos.getAllInBoxMutable(new BlockPos(0, 0, 0), new BlockPos(2, 3, 4))) {
-            System.out.println(a.toString());
-            iters++;
-        }
-
-        assertEquals(3 * 4 * 5, iters);
-    }
-
     @Test
     public void testV() {
         expectTier(V[ULV], ULV, ULV);
