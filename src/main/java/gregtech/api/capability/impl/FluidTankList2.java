@@ -1,7 +1,6 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.IMultipleTankHandler2;
+import gregtech.api.capability.MultipleTankHandler;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,12 +13,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FluidTankList2 implements IMultipleTankHandler2 {
+public final class FluidTankList2 extends MultipleTankHandler {
 
     private final boolean allowSameFluidFill;
     private Entry[] tanks = new Entry[0];
@@ -36,9 +34,9 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
         this(allowSameFluidFill, fluidTanks.toArray(new IFluidTank[0]));
     }
 
-    public FluidTankList2(boolean allowSameFluidFill, @NotNull IMultipleTankHandler2 parent,
-                         IFluidTank... additionalTanks) {
-        int tanks = parent.getTanks();
+    public FluidTankList2(boolean allowSameFluidFill, @NotNull MultipleTankHandler parent,
+                          IFluidTank... additionalTanks) {
+        int tanks = parent.size();
         int additional = 0;
 
         if (!ArrayUtils.isEmpty(additionalTanks))
@@ -105,9 +103,9 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
     @Nullable
     @Override
     public FluidStack drain(FluidStack resource, boolean doDrain) {
-        if (resource == null || resource.amount <= 0) {
+        if (resource == null || resource.amount <= 0)
             return null;
-        }
+
         int amountLeft = resource.amount;
         FluidStack totalDrained = null;
         for (IFluidTank handler : tanks) {
@@ -133,30 +131,28 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
-        if (maxDrain <= 0) {
-            return null;
-        }
+        if (maxDrain <= 0) return null;
+
         FluidStack totalDrained = null;
         for (IFluidTank handler : tanks) {
             if (totalDrained == null) {
                 var drained = handler.drain(maxDrain, doDrain);
-                if (drained != null) {
-                    totalDrained = drained.copy();
-                    maxDrain -= totalDrained.amount;
-                }
+                if (drained == null) continue;
+
+                totalDrained = drained.copy();
+                maxDrain -= totalDrained.amount;
+
             } else {
-                if (!totalDrained.isFluidEqual(handler.getFluid())) {
+                if (!totalDrained.isFluidEqual(handler.getFluid()))
                     continue;
-                }
+
                 FluidStack drain = handler.drain(maxDrain, doDrain);
-                if (drain != null) {
-                    totalDrained.amount += drain.amount;
-                    maxDrain -= drain.amount;
-                }
+                if (drain == null) continue;
+
+                totalDrained.amount += drain.amount;
+                maxDrain -= drain.amount;
             }
-            if (maxDrain <= 0) {
-                return totalDrained;
-            }
+            if (maxDrain <= 0) return totalDrained;
         }
         return totalDrained;
     }
@@ -191,12 +187,12 @@ public class FluidTankList2 implements IMultipleTankHandler2 {
     }
 
     @Override
-    public int getTanks() {
+    public int size() {
         return tanks.length;
     }
 
     @Override
-    public @NotNull IMultipleTankHandler2.Entry getTankAt(int index) {
+    public @NotNull Entry getTankAt(int index) {
         return tanks[index];
     }
 
