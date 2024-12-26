@@ -11,8 +11,6 @@ import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.function.QuadFunction;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +19,7 @@ import net.minecraft.world.World;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectSortedMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -156,7 +155,6 @@ public class ExpandablePattern implements IBlockPattern {
             // this basically reshuffles the coordinates into absolute form from relative form
             pos.zero().offset(absolutes[0], arr[0]).offset(absolutes[1], arr[1]).offset(absolutes[2], arr[2]);
             // translate from the origin to the center
-            // set the pos with world coordinates
             worldState.setPos(pos.add(translation));
 
             if (predicate != TraceabilityPredicate.ANY) {
@@ -213,7 +211,8 @@ public class ExpandablePattern implements IBlockPattern {
             TraceabilityPredicate predicate = predicateFunction.apply(pos, bounds);
 
             int[] arr = pos.getAll();
-            pos.zero().offset(absolutes[0], arr[0]).offset(absolutes[1], arr[1]).offset(absolutes[2], arr[2]).add(translation);
+            pos.zero().offset(absolutes[0], arr[0]).offset(absolutes[1], arr[1]).offset(absolutes[2], arr[2])
+                    .add(translation);
 
             if (predicate != TraceabilityPredicate.ANY && predicate != TraceabilityPredicate.AIR) {
                 predicates.put(pos.toLong(), predicate);

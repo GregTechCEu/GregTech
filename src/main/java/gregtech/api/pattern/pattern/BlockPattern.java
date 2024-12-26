@@ -8,7 +8,6 @@ import gregtech.api.pattern.OriginOffset;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.RelativeDirection;
 
 import net.minecraft.block.state.IBlockState;
@@ -254,15 +253,20 @@ public class BlockPattern implements IBlockPattern {
             // offset the string start once after every string
             stringStart.offset(absoluteString);
             charPos.from(stringStart);
+        }
 
-            // layer minimum checks
-            for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : layerCount.object2IntEntrySet()) {
-                if (entry.getIntValue() < entry.getKey().minLayerCount) {
-                    state.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 3));
-                    return false;
-                }
+        // layer minimum checks
+        for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : layerCount.object2IntEntrySet()) {
+            if (entry.getIntValue() < entry.getKey().minLayerCount) {
+                state.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 3));
+                return false;
             }
         }
+
+        for (Object2IntMap.Entry<TraceabilityPredicate.SimplePredicate> entry : layerCount.object2IntEntrySet()) {
+            globalCount.put(entry.getKey(), globalCount.getInt(entry.getKey()) + entry.getIntValue());
+        }
+
         return true;
     }
 

@@ -1,8 +1,12 @@
 package gregtech.api.util;
 
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import com.google.common.base.Preconditions;
@@ -34,6 +38,16 @@ public class BlockInfo {
         this.tileEntity = tileEntity;
         Preconditions.checkArgument(tileEntity == null || blockState.getBlock().hasTileEntity(blockState),
                 "Cannot create block info with tile entity for block not having it");
+    }
+
+    public ItemStack toItem() {
+        MetaTileEntity metaTileEntity = tileEntity instanceof IGregTechTileEntity igtte ? igtte.getMetaTileEntity() :
+                null;
+        if (metaTileEntity != null) {
+            return metaTileEntity.getStackForm();
+        } else {
+            return GTUtility.toItem(blockState);
+        }
     }
 
     public IBlockState getBlockState() {

@@ -1,8 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
-import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerHandler;
@@ -25,7 +23,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
@@ -61,7 +58,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -80,8 +76,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -150,8 +144,9 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 .where('G', states("fusionGlass", getCasingState(), getGlassState()))
                 .where('E',
                         states("fusionGlass", getCasingState(), getGlassState())
-                                .or(tieredMTEs((map, mte) -> tier <= mte.getTier() && mte.getTier() <= GTValues.UV, MetaTileEntities.ENERGY_INPUT_HATCH)
-                                .setMinGlobalLimited(1).setPreviewCount(16)))
+                                .or(tieredMTEs((map, mte) -> tier <= mte.getTier() && mte.getTier() <= GTValues.UV,
+                                        MetaTileEntities.ENERGY_INPUT_HATCH)
+                                                .setMinGlobalLimited(1).setPreviewCount(16)))
                 .where('C', states(getCasingState()))
                 .where('K', states(getCoilState()))
                 .where('O', states(getCasingState(), getGlassState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))

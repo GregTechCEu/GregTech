@@ -489,7 +489,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         Set<String> structures = src.trySubstructure(map);
 
         Long2ObjectMap<TraceabilityPredicate> copy = new Long2ObjectOpenHashMap<>();
-        for (String  structure : structures) {
+        for (String structure : structures) {
             Long2ObjectMap<TraceabilityPredicate> predicates = ((MultiblockControllerBase) holder.getMetaTileEntity())
                     .getSubstructure(structure)
                     .getDefaultShape((MultiblockControllerBase) holder.getMetaTileEntity(), map);

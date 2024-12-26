@@ -234,56 +234,67 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
                 .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
-                getCandidates(metaTileEntities));
+                getCandidates(() -> EnumFacing.NORTH, metaTileEntities));
     }
 
     @SafeVarargs
-    public static <T extends MetaTileEntity & ITieredMetaTileEntity> TraceabilityPredicate tieredMTEs(BiPredicate<Map<String, String>, T> pred, T... metaTileEntities) {
+    public static <
+            T extends MetaTileEntity & ITieredMetaTileEntity> TraceabilityPredicate tieredMTEs(BiPredicate<Map<String, String>, T> pred,
+                                                                                               T... metaTileEntities) {
         ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
                 .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
         return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
                 getCandidates(pred, metaTileEntities));
     }
 
-    private static Function<Map<String, String>, BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
+    public static Function<Map<String, String>, BlockInfo[]> getCandidates(Supplier<EnumFacing> facing,
+                                                                           MetaTileEntity... metaTileEntities) {
         return map -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
             holder.getMetaTileEntity().onPlacement();
-            holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
+            holder.getMetaTileEntity().setFrontFacing(facing.get());
             return new BlockInfo(tile.getBlock().getDefaultState(), holder);
         }).toArray(BlockInfo[]::new);
     }
 
     // generic hell
     @SafeVarargs
-    public static <T extends MetaTileEntity & ITieredMetaTileEntity> Function<Map<String, String>, BlockInfo[]> getCandidates(BiPredicate<Map<String, String>, T> pred, T... metaTileEntities) {
+    public static <
+            T extends MetaTileEntity & ITieredMetaTileEntity> Function<Map<String, String>, BlockInfo[]> getCandidates(BiPredicate<Map<String, String>, T> pred,
+                                                                                                                       T... metaTileEntities) {
         return map -> Arrays.stream(metaTileEntities).filter(Objects::nonNull)
-            .filter(i -> pred.test(map, i))
-            .map(tile -> {
-                MetaTileEntityHolder holder = new MetaTileEntityHolder();
-                holder.setMetaTileEntity(tile);
-                holder.getMetaTileEntity().onPlacement();
-                holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
-                return new BlockInfo(tile.getBlock().getDefaultState(), holder);
-        }).toArray(BlockInfo[]::new);
+                .filter(i -> pred.test(map, i))
+                .map(tile -> {
+                    MetaTileEntityHolder holder = new MetaTileEntityHolder();
+                    holder.setMetaTileEntity(tile);
+                    holder.getMetaTileEntity().onPlacement();
+                    holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
+                    return new BlockInfo(tile.getBlock().getDefaultState(), holder);
+                }).toArray(BlockInfo[]::new);
     }
 
-    private static Function<Map<String, String>, BlockInfo[]> getCandidates(String key, IBlockState... allowedStates) {
+    public static Function<Map<String, String>, BlockInfo[]> getCandidates(String key, IBlockState... allowedStates) {
         return map -> {
             if (map.containsKey(key)) {
-                return new BlockInfo[] { new BlockInfo(allowedStates[MathHelper.clamp(GTUtility.parseInt(map.get(key)), 0, allowedStates.length - 1)]) };
+                return new BlockInfo[] { new BlockInfo(allowedStates[MathHelper.clamp(GTUtility.parseInt(map.get(key)),
+                        0, allowedStates.length - 1)]) };
             }
             return Arrays.stream(allowedStates).map(BlockInfo::new).toArray(BlockInfo[]::new);
         };
     }
 
-    public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
+    public static TraceabilityPredicate abilities(Supplier<EnumFacing> facing,
+                                                  MultiblockAbility<?>... allowedAbilities) {
         return tilePredicate((state, tile) -> tile instanceof IMultiblockAbilityPart<?> &&
                 ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()),
-                getCandidates(Arrays.stream(allowedAbilities)
+                getCandidates(facing, Arrays.stream(allowedAbilities)
                         .flatMap(ability -> MultiblockAbility.REGISTRY.get(ability).stream())
                         .toArray(MetaTileEntity[]::new)));
+    }
+
+    public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
+        return abilities(() -> EnumFacing.NORTH, allowedAbilities);
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
@@ -596,6 +607,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         // i am sorry
         Object[] added = { null };
         List<Object> dummyList = new ArrayList<>() {
+
             @Override
             public boolean add(Object e) {
                 added[0] = e;
@@ -606,7 +618,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         multiblockParts.removeIf(part -> {
             if (name.equals(part.getSubstructureName())) {
                 if (part instanceof IMultiblockAbilityPart<?>) {
-                    //noinspection unchecked
+                    // noinspection unchecked
                     IMultiblockAbilityPart<Object> ability = (IMultiblockAbilityPart<Object>) part;
                     added[0] = null;
                     ability.registerAbilities(dummyList);
@@ -871,7 +883,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * Autobuild the multiblock, this is like {@link MultiblockControllerBase#autoBuild(EntityPlayer, Map, String)} but if
+     * Autobuild the multiblock, this is like {@link MultiblockControllerBase#autoBuild(EntityPlayer, Map, String)} but
+     * if
      * you have the predicate map for other uses. This does mutate the map passed in.
      */
     public void autoBuild(EntityPlayer player, Map<String, String> map,
@@ -898,6 +911,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 MetaTileEntityHolder newHolder = new MetaTileEntityHolder();
                 newHolder.setMetaTileEntity(holder.getMetaTileEntity());
                 newHolder.getMetaTileEntity().onPlacement();
+                newHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
                 if (removed.hasTagCompound())
                     newHolder.getMetaTileEntity().initFromItemStackData(removed.getTagCompound());
 
@@ -931,7 +945,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         };
 
         for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
-            // todo add autobuild key params here, also remove layer stuff from rest of the code elsewhere
             TraceabilityPredicate pred = entry.getValue();
             if (simpleIndex.getInt(pred) >= pred.simple.size()) continue;
 

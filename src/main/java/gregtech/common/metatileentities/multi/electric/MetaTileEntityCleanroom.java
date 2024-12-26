@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.ICleanroomFilter;
-import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -25,7 +24,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.pattern.GreggyBlockPos;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
@@ -43,7 +41,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
@@ -54,7 +51,6 @@ import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -81,13 +77,11 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -283,7 +277,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                         PatternError.PLACEHOLDER,
                 map -> GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
                         .filter(e -> e.getValue().getCleanroomType() != null)
-                        .filter(e -> e.getValue().getCleanroomType() == CleanroomType.getByName(map.get("cleanroomType")))
+                        .filter(e -> !map.containsKey("cleanroomType") ||
+                                e.getValue().getCleanroomType() == CleanroomType.getByName(map.get("cleanroomType")))
                         .sorted(Comparator.comparingInt(e -> e.getValue().getTier()))
                         .map(e -> new BlockInfo(e.getKey(), null))
                         .toArray(BlockInfo[]::new))
@@ -407,7 +402,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     tl.add(getWithButton(EnumFacing.EAST));
                     tl.add(getWithButton(EnumFacing.DOWN));
 
-                    tl.add(withButton(new TextComponentTranslation("gregtech.multiblock.render." + renderingAABB), "render:" + renderingAABB));
+                    tl.add(withButton(new TextComponentTranslation("gregtech.multiblock.render." + renderingAABB),
+                            "render:" + renderingAABB));
                 })
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
                 .addWorkingStatusLine()

@@ -14,7 +14,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
@@ -44,8 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-
-import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                                            implements IOpticalComputationReceiver {
@@ -139,7 +136,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
                         .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION).setExactLimit(1)))
-                .where('H', abilities(MultiblockAbility.OBJECT_HOLDER))
+                .where('H', abilities(() -> getFrontFacing().getOpposite(), MultiblockAbility.OBJECT_HOLDER))
                 .build();
     }
 

@@ -70,17 +70,14 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private static final double IDLE_TEMPERATURE = 200;
     private static final double DAMAGE_TEMPERATURE = 1000;
-
     private IEnergyContainer energyContainer;
     private IFluidHandler coolantHandler;
     private final HPCAGridHandler hpcaHandler;
-
     private boolean isActive;
     private boolean isWorkingEnabled = true;
     private boolean hasNotEnoughEnergy;
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
-
     private final ProgressWidget.TimedProgressSupplier progressSupplier;
 
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
@@ -206,7 +203,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 .where('S', selfPredicate())
                 .where('A', states(getAdvancedState()))
                 .where('V', states(getVentState()))
-                .where('X', abilities(MultiblockAbility.HPCA_COMPONENT))
+                .where('X',
+                        abilities(() -> RIGHT.getRelativeFacing(frontFacing, upwardsFacing),
+                                MultiblockAbility.HPCA_COMPONENT))
                 .where('C', states(getCasingState()).setMinGlobalLimited(5)
                         .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))

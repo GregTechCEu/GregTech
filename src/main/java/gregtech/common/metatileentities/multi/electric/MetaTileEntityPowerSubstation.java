@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -24,9 +23,7 @@ import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.BlockMetalCasing;
-import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -54,7 +51,6 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -275,7 +271,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             worldState -> GregTechAPI.PSS_BATTERIES.containsKey(worldState.getBlockState()) ? null :
                     PatternError.PLACEHOLDER,
             map -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
-                    .filter(e -> e.getValue().getTier() == GTUtility.parseInt(map.get("batteryTier"), GTValues.EV))
+                    .filter(e -> !map.containsKey("batteryTier") ||
+                            e.getValue().getTier() == GTUtility.parseInt(map.get("batteryTier"), GTValues.EV))
                     .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                     .map(entry -> new BlockInfo(entry.getKey(), null))
                     .toArray(BlockInfo[]::new))

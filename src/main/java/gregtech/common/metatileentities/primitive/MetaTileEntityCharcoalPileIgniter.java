@@ -11,7 +11,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.pattern.pattern.FactoryExpandablePattern;
@@ -23,7 +22,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.behaviors.LighterBehaviour;
-import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
@@ -42,7 +40,6 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -60,7 +57,6 @@ import codechicken.lib.vec.Matrix4;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlock;
 import crafttweaker.api.minecraft.CraftTweakerMC;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,12 +64,14 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 @ZenClass("mods.gregtech.machines.CharcoalPileIgniter")
 @ZenRegister
@@ -150,14 +148,13 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     protected IBlockPattern createStructurePattern() {
         TraceabilityPredicate floorPredicate = blocks(Blocks.BRICK_BLOCK);
-        TraceabilityPredicate wallPredicate = blocks(WALL_BLOCKS.toArray(new Block[0]));
+        TraceabilityPredicate wallPredicate = blocks("walls", WALL_BLOCKS.toArray(new Block[0]));
         TraceabilityPredicate logPredicate = logPredicate();
 
         // basically cleanroom code
         return FactoryExpandablePattern.start(RelativeDirection.UP, RelativeDirection.RIGHT, RelativeDirection.FRONT)
                 .boundsFunction((w, c, f, u) -> bounds)
                 .predicateFunction((c, b) -> {
-                    // controller always at origin
                     if (c.origin()) return selfPredicate();
 
                     int intersects = 0;
@@ -173,21 +170,24 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                     // char dir is front, so its bounds[4] and bounds[5]
                     if (c.z() == b[4] || c.z() == -b[5]) intersects++;
 
-                    // GTLog.logger.info(intersects + " intersects at " + c);
-
-                    // more than or equal to 2 intersects means it is an edge
                     if (intersects >= 2) return any();
 
-                    // 1 intersect means it is a face
                     if (intersects == 1) {
                         if (botAisle) return floorPredicate;
                         return wallPredicate;
                     }
 
-                    // intersects == 0, so its not a face
                     return logPredicate;
                 })
                 .build();
+    }
+
+    @NotNull
+    @Override
+    public Iterator<Map<String, String>> getPreviewBuilds() {
+        return IntStream.range(0, WALL_BLOCKS.size())
+                .mapToObj(i -> Collections.singletonMap("walls", Integer.toString(i)))
+                .iterator();
     }
 
     @NotNull
@@ -270,7 +270,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
             playerIn.sendMessage(
                     new TextComponentTranslation("gregtech.direction." + facing.name().toLowerCase(Locale.ROOT))
                             .appendText(" ")
-                            .appendSibling(new TextComponentTranslation("gregtech.machine.miner.radius", bounds[dir.ordinal()])));
+                            .appendSibling(new TextComponentTranslation("gregtech.machine.miner.radius",
+                                    bounds[dir.ordinal()])));
             getSubstructure("MAIN").clearCache();
             return true;
         }
@@ -306,26 +307,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         } else {
             tooltip.add(I18n.format("gregtech.tooltip.hold_ctrl"));
         }
-    }
-
-    @Override
-    public List<MultiblockShapeInfo> getMatchingShapes() {
-        List<MultiblockShapeInfo> shapeInfos = new ObjectArrayList<>();
-        for (Block block : WALL_BLOCKS) {
-            shapeInfos.add(MultiblockShapeInfo.builder()
-                    .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
-                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
-                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
-                    .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                    .where('S', MetaTileEntities.CHARCOAL_PILE_IGNITER, EnumFacing.NORTH)
-                    .where('B', Blocks.BRICK_BLOCK.getDefaultState())
-                    .where('X', block.getDefaultState())
-                    .where('D', block.getDefaultState())
-                    .where('C', Blocks.LOG.getDefaultState())
-                    .build());
-        }
-        return shapeInfos;
     }
 
     @Override

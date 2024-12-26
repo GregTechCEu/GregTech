@@ -9,10 +9,9 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.pattern.PatternError;
-import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -45,7 +44,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -195,6 +193,7 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
                     player.sendMessage(
                             new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
                     player.sendMessage(new TextComponentString(error.getErrorInfo()));
+                    if (error.getPos() != null) BlockPosHighlightRenderer.renderBlockBoxHighLight(error.getPos(), 5000);
                     return EnumActionResult.SUCCESS;
                 }
             }

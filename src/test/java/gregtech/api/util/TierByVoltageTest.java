@@ -1,15 +1,13 @@
 package gregtech.api.util;
 
-import net.minecraft.util.math.BlockPos;
-
 import org.junit.jupiter.api.Test;
 
 import static gregtech.api.GTValues.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TierByVoltageTest {
+
     @Test
     public void testV() {
         expectTier(V[ULV], ULV, ULV);
