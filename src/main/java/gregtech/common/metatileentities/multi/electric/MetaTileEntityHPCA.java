@@ -123,7 +123,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
         // don't show a problem if the structure is not yet formed
-        return !isStructureFormed("MAIN") || hpcaHandler.hasHPCABridge();
+        return !isStructureFormed() || hpcaHandler.hasHPCABridge();
     }
 
     @Override
@@ -131,7 +131,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
         super.update();
         // we need to know what components we have on the client
         if (getWorld().isRemote) {
-            if (isStructureFormed("MAIN")) {
+            if (isStructureFormed()) {
                 hpcaHandler.tryGatherClientComponents(getWorld(), getPos(), getFrontFacing(), getUpwardsFacing(),
                         isFlipped());
             } else {
@@ -375,7 +375,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0) // transform into two-state system for
                 // display
                 .setWorkingStatusKeys(
@@ -383,7 +383,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.data_bank.providing")
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN")) {
+                    if (isStructureFormed()) {
                         // Energy Usage
                         ITextComponent voltageName = new TextComponentString(
                                 GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]);
@@ -418,10 +418,10 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(hasNotEnoughEnergy)
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN")) {
+                    if (isStructureFormed()) {
                         if (temperature > 500) {
                             // Temperature warning
                             tl.add(TextComponentUtil.translationWithColor(
@@ -444,7 +444,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (isStructureFormed("MAIN")) {
+        if (isStructureFormed()) {
             if (temperature > 1000) {
                 textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
                         "gregtech.multiblock.hpca.error_temperature"));

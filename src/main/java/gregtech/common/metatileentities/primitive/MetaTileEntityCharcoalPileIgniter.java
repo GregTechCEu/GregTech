@@ -213,7 +213,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     public void update() {
         super.update();
         if (getWorld() != null) {
-            if (!getWorld().isRemote && !this.isStructureFormed("MAIN") && getOffsetTimer() % 20 == 0) {
+            if (!getWorld().isRemote && !this.isStructureFormed() && getOffsetTimer() % 20 == 0) {
                 this.reinitializeStructurePattern();
             } else if (isActive) {
                 BlockPos pos = getPos();
@@ -273,7 +273,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
                             .appendText(" ")
                             .appendSibling(new TextComponentTranslation("gregtech.machine.miner.radius",
                                     bounds[dir.ordinal()])));
-            getSubstructure("MAIN").clearCache();
+            getSubstructure().clearCache();
             return true;
         }
         return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
@@ -413,7 +413,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
             mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
         }
         if (mte instanceof MetaTileEntityCharcoalPileIgniter &&
-                ((IMultiblockController) mte).isStructureFormed("MAIN")) {
+                ((IMultiblockController) mte).isStructureFormed()) {
             if (event.getSide().isClient()) {
                 event.setCanceled(true);
                 event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);

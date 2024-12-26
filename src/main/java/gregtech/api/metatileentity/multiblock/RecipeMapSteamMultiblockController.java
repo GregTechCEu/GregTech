@@ -101,7 +101,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addCustom(tl -> {
                     // custom steam tank line
@@ -127,9 +127,9 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN") && recipeMapWorkable.isHasNotEnoughEnergy()) {
+                    if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.YELLOW,
                                 "gregtech.multiblock.steam.low_steam"));

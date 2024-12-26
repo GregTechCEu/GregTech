@@ -234,7 +234,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
 
-        if (this.isStructureFormed("MAIN")) {
+        if (this.isStructureFormed()) {
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 int energyContainer = getEnergyTier();
                 long maxVoltage = GTValues.V[energyContainer];
@@ -270,7 +270,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     private void addDisplayText2(List<ITextComponent> textList) {
-        if (this.isStructureFormed("MAIN")) {
+        if (this.isStructureFormed()) {
             ITextComponent mCoords = new TextComponentString("    ")
                     .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex",
                             this.minerLogic.getMineX().get()))
@@ -286,10 +286,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
-                .addLowPowerLine(isStructureFormed("MAIN") && !drainEnergy(true))
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
+                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN") && isInventoryFull) {
+                    if (isStructureFormed() && isInventoryFull) {
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.YELLOW,
                                 "gregtech.machine.miner.invfull"));
@@ -300,7 +300,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (isStructureFormed("MAIN") && !drainFluid(true)) {
+        if (isStructureFormed() && !drainFluid(true)) {
             textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
                     "gregtech.machine.miner.multi.needsfluid"));
         }
@@ -445,7 +445,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
-        if (getWorld().isRemote || !this.isStructureFormed("MAIN"))
+        if (getWorld().isRemote || !this.isStructureFormed())
             return true;
 
         if (!this.isActive()) {

@@ -70,7 +70,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     protected void addDisplayText(List<ITextComponent> textList) {
         LargeCombustionEngineWorkableHandler recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
 
-        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
 
         if (isExtreme) {
@@ -81,7 +81,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
 
         builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN") && recipeLogic.isOxygenBoosted) {
+                    if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                         String key = isExtreme ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
                                 "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
                         tl.add(TextComponentUtil.translationWithColor(TextFormatting.AQUA, key));
@@ -93,7 +93,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     @Override
     protected void addErrorText(List<ITextComponent> textList) {
         super.addErrorText(textList);
-        if (isStructureFormed("MAIN")) {
+        if (isStructureFormed()) {
             if (checkIntakesObstructed()) {
                 textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
                         "gregtech.multiblock.large_combustion_engine.obstructed"));
@@ -281,7 +281,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             // Lubricant
             int lubricantStored = 0;
             int lubricantCapacity = 0;
-            if (isStructureFormed("MAIN") && getInputFluidInventory() != null) {
+            if (isStructureFormed() && getInputFluidInventory() != null) {
                 // Hunt for tanks with lubricant in them
                 int[] lubricantAmount = getTotalFluidAmount(Materials.Lubricant.getFluid(Integer.MAX_VALUE),
                         getInputFluidInventory());
@@ -302,7 +302,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             if (isBoostAllowed()) {
                 int oxygenStored = 0;
                 int oxygenCapacity = 0;
-                if (isStructureFormed("MAIN") && getInputFluidInventory() != null) {
+                if (isStructureFormed() && getInputFluidInventory() != null) {
                     // Hunt for tanks with Oxygen or LOX (depending on tier) in them
                     FluidStack oxygenStack = isExtreme ?
                             Materials.Oxygen.getFluid(FluidStorageKeys.LIQUID, Integer.MAX_VALUE) :

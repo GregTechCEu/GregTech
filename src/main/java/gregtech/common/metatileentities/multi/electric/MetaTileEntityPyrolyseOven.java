@@ -101,12 +101,12 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN")) {
+                    if (isStructureFormed()) {
                         int processingSpeed = coilTier == 0 ? 75 : 50 * (coilTier + 1);
                         ITextComponent speedIncrease = TextComponentUtil.stringWithColor(
                                 getSpeedColor(processingSpeed),

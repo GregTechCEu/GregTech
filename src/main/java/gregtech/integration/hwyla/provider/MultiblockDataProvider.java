@@ -37,7 +37,7 @@ public class MultiblockDataProvider extends CapabilityDataProvider<IMultiblockCo
     @Override
     protected NBTTagCompound getNBTData(IMultiblockController capability, NBTTagCompound tag) {
         NBTTagCompound subTag = new NBTTagCompound();
-        subTag.setBoolean("Formed", capability.isStructureFormed("MAIN"));
+        subTag.setBoolean("Formed", capability.isStructureFormed());
         subTag.setBoolean("Obstructed", capability.isStructureObstructed());
         tag.setTag("gregtech.IMultiblockController", subTag);
         return tag;

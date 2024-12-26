@@ -75,7 +75,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
 
     @Override
     protected int getEnergyUsage() {
-        return isStructureFormed("MAIN") ? computationHandler.getEUt() : 0;
+        return isStructureFormed() ? computationHandler.getEUt() : 0;
     }
 
     @Override
@@ -87,7 +87,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     @Override
     public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
         seen.add(this);
-        return isStructureFormed("MAIN") ? computationHandler.getMaxCWUt(seen) : 0;
+        return isStructureFormed() ? computationHandler.getMaxCWUt(seen) : 0;
     }
 
     // allows chaining Network Switches together
@@ -145,7 +145,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
@@ -159,7 +159,7 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         super.addWarningText(textList);
-        if (isStructureFormed("MAIN") && computationHandler.hasNonBridgingConnections()) {
+        if (isStructureFormed() && computationHandler.hasNonBridgingConnections()) {
             textList.add(TextComponentUtil.translationWithColor(
                     TextFormatting.YELLOW,
                     "gregtech.multiblock.computation.non_bridging.detailed"));

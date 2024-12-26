@@ -270,7 +270,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 setFusionRingColor(0xFF000000 |
                         recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor());
             }
-        } else if (!recipeMapWorkable.isWorking() && isStructureFormed("MAIN")) {
+        } else if (!recipeMapWorkable.isWorking() && isStructureFormed()) {
             setFusionRingColor(NO_COLOR);
         }
     }
@@ -529,7 +529,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                         x, y, width, height, texture, moveType)
                                 .setIgnoreColor(true)
                                 .setHoverTextConsumer(
-                                        tl -> MultiblockDisplayText.builder(tl, instance.isStructureFormed("MAIN"))
+                                        tl -> MultiblockDisplayText.builder(tl, instance.isStructureFormed())
                                                 .setWorkingStatus(instance.recipeMapWorkable.isWorkingEnabled(),
                                                         instance.recipeMapWorkable.isActive())
                                                 .addWorkingStatusLine());

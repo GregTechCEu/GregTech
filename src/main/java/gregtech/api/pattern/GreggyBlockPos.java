@@ -55,8 +55,7 @@ public class GreggyBlockPos {
      * @param value The value of said coordinate
      */
     public GreggyBlockPos set(EnumFacing.Axis axis, int value) {
-        pos[axis.ordinal()] = value;
-        return this;
+        return set(axis.ordinal(), value);
     }
 
     /**
@@ -66,8 +65,7 @@ public class GreggyBlockPos {
      * @param other The pos to take the other axis' value from.
      */
     public GreggyBlockPos set(EnumFacing.Axis axis, GreggyBlockPos other) {
-        pos[axis.ordinal()] = other.pos[axis.ordinal()];
-        return this;
+        return set(axis.ordinal(), other.pos[axis.ordinal()]);
     }
 
     /**

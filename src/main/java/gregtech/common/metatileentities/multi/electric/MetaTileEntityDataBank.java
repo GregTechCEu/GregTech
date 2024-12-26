@@ -202,7 +202,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
             }
         } else {
             // controller rendering
-            if (isStructureFormed("MAIN")) {
+            if (isStructureFormed()) {
                 return Textures.HIGH_POWER_CASING;
             } else {
                 return Textures.COMPUTER_CASING;
@@ -250,7 +250,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
@@ -262,7 +262,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(hasNotEnoughEnergy)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }

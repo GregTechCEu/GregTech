@@ -247,10 +247,10 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 }
             } else { // check multi-block valid
                 if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase entity) {
-                    if (entity.isStructureFormed("MAIN")) {
+                    if (entity.isStructureFormed()) {
                         if (!isValid) {
-                            if (entity.getSubstructure("MAIN").getPatternState().getState().isValid()) {
-                                validPos = entity.getSubstructure("MAIN").getCache().keySet().stream()
+                            if (entity.getSubstructure().getPatternState().getState().isValid()) {
+                                validPos = entity.getSubstructure().getCache().keySet().stream()
                                         .map(BlockPos::fromLong)
                                         .collect(Collectors.toSet());
                                 writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {

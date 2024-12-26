@@ -118,14 +118,14 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                 CuboidRayTraceResult hitResult) {
-        if (!isStructureFormed("MAIN"))
+        if (!isStructureFormed())
             return false;
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
     protected boolean openGUIOnRightClick() {
-        return isStructureFormed("MAIN");
+        return isStructureFormed();
     }
 
     @Override
@@ -162,7 +162,7 @@ public class MetaTileEntityMultiblockTank extends MultiblockWithDisplayBase {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            if (isStructureFormed("MAIN")) {
+            if (isStructureFormed()) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidInventory);
             } else {
                 return null;

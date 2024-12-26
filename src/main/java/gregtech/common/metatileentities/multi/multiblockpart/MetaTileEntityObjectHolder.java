@@ -103,7 +103,7 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
     public void setFrontFacing(EnumFacing frontFacing) {
         super.setFrontFacing(frontFacing);
         var controller = getController();
-        if (controller != null && controller.isStructureFormed("MAIN")) {
+        if (controller != null && controller.isStructureFormed()) {
             controller.checkStructurePattern();
         }
     }

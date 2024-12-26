@@ -269,7 +269,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (hasMufflerMechanics() && getAbilities(MultiblockAbility.MUFFLER_HATCH).size() == 0)
             return false;
 
-        return isStructureFormed("MAIN") && hasMufflerMechanics() &&
+        return isStructureFormed() && hasMufflerMechanics() &&
                 getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0).isFrontFaceFree();
     }
 
@@ -302,7 +302,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * @return whether the current multiblock is active or not
      */
     public boolean isActive() {
-        return isStructureFormed("MAIN");
+        return isStructureFormed();
     }
 
     @Override
@@ -366,7 +366,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * to use translation, use TextComponentTranslation
      */
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"));
+        MultiblockDisplayText.builder(textList, isStructureFormed());
     }
 
     /**
@@ -512,7 +512,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Recommended to only display warnings if the structure is already formed.
      */
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
@@ -521,7 +521,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
     protected void addErrorText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
     }
 

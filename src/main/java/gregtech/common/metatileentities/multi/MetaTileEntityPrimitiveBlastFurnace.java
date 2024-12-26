@@ -109,7 +109,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
                 recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
-        if (recipeMapWorkable.isActive() && isStructureFormed("MAIN")) {
+        if (recipeMapWorkable.isActive() && isStructureFormed()) {
             EnumFacing back = getFrontFacing().getOpposite();
             Matrix4 offset = translation.copy().translate(back.getXOffset(), -0.3, back.getZOffset());
             CubeRendererState op = Textures.RENDER_STATE.get();

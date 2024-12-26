@@ -96,10 +96,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN")) {
+                    if (isStructureFormed()) {
                         // Steam Output line
                         ITextComponent steamOutput = TextComponentUtil.stringWithColor(
                                 TextFormatting.AQUA,
@@ -149,7 +149,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         super.addWarningText(textList);
-        if (isStructureFormed("MAIN")) {
+        if (isStructureFormed()) {
             int[] waterAmount = getWaterAmount();
             if (waterAmount[0] == 0) {
                 textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
@@ -234,7 +234,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     private boolean isFireboxPart(IMultiblockPart sourcePart) {
-        return isStructureFormed("MAIN") && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
+        return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());
     }
 
     @SideOnly(Side.CLIENT)
@@ -321,7 +321,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     public double getFillPercentage(int index) {
-        if (!isStructureFormed("MAIN")) return 0;
+        if (!isStructureFormed()) return 0;
         int[] waterAmount = getWaterAmount();
         if (waterAmount[1] == 0) return 0; // no water capacity
         return (1.0 * waterAmount[0]) / waterAmount[1];
@@ -334,7 +334,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        if (!isStructureFormed("MAIN")) {
+        if (!isStructureFormed()) {
             hoverList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
                     "gregtech.multiblock.invalid_structure"));
         } else {
@@ -360,7 +360,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
      * If there is no water in the boiler (or the structure isn't formed, both of these values will be zero.
      */
     private int[] getWaterAmount() {
-        if (!isStructureFormed("MAIN")) return new int[] { 0, 0 };
+        if (!isStructureFormed()) return new int[] { 0, 0 };
         List<IFluidTank> tanks = getAbilities(MultiblockAbility.IMPORT_FLUIDS);
         int filled = 0, capacity = 0;
         for (IFluidTank tank : tanks) {

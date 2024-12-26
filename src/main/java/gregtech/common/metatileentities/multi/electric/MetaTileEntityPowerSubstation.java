@@ -128,7 +128,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
 
     protected List<IBatteryData> determineBatteryParts() {
         List<IBatteryData> data = new ArrayList<>();
-        for (BlockInfo info : getSubstructure("MAIN").getCache().values()) {
+        for (BlockInfo info : getSubstructure().getCache().values()) {
             if (GregTechAPI.PSS_BATTERIES.containsKey(info.getBlockState())) {
                 data.add(GregTechAPI.PSS_BATTERIES.get(info.getBlockState()));
             }
@@ -300,14 +300,14 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.machine.active_transformer.routing")
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN") && energyBank != null) {
+                    if (isStructureFormed() && energyBank != null) {
                         BigInteger energyStored = energyBank.getStored();
                         BigInteger energyCapacity = energyBank.getCapacity();
 
@@ -391,7 +391,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         super.addWarningText(textList);
-        if (isStructureFormed("MAIN")) {
+        if (isStructureFormed()) {
             if (averageInLastSec < averageOutLastSec) { // decreasing
                 BigInteger timeToDrainSeconds = energyBank.getStored()
                         .divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20));

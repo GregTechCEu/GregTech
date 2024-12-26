@@ -87,7 +87,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (isStructureFormed("MAIN")) {
+        if (isStructureFormed()) {
             FluidStack stackInTank = importFluids.drain(Integer.MAX_VALUE, false);
             if (stackInTank != null && stackInTank.amount > 0) {
                 ITextComponent fluidName = TextComponentUtil.setColor(GTUtility.getFluidTranslation(stackInTank),
@@ -105,7 +105,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     protected void formStructure(String name) {
         super.formStructure(name);
         if (this.handler == null) return;
-        handler.determineLayerCount((BlockPattern) getSubstructure("MAIN"));
+        handler.determineLayerCount((BlockPattern) getSubstructure());
         handler.determineOrderedFluidOutputs();
     }
 

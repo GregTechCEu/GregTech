@@ -158,7 +158,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
             }
         } else {
             // controller rendering
-            if (isStructureFormed("MAIN")) {
+            if (isStructureFormed()) {
                 return Textures.GRATE_CASING_STEEL_FRONT;
             } else {
                 return Textures.SOLID_STEEL_CASING;

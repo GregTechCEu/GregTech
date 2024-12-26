@@ -144,7 +144,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         renderingAABB = false;
         writeCustomData(GregtechDataCodes.RENDER_UPDATE, buf -> buf.writeBoolean(false));
 
-        ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure("MAIN"),
+        ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure(),
                 "gregtech.multiblock.pattern.error.filters");
         if (type == null) {
             invalidateStructure(name);
@@ -360,12 +360,12 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
                 .addCustom(tl -> {
                     // Cleanliness status line
-                    if (isStructureFormed("MAIN")) {
+                    if (isStructureFormed()) {
                         ITextComponent cleanState;
                         if (isClean()) {
                             cleanState = TextComponentUtil.translationWithColor(
@@ -394,7 +394,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                     }
                 })
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN")) return;
+                    if (isStructureFormed()) return;
 
                     tl.add(getWithButton(EnumFacing.NORTH));
                     tl.add(getWithButton(EnumFacing.WEST));
@@ -451,7 +451,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
         writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> buf.writeVarIntArray(bounds));
 
-        getSubstructure("MAIN").clearCache();
+        getSubstructure().clearCache();
     }
 
     protected static int getFactor(String str) {
@@ -470,10 +470,10 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(!drainEnergy(true))
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN") && !isClean()) {
+                    if (isStructureFormed() && !isClean()) {
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.YELLOW,
                                 "gregtech.multiblock.cleanroom.warning_contaminated"));

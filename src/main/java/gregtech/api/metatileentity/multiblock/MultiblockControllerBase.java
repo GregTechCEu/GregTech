@@ -126,7 +126,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             // DummyWorld is the world for the JEI preview. We do not want to update the Multi in this world,
             // besides initially forming it in checkStructurePattern
-            if (isStructureFormed("MAIN") && !(getWorld() instanceof DummyWorld)) {
+            if (isStructureFormed() && !(getWorld() instanceof DummyWorld)) {
                 updateFormedValid();
             }
         }
@@ -172,7 +172,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public boolean isFlipped() {
-        return getSubstructure("MAIN").getPatternState().isFlipped();
+        return getSubstructure().getPatternState().isFlipped();
     }
 
     /** <strong>Should not be called outside of structure formation logic!</strong> */
@@ -353,7 +353,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * INVALID_CACHED,
      * so the pattern will not have its cache cleared, and the controller will not attempt to form the pattern again
      * unless the cache is invalidated(either through code or through it failing).
-     * Example: {@code allSameType(GregTechAPI.HEATING_COILS, getSubstructure("MAIN"))}
+     * Example: {@code allSameType(GregTechAPI.HEATING_COILS, getSubstructure())}
      * 
      * @param info    The info, such as GregTechAPI.HEATING_COILS
      * @param pattern Pattern, used to get the cache. It will also be used to set the error.
@@ -586,18 +586,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(true));
     }
 
-    /**
-     * Use {@link MultiblockControllerBase#formStructure(String)} instead!
-     */
-    @Deprecated
     protected void formStructure() {
         formStructure("MAIN");
     }
 
-    /**
-     * Use {@link MultiblockControllerBase#invalidateStructure(String)} instead!
-     */
-    @Deprecated
     public void invalidateStructure() {
         invalidateStructure("MAIN");
     }
@@ -642,6 +634,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public IBlockPattern getSubstructure(String name) {
         return structures.get(name);
+    }
+    
+    public IBlockPattern getSubstructure() {
+        return getSubstructure("MAIN");
     }
 
     public String trySubstructure(String name) {
@@ -726,7 +722,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             String name = buf.readString(Short.MAX_VALUE);
             getSubstructure(name).getPatternState().setFormed(buf.readBoolean());
 
-            if (!isStructureFormed("MAIN")) {
+            if (!isStructureFormed()) {
                 GregTechAPI.soundManager.stopTileSound(getPos());
             }
         }
@@ -743,12 +739,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return null;
     }
 
-    /**
-     * Use {@link MultiblockControllerBase#isStructureFormed(String)} instead!
-     */
-    @Deprecated
     public boolean isStructureFormed() {
-        return isStructureFormed("MAIN");
+        return isStructureFormed();
     }
 
     public boolean isStructureFormed(String name) {
@@ -799,7 +791,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (super.onRightClick(playerIn, hand, facing, hitResult))
             return true;
 
-        if (this.getWorld().isRemote && !this.isStructureFormed("MAIN") && playerIn.isSneaking() &&
+        if (this.getWorld().isRemote && !this.isStructureFormed() && playerIn.isSneaking() &&
                 playerIn.getHeldItem(hand).isEmpty()) {
             MultiblockPreviewRenderer.renderMultiBlockPreview(this, playerIn, 60000);
             return true;

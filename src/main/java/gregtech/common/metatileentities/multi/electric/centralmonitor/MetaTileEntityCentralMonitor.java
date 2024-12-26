@@ -256,7 +256,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     public boolean isActive() {
-        return isStructureFormed("MAIN") && isActive;
+        return isStructureFormed() && isActive;
     }
 
     private void clearScreens() {
@@ -281,7 +281,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         textList.add(new TextComponentTranslation("gregtech.multiblock.central_monitor.height", this.height));
-        if (!isStructureFormed("MAIN")) {
+        if (!isStructureFormed()) {
             ITextComponent buttonText = new TextComponentTranslation(
                     "gregtech.multiblock.central_monitor.height_modify", height);
             buttonText.appendText(" ");
@@ -343,7 +343,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         } else if (id == GregtechDataCodes.UPDATE_ACTIVE) {
             this.isActive = buf.readBoolean();
         } else if (id == GregtechDataCodes.STRUCTURE_FORMED) {
-            if (!this.isStructureFormed("MAIN")) {
+            if (!this.isStructureFormed()) {
                 clearScreens();
             }
         }
@@ -431,7 +431,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         netCovers = new HashSet<>();
         remoteCovers = new HashSet<>();
         inputEnergy = new EnergyContainerList(this.getAbilities(MultiblockAbility.INPUT_ENERGY));
-        width = ((BlockPattern) getSubstructure("MAIN")).getRepetitionCount(1);
+        width = ((BlockPattern) getSubstructure()).getRepetitionCount(1);
         screens = new MetaTileEntityMonitorScreen[width][height];
         for (IMultiblockPart part : this.getMultiblockParts()) {
             if (part instanceof MetaTileEntityMonitorScreen screen) {
@@ -462,7 +462,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        if (this.isStructureFormed("MAIN")) {
+        if (this.isStructureFormed()) {
             return pass == 0;
         }
         return false;
@@ -477,7 +477,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @Override
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
-        if (!this.isStructureFormed("MAIN")) return;
+        if (!this.isStructureFormed()) return;
         RenderUtil.useStencil(() -> {
             GlStateManager.pushMatrix();
             RenderUtil.moveToFace(x, y, z, this.frontFacing);

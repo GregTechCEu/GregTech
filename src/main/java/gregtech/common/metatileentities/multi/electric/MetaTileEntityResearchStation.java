@@ -84,7 +84,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     @Override
     public void checkStructurePattern() {
         super.checkStructurePattern();
-        if (isStructureFormed("MAIN") && objectHolder.getFrontFacing() != getFrontFacing().getOpposite()) {
+        if (isStructureFormed() && objectHolder.getFrontFacing() != getFrontFacing().getOpposite()) {
             invalidateStructure("MAIN");
         }
     }
@@ -221,7 +221,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
@@ -237,7 +237,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
                 .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
                 .addMaintenanceProblemLines(getMaintenanceProblems());

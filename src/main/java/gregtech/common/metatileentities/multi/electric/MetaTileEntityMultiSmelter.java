@@ -58,12 +58,12 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addCustom(tl -> {
-                    if (isStructureFormed("MAIN")) {
+                    if (isStructureFormed()) {
                         // Heating coil discount
                         if (heatingCoilDiscount > 1) {
                             ITextComponent coilDiscount = TextComponentUtil.stringWithColor(

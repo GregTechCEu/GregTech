@@ -44,7 +44,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
 
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"))
+        MultiblockDisplayText.builder(textList, isStructureFormed())
                 .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
                 .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
@@ -62,13 +62,13 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed("MAIN"), false)
+        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowDynamoTierLine(isDynamoTierTooLow())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     protected boolean isDynamoTierTooLow() {
-        if (isStructureFormed("MAIN")) {
+        if (isStructureFormed()) {
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
@@ -144,7 +144,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         int fuelCapacity = 0;
         FluidStack fuelStack = null;
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-        if (isStructureFormed("MAIN") && recipeLogic.getInputFluidStack() != null && getInputFluidInventory() != null) {
+        if (isStructureFormed() && recipeLogic.getInputFluidStack() != null && getInputFluidInventory() != null) {
             fuelStack = recipeLogic.getInputFluidStack().copy();
             fuelStack.amount = Integer.MAX_VALUE;
             int[] fuelAmount = getTotalFluidAmount(fuelStack, getInputFluidInventory());

@@ -56,7 +56,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase i
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && getOffsetTimer() % 20 == 0 && isStructureFormed("MAIN")) {
+        if (!getWorld().isRemote && getOffsetTimer() % 20 == 0 && isStructureFormed()) {
             if (biomeModifier == 0) {
                 biomeModifier = getAmount();
             } else if (biomeModifier > 0) {
