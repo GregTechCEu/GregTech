@@ -1,5 +1,7 @@
 package gregtech.api.capability;
 
+import gregtech.api.capability.impl.FluidTankList2;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
@@ -9,6 +11,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,6 +91,11 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
 
     protected final Entry wrap(IFluidTank tank) {
         return tank instanceof Entry ? (Entry) tank : new Entry(tank, this);
+    }
+
+    public MultipleTankHandler addTanks(IFluidTank... tanks) {
+        if (ArrayUtils.isEmpty(tanks)) return this;
+        return new FluidTankList2(allowSameFluidFill(), this, tanks);
     }
 
     /**
