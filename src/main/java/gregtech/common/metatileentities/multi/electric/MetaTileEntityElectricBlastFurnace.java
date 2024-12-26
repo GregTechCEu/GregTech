@@ -47,7 +47,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IntSummaryStatistics;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -130,6 +135,16 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .build();
     }
 
+    @NotNull
+    @Override
+    public Iterator<Map<String, String>> getPreviewBuilds() {
+        return GregTechAPI.HEATING_COILS.values().stream()
+                .mapToInt(IHeatingCoilBlockStats::getTier)
+                .sorted()
+                .mapToObj(i -> Collections.singletonMap("coilTier", Integer.toString(i)))
+                .iterator();
+    }
+
     protected IBlockState getCasingState() {
         return MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF);
     }
@@ -174,32 +189,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     public SoundEvent getBreakdownSound() {
         return GTSoundEvents.BREAKDOWN_ELECTRICAL;
-    }
-
-    @Override
-    public List<MultiblockShapeInfo> getMatchingShapes() {
-        List<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
-                .aisle("EEM", "CCC", "CCC", "XXX")
-                .aisle("FXD", "C#C", "C#C", "XHX")
-                .aisle("ISO", "CCC", "CCC", "XXX")
-                .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
-                .where('S', MetaTileEntities.ELECTRIC_BLAST_FURNACE, EnumFacing.SOUTH)
-                .where('#', Blocks.AIR.getDefaultState())
-                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LV], EnumFacing.NORTH)
-                .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV], EnumFacing.SOUTH)
-                .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.SOUTH)
-                .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.WEST)
-                .where('D', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.LV], EnumFacing.EAST)
-                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
-                .where('M', () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
-                        MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF), EnumFacing.NORTH)
-                .dot('C', 1, "gregtech.material.tungsten_carbide");
-        shapeInfo.add(builder.build());
-        // GregTechAPI.HEATING_COILS.entrySet().stream()
-        // .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-        // .forEach(entry -> shapeInfo.add(builder.shallowCopy().where('C', entry.getKey()).build()));
-        return shapeInfo;
     }
 
     @NotNull

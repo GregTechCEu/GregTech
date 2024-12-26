@@ -978,13 +978,17 @@ public class GTUtility {
     }
 
     /**
-     * Parse the string as an int and return, or return -1 if the string is not an int.
+     * Parse the string as an int and return, or return def if the string is not an int.
      */
-    public static int parseInt(String s) {
+    public static int parseInt(String s, int def) {
         try {
             return Integer.parseInt(s);
         } catch (NumberFormatException e) {
-            return -1;
+            return def;
         }
+    }
+
+    public static int parseInt(String s) {
+        return parseInt(s, -1);
     }
 }

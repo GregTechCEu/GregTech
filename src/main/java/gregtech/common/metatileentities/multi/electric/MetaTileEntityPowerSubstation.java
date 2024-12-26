@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
@@ -14,6 +15,7 @@ import gregtech.api.pattern.*;
 import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -52,6 +54,7 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -249,35 +252,15 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 .build();
     }
 
+    @NotNull
     @Override
-    public List<MultiblockShapeInfo> getMatchingShapes() {
-        List<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
-                .aisle("CCCCC", "CCCCC", "GGGGG", "GGGGG", "GGGGG")
-                .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
-                .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
-                .aisle("CCCCC", "CCCCC", "GBBBG", "GBBBG", "GGGGG")
-                .aisle("ICSCO", "NCMCT", "GGGGG", "GGGGG", "GGGGG")
-                .where('S', MetaTileEntities.POWER_SUBSTATION, EnumFacing.SOUTH)
-                .where('C', getCasingState())
-                .where('G', getGlassState())
-                .where('I', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
-                .where('N', MetaTileEntities.SUBSTATION_ENERGY_INPUT_HATCH[0], EnumFacing.SOUTH)
-                .where('O', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
-                .where('T', MetaTileEntities.SUBSTATION_ENERGY_OUTPUT_HATCH[0], EnumFacing.SOUTH)
-                .where('M',
-                        () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
-                                MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION),
-                        EnumFacing.SOUTH);
-
-        GregTechAPI.PSS_BATTERIES.entrySet().stream()
-                // filter out empty batteries in example structures, though they are still
-                // allowed in the predicate (so you can see them on right-click)
-                .filter(entry -> entry.getValue().getCapacity() > 0)
-                .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-                .forEach(entry -> shapeInfo.add(builder.shallowCopy().where('B', entry.getKey()).build()));
-
-        return shapeInfo;
+    public Iterator<Map<String, String>> getPreviewBuilds() {
+        return GregTechAPI.PSS_BATTERIES.values().stream()
+                .mapToInt(IBatteryData::getTier)
+                .filter(i -> i != -1)
+                .sorted()
+                .mapToObj(i -> Collections.singletonMap("batteryTier", Integer.toString(i)))
+                .iterator();
     }
 
     protected IBlockState getCasingState() {
@@ -291,7 +274,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     protected static final Supplier<TraceabilityPredicate> BATTERY_PREDICATE = () -> new TraceabilityPredicate(
             worldState -> GregTechAPI.PSS_BATTERIES.containsKey(worldState.getBlockState()) ? null :
                     PatternError.PLACEHOLDER,
-            () -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
+            map -> GregTechAPI.PSS_BATTERIES.entrySet().stream()
+                    .filter(e -> e.getValue().getTier() == GTUtility.parseInt(map.get("batteryTier"), GTValues.EV))
                     .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
                     .map(entry -> new BlockInfo(entry.getKey(), null))
                     .toArray(BlockInfo[]::new))

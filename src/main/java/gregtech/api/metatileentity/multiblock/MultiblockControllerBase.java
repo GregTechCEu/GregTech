@@ -5,6 +5,7 @@ import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleRecipeMaps;
+import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -43,6 +44,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -219,7 +221,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate tilePredicate(@NotNull BiPredicate<BlockWorldState, MetaTileEntity> predicate,
-                                                      @Nullable Supplier<BlockInfo[]> candidates) {
+                                                      @Nullable Function<Map<String, String>, BlockInfo[]> candidates) {
         return new TraceabilityPredicate(worldState -> {
             TileEntity tileEntity = worldState.getTileEntity();
             if (!(tileEntity instanceof IGregTechTileEntity)) return PatternError.PLACEHOLDER;
@@ -235,8 +237,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 getCandidates(metaTileEntities));
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
-        return () -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
+    @SafeVarargs
+    public static <T extends MetaTileEntity & ITieredMetaTileEntity> TraceabilityPredicate tieredMTEs(BiPredicate<Map<String, String>, T> pred, T... metaTileEntities) {
+        ResourceLocation[] ids = Arrays.stream(metaTileEntities).filter(Objects::nonNull)
+                .map(tile -> tile.metaTileEntityId).toArray(ResourceLocation[]::new);
+        return tilePredicate((state, tile) -> ArrayUtils.contains(ids, tile.metaTileEntityId),
+                getCandidates(pred, metaTileEntities));
+    }
+
+    private static Function<Map<String, String>, BlockInfo[]> getCandidates(MetaTileEntity... metaTileEntities) {
+        return map -> Arrays.stream(metaTileEntities).filter(Objects::nonNull).map(tile -> {
             MetaTileEntityHolder holder = new MetaTileEntityHolder();
             holder.setMetaTileEntity(tile);
             holder.getMetaTileEntity().onPlacement();
@@ -245,8 +255,27 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         }).toArray(BlockInfo[]::new);
     }
 
-    private static Supplier<BlockInfo[]> getCandidates(IBlockState... allowedStates) {
-        return () -> Arrays.stream(allowedStates).map(state -> new BlockInfo(state, null)).toArray(BlockInfo[]::new);
+    // generic hell
+    @SafeVarargs
+    public static <T extends MetaTileEntity & ITieredMetaTileEntity> Function<Map<String, String>, BlockInfo[]> getCandidates(BiPredicate<Map<String, String>, T> pred, T... metaTileEntities) {
+        return map -> Arrays.stream(metaTileEntities).filter(Objects::nonNull)
+            .filter(i -> pred.test(map, i))
+            .map(tile -> {
+                MetaTileEntityHolder holder = new MetaTileEntityHolder();
+                holder.setMetaTileEntity(tile);
+                holder.getMetaTileEntity().onPlacement();
+                holder.getMetaTileEntity().setFrontFacing(EnumFacing.SOUTH);
+                return new BlockInfo(tile.getBlock().getDefaultState(), holder);
+        }).toArray(BlockInfo[]::new);
+    }
+
+    private static Function<Map<String, String>, BlockInfo[]> getCandidates(String key, IBlockState... allowedStates) {
+        return map -> {
+            if (map.containsKey(key)) {
+                return new BlockInfo[] { new BlockInfo(allowedStates[MathHelper.clamp(GTUtility.parseInt(map.get(key)), 0, allowedStates.length - 1)]) };
+            }
+            return Arrays.stream(allowedStates).map(BlockInfo::new).toArray(BlockInfo[]::new);
+        };
     }
 
     public static TraceabilityPredicate abilities(MultiblockAbility<?>... allowedAbilities) {
@@ -258,10 +287,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate states(IBlockState... allowedStates) {
+        return states(null, allowedStates);
+    }
+
+    public static TraceabilityPredicate states(String key, IBlockState... allowedStates) {
         return new TraceabilityPredicate(
                 worldState -> ArrayUtils.contains(allowedStates, worldState.getBlockState()) ? null :
                         PatternError.PLACEHOLDER,
-                getCandidates(allowedStates));
+                getCandidates(key, allowedStates));
     }
 
     /**
@@ -281,10 +314,14 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static TraceabilityPredicate blocks(Block... block) {
+        return blocks(null, block);
+    }
+
+    public static TraceabilityPredicate blocks(String key, Block... block) {
         return new TraceabilityPredicate(
                 worldState -> ArrayUtils.contains(block, worldState.getBlockState().getBlock()) ? null :
                         PatternError.PLACEHOLDER,
-                getCandidates(Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
+                getCandidates(key, Arrays.stream(block).map(Block::getDefaultState).toArray(IBlockState[]::new)));
     }
 
     public static TraceabilityPredicate air() {
@@ -556,28 +593,33 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void invalidateStructure(String name) {
         if (!getSubstructure(name).getPatternState().isFormed()) return;
-        // invalidate the main structure
-        if ("MAIN".equals(name)) {
-            this.multiblockParts.forEach(part -> part.removeFromMultiBlock(this));
-            this.multiblockAbilities.clear();
-            this.multiblockParts.clear();
-            structures.forEach((s, p) -> {
-                p.getPatternState().setFormed(false);
-                p.getPatternState().setFlipped(false);
-            });
-            writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString("null"));
-        } else {
-            getSubstructure(name).getPatternState().setFormed(false);
-            writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(false));
+        // i am sorry
+        Object[] added = { null };
+        List<Object> dummyList = new ArrayList<>() {
+            @Override
+            public boolean add(Object e) {
+                added[0] = e;
+                return true;
+            }
+        };
 
-            multiblockParts.removeIf(part -> {
-                if (name.equals(part.getSubstructureName())) {
-                    part.removeFromMultiBlock(this);
-                    return true;
+        multiblockParts.removeIf(part -> {
+            if (name.equals(part.getSubstructureName())) {
+                if (part instanceof IMultiblockAbilityPart<?>) {
+                    //noinspection unchecked
+                    IMultiblockAbilityPart<Object> ability = (IMultiblockAbilityPart<Object>) part;
+                    added[0] = null;
+                    ability.registerAbilities(dummyList);
+                    if (added[0] != null) multiblockAbilities.get(ability.getAbility()).remove(added[0]);
                 }
-                return false;
-            });
-        }
+                part.removeFromMultiBlock(this);
+                return true;
+            }
+            return false;
+        });
+
+        getSubstructure(name).getPatternState().setFormed(false);
+        writeCustomData(STRUCTURE_FORMED, buf -> buf.writeString(name).writeBoolean(false));
     }
 
     protected void invalidStructureCaches() {
@@ -669,15 +711,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             this.upwardsFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
         } else if (dataId == STRUCTURE_FORMED) {
-            // todo rewrite this entire thing :skull:(including the server side code for multiblock abilities)
-            String name = buf.readString(65536);
-            if ("null".equals(name)) {
-                for (IBlockPattern pattern : structures.values()) {
-                    pattern.getPatternState().setFormed(false);
-                }
-            } else {
-                getSubstructure(name).getPatternState().setFormed(buf.readBoolean());
-            }
+            String name = buf.readString(Short.MAX_VALUE);
+            getSubstructure(name).getPatternState().setFormed(buf.readBoolean());
 
             if (!isStructureFormed("MAIN")) {
                 GregTechAPI.soundManager.stopTileSound(getPos());
@@ -842,7 +877,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void autoBuild(EntityPlayer player, Map<String, String> map,
                           Long2ObjectMap<TraceabilityPredicate> predicates) {
         if (getWorld().isRemote) throw new IllegalArgumentException("client side call wuh");
-
+        modifyAutoBuild(map);
         // for each symbol, which simple predicate is being used
         // this advances whenever a minimum has been satisfied(if any), or a maximum has been reached(if any)
         // preview counts are treated as exactly that many
@@ -858,36 +893,34 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
             if (info.getTileEntity() instanceof MetaTileEntityHolder holder) {
                 ItemStack removed = hasAndRemoveItem(player, holder.getMetaTileEntity().getStackForm());
-                if (!removed.isEmpty()) {
-                    MetaTileEntityHolder newHolder = new MetaTileEntityHolder();
-                    newHolder.setMetaTileEntity(holder.getMetaTileEntity());
-                    newHolder.getMetaTileEntity().onPlacement();
-                    if (removed.hasTagCompound())
-                        newHolder.getMetaTileEntity().initFromItemStackData(removed.getTagCompound());
+                if (removed.isEmpty()) return false;
 
-                    if (predicates.containsKey(pos.offset(newHolder.getMetaTileEntity().getFrontFacing()).toLong())) {
-                        EnumFacing valid = null;
-                        for (EnumFacing facing : EnumFacing.HORIZONTALS) {
-                            if (!predicates.containsKey(pos.offset(facing).toLong())) {
-                                valid = facing;
-                                break;
-                            }
-                        }
-                        if (valid != null) newHolder.getMetaTileEntity().setFrontFacing(valid);
-                        else {
-                            if (!predicates.containsKey(pos.offset(EnumFacing.UP).toLong())) {
-                                newHolder.getMetaTileEntity().setFrontFacing(EnumFacing.UP);
-                            } else if (!predicates.containsKey(pos.offset(EnumFacing.DOWN).toLong())) {
-                                newHolder.getMetaTileEntity().setFrontFacing(EnumFacing.DOWN);
-                            }
+                MetaTileEntityHolder newHolder = new MetaTileEntityHolder();
+                newHolder.setMetaTileEntity(holder.getMetaTileEntity());
+                newHolder.getMetaTileEntity().onPlacement();
+                if (removed.hasTagCompound())
+                    newHolder.getMetaTileEntity().initFromItemStackData(removed.getTagCompound());
+
+                if (predicates.containsKey(pos.offset(newHolder.getMetaTileEntity().getFrontFacing()).toLong())) {
+                    EnumFacing valid = null;
+                    for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+                        if (!predicates.containsKey(pos.offset(facing).toLong())) {
+                            valid = facing;
+                            break;
                         }
                     }
+                    if (valid != null) newHolder.getMetaTileEntity().setFrontFacing(valid);
+                    else {
+                        if (!predicates.containsKey(pos.offset(EnumFacing.UP).toLong())) {
+                            newHolder.getMetaTileEntity().setFrontFacing(EnumFacing.UP);
+                        } else if (!predicates.containsKey(pos.offset(EnumFacing.DOWN).toLong())) {
+                            newHolder.getMetaTileEntity().setFrontFacing(EnumFacing.DOWN);
+                        }
+                    }
+                }
 
-                    getWorld().setBlockState(pos, holder.getMetaTileEntity().getBlock().getDefaultState());
-                    getWorld().setTileEntity(pos, newHolder);
-
-                    // todo add relative facing fix to make hatches face air
-                } else return false;
+                getWorld().setBlockState(pos, holder.getMetaTileEntity().getBlock().getDefaultState());
+                getWorld().setTileEntity(pos, newHolder);
             } else {
                 if (!hasAndRemoveItem(player, GTUtility.toItem(info.getBlockState())).isEmpty())
                     getWorld().setBlockState(pos, info.getBlockState());
@@ -924,7 +957,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (simple.candidates == null) continue;
 
             TraceabilityPredicate.SimplePredicate finalSimple = simple;
-            cache.computeIfAbsent(simple, k -> finalSimple.candidates.get()[0]);
+            cache.computeIfAbsent(simple, k -> finalSimple.candidates.apply(map)[0]);
 
             if (!place.test(entry.getLongKey(), cache.get(simple))) return;
 
@@ -956,11 +989,17 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             if (simple.candidates == null) continue;
 
             TraceabilityPredicate.SimplePredicate finalSimple = simple;
-            cache.computeIfAbsent(simple, k -> finalSimple.candidates.get()[0]);
+            cache.computeIfAbsent(simple, k -> finalSimple.candidates.apply(map)[0]);
 
             if (!place.test(entry.getLongKey(), cache.get(simple))) return;
         }
     }
+
+    /**
+     * Called right before the autobuild code starts, modify the map like if you want it to be "height"
+     * instead of "multi.1.0"
+     */
+    protected void modifyAutoBuild(Map<String, String> map) {}
 
     /**
      * @return The item stack that is removed from the player's inventory(or AE system, satchels, etc).

@@ -212,6 +212,7 @@ public class BlockPattern implements IBlockPattern {
      */
     public boolean checkAisle(GreggyBlockPos controllerPos, EnumFacing frontFacing, EnumFacing upFacing, int aisleIndex,
                               int aisleOffset, boolean flip) {
+        // todo use a temporary cache to not double count sometimes
         // absolute facings from the relative facings
         EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, flip);
         EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, flip);
