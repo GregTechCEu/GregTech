@@ -22,13 +22,13 @@ import java.util.List;
  *
  * @see gregtech.api.capability.impl.FluidTankList FluidTankList
  */
-public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultipleTankHandler2.Entry>,
-                                       INBTSerializable<NBTTagCompound> {
+public abstract class MultipleTankHandler implements IFluidHandler, Iterable<MultipleTankHandler.Entry>,
+                                          INBTSerializable<NBTTagCompound> {
 
     /**
      * Comparator for entries that can be used in insertion logic
      */
-    Comparator<Entry> ENTRY_COMPARATOR = (o1, o2) -> {
+    public static final Comparator<Entry> ENTRY_COMPARATOR = (o1, o2) -> {
         // #1: non-empty tank first
         boolean empty1 = o1.getFluidAmount() <= 0;
         boolean empty2 = o2.getFluidAmount() <= 0;
@@ -47,21 +47,21 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
      *         and modify inner contents of the tanks.
      */
     @NotNull
-    List<Entry> getFluidTanks();
+    public abstract List<Entry> getFluidTanks();
 
     /**
      * @return Number of tanks in this tank handler
      */
-    int getTanks();
+    public abstract int size();
 
     @NotNull
-    IMultipleTankHandler2.Entry getTankAt(int index);
+    public abstract Entry getTankAt(int index);
 
     /**
      * @return {@code false} if insertion to this fluid handler enforces input to be
      *         filled in one slot at max. {@code true} if it bypasses the rule.
      */
-    boolean allowSameFluidFill();
+    public abstract boolean allowSameFluidFill();
 
     /**
      * Tries to search tank with contents equal to {@code fluidStack}. If {@code fluidStack} is
@@ -70,7 +70,7 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
      * @param fluidStack Fluid stack to search index
      * @return Index corresponding to tank at {@link #getFluidTanks()} with matching
      */
-    default int getIndexOfFluid(@Nullable FluidStack fluidStack) {
+    public final int getIndexOfFluid(@Nullable FluidStack fluidStack) {
         List<Entry> fluidTanks = getFluidTanks();
         for (int i = 0; i < fluidTanks.size(); i++) {
             FluidStack tankStack = fluidTanks.get(i).getFluid();
@@ -82,30 +82,30 @@ public interface IMultipleTankHandler2 extends IFluidHandler, Iterable<IMultiple
     }
 
     @Override
-    default @NotNull Iterator<Entry> iterator() {
+    public final @NotNull Iterator<Entry> iterator() {
         return getFluidTanks().iterator();
     }
 
-    default Entry wrap(IFluidTank tank) {
+    protected final Entry wrap(IFluidTank tank) {
         return tank instanceof Entry ? (Entry) tank : new Entry(tank, this);
     }
 
     /**
-     * Entry of multi fluid tanks. Retains reference to original {@link IMultipleTankHandler2} for accessing
-     * information such as {@link IMultipleTankHandler2#allowSameFluidFill()}.
+     * Entry of multi fluid tanks. Retains reference to original {@link MultipleTankHandler} for accessing
+     * information such as {@link MultipleTankHandler#allowSameFluidFill()}.
      */
-    class Entry implements IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
-                    IFluidTankProperties {
+    public static class Entry implements IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
+                              IFluidTankProperties {
 
         private final IFluidTank tank;
-        private final IMultipleTankHandler2 parent;
+        private final MultipleTankHandler parent;
 
-        private Entry(IFluidTank tank, IMultipleTankHandler2 parent) {
+        private Entry(IFluidTank tank, MultipleTankHandler parent) {
             this.tank = tank;
             this.parent = parent;
         }
 
-        public @NotNull IMultipleTankHandler2 getParentHandler() {
+        public @NotNull MultipleTankHandler getParentHandler() {
             return parent;
         }
 
