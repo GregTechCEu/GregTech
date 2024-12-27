@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * The default aisle strategy, supporting repeatable (multi) aisles.
+ * The default aisle strategy, supporting repeatable (multi) aisles. Multi aisles may lead to cache issues though.
  */
 public class BasicAisleStrategy extends AisleStrategy {
 
