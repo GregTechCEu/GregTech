@@ -115,7 +115,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
 
         if (parts.isEmpty()) {
             // only empty batteries found in the structure
-            invalidateStructure("main");
+            invalidateStructure();
             return;
         }
         if (this.energyBank == null) {

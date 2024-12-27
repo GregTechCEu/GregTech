@@ -282,7 +282,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
 
         List<MultiblockControllerBase> controllers = getControllers();
         for (int i = 0; i < controllers.size(); i++) {
-            controllers.get(controllers.size() - 1).invalidateStructure("main");
+            controllers.get(i).invalidateStructure();
         }
     }
 

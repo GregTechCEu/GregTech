@@ -8,7 +8,7 @@ public interface IMultiblockPart {
     boolean isAttachedToMultiBlock();
 
     default void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
-        addToMultiBlock(controllerBase, "main");
+        addToMultiBlock(controllerBase, MultiblockControllerBase.DEFAULT_STRUCTURE);
     }
 
     void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase, @NotNull String substructureName);
@@ -29,7 +29,7 @@ public interface IMultiblockPart {
     boolean canPartShare(MultiblockControllerBase target, String substructureName);
 
     default boolean canPartShare(MultiblockControllerBase target) {
-        return canPartShare(target, "main");
+        return canPartShare(target, MultiblockControllerBase.DEFAULT_STRUCTURE);
     }
 
     default boolean canPartShare() {

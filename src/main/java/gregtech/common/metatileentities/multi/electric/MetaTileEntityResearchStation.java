@@ -76,7 +76,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
         // should never happen, but would rather do this than have an obscure NPE
         if (computationProvider == null || objectHolder == null) {
-            invalidateStructure("main");
+            invalidateStructure();
         }
     }
 
@@ -85,7 +85,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     public void checkStructurePattern() {
         super.checkStructurePattern();
         if (isStructureFormed() && objectHolder.getFrontFacing() != getFrontFacing().getOpposite()) {
-            invalidateStructure("main");
+            invalidateStructure();
         }
     }
 

@@ -134,7 +134,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     protected void formStructure(String name) {
         super.formStructure(name);
         // this doesn't iterate over any(), so doesn't count the borders
-        forEachFormed("main", (info, pos) -> {
+        forEachFormed(DEFAULT_STRUCTURE, (info, pos) -> {
             BlockPos immutable = pos.immutable();
 
             if (info.getBlockState().getBlock().isWood(getWorld(), immutable)) {

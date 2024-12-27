@@ -90,6 +90,7 @@ import java.util.function.Supplier;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
+    public static final String DEFAULT_STRUCTURE = "main";
 
     protected final Comparator<IMultiblockPart> partComparator = Comparator.comparingLong(part -> {
         MetaTileEntity mte = (MetaTileEntity) part;
@@ -144,7 +145,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     protected abstract IBlockPattern createStructurePattern();
 
     protected void createStructurePatterns() {
-        structures.put("main", createStructurePattern());
+        structures.put(DEFAULT_STRUCTURE, createStructurePattern());
     }
 
     public EnumFacing getUpwardsFacing() {
@@ -444,7 +445,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void checkStructurePattern() {
-        checkStructurePattern("main");
+        checkStructurePattern(DEFAULT_STRUCTURE);
     }
 
     public void checkStructurePattern(String name) {
@@ -587,11 +588,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     protected void formStructure() {
-        formStructure("main");
+        formStructure(DEFAULT_STRUCTURE);
     }
 
     public void invalidateStructure() {
-        invalidateStructure("main");
+        invalidateStructure(DEFAULT_STRUCTURE);
     }
 
     public void invalidateStructure(String name) {
@@ -628,12 +629,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public IBlockPattern getSubstructure() {
-        return getSubstructure("main");
+        return getSubstructure(DEFAULT_STRUCTURE);
     }
 
     public String trySubstructure(String name) {
         if (structures.get(name) != null) return name;
-        return "main";
+        return DEFAULT_STRUCTURE;
     }
 
     public Set<String> trySubstructure(Map<String, String> map) {
@@ -642,7 +643,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         for (String key : map.keySet()) {
             if (key.startsWith("substructure")) set.add(trySubstructure(map.get(key)));
         }
-        if (set.isEmpty()) set.add("main");
+        if (set.isEmpty()) set.add(DEFAULT_STRUCTURE);
         return set;
     }
 
@@ -650,7 +651,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void onRemoval() {
         super.onRemoval();
         if (!getWorld().isRemote) {
-            invalidateStructure("main");
+            invalidateStructure(DEFAULT_STRUCTURE);
         }
     }
 
