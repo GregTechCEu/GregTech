@@ -102,7 +102,7 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
      * Entry of multi fluid tanks. Retains reference to original {@link MultipleTankHandler} for accessing
      * information such as {@link MultipleTankHandler#allowSameFluidFill()}.
      */
-    public static class Entry implements IFluidTank, IFilteredFluidContainer, INBTSerializable<NBTTagCompound>,
+    public static class Entry implements IFluidTank, IFilteredHandler<FluidStack>, INBTSerializable<NBTTagCompound>,
                               IFluidTankProperties {
 
         private final IFluidTank tank;
@@ -128,7 +128,7 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
         @Nullable
         @Override
         public IFilter<FluidStack> getFilter() {
-            return getDelegate() instanceof IFilteredFluidContainer filtered ? filtered.getFilter() : null;
+            return getDelegate() instanceof IFilteredHandler.FluidHandler filter ? filter.getFilter() : null;
         }
 
         @Nullable
