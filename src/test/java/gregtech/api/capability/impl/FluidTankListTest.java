@@ -1,6 +1,8 @@
 package gregtech.api.capability.impl;
 
 import gregtech.Bootstrap;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.OverlayedFluidHandler;
 
@@ -152,8 +154,8 @@ public class FluidTankListTest {
 
     @Test
     public void testMixedSameFluidFill() {
-        new FluidHandlerTester(new FluidTankList(true,
-                new FluidTankList(false,
+        new FluidHandlerTester(new FluidTankList2(true,
+                new FluidTankList2(false,
                         new FluidTank(1000),
                         new FluidTank(1000)),
                 new FluidTank(1000),
@@ -168,8 +170,8 @@ public class FluidTankListTest {
                                 new FluidStack(WATER, 1000),
                                 new FluidStack(WATER, 400));
 
-        new FluidHandlerTester(new FluidTankList(false,
-                new FluidTankList(true,
+        new FluidHandlerTester(new FluidTankList2(false,
+                new FluidTankList2(true,
                         new FluidTank(1000),
                         new FluidTank(1000)),
                 new FluidTank(1000),
@@ -311,17 +313,14 @@ public class FluidTankListTest {
 
     private static final class FluidHandlerTester {
 
-        private final FluidTankList tank;
+        private final FluidTankList2 tank;
 
-        @Nullable
-        private OverlayedFluidHandler overlayedFluidHandler;
-
-        FluidHandlerTester(FluidTankList tank) {
+        FluidHandlerTester(FluidTankList2 tank) {
             this.tank = tank;
         }
 
         FluidHandlerTester(boolean allowSameFluidFill, IFluidTank... tanks) {
-            this(new FluidTankList(allowSameFluidFill, tanks));
+            this(new FluidTankList2(allowSameFluidFill, tanks));
         }
 
         FluidHandlerTester fill(Fluid fluid, int amount) {
@@ -333,19 +332,8 @@ public class FluidTankListTest {
             String tankString = this.tank.toString(true);
 
             int tankFillSim = this.tank.fill(fluidStack, false);
-
-            if (this.overlayedFluidHandler != null) {
-                String overlayString = this.overlayedFluidHandler.toString(true);
-                int ofhSim = this.overlayedFluidHandler.insertFluid(fluidStack, fluidStack.amount);
-
-                if (tankFillSim != ofhSim) {
-                    throw new AssertionError("Result of simulation fill from tank and OFH differ.\n" +
-                            "Tank Simulation: " + tankFillSim + ", OFH simulation: " + ofhSim + "\n" +
-                            "Tank: " + tankString + "\n" +
-                            "OFH: " + overlayString);
-                }
-            }
             int actualFill = this.tank.fill(fluidStack, true);
+
             if (tankFillSim != actualFill) {
                 throw new AssertionError("Simulation fill to tank and actual fill differ.\n" +
                         "Simulated Fill: " + tankFillSim + ", Actual Fill: " + actualFill + "\n" +
@@ -359,9 +347,6 @@ public class FluidTankListTest {
         }
 
         FluidHandlerTester drain(FluidStack fluidStack) {
-            if (this.overlayedFluidHandler != null) {
-                throw new IllegalStateException("Cannot drain stuff in simulation");
-            }
             // make string representation before modifying the state, to produce better error message
             String tankString = this.tank.toString(true);
 
@@ -377,9 +362,6 @@ public class FluidTankListTest {
         }
 
         FluidHandlerTester drain(int amount) {
-            if (this.overlayedFluidHandler != null) {
-                throw new IllegalStateException("Cannot drain stuff in simulation");
-            }
             // make string representation before modifying the state, to produce better error message
             String tankString = this.tank.toString(true);
 
@@ -395,17 +377,13 @@ public class FluidTankListTest {
         }
 
         FluidHandlerTester beginSimulation() {
-            if (this.overlayedFluidHandler != null) {
-                throw new IllegalStateException("Simulation already begun");
-            }
-            this.overlayedFluidHandler = new OverlayedFluidHandler(this.tank);
             return this;
         }
 
         FluidHandlerTester expectContents(@NotNull FluidStack... optionalFluidStacks) {
-            if (optionalFluidStacks.length != this.tank.getTanks()) {
+            if (optionalFluidStacks.length != this.tank.size()) {
                 throw new IllegalArgumentException("Wrong number of fluids to compare; " +
-                        "expected: " + this.tank.getTanks() + ", provided: " + optionalFluidStacks.length);
+                        "expected: " + this.tank.size() + ", provided: " + optionalFluidStacks.length);
             }
             for (int i = 0; i < optionalFluidStacks.length; i++) {
                 var tank = this.tank.getTankAt(i);

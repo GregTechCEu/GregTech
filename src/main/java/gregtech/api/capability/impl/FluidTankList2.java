@@ -2,6 +2,9 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.MultipleTankHandler;
 
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.ints.IntSets;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -61,12 +64,13 @@ public final class FluidTankList2 extends MultipleTankHandler {
 
         int totalInserted = 0;
 
-        var fluidTanks = this.tanks.clone();
+        Entry[] fluidTanks = this.tanks.clone();
         Arrays.sort(fluidTanks, ENTRY_COMPARATOR);
 
         // search for tanks with same fluid type first
-        for (Entry tank : fluidTanks) {
-            if (!copy.isFluidEqual(tank.getFluid()))
+        for (int i = 0; i < fluidTanks.length; i++) {
+            Entry tank = fluidTanks[i];
+            if (tank.getFluidAmount() == 0 || !copy.isFluidEqual(tank.getFluid()))
                 continue;
 
             // if the fluid to insert matches the tank, insert the fluid
@@ -75,16 +79,14 @@ public final class FluidTankList2 extends MultipleTankHandler {
 
             totalInserted += inserted;
             copy.amount -= inserted;
-            if (copy.amount <= 0) {
-                return totalInserted;
-            }
+            if (copy.amount <= 0) return totalInserted;
         }
 
         // if we still have fluid to insert, loop through empty tanks until we find one that can accept the fluid
         for (Entry tank : fluidTanks) {
             // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
             // received the fluid, skip this tank
-            if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(copy))
+            if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(resource))
                 continue;
 
             int inserted = tank.fill(copy, doFill);
@@ -92,10 +94,9 @@ public final class FluidTankList2 extends MultipleTankHandler {
 
             totalInserted += inserted;
             copy.amount -= inserted;
-            if (copy.amount <= 0) {
-                return totalInserted;
-            }
+            if (copy.amount <= 0) return totalInserted;
         }
+
         // return the amount of fluid that was inserted
         return totalInserted;
     }
