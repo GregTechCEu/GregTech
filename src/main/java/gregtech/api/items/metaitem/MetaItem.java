@@ -1,10 +1,7 @@
 package gregtech.api.items.metaitem;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IFilteredHandler;
-import gregtech.api.capability.IPropertyFluidFilter;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.ModularUI;
@@ -639,7 +636,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     fluidTankProperties.getCapacity(),
                     fluid == null ? "" : fluid.getLocalizedName()));
 
-            if (fluidHandler instanceof IFilteredHandler.FluidHandler filtered &&
+            if (fluidHandler instanceof IFilteredFluidHandler filtered &&
                     filtered.getFilter() instanceof IPropertyFluidFilter propertyFilter) {
                 propertyFilter.appendTooltips(lines, false, true);
             }

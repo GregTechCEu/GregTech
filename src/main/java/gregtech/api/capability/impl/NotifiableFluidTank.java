@@ -1,7 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredHandler;
+import gregtech.api.capability.IFilteredFluidHandler;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotifiableFluidTank extends FluidTank implements INotifiableHandler, IFilteredHandler.FluidHandler {
+public class NotifiableFluidTank extends FluidTank implements INotifiableHandler, IFilteredFluidHandler {
 
     List<MetaTileEntity> notifiableEntities = new ArrayList<>();
     private final boolean isExport;

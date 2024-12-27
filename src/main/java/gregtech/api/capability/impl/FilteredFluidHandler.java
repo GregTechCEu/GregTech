@@ -1,7 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredHandler;
+import gregtech.api.capability.IFilteredFluidHandler;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Deprecated
-public class FilteredFluidHandler extends FluidTank implements IFilteredHandler.FluidHandler {
+public class FilteredFluidHandler extends FluidTank implements IFilteredFluidHandler {
 
     @Nullable
     private IFilter<FluidStack> filter;

@@ -1,8 +1,5 @@
 package gregtech.api.capability;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
@@ -25,9 +22,4 @@ public interface IFilteredHandler<T> {
      */
     @Nullable
     IFilter<T> getFilter();
-
-    // for type safe casting
-    interface FluidHandler extends IFilteredHandler<FluidStack> {}
-
-    interface ItemHandler extends IFilteredHandler<ItemStack> {}
 }
