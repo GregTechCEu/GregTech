@@ -171,7 +171,7 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
         public boolean canFillFluidType(FluidStack fluidStack) {
             if (allowSameFluidFill() || fluidStack == null) return true;
             for (Entry tank : getParentHandler()) {
-                // only consider tanks that do not allow same fluid fill
+                // only consider other tanks that do not allow same fluid fill
                 if (tank.allowSameFluidFill() || this == tank) continue;
                 if (fluidStack.isFluidEqual(tank.getFluid())) {
                     return tank.getFluidAmount() + fluidStack.amount <= tank.getCapacity();
