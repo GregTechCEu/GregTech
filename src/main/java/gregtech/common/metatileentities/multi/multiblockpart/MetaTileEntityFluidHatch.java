@@ -425,10 +425,27 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
     }
 
-    protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
+    // todo remove
+    @Deprecated
+    protected class HatchFluidTank extends NotifiableFluidTank {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
             super(capacity, entityToNotify, isExport);
+            setFilter(new IFilter<>() {
+
+                @Override
+                public boolean test(@NotNull FluidStack fluidStack) {
+                    if (!isExportHatch) return true;
+                    return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
+                }
+
+                @Override
+                public int getPriority() {
+                    if (!isExportHatch) return IFilter.noPriority();
+                    return !locked || lockedFluid == null ? IFilter.noPriority() :
+                            IFilter.whitelistPriority(1);
+                }
+            });
         }
 
         @Override
@@ -444,33 +461,10 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             return accepted;
         }
 
-        @Override
-        public boolean canFillFluidType(FluidStack fluid) {
-            return test(fluid);
-        }
-
         // override for visibility
         @Override
         public void onContentsChanged() {
             super.onContentsChanged();
-        }
-
-        @Nullable
-        @Override
-        public IFilter<FluidStack> getFilter() {
-            return this;
-        }
-
-        @Override
-        public boolean test(@NotNull FluidStack fluidStack) {
-            if (!isExportHatch) return true;
-            return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
-        }
-
-        @Override
-        public int getPriority() {
-            if (!isExportHatch) return IFilter.noPriority();
-            return !locked || lockedFluid == null ? IFilter.noPriority() : IFilter.whitelistPriority(1);
         }
     }
 }

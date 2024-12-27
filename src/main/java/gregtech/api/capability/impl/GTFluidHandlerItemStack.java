@@ -1,7 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredFluidContainer;
+import gregtech.api.capability.IFilteredHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -11,7 +11,7 @@ import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IFilteredFluidContainer {
+public class GTFluidHandlerItemStack extends FluidHandlerItemStack implements IFilteredHandler.FluidHandler {
 
     @Nullable
     private IFilter<FluidStack> filter;

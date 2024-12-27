@@ -1,5 +1,6 @@
 package gregtech.api.capability;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.Nullable;
@@ -10,18 +11,23 @@ import java.util.Comparator;
  * Interface for fluid containers ({@link net.minecraftforge.fluids.IFluidTank IFluidTank} or
  * {@link net.minecraftforge.fluids.capability.IFluidHandler IFluidHandler}) associated with {@link IFilter}.
  */
-public interface IFilteredFluidContainer {
+public interface IFilteredHandler<T> {
 
     /**
      * Compare logic for filtered instances.
      */
-    Comparator<IFilteredFluidContainer> COMPARATOR = Comparator.nullsLast(
-            Comparator.comparing(IFilteredFluidContainer::getFilter, IFilter.FILTER_COMPARATOR));
+    Comparator<IFilteredHandler<?>> COMPARATOR = Comparator.nullsLast(
+            Comparator.comparing(IFilteredHandler::getFilter, IFilter.FILTER_COMPARATOR));
 
     /**
      * @return instance of {@link IFilter} associated to this object, or {@code null} if there's no filter
      *         associated.
      */
     @Nullable
-    IFilter<FluidStack> getFilter();
+    IFilter<T> getFilter();
+
+    // for type safe casting
+    interface FluidHandler extends IFilteredHandler<FluidStack> {}
+
+    interface ItemHandler extends IFilteredHandler<ItemStack> {}
 }
