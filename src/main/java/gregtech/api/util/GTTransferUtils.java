@@ -1,6 +1,6 @@
 package gregtech.api.util;
 
-import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.MultipleTankHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidActionResult;
@@ -148,13 +148,13 @@ public class GTTransferUtils {
      * @param fluidStacks  the items to insert into {@code fluidHandler}.
      * @return {@code true} if the insertion succeeded, {@code false} otherwise.
      */
-    public static boolean addFluidsToFluidHandler(IMultipleTankHandler fluidHandler,
+    public static boolean addFluidsToFluidHandler(MultipleTankHandler fluidHandler,
                                                   boolean simulate,
                                                   List<FluidStack> fluidStacks) {
         if (simulate) {
-            OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
+            // OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
             for (FluidStack fluidStack : fluidStacks) {
-                int inserted = overlayedFluidHandler.insertFluid(fluidStack, fluidStack.amount);
+                int inserted = fluidHandler.fill(fluidStack, false);
                 if (inserted != fluidStack.amount) {
                     return false;
                 }
