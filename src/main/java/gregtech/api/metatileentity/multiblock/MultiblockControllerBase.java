@@ -626,7 +626,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public IBlockPattern getSubstructure(String name) {
         return structures.get(name);
     }
-    
+
     public IBlockPattern getSubstructure() {
         return getSubstructure("MAIN");
     }
