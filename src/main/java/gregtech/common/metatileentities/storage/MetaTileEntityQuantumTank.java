@@ -673,7 +673,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         return 0;
     }
 
-    private class QuantumFluidTank extends FluidTank implements IFilteredFluidHandler, IFilter<FluidStack> {
+    private class QuantumFluidTank extends FluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public QuantumFluidTank(int capacity) {
             super(capacity);

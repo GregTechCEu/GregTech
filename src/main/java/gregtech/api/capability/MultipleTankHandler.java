@@ -134,7 +134,7 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
         @Nullable
         @Override
         public IFilter<FluidStack> getFilter() {
-            return getDelegate() instanceof IFilteredFluidHandler filter ? filter.getFilter() : null;
+            return getDelegate() instanceof IFilteredFluidContainer filter ? filter.getFilter() : null;
         }
 
         @Nullable
