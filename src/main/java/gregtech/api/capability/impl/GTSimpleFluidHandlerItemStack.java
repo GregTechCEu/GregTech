@@ -1,7 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredHandler;
+import gregtech.api.capability.IFilteredFluidHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GTSimpleFluidHandlerItemStack extends FluidHandlerItemStackSimple
-                                           implements IFilteredHandler.FluidHandler {
+                                           implements IFilteredFluidHandler {
 
     @Nullable
     private IFilter<FluidStack> filter;

@@ -1,9 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IActiveOutputSide;
-import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredHandler;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
@@ -676,7 +673,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
         return 0;
     }
 
-    private class QuantumFluidTank extends FluidTank implements IFilteredHandler.FluidHandler, IFilter<FluidStack> {
+    private class QuantumFluidTank extends FluidTank implements IFilteredFluidHandler, IFilter<FluidStack> {
 
         public QuantumFluidTank(int capacity) {
             super(capacity);
