@@ -287,8 +287,8 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     }
 
     public boolean fillTanks(FluidStack stack, boolean simulate) {
-        return GTTransferUtils.addFluidsToFluidHandler(outputFluidInventory, simulate,
-                Collections.singletonList(stack));
+        return GTTransferUtils.addFluidsToFluidHandler(Collections.singletonList(stack), outputFluidInventory,
+                simulate);
     }
 
     public int getEnergyTier() {
