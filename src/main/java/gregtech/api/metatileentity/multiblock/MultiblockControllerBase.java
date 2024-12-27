@@ -86,6 +86,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
 
@@ -95,7 +96,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     protected final Comparator<IMultiblockPart> partComparator = Comparator.comparingLong(part -> {
         MetaTileEntity mte = (MetaTileEntity) part;
-        return ((long) multiblockPartSorter().apply(mte.getPos()) << 32) | mte.getPos().hashCode();
+        return ((long) multiblockPartSorter().applyAsInt(mte.getPos()) << 32) | mte.getPos().hashCode();
     });
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
@@ -435,7 +436,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      * Used if MultiblockPart Abilities need to be sorted a certain way, like
      * Distillation Tower and Assembly Line.
      */
-    protected Function<BlockPos, Integer> multiblockPartSorter() {
+    protected ToIntFunction<BlockPos> multiblockPartSorter() {
         return BlockPos::hashCode;
     }
 

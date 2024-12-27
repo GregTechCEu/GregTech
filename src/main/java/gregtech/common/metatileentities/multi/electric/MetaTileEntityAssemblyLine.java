@@ -52,7 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -141,7 +141,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected Function<BlockPos, Integer> multiblockPartSorter() {
+    protected ToIntFunction<BlockPos> multiblockPartSorter() {
         // player's right when looking at the controller, but the controller's left
         return RelativeDirection.LEFT.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }

@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 /**
  * Relative direction when facing horizontally
@@ -58,7 +58,7 @@ public enum RelativeDirection {
                 getRelativeFacing(frontFacing, upwardsFacing);
     }
 
-    public Function<BlockPos, Integer> getSorter(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
+    public ToIntFunction<BlockPos> getSorter(EnumFacing frontFacing, EnumFacing upwardsFacing, boolean isFlipped) {
         // get the direction to go in for the part sorter
         EnumFacing sorterDirection = getRelativeFacing(frontFacing, upwardsFacing, isFlipped);
 

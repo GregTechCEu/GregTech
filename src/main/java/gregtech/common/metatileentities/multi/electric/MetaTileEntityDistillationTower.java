@@ -36,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -70,7 +70,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
      * a properly overriden {@link DistillationTowerLogicHandler#determineOrderedFluidOutputs()}
      */
     @Override
-    protected Function<BlockPos, Integer> multiblockPartSorter() {
+    protected ToIntFunction<BlockPos> multiblockPartSorter() {
         return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }
 
