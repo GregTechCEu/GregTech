@@ -596,25 +596,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public void invalidateStructure(String name) {
         if (!getSubstructure(name).getPatternState().isFormed()) return;
-        // i am sorry
-        Object[] added = { null };
-        List<Object> dummyList = new ArrayList<>() {
-
-            @Override
-            public boolean add(Object e) {
-                added[0] = e;
-                return true;
-            }
-        };
+        List<Object> dummyList = new ArrayList<>();
 
         multiblockParts.removeIf(part -> {
             if (name.equals(part.getSubstructureName())) {
                 if (part instanceof IMultiblockAbilityPart<?>) {
                     // noinspection unchecked
                     IMultiblockAbilityPart<Object> ability = (IMultiblockAbilityPart<Object>) part;
-                    added[0] = null;
+                    dummyList.clear();
                     ability.registerAbilities(dummyList);
-                    if (added[0] != null) multiblockAbilities.get(ability.getAbility()).remove(added[0]);
+                    multiblockAbilities.get(ability.getAbility()).removeIf(dummyList::contains);
                 }
                 part.removeFromMultiBlock(this);
                 return true;
