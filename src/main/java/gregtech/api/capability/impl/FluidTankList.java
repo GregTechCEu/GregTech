@@ -53,6 +53,31 @@ public final class FluidTankList extends MultipleTankHandler {
     }
 
     @Override
+    public IFluidTankProperties[] getTankProperties() {
+        return this.tanks;
+    }
+
+    @Override
+    public @NotNull List<Entry> getFluidTanks() {
+        return Collections.unmodifiableList(Arrays.asList(this.tanks));
+    }
+
+    @Override
+    public int size() {
+        return tanks.length;
+    }
+
+    @Override
+    public @NotNull Entry getTankAt(int index) {
+        return tanks[index];
+    }
+
+    @Override
+    public boolean allowSameFluidFill() {
+        return allowSameFluidFill;
+    }
+
+    @Override
     public int fill(FluidStack resource, boolean doFill) {
         if (resource == null || resource.amount <= 0)
             return 0;
@@ -175,31 +200,6 @@ public final class FluidTankList extends MultipleTankHandler {
         for (int i = 0; i < tanks.tagCount(); i++) {
             this.tanks[i].deserializeNBT(tanks.getCompoundTagAt(i));
         }
-    }
-
-    @Override
-    public IFluidTankProperties[] getTankProperties() {
-        return this.tanks;
-    }
-
-    @Override
-    public @NotNull List<Entry> getFluidTanks() {
-        return Collections.unmodifiableList(Arrays.asList(this.tanks));
-    }
-
-    @Override
-    public int size() {
-        return tanks.length;
-    }
-
-    @Override
-    public @NotNull Entry getTankAt(int index) {
-        return tanks[index];
-    }
-
-    @Override
-    public boolean allowSameFluidFill() {
-        return allowSameFluidFill;
     }
 
     @Override
