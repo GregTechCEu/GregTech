@@ -1,7 +1,7 @@
 package gregtech.api.items.itemhandlers;
 
 import gregtech.api.capability.IFilter;
-import gregtech.api.capability.IFilteredItemHandler;
+import gregtech.api.capability.IFilteredItemContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 
 import net.minecraft.item.ItemStack;
@@ -11,7 +11,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GTItemStackHandler extends ItemStackHandler implements IFilteredItemHandler {
+public class GTItemStackHandler extends ItemStackHandler implements IFilteredItemContainer {
 
     private final MetaTileEntity metaTileEntity;
     private IFilter<ItemStack> filter;
