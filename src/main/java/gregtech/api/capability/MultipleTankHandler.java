@@ -7,6 +7,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -170,12 +171,14 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
         @Override
         public boolean canFillFluidType(FluidStack fluidStack) {
             if (allowSameFluidFill() || fluidStack == null) return true;
-            // this doesn't work with simulated fills
-            // that info needs to be stored somewhere in the parent somehow
-            int i = parent.getIndexOfFluid(fluidStack);
-            if (i == -1) return true;
-            var tank = parent.getTankAt(i);
-            return tank.getFluidAmount() + fluidStack.amount <= tank.getCapacity();
+            for (Entry tank : getParentHandler()) {
+                // only consider tanks that do not allow same fluid fill
+                if (tank.allowSameFluidFill() || this == tank) continue;
+                if (fluidStack.isFluidEqual(tank.getFluid())) {
+                    return tank.getFluidAmount() + fluidStack.amount <= tank.getCapacity();
+                }
+            }
+            return true;
         }
 
         @Override
