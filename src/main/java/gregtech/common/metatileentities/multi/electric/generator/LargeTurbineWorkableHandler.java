@@ -1,8 +1,8 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IRotorHolder;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -113,7 +113,7 @@ public class LargeTurbineWorkableHandler extends MultiblockFuelRecipeLogic {
 
     @Override
     protected @Nullable Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs,
-                                          IMultipleTankHandler fluidInputs) {
+                                          MultipleTankHandler fluidInputs) {
         RecipeMap<?> map = getRecipeMap();
         if (map == null || !isRecipeMapValid(map)) {
             return null;

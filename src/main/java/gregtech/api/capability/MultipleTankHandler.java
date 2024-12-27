@@ -1,13 +1,12 @@
 package gregtech.api.capability;
 
-import gregtech.api.capability.impl.FluidTankList2;
+import gregtech.api.capability.impl.FluidTankList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -24,7 +23,7 @@ import java.util.List;
  * Base class for multi-tank fluid handlers. Handles insertion logic, along with other standard
  * {@link IFluidHandler} functionalities.
  *
- * @see gregtech.api.capability.impl.FluidTankList FluidTankList
+ * @see FluidTankList FluidTankList
  */
 public abstract class MultipleTankHandler implements IFluidHandler, Iterable<MultipleTankHandler.Entry>,
                                           INBTSerializable<NBTTagCompound> {
@@ -47,7 +46,7 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
     };
 
     /**
-     * @return unmodifiable view of {@code MultiFluidTankEntry}s. Note that it's still possible to access
+     * @return unmodifiable view of {@code Entry}s. Note that it's still possible to access
      *         and modify inner contents of the tanks.
      */
     @NotNull
@@ -96,7 +95,7 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
 
     public MultipleTankHandler addTanks(IFluidTank... tanks) {
         if (ArrayUtils.isEmpty(tanks)) return this;
-        return new FluidTankList2(allowSameFluidFill(), this, tanks);
+        return new FluidTankList(allowSameFluidFill(), this, tanks);
     }
 
     /**

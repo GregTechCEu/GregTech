@@ -151,8 +151,8 @@ public class FluidTankListTest {
 
     @Test
     public void testMixedSameFluidFill() {
-        new FluidHandlerTester(new FluidTankList2(true,
-                new FluidTankList2(false,
+        new FluidHandlerTester(new FluidTankList(true,
+                new FluidTankList(false,
                         new FluidTank(1000),
                         new FluidTank(1000)),
                 new FluidTank(1000),
@@ -167,8 +167,8 @@ public class FluidTankListTest {
                                 new FluidStack(WATER, 1000),
                                 new FluidStack(WATER, 400));
 
-        new FluidHandlerTester(new FluidTankList2(false,
-                new FluidTankList2(true,
+        new FluidHandlerTester(new FluidTankList(false,
+                new FluidTankList(true,
                         new FluidTank(1000),
                         new FluidTank(1000)),
                 new FluidTank(1000),
@@ -310,14 +310,14 @@ public class FluidTankListTest {
 
     private static final class FluidHandlerTester {
 
-        private final FluidTankList2 tank;
+        private final FluidTankList tank;
 
-        FluidHandlerTester(FluidTankList2 tank) {
+        FluidHandlerTester(FluidTankList tank) {
             this.tank = tank;
         }
 
         FluidHandlerTester(boolean allowSameFluidFill, IFluidTank... tanks) {
-            this(new FluidTankList2(allowSameFluidFill, tanks));
+            this(new FluidTankList(allowSameFluidFill, tanks));
         }
 
         FluidHandlerTester fill(Fluid fluid, int amount) {
