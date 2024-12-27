@@ -3,7 +3,9 @@ package gregtech.api.recipes.logic;
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.FluidTankList2;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -708,7 +710,7 @@ public class ParallelLogicTest {
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(1000), true);
         secondImportFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(1), true);
 
-        IMultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0),
+        MultipleTankHandler tankHandler = new FluidTankList2(false, importFluidBus.getImportFluids().getTankAt(0),
                 secondImportFluidBus.getImportFluids().getTankAt(0));
 
         int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
