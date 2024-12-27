@@ -40,10 +40,7 @@ public final class FluidTankList extends MultipleTankHandler {
     public FluidTankList(boolean allowSameFluidFill, @NotNull MultipleTankHandler parent,
                          IFluidTank... additionalTanks) {
         int tanks = parent.size();
-        int additional = 0;
-
-        if (!ArrayUtils.isEmpty(additionalTanks))
-            additional = additionalTanks.length;
+        int additional = ArrayUtils.getLength(additionalTanks);
 
         this.tanks = new Entry[tanks + additional];
 
@@ -69,6 +66,7 @@ public final class FluidTankList extends MultipleTankHandler {
 
         // search for tanks with same fluid type first
         for (Entry tank : fluidTanks) {
+            // if empty or fluid doesn't match, skip
             if (tank.getFluidAmount() == 0 || !resource.isFluidEqual(tank.getFluid()))
                 continue;
 
