@@ -144,7 +144,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     protected abstract IBlockPattern createStructurePattern();
 
     protected void createStructurePatterns() {
-        structures.put("MAIN", createStructurePattern());
+        structures.put("main", createStructurePattern());
     }
 
     public EnumFacing getUpwardsFacing() {
@@ -444,7 +444,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public void checkStructurePattern() {
-        checkStructurePattern("MAIN");
+        checkStructurePattern("main");
     }
 
     public void checkStructurePattern(String name) {
@@ -587,11 +587,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     protected void formStructure() {
-        formStructure("MAIN");
+        formStructure("main");
     }
 
     public void invalidateStructure() {
-        invalidateStructure("MAIN");
+        invalidateStructure("main");
     }
 
     public void invalidateStructure(String name) {
@@ -628,12 +628,12 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public IBlockPattern getSubstructure() {
-        return getSubstructure("MAIN");
+        return getSubstructure("main");
     }
 
     public String trySubstructure(String name) {
         if (structures.get(name) != null) return name;
-        return "MAIN";
+        return "main";
     }
 
     public Set<String> trySubstructure(Map<String, String> map) {
@@ -642,7 +642,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         for (String key : map.keySet()) {
             if (key.startsWith("substructure")) set.add(trySubstructure(map.get(key)));
         }
-        if (set.isEmpty()) set.add("MAIN");
+        if (set.isEmpty()) set.add("main");
         return set;
     }
 
@@ -650,7 +650,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void onRemoval() {
         super.onRemoval();
         if (!getWorld().isRemote) {
-            invalidateStructure("MAIN");
+            invalidateStructure("main");
         }
     }
 

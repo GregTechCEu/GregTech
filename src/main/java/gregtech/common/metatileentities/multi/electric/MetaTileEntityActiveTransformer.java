@@ -97,7 +97,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
         // Invalidate the structure if there is not at least one output and one input
         if (powerInput.isEmpty() || powerOutput.isEmpty()) {
-            this.invalidateStructure("MAIN");
+            this.invalidateStructure("main");
         }
 
         this.powerInput = new EnergyContainerList(powerInput);

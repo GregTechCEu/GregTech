@@ -522,7 +522,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                         TileEntity tileEntity = getWorld().getTileEntity(pos);
                         if (tileEntity instanceof IGregTechTileEntity && ((IGregTechTileEntity) tileEntity)
                                 .getMetaTileEntity() instanceof MetaTileEntityMonitorScreen screen) {
-                            screen.addToMultiBlock(this, "MAIN");
+                            screen.addToMultiBlock(this, "main");
                             int sx = screen.getX(), sy = screen.getY();
                             if (sx < 0 || sx >= width || sy < 0 || sy >= height) {
                                 parts.clear();

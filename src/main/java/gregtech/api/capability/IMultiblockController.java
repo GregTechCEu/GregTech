@@ -5,7 +5,7 @@ public interface IMultiblockController {
     boolean isStructureFormed(String name);
 
     default boolean isStructureFormed() {
-        return isStructureFormed("MAIN");
+        return isStructureFormed("main");
     }
 
     default boolean isStructureObstructed() {

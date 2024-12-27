@@ -126,7 +126,7 @@ public class MultiblockPreviewRenderer {
         world.setBlockState(SOURCE, src.getBlock().getDefaultState());
         world.setTileEntity(SOURCE, holder);
 
-        ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), keyMap, "MAIN");
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), keyMap, "main");
         ((MultiblockControllerBase) holder.getMetaTileEntity()).checkStructurePattern();
 
         int finalMaxY = (int) (layer % (world.getMaxPos().y - world.getMinPos().y + 2));

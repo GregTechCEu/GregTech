@@ -164,7 +164,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     public void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
         textList.add(new TextComponentString("Multi aisle repeats: " +
-                ((BasicAisleStrategy) ((BlockPattern) structures.get("MAIN")).getAisleStrategy())
+                ((BasicAisleStrategy) ((BlockPattern) structures.get("main")).getAisleStrategy())
                         .getMultiAisleRepeats(1)));
     }
 
