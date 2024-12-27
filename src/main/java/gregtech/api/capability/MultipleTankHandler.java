@@ -2,9 +2,6 @@ package gregtech.api.capability;
 
 import gregtech.api.capability.impl.FluidTankList2;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
@@ -19,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 

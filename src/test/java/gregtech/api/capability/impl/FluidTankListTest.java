@@ -1,10 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.Bootstrap;
-import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.OverlayedFluidHandler;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
