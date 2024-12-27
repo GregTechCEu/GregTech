@@ -755,7 +755,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected boolean checkOutputSpaceFluids(@NotNull Recipe recipe, @NotNull MultipleTankHandler exportFluids) {
         // We have already trimmed fluid outputs at this time
         if (!metaTileEntity.canVoidRecipeFluidOutputs() &&
-                !GTTransferUtils.addFluidsToFluidHandler(exportFluids, true, recipe.getAllFluidOutputs())) {
+                !GTTransferUtils.addFluidsToFluidHandler(recipe.getAllFluidOutputs(), exportFluids, true)) {
             this.isOutputsFull = true;
             return false;
         }
@@ -1003,7 +1003,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     protected void outputRecipeOutputs() {
         GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, itemOutputs);
-        GTTransferUtils.addFluidsToFluidHandler(getOutputTank(), false, fluidOutputs);
+        GTTransferUtils.addFluidsToFluidHandler(fluidOutputs, getOutputTank(), false);
     }
 
     /**
