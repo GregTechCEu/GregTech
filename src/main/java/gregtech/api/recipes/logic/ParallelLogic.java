@@ -257,7 +257,7 @@ public abstract class ParallelLogic {
      *         voiding products.
      */
     public static int limitParallelByFluids(@NotNull Recipe recipe,
-                                            @NotNull MultipleTankHandler overlayedFluidHandler, int multiplier) {
+                                            @NotNull MultipleTankHandler tankHandler, int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
@@ -273,7 +273,7 @@ public abstract class ParallelLogic {
                 } else {
                     amountLeft = fluidStack.amount * multiplier;
                 }
-                int inserted = overlayedFluidHandler.fill(fluidStack, false);
+                int inserted = tankHandler.simulateFill(fluidStack, amountLeft);
                 if (inserted > 0) {
                     amountLeft -= inserted;
                 }

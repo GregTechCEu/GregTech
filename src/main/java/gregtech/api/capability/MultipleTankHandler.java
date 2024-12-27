@@ -84,6 +84,12 @@ public abstract class MultipleTankHandler implements IFluidHandler, Iterable<Mul
         return -1;
     }
 
+    public int simulateFill(FluidStack stack, int amount) {
+        var insertable = stack.copy();
+        insertable.amount = amount;
+        return fill(insertable, false);
+    }
+
     @Override
     public final @NotNull Iterator<Entry> iterator() {
         return getFluidTanks().iterator();
