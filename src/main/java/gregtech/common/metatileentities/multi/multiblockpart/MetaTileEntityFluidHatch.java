@@ -425,27 +425,11 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
     }
 
-    // todo remove
-    @Deprecated
     protected class HatchFluidTank extends NotifiableFluidTank {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
             super(capacity, entityToNotify, isExport);
-            setFilter(new IFilter<>() {
-
-                @Override
-                public boolean test(@NotNull FluidStack fluidStack) {
-                    if (!isExportHatch) return true;
-                    return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
-                }
-
-                @Override
-                public int getPriority() {
-                    if (!isExportHatch) return IFilter.noPriority();
-                    return !locked || lockedFluid == null ? IFilter.noPriority() :
-                            IFilter.whitelistPriority(1);
-                }
-            });
+            setFilter(this);
         }
 
         @Override
@@ -465,6 +449,19 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         @Override
         public void onContentsChanged() {
             super.onContentsChanged();
+        }
+
+        @Override
+        public boolean test(@NotNull FluidStack fluidStack) {
+            if (!isExportHatch) return true;
+            return !locked || lockedFluid == null || fluidStack.isFluidEqual(lockedFluid);
+        }
+
+        @Override
+        public int getPriority() {
+            if (!isExportHatch) return IFilter.noPriority();
+            return !locked || lockedFluid == null ? IFilter.noPriority() :
+                    IFilter.whitelistPriority(1);
         }
     }
 }
