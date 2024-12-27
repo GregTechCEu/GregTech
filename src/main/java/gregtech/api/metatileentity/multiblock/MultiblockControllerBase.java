@@ -90,6 +90,7 @@ import java.util.function.Supplier;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
+
     public static final String DEFAULT_STRUCTURE = "main";
 
     protected final Comparator<IMultiblockPart> partComparator = Comparator.comparingLong(part -> {
