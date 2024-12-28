@@ -316,7 +316,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 () -> IKey.lang(virtualItemStack.getDisplayName()).get(),
                 textWidget -> !virtualItemStack.isEmpty(),
                 () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
-                .child(new QuantumItemRendererWidget(itemInventory)
+                .child(new QuantumItemRendererWidget(() -> virtualItemStack)
+                        .onLock(() -> lockedStack, this::setLocked)
                         .pos(148, 41));
     }
 
@@ -339,7 +340,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     public void writeInitialSyncData(@NotNull PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         this.virtualItemStack.setCount(1);
-        buf.writeItemStack(virtualItemStack);
+        NetworkUtils.writeItemStack(buf, virtualItemStack);
         NetworkUtils.writeItemStack(buf, lockedStack);
         buf.writeLong(itemsStoredInside);
     }
@@ -347,12 +348,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        try {
-            this.virtualItemStack = buf.readItemStack();
-        } catch (IOException ignored) {
-            GTLog.logger.warn("Failed to load item from NBT in a quantum chest at " + this.getPos() +
-                    " on initial server/client sync");
-        }
+        this.virtualItemStack = NetworkUtils.readItemStack(buf);
         this.lockedStack = NetworkUtils.readItemStack(buf);
         this.itemsStoredInside = buf.readLong();
     }
@@ -421,9 +417,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     protected void setLocked(boolean locked) {
         super.setLocked(locked);
-        if (locked && !this.virtualItemStack.isEmpty())
+        if (locked && !this.virtualItemStack.isEmpty() && this.lockedStack.isEmpty())
             this.lockedStack = this.virtualItemStack.copy();
-        else this.lockedStack = ItemStack.EMPTY;
+        else if (!locked) this.lockedStack = ItemStack.EMPTY;
+    }
+
+    protected void setLocked(ItemStack stack) {
+        this.lockedStack = stack;
+        super.setLocked(!stack.isEmpty());
     }
 
     @Override
