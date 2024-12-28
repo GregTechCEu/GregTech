@@ -2,26 +2,55 @@ package gregtech.api.mui.widget;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.GuiScreenWrapper;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
+import com.cleanroommc.modularui.value.DynamicValue;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget> implements Interactable,
                                        JeiGhostIngredientSlot<ItemStack>,
                                        JeiIngredientProvider {
 
-    private final IItemHandler itemHandler;
+    private final Supplier<ItemStack> virtualStack;
+    private DynamicValue<ItemStack> lockedStack;
+    private final SyncHandler syncHandler = new SyncHandler() {
 
-    public QuantumItemRendererWidget(IItemHandler itemHandler) {
-        this.itemHandler = itemHandler;
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) throws IOException {}
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) throws IOException {
+            if (id == 0) {
+                lockedStack.setValue(NetworkUtils.readItemStack(buf));
+            }
+        }
+    };
+
+    public QuantumItemRendererWidget(Supplier<ItemStack> virtualStack) {
+        this.virtualStack = virtualStack;
+        setSyncHandler(this.syncHandler);
+        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltipBuilder(tooltip -> {
+            if (!isSynced()) return;
+            ItemStack stack = virtualStack.get();
+            if (stack.isEmpty()) stack = lockedStack.getValue();
+            if (stack.isEmpty()) return;
+            tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
+        });
     }
 
     @Override
@@ -32,14 +61,15 @@ public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget>
     @NotNull
     @Override
     public Result onMousePressed(int mouseButton) {
-        // todo interaction maybe?
+        // todo handle locked
         return Result.IGNORE;
     }
 
     @Override
     public void draw(GuiContext context, WidgetTheme widgetTheme) {
         // draw stuff
-        ItemStack stack = itemHandler.getStackInSlot(0);
+        ItemStack stack = virtualStack.get();
+        if (stack.isEmpty()) stack = lockedStack.getValue();
         if (stack.isEmpty()) return;
 
         GuiScreenWrapper screenWrapper = getScreen().getScreenWrapper();
@@ -55,7 +85,8 @@ public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget>
 
     @Override
     public void setGhostIngredient(@NotNull ItemStack ingredient) {
-        // itemHandler.setStackInSlot(0, ingredient);
+        lockedStack.setValue(ingredient);
+        this.syncHandler.syncToServer(0, buffer -> NetworkUtils.writeItemStack(buffer, ingredient));
     }
 
     @Override
@@ -65,6 +96,11 @@ public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget>
 
     @Override
     public @Nullable Object getIngredient() {
-        return itemHandler.getStackInSlot(0);
+        return lockedStack.getValue();
+    }
+
+    public QuantumItemRendererWidget onLock(Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
+        this.lockedStack = new DynamicValue<>(getter, setter);
+        return this;
     }
 }
