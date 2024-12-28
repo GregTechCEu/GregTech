@@ -89,7 +89,7 @@ public class HighlightedTextField extends TextFieldWidget {
             if (this.highlightRule == null) {
                 return;
             }
-            this.cacheMap.computeIfAbsent(text, string -> this.highlightRule.apply(string));
+            this.cacheMap.computeIfAbsent(text, this.highlightRule);
         }
     }
 }
