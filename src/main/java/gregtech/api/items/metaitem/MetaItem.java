@@ -93,7 +93,6 @@ import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import morph.avaritia.api.ICosmicRenderItem;
 import morph.avaritia.api.IHaloRenderItem;
 import morph.avaritia.api.registration.IModelRegister;
-import morph.avaritia.init.AvaritiaTextures;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -139,9 +138,6 @@ import static gregtech.api.util.Mods.Avaritia;
 @Optional.Interface(
                     modid = Mods.Names.AVARITIA,
                     iface = "morph.avaritia.api.registration.IModelRegister")
-@Optional.Interface(
-                    modid = Mods.Names.AVARITIA,
-                    iface = "morph.avaritia.init.AvaritiaTextures")
 public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                               implements ItemUIFactory, IOverlayRenderAware, IHaloRenderItem, ICosmicRenderItem,
                               IModelRegister {
@@ -820,7 +816,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     public TextureAtlasSprite getHaloTexture(ItemStack stack) {
         T metaValueItem = getItem(stack);
         if (metaValueItem.registerHaloTexture(stack) == null) {
-            return AvaritiaTextures.HALO;
+            return MetaValueItem.CosmicTexture.specialMaskTextures.get("fallback");
         }
         return MetaValueItem.CosmicTexture.haloTextures.get(metaValueItem.registerHaloTexture(stack));
     }
@@ -859,7 +855,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     public TextureAtlasSprite getMaskTexture(ItemStack stack, EntityLivingBase player) {
         T metaValueItem = getItem(stack);
         if (metaValueItem.registerMaskTexture(stack) == null) {
-            return AvaritiaTextures.INFINITY_SWORD_MASK;
+            return MetaValueItem.CosmicTexture.specialMaskTextures.get("fallback");
         }
         return MetaValueItem.CosmicTexture.maskTextures.get(metaValueItem.registerMaskTexture(stack));
     }
