@@ -733,10 +733,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return null;
     }
 
-    public boolean isStructureFormed() {
-        return isStructureFormed();
-    }
-
     public boolean isStructureFormed(String name) {
         return getWorld() != null && getSubstructure(name) != null &&
                 getSubstructure(name).getPatternState().isFormed();
