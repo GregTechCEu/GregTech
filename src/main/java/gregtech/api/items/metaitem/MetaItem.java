@@ -31,11 +31,12 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
-import gregtech.client.renderer.item.CosmicItemRenderer;
 import gregtech.client.utils.ToolChargeBarRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.covers.filter.IFilter;
 import gregtech.common.creativetab.GTCreativeTabs;
+
+import morph.avaritia.client.render.item.CosmicHaloItemRender;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -190,7 +191,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
                     if (Avaritia.isModLoaded()) {
                         ModelResourceLocation location = new ModelResourceLocation(resourceLocation, "inventory");
-                        IBakedModel wrapped = new CosmicItemRenderer(TransformUtils.DEFAULT_ITEM,
+                        IBakedModel wrapped = new CosmicHaloItemRender(TransformUtils.DEFAULT_ITEM,
                                 (modelRegistry) -> modelRegistry.getObject(location));
                         ModelRegistryHelper.register(location, wrapped);
                     }
@@ -206,7 +207,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     new ModelResourceLocation(resourceLocation, "inventory"));
             if (Avaritia.isModLoaded()) {
                 ModelResourceLocation location = new ModelResourceLocation(resourceLocation, "inventory");
-                IBakedModel wrapped = new CosmicItemRenderer(TransformUtils.DEFAULT_ITEM,
+                IBakedModel wrapped = new CosmicHaloItemRender(TransformUtils.DEFAULT_ITEM,
                         (modelRegistry) -> modelRegistry.getObject(location));
                 ModelRegistryHelper.register(location, wrapped);
             }

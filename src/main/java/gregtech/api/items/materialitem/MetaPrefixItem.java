@@ -17,8 +17,9 @@ import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.Mods;
-import gregtech.client.renderer.item.CosmicItemRenderer;
 import gregtech.common.creativetab.GTCreativeTabs;
+
+import morph.avaritia.client.render.item.CosmicHaloItemRender;
 
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -153,7 +154,7 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
 
                 if (Avaritia.isModLoaded()) {
                     ModelResourceLocation location = new ModelResourceLocation(resourceLocation, "inventory");
-                    IBakedModel wrapped = new CosmicItemRenderer(TransformUtils.DEFAULT_ITEM,
+                    IBakedModel wrapped = new CosmicHaloItemRender(TransformUtils.DEFAULT_ITEM,
                             (modelRegistry) -> modelRegistry.getObject(location));
                     ModelRegistryHelper.register(location, wrapped);
 
