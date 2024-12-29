@@ -226,11 +226,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmount(false)
-                .accessibility(true, false)
-                .onLockFluid(() -> this.lockedFluid, stack -> {
-                    if (!isExportHatch) return;
-                    setLocked(stack);
-                });
+                .accessibility(true, !isExportHatch)
+                .onLockFluid(() -> this.lockedFluid, this::setLocked);
 
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(6, 6))
@@ -321,6 +318,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     private void setLocked(FluidStack fluidStack) {
+        if (!isExportHatch) return;
         this.locked = fluidStack != null;
         this.lockedFluid = fluidStack == null ? null : fluidStack.copy();
         if (this.lockedFluid != null)
