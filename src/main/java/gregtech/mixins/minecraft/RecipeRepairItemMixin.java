@@ -76,7 +76,7 @@ public class RecipeRepairItemMixin {
             if (itemstack2.getItemDamage() == 0 && itemstack3.getItemDamage() == 0) {
                 return ItemStack.EMPTY;
             } else {
-                ItemStack output = first.get(first.getToolMaterial(itemstack2));
+                ItemStack output = first.get(first.getToolMaterial(itemstack2), itemstack2);
                 NBTTagCompound outputTag = ToolHelper.getToolTag(output);
                 outputTag.setInteger(ToolHelper.DURABILITY_KEY, itemDamage);
                 return output;
