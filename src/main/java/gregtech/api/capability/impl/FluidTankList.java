@@ -89,10 +89,21 @@ public final class FluidTankList extends MultipleTankHandler {
         Entry[] fluidTanks = this.tanks.clone();
         Arrays.sort(fluidTanks, ENTRY_COMPARATOR);
 
+        boolean overflow = false;
+
         // search for tanks with same fluid type first
         for (Entry tank : fluidTanks) {
-            // if empty or fluid doesn't match, skip
-            if (tank.getFluidAmount() == 0 || !resource.isFluidEqual(tank.getFluid()))
+            boolean empty = tank.getFluidAmount() == 0;
+
+            // if we still have fluid to insert, loop through empty tanks until we find one that can accept the fluid
+            if (empty) {
+                // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
+                // received the fluid, skip this tank
+                if (overflow && !tank.allowSameFluidFill()) continue;
+                if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(doFill ? copy : resource)) continue;
+
+                // if not empty fluid doesn't match, skip
+            } else if (!resource.isFluidEqual(tank.getFluid()))
                 continue;
 
             // if the fluid to insert matches the tank, insert the fluid
@@ -102,24 +113,7 @@ public final class FluidTankList extends MultipleTankHandler {
             totalInserted += inserted;
             copy.amount -= inserted;
             if (copy.amount <= 0) return totalInserted;
-        }
-
-        boolean overflow = false;
-
-        // if we still have fluid to insert, loop through empty tanks until we find one that can accept the fluid
-        for (Entry tank : fluidTanks) {
-            // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
-            // received the fluid, skip this tank
-            if (overflow && !tank.allowSameFluidFill()) continue;
-            if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(resource)) continue;
-
-            int inserted = tank.fill(copy, doFill);
-            if (inserted <= 0) continue;
-
-            totalInserted += inserted;
-            copy.amount -= inserted;
-            if (copy.amount <= 0) return totalInserted;
-            else overflow = true;
+            else if (empty) overflow = true;
         }
 
         // return the amount of fluid that was inserted
