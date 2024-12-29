@@ -2,15 +2,23 @@ package gregtech.mixins.mui2;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.client.event.GuiScreenEvent;
 
 import com.cleanroommc.modularui.ClientEventHandler;
 import com.cleanroommc.modularui.api.IMuiScreen;
 import com.cleanroommc.modularui.core.mixin.GuiScreenAccessor;
+import com.cleanroommc.modularui.screen.ClientScreenHandler;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.io.IOException;
 
 @Mixin(value = ClientEventHandler.class, remap = false)
 @SuppressWarnings("UnstableApiUsage")
@@ -21,23 +29,32 @@ public abstract class ClientEventHandlerMixin {
     private static void fixMouseInput(GuiScreen instance) {
         int button = Mouse.getEventButton();
         if (instance instanceof IMuiScreen screen && instance instanceof GuiScreenAccessor acc) {
+            ModularScreen ms = screen.getScreen();
             if (Mouse.getEventButtonState()) {
                 acc.setEventButton(button);
                 acc.setLastMouseEvent(Minecraft.getSystemTime());
-                screen.getScreen().onMousePressed(button);
+                ms.onMousePressed(button);
 
             } else if (button != -1) {
                 acc.setEventButton(-1);
-                screen.getScreen().onMouseRelease(button);
+                ms.onMouseRelease(button);
 
             } else if (acc.getEventButton() != -1 && acc.getLastMouseEvent() > 0L) {
                 long l = Minecraft.getSystemTime() - acc.getLastMouseEvent();
-                screen.getScreen().onMouseDrag(button, l);
+                ms.onMouseDrag(button, l);
             }
         }
     }
 
-    private static Character lastChar = null;
+    @Inject(method = "onGuiInput(Lnet/minecraftforge/client/event/GuiScreenEvent$MouseInputEvent$Pre;)V",
+            at = @At("TAIL"))
+    private static void fixScrollJei(GuiScreenEvent.MouseInputEvent.Pre event, CallbackInfo ci) throws IOException {
+        if (!event.isCanceled())
+            ClientScreenHandler.onGuiInputLow(event);
+    }
+
+    @Unique
+    private static Character gregTech$lastChar = null;
 
     @Redirect(method = "onGuiInput(Lnet/minecraftforge/client/event/GuiScreenEvent$KeyboardInputEvent$Pre;)V",
               at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;handleKeyboardInput()V"))
@@ -47,20 +64,15 @@ public abstract class ClientEventHandlerMixin {
             int key = Keyboard.getEventKey();
             boolean state = Keyboard.getEventKeyState();
             if (state) {
-                lastChar = c0;
+                gregTech$lastChar = c0;
                 screen.getScreen().onKeyPressed(c0, key);
-                // return doAction(muiScreen, ms -> ms.onKeyPressed(c0, key)) || keyTyped(mcScreen, c0, key);
             } else {
                 // releasing a key
                 // for some reason when you press E after joining a world the button will not trigger the press event,
-                // but ony the release event, causing this to be null
-                if (lastChar == null) return;
+                // but only the release event, causing this to be null
+                if (gregTech$lastChar == null) return;
                 // when the key is released, the event char is empty
-                screen.getScreen().onKeyRelease(lastChar, key);
-                // if (doAction(muiScreen, ms -> ms.onKeyRelease(lastChar, key))) return true;
-                // if (key == 0 && c0 >= ' ') {
-                // return keyTyped(mcScreen, c0, key);
-                // }
+                screen.getScreen().onKeyRelease(gregTech$lastChar, key);
             }
         }
     }
