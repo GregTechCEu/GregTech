@@ -59,6 +59,9 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
             if (this.syncHandler.showAmount())
                 tooltip.addLine(IKey.lang("gregtech.fluid.amount", fluid.amount, this.syncHandler.getCapacity()));
 
+            if (this.syncHandler.isPhantom() && this.syncHandler.showAmount())
+                tooltip.addLine(IKey.lang("modularui.fluid.phantom.control"));
+
             // Add various tooltips from the material
             for (String s : FluidTooltipUtil.getFluidTooltip(fluid)) {
                 if (s.isEmpty()) continue;
