@@ -2,6 +2,9 @@ package gregtech.mixins.mui2;
 
 import gregtech.api.mui.UnboxFix;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.text.AnimatedText;
 import com.cleanroommc.modularui.drawable.text.StyledText;
@@ -98,6 +101,7 @@ public abstract class StyledTextMixin implements UnboxFix {
                 .shadow(shadow != null && shadow);
     }
 
+    @SideOnly(Side.CLIENT)
     @ModifyArg(method = "draw",
                at = @At(value = "INVOKE",
                         target = "Lcom/cleanroommc/modularui/drawable/text/TextRenderer;setColor(I)V"))
@@ -105,6 +109,7 @@ public abstract class StyledTextMixin implements UnboxFix {
         return gregTech$defaultTextColor ? theme.getTextColor() : color;
     }
 
+    @SideOnly(Side.CLIENT)
     @ModifyArg(method = "draw",
                at = @At(value = "INVOKE",
                         target = "Lcom/cleanroommc/modularui/drawable/text/TextRenderer;setShadow(Z)V"))
