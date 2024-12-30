@@ -10,7 +10,6 @@ import net.minecraftforge.fluids.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Deprecated
 public class FilteredFluidHandler extends FluidTank implements IFilteredFluidContainer {
 
     @Nullable
