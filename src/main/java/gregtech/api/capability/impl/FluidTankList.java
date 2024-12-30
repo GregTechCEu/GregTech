@@ -100,7 +100,9 @@ public final class FluidTankList extends MultipleTankHandler {
                 // if the tank uses distinct fluid fill (allowSameFluidFill disabled) and another distinct tank had
                 // received the fluid, skip this tank
                 if (overflow && !tank.allowSameFluidFill()) continue;
-                if (tank.getFluidAmount() > 0 || !tank.canFillFluidType(doFill ? copy : resource)) continue;
+                // if simulating, pass in the original resource since nothing was actually filled,
+                // otherwise pass in the mutated copy
+                if (!tank.canFillFluidType(doFill ? copy : resource)) continue;
 
                 // if not empty fluid doesn't match, skip
             } else if (!resource.isFluidEqual(tank.getFluid()))
