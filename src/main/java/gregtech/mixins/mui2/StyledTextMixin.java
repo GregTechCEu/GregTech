@@ -77,8 +77,8 @@ public abstract class StyledTextMixin implements UnboxFix {
                 .alignment(this.alignment)
                 .scale(this.scale);
 
-        ((UnboxFix) text).gregTech$useDefaultTextColor(this.color == null);
-        ((UnboxFix) text).gregTech$useDefaultShadow(this.shadow == null);
+        ((UnboxFix) text).gregTech$useDefaultTextColor(this.gregTech$defaultTextColor);
+        ((UnboxFix) text).gregTech$useDefaultShadow(this.gregTech$defaultShadow);
 
         return text.color(color == null ? 0 : color)
                 .shadow(shadow != null && shadow);
@@ -94,8 +94,8 @@ public abstract class StyledTextMixin implements UnboxFix {
                 .alignment(this.alignment)
                 .scale(this.scale);
 
-        ((UnboxFix) text).gregTech$useDefaultTextColor(this.color == null);
-        ((UnboxFix) text).gregTech$useDefaultShadow(this.shadow == null);
+        ((UnboxFix) text).gregTech$useDefaultTextColor(this.gregTech$defaultTextColor);
+        ((UnboxFix) text).gregTech$useDefaultShadow(this.gregTech$defaultShadow);
 
         return text.color(color == null ? 0 : color)
                 .shadow(shadow != null && shadow);
