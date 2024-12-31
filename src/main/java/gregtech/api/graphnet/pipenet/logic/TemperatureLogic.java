@@ -125,7 +125,8 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
 
     public void moveTowardsTemperature(int temperature, long tick, float mult, boolean noParticle) {
         int temp = getTemperature(tick);
-        float thermalEnergy = mult * (temperature - temp);
+        float thermalEnergy = (float) (this.thermalMass * (temperature - temp) *
+                (1 - Math.pow(0.5, mult / this.thermalMass)));
         if (noParticle) {
             float thermalMax = this.thermalMass * (GTOverheatParticle.TEMPERATURE_CUTOFF - DEFAULT_TEMPERATURE);
             if (thermalEnergy + this.energy > thermalMax) {

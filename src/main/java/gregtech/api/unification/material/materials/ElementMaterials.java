@@ -369,7 +369,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .element(Elements.Ir)
                 .rotorStats(7.0f, 3.0f, 2560)
-                .fluidPipeProperties(3398, 5, 250, true, false, false)
+                .fluidPipeProperties(3398, 4, 250, true, false, false)
                 .blast(b -> b
                         .temp(4500, GasTier.HIGH)
                         .blastStats(VA[IV], 1100)
