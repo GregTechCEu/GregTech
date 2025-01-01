@@ -5,12 +5,12 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.materials.SoftToolAddition;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
@@ -406,31 +406,23 @@ public class ToolRecipeHandler {
     }
 
     private static void registerSoftToolRecipes() {
-        final Material[] softMaterials = new Material[] {
-                Materials.Wood, Materials.Rubber, Materials.Polyethylene,
-                Materials.Polytetrafluoroethylene, Materials.Polybenzimidazole
-        };
+        final Material[] softMaterials = SoftToolAddition.softMaterials;
 
         final UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
 
-        for (int i = 0; i < softMaterials.length; i++) {
-            Material material = softMaterials[i];
-
+        for (Material material : softMaterials) {
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 47, 1, 4F, 1F),
+                addToolRecipe(material, ToolItems.SOFT_MALLET, true,
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.plank, material),
                         'S', stick);
             } else {
-                ModHandler.addMirroredShapedRecipe(String.format("soft_mallet_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.SOFT_MALLET, material, 128 * (1 << i) - 1, 1, 4F, 1F),
+                addToolRecipe(material, ToolItems.SOFT_MALLET, true,
                         "II ", "IIS", "II ",
                         'I', new UnificationEntry(OrePrefix.ingot, material),
                         'S', stick);
 
-                ModHandler.addMirroredShapedRecipe(String.format("plunger_%s", material),
-                        ToolHelper.getAndSetToolData(ToolItems.PLUNGER, material, 128 * (i << 1) - 1, 1, 4F, 0F),
+                addToolRecipe(material, ToolItems.PLUNGER, true,
                         "xPP", " SP", "S f",
                         'P', new UnificationEntry(OrePrefix.plate, material),
                         'S', stick);
