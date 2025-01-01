@@ -23,10 +23,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCParams;
@@ -60,7 +58,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -79,10 +76,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.DoubleSupplier;
+import java.util.stream.IntStream;
 
 import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_DURATION_FACTOR;
 import static gregtech.api.recipes.logic.OverclockingLogic.PERFECT_HALF_VOLTAGE_FACTOR;
@@ -126,7 +125,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("###############", "######OGO######", "###############")
+                .aisle("###############", "######OSO######", "###############")
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
                 .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
                 .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
@@ -140,15 +139,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
                 .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
-                .aisle("###############", "######OSO######", "###############")
+                .aisle("###############", "######OGO######", "###############")
                 .where('S', selfPredicate())
-                .where('G', states(getCasingState(), getGlassState()))
+                .where('G', states("fusionGlass", getCasingState(), getGlassState()))
                 .where('E',
-                        states(getCasingState(), getGlassState()).or(metaTileEntities(Arrays
-                                .stream(MetaTileEntities.ENERGY_INPUT_HATCH)
-                                .filter(mte -> mte != null && tier <= mte.getTier() && mte.getTier() <= GTValues.UV)
-                                .toArray(MetaTileEntity[]::new))
-                                        .setMinGlobalLimited(1).setPreviewCount(16)))
+                        states("fusionGlass", getCasingState(), getGlassState())
+                                .or(tieredMTEs((map, mte) -> tier <= mte.getTier() && mte.getTier() <= GTValues.UV,
+                                        MetaTileEntities.ENERGY_INPUT_HATCH)
+                                                .setMinGlobalLimited(1).setPreviewCount(16)))
                 .where('C', states(getCasingState()))
                 .where('K', states(getCoilState()))
                 .where('O', states(getCasingState(), getGlassState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS)))
@@ -159,48 +157,12 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 .build();
     }
 
+    @NotNull
     @Override
-    public List<MultiblockShapeInfo> getMatchingShapes() {
-        List<MultiblockShapeInfo> shapeInfos = new ArrayList<>();
-
-        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
-                .aisle("###############", "######WGW######", "###############")
-                .aisle("######DCD######", "####GG###GG####", "######UCU######")
-                .aisle("####CC###CC####", "###w##EGE##s###", "####CC###CC####")
-                .aisle("###C#######C###", "##nKeG###GeKn##", "###C#######C###")
-                .aisle("##C#########C##", "#G#s#######w#G#", "##C#########C##")
-                .aisle("##C#########C##", "#G#G#######G#G#", "##C#########C##")
-                .aisle("#D###########D#", "N#S#########N#S", "#U###########U#")
-                .aisle("#C###########C#", "G#G#########G#G", "#C###########C#")
-                .aisle("#D###########D#", "N#S#########N#S", "#U###########U#")
-                .aisle("##C#########C##", "#G#G#######G#G#", "##C#########C##")
-                .aisle("##C#########C##", "#G#s#######w#G#", "##C#########C##")
-                .aisle("###C#######C###", "##eKnG###GnKe##", "###C#######C###")
-                .aisle("####CC###CC####", "###w##WGW##s###", "####CC###CC####")
-                .aisle("######DCD######", "####GG###GG####", "######UCU######")
-                .aisle("###############", "######EME######", "###############")
-                .where('M', MetaTileEntities.FUSION_REACTOR[tier - GTValues.LuV], EnumFacing.SOUTH)
-                .where('C', getCasingState())
-                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(
-                        BlockGlassCasing.CasingType.FUSION_GLASS))
-                .where('K', getCoilState())
-                .where('W', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.NORTH)
-                .where('E', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.SOUTH)
-                .where('S', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.EAST)
-                .where('N', MetaTileEntities.FLUID_EXPORT_HATCH[tier], EnumFacing.WEST)
-                .where('w', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.WEST)
-                .where('e', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.SOUTH)
-                .where('s', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.EAST)
-                .where('n', MetaTileEntities.ENERGY_INPUT_HATCH[tier], EnumFacing.NORTH)
-                .where('U', MetaTileEntities.FLUID_IMPORT_HATCH[tier], EnumFacing.UP)
-                .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[tier], EnumFacing.DOWN)
-                .where('#', Blocks.AIR.getDefaultState());
-
-        shapeInfos.add(baseBuilder.shallowCopy()
-                .where('G', getCasingState())
-                .build());
-        shapeInfos.add(baseBuilder.build());
-        return shapeInfos;
+    public Iterator<Map<String, String>> getPreviewBuilds() {
+        return IntStream.of(0, 1)
+                .mapToObj(i -> Collections.singletonMap("fusionGlass", Integer.toString(i)))
+                .iterator();
     }
 
     @SideOnly(Side.CLIENT)
@@ -249,16 +211,16 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
+    protected void formStructure(String name) {
         long energyStored = this.energyContainer.getEnergyStored();
-        super.formStructure(context);
+        super.formStructure(name);
         this.initializeAbilities();
         ((EnergyContainerHandler) this.energyContainer).setEnergyStored(energyStored);
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
 
             @NotNull

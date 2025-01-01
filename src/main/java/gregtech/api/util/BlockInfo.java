@@ -1,11 +1,13 @@
 package gregtech.api.util;
 
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import com.google.common.base.Preconditions;
 
@@ -20,7 +22,6 @@ public class BlockInfo {
 
     private final IBlockState blockState;
     private final TileEntity tileEntity;
-    private final Object info;
 
     public BlockInfo(Block block) {
         this(block.getDefaultState());
@@ -31,15 +32,22 @@ public class BlockInfo {
     }
 
     public BlockInfo(IBlockState blockState, TileEntity tileEntity) {
-        this(blockState, tileEntity, null);
-    }
-
-    public BlockInfo(IBlockState blockState, TileEntity tileEntity, Object info) {
+        // the predicate is an extremely scuffed way of displaying candidates during preview
+        // ideally you would bind the predicate to the char in the code but uh yeah
         this.blockState = blockState;
         this.tileEntity = tileEntity;
-        this.info = info;
         Preconditions.checkArgument(tileEntity == null || blockState.getBlock().hasTileEntity(blockState),
                 "Cannot create block info with tile entity for block not having it");
+    }
+
+    public ItemStack toItem() {
+        MetaTileEntity metaTileEntity = tileEntity instanceof IGregTechTileEntity igtte ? igtte.getMetaTileEntity() :
+                null;
+        if (metaTileEntity != null) {
+            return metaTileEntity.getStackForm();
+        } else {
+            return GTUtility.toItem(blockState);
+        }
     }
 
     public IBlockState getBlockState() {
@@ -48,16 +56,5 @@ public class BlockInfo {
 
     public TileEntity getTileEntity() {
         return tileEntity;
-    }
-
-    public Object getInfo() {
-        return info;
-    }
-
-    public void apply(World world, BlockPos pos) {
-        world.setBlockState(pos, blockState);
-        if (tileEntity != null) {
-            world.setTileEntity(pos, tileEntity);
-        }
     }
 }

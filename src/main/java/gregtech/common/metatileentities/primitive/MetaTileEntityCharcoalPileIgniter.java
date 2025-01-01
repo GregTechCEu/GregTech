@@ -11,17 +11,21 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.*;
+import gregtech.api.pattern.PatternError;
+import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.pattern.FactoryExpandablePattern;
+import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.util.Mods;
+import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.behaviors.LighterBehaviour;
-import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFireball;
@@ -30,8 +34,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,23 +51,28 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.block.IBlock;
 import crafttweaker.api.minecraft.CraftTweakerMC;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 @ZenClass("mods.gregtech.machines.CharcoalPileIgniter")
 @ZenRegister
@@ -65,6 +80,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     private static final int MIN_RADIUS = 1;
     private static final int MIN_DEPTH = 2;
+    private static final int MAX_RADIUS = 5;
+    private static final int MAX_DEPTH = 5;
 
     private static final Set<Block> WALL_BLOCKS = new ObjectOpenHashSet<>();
 
@@ -77,13 +94,16 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         WALL_BLOCKS.add(Blocks.SAND);
     }
 
-    private int lDist = 0;
-    private int rDist = 0;
-    private int hDist = 0;
+    private final int[] bounds = new int[] { 0, MIN_DEPTH, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
 
     private boolean isActive;
     private int progressTime = 0;
     private int maxProgress = 0;
+
+    /**
+     * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
+     */
+    private final Map<EnumFacing, RelativeDirection> facingMap = new EnumMap<>(EnumFacing.class);
 
     public MetaTileEntityCharcoalPileIgniter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -103,182 +123,81 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         setActive(false);
         this.progressTime = 0;
         this.maxProgress = 0;
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
+        // this doesn't iterate over any(), so doesn't count the borders
+        forEachFormed(DEFAULT_STRUCTURE, (info, pos) -> {
+            BlockPos immutable = pos.immutable();
+
+            if (info.getBlockState().getBlock().isWood(getWorld(), immutable)) {
+                logPositions.add(immutable);
+            }
+        });
         // calculate the duration upon formation
         updateMaxProgressTime();
     }
 
     @NotNull
     @Override
-    protected BlockPattern createStructurePattern() {
-        // update the structure's dimensions just before we create it
-        // return the default structure, even if there is no valid size found
-        // this means auto-build will still work, and prevents terminal crashes.
-        if (getWorld() != null) updateStructureDimensions();
+    protected IBlockPattern createStructurePattern() {
+        TraceabilityPredicate floorPredicate = blocks(Blocks.BRICK_BLOCK);
+        TraceabilityPredicate wallPredicate = blocks("walls", WALL_BLOCKS.toArray(new Block[0]));
+        TraceabilityPredicate logPredicate = logPredicate();
 
-        // these can sometimes get set to 0 when loading the game, breaking JEI
-        if (lDist < 1) lDist = MIN_RADIUS;
-        if (rDist < 1) rDist = MIN_RADIUS;
-        if (hDist < 2) hDist = MIN_DEPTH;
+        // basically cleanroom code
+        return FactoryExpandablePattern.start(RelativeDirection.UP, RelativeDirection.RIGHT, RelativeDirection.FRONT)
+                .boundsFunction((w, c, f, u) -> bounds)
+                .predicateFunction((c, b) -> {
+                    if (c.origin()) return selfPredicate();
 
-        // swap the left and right distances if the front facing is east or west
-        // i guess allows BlockPattern checkPatternAt to get the correct relative position, somehow.
-        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
-            int tmp = lDist;
-            lDist = rDist;
-            rDist = tmp;
-        }
+                    int intersects = 0;
 
-        StringBuilder wallBuilder = new StringBuilder();       // " XXX "
-        StringBuilder floorBuilder = new StringBuilder();      // " BBB "
-        StringBuilder cornerBuilder = new StringBuilder();     // " "
-        StringBuilder ctrlBuilder = new StringBuilder();       // " XSX "
-        StringBuilder woodBuilder = new StringBuilder();       // "XCCCX"
+                    // aisle dir is up, so its bounds[0] and bounds[1]
+                    boolean topAisle = c.x() == b[0];
+                    boolean botAisle = c.x() == -b[1];
 
-        // everything to the left of the controller
-        wallBuilder.append(" ");
-        floorBuilder.append(" ");
-        ctrlBuilder.append(" ");
-        woodBuilder.append("X");
+                    if (topAisle || botAisle) intersects++;
+                    // negative signs for the LEFT and BACK ordinals
+                    // string dir is right, so its bounds[2] and bounds[3]
+                    if (c.y() == -b[2] || c.y() == b[3]) intersects++;
+                    // char dir is front, so its bounds[4] and bounds[5]
+                    if (c.z() == b[4] || c.z() == -b[5]) intersects++;
 
-        for (int i = 0; i < lDist; i++) {
-            cornerBuilder.append(" ");
-            if (i > 0) {
-                wallBuilder.append("X");
-                floorBuilder.append("B");
-                ctrlBuilder.append("X");
-                woodBuilder.append("C");
-            }
-        }
+                    if (intersects >= 2) return any();
 
-        // everything in-line with the controller
-        wallBuilder.append("X");
-        floorBuilder.append("B");
-        cornerBuilder.append(" ");
-        ctrlBuilder.append("S");
-        woodBuilder.append("C");
+                    if (intersects == 1) {
+                        if (botAisle) return floorPredicate;
+                        return wallPredicate;
+                    }
 
-        // everything to the right of the controller
-        for (int i = 0; i < rDist; i++) {
-            cornerBuilder.append(" ");
-            if (i < rDist - 1) {
-                wallBuilder.append("X");
-                floorBuilder.append("B");
-                ctrlBuilder.append("X");
-                woodBuilder.append("C");
-            }
-        }
-
-        wallBuilder.append(" ");
-        floorBuilder.append(" ");
-        ctrlBuilder.append(" ");
-        woodBuilder.append("X");
-
-        String[] wall = new String[hDist + 1]; // " ", " XXX ", " "
-        Arrays.fill(wall, wallBuilder.toString());
-        wall[0] = cornerBuilder.toString();
-        wall[wall.length - 1] = cornerBuilder.toString();
-
-        String[] slice = new String[hDist + 1]; // " BBB ", "XCCCX", " XXX "
-        Arrays.fill(slice, woodBuilder.toString());
-        slice[0] = floorBuilder.toString();
-
-        String[] center = Arrays.copyOf(slice, slice.length); // " BBB ", "XCCCX", " XSX "
-        // inverse the center slice if facing east or west.
-        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
-            center[center.length - 1] = ctrlBuilder.reverse().toString();
-        } else {
-            center[center.length - 1] = ctrlBuilder.toString();
-        }
-
-        // slice is finished after center, so we can re-use it a bit more
-        slice[slice.length - 1] = wallBuilder.toString();
-
-        return FactoryBlockPattern.start()
-                .aisle(wall)
-                .aisle(slice).setRepeatable(0, 4)
-                .aisle(center)
-                .aisle(slice).setRepeatable(0, 4)
-                .aisle(wall)
-                .where('S', selfPredicate())
-                .where('B', blocks(Blocks.BRICK_BLOCK))
-                .where('X', blocks(WALL_BLOCKS.toArray(new Block[0])))
-                .where('C', logPredicate())
-                .where(' ', any())
+                    return logPredicate;
+                })
                 .build();
     }
 
     @NotNull
+    @Override
+    public Iterator<Map<String, String>> getPreviewBuilds() {
+        return IntStream.range(0, WALL_BLOCKS.size())
+                .mapToObj(i -> Collections.singletonMap("walls", Integer.toString(i)))
+                .iterator();
+    }
+
+    @NotNull
     private TraceabilityPredicate logPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> {
-            if (blockWorldState.getBlockState().getBlock().isWood(blockWorldState.getWorld(),
-                    blockWorldState.getPos())) {
-                // store the position of every log, so we can easily turn them into charcoal
-                logPositions.add(blockWorldState.getPos());
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private boolean updateStructureDimensions() {
-        World world = getWorld();
-        EnumFacing left = getFrontFacing().getOpposite().rotateYCCW();
-        EnumFacing right = left.getOpposite();
-
-        // l, r move down 1 block because the top layer has no bricks
-        BlockPos.MutableBlockPos lPos = new BlockPos.MutableBlockPos(getPos()).move(EnumFacing.DOWN);
-        BlockPos.MutableBlockPos rPos = new BlockPos.MutableBlockPos(getPos()).move(EnumFacing.DOWN);
-        BlockPos.MutableBlockPos hPos = new BlockPos.MutableBlockPos(getPos());
-
-        // find the distances from the controller to the brick blocks on one horizontal axis and the Y axis
-        // repeatable aisles take care of the second horizontal axis
-        int lDist = 0;
-        int rDist = 0;
-        int hDist = 0;
-
-        // find the left, right, height distances for the structure pattern
-        // maximum size is 11x11x6 including walls, so check 5 block radius around the controller for blocks
-        for (int i = 1; i < 6; i++) {
-            if (lDist != 0 && rDist != 0 && hDist != 0) break;
-            if (lDist == 0 && isBlockWall(world, lPos, left)) lDist = i;
-            if (rDist == 0 && isBlockWall(world, rPos, right)) rDist = i;
-            if (hDist == 0 && isBlockFloor(world, hPos)) hDist = i;
-        }
-
-        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || hDist < MIN_DEPTH) {
-            invalidateStructure();
-            return false;
-        }
-
-        this.lDist = lDist;
-        this.rDist = rDist;
-        this.hDist = hDist;
-
-        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
-            buf.writeInt(this.lDist);
-            buf.writeInt(this.rDist);
-            buf.writeInt(this.hDist);
-        });
-        return true;
-    }
-
-    private static boolean isBlockWall(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
-                                       @NotNull EnumFacing direction) {
-        return WALL_BLOCKS.contains(world.getBlockState(pos.move(direction)).getBlock());
-    }
-
-    private static boolean isBlockFloor(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos) {
-        return world.getBlockState(pos.move(EnumFacing.DOWN)).getBlock() == Blocks.BRICK_BLOCK;
+        return new TraceabilityPredicate(
+                worldState -> worldState.getBlockState().getBlock().isWood(worldState.getWorld(),
+                        worldState.getPos()) ||
+                        worldState.getBlockState().equals(MetaBlocks.BRITTLE_CHARCOAL.getDefaultState()) ? null :
+                                PatternError.PLACEHOLDER);
     }
 
     private void setActive(boolean active) {
@@ -329,6 +248,43 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         logPositions.clear();
     }
 
+    protected void updateFacingMap() {
+        // cache relative front, back, left, right
+        for (int i = 2; i < 6; i++) {
+            EnumFacing abs = RelativeDirection.VALUES[i].getRelativeFacing(frontFacing, upwardsFacing, false);
+            facingMap.put(abs, RelativeDirection.VALUES[i]);
+        }
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                      CuboidRayTraceResult hitResult) {
+        if (!playerIn.isSneaking()) {
+            if (getWorld().isRemote) return true;
+
+            RelativeDirection dir = facingMap.getOrDefault(facing, RelativeDirection.DOWN);
+            bounds[dir.ordinal()] += 1;
+            if (bounds[dir.ordinal()] > (dir == RelativeDirection.DOWN ? MAX_DEPTH : MAX_RADIUS)) {
+                bounds[dir.ordinal()] = (dir == RelativeDirection.DOWN ? MIN_DEPTH : MIN_RADIUS);
+            }
+
+            playerIn.sendMessage(
+                    new TextComponentTranslation("gregtech.direction." + facing.name().toLowerCase(Locale.ROOT))
+                            .appendText(" ")
+                            .appendSibling(new TextComponentTranslation("gregtech.machine.miner.radius",
+                                    bounds[dir.ordinal()])));
+            getSubstructure().clearCache();
+            return true;
+        }
+        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing facing) {
+        super.setFrontFacing(facing);
+        updateFacingMap();
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
@@ -355,54 +311,28 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     }
 
     @Override
-    public List<MultiblockShapeInfo> getMatchingShapes() {
-        List<MultiblockShapeInfo> shapeInfos = new ObjectArrayList<>();
-        for (Block block : WALL_BLOCKS) {
-            shapeInfos.add(MultiblockShapeInfo.builder()
-                    .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
-                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DSD ")
-                    .aisle(" BBB ", "XCCCX", "XCCCX", "XCCCX", " DDD ")
-                    .aisle("     ", " XXX ", " XXX ", " XXX ", "     ")
-                    .where('S', MetaTileEntities.CHARCOAL_PILE_IGNITER, EnumFacing.NORTH)
-                    .where('B', Blocks.BRICK_BLOCK.getDefaultState())
-                    .where('X', block.getDefaultState())
-                    .where('D', block.getDefaultState())
-                    .where('C', Blocks.LOG.getDefaultState())
-                    .build());
-        }
-        return shapeInfos;
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("lDist", this.lDist);
-        data.setInteger("rDist", this.rDist);
-        data.setInteger("hDist", this.hDist);
         data.setInteger("progressTime", this.progressTime);
         data.setInteger("maxProgress", this.maxProgress);
         data.setBoolean("isActive", this.isActive);
+        data.setIntArray("bounds", this.bounds);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
-        this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
-        this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
         this.progressTime = data.getInteger("progressTime");
         this.maxProgress = data.getInteger("maxProgress");
         this.isActive = data.getBoolean("isActive");
+        if (data.hasKey("bounds")) System.arraycopy(data.getIntArray("bounds"), 0, bounds, 0, 6);
+        updateFacingMap();
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(this.lDist);
-        buf.writeInt(this.rDist);
-        buf.writeInt(this.hDist);
         buf.writeInt(this.progressTime);
         buf.writeInt(this.maxProgress);
         buf.writeBoolean(this.isActive);
@@ -411,9 +341,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.lDist = buf.readInt();
-        this.rDist = buf.readInt();
-        this.hDist = buf.readInt();
         this.progressTime = buf.readInt();
         this.maxProgress = buf.readInt();
         this.isActive = buf.readBoolean();
@@ -422,14 +349,11 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
-            this.lDist = buf.readInt();
-            this.rDist = buf.readInt();
-            this.hDist = buf.readInt();
-        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
-            this.isActive = buf.readBoolean();
-            scheduleRenderUpdate();
-        }
+        if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {} else
+            if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+                this.isActive = buf.readBoolean();
+                scheduleRenderUpdate();
+            }
     }
 
     /**
@@ -488,7 +412,8 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         if (tileEntity instanceof IGregTechTileEntity) {
             mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
         }
-        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((IMultiblockController) mte).isStructureFormed()) {
+        if (mte instanceof MetaTileEntityCharcoalPileIgniter &&
+                ((IMultiblockController) mte).isStructureFormed()) {
             if (event.getSide().isClient()) {
                 event.setCanceled(true);
                 event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);

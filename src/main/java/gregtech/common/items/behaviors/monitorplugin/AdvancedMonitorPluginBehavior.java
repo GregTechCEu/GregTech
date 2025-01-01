@@ -9,7 +9,6 @@ import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.PatternMatchContext;
 import gregtech.client.renderer.scene.FBOWorldSceneRenderer;
 import gregtech.client.renderer.scene.WorldSceneRenderer;
 import gregtech.client.utils.RenderUtil;
@@ -222,7 +221,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         super.update();
         if (this.screen.getOffsetTimer() % 20 == 0) {
             if (this.screen.getWorld().isRemote) { // check connections
-                if (worldSceneRenderer == null && validPos != null && validPos.size() > 0) {
+                if (worldSceneRenderer == null && validPos != null && !validPos.isEmpty()) {
                     createWorldScene();
                 }
                 if (this.connect && worldSceneRenderer != null &&
@@ -247,15 +246,12 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     }
                 }
             } else { // check multi-block valid
-                if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase) {
-                    MultiblockControllerBase entity = (MultiblockControllerBase) holder.getMetaTileEntity();
+                if (holder != null && holder.getMetaTileEntity() instanceof MultiblockControllerBase entity) {
                     if (entity.isStructureFormed()) {
                         if (!isValid) {
-                            PatternMatchContext result = entity.structurePattern.checkPatternFastAt(
-                                    entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite(),
-                                    entity.getUpwardsFacing(), entity.allowsFlip());
-                            if (result != null) {
-                                validPos = entity.structurePattern.cache.keySet().stream().map(BlockPos::fromLong)
+                            if (entity.getSubstructure().getPatternState().getState().isValid()) {
+                                validPos = entity.getSubstructure().getCache().keySet().stream()
+                                        .map(BlockPos::fromLong)
                                         .collect(Collectors.toSet());
                                 writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {
                                     buf.writeVarInt(validPos.size());

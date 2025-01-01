@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -9,9 +10,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCParams;
@@ -24,7 +24,6 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
-import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.core.sound.GTSoundEvents;
 
@@ -105,21 +104,21 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
-        Object coilType = context.get("CoilType");
-        if (coilType instanceof IHeatingCoilBlockStats) {
-            this.heatingCoilLevel = ((IHeatingCoilBlockStats) coilType).getLevel();
-            this.heatingCoilDiscount = ((IHeatingCoilBlockStats) coilType).getEnergyDiscount();
+    protected void formStructure(String name) {
+        super.formStructure(name);
+        IHeatingCoilBlockStats type = allSameType(GregTechAPI.HEATING_COILS, getSubstructure(name),
+                "gregtech.multiblock.pattern.error.coils");
+        if (type == null) {
+            invalidateStructure(name);
         } else {
-            this.heatingCoilLevel = CoilType.CUPRONICKEL.getLevel();
-            this.heatingCoilDiscount = CoilType.CUPRONICKEL.getEnergyDiscount();
+            this.heatingCoilLevel = type.getLevel();
+            this.heatingCoilDiscount = type.getEnergyDiscount();
         }
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         this.heatingCoilLevel = 0;
         this.heatingCoilDiscount = 0;
     }
@@ -128,9 +127,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "CCC", "XXX")
-                .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
+                .aisle("XXX", "C#C", "XMX")
+                .aisle("XXX", "CCC", "XXX")
                 .where('S', selfPredicate())
                 .where('X',
                         states(getCasingState()).setMinGlobalLimited(9)

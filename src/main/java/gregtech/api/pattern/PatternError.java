@@ -3,44 +3,48 @@ package gregtech.api.pattern;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
 import java.util.List;
 
 public class PatternError {
 
-    protected BlockWorldState worldState;
+    /**
+     * Return this for your pattern errors if you want them to be a default error with the pos of the BlockWorldState
+     * and candidates of the simple predicate's error.
+     */
+    public static final PatternError PLACEHOLDER = new PatternError(BlockPos.ORIGIN, Collections.emptyList());
+    protected BlockPos pos;
+    protected List<List<ItemStack>> candidates;
 
-    public void setWorldState(BlockWorldState worldState) {
-        this.worldState = worldState;
+    public PatternError(BlockPos pos, List<List<ItemStack>> candidates) {
+        this.pos = pos;
+        this.candidates = candidates;
     }
 
-    public World getWorld() {
-        return worldState.getWorld();
+    public PatternError(BlockPos pos, TraceabilityPredicate failingPredicate) {
+        this(pos, failingPredicate.getCandidates());
     }
 
+    public PatternError(BlockPos pos, TraceabilityPredicate.SimplePredicate failingPredicate) {
+        this(pos, Collections.singletonList(failingPredicate.getCandidates()));
+    }
+
+    @Nullable
     public BlockPos getPos() {
-        return worldState.getPos();
+        return pos;
     }
 
     public List<List<ItemStack>> getCandidates() {
-        TraceabilityPredicate predicate = worldState.predicate;
-        List<List<ItemStack>> candidates = new ArrayList<>();
-        for (TraceabilityPredicate.SimplePredicate common : predicate.common) {
-            candidates.add(common.getCandidates());
-        }
-        for (TraceabilityPredicate.SimplePredicate limited : predicate.limited) {
-            candidates.add(limited.getCandidates());
-        }
-        return candidates;
+        return this.candidates;
     }
 
     @SideOnly(Side.CLIENT)
     public String getErrorInfo() {
-        List<List<ItemStack>> candidates = getCandidates();
         StringBuilder builder = new StringBuilder();
         for (List<ItemStack> candidate : candidates) {
             if (!candidate.isEmpty()) {
@@ -49,6 +53,6 @@ public class PatternError {
             }
         }
         builder.append("...");
-        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), worldState.pos);
+        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), pos);
     }
 }

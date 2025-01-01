@@ -13,10 +13,9 @@ import gregtech.api.gui.widgets.SuppliedImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
@@ -71,17 +70,14 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private static final double IDLE_TEMPERATURE = 200;
     private static final double DAMAGE_TEMPERATURE = 1000;
-
     private IEnergyContainer energyContainer;
     private IFluidHandler coolantHandler;
     private final HPCAGridHandler hpcaHandler;
-
     private boolean isActive;
     private boolean isWorkingEnabled = true;
     private boolean hasNotEnoughEnergy;
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
-
     private final ProgressWidget.TimedProgressSupplier progressSupplier;
 
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
@@ -97,16 +93,16 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
         this.coolantHandler = new FluidTankList(false, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
         this.hpcaHandler.onStructureForm(getAbilities(MultiblockAbility.HPCA_COMPONENT));
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
         this.hpcaHandler.onStructureInvalidate();
     }
@@ -199,15 +195,17 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
+                .aisle("AS", "CC", "CC", "CC", "AA")
+                .aisle("AV", "VX", "VX", "VX", "AV")
+                .aisle("AV", "VX", "VX", "VX", "AV")
+                .aisle("AV", "VX", "VX", "VX", "AV")
                 .aisle("AA", "CC", "CC", "CC", "AA")
-                .aisle("VA", "XV", "XV", "XV", "VA")
-                .aisle("VA", "XV", "XV", "XV", "VA")
-                .aisle("VA", "XV", "XV", "XV", "VA")
-                .aisle("SA", "CC", "CC", "CC", "AA")
                 .where('S', selfPredicate())
                 .where('A', states(getAdvancedState()))
                 .where('V', states(getVentState()))
-                .where('X', abilities(MultiblockAbility.HPCA_COMPONENT))
+                .where('X',
+                        abilities(() -> RIGHT.getRelativeFacing(frontFacing, upwardsFacing),
+                                MultiblockAbility.HPCA_COMPONENT))
                 .where('C', states(getCasingState()).setMinGlobalLimited(5)
                         .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
@@ -231,7 +229,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         List<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
+        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
                 .aisle("AA", "EC", "MC", "HC", "AA")
                 .aisle("VA", "6V", "3V", "0V", "VA")
                 .aisle("VA", "7V", "4V", "1V", "VA")

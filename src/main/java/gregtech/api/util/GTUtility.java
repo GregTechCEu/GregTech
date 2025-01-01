@@ -20,6 +20,7 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
@@ -38,6 +39,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -653,6 +656,46 @@ public class GTUtility {
         return new ItemStack(state.getBlock(), amount, state.getBlock().getMetaFromState(state));
     }
 
+    /**
+     * Converts the block at pos in the world to an item. First uses the MTE method if the block is a mte, then uses
+     * pick block, then uses the first of the block drops, then returns EMPTY.
+     */
+    @NotNull
+    public static ItemStack toItem(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+
+        ItemStack stack = ItemStack.EMPTY;
+
+        // first check if the block is a GT machine
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity instanceof IGregTechTileEntity igtte) {
+            stack = igtte.getMetaTileEntity().getStackForm();
+        }
+
+        if (stack.isEmpty()) {
+            // first, see what the block has to say for itself before forcing it to use a particular meta value
+            stack = block.getPickBlock(state, new RayTraceResult(Vec3d.ZERO, EnumFacing.UP, pos), world, pos,
+                    new GregFakePlayer(world));
+        } else return stack;
+
+        if (stack.isEmpty()) {
+            // try the default itemstack constructor if we're not a GT machine
+            stack = GTUtility.toItem(state);
+        } else return stack;
+
+        if (stack.isEmpty()) {
+            // add the first of the block's drops if the others didn't work
+            NonNullList<ItemStack> list = NonNullList.create();
+            state.getBlock().getDrops(list, world, pos, state, 0);
+            if (!list.isEmpty()) {
+                return list.get(0);
+            }
+        } else return stack;
+
+        return ItemStack.EMPTY;
+    }
+
     public static boolean isOre(ItemStack item) {
         OrePrefix orePrefix = OreDictUnifier.getPrefix(item);
         return orePrefix != null && orePrefix.name().startsWith("ore");
@@ -912,6 +955,19 @@ public class GTUtility {
     }
 
     /**
+     * Gets the cross product of 2 facings. Null is returned if the result is a zero vector(facings are on the same
+     * axis).
+     */
+    public static EnumFacing cross(EnumFacing a, EnumFacing b) {
+        if (a.getAxis() == b.getAxis()) return null;
+
+        return EnumFacing.getFacingFromVector(
+                a.getYOffset() * b.getZOffset() - a.getZOffset() * b.getYOffset(),
+                a.getZOffset() * b.getXOffset() - a.getXOffset() * b.getZOffset(),
+                a.getXOffset() * b.getYOffset() - a.getYOffset() * b.getXOffset());
+    }
+
+    /**
      * Safely cast a Long to an Int without overflow.
      *
      * @param v The Long value to cast to an Int.
@@ -919,5 +975,20 @@ public class GTUtility {
      */
     public static int safeCastLongToInt(long v) {
         return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    }
+
+    /**
+     * Parse the string as an int and return, or return def if the string is not an int.
+     */
+    public static int parseInt(String s, int def) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    public static int parseInt(String s) {
+        return parseInt(s, -1);
     }
 }

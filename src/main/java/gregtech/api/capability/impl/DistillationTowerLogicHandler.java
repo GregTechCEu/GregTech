@@ -4,7 +4,7 @@ import gregtech.api.capability.IDistillationTower;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.BlockPattern;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockPart;
 
@@ -63,7 +63,7 @@ public class DistillationTowerLogicHandler {
      * @param structurePattern the structure pattern
      */
     public void determineLayerCount(@NotNull BlockPattern structurePattern) {
-        this.setLayerCount(structurePattern.formedRepetitionCount[1] + 1);
+        this.setLayerCount(structurePattern.getRepetitionCount(1) + 1);
     }
 
     /**

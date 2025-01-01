@@ -10,6 +10,7 @@ import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.CleanroomLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
+import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
@@ -22,24 +23,24 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.pattern.PatternStringError;
+import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.pattern.pattern.FactoryExpandablePattern;
+import gregtech.api.pattern.pattern.IBlockPattern;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
+import gregtech.client.renderer.handler.AABBHighlightRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockCleanroomCasing;
 import gregtech.common.blocks.BlockGlassCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveWaterPump;
@@ -50,7 +51,6 @@ import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -59,7 +59,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -79,13 +78,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 
 public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                      implements ICleanroomProvider, IWorkable, IDataInfoProvider {
@@ -95,21 +98,25 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     public static final int MIN_RADIUS = 2;
     public static final int MIN_DEPTH = 4;
-
-    private int lDist = 0;
-    private int rDist = 0;
-    private int bDist = 0;
-    private int fDist = 0;
-    private int hDist = 0;
-
+    public static final int MAX_RADIUS = 7;
+    public static final int MAX_DEPTH = 14;
+    private static final GreggyBlockPos offset = new GreggyBlockPos(1, 1, 1);
+    private final int[] bounds = { 0, MIN_DEPTH, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS, MIN_RADIUS };
     private CleanroomType cleanroomType = null;
     private int cleanAmount;
 
     private IEnergyContainer energyContainer;
 
     private ICleanroomFilter cleanroomFilter;
+    private boolean renderingAABB;
     private final CleanroomLogic cleanroomLogic;
     private final Collection<ICleanroomReceiver> cleanroomReceivers = new HashSet<>();
+    private AABBHighlightRenderer.AABBRender aabb;
+
+    /**
+     * Reverse map from enum facing -> relative direction, refreshed on every setFrontFacing(...) call
+     */
+    private final Map<EnumFacing, RelativeDirection> facingMap = new EnumMap<>(EnumFacing.class);
 
     public MetaTileEntityCleanroom(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -121,7 +128,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         return new MetaTileEntityCleanroom(metaTileEntityId);
     }
 
-    protected void initializeAbilities() {
+    private void initializeAbilities() {
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
     }
 
@@ -130,23 +137,49 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         initializeAbilities();
-        this.cleanroomFilter = context.get("FilterType");
-        this.cleanroomType = cleanroomFilter.getCleanroomType();
+
+        renderingAABB = false;
+        writeCustomData(GregtechDataCodes.RENDER_UPDATE, buf -> buf.writeBoolean(false));
+
+        ICleanroomFilter type = allSameType(GregTechAPI.CLEANROOM_FILTERS, getSubstructure(),
+                "gregtech.multiblock.pattern.error.filters");
+        if (type == null) {
+            invalidateStructure(name);
+            return;
+        }
+
+        this.cleanroomFilter = type;
+        this.cleanroomType = type.getCleanroomType();
+
+        forEachFormed(name, (info, pos) -> {
+            TileEntity te = info.getTileEntity();
+            if (!(te instanceof IGregTechTileEntity gtte)) return;
+
+            MetaTileEntity mte = gtte.getMetaTileEntity();
+
+            if (!(mte instanceof ICleanroomReceiver receiver)) return;
+
+            if (receiver.getCleanroom() != this) {
+                receiver.setCleanroom(this);
+                cleanroomReceivers.add(receiver);
+            }
+        });
 
         // max progress is based on the dimensions of the structure: (x^3)-(x^2)
         // taller cleanrooms take longer than wider ones
         // minimum of 100 is a 5x5x5 cleanroom: 125-25=100 ticks
-        this.cleanroomLogic.setMaxProgress(Math.max(100,
-                ((lDist + rDist + 1) * (bDist + fDist + 1) * hDist) - ((lDist + rDist + 1) * (bDist + fDist + 1))));
+        int leftRight = bounds[2] + bounds[3] + 1;
+        int frontBack = bounds[4] + bounds[5] + 1;
+        this.cleanroomLogic.setMaxProgress(leftRight * frontBack * bounds[1]);
         this.cleanroomLogic.setMinEnergyTier(cleanroomFilter.getMinTier());
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         resetTileAbilities();
         this.cleanroomLogic.invalidate();
         this.cleanAmount = MIN_CLEAN_AMOUNT;
@@ -167,9 +200,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
 
     @Override
     public void checkStructurePattern() {
-        if (!this.isStructureFormed()) {
-            reinitializeStructurePattern();
-        }
         super.checkStructurePattern();
     }
 
@@ -183,230 +213,76 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         return false;
     }
 
-    /**
-     * Scans for blocks around the controller to update the dimensions
-     */
-    public boolean updateStructureDimensions() {
-        World world = getWorld();
-        EnumFacing front = getFrontFacing();
-        EnumFacing back = front.getOpposite();
-        EnumFacing left = front.rotateYCCW();
-        EnumFacing right = left.getOpposite();
-
-        BlockPos.MutableBlockPos lPos = new BlockPos.MutableBlockPos(getPos());
-        BlockPos.MutableBlockPos rPos = new BlockPos.MutableBlockPos(getPos());
-        BlockPos.MutableBlockPos fPos = new BlockPos.MutableBlockPos(getPos());
-        BlockPos.MutableBlockPos bPos = new BlockPos.MutableBlockPos(getPos());
-        BlockPos.MutableBlockPos hPos = new BlockPos.MutableBlockPos(getPos());
-
-        // find the distances from the controller to the plascrete blocks on one horizontal axis and the Y axis
-        // repeatable aisles take care of the second horizontal axis
-        int lDist = 0;
-        int rDist = 0;
-        int bDist = 0;
-        int fDist = 0;
-        int hDist = 0;
-
-        // find the left, right, back, and front distances for the structure pattern
-        // maximum size is 15x15x15 including walls, so check 7 block radius around the controller for blocks
-        for (int i = 1; i < 8; i++) {
-            if (lDist == 0 && isBlockEdge(world, lPos, left)) lDist = i;
-            if (rDist == 0 && isBlockEdge(world, rPos, right)) rDist = i;
-            if (bDist == 0 && isBlockEdge(world, bPos, back)) bDist = i;
-            if (fDist == 0 && isBlockEdge(world, fPos, front)) fDist = i;
-            if (lDist != 0 && rDist != 0 && bDist != 0 && fDist != 0) break;
-        }
-
-        // height is diameter instead of radius, so it needs to be done separately
-        for (int i = 1; i < 15; i++) {
-            if (isBlockFloor(world, hPos, EnumFacing.DOWN)) hDist = i;
-            if (hDist != 0) break;
-        }
-
-        if (lDist < MIN_RADIUS || rDist < MIN_RADIUS || bDist < MIN_RADIUS || fDist < MIN_RADIUS || hDist < MIN_DEPTH) {
-            invalidateStructure();
-            return false;
-        }
-
-        this.lDist = lDist;
-        this.rDist = rDist;
-        this.bDist = bDist;
-        this.fDist = fDist;
-        this.hDist = hDist;
-
-        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> {
-            buf.writeInt(this.lDist);
-            buf.writeInt(this.rDist);
-            buf.writeInt(this.bDist);
-            buf.writeInt(this.fDist);
-            buf.writeInt(this.hDist);
-        });
-        return true;
-    }
-
-    /**
-     * @param world     the world to check
-     * @param pos       the pos to check and move
-     * @param direction the direction to move
-     * @return if a block is a valid wall block at pos moved in direction
-     */
-    public boolean isBlockEdge(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
-                               @NotNull EnumFacing direction) {
-        return world.getBlockState(pos.move(direction)) ==
-                MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE);
-    }
-
-    /**
-     * @param world     the world to check
-     * @param pos       the pos to check and move
-     * @param direction the direction to move
-     * @return if a block is a valid floor block at pos moved in direction
-     */
-    public boolean isBlockFloor(@NotNull World world, @NotNull BlockPos.MutableBlockPos pos,
-                                @NotNull EnumFacing direction) {
-        return isBlockEdge(world, pos, direction) || world.getBlockState(pos) ==
-                MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS);
-    }
-
     @NotNull
     @Override
-    protected BlockPattern createStructurePattern() {
-        // return the default structure, even if there is no valid size found
-        // this means auto-build will still work, and prevents terminal crashes.
-        if (getWorld() != null) updateStructureDimensions();
-
-        // these can sometimes get set to 0 when loading the game, breaking JEI
-        if (lDist < MIN_RADIUS) lDist = MIN_RADIUS;
-        if (rDist < MIN_RADIUS) rDist = MIN_RADIUS;
-        if (bDist < MIN_RADIUS) bDist = MIN_RADIUS;
-        if (fDist < MIN_RADIUS) fDist = MIN_RADIUS;
-        if (hDist < MIN_DEPTH) hDist = MIN_DEPTH;
-
-        if (this.frontFacing == EnumFacing.EAST || this.frontFacing == EnumFacing.WEST) {
-            int tmp = lDist;
-            lDist = rDist;
-            rDist = tmp;
-        }
-
-        // build each row of the structure
-        StringBuilder borderBuilder = new StringBuilder();     // BBBBB
-        StringBuilder wallBuilder = new StringBuilder();       // BXXXB
-        StringBuilder insideBuilder = new StringBuilder();     // X X
-        StringBuilder roofBuilder = new StringBuilder();       // BFFFB
-        StringBuilder controllerBuilder = new StringBuilder(); // BFSFB
-        StringBuilder centerBuilder = new StringBuilder();     // BXKXB
-
-        // everything to the left of the controller
-        for (int i = 0; i < lDist; i++) {
-            borderBuilder.append("B");
-            if (i == 0) {
-                wallBuilder.append("B");
-                insideBuilder.append("X");
-                roofBuilder.append("B");
-                controllerBuilder.append("B");
-                centerBuilder.append("B");
-            } else {
-                insideBuilder.append(" ");
-                wallBuilder.append("X");
-                roofBuilder.append("F");
-                controllerBuilder.append("F");
-                centerBuilder.append("X");
-            }
-        }
-
-        // everything in-line with the controller
-        borderBuilder.append("B");
-        wallBuilder.append("X");
-        insideBuilder.append(" ");
-        roofBuilder.append("F");
-        controllerBuilder.append("S");
-        centerBuilder.append("K");
-
-        // everything to the right of the controller
-        for (int i = 0; i < rDist; i++) {
-            borderBuilder.append("B");
-            if (i == rDist - 1) {
-                wallBuilder.append("B");
-                insideBuilder.append("X");
-                roofBuilder.append("B");
-                controllerBuilder.append("B");
-                centerBuilder.append("B");
-            } else {
-                insideBuilder.append(" ");
-                wallBuilder.append("X");
-                roofBuilder.append("F");
-                controllerBuilder.append("F");
-                centerBuilder.append("X");
-            }
-        }
-
-        // build each slice of the structure
-        String[] wall = new String[hDist + 1]; // "BBBBB", "BXXXB", "BXXXB", "BXXXB", "BBBBB"
-        Arrays.fill(wall, wallBuilder.toString());
-        wall[0] = borderBuilder.toString();
-        wall[wall.length - 1] = borderBuilder.toString();
-
-        String[] slice = new String[hDist + 1]; // "BXXXB", "X X", "X X", "X X", "BFFFB"
-        Arrays.fill(slice, insideBuilder.toString());
-        slice[0] = wallBuilder.toString();
-        slice[slice.length - 1] = roofBuilder.toString();
-
-        String[] center = Arrays.copyOf(slice, slice.length); // "BXKXB", "X X", "X X", "X X", "BFSFB"
-        if (this.frontFacing == EnumFacing.NORTH || this.frontFacing == EnumFacing.SOUTH) {
-            center[0] = centerBuilder.reverse().toString();
-            center[center.length - 1] = controllerBuilder.reverse().toString();
-        } else {
-            center[0] = centerBuilder.toString();
-            center[center.length - 1] = controllerBuilder.toString();
-        }
-
-        TraceabilityPredicate wallPredicate = states(getCasingState(), getGlassState());
-        TraceabilityPredicate basePredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
+    protected IBlockPattern createStructurePattern() {
+        TraceabilityPredicate wallPredicate = states("cleanroomGlass", getCasingState(), getGlassState());
+        TraceabilityPredicate energyPredicate = autoAbilities().or(abilities(MultiblockAbility.INPUT_ENERGY)
                 .setMinGlobalLimited(1).setMaxGlobalLimited(3));
 
-        // layer the slices one behind the next
-        return FactoryBlockPattern.start()
-                .aisle(wall)
-                .aisle(slice).setRepeatable(bDist - 1)
-                .aisle(center)
-                .aisle(slice).setRepeatable(fDist - 1)
-                .aisle(wall)
-                .where('S', selfPredicate())
-                .where('B', states(getCasingState()).or(basePredicate))
-                .where('X', wallPredicate.or(basePredicate)
-                        .or(doorPredicate().setMaxGlobalLimited(8))
-                        .or(abilities(MultiblockAbility.PASSTHROUGH_HATCH).setMaxGlobalLimited(30)))
-                .where('K', wallPredicate) // the block beneath the controller must only be a casing for structure
-                                           // dimension checks
-                .where('F', filterPredicate())
-                .where(' ', innerPredicate())
+        TraceabilityPredicate edgePredicate = states(getCasingState())
+                .or(energyPredicate);
+        TraceabilityPredicate facePredicate = wallPredicate
+                .or(energyPredicate)
+                .or(doorPredicate().setMaxGlobalLimited(8))
+                .or(abilities(MultiblockAbility.PASSTHROUGH_HATCH).setMaxGlobalLimited(30));
+        TraceabilityPredicate filterPredicate = filterPredicate();
+        TraceabilityPredicate innerPredicate = innerPredicate();
+        TraceabilityPredicate verticalEdgePredicate = edgePredicate
+                .or(states(getGlassState()));
+
+        return FactoryExpandablePattern.start(RelativeDirection.UP, RelativeDirection.RIGHT, RelativeDirection.FRONT)
+                .boundsFunction((w, c, f, u) -> bounds)
+                .predicateFunction((c, b) -> {
+                    // controller always at origin
+                    if (c.origin()) return selfPredicate();
+
+                    int intersects = 0;
+
+                    // aisle dir is up, so its bounds[0] and bounds[1]
+                    boolean topAisle = c.x() == b[0];
+                    boolean botAisle = c.x() == -b[1];
+
+                    if (topAisle || botAisle) intersects++;
+                    // negative signs for the LEFT and BACK ordinals
+                    // string dir is right, so its bounds[2] and bounds[3]
+                    if (c.y() == -b[2] || c.y() == b[3]) intersects++;
+                    // char dir is front, so its bounds[4] and bounds[5]
+                    if (c.z() == b[4] || c.z() == -b[5]) intersects++;
+
+                    // GTLog.logger.info(intersects + " intersects at " + c);
+
+                    // more than or equal to 2 intersects means it is an edge
+                    if (intersects >= 2) {
+                        if (topAisle || botAisle) return edgePredicate;
+                        return verticalEdgePredicate;
+                    }
+
+                    // 1 intersect means it is a face
+                    if (intersects == 1) {
+                        if (topAisle) return filterPredicate;
+                        return facePredicate;
+                    }
+
+                    // intersects == 0, so its not a face
+                    return innerPredicate;
+                })
                 .build();
     }
 
     @NotNull
     protected TraceabilityPredicate filterPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> {
-            IBlockState blockState = blockWorldState.getBlockState();
-            if (GregTechAPI.CLEANROOM_FILTERS.containsKey(blockState)) {
-                ICleanroomFilter cleanroomFilter = GregTechAPI.CLEANROOM_FILTERS.get(blockState);
-                if (cleanroomFilter.getCleanroomType() == null) return false;
-
-                ICleanroomFilter currentFilter = blockWorldState.getMatchContext().getOrPut("FilterType",
-                        cleanroomFilter);
-                if (!currentFilter.getCleanroomType().equals(cleanroomFilter.getCleanroomType())) {
-                    blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.filters"));
-                    return false;
-                }
-                blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
-                return true;
-            }
-            return false;
-        }, () -> GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
-                .filter(entry -> entry.getValue().getCleanroomType() != null)
-                .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-                .map(entry -> new BlockInfo(entry.getKey(), null))
-                .toArray(BlockInfo[]::new))
-                        .addTooltips("gregtech.multiblock.pattern.error.filters");
+        return new TraceabilityPredicate(
+                worldState -> GregTechAPI.CLEANROOM_FILTERS.containsKey(worldState.getBlockState()) ? null :
+                        PatternError.PLACEHOLDER,
+                map -> GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
+                        .filter(e -> e.getValue().getCleanroomType() != null)
+                        .filter(e -> !map.containsKey("cleanroomType") ||
+                                e.getValue().getCleanroomType() == CleanroomType.getByName(map.get("cleanroomType")))
+                        .sorted(Comparator.comparingInt(e -> e.getValue().getTier()))
+                        .map(e -> new BlockInfo(e.getKey(), null))
+                        .toArray(BlockInfo[]::new))
+                                .addTooltips("gregtech.multiblock.pattern.error.filters");
     }
 
     @SideOnly(Side.CLIENT)
@@ -429,35 +305,38 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @NotNull
     protected static TraceabilityPredicate doorPredicate() {
         return new TraceabilityPredicate(
-                blockWorldState -> blockWorldState.getBlockState().getBlock() instanceof BlockDoor);
+                worldState -> worldState.getBlockState().getBlock() instanceof BlockDoor ? null :
+                        PatternError.PLACEHOLDER);
     }
 
     @NotNull
     protected TraceabilityPredicate innerPredicate() {
-        return new TraceabilityPredicate(blockWorldState -> {
+        return new TraceabilityPredicate(worldState -> {
             // all non-MetaTileEntities are allowed inside by default
-            TileEntity tileEntity = blockWorldState.getTileEntity();
-            if (!(tileEntity instanceof IGregTechTileEntity)) return true;
+            TileEntity tileEntity = worldState.getTileEntity();
+            if (!(tileEntity instanceof IGregTechTileEntity)) return null;
 
             MetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
 
             // always ban other cleanrooms, can cause problems otherwise
-            if (metaTileEntity instanceof ICleanroomProvider)
-                return false;
+            if (metaTileEntity instanceof ICleanroomProvider) return null;
 
-            if (isMachineBanned(metaTileEntity))
-                return false;
-
-            // the machine does not need a cleanroom, so do nothing more
-            if (!(metaTileEntity instanceof ICleanroomReceiver cleanroomReceiver)) return true;
-
-            // give the machine this cleanroom if it doesn't have this one
-            if (cleanroomReceiver.getCleanroom() != this) {
-                cleanroomReceiver.setCleanroom(this);
-                cleanroomReceivers.add(cleanroomReceiver);
-            }
-            return true;
+            return isMachineBanned(metaTileEntity) ? PatternError.PLACEHOLDER : null;
         });
+    }
+
+    @Override
+    public void setFrontFacing(EnumFacing facing) {
+        super.setFrontFacing(facing);
+        updateFacingMap();
+    }
+
+    protected void updateFacingMap() {
+        // cache relative front, back, left, right
+        for (int i = 2; i < 6; i++) {
+            EnumFacing abs = RelativeDirection.VALUES[i].getRelativeFacing(frontFacing, upwardsFacing, false);
+            facingMap.put(abs, RelativeDirection.VALUES[i]);
+        }
     }
 
     @Override
@@ -514,9 +393,79 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
                                 "gregtech.multiblock.cleanroom.low_tier", energyNeeded));
                     }
                 })
+                .addCustom(tl -> {
+                    if (isStructureFormed()) return;
+
+                    tl.add(getWithButton(EnumFacing.NORTH));
+                    tl.add(getWithButton(EnumFacing.WEST));
+                    tl.add(getWithButton(EnumFacing.SOUTH));
+                    tl.add(getWithButton(EnumFacing.EAST));
+                    tl.add(getWithButton(EnumFacing.DOWN));
+
+                    tl.add(withButton(new TextComponentTranslation("gregtech.multiblock.render." + renderingAABB),
+                            "render:" + renderingAABB));
+                })
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
                 .addWorkingStatusLine()
                 .addProgressLine(getProgressPercent() / 100.0);
+    }
+
+    protected ITextComponent getWithButton(EnumFacing facing) {
+        RelativeDirection relative = facing == EnumFacing.DOWN ? RelativeDirection.DOWN : facingMap.get(facing);
+        if (relative == null)
+            return new TextComponentString("null value at facingMap.get(EnumFacing." + facing.getName() + ")");
+
+        String name = relative.name();
+
+        ITextComponent button = new TextComponentTranslation("gregtech.direction." + facing.getName().toLowerCase(
+                Locale.ROOT)).appendText(": " + bounds[relative.ordinal()]);
+        button.appendText(" ");
+        button.appendSibling(withButton(new TextComponentString("[-]"), name + ":-"));
+        button.appendText(" ");
+        button.appendSibling(withButton(new TextComponentString("[+]"), name + ":+"));
+        return button;
+    }
+
+    @Override
+    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
+        super.handleDisplayClick(componentData, clickData);
+
+        String[] data = componentData.split(":");
+
+        if ("render".equals(data[0])) {
+            boolean render = !Boolean.parseBoolean(data[1]);
+            renderingAABB = render;
+            writeCustomData(GregtechDataCodes.RENDER_UPDATE, buf -> buf.writeBoolean(render));
+        }
+
+        switch (data[0]) {
+            case "LEFT" -> bounds[2] = MathHelper.clamp(bounds[2] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "RIGHT" -> bounds[3] = MathHelper.clamp(bounds[3] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "FRONT" -> bounds[4] = MathHelper.clamp(bounds[4] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "BACK" -> bounds[5] = MathHelper.clamp(bounds[5] + getFactor(data[1]), MIN_RADIUS, MAX_RADIUS);
+            case "DOWN" -> bounds[1] = MathHelper.clamp(bounds[1] + getFactor(data[1]), MIN_DEPTH, MAX_DEPTH);
+            default -> {
+                return;
+            }
+        }
+
+        writeCustomData(GregtechDataCodes.UPDATE_STRUCTURE_SIZE, buf -> buf.writeVarIntArray(bounds));
+
+        getSubstructure().clearCache();
+    }
+
+    protected static int getFactor(String str) {
+        return "+".equals(str) ? 1 : -1;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<Map<String, String>> getPreviewBuilds() {
+        return GregTechAPI.CLEANROOM_FILTERS.values().stream()
+                .filter(i -> i.getCleanroomType() != null)
+                .sorted(Comparator.comparingInt(ICleanroomFilter::getTier))
+                .map(i -> Collections.singletonMap("cleanroomType", i.getCleanroomType().getName()))
+                .iterator();
     }
 
     @Override
@@ -555,6 +504,41 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             tooltip.add("");
         } else {
             tooltip.add(I18n.format("gregtech.machine.cleanroom.tooltip.hold_ctrl"));
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void renderAABB(boolean render) {
+        if (render) {
+            if (aabb == null) aabb = new AABBHighlightRenderer.AABBRender(new GreggyBlockPos(getPos()),
+                    new GreggyBlockPos(getPos()), 1, 1, 1, Long.MAX_VALUE);
+
+            // reset coords
+            aabb.from().from(getPos());
+            aabb.to().from(getPos());
+
+            // ordinal 0 is UP, which is always 0
+            for (int i = 1; i < 6; i++) {
+                EnumFacing facing = RelativeDirection.VALUES[i].getRelativeFacing(getFrontFacing(), getUpwardsFacing(),
+                        false);
+                if (facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) {
+                    // from is always absolutely positive
+                    aabb.from().offset(facing, bounds[i]);
+                } else {
+                    // to is always absolutely negative
+                    aabb.to().offset(facing, bounds[i]);
+                }
+            }
+
+            // offset by 1 since the renderer doesn't do it
+            aabb.from().add(offset);
+
+            // this is so scuffed im sorry for going back to kila level code :sob:
+            // surely this won't cause the gc to blow up
+            AABBHighlightRenderer.addAABB(aabb, () -> isValid() && getWorld().isBlockLoaded(getPos(), false) &&
+                    getWorld().getTileEntity(getPos()) == getHolder());
+        } else {
+            AABBHighlightRenderer.removeAABB(aabb);
         }
     }
 
@@ -645,6 +629,8 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     }
 
     public boolean drainEnergy(boolean simulate) {
+        if (energyContainer == null) return false;
+
         long energyToDrain = isClean() ? 4 :
                 GTValues.VA[getEnergyTier()];
         long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
@@ -669,53 +655,48 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_STRUCTURE_SIZE) {
-            this.lDist = buf.readInt();
-            this.rDist = buf.readInt();
-            this.bDist = buf.readInt();
-            this.fDist = buf.readInt();
-            this.hDist = buf.readInt();
+            System.arraycopy(buf.readVarIntArray(), 0, bounds, 0, 6);
+            renderAABB(renderingAABB);
         } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.cleanroomLogic.setActive(buf.readBoolean());
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.cleanroomLogic.setWorkingEnabled(buf.readBoolean());
             scheduleRenderUpdate();
+        } else if (dataId == GregtechDataCodes.RENDER_UPDATE) {
+            this.renderingAABB = buf.readBoolean();
+            renderAABB(this.renderingAABB);
         }
     }
 
     @Override
     public NBTTagCompound writeToNBT(@NotNull NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("lDist", this.lDist);
-        data.setInteger("rDist", this.rDist);
-        data.setInteger("bDist", this.fDist);
-        data.setInteger("fDist", this.bDist);
-        data.setInteger("hDist", this.hDist);
         data.setInteger("cleanAmount", this.cleanAmount);
+        data.setIntArray("bounds", bounds);
         return this.cleanroomLogic.writeToNBT(data);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.lDist = data.hasKey("lDist") ? data.getInteger("lDist") : this.lDist;
-        this.rDist = data.hasKey("rDist") ? data.getInteger("rDist") : this.rDist;
-        this.hDist = data.hasKey("hDist") ? data.getInteger("hDist") : this.hDist;
-        this.bDist = data.hasKey("bDist") ? data.getInteger("bDist") : this.bDist;
-        this.fDist = data.hasKey("fDist") ? data.getInteger("fDist") : this.fDist;
-        reinitializeStructurePattern();
         this.cleanAmount = data.getInteger("cleanAmount");
         this.cleanroomLogic.readFromNBT(data);
+        if (data.hasKey("bounds")) {
+            System.arraycopy(data.getIntArray("bounds"), 0, bounds, 0, 6);
+        } else if (data.hasKey("lDist")) {
+            bounds[1] = data.getInteger("hDist");
+            bounds[2] = data.getInteger("lDist");
+            bounds[3] = data.getInteger("rDist");
+            bounds[4] = data.getInteger("fDist");
+            bounds[5] = data.getInteger("bDist");
+        }
+        updateFacingMap();
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(this.lDist);
-        buf.writeInt(this.rDist);
-        buf.writeInt(this.bDist);
-        buf.writeInt(this.fDist);
-        buf.writeInt(this.hDist);
         buf.writeInt(this.cleanAmount);
         this.cleanroomLogic.writeInitialSyncData(buf);
     }
@@ -723,11 +704,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.lDist = buf.readInt();
-        this.rDist = buf.readInt();
-        this.bDist = buf.readInt();
-        this.fDist = buf.readInt();
-        this.hDist = buf.readInt();
         this.cleanAmount = buf.readInt();
         this.cleanroomLogic.receiveInitialSyncData(buf);
     }
@@ -737,42 +713,6 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         if (ConfigHolder.machines.enableCleanroom) {
             super.getSubItems(creativeTab, subItems);
         }
-    }
-
-    @Override
-    public List<MultiblockShapeInfo> getMatchingShapes() {
-        ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
-                .aisle("XXXXX", "XIHLX", "XXDXX", "XXXXX", "XXXXX")
-                .aisle("XXXXX", "X   X", "G   G", "X   X", "XFFFX")
-                .aisle("XXXXX", "X   X", "G   G", "X   X", "XFSFX")
-                .aisle("XXXXX", "X   X", "G   G", "X   X", "XFFFX")
-                .aisle("XMXEX", "XXOXX", "XXRXX", "XXXXX", "XXXXX")
-                .where('X', MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE))
-                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockGlassCasing.CasingType.CLEANROOM_GLASS))
-                .where('S', MetaTileEntities.CLEANROOM, EnumFacing.SOUTH)
-                .where(' ', Blocks.AIR.getDefaultState())
-                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.LV], EnumFacing.SOUTH)
-                .where('I', MetaTileEntities.PASSTHROUGH_HATCH_ITEM, EnumFacing.NORTH)
-                .where('L', MetaTileEntities.PASSTHROUGH_HATCH_FLUID, EnumFacing.NORTH)
-                .where('H', MetaTileEntities.HULL[GTValues.HV], EnumFacing.NORTH)
-                .where('D', MetaTileEntities.DIODES[GTValues.HV], EnumFacing.NORTH)
-                .where('M',
-                        () -> ConfigHolder.machines.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH :
-                                MetaBlocks.CLEANROOM_CASING.getState(BlockCleanroomCasing.CasingType.PLASCRETE),
-                        EnumFacing.SOUTH)
-                .where('O',
-                        Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH)
-                                .withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.LOWER))
-                .where('R', Blocks.IRON_DOOR.getDefaultState().withProperty(BlockDoor.FACING, EnumFacing.NORTH)
-                        .withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
-
-        GregTechAPI.CLEANROOM_FILTERS.entrySet().stream()
-                .filter(entry -> entry.getValue().getCleanroomType() != null)
-                .sorted(Comparator.comparingInt(entry -> entry.getValue().getTier()))
-                .forEach(entry -> shapeInfo.add(builder.where('F', entry.getKey()).build()));
-
-        return shapeInfo;
     }
 
     @Override

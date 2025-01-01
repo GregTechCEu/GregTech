@@ -2,15 +2,14 @@ package gregtech.api.pattern;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
+/**
+ * Class allowing access to a block at a certain pos for structure checks and contains structure information.
+ */
 public class BlockWorldState {
 
     protected World world;
@@ -18,41 +17,27 @@ public class BlockWorldState {
     protected IBlockState state;
     protected TileEntity tileEntity;
     protected boolean tileEntityInitialized;
-    protected PatternMatchContext matchContext;
-    protected Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
-    protected Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
-    protected TraceabilityPredicate predicate;
-    protected PatternError error;
 
-    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext,
-                       Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount,
-                       Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount,
-                       TraceabilityPredicate predicate) {
+    public void update(World worldIn, GreggyBlockPos pos) {
         this.world = worldIn;
-        this.pos = posIn;
+        this.pos = pos.immutable();
         this.state = null;
         this.tileEntity = null;
         this.tileEntityInitialized = false;
-        this.matchContext = matchContext;
-        this.globalCount = globalCount;
-        this.layerCount = layerCount;
-        this.predicate = predicate;
-        this.error = null;
     }
 
-    public boolean hasError() {
-        return error != null;
+    public void setPos(GreggyBlockPos pos) {
+        this.pos = pos.immutable();
+        this.state = null;
+        this.tileEntity = null;
+        this.tileEntityInitialized = false;
     }
 
-    public void setError(PatternError error) {
-        this.error = error;
-        if (error != null) {
-            error.setWorldState(this);
-        }
-    }
-
-    public PatternMatchContext getMatchContext() {
-        return matchContext;
+    public void setPos(BlockPos pos) {
+        this.pos = pos.toImmutable();
+        this.state = null;
+        this.tileEntity = null;
+        this.tileEntityInitialized = false;
     }
 
     public IBlockState getBlockState() {
@@ -77,17 +62,11 @@ public class BlockWorldState {
         return this.pos.toImmutable();
     }
 
-    public IBlockState getOffsetState(EnumFacing face) {
-        if (pos instanceof MutableBlockPos) {
-            ((MutableBlockPos) pos).move(face);
-            IBlockState blockState = world.getBlockState(pos);
-            ((MutableBlockPos) pos).move(face.getOpposite());
-            return blockState;
-        }
-        return world.getBlockState(this.pos.offset(face));
-    }
-
     public World getWorld() {
         return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 }

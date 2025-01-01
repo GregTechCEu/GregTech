@@ -9,9 +9,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTTransferUtils;
@@ -37,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -71,7 +70,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
      * a properly overriden {@link DistillationTowerLogicHandler#determineOrderedFluidOutputs()}
      */
     @Override
-    protected Function<BlockPos, Integer> multiblockPartSorter() {
+    protected ToIntFunction<BlockPos> multiblockPartSorter() {
         return RelativeDirection.UP.getSorter(getFrontFacing(), getUpwardsFacing(), isFlipped());
     }
 
@@ -103,24 +102,24 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
-        if (this.handler == null || this.structurePattern == null) return;
-        handler.determineLayerCount(this.structurePattern);
+    protected void formStructure(String name) {
+        super.formStructure(name);
+        if (this.handler == null) return;
+        handler.determineLayerCount((BlockPattern) getSubstructure());
         handler.determineOrderedFluidOutputs();
     }
 
     @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
+    public void invalidateStructure(String name) {
+        super.invalidateStructure(name);
         if (this.handler != null) handler.invalidate();
     }
 
     @Override
     protected @NotNull BlockPattern createStructurePattern() {
-        return FactoryBlockPattern.start(RIGHT, FRONT, UP)
-                .aisle("YSY", "YYY", "YYY")
-                .aisle("XXX", "X#X", "XXX").setRepeatable(1, 11)
+        return FactoryBlockPattern.start(UP, FRONT, RIGHT)
+                .aisle("YYY", "YYY", "YSY")
+                .aisleRepeatable(1, 11, "XXX", "X#X", "XXX")
                 .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
                 .where('Y', states(getCasingState())

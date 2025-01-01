@@ -80,6 +80,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_STRUCTURE_SIZE = assignId();
     public static final int STRUCTURE_FORMED = assignId();
     public static final int VARIANT_RENDER_UPDATE = assignId();
+    public static final int RENDER_UPDATE = assignId();
     public static final int IS_TAPED = assignId();
     public static final int STORE_MAINTENANCE = assignId();
     public static final int STORE_TAPED = assignId();

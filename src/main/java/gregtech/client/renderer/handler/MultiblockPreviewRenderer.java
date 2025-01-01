@@ -1,23 +1,29 @@
 package gregtech.client.renderer.handler;
 
-import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.util.BlockInfo;
+import gregtech.api.pattern.GreggyBlockPos;
+import gregtech.api.util.GregFakePlayer;
+import gregtech.client.renderer.scene.ImmediateWorldSceneRenderer;
 import gregtech.client.utils.TrackedDummyWorld;
+import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
@@ -30,9 +36,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
+
+import static gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper.SOURCE;
 
 @SideOnly(Side.CLIENT)
 public class MultiblockPreviewRenderer {
@@ -73,20 +80,25 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-    public static void renderMultiBlockPreview(MultiblockControllerBase controller, long durTimeMillis) {
-        if (!controller.getPos().equals(mbpPos)) {
+    public static void renderMultiBlockPreview(MultiblockControllerBase src, EntityPlayer player,
+                                               long durTimeMillis) {
+        if (!src.getPos().equals(mbpPos)) {
             layer = 0;
         } else {
             if (mbpEndTime - System.currentTimeMillis() < 200) return;
             layer++;
         }
         resetMultiblockRender();
-        mbpPos = controller.getPos();
+        mbpPos = src.getPos();
         mbpEndTime = System.currentTimeMillis() + durTimeMillis;
         opList = GLAllocation.generateDisplayLists(1); // allocate op list
         GlStateManager.glNewList(opList, GL11.GL_COMPILE);
-        List<MultiblockShapeInfo> shapes = controller.getMatchingShapes();
-        if (!shapes.isEmpty()) renderControllerInList(controller, shapes.get(0), layer);
+        Iterator<Map<String, String>> iter = src.getPreviewBuilds();
+        if (iter.hasNext()) {
+            renderControllerInList(src, iter.next(), layer);
+            // todo add dots again
+            // shapes.get(0).sendDotMessage(player);
+        }
         GlStateManager.glEndList();
     }
 
@@ -99,86 +111,46 @@ public class MultiblockPreviewRenderer {
         }
     }
 
-    public static void renderControllerInList(MultiblockControllerBase controllerBase, MultiblockShapeInfo shapeInfo,
+    public static void renderControllerInList(MultiblockControllerBase src, Map<String, String> keyMap,
                                               int layer) {
-        BlockPos mbpPos = controllerBase.getPos();
-        EnumFacing frontFacing, previewFacing;
-        previewFacing = controllerBase.getFrontFacing();
-        BlockPos controllerPos = BlockPos.ORIGIN;
-        MultiblockControllerBase mte = null;
-        BlockInfo[][][] blocks = shapeInfo.getBlocks();
-        Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
-        int maxY = 0;
-        for (int x = 0; x < blocks.length; x++) {
-            BlockInfo[][] aisle = blocks[x];
-            maxY = Math.max(maxY, aisle.length);
-            for (int y = 0; y < aisle.length; y++) {
-                BlockInfo[] column = aisle[y];
-                for (int z = 0; z < column.length; z++) {
-                    blockMap.put(new BlockPos(x, y, z), column[z]);
-                    MetaTileEntity metaTE = column[z].getTileEntity() instanceof IGregTechTileEntity ?
-                            ((IGregTechTileEntity) column[z].getTileEntity()).getMetaTileEntity() : null;
-                    if (metaTE instanceof MultiblockControllerBase &&
-                            metaTE.metaTileEntityId.equals(controllerBase.metaTileEntityId)) {
-                        controllerPos = new BlockPos(x, y, z);
-                        previewFacing = metaTE.getFrontFacing();
-                        mte = (MultiblockControllerBase) metaTE;
-                        break;
-                    }
-                }
-            }
-        }
         TrackedDummyWorld world = new TrackedDummyWorld();
-        world.addBlocks(blockMap);
-        int finalMaxY = layer % (maxY + 1);
-        world.setRenderFilter(pos -> pos.getY() + 1 == finalMaxY || finalMaxY == 0);
+        ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
+        worldSceneRenderer.setClearColor(ConfigHolder.client.multiblockPreviewColor);
 
-        EnumFacing facing = controllerBase.getFrontFacing();
-        EnumFacing upwardsFacing = controllerBase.getUpwardsFacing();
+        MetaTileEntityHolder holder = new MetaTileEntityHolder();
+        holder.setMetaTileEntity(src);
+        holder.getMetaTileEntity().onPlacement();
+        holder.getMetaTileEntity().setFrontFacing(src.getFrontFacing());
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).setUpwardsFacing(src.getUpwardsFacing());
 
-        frontFacing = facing.getYOffset() == 0 ? facing :
-                facing.getYOffset() < 0 ? upwardsFacing : upwardsFacing.getOpposite();
-        Rotation rotatePreviewBy = Rotation
-                .values()[(4 + frontFacing.getHorizontalIndex() - previewFacing.getHorizontalIndex()) % 4];
+        world.setBlockState(SOURCE, src.getBlock().getDefaultState());
+        world.setTileEntity(SOURCE, holder);
+
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).autoBuild(new GregFakePlayer(world), keyMap,
+                MultiblockControllerBase.DEFAULT_STRUCTURE);
+        ((MultiblockControllerBase) holder.getMetaTileEntity()).checkStructurePattern();
+
+        int finalMaxY = (int) (layer % (world.getMaxPos().y - world.getMinPos().y + 2));
+        world.setRenderFilter(pos -> pos.getY() - (int) world.getMinPos().y + 1 == finalMaxY || finalMaxY == 0);
 
         Minecraft mc = Minecraft.getMinecraft();
         BlockRendererDispatcher brd = mc.getBlockRendererDispatcher();
         Tessellator tes = Tessellator.getInstance();
         BufferBuilder buff = tes.getBuffer();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(mbpPos.getX(), mbpPos.getY(), mbpPos.getZ());
-        GlStateManager.translate(0.5, 0, 0.5);
-        GlStateManager.rotate(rotatePreviewBy.ordinal() * 90, 0, -1, 0);
-        GlStateManager.translate(-0.5, 0, -0.5);
-
-        if (facing == EnumFacing.UP) {
-            GlStateManager.translate(0.5, 0.5, 0.5);
-            GlStateManager.rotate(90, -previewFacing.getZOffset(), 0, previewFacing.getXOffset());
-            GlStateManager.translate(-0.5, -0.5, -0.5);
-        } else if (facing == EnumFacing.DOWN) {
-            GlStateManager.translate(0.5, 0.5, 0.5);
-            GlStateManager.rotate(90, previewFacing.getZOffset(), 0, -previewFacing.getXOffset());
-            GlStateManager.translate(-0.5, -0.5, -0.5);
-        } else {
-            int degree = 90 * (upwardsFacing == EnumFacing.EAST ? -1 :
-                    upwardsFacing == EnumFacing.SOUTH ? 2 : upwardsFacing == EnumFacing.WEST ? 1 : 0);
-            GlStateManager.translate(0.5, 0.5, 0.5);
-            GlStateManager.rotate(degree, previewFacing.getXOffset(), 0, previewFacing.getZOffset());
-            GlStateManager.translate(-0.5, -0.5, -0.5);
-        }
-
-        if (mte != null) {
-            mte.checkStructurePattern();
-        }
 
         BlockRenderLayer oldLayer = MinecraftForgeClient.getRenderLayer();
-
         TargetBlockAccess targetBA = new TargetBlockAccess(world, BlockPos.ORIGIN);
-        for (BlockPos pos : blockMap.keySet()) {
+
+        GreggyBlockPos greg = new GreggyBlockPos();
+        GreggyBlockPos offset = new GreggyBlockPos(SOURCE);
+        GreggyBlockPos temp = new GreggyBlockPos();
+
+        for (BlockPos pos : world.renderedBlocks) {
             targetBA.setPos(pos);
+            greg.from(src.getPos()).add(temp.from(pos)).subtract(offset);
+
             GlStateManager.pushMatrix();
-            BlockPos.MutableBlockPos tPos = new BlockPos.MutableBlockPos(pos.subtract(controllerPos));
-            GlStateManager.translate(tPos.getX(), tPos.getY(), tPos.getZ());
+            GlStateManager.translate(greg.x(), greg.y(), greg.z());
             GlStateManager.translate(0.125, 0.125, 0.125);
             GlStateManager.scale(0.75, 0.75, 0.75);
 
@@ -194,8 +166,6 @@ public class MultiblockPreviewRenderer {
             GlStateManager.popMatrix();
         }
         ForgeHooksClient.setRenderLayer(oldLayer);
-
-        GlStateManager.popMatrix();
     }
 
     @SideOnly(Side.CLIENT)

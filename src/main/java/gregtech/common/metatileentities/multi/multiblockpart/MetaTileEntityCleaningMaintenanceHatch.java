@@ -5,7 +5,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
@@ -50,8 +49,8 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
-        super.addToMultiBlock(controllerBase);
+    public void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase, @NotNull String name) {
+        super.addToMultiBlock(controllerBase, name);
         if (controllerBase instanceof ICleanroomReceiver &&
                 ((ICleanroomReceiver) controllerBase).getCleanroom() == null) {
             ((ICleanroomReceiver) controllerBase).setCleanroom(DUMMY_CLEANROOM);
@@ -61,21 +60,6 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
     @Override
     public int getTier() {
         return GTValues.UV;
-    }
-
-    @Override
-    public ICubeRenderer getBaseTexture() {
-        MultiblockControllerBase controller = getController();
-        if (controller != null) {
-            return this.hatchTexture = controller.getBaseTexture(this);
-        } else if (this.hatchTexture != null) {
-            if (hatchTexture != Textures.getInactiveTexture(hatchTexture)) {
-                return this.hatchTexture = Textures.getInactiveTexture(hatchTexture);
-            }
-            return this.hatchTexture;
-        } else {
-            return Textures.VOLTAGE_CASINGS[getTier()];
-        }
     }
 
     @Override

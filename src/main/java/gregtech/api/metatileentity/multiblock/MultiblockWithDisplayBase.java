@@ -13,7 +13,6 @@ import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
@@ -181,8 +180,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         if (this.hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) { // nothing extra if no
                                                                                          // maintenance
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
@@ -199,7 +198,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 storeTaped(false);
             }
         }
-        this.variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
+        this.variantActiveBlocks = getVABlocks(getSubstructure(name).getCache());
         replaceVariantBlocksActive(false);
     }
 
@@ -307,7 +306,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void invalidateStructure() {
+    public void invalidateStructure(String name) {
         if (hasMaintenanceMechanics() && ConfigHolder.machines.enableMaintenance) { // nothing extra if no maintenance
             if (!getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0)
@@ -318,7 +317,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         this.fluidInfSink = false;
         this.itemInfSink = false;
         this.maintenanceHatch = null;
-        super.invalidateStructure();
+        super.invalidateStructure(name);
     }
 
     protected void replaceVariantBlocksActive(boolean isActive) {

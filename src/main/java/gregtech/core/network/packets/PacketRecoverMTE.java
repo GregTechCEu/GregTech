@@ -46,6 +46,8 @@ public class PacketRecoverMTE implements IPacket, IServerExecutor {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IGregTechTileEntity holder && holder.isValid()) {
             holder.writeCustomData(INITIALIZE_MTE, buffer -> {
+                // curse you who didn't write the line below and wasted 4 hours for me to debug
+                buffer.writeVarInt(holder.getMetaTileEntity().getRegistry().getNetworkId());
                 buffer.writeVarInt(
                         holder.getMetaTileEntity().getRegistry()
                                 .getIdByObjectName(holder.getMetaTileEntity().metaTileEntityId));

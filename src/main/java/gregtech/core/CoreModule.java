@@ -222,6 +222,7 @@ public class CoreModule implements IGregTechModule {
             PSS_BATTERIES.put(MetaBlocks.BATTERY_BLOCK.getState(type), type);
         }
         for (BlockCleanroomCasing.CasingType type : BlockCleanroomCasing.CasingType.values()) {
+            if (type.getCleanroomType() == null) continue;
             CLEANROOM_FILTERS.put(MetaBlocks.CLEANROOM_CASING.getState(type), type);
         }
         /* End API Block Registration */

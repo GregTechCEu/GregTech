@@ -1,12 +1,36 @@
 package gregtech.api.metatileentity.multiblock;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public interface IMultiblockPart {
 
     boolean isAttachedToMultiBlock();
 
-    void addToMultiBlock(MultiblockControllerBase controllerBase);
+    default void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase) {
+        addToMultiBlock(controllerBase, MultiblockControllerBase.DEFAULT_STRUCTURE);
+    }
 
-    void removeFromMultiBlock(MultiblockControllerBase controllerBase);
+    void addToMultiBlock(@NotNull MultiblockControllerBase controllerBase, @NotNull String substructureName);
+
+    void removeFromMultiBlock(@NotNull MultiblockControllerBase controllerBase);
+
+    /**
+     * Gets how many multiblocks are currently using the part.
+     */
+    int getWallshareCount();
+
+    /**
+     * Gets the name of the substructure the part is attached to, or null if it is not attached.
+     */
+    @Nullable
+    String getSubstructureName();
+
+    boolean canPartShare(MultiblockControllerBase target, String substructureName);
+
+    default boolean canPartShare(MultiblockControllerBase target) {
+        return canPartShare(target, MultiblockControllerBase.DEFAULT_STRUCTURE);
+    }
 
     default boolean canPartShare() {
         return true;

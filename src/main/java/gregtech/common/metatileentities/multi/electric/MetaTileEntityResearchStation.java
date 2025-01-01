@@ -13,10 +13,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
-import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTUtility;
@@ -45,8 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static gregtech.api.util.RelativeDirection.*;
-
 public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                                            implements IOpticalComputationReceiver {
 
@@ -64,8 +61,8 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
+    protected void formStructure(String name) {
+        super.formStructure(name);
         List<IOpticalComputationHatch> providers = getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION);
         if (providers != null && providers.size() >= 1) {
             computationProvider = providers.get(0);
@@ -98,7 +95,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    public void invalidateStructure() {
+    public void invalidateStructure(String name) {
         computationProvider = null;
         // recheck the ability to make sure it wasn't the one broken
         List<IObjectHolder> holders = getAbilities(MultiblockAbility.OBJECT_HOLDER);
@@ -106,7 +103,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
             objectHolder.setLocked(false);
         }
         objectHolder = null;
-        super.invalidateStructure();
+        super.invalidateStructure(name);
     }
 
     @Override
@@ -122,13 +119,13 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "VVV", "PPP", "PPP", "PPP", "VVV", "XXX")
-                .aisle("XXX", "VAV", "AAA", "AAA", "AAA", "VAV", "XXX")
-                .aisle("XXX", "VAV", "XAX", "XSX", "XAX", "VAV", "XXX")
-                .aisle("XXX", "XAX", "---", "---", "---", "XAX", "XXX")
-                .aisle(" X ", "XAX", "---", "---", "---", "XAX", " X ")
-                .aisle(" X ", "XAX", "-A-", "-H-", "-A-", "XAX", " X ")
                 .aisle("   ", "XXX", "---", "---", "---", "XXX", "   ")
+                .aisle(" X ", "XAX", "-A-", "-H-", "-A-", "XAX", " X ")
+                .aisle(" X ", "XAX", "---", "---", "---", "XAX", " X ")
+                .aisle("XXX", "XAX", "---", "---", "---", "XAX", "XXX")
+                .aisle("XXX", "VAV", "XAX", "XSX", "XAX", "VAV", "XXX")
+                .aisle("XXX", "VAV", "AAA", "AAA", "AAA", "VAV", "XXX")
+                .aisle("XXX", "VVV", "PPP", "PPP", "PPP", "VVV", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()))
                 .where(' ', any())
@@ -139,13 +136,13 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
                         .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1))
                         .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION).setExactLimit(1)))
-                .where('H', abilities(MultiblockAbility.OBJECT_HOLDER))
+                .where('H', abilities(() -> getFrontFacing().getOpposite(), MultiblockAbility.OBJECT_HOLDER))
                 .build();
     }
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        return Collections.singletonList(MultiblockShapeInfo.builder(RIGHT, DOWN, FRONT)
+        return Collections.singletonList(MultiblockShapeInfo.builder()
                 .aisle("XXX", "VVV", "POP", "PEP", "PMP", "VVV", "XXX")
                 .aisle("XXX", "VAV", "AAA", "AAA", "AAA", "VAV", "XXX")
                 .aisle("XXX", "VAV", "XAX", "XSX", "XAX", "VAV", "XXX")

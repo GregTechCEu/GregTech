@@ -6,8 +6,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.pattern.BlockPattern;
+import gregtech.api.pattern.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.client.particle.VanillaParticleEffects;
 import gregtech.client.renderer.ICubeRenderer;
@@ -51,9 +51,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("XXX", "CCC", "#C#")
-                .aisle("XXX", "C#C", "#C#")
                 .aisle("XXX", "CSC", "#C#")
+                .aisle("XXX", "C#C", "#C#")
+                .aisle("XXX", "CCC", "#C#")
                 .where('S', selfPredicate())
                 .where('X', states(getFireboxState())
                         .or(autoAbilities(true, false, false, false, false).setMinGlobalLimited(1)

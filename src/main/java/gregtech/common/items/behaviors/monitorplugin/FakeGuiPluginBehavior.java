@@ -13,9 +13,6 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.gui.impl.FakeModularUIPluginContainer;
@@ -28,7 +25,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -66,34 +62,35 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
     }
 
     public MetaTileEntity getRealMTE() {
-        MetaTileEntity target = this.holder.getMetaTileEntity();
-        if (target instanceof MultiblockControllerBase multi && partIndex > 0) {
-            if (partPos != null) {
-                TileEntity entity = this.screen.getWorld().getTileEntity(partPos);
-                if (entity instanceof IGregTechTileEntity) {
-                    return ((IGregTechTileEntity) entity).getMetaTileEntity();
-                } else {
-                    partPos = null;
-                    return null;
-                }
-            }
-            PatternMatchContext context = multi.structurePattern.checkPatternFastAt(
-                    target.getWorld(), target.getPos(), target.getFrontFacing().getOpposite(), multi.getUpwardsFacing(),
-                    multi.allowsFlip());
-            if (context == null) {
-                return null;
-            }
-            Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
-            List<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
-            parts.sort(Comparator.comparing((it) -> ((MetaTileEntity) it).getPos().hashCode()));
-            if (parts.size() > partIndex - 1 && parts.get(partIndex - 1) instanceof MetaTileEntity) {
-                target = (MetaTileEntity) parts.get(partIndex - 1);
-                partPos = target.getPos();
-            } else {
-                return null;
-            }
-        }
-        return target;
+        return null;
+        // MetaTileEntity target = this.holder.getMetaTileEntity();
+        // if (target instanceof MultiblockControllerBase multi && partIndex > 0) {
+        // if (partPos != null) {
+        // TileEntity entity = this.screen.getWorld().getTileEntity(partPos);
+        // if (entity instanceof IGregTechTileEntity) {
+        // return ((IGregTechTileEntity) entity).getMetaTileEntity();
+        // } else {
+        // partPos = null;
+        // return null;
+        // }
+        // }
+        // PatternMatchContext context = multi.structurePattern.checkPatternFastAt(
+        // target.getWorld(), target.getPos(), target.getFrontFacing().getOpposite(), multi.getUpwardsFacing(),
+        // multi.allowsFlip());
+        // if (context == null) {
+        // return null;
+        // }
+        // Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
+        // List<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
+        // parts.sort(Comparator.comparing((it) -> ((MetaTileEntity) it).getPos().hashCode()));
+        // if (parts.size() > partIndex - 1 && parts.get(partIndex - 1) instanceof MetaTileEntity) {
+        // target = (MetaTileEntity) parts.get(partIndex - 1);
+        // partPos = target.getPos();
+        // } else {
+        // return null;
+        // }
+        // }
+        // return target;
     }
 
     public void createFakeGui() {
