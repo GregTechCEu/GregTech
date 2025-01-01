@@ -2,9 +2,9 @@ package gregtech.api.unification.material.properties;
 
 import net.minecraft.enchantment.Enchantment;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.tools.Tool;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,16 +22,12 @@ public class ExtraToolProperty implements IMaterialProperty {
             this.setToolAttackSpeed(Float.NaN);
             this.setToolAttackDamage(Float.NaN);
             this.setToolDurability(-1);
-            super.setToolHarvestLevel(-1);
+            this.setToolHarvestLevel(-1);
             this.setToolEnchantability(-1);
             this.setDurabilityMultiplier(-1);
         }
 
         // It does not make much sense to set these overrides:
-        public void setToolHarvestLevel(int harvestLevel) {
-            throw new UnsupportedOperationException();
-        }
-
         public void setShouldIgnoreCraftingTools(boolean ignore) {
             throw new UnsupportedOperationException();
         }
@@ -44,26 +40,31 @@ public class ExtraToolProperty implements IMaterialProperty {
             throw new UnsupportedOperationException();
         }
 
-        public SimpleToolProperty override(SimpleToolProperty property) {
+        private SimpleToolProperty override(@NotNull SimpleToolProperty property) {
+            // copy to prevent the previous map is produced
+            SimpleToolProperty result = new SimpleToolProperty(property);
+
             // Set the floating point number fields
             if (!Float.isNaN(this.getToolSpeed()))
-                property.setToolSpeed(this.getToolSpeed());
+                result.setToolSpeed(this.getToolSpeed());
             if (!Float.isNaN(this.getToolAttackSpeed()))
-                property.setToolAttackSpeed(this.getToolAttackSpeed());
+                result.setToolAttackSpeed(this.getToolAttackSpeed());
             if (!Float.isNaN(this.getToolAttackDamage()))
-                property.setToolAttackDamage(this.getToolAttackDamage());
+                result.setToolAttackDamage(this.getToolAttackDamage());
 
             // Set the integer fields
             if (this.getToolDurability() != -1)
-                property.setToolDurability(this.getToolDurability());
+                result.setToolDurability(this.getToolDurability());
+            if (this.getToolHarvestLevel() != -1)
+                result.setToolHarvestLevel(this.getToolHarvestLevel());
             if (this.getToolEnchantability() != -1)
-                property.setToolEnchantability(this.getToolEnchantability());
+                result.setToolEnchantability(this.getToolEnchantability());
             if (this.getDurabilityMultiplier() != -1)
-                property.setDurabilityMultiplier(this.getDurabilityMultiplier());
+                result.setDurabilityMultiplier(this.getDurabilityMultiplier());
 
             // Merge the enchantment map
-            property.getEnchantments().putAll(this.getEnchantments());
-            return property;
+            result.getEnchantments().putAll(this.getEnchantments());
+            return result;
         }
     }
 
@@ -84,8 +85,10 @@ public class ExtraToolProperty implements IMaterialProperty {
         return getOverrideProperty(toolClass) != null;
     }
 
-    public SimpleToolProperty getOverriddenResult(ToolProperty toolProperty, String toolClass){
-        return overrideMap.getOrDefault(toolClass, new OverrideToolProperty()).override((SimpleToolProperty) toolProperty);
+    public SimpleToolProperty getOverriddenResult(String toolClass, @Nullable ToolProperty toolProperty) {
+        if (toolProperty == null) toolProperty = new ToolProperty();
+        return overrideMap.getOrDefault(toolClass, new OverrideToolProperty())
+                .override(toolProperty);
     }
 
     @Override
@@ -94,52 +97,67 @@ public class ExtraToolProperty implements IMaterialProperty {
         // If they are overriding ToolProperty, then it is already generated.
     }
 
-    public static class Overrider {
+    public static class Builder {
 
         private final OverrideToolProperty toolProperty;
 
-        public static Overrider of() {
-            return new Overrider();
+        public static Builder of() {
+            return new Builder();
         }
 
-        public static Overrider of(float harvestSpeed, float attackDamage, int durability) {
-            Overrider overrider = new Overrider();
-            overrider.harvestSpeed(harvestSpeed).attackDamage(attackDamage).durability(durability);
-            return overrider;
+        public static Builder of(int durability) {
+            Builder builder = new Builder();
+            builder.durability(durability);
+            return builder;
         }
 
-        public Overrider() {
+        public static Builder of(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
+            Builder builder = new Builder();
+            builder.harvestSpeed(harvestSpeed).attackDamage(attackDamage).durability(durability).harvestLevel(harvestLevel);
+            return builder;
+        }
+
+        public Builder() {
             this.toolProperty = new OverrideToolProperty();
         }
 
-        public Overrider harvestSpeed(float harvestSpeed) {
+        public Builder harvestSpeed(float harvestSpeed) {
             toolProperty.setToolSpeed(harvestSpeed);
             return this;
         }
 
-        public Overrider attackDamage(float attackDamage) {
+        public Builder attackDamage(float attackDamage) {
             toolProperty.setToolAttackDamage(attackDamage);
             return this;
         }
 
-        public Overrider durability(int durability) {
+        public Builder durability(int durability) {
             toolProperty.setToolDurability(durability);
             return this;
         }
 
-        public Overrider attackSpeed(float attackSpeed) {
+        public Builder attackSpeed(float attackSpeed) {
             toolProperty.setToolAttackSpeed(attackSpeed);
             return this;
         }
 
-        public Overrider enchantment(Enchantment enchantment, int level) {
+        public Builder harvestLevel(int harvestLevel) {
+            toolProperty.setToolHarvestLevel(harvestLevel);
+            return this;
+        }
+
+        public Builder enchantment(Enchantment enchantment, int level) {
             toolProperty.addEnchantmentForTools(enchantment, level);
             return this;
         }
 
-        public Overrider durabilityMultiplier(int multiplier) {
+        public Builder durabilityMultiplier(int multiplier) {
             toolProperty.setDurabilityMultiplier(multiplier);
             return this;
+        }
+
+        public OverrideToolProperty build() {
+            return this.toolProperty;
         }
     }
 }
