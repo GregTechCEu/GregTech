@@ -96,7 +96,7 @@ public class RecipeRepairItemHooks {
 
                     // two GT tools, so use own logic to produce the correct output
                     IGTTool tool = (IGTTool) first.getItem();
-                    ItemStack output = tool.get(tool.getToolMaterial(first), first);
+                    ItemStack output = tool.get(tool.getToolMaterial(first));
 
                     NBTTagCompound outputTag = ToolHelper.getToolTag(output);
                     outputTag.setInteger(ToolHelper.DURABILITY_KEY, i1);
