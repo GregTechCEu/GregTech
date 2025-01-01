@@ -20,6 +20,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.SimpleToolProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -151,19 +152,16 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     /**
-     * This is a safer wrapper for materials without toolProperty properly set. In this case, the missing data is
-     * inferred from the referenceStack. This method supports specially made tools that is registered separately.
-     *
-     * @return A tool made from the given material
+     * @return A tool made from the given material. The tool property (at least overriding) for the material must be
+     * set.
      */
-    default ItemStack get(Material material, ItemStack referenceStack) {
+    default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
 
         NBTTagCompound stackCompound = GTUtility.getOrCreateNbtCompound(stack);
         stackCompound.setBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
 
         NBTTagCompound toolTag = getToolTag(stack);
-        NBTTagCompound referenceToolTag = getToolTag(referenceStack);
         IGTToolDefinition toolStats = getToolStats();
 
         // don't show the normal vanilla damage and attack speed tooltips,
@@ -177,54 +175,55 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         // Set other tool stats (durability)
-        ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-
+        System.out.println(this.getToolId());
+        SimpleToolProperty finalToolProperty;
+        {
+            ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
+            if (material.hasProperty(PropertyKey.EXTRATOOL)) {
+                System.out.println("Find Override Property!");
+                System.out.println(material);
+                finalToolProperty = material.getProperty(PropertyKey.EXTRATOOL)
+                        .getOverriddenResult(this.getToolId(), toolProperty);
+            } else {
+                finalToolProperty = material.getProperty(PropertyKey.TOOL);
+            }
+        }
         // Durability formula we are working with:
         // Final Durability = (material durability * material durability multiplier) + (tool definition durability *
         // definition durability multiplier) - 1
         // Subtracts 1 internally since Minecraft treats "0" as a valid durability, but we don't want to display this.
 
-        int durability;
-        boolean isUnbreakable;
-        if (toolProperty != null) {
-            // Tool material modifiers.
-            durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
+        // Tool material modifiers.
+        int durability = finalToolProperty.getToolDurability() * finalToolProperty.getDurabilityMultiplier();
 
-            // Tool type modifiers.
-            // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So
-            // apply the multiplier to the material durability if that would happen
-            if (toolStats.getBaseDurability(stack) == 0) {
-                durability = (int) (durability * toolStats.getDurabilityMultiplier(stack));
-            } else {
-                durability += (int) (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack));
-            }
-            durability--; // Adjust for MC
-
-            // Get unbreakability
-            isUnbreakable = toolProperty.getUnbreakable();
-
-            // Set tool and material enchantments
-            Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
-            toolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment,
-                    level.getLevel(toolProperty.getToolHarvestLevel())));
-            toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment,
-                    level.getLevel(toolProperty.getToolHarvestLevel())));
-            enchantments.forEach((enchantment, level) -> {
-                if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
-                    stack.addEnchantment(enchantment, level);
-                }
-            });
+        // Tool type modifiers.
+        // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So
+        // apply the multiplier to the material durability if that would happen
+        if (toolStats.getBaseDurability(stack) == 0) {
+            durability = (int) (durability * toolStats.getDurabilityMultiplier(stack));
         } else {
-            // In this case, simply get from the reference tool
-            durability = referenceToolTag.getInteger(MAX_DURABILITY_KEY);
-            isUnbreakable = referenceToolTag.getBoolean(UNBREAKABLE_KEY);
+            durability += (int) (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack));
         }
 
-        if (isUnbreakable) {
-            stackCompound.setBoolean(UNBREAKABLE_KEY, true);
-        }
+        durability -= 1; // Finally adjust for MC
         toolTag.setInteger(MAX_DURABILITY_KEY, durability);
         toolTag.setInteger(DURABILITY_KEY, 0);
+
+        if (finalToolProperty.getUnbreakable()) {
+            stackCompound.setBoolean(UNBREAKABLE_KEY, true);
+        }
+
+        // Set tool and material enchantments
+        Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
+        finalToolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment,
+                level.getLevel(finalToolProperty.getToolHarvestLevel())));
+        toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment,
+                level.getLevel(finalToolProperty.getToolHarvestLevel())));
+        enchantments.forEach((enchantment, level) -> {
+            if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
+                stack.addEnchantment(enchantment, level);
+            }
+        });
 
         // Set behaviours
         NBTTagCompound behaviourTag = getBehaviorsTag(stack);
@@ -239,18 +238,11 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
         }
 
-        if (toolProperty != null && toolProperty.isMagnetic()) {
+        if (finalToolProperty.isMagnetic()) {
             behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, true);
         }
 
         return stack;
-    }
-
-    /**
-     * @return A tool made from the given material. The tool property for the material must be set.
-     */
-    default ItemStack get(Material material) {
-        return get(material, ItemStack.EMPTY);
     }
 
     default ItemStack get(Material material, long defaultCharge, long defaultMaxCharge) {
