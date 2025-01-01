@@ -30,6 +30,10 @@ public class PatternError {
         this(pos, failingPredicate.getCandidates());
     }
 
+    public PatternError(BlockPos pos, TraceabilityPredicate.SimplePredicate failingPredicate) {
+        this(pos, Collections.singletonList(failingPredicate.getCandidates()));
+    }
+
     @Nullable
     public BlockPos getPos() {
         return pos;

@@ -85,15 +85,12 @@ public class BlockPattern implements IBlockPattern {
      * @param center The center char to look for
      */
     private void legacyStartOffset(char center) {
-        // don't do anything if center char isn't specified, this allows
-        // MultiblockControllerBase#validateStructurePatterns to do its thing while not logging an error here
+        // don't do anything if center char isn't specified
         if (center == 0) return;
-        // could also use aisles.length but this is cooler
         for (int aisleI = 0; aisleI < dimensions[0]; aisleI++) {
             int[] result = aisles[aisleI].firstInstanceOf(center);
             if (result != null) {
                 // structure starts at aisle 0, string 0, char 0, think about it
-                // so relative to the controller we need to offset by this to get to the start
                 moveOffset(directions[0], -aisleI);
                 moveOffset(directions[1], -result[0]);
                 moveOffset(directions[2], -result[1]);
@@ -211,7 +208,6 @@ public class BlockPattern implements IBlockPattern {
      */
     public boolean checkAisle(GreggyBlockPos controllerPos, EnumFacing frontFacing, EnumFacing upFacing, int aisleIndex,
                               int aisleOffset, boolean flip) {
-        // todo use a temporary cache to not double count sometimes
         // absolute facings from the relative facings
         EnumFacing absoluteAisle = directions[0].getRelativeFacing(frontFacing, upFacing, flip);
         EnumFacing absoluteString = directions[1].getRelativeFacing(frontFacing, upFacing, flip);

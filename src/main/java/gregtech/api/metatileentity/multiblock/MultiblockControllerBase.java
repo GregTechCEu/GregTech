@@ -56,7 +56,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Iterators;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -834,19 +834,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
      */
     @NotNull
     public Iterator<Map<String, String>> getPreviewBuilds() {
-        return new AbstractIterator<>() {
-
-            private boolean used;
-
-            @Override
-            protected Map<String, String> computeNext() {
-                if (!used) {
-                    used = true;
-                    return Collections.emptyMap();
-                }
-                return endOfData();
-            }
-        };
+        return Iterators.singletonIterator(Collections.emptyMap());
     }
 
     /**
@@ -882,10 +870,8 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
         BiPredicate<Long, BlockInfo> place = (l, info) -> {
             BlockPos pos = BlockPos.fromLong(l);
-
             // don't stop build if its air
             if (!getWorld().isAirBlock(pos)) return true;
-
             if (info.getTileEntity() instanceof MetaTileEntityHolder holder) {
                 ItemStack removed = hasAndRemoveItem(player, holder.getMetaTileEntity().getStackForm());
                 if (removed.isEmpty()) return false;
@@ -896,7 +882,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 newHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
                 if (removed.hasTagCompound())
                     newHolder.getMetaTileEntity().initFromItemStackData(removed.getTagCompound());
-
                 if (predicates.containsKey(pos.offset(newHolder.getMetaTileEntity().getFrontFacing()).toLong())) {
                     EnumFacing valid = null;
                     for (EnumFacing facing : EnumFacing.HORIZONTALS) {
@@ -914,7 +899,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                         }
                     }
                 }
-
                 getWorld().setBlockState(pos, holder.getMetaTileEntity().getBlock().getDefaultState());
                 getWorld().setTileEntity(pos, newHolder);
             } else {
@@ -922,18 +906,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     getWorld().setBlockState(pos, info.getBlockState());
                 else return false;
             }
-
             return true;
         };
 
         for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
             TraceabilityPredicate pred = entry.getValue();
             if (simpleIndex.getInt(pred) >= pred.simple.size()) continue;
-
             int pointer = simpleIndex.getInt(pred);
             TraceabilityPredicate.SimplePredicate simple = pred.simple.get(pointer);
             int count = globalCache.getInt(simple);
-
             try {
                 while ((simple.previewCount == -1 || count == simple.previewCount) &&
                         (simple.minGlobalCount == -1 || count == simple.minGlobalCount)) {
@@ -946,28 +927,19 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             } catch (IndexOutOfBoundsException e) {
                 continue;
             }
-
             globalCache.put(simple, globalCache.getInt(simple) + 1);
-
             if (simple.candidates == null) continue;
-
             TraceabilityPredicate.SimplePredicate finalSimple = simple;
             cache.computeIfAbsent(simple, k -> finalSimple.candidates.apply(map)[0]);
-
             if (!place.test(entry.getLongKey(), cache.get(simple))) return;
-
             entry.setValue(null);
         }
-
         simpleIndex.clear();
-
         for (Long2ObjectMap.Entry<TraceabilityPredicate> entry : predicates.long2ObjectEntrySet()) {
             TraceabilityPredicate pred = entry.getValue();
             if (pred == null || simpleIndex.getInt(pred) >= pred.simple.size()) continue;
-
             TraceabilityPredicate.SimplePredicate simple = pred.simple.get(simpleIndex.getInt(pred));
             int count = globalCache.getInt(simple);
-
             while (count == simple.previewCount || count == simple.maxGlobalCount) {
                 // if the current predicate is used, move until the next free one
                 int newIndex = simpleIndex.put(pred, simpleIndex.getInt(pred) + 1) + 1;
@@ -980,19 +952,16 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 count = globalCache.getInt(simple);
             }
             globalCache.put(simple, globalCache.getInt(simple) + 1);
-
             if (simple.candidates == null) continue;
-
             TraceabilityPredicate.SimplePredicate finalSimple = simple;
             cache.computeIfAbsent(simple, k -> finalSimple.candidates.apply(map)[0]);
-
             if (!place.test(entry.getLongKey(), cache.get(simple))) return;
         }
     }
 
     /**
      * Called right before the autobuild code starts, modify the map like if you want it to be "height"
-     * instead of "multi.1.0"
+     * instead of "multi.1.0". The passed in map may be immutable and may be the same one passed in for multiple builds.
      */
     protected void modifyAutoBuild(Map<String, String> map) {}
 

@@ -71,7 +71,6 @@ public class BasicAisleStrategy extends AisleStrategy {
         return aisles.get(index).actualRepeats = aisle.maxRepeats;
     }
 
-    // todo more lang support(yay!)
     @Override
     public int @NotNull [] getDefaultAisles(Map<String, String> map) {
         IntList list = new IntArrayList();
@@ -135,7 +134,6 @@ public class BasicAisleStrategy extends AisleStrategy {
         throw new IllegalStateException("Illegal multiAisles, check logs above.");
     }
 
-    // resisting the urge to make this a generic type return to allow for inheritors,,,,,,
     public BasicAisleStrategy multiAisle(int min, int max, int from, int to) {
         Preconditions.checkArgument(max >= min, "max: %s is less than min: %s", max, min);
         Preconditions.checkArgument(from >= 0, "from argument is negative: %s", from);

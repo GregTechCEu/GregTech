@@ -10,7 +10,6 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.factory.MetaItemGuiFactory;
 import gregtech.api.pattern.PatternError;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -193,7 +192,6 @@ public class MultiblockBuilderBehavior implements IItemBehaviour, ItemUIFactory 
                     player.sendMessage(
                             new TextComponentTranslation("gregtech.multiblock.pattern.error_message_header"));
                     player.sendMessage(new TextComponentString(error.getErrorInfo()));
-                    if (error.getPos() != null) BlockPosHighlightRenderer.renderBlockBoxHighLight(error.getPos(), 5000);
                     return EnumActionResult.SUCCESS;
                 }
             }

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+@Deprecated(forRemoval = true) // this shall be removed soontm, this class has no use atm
 public class MultiblockShapeInfo {
 
     /**

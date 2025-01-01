@@ -2,7 +2,6 @@ package gregtech.api.pattern;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 
 import com.google.common.collect.AbstractIterator;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,7 @@ import java.util.Iterator;
  */
 public class GreggyBlockPos {
 
-    public static final int NUM_X_BITS = 1 + MathHelper.log2(MathHelper.smallestEncompassingPowerOfTwo(30000000));
+    public static final int NUM_X_BITS = 1 + 32 - Integer.numberOfLeadingZeros(30_000_000 - 1);
     public static final int NUM_Z_BITS = NUM_X_BITS, NUM_Y_BITS = 64 - 2 * NUM_X_BITS;
     public static final int Y_SHIFT = NUM_Z_BITS;
     public static final int X_SHIFT = Y_SHIFT + NUM_Y_BITS;
@@ -156,7 +155,6 @@ public class GreggyBlockPos {
 
     /**
      * Serializes this pos to long, this should be identical to {@link BlockPos}.
-     * But the blockpos impl is so bad, who let them cook???
      * 
      * @return Long rep
      */
@@ -284,7 +282,8 @@ public class GreggyBlockPos {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(pos);
+        // should be identical to blockpos
+        return (pos[1] + pos[2] * 31) * 31 + pos[0];
     }
 
     @Override

@@ -102,11 +102,9 @@ public class TraceabilityPredicate {
      * @return A list containing lists which group together candidates
      */
     public List<List<ItemStack>> getCandidates() {
-        List<List<ItemStack>> candidates = new ArrayList<>();
-        for (TraceabilityPredicate.SimplePredicate pred : simple) {
-            candidates.add(pred.getCandidates());
-        }
-        return candidates;
+        return simple.stream()
+                .map(SimplePredicate::getCandidates)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -284,23 +282,17 @@ public class TraceabilityPredicate {
         public PatternError testGlobal(BlockWorldState worldState, Object2IntMap<SimplePredicate> global,
                                        Object2IntMap<SimplePredicate> layer) {
             PatternError result = predicate.apply(worldState);
-
             if (!global.containsKey(this)) global.put(this, 0);
             if ((minGlobalCount == -1 && maxGlobalCount == -1) || result != null || layer == null) return result;
-
             int count = layer.put(this, layer.getInt(this) + 1) + 1 + global.getInt(this);
             if (maxGlobalCount == -1 || count <= maxGlobalCount) return null;
-
             return new SinglePredicateError(this, 0);
         }
 
         public PatternError testLayer(BlockWorldState worldState, Object2IntMap<SimplePredicate> cache) {
             PatternError result = predicate.apply(worldState);
-
             if ((minLayerCount == -1 && maxLayerCount == -1) || result != null) return result;
-
             if (maxLayerCount == -1 || cache.getInt(this) <= maxLayerCount) return null;
-
             return new SinglePredicateError(this, 2);
         }
 
@@ -318,7 +310,7 @@ public class TraceabilityPredicate {
         public final int type, number;
 
         public SinglePredicateError(SimplePredicate failingPredicate, int type) {
-            super(null, Collections.singletonList(failingPredicate.getCandidates()));
+            super(null, failingPredicate);
             this.type = type;
 
             int number = -1;
