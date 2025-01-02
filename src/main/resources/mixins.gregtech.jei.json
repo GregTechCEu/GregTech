@@ -1,12 +1,13 @@
 {
-  "package" : "gregtech.mixins.jei",
-  "refmap" : "mixins.gregtech.refmap.json",
-  "target" : "@env(DEFAULT)",
-  "minVersion" : "0.8",
-  "compatibilityLevel" : "JAVA_8",
-  "mixins" : [
+  "package": "gregtech.mixins.jei",
+  "refmap": "mixins.gregtech.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "IngredientGridMixin",
     "JEITooltipMixin"
   ],
-  "client" : [],
-  "server" : []
+  "client": [],
+  "server": []
 }
