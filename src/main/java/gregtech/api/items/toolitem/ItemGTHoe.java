@@ -314,7 +314,7 @@ public class ItemGTHoe extends ItemHoe implements IGTTool {
     @Override
     public boolean hitEntity(@NotNull ItemStack stack, @NotNull EntityLivingBase target,
                              @NotNull EntityLivingBase attacker) {
-        getToolStats().getBehaviors().forEach(behavior -> behavior.hitEntity(stack, target, attacker));
+        getBehaviors(stack).forEach(behavior -> behavior.hitEntity(stack, target, attacker));
         // damage by 1, as this is what vanilla does
         ToolHelper.damageItem(stack, attacker, 1);
         return true;
