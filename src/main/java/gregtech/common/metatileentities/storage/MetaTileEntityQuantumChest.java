@@ -313,9 +313,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
     @Override
     protected void createWidgets(ModularPanel mainPanel, PanelSyncManager syncManager) {
         mainPanel.child(createQuantumDisplay("gregtech.machine.quantum_chest.items_stored",
-                () -> IKey.lang(virtualItemStack.getDisplayName()).get(),
-                textWidget -> !virtualItemStack.isEmpty(),
-                () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
+                        () -> IKey.lang(virtualItemStack.getTranslationKey()).get(),
+                        textWidget -> !virtualItemStack.isEmpty(),
+                        () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
                 .child(new QuantumItemRendererWidget(() -> virtualItemStack)
                         .onLock(() -> lockedStack, this::setLocked)
                         .pos(148, 41));
