@@ -1,8 +1,10 @@
 package gregtech.api.mui.widget;
 
+import gregtech.api.mui.sync.MappedSyncHandler;
+
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
@@ -17,7 +19,6 @@ import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -27,18 +28,8 @@ public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget>
 
     private final Supplier<ItemStack> virtualStack;
     private DynamicValue<ItemStack> lockedStack;
-    private final SyncHandler syncHandler = new SyncHandler() {
-
-        @Override
-        public void readOnClient(int id, PacketBuffer buf) throws IOException {}
-
-        @Override
-        public void readOnServer(int id, PacketBuffer buf) throws IOException {
-            if (id == 0) {
-                lockedStack.setValue(NetworkUtils.readItemStack(buf));
-            }
-        }
-    };
+    private final SyncHandler syncHandler = new MappedSyncHandler()
+            .addServerHandler(0, buffer -> lockedStack.setValue(NetworkUtils.readItemStack(buffer)));
 
     public QuantumItemRendererWidget(Supplier<ItemStack> virtualStack) {
         this.virtualStack = virtualStack;
@@ -77,7 +68,9 @@ public class QuantumItemRendererWidget extends Widget<QuantumItemRendererWidget>
         screenWrapper.setZ(100);
         renderer.zLevel = 100;
         GlStateManager.disableDepth();
+        RenderHelper.enableGUIStandardItemLighting();
         renderer.renderItemAndEffectIntoGUI(stack, 1, 1);
+        RenderHelper.enableStandardItemLighting();
         GlStateManager.enableDepth();
         screenWrapper.setZ(0);
         renderer.zLevel = 0;
