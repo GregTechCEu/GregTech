@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.drawable.DynamicDrawable;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
-
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IQuantumController;
@@ -36,6 +33,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -44,6 +42,7 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
@@ -436,8 +435,8 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                         tooltip.addLine(IKey.lang("gregtech.machine.quantum_storage.disconnected"));
                     }
                 })
-                .background(new DynamicDrawable(() ->
-                        isConnected() ? GTGuiTextures.GREGTECH_LOGO : GTGuiTextures.GREGTECH_LOGO_DARK));
+                .background(new DynamicDrawable(
+                        () -> isConnected() ? GTGuiTextures.GREGTECH_LOGO : GTGuiTextures.GREGTECH_LOGO_DARK));
     }
 
     protected ClickButtonWidget createConnectedGui(int y) {
