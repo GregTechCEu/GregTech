@@ -1,5 +1,8 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IQuantumController;
@@ -414,11 +417,34 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         }
     }
 
+    protected ButtonWidget<?> createConnectedGui() {
+        return new ButtonWidget<>()
+                .left(151)
+                .disableHoverBackground()
+                .onMousePressed(mouseButton -> {
+                    // tell controller to highlight
+                    if (!isConnected()) return false;
+                    BlockPosHighlightRenderer.renderBlockBoxHighLight(getControllerPos(), 6000, 1500);
+                    Minecraft.getMinecraft().player.closeScreen();
+                    return true;
+                })
+                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipBuilder(tooltip -> {
+                    if (isConnected()) {
+                        tooltip.addLine(IKey.lang("gregtech.machine.quantum_storage.connected"));
+                    } else {
+                        tooltip.addLine(IKey.lang("gregtech.machine.quantum_storage.disconnected"));
+                    }
+                })
+                .background(new DynamicDrawable(() ->
+                        isConnected() ? GTGuiTextures.GREGTECH_LOGO : GTGuiTextures.GREGTECH_LOGO_DARK));
+    }
+
     protected ClickButtonWidget createConnectedGui(int y) {
         connectedIcon = new ClickButtonWidget(151, y, 18, 18, "",
                 clickData -> {
                     if (isConnected())
-                        writeCustomData(GregtechDataCodes.LOCATE_CONTROLLER, buffer -> {});
+                        writeCustomData(GregtechDataCodes.LOCATE_CONTROLLER);
                 });
         connectedIcon.setButtonTexture(isConnected() ? GuiTextures.GREGTECH_LOGO : GuiTextures.GREGTECH_LOGO_DARK);
 
