@@ -1,5 +1,14 @@
 package gregtech.common.metatileentities.storage;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -10,6 +19,7 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -82,7 +92,47 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return GTGuis.createPanel(this, 176, 166);
+        return GTGuis.createPanel(this, 176, 166)
+                .child(IKey.lang("gregtech.creative.chest.item").asWidget()
+                        .pos(7, 9))
+//                .child(GTGuiTextures.DISPLAY.asWidget()
+//                        .pos(7, 48)
+//                        .size(154, 14))
+                .child(new TextFieldWidget()
+                        .pos(7, 50)
+                        .size(152, 10)
+                        .setMaxLength(11)
+                        .setNumbers(1, Integer.MAX_VALUE)
+                        .value(new IntSyncValue(() -> itemsPerCycle, value -> itemsPerCycle = value)))
+                .child(IKey.lang("gregtech.creative.chest.ipc").asWidget()
+                        .pos(7, 28))
+//                .child(GTGuiTextures.DISPLAY.asWidget()
+//                        .pos(7, 85)
+//                        .size(154, 14))
+                .child(new TextFieldWidget()
+                        .pos(7, 85)
+                        .size(152, 10)
+                        .setMaxLength(11)
+                        .setNumbers(1, Integer.MAX_VALUE)
+                        .value(new IntSyncValue(() -> ticksPerCycle, value -> ticksPerCycle = value)))
+                .child(IKey.lang("gregtech.creative.chest.tpc").asWidget()
+                        .pos(7, 65))
+                .child(new ToggleButton()
+                        .pos(7, 101)
+                        .size(162, 20)
+                        .overlay(IKey.dynamic(() -> IKey.lang(active ? "gregtech.creative.activity.on" : "gregtech.creative.activity.off").get()))
+                        .value(new BooleanSyncValue(() -> active, value -> {
+                            active = value;
+                            scheduleRenderUpdate();
+                            var c = getQuantumController();
+                            if (c != null) c.updateHandler();
+                        })))
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.phantomItemSlot(handler, 0)
+                                .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
+                        .pos(36, 6))
+                .child(createConnectedGui()
+                        .top(7));
     }
 
     @Override
