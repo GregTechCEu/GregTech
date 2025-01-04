@@ -1,11 +1,10 @@
 package gregtech.api.mui.sync;
 
-import com.cleanroommc.modularui.value.sync.SyncHandler;
+import net.minecraft.network.PacketBuffer;
 
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-
-import net.minecraft.network.PacketBuffer;
 
 import java.io.IOException;
 import java.util.function.Consumer;

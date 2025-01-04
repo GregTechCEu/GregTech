@@ -1,14 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
-import com.cleanroommc.modularui.widgets.ItemSlot;
-
-import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -19,7 +10,6 @@ import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -43,9 +33,16 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,9 +92,9 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang("gregtech.creative.chest.item").asWidget()
                         .pos(7, 9))
-//                .child(GTGuiTextures.DISPLAY.asWidget()
-//                        .pos(7, 48)
-//                        .size(154, 14))
+                // .child(GTGuiTextures.DISPLAY.asWidget()
+                // .pos(7, 48)
+                // .size(154, 14))
                 .child(new TextFieldWidget()
                         .pos(7, 50)
                         .size(152, 10)
@@ -106,9 +103,9 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                         .value(new IntSyncValue(() -> itemsPerCycle, value -> itemsPerCycle = value)))
                 .child(IKey.lang("gregtech.creative.chest.ipc").asWidget()
                         .pos(7, 28))
-//                .child(GTGuiTextures.DISPLAY.asWidget()
-//                        .pos(7, 85)
-//                        .size(154, 14))
+                // .child(GTGuiTextures.DISPLAY.asWidget()
+                // .pos(7, 85)
+                // .size(154, 14))
                 .child(new TextFieldWidget()
                         .pos(7, 85)
                         .size(152, 10)
@@ -120,7 +117,9 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                 .child(new ToggleButton()
                         .pos(7, 101)
                         .size(162, 20)
-                        .overlay(IKey.dynamic(() -> IKey.lang(active ? "gregtech.creative.activity.on" : "gregtech.creative.activity.off").get()))
+                        .overlay(IKey.dynamic(() -> IKey
+                                .lang(active ? "gregtech.creative.activity.on" : "gregtech.creative.activity.off")
+                                .get()))
                         .value(new BooleanSyncValue(() -> active, value -> {
                             active = value;
                             scheduleRenderUpdate();
