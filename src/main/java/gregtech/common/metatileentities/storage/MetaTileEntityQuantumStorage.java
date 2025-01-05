@@ -72,6 +72,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     protected static final String INPUT_FROM_OUTPUT = "AllowInputFromOutputSide";
     protected static final String INPUT_FROM_OUTPUT_FLUID = "AllowInputFromOutputSideF";
 
+    @Deprecated
     private ClickButtonWidget connectedIcon;
     protected EnumFacing outputFacing;
     protected boolean voiding = false;
@@ -416,7 +417,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
         }
     }
 
-    protected ButtonWidget<?> createConnectedGui() {
+    protected ButtonWidget<?> createConnectionButton() {
         return new ButtonWidget<>()
                 .left(151)
                 .disableHoverBackground()
@@ -430,7 +431,9 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .tooltipBuilder(tooltip -> {
                     if (isConnected()) {
-                        tooltip.addLine(IKey.lang("gregtech.machine.quantum_storage.connected"));
+                        var pos = getControllerPos();
+                        tooltip.addLine(IKey.lang("gregtech.machine.quantum_storage.connected", pos.getX(), pos.getY(),
+                                pos.getZ()));
                     } else {
                         tooltip.addLine(IKey.lang("gregtech.machine.quantum_storage.disconnected"));
                     }
@@ -439,6 +442,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                         () -> isConnected() ? GTGuiTextures.GREGTECH_LOGO : GTGuiTextures.GREGTECH_LOGO_DARK));
     }
 
+    @Deprecated
     protected ClickButtonWidget createConnectedGui(int y) {
         connectedIcon = new ClickButtonWidget(151, y, 18, 18, "",
                 clickData -> {
