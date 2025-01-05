@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
@@ -36,12 +37,14 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
@@ -92,34 +95,32 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang("gregtech.creative.chest.item").asWidget()
                         .pos(7, 9))
-                // .child(GTGuiTextures.DISPLAY.asWidget()
-                // .pos(7, 48)
-                // .size(154, 14))
-                .child(new TextFieldWidget()
-                        .pos(7, 50)
-                        .size(152, 10)
-                        .setMaxLength(11)
-                        .setNumbers(1, Integer.MAX_VALUE)
-                        .value(new IntSyncValue(() -> itemsPerCycle, value -> itemsPerCycle = value)))
-                .child(IKey.lang("gregtech.creative.chest.ipc").asWidget()
-                        .pos(7, 28))
-                // .child(GTGuiTextures.DISPLAY.asWidget()
-                // .pos(7, 85)
-                // .size(154, 14))
-                .child(new TextFieldWidget()
-                        .pos(7, 85)
-                        .size(152, 10)
-                        .setMaxLength(11)
-                        .setNumbers(1, Integer.MAX_VALUE)
-                        .value(new IntSyncValue(() -> ticksPerCycle, value -> ticksPerCycle = value)))
-                .child(IKey.lang("gregtech.creative.chest.tpc").asWidget()
-                        .pos(7, 65))
+                .child(new Column()
+                        .pos(7, 28)
+                        .coverChildren()
+                        .crossAxisAlignment(Alignment.CrossAxis.START)
+                        .child(IKey.lang("gregtech.creative.chest.ipc").asWidget()
+                                .marginBottom(2))
+                        .child(new TextFieldWidget()
+                                .marginBottom(15)
+                                .size(152, 14)
+                                .setMaxLength(11)
+                                .setNumbers(1, Integer.MAX_VALUE)
+                                .value(new IntSyncValue(() -> itemsPerCycle, value -> itemsPerCycle = value)))
+                        .child(IKey.lang("gregtech.creative.chest.tpc").asWidget()
+                                .marginBottom(2))
+                        .child(new TextFieldWidget()
+                                .setTextAlignment(Alignment.CenterLeft)
+                                .size(152, 14)
+                                .setMaxLength(11)
+                                .setNumbers(1, Integer.MAX_VALUE)
+                                .value(new IntSyncValue(() -> ticksPerCycle, value -> ticksPerCycle = value))))
                 .child(new ToggleButton()
                         .pos(7, 101)
                         .size(162, 20)
-                        .overlay(IKey.dynamic(() -> IKey
-                                .lang(active ? "gregtech.creative.activity.on" : "gregtech.creative.activity.off")
-                                .get()))
+                        .overlay(IKey.dynamic(() -> LocalizationUtils.format(active ?
+                                "gregtech.creative.activity.on" :
+                                "gregtech.creative.activity.off")))
                         .value(new BooleanSyncValue(() -> active, value -> {
                             active = value;
                             scheduleRenderUpdate();
@@ -130,7 +131,7 @@ public class MetaTileEntityCreativeChest extends MetaTileEntityQuantumChest {
                         .slot(SyncHandlers.phantomItemSlot(handler, 0)
                                 .changeListener((newItem, onlyAmountChanged, client, init) -> markDirty()))
                         .pos(36, 6))
-                .child(createConnectedGui()
+                .child(createConnectionButton()
                         .top(7));
     }
 
