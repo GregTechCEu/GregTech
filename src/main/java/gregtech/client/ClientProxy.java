@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -17,6 +16,7 @@ import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
@@ -30,6 +30,7 @@ import gregtech.common.items.ToolItems;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,6 +45,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -57,7 +59,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-import codechicken.lib.texture.TextureUtils;
 import org.jetbrains.annotations.NotNull;
 import paulscode.sound.SoundSystemConfig;
 
@@ -84,7 +85,6 @@ public class ClientProxy extends CommonProxy {
 
         MetaTileEntityRenderer.preInit();
         MetaEntities.initRenderers();
-        TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
     }
 
     @Override
@@ -96,7 +96,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onPostLoad() {
         super.onPostLoad();
-        TerminalRegistry.initTerminalFiles();
         ItemRenderCompat.init();
         FacadeRenderer.init();
     }
@@ -111,6 +110,13 @@ public class ClientProxy extends CommonProxy {
     public static void registerBakedModels(ModelBakeEvent event) {
         AbstractPipeModel.invalidateCaches();
         PipeModelRegistry.registerModels(event.getModelRegistry());
+    }
+
+    @SubscribeEvent
+    public static void textureStitchPre(@NotNull TextureStitchEvent.Pre event) {
+        TextureMap map = event.getMap();
+        GTFluidRegistration.INSTANCE.registerSprites(map);
+        Textures.register(map);
     }
 
     @SubscribeEvent

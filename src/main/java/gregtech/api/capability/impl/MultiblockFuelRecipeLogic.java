@@ -8,7 +8,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 
@@ -29,7 +29,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
         // apply maintenance bonuses
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 
@@ -40,7 +40,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
         // apply maintenance penalties
         Tuple<Integer, Double> maintenanceValues = getMaintenanceValues();
 

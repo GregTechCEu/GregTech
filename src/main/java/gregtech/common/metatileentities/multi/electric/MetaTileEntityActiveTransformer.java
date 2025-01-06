@@ -15,6 +15,8 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -30,6 +32,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,6 +53,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
     private IEnergyContainer powerOutput;
     private IEnergyContainer powerInput;
     private boolean isActive = false;
+    private long averageIOLastSec;
+    private long netIOLastSec;
 
     public MetaTileEntityActiveTransformer(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -64,10 +69,18 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
     @Override
     protected void updateFormedValid() {
-        if (isWorkingEnabled()) {
-            long canDrain = powerInput.getEnergyStored();
-            long totalDrained = powerOutput.changeEnergy(canDrain);
-            powerInput.removeEnergy(totalDrained);
+        if (!getWorld().isRemote) {
+            if ((getOffsetTimer() % 20) == 0) {
+                averageIOLastSec = netIOLastSec / 20;
+                netIOLastSec = 0;
+            }
+
+            if (isWorkingEnabled()) {
+                long canDrain = powerInput.getEnergyStored();
+                long totalDrained = powerOutput.changeEnergy(canDrain);
+                powerInput.removeEnergy(totalDrained);
+                netIOLastSec += totalDrained;
+            }
         }
     }
 
@@ -159,7 +172,39 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.machine.active_transformer.routing")
-                .addWorkingStatusLine();
+                .addWorkingStatusLine()
+                .addCustom(tl -> {
+                    if (isStructureFormed()) {
+                        // Max input line
+                        ITextComponent maxInputFormatted = TextComponentUtil.stringWithColor(
+                                TextFormatting.WHITE,
+                                TextFormattingUtil.formatNumbers(
+                                        powerInput.getInputVoltage() * powerInput.getInputAmperage()) + " EU/t");
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.GREEN,
+                                "gregtech.multiblock.active_transformer.max_in",
+                                maxInputFormatted));
+
+                        // Max output line
+                        ITextComponent maxOutputFormatted = TextComponentUtil.stringWithColor(
+                                TextFormatting.WHITE,
+                                TextFormattingUtil.formatNumbers(
+                                        powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage()) + " EU/t");
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.RED,
+                                "gregtech.multiblock.active_transformer.max_out",
+                                maxOutputFormatted));
+
+                        // Average I/O line
+                        ITextComponent avgInputFormatted = TextComponentUtil.stringWithColor(
+                                TextFormatting.WHITE,
+                                TextFormattingUtil.formatNumbers(averageIOLastSec) + " EU/t");
+                        tl.add(TextComponentUtil.translationWithColor(
+                                TextFormatting.AQUA,
+                                "gregtech.multiblock.active_transformer.average_io",
+                                avgInputFormatted));
+                    }
+                });
     }
 
     @Override
@@ -254,5 +299,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip2"));
         tooltip.add(I18n.format("gregtech.machine.active_transformer.tooltip3") + TooltipHelper.RAINBOW_SLOW +
                 I18n.format("gregtech.machine.active_transformer.tooltip3.5"));
+    }
+
+    public long getAverageIOLastSec() {
+        return this.averageIOLastSec;
     }
 }

@@ -241,7 +241,6 @@ public class FirstDegreeMaterials {
         Galena = new Material.Builder(279, gregtechId("galena"))
                 .dust(3).ore()
                 .color(0x643C64)
-                .flags(NO_SMELTING)
                 .components(Lead, 1, Sulfur, 1)
                 .build();
 

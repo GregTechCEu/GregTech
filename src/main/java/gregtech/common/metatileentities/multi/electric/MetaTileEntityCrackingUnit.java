@@ -12,7 +12,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -150,7 +150,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull IRecipePropertyStorage storage) {
+        protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
             super.modifyOverclockPost(ocResult, storage);
 
             int coilTier = ((MetaTileEntityCrackingUnit) metaTileEntity).getCoilTier();

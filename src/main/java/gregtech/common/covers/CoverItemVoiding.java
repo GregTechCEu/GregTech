@@ -24,6 +24,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -31,8 +32,7 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 
 public class CoverItemVoiding extends CoverConveyor {
@@ -80,11 +80,11 @@ public class CoverItemVoiding extends CoverConveyor {
     }
 
     @Override
-    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
         var isWorking = new BooleanSyncValue(this::isWorkingEnabled, this::setWorkingEnabled);
 
-        return super.createUI(mainPanel, guiSyncManager)
-                .child(new Row().height(18).widthRel(1f)
+        return super.createUI(data, guiSyncManager)
+                .child(Flow.row().height(18).widthRel(1f)
                         .marginBottom(2)
                         .child(new ToggleButton()
                                 .value(isWorking)

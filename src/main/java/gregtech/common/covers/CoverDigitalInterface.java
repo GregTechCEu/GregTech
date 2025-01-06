@@ -21,8 +21,8 @@ import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.RenderUtil;
+import gregtech.common.gui.widget.prospector.widget.WidgetOreList;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
-import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

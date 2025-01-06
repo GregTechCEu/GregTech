@@ -11,7 +11,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -55,11 +54,6 @@ public class MetaTileEntityLDItemEndpoint extends MetaTileEntityLongDistanceEndp
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityLDItemEndpoint(this.metaTileEntityId);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

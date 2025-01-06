@@ -8,9 +8,9 @@ import gregtech.api.recipes.chance.output.ChancedOutputLogic;
 import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
-import gregtech.api.recipes.recipeproperties.EmptyRecipePropertyStorage;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
+import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorageImpl;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.integration.groovy.GroovyScriptModule;
@@ -26,15 +26,15 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Class that represent machine recipe.
@@ -99,7 +99,7 @@ public class Recipe {
     // TODO YEET
     private final boolean isCTRecipe;
     private final boolean groovyRecipe;
-    private final IRecipePropertyStorage recipePropertyStorage;
+    private final RecipePropertyStorage recipePropertyStorage;
 
     private final int hashCode;
 
@@ -113,10 +113,9 @@ public class Recipe {
                   long EUt,
                   boolean hidden,
                   boolean isCTRecipe,
-                  IRecipePropertyStorage recipePropertyStorage,
+                  @NotNull RecipePropertyStorage recipePropertyStorage,
                   @NotNull GTRecipeCategory recipeCategory) {
-        this.recipePropertyStorage = recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE :
-                recipePropertyStorage;
+        this.recipePropertyStorage = recipePropertyStorage;
         this.inputs = GTRecipeInputCache.deduplicateInputs(inputs);
         if (outputs.isEmpty()) {
             this.outputs = Collections.emptyList();
@@ -742,40 +741,26 @@ public class Recipe {
     ///////////////////////////////////////////////////////////
     // Property Helper Methods //
     ///////////////////////////////////////////////////////////
-    public <T> T getProperty(RecipeProperty<T> property, T defaultValue) {
-        return recipePropertyStorage.getRecipePropertyValue(property, defaultValue);
+
+    /**
+     * @see RecipePropertyStorageImpl#get(RecipeProperty, Object)
+     */
+    @Contract("_, !null -> !null")
+    public <T> @Nullable T getProperty(@NotNull RecipeProperty<T> property, @Nullable T defaultValue) {
+        return recipePropertyStorage.get(property, defaultValue);
     }
 
-    public Object getPropertyRaw(String key) {
-        return recipePropertyStorage.getRawRecipePropertyValue(key);
+    /**
+     * @see RecipePropertyStorageImpl#contains(RecipeProperty)
+     */
+    public boolean hasProperty(@NotNull RecipeProperty<?> property) {
+        return recipePropertyStorage.contains(property);
     }
 
-    public Set<Map.Entry<RecipeProperty<?>, Object>> getPropertyValues() {
-        return recipePropertyStorage.getRecipeProperties();
-    }
-
-    public Set<String> getPropertyKeys() {
-        return recipePropertyStorage.getRecipePropertyKeys();
-    }
-
-    public Set<RecipeProperty<?>> getPropertyTypes() {
-        return recipePropertyStorage.getPropertyTypes();
-    }
-
-    public boolean hasProperty(RecipeProperty<?> property) {
-        return recipePropertyStorage.hasRecipeProperty(property);
-    }
-
-    public int getPropertyCount() {
-        return recipePropertyStorage.getSize();
-    }
-
-    public int getUnhiddenPropertyCount() {
-        return (int) recipePropertyStorage.getRecipeProperties().stream()
-                .filter((property) -> !property.getKey().isHidden()).count();
-    }
-
-    public IRecipePropertyStorage getRecipePropertyStorage() {
+    /**
+     * @return the property storage
+     */
+    public @NotNull RecipePropertyStorage propertyStorage() {
         return recipePropertyStorage;
     }
 }

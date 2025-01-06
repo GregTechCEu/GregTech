@@ -147,7 +147,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
             } else {
                 voltage = V[MAX];
                 amps = Integer.MAX_VALUE;
-                setTier = 14;
+                setTier = MAX;
             }
         }, "gregtech.creative.energy.sink", "gregtech.creative.energy.source"));
 
@@ -158,6 +158,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
         this.active = active;
         if (!getWorld().isRemote) {
             writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(active));
+            markDirty();
         }
     }
 

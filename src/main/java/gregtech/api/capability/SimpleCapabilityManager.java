@@ -4,7 +4,6 @@ import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
-import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.worldgen.generator.GTWorldGenCapability;
 import gregtech.common.metatileentities.converter.ConverterTrait;
 
@@ -48,7 +47,6 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
         registerCapabilityWithNoDefault(IDataAccess.class);
-        registerCapabilityWithNoDefault(HardwareProvider.class);
         registerCapabilityWithNoDefault(ConverterTrait.class);
         registerCapabilityWithNoDefault(ILaserRelay.class);
 

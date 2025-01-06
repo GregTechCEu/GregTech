@@ -6,6 +6,8 @@ import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.data.IStandardDataAccess;
 import gregtech.api.capability.data.query.DataQueryObject;
 import gregtech.api.capability.data.query.IBridgeable;
+import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.IOpticalDataAccessHatch;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;

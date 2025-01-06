@@ -5,6 +5,8 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IQuantumController;
+import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.graphnet.logic.NetLogicData;
@@ -285,6 +287,30 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
                 list.addAll(provider.getDataInfo());
+            }
+
+            // quantum storage
+            if (metaTileEntity instanceof IQuantumController quantumController) {
+                list.add(new TextComponentTranslation("behavior.tricorder.divider"));
+                long eut = quantumController.getEnergyUsage(); // eu per 10 ticks
+                int tier = GTUtility.getTierByVoltage(eut / 10);
+                list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.usage",
+                        TextFormatting.RED + String.format("%.1f", eut / 10d) + TextFormatting.RESET,
+                        GTValues.VNF[tier]));
+                var handler = quantumController.getHandler();
+                list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_items",
+                        TextFormatting.RED.toString() + handler.getItemHandlers().getSlots()));
+                list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_fluids",
+                        TextFormatting.RED.toString() + handler.getFluidTanks().getTanks()));
+            } else if (metaTileEntity instanceof IQuantumStorage<?>storage) {
+                var qcontrollor = storage.getQuantumController();
+                if (qcontrollor != null) {
+                    long eut = qcontrollor.getTypeEnergy(storage);
+
+                    list.add(new TextComponentTranslation("behavior.tricorder.divider"));
+                    list.add(new TextComponentTranslation("behavior.tricorder.quantum_storage.usage",
+                            TextFormatting.RED + String.format("%.1f", eut / 10d)));
+                }
             }
 
         } else if (tileEntity instanceof PipeTileEntity pipeTile) {

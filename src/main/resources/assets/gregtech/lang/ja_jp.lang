@@ -109,7 +109,7 @@ gregtech.top.ld_pipe_output=搬出
 gregtech.top.ld_pipe_input_endpoint=搬入口:
 gregtech.top.ld_pipe_output_endpoint=搬出口:
 
-gregtech.waila.energy_stored=エネルギー: %d EU / %d EU
+gregtech.waila.energy_stored=エネルギー: %s EU / %s EU
 gregtech.waila.progress_idle=停止中
 gregtech.waila.progress_tick=進捗: %d t / %d t
 gregtech.waila.progress_sec=進捗: %d s / %d s

@@ -35,6 +35,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
+import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.items.MetaItems;
@@ -87,7 +89,6 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.IGuiHolder;
@@ -162,7 +163,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
 
-    private UUID owner;
+    @Nullable
+    private UUID owner = null;
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -233,7 +235,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
-                               boolean advanced) {}
+                               boolean advanced) {
+        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
+    }
 
     /**
      * Override this to add extended tool information to the "Hold SHIFT to show Tool Info" tooltip section.
@@ -268,7 +273,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+        return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
     }
 
     /**
@@ -294,7 +299,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      */
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
+        TextureAtlasSprite atlasSprite = RenderUtil.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -582,6 +587,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (toolClasses.contains(ToolClasses.HARD_HAMMER)) {
             return onHardHammerClick(playerIn, hand, gridSideHit, hitResult);
         }
+        if (toolClasses.contains(ToolClasses.WIRE_CUTTER)) {
+            return onWireCutterClick(playerIn, hand, gridSideHit, hitResult);
+        }
         return false;
     }
 
@@ -660,6 +668,16 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                     "gregtech.machine.muffle.on" : "gregtech.machine.muffle.off"), true);
         }
         return true;
+    }
+
+    /**
+     * Called when player clicks a wire cutter on specific side of this meta tile entity
+     *
+     * @return true if something happened, so the tool will get damaged and animation will be played
+     */
+    public boolean onWireCutterClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
+                                     CuboidRayTraceResult hitResult) {
+        return false;
     }
 
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
@@ -927,13 +945,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public final ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
         IndexedCuboid6 hitCuboid = result.cuboid6;
+        final boolean isCreativePickBlock = player.isCreative() && TooltipHelper.isCtrlDown();
         if (hitCuboid.data instanceof CoverRayTracer.CoverSideData coverSideData) {
             Cover cover = getCoverAtSide(coverSideData.side);
-            return cover == null ? ItemStack.EMPTY : cover.getPickItem();
+            return cover == null || isCreativePickBlock ? ItemStack.EMPTY : cover.getPickItem();
         } else if (hitCuboid.data == null || hitCuboid.data instanceof CoverRayTracer.PrimaryBoxData) {
             // data is null -> MetaTileEntity hull hit
             Cover cover = getCoverAtSide(result.sideHit);
-            if (cover != null) {
+            if (cover != null && !isCreativePickBlock) {
                 return cover.getPickItem();
             }
             return getPickItem(player);
@@ -1302,7 +1321,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
         data.setBoolean(TAG_KEY_MUFFLED, muffled);
 
-        data.setUniqueId("Owner", owner);
+        if (owner != null)
+            data.setUniqueId("Owner", owner);
 
         return data;
     }
@@ -1330,7 +1350,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         CoverSaveHandler.readCoverNBT(data, this, covers::put);
         this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
 
-        this.owner = data.getUniqueId("Owner");
+        if (data.hasKey("Owner"))
+            this.owner = data.getUniqueId("Owner");
     }
 
     @Override
@@ -1378,8 +1399,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement() {
-        this.owner = null;
+    public final void onPlacement() {
+        onPlacement(null);
     }
 
     /**

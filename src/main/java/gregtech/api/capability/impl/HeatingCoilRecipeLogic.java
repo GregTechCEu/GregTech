@@ -5,8 +5,8 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.logic.OverclockingLogic;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
-import gregtech.api.recipes.recipeproperties.TemperatureProperty;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
+import gregtech.api.recipes.properties.impl.TemperatureProperty;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,18 +26,18 @@ public class HeatingCoilRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
         super.modifyOverclockPre(ocParams, storage);
         // coil EU/t discount
         ocParams.setEut(OverclockingLogic.applyCoilEUtDiscount(ocParams.eut(),
                 ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
-                storage.getRecipePropertyValue(TemperatureProperty.getInstance(), 0)));
+                storage.get(TemperatureProperty.getInstance(), 0)));
     }
 
     @Override
     protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull IRecipePropertyStorage propertyStorage, long maxVoltage) {
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
         heatingCoilOC(ocParams, ocResult, maxVoltage, ((IHeatingCoil) metaTileEntity).getCurrentTemperature(),
-                propertyStorage.getRecipePropertyValue(TemperatureProperty.getInstance(), 0));
+                propertyStorage.get(TemperatureProperty.getInstance(), 0));
     }
 }

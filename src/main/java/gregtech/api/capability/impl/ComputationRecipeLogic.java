@@ -3,8 +3,8 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.data.IComputationUser;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.recipeproperties.ComputationProperty;
-import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
+import gregtech.api.recipes.properties.impl.ComputationProperty;
+import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -45,11 +45,12 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         if (!super.checkRecipe(recipe)) {
             return false;
         }
-        if (!recipe.hasProperty(ComputationProperty.getInstance())) {
+        int recipeCWUt = recipe.getProperty(ComputationProperty.getInstance(), 0);
+        if (recipeCWUt == 0) {
             return true;
         }
+
         IComputationUser provider = getComputationProvider();
-        int recipeCWUt = recipe.getProperty(ComputationProperty.getInstance(), 0);
         return provider.requestCWU(recipeCWUt, true) >= recipeCWUt;
     }
 
