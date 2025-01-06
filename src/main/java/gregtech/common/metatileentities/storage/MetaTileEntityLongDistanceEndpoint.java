@@ -5,10 +5,6 @@ import gregtech.api.longdist.LongDistanceNetwork;
 import gregtech.api.longdist.LongDistancePipeType;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.common.ConfigHolder;
-import gregtech.api.pipenet.longdist.ILDEndpoint;
-import gregtech.api.pipenet.longdist.LongDistanceNetwork;
-import gregtech.api.pipenet.longdist.LongDistancePipeType;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;

@@ -2,7 +2,6 @@ package gregtech.common.pipelike.longdistance.fluid;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.longdist.ILDEndpoint;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;

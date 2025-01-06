@@ -60,6 +60,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityLaserHatch(metaTileEntityId, isTransmitter, tier, amperage);
     }
+
     @Override
     protected boolean openGUIOnRightClick() {
         return false;

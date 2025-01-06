@@ -132,10 +132,6 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI, CoverWith
         return filter;
     }
 
-    public @NotNull BaseFilterContainer getFilterContainer() {
-        return this.itemFilterContainer;
-    }
-
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return coverable.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getAttachedSide()) != null;

@@ -8,8 +8,6 @@ import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.data.query.DataQueryObject;
 import gregtech.api.capability.data.query.IBridgeable;
 import gregtech.api.capability.data.query.IComputationQuery;
-import gregtech.api.capability.IOpticalComputationHatch;
-import gregtech.api.capability.IOpticalComputationProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;

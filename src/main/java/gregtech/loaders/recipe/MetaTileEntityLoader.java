@@ -1018,7 +1018,7 @@ public class MetaTileEntityLoader {
                 "PEP", "ACA", "PHP",
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
                 'E', MetaItems.EMITTER_MV.getStackForm(),
-                'C', new UnificationEntry(OrePrefix.pipeHugeItem, Materials.SterlingSilver),
+                'C', new UnificationEntry(OrePrefix.pipeHuge, Materials.SterlingSilver),
                 'A', MetaItems.ROBOT_ARM_MV.getStackForm(),
                 'H', MetaTileEntities.HULL[GTValues.MV].getStackForm());
 
@@ -1027,7 +1027,7 @@ public class MetaTileEntityLoader {
                 MetaTileEntities.QUANTUM_STORAGE_EXTENDER.getStackForm(4),
                 "PPP", "CHC", "PPP",
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
-                'C', new UnificationEntry(OrePrefix.pipeSmallItem, Materials.SterlingSilver),
+                'C', new UnificationEntry(OrePrefix.pipeSmall, Materials.SterlingSilver),
                 'H', MetaTileEntities.HULL[GTValues.MV].getStackForm());
 
         // Super / Quantum Chests

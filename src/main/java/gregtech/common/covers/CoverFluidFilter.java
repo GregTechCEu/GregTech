@@ -134,10 +134,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWit
         return filter;
     }
 
-    public @NotNull BaseFilterContainer getFilterContainer() {
-        return this.fluidFilterContainer;
-    }
-
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return coverable.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, getAttachedSide()) != null;
