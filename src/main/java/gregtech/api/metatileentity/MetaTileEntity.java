@@ -1689,6 +1689,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     public void removeFromCreativeTab(CreativeTabs creativeTab) {
         Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (creativeTab == CreativeTabs.SEARCH) {
+            GTLog.logger.error("Cannot remove MTEs from the creative search tab!",
+                    new IllegalArgumentException());
+            return;
+        }
         if (!creativeTabs.contains(creativeTab)) {
             GTLog.logger.error("{} is not in the creative tab {}.", this, creativeTab.tabLabel,
                     new IllegalArgumentException());
