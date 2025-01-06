@@ -175,16 +175,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         // Set other tool stats (durability)
-        SimpleToolProperty finalToolProperty;
-        {
-            ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-            if (material.hasProperty(PropertyKey.EXTRATOOL)) {
-                finalToolProperty = material.getProperty(PropertyKey.EXTRATOOL)
-                        .getOverriddenResult(this.getToolId(), toolProperty);
-            } else {
-                finalToolProperty = material.getProperty(PropertyKey.TOOL);
-            }
-        }
+        SimpleToolProperty finalToolProperty = getToolProperty(material);
         // Durability formula we are working with:
         // Final Durability = (material durability * material durability multiplier) + (tool definition durability *
         // definition durability multiplier) - 1
@@ -270,8 +261,23 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Nullable
-    default ToolProperty getToolProperty(ItemStack stack) {
-        return getToolMaterial(stack).getProperty(PropertyKey.TOOL);
+    default SimpleToolProperty getToolProperty(Material material) {
+        SimpleToolProperty finalToolProperty;
+        {
+            ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
+            if (material.hasProperty(PropertyKey.EXTRATOOL)) {
+                finalToolProperty = material.getProperty(PropertyKey.EXTRATOOL)
+                        .getOverriddenResult(this.getToolId(), toolProperty);
+            } else {
+                finalToolProperty = toolProperty;
+            }
+        }
+        return finalToolProperty;
+    }
+
+    @Nullable
+    default SimpleToolProperty getToolProperty(ItemStack stack) {
+        return getToolProperty(getToolMaterial(stack));
     }
 
     @Nullable
@@ -280,32 +286,32 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default float getMaterialToolSpeed(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolSpeed();
     }
 
     default float getMaterialAttackDamage(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolAttackDamage();
     }
 
     default float getMaterialAttackSpeed(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolAttackSpeed();
     }
 
     default int getMaterialDurability(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
     }
 
     default int getMaterialEnchantability(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolEnchantability();
     }
 
     default int getMaterialHarvestLevel(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolHarvestLevel();
     }
 
@@ -866,7 +872,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
         }
 
-        ToolProperty property = getToolProperty(stack);
+        SimpleToolProperty property = getToolProperty(stack);
         if (property == null) return false;
 
         // Check for any special enchantments specified by the material of this Tool
