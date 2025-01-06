@@ -4,7 +4,6 @@ import gregtech.api.capability.*;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -227,7 +226,11 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         var fluidSyncHandler = GTFluidSlot.sync(fluidTank)
                 .showAmount(false)
                 .accessibility(true, !isExportHatch)
-                .onLockFluid(() -> this.lockedFluid, this::setLocked);
+                .handleLocking(() -> this.lockedFluid, fluidStack -> {
+                    setLocked(fluidStack != null);
+                    this.lockedFluid = fluidStack;
+                    this.fluidTank.onContentsChanged();
+                }, this::setLocked);
 
         return GTGuis.createPanel(this, 176, 166)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(6, 6))
@@ -317,16 +320,19 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         return this.locked;
     }
 
-    private void setLocked(FluidStack fluidStack) {
-        if (!isExportHatch) return;
-        this.locked = fluidStack != null;
-        this.lockedFluid = fluidStack == null ? null : fluidStack.copy();
-        if (this.lockedFluid != null)
+    private void setLocked(boolean locked) {
+        if (!isExportHatch || this.locked == locked) return;
+        this.locked = locked;
+
+        if (!getWorld().isRemote) markDirty();
+        if (locked && fluidTank.getFluid() != null) {
+            this.lockedFluid = fluidTank.getFluid().copy();
             this.lockedFluid.amount = 1;
-        fluidTank.onContentsChanged();
-        if (!getWorld().isRemote) {
-            markDirty();
+            fluidTank.onContentsChanged();
+            return;
         }
+        this.lockedFluid = null;
+        fluidTank.onContentsChanged();
     }
 
     protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
