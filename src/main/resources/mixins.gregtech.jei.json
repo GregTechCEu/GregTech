@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "BasicRecipeTransferHandlerServerMixin",
+    "IngredientGridMixin",
     "JEITooltipMixin",
     "StackHelperMixin"
   ],

@@ -1288,6 +1288,8 @@ cover.filter.mode.title=Filter Mode
 cover.filter.mode.filter_insert=Filter Insert
 cover.filter.mode.filter_extract=Filter Extract
 cover.filter.mode.filter_both=Filter Insert/Extract
+cover.filter.allow_flow.label=Allow Flow
+cover.filter.allow_flow.tooltip=By default, Items/Fluids can only move in the direction\nof the filter with respect to the filter's setting.\n\nIf Enabled, Items/Fluids are allowed to pass unfiltered\nthrough the opposite direction of this filter.
 cover.item_filter.ignore_damage.enabled=Ignore Damage
 cover.item_filter.ignore_damage.disabled=Respect Damage
 cover.item_filter.ignore_nbt.enabled=Ignore NBT
@@ -1317,6 +1319,8 @@ cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge
 cover.smart_item_filter.filtering_mode.sifter=Sifter
 cover.smart_item_filter.filtering_mode.description=Select Machine this Smart Filter will use for filtering./nIt will automatically pick right portions of items for robotic arm.
 
+cover.generic.disabled=Disabled
+cover.generic.enabled=Enabled
 cover.generic.transfer_mode=Transfer Mode
 cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
@@ -4248,9 +4252,9 @@ gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Power Trans
 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Mallet to change Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage_screwdriver=§8Use Screwdriver to change Amperage flow or access Covers
 gregtech.machine.diode.tooltip_general=Allows Energy Flow in one direction and limits Amperage
-gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Soft Mallet to change
+gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Screwdriver to change
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -5424,7 +5428,7 @@ gregtech.universal.tooltip.uses_per_op=Uses §f%,d EU/operation
 gregtech.universal.tooltip.base_production_eut=§eBase Production: §f%,d EU/t
 gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
-gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
+gregtech.universal.tooltip.terrain_resist=§eThis Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
 gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
