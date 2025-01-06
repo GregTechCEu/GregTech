@@ -72,22 +72,22 @@ public class ExtraToolProperty implements IMaterialProperty {
         this.overrideMap = new HashMap<>();
     }
 
-    public void setOverrideProperty(String toolClass, OverrideToolProperty overrideProperty) {
-        this.overrideMap.put(toolClass, overrideProperty);
+    public void setOverrideProperty(String toolId, OverrideToolProperty overrideProperty) {
+        this.overrideMap.put(toolId, overrideProperty);
     }
 
     @Nullable
-    public OverrideToolProperty getOverrideProperty(String toolClass) {
-        return this.overrideMap.get(toolClass);
+    public OverrideToolProperty getOverrideProperty(String toolId) {
+        return this.overrideMap.get(toolId);
     }
 
-    public boolean hasOverrideProperty(String toolClass) {
-        return getOverrideProperty(toolClass) != null;
+    public boolean hasOverrideProperty(String toolId) {
+        return getOverrideProperty(toolId) != null;
     }
 
-    public SimpleToolProperty getOverriddenResult(String toolClass, @Nullable ToolProperty toolProperty) {
+    public SimpleToolProperty getOverriddenResult(String toolId, @Nullable ToolProperty toolProperty) {
         if (toolProperty == null) toolProperty = new ToolProperty();
-        return overrideMap.getOrDefault(toolClass, new OverrideToolProperty())
+        return overrideMap.getOrDefault(toolId, new OverrideToolProperty())
                 .override(toolProperty);
     }
 

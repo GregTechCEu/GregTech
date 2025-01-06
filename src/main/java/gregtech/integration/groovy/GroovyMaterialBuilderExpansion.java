@@ -133,8 +133,8 @@ public class GroovyMaterialBuilderExpansion {
         return builder.toolStats(ToolProperty.Builder.of(harvestSpeed, attackDamage, durability, harvestLevel).build());
     }
 
-    public static Material.Builder overrideToolStats(Material.Builder builder, String toolClass,
+    public static Material.Builder overrideToolStats(Material.Builder builder, String toolId,
                                                      ExtraToolProperty.Builder overrideBuilder) {
-        return builder.overrideToolStats(toolClass, overrideBuilder.build());
+        return builder.overrideToolStats(toolId, overrideBuilder.build());
     }
 }

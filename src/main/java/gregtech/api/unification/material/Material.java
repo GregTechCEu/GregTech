@@ -940,9 +940,9 @@ public class Material implements Comparable<Material> {
         /**
          * Use {@link ExtraToolProperty.Builder} to create a Tool Property Override.
          */
-        public Builder overrideToolStats(String toolClass, ExtraToolProperty.OverrideToolProperty toolProperty) {
+        public Builder overrideToolStats(String toolId, ExtraToolProperty.OverrideToolProperty toolProperty) {
             properties.ensureSet(PropertyKey.EXTRATOOL);
-            properties.getProperty(PropertyKey.EXTRATOOL).setOverrideProperty(toolClass, toolProperty);
+            properties.getProperty(PropertyKey.EXTRATOOL).setOverrideProperty(toolId, toolProperty);
             return this;
         }
 

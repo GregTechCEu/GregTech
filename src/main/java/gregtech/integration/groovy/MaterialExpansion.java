@@ -191,12 +191,12 @@ public class MaterialExpansion {
     // Extra Tool Property //
     ////////////////////////////////////
 
-    public static void setOverrideToolStats(Material m, String toolClass, ExtraToolProperty.Builder overrideBuilder) {
+    public static void setOverrideToolStats(Material m, String toolId, ExtraToolProperty.Builder overrideBuilder) {
         if (checkFrozen("set overriding tool stats")) return;
         m.getProperties().ensureSet(PropertyKey.EXTRATOOL);
         ExtraToolProperty prop = m.getProperty(PropertyKey.EXTRATOOL);
         if (prop != null) {
-            prop.setOverrideProperty(toolClass, overrideBuilder.build());
+            prop.setOverrideProperty(toolId, overrideBuilder.build());
         } else logError(m, "change tool stats", "Tool");
     }
 
