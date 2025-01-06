@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
+import static gregtech.api.capability.GregtechDataCodes.WORKING_ENABLED;
 
 public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
                                  implements IPassthroughHatch, IMultiblockAbilityPart<IPassthroughHatch>,
@@ -83,12 +85,14 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeInt(amps);
+        buf.writeBoolean(isWorkingEnabled);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.amps = buf.readInt();
+        this.isWorkingEnabled = buf.readBoolean();
     }
 
     @Override
@@ -96,6 +100,8 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
         super.receiveCustomData(dataId, buf);
         if (dataId == AMP_INDEX) {
             this.amps = buf.readInt();
+        } else if (dataId == WORKING_ENABLED) {
+            this.isWorkingEnabled = buf.readBoolean();
         }
     }
 
@@ -208,5 +214,8 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     @Override
     public void setWorkingEnabled(boolean isWorkingAllowed) {
         this.isWorkingEnabled = isWorkingAllowed;
+        if (getWorld().isRemote) {
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingAllowed));
+        }
     }
 }
