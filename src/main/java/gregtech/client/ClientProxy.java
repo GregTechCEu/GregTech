@@ -14,12 +14,8 @@ import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
-import gregtech.client.renderer.pipe.CableRenderer;
-import gregtech.client.renderer.pipe.FluidPipeRenderer;
-import gregtech.client.renderer.pipe.ItemPipeRenderer;
-import gregtech.client.renderer.pipe.LaserPipeRenderer;
-import gregtech.client.renderer.pipe.OpticalPipeRenderer;
-import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.PipeModelRegistry;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
@@ -47,6 +43,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -87,11 +84,6 @@ public class ClientProxy extends CommonProxy {
         }
 
         MetaTileEntityRenderer.preInit();
-        CableRenderer.INSTANCE.preInit();
-        FluidPipeRenderer.INSTANCE.preInit();
-        ItemPipeRenderer.INSTANCE.preInit();
-        OpticalPipeRenderer.INSTANCE.preInit();
-        LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
     }
 
@@ -115,16 +107,16 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    public static void registerBakedModels(ModelBakeEvent event) {
+        AbstractPipeModel.invalidateCaches();
+        PipeModelRegistry.registerModels(event.getModelRegistry());
+    }
+
+    @SubscribeEvent
     public static void textureStitchPre(@NotNull TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
         GTFluidRegistration.INSTANCE.registerSprites(map);
-        PipeRenderer.initializeRestrictor(map);
         Textures.register(map);
-        CableRenderer.INSTANCE.registerIcons(map);
-        FluidPipeRenderer.INSTANCE.registerIcons(map);
-        ItemPipeRenderer.INSTANCE.registerIcons(map);
-        OpticalPipeRenderer.INSTANCE.registerIcons(map);
-        LaserPipeRenderer.INSTANCE.registerIcons(map);
     }
 
     @SubscribeEvent

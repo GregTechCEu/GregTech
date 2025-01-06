@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,5 +72,19 @@ public class TaskScheduler {
                 scheduler.running = false;
             }
         }
+    }
+
+    public static Task weakTask(Task task) {
+        return new Task() {
+
+            private final WeakReference<Task> ref = new WeakReference<>(task);
+
+            @Override
+            public boolean run() {
+                Task task = this.ref.get();
+                if (task == null) return false;
+                else return task.run();
+            }
+        };
     }
 }

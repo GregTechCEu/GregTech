@@ -5,9 +5,12 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
+import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
@@ -22,12 +25,12 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -49,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CoverFluidFilter extends CoverBase implements CoverWithUI {
+public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWithFluidFilter {
 
     protected final String titleLocale;
     protected final SimpleOverlayRenderer texture;
@@ -65,6 +68,16 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         this.filterMode = FluidFilterMode.FILTER_FILL;
         this.titleLocale = titleLocale;
         this.texture = texture;
+    }
+
+    @Override
+    public @NotNull FluidFilterContainer getFluidFilter() {
+        return fluidFilterContainer;
+    }
+
+    @Override
+    public ManualImportExportMode getManualMode() {
+        return ManualImportExportMode.FILTERED;
     }
 
     public void setFilterMode(FluidFilterMode filterMode) {
@@ -109,15 +122,16 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
         return filterMode;
     }
 
+    public @NotNull BaseFilterContainer getFilterContainer() {
+        return this.fluidFilterContainer;
+    }
+
+    @SuppressWarnings("DataFlowIssue") // this cover always has a filter
     public @NotNull BaseFilter getFilter() {
         var filter = getFilterContainer().getFilter();
         if (filter == null) return BaseFilter.ERROR_FILTER;
 
         return filter;
-    }
-
-    public @NotNull BaseFilterContainer getFilterContainer() {
-        return this.fluidFilterContainer;
     }
 
     @Override
@@ -131,7 +145,7 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     }
 
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         if (!playerIn.world.isRemote) {
             this.openUI((EntityPlayerMP) playerIn);
         }
@@ -187,6 +201,11 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI {
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         this.texture.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(this.texture).build();
     }
 
     @Override

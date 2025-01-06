@@ -1,5 +1,6 @@
 package gregtech.api.cover;
 
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.utils.BloomEffectUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,12 +10,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -139,9 +140,9 @@ public interface Cover {
     }
 
     /**
-     * @return if the pipe this cover is placed on should render a connection to the cover
+     * @return if the pipe this cover is placed on should always render a connection to the cover
      */
-    default boolean shouldAutoConnectToPipes() {
+    default boolean forcePipeRenderConnection() {
         return true;
     }
 
@@ -157,7 +158,7 @@ public interface Cover {
      * @param hitResult the HitResult of the click
      * @return the action's result
      */
-    default boolean onLeftClick(@NotNull EntityPlayer player, @NotNull CuboidRayTraceResult hitResult) {
+    default boolean onLeftClick(@NotNull EntityPlayer player, @NotNull RayTraceResult hitResult) {
         return false;
     }
 
@@ -168,7 +169,7 @@ public interface Cover {
      * @return the action's result
      */
     default @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                                   @NotNull CuboidRayTraceResult hitResult) {
+                                                   @NotNull RayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -179,7 +180,7 @@ public interface Cover {
      * @return the action's result
      */
     default @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                                         @NotNull CuboidRayTraceResult hitResult) {
+                                                         @NotNull RayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -190,7 +191,7 @@ public interface Cover {
      * @return the action's result
      */
     default @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         return EnumActionResult.PASS;
     }
 
@@ -247,6 +248,10 @@ public interface Cover {
     void renderCoverPlate(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                           @NotNull IVertexOperation[] pipeline,
                           @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer);
+
+    @SideOnly(Side.CLIENT)
+    @NotNull
+    CoverRenderer getRenderer();
 
     default boolean canRenderBackside() {
         return true;
