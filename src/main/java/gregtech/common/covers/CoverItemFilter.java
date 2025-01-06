@@ -42,8 +42,7 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -156,13 +155,13 @@ public class CoverItemFilter extends CoverBase implements CoverWithUI {
         return getFilter().createPanel(guiSyncManager)
                 .size(176, 212).padding(7)
                 .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()).left(4))
-                .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
+                .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(ItemFilterMode.class)
                                 .value(filteringMode)
                                 .lang("cover.filter.mode.title")
                                 .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .build())
-                        .child(new Row()
+                        .child(Flow.row()
                                 .marginBottom(2)
                                 .widthRel(1f)
                                 .coverChildrenHeight()

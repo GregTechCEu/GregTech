@@ -11,7 +11,6 @@ import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -398,9 +397,8 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.pump.tooltip"));
-        if (ConfigHolder.machines.doTerrainExplosion)
-            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
         tooltip.add(
                 I18n.format("gregtech.universal.tooltip.uses_per_op", GTValues.V[getTier()] * 2) + TextFormatting.GRAY +
                         ", " + I18n.format("gregtech.machine.pump.tooltip_buckets", getPumpingCycleLength()));
