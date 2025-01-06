@@ -35,6 +35,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
@@ -53,6 +54,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                                       implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
     public static final int INITIAL_INVENTORY_SIZE = 8000;
+    public static final int LOCK_FILL = GregtechDataCodes.assignId();
 
     // only holding this for convenience
     protected final HatchFluidTank fluidTank;
@@ -166,6 +168,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
+        } else if (dataId == LOCK_FILL) {
+            this.lockedFluid = NetworkUtils.readFluidStack(buf);
         }
     }
 
@@ -348,6 +352,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
                 lockedFluid.amount = 1;
+                writeCustomData(LOCK_FILL, buffer -> NetworkUtils.writeFluidStack(buffer, lockedFluid));
             }
             return accepted;
         }
