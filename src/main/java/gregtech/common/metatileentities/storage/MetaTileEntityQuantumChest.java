@@ -9,7 +9,6 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.mui.widget.QuantumItemRendererWidget;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -47,6 +46,8 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -316,8 +317,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 () -> IKey.lang(virtualItemStack.getTranslationKey()).get(),
                 textWidget -> !virtualItemStack.isEmpty(),
                 () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
-                .child(new QuantumItemRendererWidget(() -> virtualItemStack)
-                        .onLock(() -> lockedStack, this::setLocked)
+                .child(new ItemSlot()
+                        .slot(new ModularSlot(itemInventory, 0, true))
                         .pos(148, 41));
     }
 
