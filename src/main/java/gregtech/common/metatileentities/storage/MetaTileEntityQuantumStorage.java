@@ -47,8 +47,7 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -181,10 +180,10 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     protected void createWidgets(ModularPanel mainPanel, PanelSyncManager syncManager) {}
 
-    public Column createQuantumDisplay(String lang,
-                                       Supplier<String> name, Predicate<TextWidget> condition,
-                                       Supplier<String> count) {
-        return new Column()
+    public Flow createQuantumDisplay(String lang,
+                                     Supplier<String> name, Predicate<TextWidget> condition,
+                                     Supplier<String> count) {
+        return Flow.column()
                 .background(GTGuiTextures.DISPLAY)
                 .padding(4)
                 .height(46)
@@ -215,7 +214,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
 
     public ParentWidget<?> createQuantumIO(IItemHandlerModifiable importHandler,
                                            IItemHandlerModifiable exportHandler) {
-        return new Row()
+        return Flow.row()
                 .pos(79, 18 + 45)
                 .coverChildren()
                 .child(new ItemSlot()
@@ -230,11 +229,11 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                                 .accessibility(false, true)));
     }
 
-    public Row createQuantumButtonRow() {
+    public Flow createQuantumButtonRow() {
         boolean isFluid = getType() == Type.FLUID;
         BooleanSupplier getter = isFluid ? this::isAutoOutputFluids : this::isAutoOutputItems;
 
-        return new Row()
+        return Flow.row()
                 .coverChildren()
                 .pos(7, 63)
                 .child(new ToggleButton()

@@ -45,7 +45,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +103,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                                 .phantom(true)
                                 .controlsAmount(true))
                         .pos(36, 6))
-                .child(new Column()
+                .child(Flow.column()
                         .pos(7, 28)
                         .crossAxisAlignment(Alignment.CrossAxis.START)
                         .coverChildren()
