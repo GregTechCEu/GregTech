@@ -20,7 +20,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
@@ -242,12 +241,12 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
-        return super.buildUI(guiData, guiSyncManager).height(192 + 36);
+    public int getHeight() {
+        return super.getHeight() + 36;
     }
 
     @Override
-    protected ParentWidget<?> createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
+    public @NotNull ParentWidget<?> createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
         var transferMode = new EnumSyncValue<>(TransferMode.class, this::getTransferMode, this::setTransferMode);
         transferMode.updateCacheFromSource(true);
         syncManager.syncValue("transfer_mode", transferMode);
