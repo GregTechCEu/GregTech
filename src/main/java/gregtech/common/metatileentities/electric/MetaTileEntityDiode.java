@@ -137,11 +137,6 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public boolean isValidFrontFacing(EnumFacing facing) {
-        return true;
-    }
-
-    @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                       CuboidRayTraceResult hitResult) {
         if (getWorld().isRemote) {
