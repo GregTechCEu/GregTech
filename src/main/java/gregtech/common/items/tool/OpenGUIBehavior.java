@@ -23,7 +23,7 @@ public class OpenGUIBehavior implements IToolBehavior {
     public @NotNull ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player,
                                                              @NotNull EnumHand hand) {
         if (!world.isRemote) {
-            ItemGuiFactory.open((EntityPlayerMP) player, hand);
+            ItemGuiFactory.INSTANCE.open((EntityPlayerMP) player, hand);
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }

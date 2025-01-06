@@ -62,7 +62,6 @@ import buildcraft.api.tools.IToolWrench;
 import cofh.api.item.IToolHammer;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.factory.HandGuiData;
 import com.cleanroommc.modularui.factory.ItemGuiFactory;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -71,8 +70,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.TextWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.enderio.core.common.interfaces.IOverlayRenderAware;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -678,7 +676,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         if (!world.isRemote) {
             // TODO: relocate to keybind action when keybind PR happens
             if (player.isSneaking() && getMaxAoEDefinition(stack) != AoESymmetrical.none()) {
-                ItemGuiFactory.open((EntityPlayerMP) player, hand);
+                ItemGuiFactory.INSTANCE.open((EntityPlayerMP) player, hand);
                 return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
             }
         }
@@ -941,7 +939,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         manager.syncValue("layer_value", layerValue);
 
         return GTGuis.createPanel(usedStack.getTranslationKey(), 120, 80)
-                .child(new Row()
+                .child(Flow.row()
                         .widthRel(1f)
                         .margin(4, 0)
                         .alignY(0.5f)
@@ -952,7 +950,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                         .child(createColumn(layerValue, "layers", false, defaultDefinition.layer)));
     }
 
-    default Column createColumn(IntSyncValue syncValue, String lang, boolean shouldDouble, int max) {
+    default Flow createColumn(IntSyncValue syncValue, String lang, boolean shouldDouble, int max) {
         final var display = IKey.dynamic(
                 () -> String.valueOf(1 + (shouldDouble ? 2 * syncValue.getIntValue() : syncValue.getIntValue())));
 
@@ -964,7 +962,6 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 .onMousePressed(data -> {
                     int val = syncValue.getIntValue();
                     if (val < max) syncValue.setIntValue(++val);
-                    Interactable.playButtonClickSound();
                     return true;
                 });
 
@@ -976,15 +973,14 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
                 .onMousePressed(data -> {
                     int val = syncValue.getIntValue();
                     if (val > 0) syncValue.setIntValue(--val);
-                    Interactable.playButtonClickSound();
                     return true;
                 });
 
-        return new Column()
+        return Flow.column()
                 .coverChildren()
                 .child(new TextWidget(IKey.lang("item.gt.tool.aoe." + lang))
                         .marginBottom(5))
-                .child(new Row()
+                .child(Flow.row()
                         .coverChildren()
                         .marginBottom(5)
                         .child(increaseButton)
