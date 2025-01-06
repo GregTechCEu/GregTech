@@ -14,7 +14,6 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.mui.widget.QuantumFluidRendererWidget;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
@@ -55,7 +54,9 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.FluidSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -318,7 +319,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 },
                 textWidget -> fluidTank.getFluid() != null,
                 () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
-                .child(new QuantumFluidRendererWidget(fluidTank)
+                .child(new FluidSlot()
+                        // todo use GTFluidSlot once rc2 pr is merged
+                        .syncHandler(new FluidSlotSyncHandler(fluidTank)
+                                .phantom(true)
+                                .controlsAmount(true))
                         .pos(148, 41));
     }
 
