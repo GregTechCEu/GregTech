@@ -175,13 +175,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         // Set other tool stats (durability)
-        System.out.println(this.getToolId());
         SimpleToolProperty finalToolProperty;
         {
             ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
             if (material.hasProperty(PropertyKey.EXTRATOOL)) {
-                System.out.println("Find Override Property!");
-                System.out.println(material);
                 finalToolProperty = material.getProperty(PropertyKey.EXTRATOOL)
                         .getOverriddenResult(this.getToolId(), toolProperty);
             } else {
