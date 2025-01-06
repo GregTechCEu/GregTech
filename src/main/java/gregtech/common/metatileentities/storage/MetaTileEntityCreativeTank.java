@@ -15,6 +15,7 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
 import gregtech.client.utils.TooltipHelper;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,10 +41,8 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
@@ -98,10 +97,10 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
                 .child(IKey.lang("gregtech.creative.tank.fluid").asWidget()
                         .pos(7, 9))
                 // todo replace with our fluid slot
-                .child(new FluidSlot()
-                        .syncHandler(new FluidSlotSyncHandler(this.fluidTank)
+                .child(new GTFluidSlot()
+                        .syncHandler(GTFluidSlot.sync(this.fluidTank)
                                 .phantom(true)
-                                .controlsAmount(true))
+                                .showAmount(true))
                         .pos(36, 6))
                 .child(Flow.column()
                         .pos(7, 28)

@@ -19,6 +19,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -54,9 +55,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.value.sync.FluidSlotSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.widgets.FluidSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -319,11 +318,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 },
                 textWidget -> fluidTank.getFluid() != null,
                 () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
-                .child(new FluidSlot()
-                        // todo use GTFluidSlot once rc2 pr is merged
-                        .syncHandler(new FluidSlotSyncHandler(fluidTank)
+                .child(new GTFluidSlot()
+                        .syncHandler(GTFluidSlot.sync(fluidTank)
                                 .phantom(true)
-                                .controlsAmount(true))
+                                .handleLocking(() -> lockedFluid, fluidStack -> {
+                                    setLocked(fluidStack != null);
+                                    lockedFluid = fluidStack;
+                                }, this::setLocked)
+                                .showAmount(true))
                         .pos(148, 41));
     }
 
