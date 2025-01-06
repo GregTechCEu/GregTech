@@ -113,7 +113,8 @@ public class ExtraToolProperty implements IMaterialProperty {
 
         public static Builder of(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
             Builder builder = new Builder();
-            builder.harvestSpeed(harvestSpeed).attackDamage(attackDamage).durability(durability).harvestLevel(harvestLevel);
+            builder.harvestSpeed(harvestSpeed).attackDamage(attackDamage).durability(durability)
+                    .harvestLevel(harvestLevel);
             return builder;
         }
 

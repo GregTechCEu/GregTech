@@ -2,13 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import net.minecraft.enchantment.Enchantment;
 
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class ToolProperty extends SimpleToolProperty implements IMaterialProperty {
-
 
     public ToolProperty(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
         super(harvestSpeed, attackDamage, durability, harvestLevel);

@@ -153,7 +153,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
 
     /**
      * @return A tool made from the given material. The tool property (at least overriding) for the material must be
-     * set.
+     *         set.
      */
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());

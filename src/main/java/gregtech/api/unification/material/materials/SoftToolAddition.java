@@ -2,11 +2,10 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.unification.material.properties.ExtraToolProperty;
-import gregtech.api.unification.material.properties.PropertyKey;
-
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.ExtraToolProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 
 public class SoftToolAddition {
 
@@ -20,7 +19,6 @@ public class SoftToolAddition {
             material.setProperty(PropertyKey.EXTRATOOL, new ExtraToolProperty());
         return material.getProperty(PropertyKey.EXTRATOOL);
     }
-
 
     public static void register() {
         for (int i = 0; i < softMaterials.length; i++) {
