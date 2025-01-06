@@ -12,6 +12,7 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.ExtraToolProperty;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.GemProperty;
@@ -933,6 +934,15 @@ public class Material implements Comparable<Material> {
          */
         public Builder toolStats(ToolProperty toolProperty) {
             properties.setProperty(PropertyKey.TOOL, toolProperty);
+            return this;
+        }
+
+        /**
+         * Use {@link ExtraToolProperty.Builder} to create a Tool Property Override.
+         */
+        public Builder overrideToolStats(String toolClass, ExtraToolProperty.OverrideToolProperty toolProperty) {
+            properties.ensureSet(PropertyKey.EXTRATOOL);
+            properties.getProperty(PropertyKey.EXTRATOOL).setOverrideProperty(toolClass, toolProperty);
             return this;
         }
 

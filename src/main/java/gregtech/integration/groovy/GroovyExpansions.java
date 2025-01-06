@@ -7,6 +7,7 @@ import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
+import gregtech.api.unification.material.properties.ExtraToolProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 
 import net.minecraft.util.ResourceLocation;
@@ -52,6 +53,16 @@ public class GroovyExpansions {
 
     public static ToolProperty.Builder toolBuilder(MaterialEvent event) {
         return toolBuilder(event, 1.0F, 1.0F, 100, 2);
+    }
+
+    public static ExtraToolProperty.Builder overrideToolBuilder(MaterialEvent event) {
+        return ExtraToolProperty.Builder.of();
+    }
+
+    public static ExtraToolProperty.Builder overrideToolBuilder(MaterialEvent event, float harvestSpeed,
+                                                                float attackDamage,
+                                                                int durability, int harvestLevel) {
+        return ExtraToolProperty.Builder.of(harvestSpeed, attackDamage, durability, harvestLevel);
     }
 
     public static FluidBuilder fluidBuilder(MaterialEvent event) {

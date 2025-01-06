@@ -8,6 +8,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.ExtraToolProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 
@@ -130,5 +131,10 @@ public class GroovyMaterialBuilderExpansion {
     public static Material.Builder toolStats(Material.Builder builder, float harvestSpeed, float attackDamage,
                                              int durability, int harvestLevel) {
         return builder.toolStats(ToolProperty.Builder.of(harvestSpeed, attackDamage, durability, harvestLevel).build());
+    }
+
+    public static Material.Builder overrideToolStats(Material.Builder builder, String toolClass,
+                                                     ExtraToolProperty.Builder overrideBuilder) {
+        return builder.overrideToolStats(toolClass, overrideBuilder.build());
     }
 }

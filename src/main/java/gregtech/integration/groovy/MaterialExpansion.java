@@ -6,6 +6,7 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.ExtraToolProperty;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -183,6 +184,19 @@ public class MaterialExpansion {
             prop.setToolHarvestLevel(toolHarvestLevel == 0 ? 2 : toolHarvestLevel);
             prop.setToolEnchantability(enchantability == 0 ? 10 : enchantability);
             prop.setShouldIgnoreCraftingTools(shouldIngoreCraftingTools);
+        } else logError(m, "change tool stats", "Tool");
+    }
+
+    ////////////////////////////////////
+    // Extra Tool Property //
+    ////////////////////////////////////
+
+    public static void setOverrideToolStats(Material m, String toolClass, ExtraToolProperty.Builder overrideBuilder) {
+        if (checkFrozen("set overriding tool stats")) return;
+        m.getProperties().ensureSet(PropertyKey.EXTRATOOL);
+        ExtraToolProperty prop = m.getProperty(PropertyKey.EXTRATOOL);
+        if (prop != null) {
+            prop.setOverrideProperty(toolClass, overrideBuilder.build());
         } else logError(m, "change tool stats", "Tool");
     }
 
