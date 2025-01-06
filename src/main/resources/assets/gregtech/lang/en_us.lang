@@ -2425,6 +2425,11 @@ tile.laser_pipe_normal.tooltip1=Transmitting power with §fno loss§7 in straigh
 tile.laser_pipe_mirror.name=Laser Mirror Cable
 tile.laser_pipe_mirror.tooltip1=Transmitting power with §fno loss§7 around a bend
 
+tile.warp_duct_normal.name=Warp Duct
+tile.warp_duct_restrictive.name=Restrictive Warp Duct
+tile.warp_duct_normal.tooltip1=Teleporting entities from point A to point B
+
+
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
 metaitem.prospector.luv.name=Electric Prospector's Scanner (LuV)

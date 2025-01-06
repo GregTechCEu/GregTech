@@ -961,6 +961,20 @@ public class MachineRecipeLoader {
                 .input(ring, Platinum, 4)
                 .output(FLUID_CELL_LARGE_TUNGSTEN_STEEL)
                 .duration(200).EUt(VA[HV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(stick, Gold, 6)
+                .input(ring, RoseGold, 6)
+                .input(Items.ENDER_PEARL, 2)
+                .fluidInputs(Helium3.getFluid(65))
+                .output(MetaBlocks.WARP_DUCTS[0])
+                .duration(35).EUt(VA[HV]).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(MetaBlocks.WARP_DUCTS[0])
+                .input(Blocks.OBSIDIAN, 3)
+                .output(MetaBlocks.WARP_DUCTS[1])
+                .duration(15).EUt(VA[HV]).buildAndRegister();
     }
 
     private static void registerBlastFurnaceRecipes() {

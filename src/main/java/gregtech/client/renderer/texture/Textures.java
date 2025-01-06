@@ -589,6 +589,21 @@ public class Textures {
     public static final SpriteInformationWrapper PIPE_BLOCKED_OVERLAY = new SpriteInformationWrapper();
 
     @SideOnly(Side.CLIENT)
+    public static final SpriteInformationWrapper WARP_DUCT_RESTRICTIVE_OVERLAY = new SpriteInformationWrapper();
+
+    @SideOnly(Side.CLIENT)
+    public static final SpriteInformationWrapper WARP_DUCT_IN = new SpriteInformationWrapper();
+
+    @SideOnly(Side.CLIENT)
+    public static final SpriteInformationWrapper WARP_DUCT_SIDE = new SpriteInformationWrapper();
+
+    @SideOnly(Side.CLIENT)
+    public static final SpriteInformationWrapper WARP_DUCT_IN_BLOCKED_OVERLAY = new SpriteInformationWrapper();
+
+    @SideOnly(Side.CLIENT)
+    public static final SpriteInformationWrapper WARP_DUCT_SIDE_BLOCKED_OVERLAY = new SpriteInformationWrapper();
+
+    @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
 
     static {
@@ -650,17 +665,23 @@ public class Textures {
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay_emissive")),
                 0);
 
+        WARP_DUCT_RESTRICTIVE_OVERLAY.accept(
+                textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/duct/duct_warp_restrictive")),
+                -1);
+        WARP_DUCT_IN.accept(textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/duct/duct_warp_in")),
+                -1);
+        WARP_DUCT_SIDE.accept(
+                textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/duct/duct_warp_side")), -1);
+        WARP_DUCT_IN_BLOCKED_OVERLAY.accept(
+                textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/duct/duct_warp_in_blocked")),
+                -1);
+        WARP_DUCT_SIDE_BLOCKED_OVERLAY.accept(
+                textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/duct/duct_warp_side_blocked")),
+                -1);
+
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             textureMap.registerSprite(MaterialIconType.frameGt.getBlockTexturePath(iconSet));
         }
-    }
-
-    private static int mask(EnumFacing... facings) {
-        int mask = 0;
-        for (EnumFacing facing : facings) {
-            mask |= (1 << facing.ordinal());
-        }
-        return mask;
     }
 
     @SideOnly(Side.CLIENT)

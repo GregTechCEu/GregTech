@@ -4,18 +4,18 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 
 @SideOnly(Side.CLIENT)
 public class SpriteInformationWrapper implements Supplier<SpriteInformation>, Consumer<SpriteInformation>,
-                                      BiConsumer<TextureAtlasSprite, Integer> {
+                                      ObjIntConsumer<TextureAtlasSprite> {
 
     private SpriteInformation sprite;
 
     @Override
-    public void accept(TextureAtlasSprite sprite, Integer colorID) {
+    public void accept(TextureAtlasSprite sprite, int colorID) {
         accept(new SpriteInformation(sprite, colorID));
     }
 

@@ -6,6 +6,7 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.ExtraCappedSQC;
+import gregtech.client.renderer.pipe.cache.StandardSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
 import gregtech.client.renderer.pipe.quad.ColorData;
 import gregtech.client.renderer.pipe.quad.PipeQuadHelper;
@@ -89,7 +90,7 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     protected StructureQuadCache constructForKey(CacheKey key) {
         SpriteInformation sideTex = fullInsulationTex != null ? fullInsulationTex.get() : wireTex.get();
         if (insulationTex == null) {
-            return StructureQuadCache.create(PipeQuadHelper.create(key.getThickness()), wireTex.get(), sideTex);
+            return StandardSQC.create(PipeQuadHelper.create(key.getThickness()), wireTex.get(), sideTex);
         } else {
             return ExtraCappedSQC.create(PipeQuadHelper.create(key.getThickness()), wireTex.get(), sideTex,
                     insulationTex.get());

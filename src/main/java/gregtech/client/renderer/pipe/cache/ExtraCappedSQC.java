@@ -18,7 +18,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class ExtraCappedSQC extends StructureQuadCache {
+public class ExtraCappedSQC extends StandardSQC {
 
     protected final EnumMap<EnumFacing, SubListAddress> extraCapperCoords = new EnumMap<>(EnumFacing.class);
 

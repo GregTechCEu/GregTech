@@ -13,6 +13,7 @@ import gregtech.api.util.IBlockOre;
 import gregtech.api.util.Mods;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
 import gregtech.client.model.customtexture.MetadataSectionCTM;
+import gregtech.client.renderer.WarpDuctVoidRenderer;
 import gregtech.client.renderer.handler.FacadeRenderer;
 import gregtech.client.renderer.handler.MetaTileEntityRenderer;
 import gregtech.client.renderer.pipe.AbstractPipeModel;
@@ -27,6 +28,7 @@ import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
+import gregtech.common.pipelike.block.warpduct.WarpDuctTileEntity;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -50,6 +52,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -85,6 +88,7 @@ public class ClientProxy extends CommonProxy {
         MetaTileEntityRenderer.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
+        ClientRegistry.bindTileEntitySpecialRenderer(WarpDuctTileEntity.class, new WarpDuctVoidRenderer());
     }
 
     @Override

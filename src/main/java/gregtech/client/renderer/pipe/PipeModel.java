@@ -2,7 +2,6 @@ package gregtech.client.renderer.pipe;
 
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cache.BlockableSQC;
@@ -29,10 +28,10 @@ import java.util.function.Supplier;
 @SideOnly(Side.CLIENT)
 public class PipeModel extends AbstractPipeModel<CacheKey> {
 
-    private final @NotNull Supplier<SpriteInformation> inTex;
-    private final @NotNull Supplier<SpriteInformation> sideTex;
-    private final @Nullable Supplier<SpriteInformation> restrictiveTex;
-    private final @NotNull Supplier<SpriteInformation> blockedTex;
+    protected final @NotNull Supplier<SpriteInformation> inTex;
+    protected final @NotNull Supplier<SpriteInformation> sideTex;
+    protected final @Nullable Supplier<SpriteInformation> restrictiveTex;
+    protected final @NotNull Supplier<SpriteInformation> blockedTex;
 
     public PipeModel(@NotNull Supplier<SpriteInformation> inTex, @NotNull Supplier<SpriteInformation> sideTex,
                      @Nullable Supplier<SpriteInformation> restrictiveTex,
@@ -77,7 +76,7 @@ public class PipeModel extends AbstractPipeModel<CacheKey> {
         if (block == null) return null;
         Material mater = block instanceof PipeMaterialBlock mat ? mat.getMaterialForStack(stack) : null;
         return new PipeItemModel<>(redirector, this, new CacheKey(block.getStructure().getRenderThickness()),
-                new ColorData(mater != null ? GTUtility.convertRGBtoARGB(mater.getMaterialRGB()) :
-                        PipeTileEntity.DEFAULT_COLOR));
+                mater != null ? new ColorData(GTUtility.convertRGBtoARGB(mater.getMaterialRGB())) :
+                        ColorData.PLAIN);
     }
 }

@@ -43,6 +43,11 @@ public final class PipeModelRegistry {
     private static final ActivablePipeModel LASER;
     private static final PipeModelRedirector LASER_MODEL;
 
+    private static final WarpDuctModel WARP_DUCT;
+    private static final WarpDuctModel WARP_DUCT_RESTRICTIVE;
+    private static final PipeModelRedirector WARP_DUCT_MODEL;
+    private static final PipeModelRedirector WARP_DUCT_RESTRICTIVE_MODEL;
+
     static {
         initPipes();
         initCables();
@@ -53,6 +58,17 @@ public final class PipeModelRegistry {
         LASER = new ActivablePipeModel(Textures.LASER_PIPE_IN, Textures.LASER_PIPE_SIDE, Textures.LASER_PIPE_OVERLAY,
                 Textures.LASER_PIPE_OVERLAY_EMISSIVE, true);
         LASER_MODEL = new PipeModelRedirector(new ModelResourceLocation(loc, "laser"), m -> LASER, s -> null);
+        WARP_DUCT = new WarpDuctModel(Textures.WARP_DUCT_IN, Textures.WARP_DUCT_SIDE, null,
+                Textures.WARP_DUCT_IN_BLOCKED_OVERLAY, Textures.WARP_DUCT_SIDE_BLOCKED_OVERLAY);
+        WARP_DUCT_MODEL = new PipeModelRedirector(
+                new ModelResourceLocation(GTUtility.gregtechId("block/duct_warp"), "normal"), m -> WARP_DUCT,
+                s -> null);
+        WARP_DUCT_RESTRICTIVE = new WarpDuctModel(Textures.WARP_DUCT_IN, Textures.WARP_DUCT_SIDE,
+                Textures.WARP_DUCT_RESTRICTIVE_OVERLAY,
+                Textures.WARP_DUCT_IN_BLOCKED_OVERLAY, Textures.WARP_DUCT_SIDE_BLOCKED_OVERLAY);
+        WARP_DUCT_RESTRICTIVE_MODEL = new PipeModelRedirector(
+                new ModelResourceLocation(GTUtility.gregtechId("block/duct_warp"), "restrictive"),
+                m -> WARP_DUCT_RESTRICTIVE, s -> null);
     }
 
     public static void registerPipeOverride(@NotNull MaterialModelOverride<PipeModel> override) {
@@ -93,6 +109,10 @@ public final class PipeModelRegistry {
         return LASER_MODEL;
     }
 
+    public static PipeModelRedirector getWarpDuctModel(boolean restrictive) {
+        return restrictive ? WARP_DUCT_RESTRICTIVE_MODEL : WARP_DUCT_MODEL;
+    }
+
     public static void registerModels(@NotNull IRegistry<ModelResourceLocation, IBakedModel> registry) {
         for (PipeModelRedirector redirector : PIPE_MODELS) {
             registry.putObject(redirector.getLoc(), redirector);
@@ -105,6 +125,8 @@ public final class PipeModelRegistry {
         }
         registry.putObject(OPTICAL_MODEL.getLoc(), OPTICAL_MODEL);
         registry.putObject(LASER_MODEL.getLoc(), LASER_MODEL);
+        registry.putObject(WARP_DUCT_MODEL.getLoc(), WARP_DUCT_MODEL);
+        registry.putObject(WARP_DUCT_RESTRICTIVE_MODEL.getLoc(), WARP_DUCT_RESTRICTIVE_MODEL);
     }
 
     public static PipeModelRedirector materialModel(@NotNull ResourceLocation loc, MaterialModelSupplier supplier,

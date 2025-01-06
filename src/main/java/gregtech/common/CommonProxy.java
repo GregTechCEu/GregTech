@@ -59,6 +59,8 @@ import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
 import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
+import gregtech.common.pipelike.block.warpduct.WarpDuctBlock;
+import gregtech.common.pipelike.block.warpduct.WarpDuctStructure;
 import gregtech.common.pipelike.net.energy.AmperageLimitLogic;
 import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
 import gregtech.common.pipelike.net.energy.SuperconductorLogic;
@@ -129,6 +131,7 @@ public class CommonProxy {
         }
         for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(pipe);
         for (LaserPipeBlock pipe : LASER_PIPES) registry.register(pipe);
+        for (WarpDuctBlock pipe : WARP_DUCTS) registry.register(pipe);
 
         registry.register(LD_ITEM_PIPE);
         registry.register(LD_FLUID_PIPE);
@@ -247,6 +250,7 @@ public class CommonProxy {
         }
         for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
         for (LaserPipeBlock pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
+        for (WarpDuctBlock pipe : WARP_DUCTS) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
 
         registry.register(createItemBlock(LD_ITEM_PIPE, ItemBlock::new));
         registry.register(createItemBlock(LD_FLUID_PIPE, ItemBlock::new));
@@ -397,6 +401,7 @@ public class CommonProxy {
         MaterialPipeStructure.register(event);
         LaserStructure.register(event);
         OpticalStructure.register(event);
+        WarpDuctStructure.register(event);
     }
 
     @SubscribeEvent

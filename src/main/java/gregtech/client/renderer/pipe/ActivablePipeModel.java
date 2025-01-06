@@ -2,7 +2,6 @@ package gregtech.client.renderer.pipe;
 
 import gregtech.api.block.UnlistedBooleanProperty;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
-import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
 import gregtech.client.renderer.pipe.cache.ActivableSQC;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
@@ -110,6 +109,6 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
         if (block == null) return null;
         return new PipeItemModel<>(redirector, this,
                 new ActivableCacheKey(block.getStructure().getRenderThickness(), false),
-                new ColorData(PipeTileEntity.DEFAULT_COLOR));
+                ColorData.PLAIN);
     }
 }

@@ -48,6 +48,9 @@ import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
 import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
+import gregtech.common.pipelike.block.warpduct.WarpDuctBlock;
+import gregtech.common.pipelike.block.warpduct.WarpDuctStructure;
+import gregtech.common.pipelike.block.warpduct.WarpDuctTileEntity;
 import gregtech.common.pipelike.longdistance.fluid.LDFluidPipeType;
 import gregtech.common.pipelike.longdistance.item.LDItemPipeType;
 
@@ -114,6 +117,7 @@ public class MetaBlocks {
     public static final Map<String, MaterialPipeBlock[]> MATERIAL_PIPES = new Object2ObjectOpenHashMap<>();
     public static OpticalPipeBlock[] OPTICAL_PIPES;
     public static LaserPipeBlock[] LASER_PIPES;
+    public static WarpDuctBlock[] WARP_DUCTS;
     public static BlockLongDistancePipe LD_ITEM_PIPE;
     public static BlockLongDistancePipe LD_FLUID_PIPE;
 
@@ -231,6 +235,15 @@ public class MetaBlocks {
             LaserPipeBlock block = new LaserPipeBlock(struct);
             block.setRegistryName(GTValues.MODID, String.format(struct.getName()));
             LASER_PIPES[i] = block;
+            i++;
+        }
+        Set<WarpDuctStructure> structuresWarp = PipeStructureRegistry.getStructures(WarpDuctStructure.class);
+        WARP_DUCTS = new WarpDuctBlock[structuresWarp.size()];
+        i = 0;
+        for (WarpDuctStructure struct : structuresWarp) {
+            WarpDuctBlock block = new WarpDuctBlock(struct);
+            block.setRegistryName(GTValues.MODID, String.format(struct.getName()));
+            WARP_DUCTS[i] = block;
             i++;
         }
 
@@ -438,6 +451,7 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(PipeTileEntity.class, gregtechId("pipe"));
         GameRegistry.registerTileEntity(PipeMaterialTileEntity.class, gregtechId("material_pipe"));
         GameRegistry.registerTileEntity(PipeActivableTileEntity.class, gregtechId("activatable_pipe"));
+        GameRegistry.registerTileEntity(WarpDuctTileEntity.class, gregtechId("warp_duct"));
     }
 
     @SideOnly(Side.CLIENT)
@@ -468,6 +482,11 @@ public class MetaBlocks {
             ModelBakery.registerItemVariants(item, decoy);
         }
         for (LaserPipeBlock pipe : LASER_PIPES) {
+            Item item = Item.getItemFromBlock(pipe);
+            ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getStructure().getModel().getLoc());
+            ModelBakery.registerItemVariants(item, decoy);
+        }
+        for (WarpDuctBlock pipe : WARP_DUCTS) {
             Item item = Item.getItemFromBlock(pipe);
             ModelLoader.setCustomMeshDefinition(item, stack -> pipe.getStructure().getModel().getLoc());
             ModelBakery.registerItemVariants(item, decoy);
@@ -576,6 +595,9 @@ public class MetaBlocks {
             ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getStructure().getModel().getLoc()));
         }
         for (LaserPipeBlock pipe : LASER_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getStructure().getModel().getLoc()));
+        }
+        for (WarpDuctBlock pipe : WARP_DUCTS) {
             ModelLoader.setCustomStateMapper(pipe, new SimpleStateMapper(pipe.getStructure().getModel().getLoc()));
         }
 

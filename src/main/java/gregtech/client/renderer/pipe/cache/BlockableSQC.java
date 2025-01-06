@@ -21,7 +21,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class BlockableSQC extends StructureQuadCache {
+public class BlockableSQC extends StandardSQC {
 
     protected final EnumMap<EnumFacing, SubListAddress> blockedCoords = new EnumMap<>(EnumFacing.class);
 

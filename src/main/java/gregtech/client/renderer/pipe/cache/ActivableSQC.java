@@ -18,7 +18,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class ActivableSQC extends StructureQuadCache {
+public class ActivableSQC extends StandardSQC {
 
     protected final EnumMap<EnumFacing, SubListAddress> overlayCoords = new EnumMap<>(EnumFacing.class);
     protected final EnumMap<EnumFacing, SubListAddress> overlayActiveCoords = new EnumMap<>(EnumFacing.class);
