@@ -24,7 +24,7 @@ public class GTItemSyncHandler extends SyncHandler {
     public void init(String key, PanelSyncManager syncManager) {
         super.init(key, syncManager);
         // noinspection UnstableApiUsage
-        getSyncManager().getContainer().registerSlot(getSyncManager().getPanelName(), this.slot);
+        // getSyncManager().getContainer().registerSlot(getSyncManager().getPanelName(), this.slot);
         this.lastStoredItem = getSlot().getStack().copy();
         // if (isPhantom() && !getSlot().getStack().isEmpty()) {
         // this.lastStoredPhantomItem = getSlot().getStack().copy();
