@@ -220,7 +220,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
                 .child(new ItemSlot()
                         .background(GTGuiTextures.SLOT, GTGuiTextures.IN_SLOT_OVERLAY)
                         .slot(SyncHandlers.itemSlot(importHandler, 0)
-                                .accessibility(true, false)
+                                .accessibility(true, true)
                                 .singletonSlotGroup(200))
                         .marginRight(18))
                 .child(new ItemSlot()
