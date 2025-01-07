@@ -84,7 +84,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private final Set<ITickable> tickers = new ObjectOpenHashSet<>();
 
     protected final PipeCoverHolder covers = new PipeCoverHolder(this);
-    private final Object2ObjectOpenCustomHashMap<NetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet
+    protected final Object2ObjectOpenCustomHashMap<NetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet
             .getSensitiveHashMap();
 
     @Nullable
@@ -296,12 +296,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     // ticking //
 
-    public void addTicker(ITickable ticker) {
-        this.tickers.add(ticker);
-        // noinspection ConstantValue
-        if (getWorld() != null) getWorld().tickableTileEntities.add(this);
-    }
-
     @Override
     public void update() {
         this.tickers.forEach(ITickable::update);
@@ -320,6 +314,12 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             if (last == this) tickables.remove(tickables.size() - 1);
             else tickables.remove(this);
         }
+    }
+
+    public void addTicker(ITickable ticker) {
+        this.tickers.add(ticker);
+        // noinspection ConstantValue
+        if (getWorld() != null) getWorld().tickableTileEntities.add(this);
     }
 
     public void removeTicker(ITickable ticker) {

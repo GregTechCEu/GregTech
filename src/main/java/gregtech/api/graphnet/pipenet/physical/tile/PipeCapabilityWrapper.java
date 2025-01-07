@@ -64,6 +64,10 @@ public class PipeCapabilityWrapper implements ICapabilityProvider {
         return (this.activeMask & 1 << facing.ordinal()) > 0;
     }
 
+    public boolean matchesCapability(@NotNull Capability<?> capability) {
+        return capabilities.containsKey(capability);
+    }
+
     @Override
     public boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing) {
         IPipeCapabilityObject obj = capabilities.get(capability);

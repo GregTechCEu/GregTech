@@ -48,9 +48,9 @@ import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
 import gregtech.common.pipelike.block.optical.OpticalStructure;
 import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
 import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
-import gregtech.common.pipelike.block.warpduct.WarpDuctBlock;
-import gregtech.common.pipelike.block.warpduct.WarpDuctStructure;
-import gregtech.common.pipelike.block.warpduct.WarpDuctTileEntity;
+import gregtech.common.pipelike.block.warp.WarpDuctBlock;
+import gregtech.common.pipelike.block.warp.WarpDuctStructure;
+import gregtech.common.pipelike.block.warp.WarpDuctTileEntity;
 import gregtech.common.pipelike.longdistance.fluid.LDFluidPipeType;
 import gregtech.common.pipelike.longdistance.item.LDItemPipeType;
 

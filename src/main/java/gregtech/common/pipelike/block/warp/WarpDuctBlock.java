@@ -1,4 +1,4 @@
-package gregtech.common.pipelike.block.warpduct;
+package gregtech.common.pipelike.block.warp;
 
 import gregtech.api.graphnet.pipenet.IPipeNetNodeHandler;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
@@ -8,6 +8,7 @@ import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.handlers.WarpDuctNetHandler;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +25,14 @@ public class WarpDuctBlock extends PipeBlock {
     public WarpDuctBlock(WarpDuctStructure structure) {
         super(structure);
         setCreativeTab(GTCreativeTabs.TAB_GREGTECH_PIPES);
+    }
+
+    @Override
+    public void onEntityCollision(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state,
+                                  @NotNull Entity entityIn) {
+        super.onEntityCollision(worldIn, pos, state, entityIn);
+        WarpDuctTileEntity tile = getTileEntity(worldIn, pos);
+        if (tile != null) tile.handleEntityCollision(entityIn);
     }
 
     @Override

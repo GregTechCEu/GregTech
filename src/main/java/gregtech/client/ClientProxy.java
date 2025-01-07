@@ -28,7 +28,7 @@ import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
-import gregtech.common.pipelike.block.warpduct.WarpDuctTileEntity;
+import gregtech.common.pipelike.block.warp.WarpDuctTileEntity;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

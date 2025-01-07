@@ -48,7 +48,7 @@ public interface IPipeStructure extends IStringSerializable {
         return pipeBoxes;
     }
 
-    static AxisAlignedBB getSideBox(EnumFacing side, float thickness) {
+    default @NotNull AxisAlignedBB getSideBox(EnumFacing side, float thickness) {
         float min = (1.0f - thickness) / 2.0f, max = min + thickness;
         float faceMin = 0f, faceMax = 1f;
 

@@ -2,7 +2,7 @@ package gregtech.client.renderer;
 
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.quad.QuadHelper;
-import gregtech.common.pipelike.block.warpduct.WarpDuctTileEntity;
+import gregtech.common.pipelike.block.warp.WarpDuctTileEntity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;

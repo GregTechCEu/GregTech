@@ -36,4 +36,7 @@ public class GregtechTileCapabilities {
 
     @CapabilityInject(ILaserRelay.class)
     public static Capability<ILaserRelay> CAPABILITY_LASER = null;
+
+    @CapabilityInject(IEntityRelay.class)
+    public static Capability<IEntityRelay> CAPABILITY_ENTITY_TRANSFER = null;
 }
