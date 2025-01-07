@@ -59,6 +59,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -69,8 +70,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -629,25 +629,20 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createUI(panel, guiSyncManager))
+                .child(createUI(guiData, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<?> createUI(ModularPanel mainPanel, PanelSyncManager syncManager) {
+    protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
         var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
-        manualIOmode.updateCacheFromSource(true);
 
         var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-        throughput.updateCacheFromSource(true);
 
         var throughputString = new StringSyncValue(
-                throughput::getStringValue,
-                throughput::setStringValue);
-        throughputString.updateCacheFromSource(true);
+                throughput::getStringValue, throughput::setStringValue);
 
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
-        pumpMode.updateCacheFromSource(true);
 
         EnumSyncValue<DistributionMode> distributionMode = new EnumSyncValue<>(DistributionMode.class,
                 this::getDistributionMode, this::setDistributionMode);
@@ -657,17 +652,17 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         syncManager.syncValue("distribution_mode", distributionMode);
         syncManager.syncValue("throughput", throughput);
 
-        var column = new Column().top(24).margin(7, 0)
+        var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 
         if (createThroughputRow())
-            column.child(new Row().coverChildrenHeight()
+            column.child(Flow.row().coverChildrenHeight()
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val, true, true);
+                                throughput.setValue(val);
                                 Interactable.playButtonClickSound();
                                 return true;
                             })
@@ -682,15 +677,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .right(0).width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val, true, true);
+                                throughput.setValue(val);
                                 Interactable.playButtonClickSound();
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
         if (createFilterRow())
-            column.child(getFluidFilterContainer()
-                    .initUI(mainPanel, syncManager));
+            column.child(getFluidFilterContainer().initUI(data, syncManager));
 
         if (createManualIOModeRow())
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)

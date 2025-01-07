@@ -1001,6 +1001,35 @@ public class MetaTileEntityLoader {
                 "PPP", "PFP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Neutronium), 'F',
                 new UnificationEntry(OrePrefix.pipeLarge, Materials.Duranium));
 
+        // Quantum Storage Controller
+        ModHandler.addShapedRecipe(true, "quantum_storage_controller",
+                MetaTileEntities.QUANTUM_STORAGE_CONTROLLER.getStackForm(),
+                "PCP", "EHS", "CFC",
+                'C', new UnificationEntry(OrePrefix.circuit, Tier.MV),
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                'H', MetaTileEntities.HULL[GTValues.MV].getStackForm(),
+                'F', MetaItems.FIELD_GENERATOR_MV.getStackForm(),
+                'E', MetaItems.EMITTER_MV.getStackForm(),
+                'S', MetaItems.SENSOR_MV.getStackForm());
+
+        // Quantum Storage Proxy
+        ModHandler.addShapedRecipe(true, "quantum_storage_proxy",
+                MetaTileEntities.QUANTUM_STORAGE_PROXY.getStackForm(),
+                "PEP", "ACA", "PHP",
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                'E', MetaItems.EMITTER_MV.getStackForm(),
+                'C', new UnificationEntry(OrePrefix.pipeHuge, Materials.SterlingSilver),
+                'A', MetaItems.ROBOT_ARM_MV.getStackForm(),
+                'H', MetaTileEntities.HULL[GTValues.MV].getStackForm());
+
+        // Quantum Storage Extender
+        ModHandler.addShapedRecipe(true, "quantum_storage_extender",
+                MetaTileEntities.QUANTUM_STORAGE_EXTENDER.getStackForm(4),
+                "PPP", "CHC", "PPP",
+                'P', new UnificationEntry(OrePrefix.plate, Materials.Steel),
+                'C', new UnificationEntry(OrePrefix.pipeSmall, Materials.SterlingSilver),
+                'H', MetaTileEntities.HULL[GTValues.MV].getStackForm());
+
         // Super / Quantum Chests
         ModHandler.addShapedRecipe(true, "super_chest_lv", MetaTileEntities.QUANTUM_CHEST[0].getStackForm(), "CPC",
                 "PFP", "CPC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.LV), 'P',

@@ -60,6 +60,7 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
@@ -70,8 +71,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -747,12 +747,12 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         getItemFilterContainer().setMaxTransferSize(getMaxStackSize());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createUI(panel, guiSyncManager))
+                .child(createUI(guiData, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<Column> createUI(ModularPanel mainPanel, PanelSyncManager guiSyncManager) {
-        var column = new Column().top(24).margin(7, 0)
+    protected ParentWidget<Flow> createUI(GuiData data, PanelSyncManager guiSyncManager) {
+        var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 
         EnumSyncValue<ManualImportExportMode> manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
@@ -762,7 +762,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 this::getConveyorMode, this::setConveyorMode);
 
         IntSyncValue throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-        throughput.updateCacheFromSource(true);
 
         StringSyncValue formattedThroughput = new StringSyncValue(throughput::getStringValue,
                 throughput::setStringValue);
@@ -776,7 +775,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         guiSyncManager.syncValue("throughput", throughput);
 
         if (createThroughputRow())
-            column.child(new Row().coverChildrenHeight()
+            column.child(Flow.row().coverChildrenHeight()
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
@@ -804,7 +803,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
         if (createFilterRow())
-            column.child(getItemFilterContainer().initUI(mainPanel, guiSyncManager));
+            column.child(getItemFilterContainer().initUI(data, guiSyncManager));
 
         if (createManualIOModeRow())
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)

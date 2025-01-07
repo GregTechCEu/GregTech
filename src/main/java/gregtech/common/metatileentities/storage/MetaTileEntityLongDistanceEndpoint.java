@@ -5,7 +5,6 @@ import gregtech.api.longdist.LongDistanceNetwork;
 import gregtech.api.longdist.LongDistancePipeType;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -213,14 +212,12 @@ public abstract class MetaTileEntityLongDistanceEndpoint extends MetaTileEntity
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, @NotNull List<String> tooltip,
                                boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.1"));
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.2"));
         tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.3"));
         if (pipeType.getMinLength() > 0) {
             tooltip.add(I18n.format("gregtech.machine.endpoint.tooltip.min_length", pipeType.getMinLength()));
-        }
-        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant()) {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
         }
     }
 

@@ -175,9 +175,6 @@ public class GTTransferUtils {
         if (handler == null || stack.isEmpty()) {
             return stack;
         }
-        if (!stack.isStackable()) {
-            return insertToEmpty(handler, stack, simulate);
-        }
 
         IntList emptySlots = new IntArrayList();
         int slots = handler.getSlots();

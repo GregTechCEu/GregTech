@@ -63,7 +63,7 @@ public class RecipeLogicInfoProvider extends CapabilityInfoProvider<AbstractReci
                 // IGregTechTileEntity...)
                 text = TextFormatting.RED + TextFormattingUtil.formatNumbers(eut) + TextStyleClass.INFO +
                         " EU/t" + TextFormatting.GREEN +
-                        " (" + GTValues.VNF[GTUtility.getOCTierByVoltage(eut)] + TextFormatting.GREEN + ")";
+                        " (" + GTValues.VOCNF[GTUtility.getOCTierByVoltage(eut)] + TextFormatting.GREEN + ")";
             }
 
             if (eut == 0) return; // do not display 0 eut

@@ -3,8 +3,8 @@ package gregtech.api.recipes.machines;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.recipeproperties.ResearchProperty;
-import gregtech.api.recipes.recipeproperties.ResearchPropertyData;
+import gregtech.api.recipes.properties.impl.ResearchProperty;
+import gregtech.api.recipes.properties.impl.ResearchPropertyData;
 import gregtech.api.recipes.ui.RecipeMapUIFunction;
 import gregtech.core.sound.GTSoundEvents;
 
@@ -32,15 +32,11 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     @Override
     public boolean compileRecipe(Recipe recipe) {
         if (!super.compileRecipe(recipe)) return false;
-        if (recipe.hasProperty(ResearchProperty.getInstance())) {
-            ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
-            if (data != null) {
-                for (ResearchPropertyData.ResearchEntry entry : data) {
-                    addDataStickEntry(entry.getResearchId(), recipe);
-                }
-                return true;
+        ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
+        if (data != null) {
+            for (ResearchPropertyData.ResearchEntry entry : data) {
+                addDataStickEntry(entry.researchId(), recipe);
             }
-            return false;
         }
         return true;
     }
@@ -48,15 +44,11 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     @Override
     public boolean removeRecipe(@NotNull Recipe recipe) {
         if (!super.removeRecipe(recipe)) return false;
-        if (recipe.hasProperty(ResearchProperty.getInstance())) {
-            ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
-            if (data != null) {
-                for (ResearchPropertyData.ResearchEntry entry : data) {
-                    removeDataStickEntry(entry.getResearchId(), recipe);
-                }
-                return true;
+        ResearchPropertyData data = recipe.getProperty(ResearchProperty.getInstance(), null);
+        if (data != null) {
+            for (ResearchPropertyData.ResearchEntry entry : data) {
+                removeDataStickEntry(entry.researchId(), recipe);
             }
-            return false;
         }
         return true;
     }

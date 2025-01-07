@@ -12,7 +12,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
-import gregtech.client.utils.TooltipHelper;
 import gregtech.common.covers.filter.BaseFilter;
 import gregtech.common.covers.filter.BaseFilterContainer;
 import gregtech.common.covers.filter.FluidFilterContainer;
@@ -36,14 +35,18 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +58,8 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWit
     protected final SimpleOverlayRenderer texture;
     protected final FluidFilterContainer fluidFilterContainer;
     protected FluidFilterMode filterMode;
-    protected FluidHandlerFiltered fluidHandler;
+    protected boolean allowFlow = false;
+    protected FluidHandlerDelegate fluidHandler;
 
     public CoverFluidFilter(@NotNull CoverDefinition definition, @NotNull CoverableView coverableView,
                             @NotNull EnumFacing attachedSide, String titleLocale, SimpleOverlayRenderer texture) {
@@ -91,9 +95,6 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWit
 
     @Override
     public @NotNull ItemStack getPickItem() {
-        if (TooltipHelper.isCtrlDown())
-            return getCoverableView().getStackForm();
-
         return this.fluidFilterContainer.getFilterStack();
     }
 
@@ -127,9 +128,10 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWit
 
     @SuppressWarnings("DataFlowIssue") // this cover always has a filter
     public @NotNull BaseFilter getFilter() {
-        return this.fluidFilterContainer.hasFilter() ?
-                this.fluidFilterContainer.getFilter() :
-                BaseFilter.ERROR_FILTER;
+        var filter = getFilterContainer().getFilter();
+        if (filter == null) return BaseFilter.ERROR_FILTER;
+
+        return filter;
     }
 
     @Override
@@ -161,17 +163,34 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWit
 
         guiSyncManager.syncValue("filtering_mode", filteringMode);
         this.fluidFilterContainer.setMaxTransferSize(1);
-        getFilter().getFilterReader().readStack(this.fluidFilterContainer.getFilterStack());
 
         return getFilter().createPanel(guiSyncManager)
-                .size(176, 194).padding(7)
-                .child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(new Column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
+                .size(176, 212).padding(7)
+                .child(CoverWithUI.createTitleRow(getFilterContainer().getFilterStack()))
+                .child(Flow.column().widthRel(1f).align(Alignment.TopLeft).top(22).coverChildrenHeight()
                         .child(new EnumRowBuilder<>(FluidFilterMode.class)
                                 .value(filteringMode)
                                 .lang("cover.filter.mode.title")
                                 .overlay(16, GTGuiTextures.FILTER_MODE_OVERLAY)
                                 .build())
+                        .child(Flow.row()
+                                .marginBottom(2)
+                                .widthRel(1f)
+                                .coverChildrenHeight()
+                                .setEnabledIf(b -> getFilterMode() != FluidFilterMode.FILTER_BOTH)
+                                .child(new ToggleButton()
+                                        .overlay(IKey.dynamic(() -> IKey.lang(allowFlow ?
+                                                "cover.generic.enabled" :
+                                                "cover.generic.disabled").get())
+                                                .color(Color.WHITE.main).shadow(false))
+                                        .tooltip(tooltip -> tooltip
+                                                .addLine(IKey.lang("cover.filter.allow_flow.tooltip")))
+                                        .size(72, 18)
+                                        .value(new BooleanSyncValue(() -> allowFlow, b -> allowFlow = b)))
+                                .child(IKey.lang("cover.filter.allow_flow.label")
+                                        .asWidget()
+                                        .height(18)
+                                        .alignX(1f)))
                         .child(new Rectangle().setColor(UI_TEXT_COLOR).asWidget()
                                 .height(1).widthRel(0.95f).margin(0, 4))
                         .child(getFilter().createWidgets(guiSyncManager)))
@@ -230,30 +249,36 @@ public class CoverFluidFilter extends CoverBase implements CoverWithUI, CoverWit
         }
 
         public int fill(FluidStack resource, boolean doFill) {
-            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN || !fluidFilterContainer.test(resource)) {
-                return 0;
-            }
-            return super.fill(resource, doFill);
+            // set to drain, but filling is allowed
+            if (getFilterMode() == FluidFilterMode.FILTER_DRAIN && allowFlow)
+                return super.fill(resource, doFill);
+
+            // if set to insert or both, test the stack
+            if (getFilterMode() != FluidFilterMode.FILTER_DRAIN && fluidFilterContainer.test(resource))
+                return super.fill(resource, doFill);
+
+            // otherwise fail
+            return 0;
         }
 
         @Nullable
         public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (getFilterMode() == FluidFilterMode.FILTER_FILL || !fluidFilterContainer.test(resource)) {
-                return null;
-            }
-            return super.drain(resource, doDrain);
+            // set to fill, draining is allowed
+            if (getFilterMode() == FluidFilterMode.FILTER_FILL && allowFlow)
+                return super.drain(resource, doDrain);
+
+            // if set to extract or both, test stack
+            if (getFilterMode() != FluidFilterMode.FILTER_FILL && fluidFilterContainer.test(resource))
+                return super.drain(resource, doDrain);
+
+            // otherwise fail
+            return null;
         }
 
         @Nullable
         public FluidStack drain(int maxDrain, boolean doDrain) {
-            if (getFilterMode() != FluidFilterMode.FILTER_FILL) {
-                FluidStack result = super.drain(maxDrain, false);
-                if (result == null || result.amount <= 0 || !fluidFilterContainer.test(result)) {
-                    return null;
-                }
-                return doDrain ? super.drain(maxDrain, true) : result;
-            }
-            return super.drain(maxDrain, doDrain);
+            var f = super.drain(maxDrain, false);
+            return drain(f, doDrain);
         }
     }
 }

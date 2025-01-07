@@ -2,7 +2,6 @@ package gregtech.common.pipelike.longdistance.fluid;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.FluidHandlerDelegate;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.longdist.ILDEndpoint;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -11,7 +10,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.storage.MetaTileEntityLongDistanceEndpoint;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -55,11 +53,6 @@ public class MetaTileEntityLDFluidEndpoint extends MetaTileEntityLongDistanceEnd
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityLDFluidEndpoint(this.metaTileEntityId);
-    }
-
-    @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return null;
     }
 
     @Override

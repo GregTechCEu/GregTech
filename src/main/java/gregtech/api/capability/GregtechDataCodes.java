@@ -138,6 +138,11 @@ public class GregtechDataCodes {
     public static final int UPDATE_ITEM_COUNT = assignId();
     public static final int UPDATE_FLUID_AMOUNT = assignId();
 
+    // Quantum Storage Controller
+    public static final int UPDATE_CONTROLLER_POS = assignId();
+    public static final int REMOVE_CONTROLLER = assignId();
+    public static final int LOCATE_CONTROLLER = assignId();
+
     // Detector Covers
     public static final int UPDATE_INVERTED = assignId();
 

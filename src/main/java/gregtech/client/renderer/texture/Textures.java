@@ -22,6 +22,7 @@ import gregtech.client.renderer.texture.custom.DrumRenderer;
 import gregtech.client.renderer.texture.custom.FireboxActiveRenderer;
 import gregtech.client.renderer.texture.custom.LargeTurbineRenderer;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+import gregtech.client.texture.IconRegistrar;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -34,7 +35,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.BlockRenderer.BlockFace;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.TransformationList;
@@ -54,7 +54,7 @@ public class Textures {
     public static final Map<String, ICubeRenderer> CUBE_RENDERER_REGISTRY = new HashMap<>();
 
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
-    public static final List<IIconRegister> iconRegisters = new ArrayList<>();
+    public static final List<IconRegistrar> iconRegisters = new ArrayList<>();
 
     // Custom Renderers
     public static final ClipboardRenderer CLIPBOARD_RENDERER = new ClipboardRenderer();
@@ -99,6 +99,32 @@ public class Textures {
             "casings/pipe/machine_casing_grate");
     public static final SimpleOverlayRenderer HIGH_POWER_CASING = new SimpleOverlayRenderer(
             "casings/computer/high_power_casing");
+    public static final SimpleOverlayRenderer QUANTUM_CASING = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_casing");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_FRONT_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_front_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_FRONT_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_front_active");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_active");
+    public static final SimpleOverlayRenderer QUANTUM_CONTROLLER_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/controller_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_PROXY_INACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/proxy_inactive");
+    public static final SimpleOverlayRenderer QUANTUM_PROXY_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/proxy_active");
+    public static final SimpleOverlayRenderer QUANTUM_EXTENDER = new SimpleOverlayRenderer("casings/quantum/extender");
+    public static final SimpleOverlayRenderer QUANTUM_EXTENDER_ACTIVE = new SimpleOverlayRenderer(
+            "casings/quantum/extender_active");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_disconnected");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR_CONNECTED = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_connected");
+
+    public static final SimpleOverlayRenderer QUANTUM_INDICATOR_POWERED = new SimpleOverlayRenderer(
+            "casings/quantum/quantum_indicator_powered");
 
     // Simple Sided Cube Renderers
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer(
@@ -619,8 +645,8 @@ public class Textures {
     @SideOnly(Side.CLIENT)
     public static void register(TextureMap textureMap) {
         GTLog.logger.info("Loading meta tile entity texture sprites...");
-        for (IIconRegister iconRegister : iconRegisters) {
-            iconRegister.registerIcons(textureMap);
+        for (IconRegistrar registrar : iconRegisters) {
+            registrar.registerIcons(textureMap);
         }
 
         WIRE.accept(textureMap.registerSprite(gregtechId("blocks/cable/wire")), 0);

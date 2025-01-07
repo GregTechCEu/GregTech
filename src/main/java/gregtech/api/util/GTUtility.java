@@ -86,9 +86,6 @@ import java.util.function.IntPredicate;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
-import static gregtech.api.GTValues.V;
-import static gregtech.api.GTValues.VOC;
-
 public class GTUtility {
 
     public static <T> String[] mapToString(T[] array, Function<T, String> mapper) {
@@ -268,7 +265,10 @@ public class GTUtility {
      *         tier that can handle it, {@code MAX} is returned.
      */
     public static byte getTierByVoltage(long voltage) {
-        return (byte) Math.min(GTValues.MAX, nearestLesser(V, voltage) + 1);
+        if (voltage >= GTValues.V[GTValues.MAX]) {
+            return GTValues.MAX;
+        }
+        return getOCTierByVoltage(voltage);
     }
 
     /**
@@ -277,7 +277,10 @@ public class GTUtility {
      *         tier that can handle it, {@code MAX_TRUE} is returned.
      */
     public static byte getOCTierByVoltage(long voltage) {
-        return (byte) Math.min(GTValues.MAX_TRUE, nearestLesser(VOC, voltage) + 1);
+        if (voltage <= GTValues.V[GTValues.ULV]) {
+            return GTValues.ULV;
+        }
+        return (byte) ((62 - Long.numberOfLeadingZeros(voltage - 1)) >> 1);
     }
 
     /**
@@ -287,7 +290,14 @@ public class GTUtility {
      *         {@code ULV} if there's no tier below
      */
     public static byte getFloorTierByVoltage(long voltage) {
-        return (byte) Math.max(GTValues.ULV, nearestLesserOrEqual(VOC, voltage));
+        if (voltage < GTValues.V[GTValues.LV]) {
+            return GTValues.ULV;
+        }
+        if (voltage == GTValues.VOC[GTValues.MAX_TRUE]) {
+            return GTValues.MAX_TRUE;
+        }
+
+        return (byte) ((60 - Long.numberOfLeadingZeros(voltage)) >> 1);
     }
 
     @SuppressWarnings("deprecation")

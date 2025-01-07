@@ -167,6 +167,7 @@ public class GTGuiTextures {
 
     public static final UITexture[] BUTTON_MATCH_ALL = slice("textures/gui/widget/ore_filter/button_match_all.png",
             16, 32, 16, 16, true);
+    public static final UITexture BUTTON_LOCK = fullImage("textures/gui/widget/button_lock.png");
 
     public static final UITexture OREDICT_ERROR = fullImage("textures/gui/widget/ore_filter/error.png");
     public static final UITexture OREDICT_INFO = fullImage("textures/gui/widget/ore_filter/info.png");
@@ -205,6 +206,8 @@ public class GTGuiTextures {
     public static final UITexture[] PRIVATE_MODE_BUTTON = slice(
             "textures/gui/widget/button_public_private.png",
             18, 36, 18, 18, true);
+
+    public static final UITexture MENU_OVERLAY = fullImage("textures/gui/overlay/menu_overlay.png");
 
     // todo bronze/steel/primitive fluid slots?
 
