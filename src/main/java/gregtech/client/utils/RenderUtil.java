@@ -33,6 +33,7 @@ import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.ModularUIJeiPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -165,7 +166,7 @@ public class RenderUtil {
     public static void useLightMap(float x, float y, Runnable codeBlock) {
         /* hack the lightmap */
         GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        RenderHelper.disableStandardItemLighting();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, x, y);
@@ -174,7 +175,7 @@ public class RenderUtil {
         }
         /* restore the lightmap */
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         GL11.glPopAttrib();
     }
 
@@ -379,14 +380,14 @@ public class RenderUtil {
     }
 
     public static void renderItemOverLay(float x, float y, float z, float scale, ItemStack itemStack) {
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.scale(scale, scale, 0.0001f);
         GlStateManager.translate(x * 16, y * 16, z * 16);
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0);
         GlStateManager.popMatrix();
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        RenderHelper.disableStandardItemLighting();
     }
 
     // adapted from com.cleanroommc.modularui.drawable.GuiDraw.java
@@ -634,10 +635,10 @@ public class RenderUtil {
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
         if (fbo.isStencilEnabled()) {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER,
-                    org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
+                    EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
                     depthBuffer);
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER,
-                    org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
+                    EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER,
                     depthBuffer);
         } else {
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT,
@@ -714,6 +715,14 @@ public class RenderUtil {
      */
     public static @NotNull TextureAtlasSprite getMissingSprite() {
         return getTextureMap().getMissingSprite();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawItemStack(ItemStack itemStack, int x, int y, boolean drawCount) {
+        int cache = itemStack.getCount();
+        if (!drawCount) itemStack.setCount(1);
+        drawItemStack(itemStack, x, y, null);
+        if (!drawCount) itemStack.setCount(cache);
     }
 
     @SideOnly(Side.CLIENT)
