@@ -3,7 +3,6 @@ package gregtech.common.mui.widget;
 import gregtech.client.utils.RenderUtil;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -131,12 +130,9 @@ public class GTItemSlot extends Widget<GTItemSlot>
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         if (this.syncHandler == null) return;
-        RenderHelper.enableGUIStandardItemLighting();
-        // todo draw slot
-        RenderUtil.drawItemStack(getSlot().getStack(), 0, 0, null);
-        // drawSlot(getSlot());
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.disableLighting();
+
+        RenderUtil.drawItemStack(getSlot().getStack(), 1, 1, false);
+
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);
             GuiDraw.drawRect(1, 1, 16, 16, getSlotHoverColor());

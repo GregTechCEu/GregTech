@@ -42,6 +42,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -316,10 +317,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 () -> virtualItemStack.getDisplayName(),
                 textWidget -> !virtualItemStack.isEmpty(),
                 () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
-                // todo make and use GT item slot for special behavior
                 .child(new GTItemSlot()
                         .showTooltip(false)
-                        // todo disable tooltip
+                        .background(IDrawable.NONE)
                         .slot(new ModularSlot(itemInventory, 0)
                                 .accessibility(false, false))
                         .pos(148, 41));
