@@ -15,6 +15,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.custom.QuantumStorageRenderer;
+import gregtech.common.mui.widget.GTItemSlot;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -45,7 +46,6 @@ import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -317,7 +317,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntityQuantumStorage<IIt
                 textWidget -> !virtualItemStack.isEmpty(),
                 () -> TextFormattingUtil.formatNumbers(itemsStoredInside)))
                 // todo make and use GT item slot for special behavior
-                .child(new ItemSlot()
+                .child(new GTItemSlot()
+                        .showTooltip(false)
                         // todo disable tooltip
                         .slot(new ModularSlot(itemInventory, 0)
                                 .accessibility(false, false))
