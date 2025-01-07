@@ -320,7 +320,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
                 () -> TextFormattingUtil.formatNumbers(fluidTank.getFluidAmount()) + " L"))
                 .child(new GTFluidSlot()
                         .syncHandler(GTFluidSlot.sync(fluidTank)
-                                .phantom(true)
                                 .handleLocking(() -> lockedFluid, fluidStack -> {
                                     setLocked(fluidStack != null);
                                     lockedFluid = fluidStack;
