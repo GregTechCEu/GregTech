@@ -95,7 +95,7 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
         for (var key : syncHandler.builtKeys) {
             if (key == null) continue;
             textRenderer.setPos(x, y);
-            textRenderer.draw(key.get());
+            textRenderer.draw(key.getFormatted());
             y += 12;
         }
     }

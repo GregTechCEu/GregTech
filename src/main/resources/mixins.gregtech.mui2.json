@@ -9,6 +9,7 @@
   },
   "mixins": [
     "ItemSlotSHMixin",
+    "KeyCompMixin",
     "PanelSyncHandlerMixin",
     "PanelSyncManagerMixin",
     "StyledTextMixin",
