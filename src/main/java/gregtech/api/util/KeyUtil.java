@@ -13,12 +13,6 @@ public class KeyUtil {
 
     public static final String SECTION = "§";
 
-    public static IKey colored(TextFormatting formatting, IKey... keys) {
-        if (ArrayUtils.isEmpty(keys)) return wrap(formatting);
-        if (keys.length == 1) return IKey.comp(wrap(formatting), keys[0]);
-        return IKey.comp(keys).format(formatting);
-    }
-
     public static IKey string(String s) {
         return IKey.str(s);
     }
@@ -55,7 +49,8 @@ public class KeyUtil {
     public static IKey lang(TextFormatting formatting, String lang, Supplier<?>... argSuppliers) {
         if (ArrayUtils.isEmpty(argSuppliers)) return IKey.lang(lang).format(formatting);
         if (argSuppliers.length == 1)
-            return IKey.dynamic(() -> IKey.lang(lang, fixArg(formatting, argSuppliers[0].get())).format(formatting).getFormatted());
+            return IKey.dynamic(
+                    () -> IKey.lang(lang, fixArg(formatting, argSuppliers[0].get())).format(formatting).getFormatted());
         final Object[] args = new Object[argSuppliers.length];
         return IKey.dynamic(() -> {
             Arrays.setAll(args, value -> fixArg(formatting, argSuppliers[value].get()));
