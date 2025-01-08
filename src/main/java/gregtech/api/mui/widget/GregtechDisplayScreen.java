@@ -15,10 +15,11 @@ import com.cleanroommc.modularui.api.layout.IViewportStack;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.Stencil;
-import com.cleanroommc.modularui.drawable.TextRenderer;
+import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
@@ -82,7 +83,7 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
     public void getWidgetsAt(IViewportStack stack, HoveredWidgetList widgets, int x, int y) {}
 
     @Override
-    public void draw(GuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         // draw the keys
         int x = getArea().getPadding().left;
         int y = getArea().getPadding().top - scroll.getScrollY().getScroll();
@@ -209,14 +210,14 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
     }
 
     @Override
-    public void preDraw(GuiContext context, boolean transformed) {
+    public void preDraw(ModularGuiContext context, boolean transformed) {
         if (!transformed) {
             Stencil.applyAtZero(this.scroll, context);
         }
     }
 
     @Override
-    public void postDraw(GuiContext context, boolean transformed) {
+    public void postDraw(ModularGuiContext context, boolean transformed) {
         if (!transformed) {
             Stencil.remove();
             this.scroll.drawScrollbar();

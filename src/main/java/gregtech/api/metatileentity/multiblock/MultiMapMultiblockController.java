@@ -141,7 +141,8 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                         return null;
 
                     return new CycleButtonWidget()
-                            .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
+                            // .textureGetter(i -> GTGuiTextures.BUTTON_MULTI_MAP)
+                            .overlay(GTGuiTextures.BUTTON_MULTI_MAP)
                             .background(GTGuiTextures.BUTTON)
                             // TODO find out why this needs to be called
                             .disableHoverBackground()
