@@ -474,9 +474,9 @@ public class MultiblockUIFactory {
         private boolean isStructureFormed;
 
         // Keys for the three-state working system, can be set custom by multiblocks.
-        private IKey idlingKey = IKey.lang("gregtech.multiblock.idling");
-        private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused");
-        private IKey runningKey = IKey.lang("gregtech.multiblock.running");
+        private IKey idlingKey = IKey.lang("gregtech.multiblock.idling").format(TextFormatting.GRAY);
+        private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").format(TextFormatting.GOLD);
+        private IKey runningKey = IKey.lang("gregtech.multiblock.running").format(TextFormatting.GREEN);
         private boolean dirty;
 
         protected static Widget<?> keyMapper(IDrawable key) {
@@ -691,7 +691,7 @@ public class MultiblockUIFactory {
         public Builder addWorkPausedLine(boolean checkState) {
             if (!isStructureFormed) return this;
             if (!checkState || !isWorkingEnabled.getAsBoolean()) {
-                addKey(KeyUtil.colored(TextFormatting.GOLD, pausedKey));
+                addKey(pausedKey);
             }
             return this;
         }
@@ -705,7 +705,7 @@ public class MultiblockUIFactory {
         public Builder addRunningPerfectlyLine(boolean checkState) {
             if (!isStructureFormed) return this;
             if (!checkState || isActive.getAsBoolean()) {
-                addKey(KeyUtil.colored(TextFormatting.GREEN, runningKey));
+                addKey(runningKey);
             }
             return this;
         }
@@ -719,7 +719,7 @@ public class MultiblockUIFactory {
         public Builder addIdlingLine(boolean checkState) {
             if (!isStructureFormed) return this;
             if (!checkState || (isWorkingEnabled.getAsBoolean() && !isActive.getAsBoolean())) {
-                addKey(KeyUtil.colored(TextFormatting.GRAY, idlingKey));
+                addKey(idlingKey);
             }
             return this;
         }
