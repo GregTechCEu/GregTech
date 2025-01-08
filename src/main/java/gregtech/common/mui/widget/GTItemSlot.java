@@ -32,6 +32,7 @@ public class GTItemSlot extends Widget<GTItemSlot>
                         JeiIngredientProvider {
 
     private boolean showTooltip = true;
+    private boolean showAmount = true;
     private ItemSlotSH syncHandler;
 
     public GTItemSlot() {
@@ -56,6 +57,11 @@ public class GTItemSlot extends Widget<GTItemSlot>
 
     public GTItemSlot showTooltip(boolean showTooltip) {
         this.showTooltip = showTooltip;
+        return getThis();
+    }
+
+    public GTItemSlot showAmount(boolean showAmount) {
+        this.showAmount = showTooltip;
         return getThis();
     }
 
@@ -131,7 +137,7 @@ public class GTItemSlot extends Widget<GTItemSlot>
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         if (this.syncHandler == null) return;
 
-        RenderUtil.drawItemStack(getSlot().getStack(), 1, 1, false);
+        RenderUtil.drawItemStack(getSlot().getStack(), 1, 1, showAmount);
 
         if (isHovering()) {
             GlStateManager.colorMask(true, true, true, false);
