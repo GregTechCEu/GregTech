@@ -5,6 +5,7 @@ import net.minecraft.util.text.TextFormatting;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.Arrays;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
@@ -23,7 +24,7 @@ public class KeyUtil {
     }
 
     public static IKey string(Supplier<String> s) {
-        return string(TextFormatting.RESET, s);
+        return IKey.dynamic(s);
     }
 
     public static IKey string(TextFormatting formatting, String string) {
@@ -36,31 +37,29 @@ public class KeyUtil {
     }
 
     public static IKey string(Supplier<TextFormatting> formatting, String s) {
-        return IKey.dynamic(() -> formatting.get() + s);
+        return IKey.dynamic(() -> IKey.str(s).format(formatting.get()).getFormatted());
     }
 
     public static IKey string(Supplier<TextFormatting> formatting, Supplier<String> stringSupplier) {
-        return IKey.dynamic(() -> formatting.get() + stringSupplier.get());
+        return IKey.dynamic(() -> IKey.str(stringSupplier.get()).format(formatting.get()).getFormatted());
     }
 
     public static IKey lang(String lang, Object... args) {
-        return lang(TextFormatting.RESET, lang, args);
+        return IKey.lang(lang, args);
     }
 
     public static IKey lang(TextFormatting formatting, String lang, Object... args) {
-        return IKey.lang(lang, args).format(formatting);
+        return IKey.lang(lang, checkFormatting(formatting, args)).format(formatting);
     }
 
     public static IKey lang(TextFormatting formatting, String lang, Supplier<?>... argSuppliers) {
-        if (ArrayUtils.isEmpty(argSuppliers)) return colored(formatting, IKey.lang(lang));
+        if (ArrayUtils.isEmpty(argSuppliers)) return IKey.lang(lang).format(formatting);
         if (argSuppliers.length == 1)
-            return string(formatting, () -> IKey.lang(lang, fixArg(formatting, argSuppliers[0].get())).get());
-        final Object[] fixedArgs = new Object[argSuppliers.length];
+            return IKey.dynamic(() -> IKey.lang(lang, fixArg(formatting, argSuppliers[0].get())).format(formatting).getFormatted());
+        final Object[] args = new Object[argSuppliers.length];
         return IKey.dynamic(() -> {
-            for (int i = 0; i < fixedArgs.length; i++) {
-                fixedArgs[i] = fixArg(formatting, argSuppliers[i].get());
-            }
-            return formatting + IKey.lang(lang, fixedArgs).get();
+            Arrays.setAll(args, value -> fixArg(formatting, argSuppliers[value].get()));
+            return IKey.lang(lang, args).format(formatting).getFormatted();
         });
     }
 
@@ -97,16 +96,13 @@ public class KeyUtil {
     }
 
     private static Object[] checkFormatting(TextFormatting formatting, Object[] args) {
-        Object[] fixedArgs = new Object[args.length];
-        for (int i = 0; i < args.length; i++) {
-            fixedArgs[i] = fixArg(formatting, args[i]);
-        }
-        return fixedArgs;
+        Arrays.setAll(args, value -> fixArg(formatting, args[value]));
+        return args;
     }
 
     private static Object fixArg(TextFormatting formatting, Object arg) {
         if (arg instanceof IKey key) {
-            if (hasFormatting(key.get()))
+            if (hasFormatting(key.getFormatted()))
                 return IKey.comp(key, wrap(formatting));
         } else if (arg instanceof String s) {
             if (hasFormatting(s))
