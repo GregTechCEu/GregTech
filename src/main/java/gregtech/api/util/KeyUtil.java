@@ -15,11 +15,11 @@ public class KeyUtil {
     public static IKey colored(TextFormatting formatting, IKey... keys) {
         if (ArrayUtils.isEmpty(keys)) return wrap(formatting);
         if (keys.length == 1) return IKey.comp(wrap(formatting), keys[0]);
-        return IKey.comp(wrap(formatting), IKey.comp(keys));
+        return IKey.comp(keys).format(formatting);
     }
 
     public static IKey string(String s) {
-        return string(TextFormatting.RESET, s);
+        return IKey.str(s);
     }
 
     public static IKey string(Supplier<String> s) {
@@ -28,11 +28,11 @@ public class KeyUtil {
 
     public static IKey string(TextFormatting formatting, String string) {
         if (string == null) return IKey.EMPTY;
-        return IKey.comp(wrap(formatting), IKey.str(string));
+        return IKey.str(string).format(formatting);
     }
 
     public static IKey string(TextFormatting formatting, Supplier<String> stringSupplier) {
-        return IKey.dynamic(() -> formatting + stringSupplier.get());
+        return IKey.dynamic(stringSupplier).format(formatting);
     }
 
     public static IKey string(Supplier<TextFormatting> formatting, String s) {
@@ -48,8 +48,7 @@ public class KeyUtil {
     }
 
     public static IKey lang(TextFormatting formatting, String lang, Object... args) {
-        if (ArrayUtils.isEmpty(args)) return colored(formatting, IKey.lang(lang));
-        return colored(formatting, IKey.lang(lang, checkFormatting(formatting, args)));
+        return IKey.lang(lang, args).format(formatting);
     }
 
     public static IKey lang(TextFormatting formatting, String lang, Supplier<?>... argSuppliers) {
