@@ -21,7 +21,7 @@ import net.minecraft.util.text.TextFormatting;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.drawable.keys.DynamicKey;
+import com.cleanroommc.modularui.drawable.text.DynamicKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -37,6 +37,7 @@ import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -254,8 +255,8 @@ public class MultiblockUIFactory {
      * @param panelSyncManager the sync manager for synchronizing widgets
      */
     @Nullable
-    protected Column createBars(@NotNull ModularPanel mainPanel,
-                                @NotNull PanelSyncManager panelSyncManager) {
+    protected Flow createBars(@NotNull ModularPanel mainPanel,
+                              @NotNull PanelSyncManager panelSyncManager) {
         if (!(mte instanceof ProgressBarMultiblock progressMulti)) return null;
 
         final int count = progressMulti.getProgressBarCount();
@@ -265,7 +266,7 @@ public class MultiblockUIFactory {
         final int rows = progressMulti.getProgressBarRows();
         final int cols = progressMulti.getProgressBarCols();
 
-        Column column = new Column()
+        Flow column = Flow.column()
                 .margin(4, 0)
                 .top(114)
                 .widthRel(1f)
@@ -274,7 +275,7 @@ public class MultiblockUIFactory {
 
         for (int r = 0; r < rows; r++) {
 
-            Row row = new Row()
+            Flow row = Flow.row()
                     .widthRel(1f)
                     .height(Bars.HEIGHT);
 
@@ -347,7 +348,7 @@ public class MultiblockUIFactory {
     }
 
     @NotNull
-    protected Column createButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
+    protected Flow createButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
         var flexButton = this.flexButton.apply(mainPanel, panelSyncManager);
         if (flexButton == null) {
             flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
@@ -356,7 +357,7 @@ public class MultiblockUIFactory {
         }
         var powerButton = createPowerButton(mainPanel, panelSyncManager);
 
-        return new Column()
+        return Flow.column()
                 .alignX(1f)
                 .right(4)
                 .size(18, 77)
@@ -379,7 +380,9 @@ public class MultiblockUIFactory {
         return new CycleButtonWidget()
                 .size(18, 18)
                 .value(distinctValue)
-                .textureGetter(i -> GTGuiTextures.BUTTON_DISTINCT_BUSES[i])
+                // .textureGetter(i -> GTGuiTextures.BUTTON_DISTINCT_BUSES[i])
+                .stateBackground(true, GTGuiTextures.BUTTON_DISTINCT_BUSES[1])
+                .stateBackground(false, GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
                 .background(GTGuiTextures.BUTTON)
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                 .tooltipBuilder(t -> t.addLine(distinctValue.getBoolValue() ?
@@ -398,7 +401,11 @@ public class MultiblockUIFactory {
 
         return new CycleButtonWidget()
                 .size(18, 18)
-                .textureGetter(i -> GTGuiTextures.MULTIBLOCK_VOID[i])
+                // .textureGetter(i -> GTGuiTextures.MULTIBLOCK_VOID[i])
+                .stateOverlay(0, GTGuiTextures.MULTIBLOCK_VOID[0])
+                .stateOverlay(1, GTGuiTextures.MULTIBLOCK_VOID[1])
+                .stateOverlay(2, GTGuiTextures.MULTIBLOCK_VOID[2])
+                .stateOverlay(3, GTGuiTextures.MULTIBLOCK_VOID[3])
                 .background(GTGuiTextures.BUTTON)
                 .value(voidingValue)
                 .length(4)
@@ -421,7 +428,9 @@ public class MultiblockUIFactory {
 
         return new CycleButtonWidget()
                 .size(18)
-                .textureGetter(i -> GTGuiTextures.BUTTON_POWER[i])
+                // .textureGetter(i -> GTGuiTextures.BUTTON_POWER[i])
+                .stateOverlay(true, GTGuiTextures.BUTTON_POWER[1])
+                .stateOverlay(false, GTGuiTextures.BUTTON_POWER[0])
                 .disableHoverBackground()
                 .background(GTGuiTextures.BUTTON_POWER_DETAIL.asIcon().size(18, 6).marginTop(24), GTGuiTextures.BUTTON)
                 .value(new BooleanSyncValue(controllable::isWorkingEnabled, controllable::setWorkingEnabled))

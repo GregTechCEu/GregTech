@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.screen.Tooltip;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -183,7 +183,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
      * @param amounts       the sync value containing an array of [fuel stored, fuel capacity]
      * @param fuelNameValue the name of the fuel
      */
-    protected void createFuelTooltip(@NotNull Tooltip tooltip, @NotNull FixedIntArraySyncValue amounts,
+    protected void createFuelTooltip(@NotNull RichTooltip tooltip, @NotNull FixedIntArraySyncValue amounts,
                                      @NotNull StringSyncValue fuelNameValue) {
         tooltip.setAutoUpdate(true);
         if (isStructureFormed()) {
