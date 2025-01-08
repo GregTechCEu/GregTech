@@ -272,7 +272,9 @@ public class GregtechDisplayScreen extends ParentWidget<GregtechDisplayScreen> i
         }
 
         private void buildKeys(PacketBuffer buffer) {
-            builtKeys = new IKey[deserializers.size()];
+            if (builtKeys.length != deserializers.size())
+                builtKeys = new IKey[deserializers.size()];
+
             activeHeight = 0;
             if (buffer == null) return;
             Arrays.setAll(builtKeys, i -> {
