@@ -197,7 +197,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                     }
                 }))
                 .createFlexButton((panel, syncManager) -> {
-                    PanelSyncHandler throttle = syncManager.panel("throttle_panel", panel, this::makeThrottlePanel);
+                    PanelSyncHandler throttle = (PanelSyncHandler) syncManager.panel("throttle_panel",
+                            this::makeThrottlePanel, true);
 
                     return new ButtonWidget<>()
                             .width(18)
