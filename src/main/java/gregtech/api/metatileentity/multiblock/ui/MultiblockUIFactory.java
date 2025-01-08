@@ -129,7 +129,7 @@ public class MultiblockUIFactory {
 
         return panel.child(createScreen(panelSyncManager))
                 .childIf(bars != null, bars)
-                .child(new Row()
+                .child(Flow.row()
                         .bottom(7)
                         .height(77)
                         .margin(4, 0)
