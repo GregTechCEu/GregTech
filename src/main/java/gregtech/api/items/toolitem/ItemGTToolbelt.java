@@ -392,7 +392,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         if (match != -1) {
             setSelectedTool(match, stack);
             PacketToolbeltSelectionChange.toClient(match,
-                    lastSlot.get(), (EntityPlayerMP) lastPlayer.get());
+                    lastSlot.get(), lastPlayer.get());
         }
     }
 
