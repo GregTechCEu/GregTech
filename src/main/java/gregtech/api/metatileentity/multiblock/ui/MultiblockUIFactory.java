@@ -20,10 +20,12 @@ import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.drawable.text.DynamicKey;
+import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -35,24 +37,20 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.cleanroommc.modularui.widgets.layout.Row;
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
@@ -144,7 +142,7 @@ public class MultiblockUIFactory {
                 .pos(174 - 5, screenHeight - 18 - 3)
                 .onUpdateListener(w -> w.overlay(getIndicatorOverlay(builder)))
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                .tooltipBuilder(tooltip -> tooltip.addDrawableLines(builder.getTextList()));
+                .tooltipBuilder(builder::buildTooltip);
     }
 
     private IDrawable getIndicatorOverlay(Builder builder) {
@@ -308,27 +306,29 @@ public class MultiblockUIFactory {
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
         final var builder = builder();
         this.displayText.accept(builder);
-        var col = new Column();
-        builder.build(col);
+        var richTextWidget = new RichTextWidget();
+        builder.buildDisplay(richTextWidget);
         final var compare = builder();
 
         return new ParentWidget<>()
                 .child(createIndicator())
                 .child(customScreen != null ? customScreen.get() : new ScrollWidget<>(new VerticalScrollData())
                         .sizeRel(1f)
-                        .child(col.expanded()
+                        .child(richTextWidget.sizeRel(1f)
+                                .alignment(Alignment.TopLeft)
                                 .margin(4, 4)
                                 .onUpdateListener(column -> {
                                     // really debating on if the display screen should be its own widget
-                                    compare.clear();
+                                    // compare.clear();
                                     this.displayText.accept(compare);
-                                    if (!builder.hasChanged(compare) && !dirty) return;
-                                    builder.clear();
-                                    column.getChildren().clear();
-                                    this.displayText.accept(builder);
-                                    builder.build(column);
-                                    resize(column);
-                                    dirty = false;
+                                    // if (!builder.hasChanged(compare) && !dirty) return;
+                                    // builder.clear();
+                                    if (builder.hasChanged(compare))
+                                        column.markDirty();
+                                    // this.displayText.accept(builder);
+                                    // builder.build(column);
+                                    // resize(column);
+                                    // dirty = false;
                                 })))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)
@@ -465,9 +465,11 @@ public class MultiblockUIFactory {
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
     public static class Builder {
 
-        private final List<IDrawable> textList;
-        private Function<IDrawable, Widget<?>> widgetFunction = Builder::keyMapper;
-        private final Int2ObjectMap<IDrawable> tooltips = new Int2ObjectArrayMap<>();
+        private final RichText text = new RichText();
+        private final List<Consumer<IRichTextBuilder<? extends IRichTextBuilder<?>>>> textList = new ArrayList<>();
+        // private final List<IDrawable> textList;
+        // private Function<IDrawable, Widget<?>> widgetFunction = Builder::keyMapper;
+        // private final Int2ObjectMap<IDrawable> tooltips = new Int2ObjectArrayMap<>();
 
         private BooleanSupplier isWorkingEnabled = () -> false;
         private BooleanSupplier isActive = () -> false;
@@ -479,15 +481,15 @@ public class MultiblockUIFactory {
         private IKey runningKey = IKey.lang("gregtech.multiblock.running").format(TextFormatting.GREEN);
         private boolean dirty;
 
-        protected static Widget<?> keyMapper(IDrawable key) {
-            return key.asWidget()
-                    .widthRel(1f)
-                    .height(12);
-        }
+        // protected static Widget<?> keyMapper(IDrawable key) {
+        // return key.asWidget()
+        // .widthRel(1f)
+        // .height(12);
+        // }
 
-        private Builder() {
-            this.textList = new ArrayList<>();
-        }
+        // private Builder() {
+        // this.textList = new ArrayList<>();
+        // }
 
         public Builder structureFormed(boolean structureFormed) {
             this.isStructureFormed = structureFormed;
@@ -672,11 +674,11 @@ public class MultiblockUIFactory {
 
             addKey(KeyUtil.string(() -> {
                 if (!isWorkingEnabled.getAsBoolean()) {
-                    return TextFormatting.GOLD + pausedKey.get();
+                    return pausedKey.getFormatted();
                 } else if (isActive.getAsBoolean()) {
-                    return TextFormatting.GREEN + runningKey.get();
+                    return runningKey.getFormatted();
                 } else {
-                    return TextFormatting.GRAY + idlingKey.get();
+                    return idlingKey.getFormatted();
                 }
             }));
             return this;
@@ -881,23 +883,13 @@ public class MultiblockUIFactory {
 
         /** Insert an empty line into the text list. */
         public Builder addEmptyLine() {
-            addKey(IKey.EMPTY); // this is going to cause problems maybe
+            this.text.newLine();
             return this;
         }
 
         /** Add custom text dynamically, allowing for custom application logic. */
-        public Builder addCustom(Consumer<List<IDrawable>> customConsumer) {
-            List<IDrawable> customKeys = new ArrayList<>();
-            customConsumer.accept(customKeys);
-            customKeys.forEach(this::addKey);
-            return this;
-        }
-
-        /**
-         * @param widgetFunction function to build widgets from keys
-         */
-        public Builder widgetFunction(Function<IDrawable, Widget<?>> widgetFunction) {
-            this.widgetFunction = widgetFunction;
+        public Builder addCustom(Consumer<RichText> customConsumer) {
+            customConsumer.accept(this.text);
             return this;
         }
 
@@ -909,41 +901,35 @@ public class MultiblockUIFactory {
             textList.clear();
         }
 
-        protected void build(ParentWidget<?> parent) {
-            for (int i = 0; i < textList.size(); i++) {
-                var line = this.widgetFunction.apply(textList.get(i));
-                if (tooltips.containsKey(i))
-                    line.addTooltipLine(tooltips.get(i));
-                parent.child(line);
-            }
+        protected void buildDisplay(RichTextWidget parent) {
+            parent.textBuilder(richText -> this.textList.forEach(t -> t.accept(richText)));
         }
 
-        protected List<IDrawable> getTextList() {
-            return Collections.unmodifiableList(textList);
+        protected void buildTooltip(RichTooltip tooltip) {
+            this.textList.forEach(t -> t.accept(tooltip));
+        }
+
+        protected RichText getTextList() {
+            return this.text;
         }
 
         protected boolean hasChanged(Builder other) {
-            if (textList.size() != other.textList.size()) return true;
-            for (int i = 0; i < textList.size(); i++) {
-                IDrawable left = textList.get(i), right = other.textList.get(i);
-
-                // dynamic keys are impossible to check, skip
-                if (left instanceof DynamicKey && right instanceof DynamicKey)
-                    continue;
-
-                if (!left.equals(right))
+            List<String> cur = text.getStringRepresentation();
+            List<String> oth = other.text.getStringRepresentation();
+            if (cur.size() != oth.size()) return true;
+            for (int i = 0; i < cur.size(); i++) {
+                if (!Objects.equals(cur.get(i), oth.get(i)))
                     return true;
             }
             return false;
         }
 
         private void addKey(IDrawable key) {
-            this.textList.add(key);
+            textList.add(richText -> richText.addLine(key));
         }
 
-        private void addKey(IDrawable key, IDrawable hover) {
-            this.tooltips.put(textList.size(), hover);
-            addKey(key);
+        private void addKey(IKey key, IDrawable hover) {
+            addKey(key.asTextIcon().asHoverable().addTooltipLine(hover));
         }
     }
 }
