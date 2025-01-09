@@ -188,13 +188,12 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     @Override
     protected MultiblockUIFactory createUIFactory() {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-        boolean noRotor = getRotorHolder() == null;
         IntSyncValue efficiency = new IntSyncValue(
-                () -> noRotor ? 0 : getRotorHolder().getRotorEfficiency(), null);
+                () -> getRotorHolder() == null ? 0 : getRotorHolder().getRotorEfficiency(), null);
         IntSyncValue total = new IntSyncValue(
-                () -> noRotor ? 0 : getRotorHolder().getTotalEfficiency(), null);
+                () -> getRotorHolder() == null ? 0 : getRotorHolder().getTotalEfficiency(), null);
         IntSyncValue durability = new IntSyncValue(
-                () -> noRotor ? 0 : getRotorHolder().getRotorDurabilityPercent(), null);
+                () -> getRotorHolder() == null ? 0 : getRotorHolder().getRotorDurabilityPercent(), null);
         BooleanSyncValue rotorFree = new BooleanSyncValue(
                 this::isRotorFaceFree, null);
         StringSyncValue fuelAmount = new StringSyncValue(recipeLogic::getRecipeFluidInputInfo, null);
