@@ -381,6 +381,9 @@ public class ConfigHolder {
         @Config.Name("Shader Options")
         public ShaderOptions shader = new ShaderOptions();
 
+        @Config.Name("Toolbelt Config")
+        public ToolbeltConfig toolbeltConfig = new ToolbeltConfig();
+
         @Config.Comment({ "Terminal root path.", "Default: {.../config}/gregtech/terminal" })
         @Config.RequiresMcRestart
         public String terminalRootPath = "gregtech/terminal";
@@ -553,6 +556,22 @@ public class ConfigHolder {
             @Config.Comment({ "Blur Step (bloom range)", "Default: 1" })
             @Config.RangeDouble(min = 0)
             public double step = 1;
+        }
+
+        public static class ToolbeltConfig {
+
+            @Config.Comment({ "Enable the capturing of hotbar scroll while sneaking by a selected toolbelt.",
+                    "Default: true" })
+            public boolean enableToolbeltScrollingCapture = true;
+
+            @Config.Comment({ "Enable the capturing of hotbar keypresses while sneaking by a selected toolbelt.",
+                    "Default: true" })
+            public boolean enableToolbeltKeypressCapture = true;
+
+            @Config.Comment({
+                    "Enable the display of a second hotbar representing the toolbelt's inventory when one is selected.",
+                    "Default: true" })
+            public boolean enableToolbeltHotbarDisplay = true;
         }
     }
 

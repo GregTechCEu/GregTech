@@ -79,7 +79,10 @@ public interface IToolBehavior {
     }
 
     /**
-     * Called when a Block is right-clicked with this Item, but before the block is activated
+     * Called when a Block is right-clicked with this Item, but before the block is activated.
+     * If actions not going through {@link gregtech.api.items.toolitem.ToolHelper} are performed, such as
+     * {@link ItemStack#shrink(int)}, don't forget to perform toolbelt passthrough via
+     * {@link gregtech.api.items.toolitem.ToolHelper#toolbeltPassthrough(ItemStack)}
      *
      * @param player the player clicking with the item
      * @param world  the world in which the block is clicked
@@ -97,7 +100,10 @@ public interface IToolBehavior {
     }
 
     /**
-     * Called when a Block is right-clicked with this Item
+     * Called when a Block is right-clicked with this Item.
+     * If actions not going through {@link gregtech.api.items.toolitem.ToolHelper} are performed, such as
+     * {@link ItemStack#shrink(int)}, don't forget to perform toolbelt passthrough via
+     * {@link gregtech.api.items.toolitem.ToolHelper#toolbeltPassthrough(ItemStack)}
      *
      * @param player the player clicking with the item
      * @param world  the world in which the block is clicked
@@ -117,6 +123,9 @@ public interface IToolBehavior {
 
     /**
      * Called when the equipped item is right-clicked.
+     * If actions not going through {@link gregtech.api.items.toolitem.ToolHelper} are performed, such as
+     * {@link ItemStack#shrink(int)}, don't forget to perform toolbelt passthrough via
+     * {@link gregtech.api.items.toolitem.ToolHelper#toolbeltPassthrough(ItemStack)}
      *
      * @param world  the world in which the click happened
      * @param player the player clicking the item
