@@ -4,7 +4,6 @@ import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import gregtech.api.util.GTLog;
 import gregtech.client.utils.TooltipHelper;
 
 import net.minecraft.network.PacketBuffer;
