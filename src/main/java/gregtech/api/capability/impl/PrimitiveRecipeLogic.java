@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
@@ -31,6 +32,11 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected long getEnergyCapacity() {
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    protected IEnergyContainer getEnergyContainer() {
+        return IEnergyContainer.DEFAULT;
     }
 
     @Override

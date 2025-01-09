@@ -385,34 +385,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected long getEnergyInputPerSecond() {
-        return getEnergyContainer().getInputPerSec();
-    }
-
-    @Override
-    protected long getEnergyStored() {
-        return getEnergyContainer().getEnergyStored();
-    }
-
-    @Override
-    protected long getEnergyCapacity() {
-        return getEnergyContainer().getEnergyCapacity();
-    }
-
-    @Override
-    protected boolean drawEnergy(long recipeEUt, boolean simulate) {
-        long resultEnergy = getEnergyStored() - recipeEUt;
-        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
-            if (!simulate) getEnergyContainer().changeEnergy(-recipeEUt);
-            return true;
-        } else return false;
-    }
-
-    @Override
     public long getMaxVoltage() {
         IEnergyContainer energyContainer = getEnergyContainer();
         if (!consumesEnergy()) {
-            // Generators
+            // Generator Multiblocks
             long voltage = energyContainer.getOutputVoltage();
             long amperage = energyContainer.getOutputAmperage();
             if (energyContainer instanceof EnergyContainerList && amperage == 1) {
@@ -424,7 +400,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             }
             return voltage;
         } else {
-            // Machines
+            // Machine Multiblocks
             if (energyContainer instanceof EnergyContainerList energyList) {
                 long highestVoltage = energyList.getHighestInputVoltage();
                 if (energyList.getNumHighestInputContainers() > 1) {
