@@ -76,7 +76,7 @@ import static gregtech.api.items.toolitem.ToolHelper.MATERIAL_KEY;
 public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
     private static final ThreadLocal<Integer> lastSlot = ThreadLocal.withInitial(() -> -999);
-    private static final ThreadLocal<EntityPlayer> lastPlayer = ThreadLocal.withInitial(() -> null);
+    private static final ThreadLocal<EntityPlayerMP> lastPlayer = ThreadLocal.withInitial(() -> null);
 
     public ItemGTToolbelt(String domain, String id, Supplier<ItemStack> markerItem, IToolBehavior... behaviors) {
         super(domain, id, -1,
@@ -525,7 +525,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         return false;
     }
 
-    public static void setCraftingSlot(int slot, EntityPlayer player) {
+    public static void setCraftingSlot(int slot, EntityPlayerMP player) {
         lastSlot.set(slot);
         lastPlayer.set(player);
     }

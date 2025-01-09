@@ -3,6 +3,7 @@ package gregtech.mixins.minecraft;
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -22,8 +23,8 @@ public abstract class ContainerMixin {
     private void setPlayer(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player,
                            CallbackInfoReturnable<ItemStack> cir) {
         var playerStack = player.inventory.getItemStack();
-        if (playerStack.getItem() instanceof ItemGTToolbelt) {
-            ItemGTToolbelt.setCraftingSlot(slotId, player);
+        if (player instanceof EntityPlayerMP serverPlayer && playerStack.getItem() instanceof ItemGTToolbelt) {
+            ItemGTToolbelt.setCraftingSlot(slotId, serverPlayer);
         }
     }
 }
