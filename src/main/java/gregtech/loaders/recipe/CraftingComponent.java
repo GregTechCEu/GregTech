@@ -546,7 +546,7 @@ public class CraftingComponent {
                 { 0, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Bronze) },
                 { 1, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.CobaltBrass) },
                 { 2, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.VanadiumSteel) },
-                { 3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.BlueSteel) },
+                { 3, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.RedSteel) },
                 { 4, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.Ultimet) },
                 { 5, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.TungstenCarbide) },
                 { 6, new UnificationEntry(OrePrefix.toolHeadBuzzSaw, Materials.HSSE) },
