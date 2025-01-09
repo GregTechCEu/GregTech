@@ -5533,6 +5533,10 @@ gregtech.gui.config_slot.auto_pull_managed=§4Disabled:§7 Managed by Auto-Pull
 gregtech.gui.me_bus.extra_slot=Extra Slot/n§7Put extra items for recipes here, like Molds or Lenses
 gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from ME
 gregtech.gui.alarm.radius=Radius:
+gregtech.gui.item_passthrough.enabled=Item Passthough Enabled
+gregtech.gui.item_passthrough.disabled=Item Passthough Disabled
+gregtech.gui.fluid_passthrough.enabled=Fluid Passthough Enabled
+gregtech.gui.fluid_passthrough.disabled=Fluid Passthough Disabled
 
 
 ore.spawnlocation.name=Ore Spawn Information
