@@ -11,7 +11,6 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.FixedIntArraySyncValue;
-import gregtech.api.mui.widget.GregtechDisplayScreen;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -208,22 +207,40 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                 .syncValue("dura", rotorFree)
                 .syncValue("fuel_amount", fuelAmount)
                 .syncValue("prev_duration", prevDuration)
-                .customScreen(() -> new GregtechDisplayScreen(this)
-                        .padding(4)
-                        .energy(this::getMaxVoltage, recipeLogic::getRecipeEUt)
-                        .addLine(buffer -> {
-                            buffer.writeBoolean(isStructureFormed());
-                            if (isStructureFormed())
-                                buffer.writeInt(noRotor ? -1 : getRotorHolder().getTotalEfficiency());
-                        }, buffer -> {
-                            if (!buffer.readBoolean()) return null;
-                            int i = buffer.readInt();
-                            if (i < 0) return null;
-                            return KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.turbine.efficiency", i);
-                        })
-                        .fuelNeeded(recipeLogic::getRecipeFluidInputInfo, recipeLogic::getPreviousRecipeDuration)
-                        .status())
+                // .customScreen(() -> new ScrollWidget<>(new VerticalScrollData())
+                // .padding(4).sizeRel(1f)
+                // .child(new RichTextWidget()
+                // .sizeRel(1f)
+                // .autoUpdate(true)
+                // .alignment(Alignment.TopLeft)
+                // .textBuilder(richText -> {
+                // richText.add(KeyUtil.lang(TextFormatting.WHITE, getMetaFullName())).newLine();
+                //
+                // if (!isStructureFormed())
+                // richText.add(KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.invalid_structure")).newLine();
+                //
+                // long v = getMaxVoltage();
+                // String voltageName = GTValues.VOCNF[GTUtility.getFloorTierByVoltage(v)];
+                // richText.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.max_energy_per_tick",
+                // TextFormattingUtil.formatNumbers(v), IKey.str(voltageName).format(TextFormatting.RESET))).newLine();
+                // }))
+                // new GregtechDisplayScreen(this)
+                // .padding(4)
+                // .energy(this::getMaxVoltage, recipeLogic::getRecipeEUt)
+                // .addLine(buffer -> {
+                // buffer.writeBoolean(isStructureFormed());
+                // if (isStructureFormed())
+                // buffer.writeInt(noRotor ? -1 : getRotorHolder().getTotalEfficiency());
+                // }, buffer -> {
+                // if (!buffer.readBoolean()) return null;
+                // int i = buffer.readInt();
+                // if (i < 0) return null;
+                // return KeyUtil.lang(TextFormatting.GRAY,
+                // "gregtech.multiblock.turbine.efficiency", i);
+                // })
+                // .fuelNeeded(recipeLogic::getRecipeFluidInputInfo, recipeLogic::getPreviousRecipeDuration)
+                // .status()
+                // )
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
                         .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
