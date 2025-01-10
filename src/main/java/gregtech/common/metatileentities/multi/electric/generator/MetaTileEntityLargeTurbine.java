@@ -200,89 +200,55 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         IntSyncValue prevDuration = new IntSyncValue(recipeLogic::getPreviousRecipeDuration, null);
 
         return new MultiblockUIFactory(this)
-                .syncValue("eff", efficiency)
+                .syncValue("efficiency", efficiency)
                 .syncValue("total", total)
-                .syncValue("free", durability)
-                .syncValue("dura", rotorFree)
+                .syncValue("durability", durability)
+                .syncValue("rotor_free", rotorFree)
                 .syncValue("fuel_amount", fuelAmount)
                 .syncValue("prev_duration", prevDuration)
-                // .customScreen(() -> new ScrollWidget<>(new VerticalScrollData())
-                // .padding(4).sizeRel(1f)
-                // .child(new RichTextWidget()
-                // .sizeRel(1f)
-                // .autoUpdate(true)
-                // .alignment(Alignment.TopLeft)
-                // .textBuilder(richText -> {
-                // richText.add(KeyUtil.lang(TextFormatting.WHITE, getMetaFullName())).newLine();
-                //
-                // if (!isStructureFormed())
-                // richText.add(KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.invalid_structure")).newLine();
-                //
-                // long v = getMaxVoltage();
-                // String voltageName = GTValues.VOCNF[GTUtility.getFloorTierByVoltage(v)];
-                // richText.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.max_energy_per_tick",
-                // TextFormattingUtil.formatNumbers(v), IKey.str(voltageName).format(TextFormatting.RESET))).newLine();
-                // }))
-                // new GregtechDisplayScreen(this)
-                // .padding(4)
-                // .energy(this::getMaxVoltage, recipeLogic::getRecipeEUt)
-                // .addLine(buffer -> {
-                // buffer.writeBoolean(isStructureFormed());
-                // if (isStructureFormed())
-                // buffer.writeInt(noRotor ? -1 : getRotorHolder().getTotalEfficiency());
-                // }, buffer -> {
-                // if (!buffer.readBoolean()) return null;
-                // int i = buffer.readInt();
-                // if (i < 0) return null;
-                // return KeyUtil.lang(TextFormatting.GRAY,
-                // "gregtech.multiblock.turbine.efficiency", i);
-                // })
-                // .fuelNeeded(recipeLogic::getRecipeFluidInputInfo, recipeLogic::getPreviousRecipeDuration)
-                // .status()
-                // )
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
                         .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
-                        .addCustom(tl -> {
-                            if (isStructureFormed()) {
-                                if (efficiency.getIntValue() > 0) {
-                                    IKey efficiencyInfo = KeyUtil.number(TextFormatting.AQUA,
-                                            total.getIntValue(), "%");
-                                    tl.add(KeyUtil.lang(TextFormatting.GRAY,
-                                            "gregtech.multiblock.turbine.efficiency",
-                                            efficiencyInfo));
-                                }
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
+
+                            if (efficiency.getIntValue() > 0) {
+                                IKey efficiencyInfo = KeyUtil.number(TextFormatting.AQUA,
+                                        total.getIntValue(), "%");
+                                richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                                        "gregtech.multiblock.turbine.efficiency",
+                                        efficiencyInfo));
                             }
                         })
+                        // todo fix prev duration being 0 on first ui open
                         .addFuelNeededLine(fuelAmount.getValue(), prevDuration::getIntValue)
                         .addWorkingStatusLine())
                 .configureWarningText(false, builder -> builder
-                        .addCustom(tl -> {
-                            if (isStructureFormed()) {
-                                if (efficiency.getIntValue() > 0) {
-                                    if (durability.getIntValue() <= MIN_DURABILITY_TO_WARN) {
-                                        tl.add(KeyUtil.lang(TextFormatting.YELLOW,
-                                                "gregtech.multiblock.turbine.rotor_durability_low"));
-                                    }
-                                }
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
+
+                            if (efficiency.getIntValue() > 0 && durability.getIntValue() <= MIN_DURABILITY_TO_WARN) {
+                                richText.addLine(KeyUtil.lang(TextFormatting.YELLOW,
+                                        "gregtech.multiblock.turbine.rotor_durability_low"));
                             }
                         })
                         .addLowDynamoTierLine(isDynamoTierTooLow())
                         .addMaintenanceProblemLines(getMaintenanceProblems()))
                 .configureErrorText(builder -> builder
-                        .addCustom(keyList -> {
-                            if (isStructureFormed()) {
-                                if (!rotorFree.getBoolValue()) {
-                                    keyList.add(KeyUtil.lang(TextFormatting.RED,
-                                            "gregtech.multiblock.turbine.obstructed"));
-                                    keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                                            "gregtech.multiblock.turbine.obstructed.desc"));
-                                }
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
 
-                                if (efficiency.getIntValue() <= 0) {
-                                    keyList.add(KeyUtil.lang(TextFormatting.RED,
-                                            "gregtech.multiblock.turbine.no_rotor"));
-                                }
+                            if (!rotorFree.getBoolValue()) {
+                                richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                                        "gregtech.multiblock.turbine.obstructed"));
+                                richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                                        "gregtech.multiblock.turbine.obstructed.desc"));
+                            }
+
+                            // todo fix "no rotor" tooltip always being shown on first ui open
+                            if (efficiency.getIntValue() <= 0) {
+                                richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                                        "gregtech.multiblock.turbine.no_rotor"));
                             }
                         }));
     }
