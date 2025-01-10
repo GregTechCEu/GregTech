@@ -503,22 +503,22 @@ public class MultiblockUIFactory {
          * <br>
          * Added if the structure is formed and if the passed energy container has greater than zero capacity.
          */
-        public Builder addEnergyUsageLine(IEnergyContainer energyContainer) {
-            if (!isStructureFormed || energyContainer == null) return this;
+        public Builder addEnergyUsageLine(Supplier<IEnergyContainer> energyContainer) {
+            if (!isStructureFormed || energyContainer.get() == null) return this;
+            if (energyContainer.get().getEnergyCapacity() <= 0) return this;
 
-            if (energyContainer.getEnergyCapacity() > 0) {
-                long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-
-                String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
-                // wrap in text component to keep it from being formatted
-                IKey voltageName = IKey.str(GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
-
-                var bodyText = KeyUtil.lang(TextFormatting.GRAY,
-                        "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName);
-                var hoverText = KeyUtil.lang(TextFormatting.GRAY,
-                        "gregtech.multiblock.max_energy_per_tick_hover");
-                addKey(bodyText, hoverText);
-            }
+            IKey bodyText = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.max_energy_per_tick", () -> {
+                var e = energyContainer.get();
+                long maxVoltage = Math.max(e.getInputVoltage(), e.getOutputVoltage());
+                return TextFormattingUtil.formatNumbers(maxVoltage);
+            }, () -> {
+                var e = energyContainer.get();
+                long maxVoltage = Math.max(e.getInputVoltage(), e.getOutputVoltage());
+                return GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
+            });
+            var hoverText = KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.max_energy_per_tick_hover");
+            addKey(bodyText, hoverText);
             return this;
         }
 
