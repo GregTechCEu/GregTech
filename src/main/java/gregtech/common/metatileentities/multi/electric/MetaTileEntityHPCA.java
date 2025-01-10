@@ -20,6 +20,7 @@ import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -55,6 +56,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
+import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -451,6 +454,79 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
             hpcaHandler.addErrors(textList);
         }
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        IntSyncValue curCWUt = new IntSyncValue(() -> hpcaHandler.cachedCWUt, null);
+        IntSyncValue maxCWUt = new IntSyncValue(hpcaHandler::getMaxCWUt, null);
+        BooleanSyncValue hasNoEnergy = new BooleanSyncValue(() -> hasNotEnoughEnergy, null);
+        DoubleSyncValue temp = new DoubleSyncValue(() -> temperature, null);
+
+        return new MultiblockUIFactory(this)
+                .syncValue("cur_cwut", curCWUt)
+                .syncValue("max_cwut", maxCWUt)
+                .syncValue("no_energy", hasNoEnergy)
+                .syncValue("temp", temp)
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(() -> true, () -> hpcaHandler.getAllocatedCWUt() > 0)
+                        .setWorkingStatusKeys(
+                                "gregtech.multiblock.idling",
+                                "gregtech.multiblock.idling",
+                                "gregtech.multiblock.data_bank.providing")
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
+
+                            // Energy Usage
+                            String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())];
+                            richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.hpca.energy",
+                                    TextFormattingUtil.formatNumbers(curCWUt.getIntValue()),
+                                    TextFormattingUtil.formatNumbers(maxCWUt.getIntValue()),
+                                    voltageName));
+
+                            // Provided Computation
+                            IKey cwutInfo = KeyUtil.string(TextFormatting.AQUA,
+                                    curCWUt.getIntValue() + " / " + maxCWUt.getIntValue() + " CWU/t");
+
+                            richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.hpca.computation",
+                                    cwutInfo));
+                        })
+                        .addWorkingStatusLine())
+                .configureWarningText(builder -> builder
+                        .addLowPowerLine(hasNoEnergy.getBoolValue())
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
+
+                            if (temp.getDoubleValue() > 500) {
+                                // Temperature warning
+                                richText.add(KeyUtil.lang(
+                                        TextFormatting.YELLOW,
+                                        "gregtech.multiblock.hpca.warning_temperature"));
+
+                                // Active cooler overdrive warning
+                                richText.add(KeyUtil.lang(
+                                        TextFormatting.GRAY,
+                                        "gregtech.multiblock.hpca.warning_temperature_active_cool"));
+                            }
+
+                            // Structure warnings
+                            // hpcaHandler.addWarnings(richText);
+                            hpcaHandler.addWarnings2(richText);
+                        })
+                        .addMaintenanceProblemLines(getMaintenanceProblems()))
+                .configureErrorText(builder -> builder
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
+
+                            if (temp.getDoubleValue() > 1000) {
+                                richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                                        "gregtech.multiblock.hpca.error_temperature"));
+                            }
+                            // hpcaHandler.addErrors(textList);
+                            hpcaHandler.addErrors2(richText);
+                        }));
     }
 
     @Override
@@ -920,6 +996,37 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
                 textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
                         "gregtech.multiblock.hpca.error_damaged"));
+            }
+        }
+
+        public void addWarnings2(IRichTextBuilder<?> richText) {
+            List<IKey> warnings = new ArrayList<>();
+            if (numBridges > 1) {
+                warnings.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.hpca.warning_multiple_bridges"));
+            }
+            if (computationProviders.isEmpty()) {
+                warnings.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.hpca.warning_no_computation"));
+            }
+            if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
+                warnings.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.hpca.warning_low_cooling"));
+            }
+            if (!warnings.isEmpty()) {
+                richText.addLine(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.hpca.warning_structure_header"));
+                warnings.forEach(richText::addLine);
+            }
+        }
+
+        public void addErrors2(IRichTextBuilder<?> richText) {
+            for (IHPCAComponentHatch component : components) {
+                if (component.isDamaged()) {
+                    richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                            "gregtech.multiblock.hpca.error_damaged"));
+                    return;
+                }
             }
         }
 
