@@ -170,7 +170,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected MultiblockUIFactory createUIFactory() {
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
         IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-        tier.updateCacheFromSource(true);
         return new MultiblockUIFactory(this)
                 .syncValue("progress", progress)
                 .syncValue("tier", tier)
