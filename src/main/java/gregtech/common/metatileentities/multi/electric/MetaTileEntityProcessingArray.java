@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -26,6 +27,7 @@ import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -49,6 +51,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -172,6 +177,73 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 })
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
+
+        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+        IntSyncValue tier = new IntSyncValue(() -> logic.currentMachineStack.isEmpty() ? -1 : logic.machineTier, null);
+        return new MultiblockUIFactory(this)
+                .syncValue("progress", progress)
+                .syncValue("tier", tier)
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
+                        .addEnergyUsageLine(this::getEnergyContainer)
+                        .addEnergyTierLine(tier.getIntValue())
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
+
+                            // Machine mode text
+                            // Shared text components for both states
+                            IKey maxMachinesText = KeyUtil.string(TextFormatting.DARK_PURPLE,
+                                    Integer.toString(getMachineLimit()));
+                            maxMachinesText = KeyUtil.lang(TextFormatting.GRAY,
+                                    "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
+
+                            if (logic.activeRecipeMap == null) {
+                                // No machines in hatch
+                                IKey noneText = KeyUtil.lang(TextFormatting.YELLOW,
+                                        "gregtech.machine.machine_hatch.machines_none");
+                                IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
+                                        "gregtech.machine.machine_hatch.machines", noneText);
+                                IKey hoverText1 = KeyUtil.lang(TextFormatting.GRAY,
+                                        "gregtech.machine.machine_hatch.machines_none_hover");
+                                richText.addLine(KeyUtil.setHover(bodyText, hoverText1, maxMachinesText));
+                            } else {
+                                // Some amount of machines in hatch
+                                String key = logic.getMachineStack().getTranslationKey();
+                                IKey mapText = KeyUtil.lang(TextFormatting.DARK_PURPLE,
+                                        key + ".name");
+                                mapText = KeyUtil.lang(
+                                        TextFormatting.DARK_PURPLE,
+                                        "%sx %s",
+                                        logic.getParallelLimit(), mapText);
+                                IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
+                                        "gregtech.machine.machine_hatch.machines", mapText);
+                                String voltageName = GTValues.VNF[logic.machineTier];
+                                int amps = logic.getMachineStack().getCount();
+                                String energyFormatted = TextFormattingUtil
+                                        .formatNumbers(GTValues.V[logic.machineTier] * amps);
+                                IKey hoverText = KeyUtil.lang(
+                                        TextFormatting.GRAY,
+                                        "gregtech.machine.machine_hatch.machines_max_eut",
+                                        energyFormatted, amps, voltageName);
+                                richText.addLine(KeyUtil.setHover(bodyText, hoverText, maxMachinesText));
+                            }
+
+                            // Hatch locked status
+                            if (isActive()) {
+                                richText.addLine(KeyUtil.lang(TextFormatting.DARK_RED,
+                                        "gregtech.machine.machine_hatch.locked"));
+                            }
+                        })
+                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                        .addWorkingStatusLine()
+                        .addProgressLine(progress::getDoubleValue))
+                .configureWarningText(builder -> builder
+                        .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy()));
     }
 
     @SideOnly(Side.CLIENT)
