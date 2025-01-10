@@ -442,11 +442,7 @@ public class MultiblockUIFactory {
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
     public static class Builder {
 
-        // private final RichText text = new RichText();
         private final List<Consumer<IRichTextBuilder<?>>> textList = new ArrayList<>();
-        // private final List<IDrawable> textList;
-        // private Function<IDrawable, Widget<?>> widgetFunction = Builder::keyMapper;
-        // private final Int2ObjectMap<IDrawable> tooltips = new Int2ObjectArrayMap<>();
 
         private BooleanSupplier isWorkingEnabled = () -> false;
         private BooleanSupplier isActive = () -> false;
