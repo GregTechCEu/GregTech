@@ -87,8 +87,9 @@ public class KeyUtil {
         return string(formatting, () -> TextFormattingUtil.formatNumbers(supplier.getAsLong()) + suffix);
     }
 
-    public static IDrawable setHover(IKey body, IDrawable hover) {
-        return body.asTextIcon().asHoverable().addTooltipLine(hover);
+    public static IDrawable setHover(IKey body, IDrawable... hover) {
+        if (ArrayUtils.isEmpty(hover)) return body;
+        return body.asTextIcon().asHoverable().addTooltipDrawableLines(Arrays.asList(hover));
     }
 
     private static IKey wrap(TextFormatting formatting) {
