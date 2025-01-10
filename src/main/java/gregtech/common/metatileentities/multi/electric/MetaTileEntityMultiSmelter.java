@@ -113,7 +113,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     protected MultiblockUIFactory createUIFactory() {
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
         IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-        tier.updateCacheFromSource(true);
         IntSyncValue discount = new IntSyncValue(() -> heatingCoilDiscount, null);
         IntSyncValue parallel = new IntSyncValue(() -> getRecipeMapWorkable().getParallelLimit(), null);
         return new MultiblockUIFactory(this)
