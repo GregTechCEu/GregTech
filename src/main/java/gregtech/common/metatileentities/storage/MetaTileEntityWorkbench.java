@@ -51,7 +51,6 @@ import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
@@ -299,7 +298,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     public IWidget createCraftingOutput(PosGuiData guiData, PanelSyncManager syncManager) {
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
         syncManager.syncValue("amount_crafted", amountCrafted);
-        amountCrafted.updateCacheFromSource(true);
+        amountCrafted.updateCacheFromSource(true); // todo remove
 
         return Flow.column()
                 .size(54)
@@ -333,7 +332,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         };
 
         if (this.connectedInventory.getSlots() == 0) {
-            return new Column()
+            return Flow.column()
                     .debugName("inventory page - empty")
                     .leftRel(0.5f)
                     .padding(2)
