@@ -111,7 +111,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .syncValue("tier", tier)
                 .configureDisplayText(builder -> builder
                         .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
-                        .addEnergyUsageLine(getEnergyContainer())
+                        .addEnergyUsageLine(this::getEnergyContainer)
                         .addEnergyTierLine(tier.getIntValue())
                         .addCustom(addHeatCapacity(temp))
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
