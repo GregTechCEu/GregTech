@@ -52,8 +52,8 @@ import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
-import com.cleanroommc.modularui.widgets.layout.Row;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ArrayUtils;
@@ -209,7 +209,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         var controller = new PagedWidget.Controller();
 
         return GTGuis.createPanel(this, 176, 224)
-                .child(new Row()
+                .child(Flow.row()
                         .debugName("tab row")
                         .widthRel(1f)
                         .leftRel(0.5f)
@@ -232,10 +232,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .controller(controller)
                         .coverChildrenHeight()
                         // workstation page
-                        .addPage(new Column()
+                        .addPage(Flow.column()
                                 .debugName("crafting page")
                                 .coverChildrenWidth()
-                                .child(new Row()
+                                .child(Flow.row()
                                         // todo add clear crafting grid button
                                         .debugName("crafting row")
                                         .coverChildrenHeight()
@@ -301,7 +301,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         syncManager.syncValue("amount_crafted", amountCrafted);
         amountCrafted.updateCacheFromSource(true);
 
-        return new Column()
+        return Flow.column()
                 .size(54)
                 .child(new CraftingOutputSlot(amountCrafted, this)
                         .marginTop(18)
@@ -347,10 +347,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                     .setEnabledIf(checkSlotValid)
                     .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
                             .slotGroup(connected));
-            widget.setEnabled(checkSlotValid.test(widget));
+            // widget.setEnabled(checkSlotValid.test(widget));
             list.add(widget);
         }
-        return new Column()
+        return Flow.column()
                 .debugName("inventory page")
                 .padding(2)
                 .leftRel(0.5f)
