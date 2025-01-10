@@ -40,10 +40,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.GuiAxis;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
-import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
@@ -186,14 +186,12 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                         .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
                         .addCustom(this::addCustomData)
                         .addWorkingStatusLine())
-                .configureWarningText(builder -> builder.addCustom(keyList -> {
-                    if (isStructureFormed()) {
-                        if (!waterFilled.getBoolValue()) {
-                            keyList.add(KeyUtil.lang(TextFormatting.YELLOW,
-                                    "gregtech.multiblock.large_boiler.no_water"));
-                            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.large_boiler.explosion_tooltip"));
-                        }
+                .configureWarningText(builder -> builder.addCustom(richText -> {
+                    if (isStructureFormed() && !waterFilled.getBoolValue()) {
+                        richText.add(KeyUtil.lang(TextFormatting.YELLOW,
+                                "gregtech.multiblock.large_boiler.no_water"));
+                        richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.large_boiler.explosion_tooltip"));
                     }
                 }))
                 .createFlexButton((panel, syncManager) -> {
@@ -219,7 +217,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 });
     }
 
-    private void addCustomData(RichText keyList) {
+    private void addCustomData(IRichTextBuilder<?> keyList) {
         if (isStructureFormed()) {
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
