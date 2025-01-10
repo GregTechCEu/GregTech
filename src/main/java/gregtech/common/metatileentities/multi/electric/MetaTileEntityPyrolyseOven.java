@@ -148,7 +148,6 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     protected MultiblockUIFactory createUIFactory() {
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
         IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-        tier.updateCacheFromSource(true);
         IntSyncValue coil = new IntSyncValue(() -> coilTier, null);
         return new MultiblockUIFactory(this)
                 .syncValue("progress", progress)
