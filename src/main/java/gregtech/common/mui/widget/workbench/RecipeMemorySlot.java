@@ -7,11 +7,11 @@ import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.screen.GuiScreenWrapper;
-import com.cleanroommc.modularui.screen.Tooltip;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.widget.Widget;
@@ -25,24 +25,25 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
     public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
         this.memory = memory;
         this.index = index;
-        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltip().setAutoUpdate(true);
+        // .setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
             var recipe = memory.getRecipeAtIndex(this.index);
             if (recipe == null) return;
-            var list = getScreen().getScreenWrapper().getItemToolTip(recipe.getRecipeResult());
+            var list = MCHelper.getItemToolTip(recipe.getRecipeResult());
             list.add(1, IKey.lang("Times Used: " + recipe.timesUsed).get());
             tooltip.addStringLines(list);
         });
     }
 
     @Override
-    public void draw(GuiContext context, WidgetTheme widgetTheme) {
-        GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
+    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+        // GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
         ItemStack itemstack = this.memory.getRecipeOutputAtIndex(this.index);
         if (itemstack.isEmpty()) return;
 
-        guiScreen.setZ(100f);
-        guiScreen.getItemRenderer().zLevel = 100.0F;
+        // guiScreen.setZ(100f);
+        // guiScreen.getItemRenderer().zLevel = 100.0F;
 
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
@@ -55,13 +56,13 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             GlStateManager.enableDepth();
         }
 
-        guiScreen.getItemRenderer().zLevel = 0.0F;
-        guiScreen.setZ(0f);
+        // guiScreen.getItemRenderer().zLevel = 0.0F;
+        // guiScreen.setZ(0f);
     }
 
     @Override
-    public void drawForeground(GuiContext context) {
-        Tooltip tooltip = getTooltip();
+    public void drawForeground(ModularGuiContext context) {
+        RichTooltip tooltip = getTooltip();
         if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
             tooltip.draw(getContext(), this.memory.getRecipeOutputAtIndex(this.index));
         }

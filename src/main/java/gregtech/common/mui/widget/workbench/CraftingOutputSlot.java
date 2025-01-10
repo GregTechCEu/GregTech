@@ -17,9 +17,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.screen.GuiScreenWrapper;
-import com.cleanroommc.modularui.screen.Tooltip;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -48,13 +47,20 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                         workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
                         syncValue, workbench));
         setSyncHandler(this.syncHandler);
-        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltip().setAutoUpdate(true);
+        // .setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
             ItemStack stack = this.syncHandler.getOutputStack();
             if (stack.isEmpty()) return;
-            tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
+            tooltip.addFromItem(stack);
+            // tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
         });
+    }
+
+    @Override
+    public boolean isValidSyncHandler(SyncHandler syncHandler) {
+        return syncHandler instanceof CraftingSlotSH;
     }
 
     @Override
@@ -65,23 +71,23 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
     }
 
     @Override
-    public void draw(GuiContext context, WidgetTheme widgetTheme) {
-        GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
+    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+        // GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
         ItemStack itemstack = this.syncHandler.getOutputStack();
         if (itemstack.isEmpty()) return;
 
-        guiScreen.setZ(100f);
-        guiScreen.getItemRenderer().zLevel = 100.0F;
+        // guiScreen.setZ(100f);
+        // guiScreen.getItemRenderer().zLevel = 100.0F;
 
         RenderUtil.renderItemInGUI(itemstack, 1, 1);
 
-        guiScreen.getItemRenderer().zLevel = 0.0F;
-        guiScreen.setZ(0f);
+        // guiScreen.getItemRenderer().zLevel = 0.0F;
+        // guiScreen.setZ(0f);
     }
 
     @Override
-    public void drawForeground(GuiContext context) {
-        Tooltip tooltip = getTooltip();
+    public void drawForeground(ModularGuiContext context) {
+        RichTooltip tooltip = getTooltip();
         if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
             tooltip.draw(getContext(), this.syncHandler.getOutputStack());
         }

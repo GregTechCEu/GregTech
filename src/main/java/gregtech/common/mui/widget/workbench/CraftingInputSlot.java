@@ -11,9 +11,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
-import com.cleanroommc.modularui.screen.GuiScreenWrapper;
-import com.cleanroommc.modularui.screen.Tooltip;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
@@ -34,12 +33,14 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     public CraftingInputSlot(IItemHandlerModifiable handler, int index) {
         this.syncHandler = new InputSyncHandler(handler, index);
         setSyncHandler(this.syncHandler);
-        tooltip().setAutoUpdate(true).setHasTitleMargin(true);
+        tooltip().setAutoUpdate(true);
+        // .setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
             ItemStack stack = this.syncHandler.getStack();
             if (stack.isEmpty()) return;
-            tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
+            tooltip.addFromItem(stack);
+            // tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
         });
     }
 
@@ -47,6 +48,11 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         var slot = new CraftingInputSlot(handler, index);
         logic.setInputSlot(slot, index);
         return slot;
+    }
+
+    @Override
+    public boolean isValidSyncHandler(SyncHandler syncHandler) {
+        return syncHandler instanceof InputSyncHandler;
     }
 
     @Override
@@ -70,13 +76,12 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     }
 
     @Override
-    public void draw(GuiContext context, WidgetTheme widgetTheme) {
-        GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
+    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
+        // GuiScreen guiScreen = getScreen().getScreenWrapper().getGuiScreen();
         ItemStack itemstack = this.syncHandler.getStack();
         if (itemstack.isEmpty()) return;
-
-        guiScreen.getItemRenderer().zLevel = 0.0F;
-        guiScreen.setZ(0f);
+        // guiScreen.getItemRenderer().zLevel = 0.0F;
+        // guiScreen.setZ(0f);
         RenderUtil.renderItemInGUI(itemstack, 1, 1);
 
         if (!this.hasIngredients) {
@@ -85,8 +90,8 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     }
 
     @Override
-    public void drawForeground(GuiContext context) {
-        Tooltip tooltip = getTooltip();
+    public void drawForeground(ModularGuiContext context) {
+        RichTooltip tooltip = getTooltip();
         if (tooltip != null && isHoveringFor(tooltip.getShowUpTimer())) {
             tooltip.draw(getContext(), this.syncHandler.getStack());
         }
