@@ -7,6 +7,7 @@ import com.cleanroommc.modularui.widgets.AbstractCycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.spongepowered.asm.mixin.Mixin;
 
+// todo remove this and interface once rc3 is released
 @Mixin(value = ToggleButton.class, remap = false)
 public class ToggleButtonMixin extends AbstractCycleButtonWidget<ToggleButton> implements StateOverlay {
 

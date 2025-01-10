@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
+// todo remove once rc3 is released
 @Mixin(value = PanelSyncManager.class, remap = false)
 public abstract class PanelSyncManagerMixin {
 

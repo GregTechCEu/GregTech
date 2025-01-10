@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
+// todo remove this and interface once rc3 is released
 @Mixin(value = TextWidget.class, remap = false)
 public abstract class TextWidgetMixin extends Widget<TextWidget> implements UnboxFix {
 

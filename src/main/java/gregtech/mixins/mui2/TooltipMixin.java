@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.function.Consumer;
 
+// todo remove once rc3 is released
 @Mixin(value = RichTooltip.class, remap = false)
 public abstract class TooltipMixin {
 

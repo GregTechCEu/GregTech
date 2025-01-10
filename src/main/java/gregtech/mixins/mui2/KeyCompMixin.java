@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+// todo check if can remove once rc3 is released
 @Mixin(value = CompoundKey.class, remap = false)
 public abstract class KeyCompMixin extends BaseKey {
 
