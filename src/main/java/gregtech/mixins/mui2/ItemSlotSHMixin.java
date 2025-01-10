@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.IOException;
 
+// todo remove once rc3 is released
 @Mixin(value = ItemSlotSH.class, remap = false)
 public abstract class ItemSlotSHMixin extends SyncHandler {
 
