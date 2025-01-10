@@ -877,7 +877,7 @@ public class MultiblockUIFactory {
         }
 
         private void addKey(IKey key, IDrawable hover) {
-            addKey(key.asTextIcon().asHoverable().addTooltipLine(hover));
+            addKey(KeyUtil.setHover(key, hover));
         }
     }
 }
