@@ -96,6 +96,7 @@ public class KeyUtil {
     }
 
     private static Object[] checkFormatting(TextFormatting formatting, Object[] args) {
+        if (ArrayUtils.isEmpty(args)) return args;
         Arrays.setAll(args, value -> fixArg(formatting, args[value]));
         return args;
     }
