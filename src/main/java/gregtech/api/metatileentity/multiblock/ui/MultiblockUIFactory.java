@@ -442,6 +442,12 @@ public class MultiblockUIFactory {
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
     public static class Builder {
 
+        /*
+         * NOTE:
+         * instead of this, hold an IRichTextBuilder and set with a method
+         * display needs RichText, and warning/error need RichTooltip
+         * then compare the builder (requires mixin) to see if update is needed
+         **/
         private final List<Consumer<IRichTextBuilder<?>>> textList = new ArrayList<>();
 
         private BooleanSupplier isWorkingEnabled = () -> false;
@@ -488,9 +494,9 @@ public class MultiblockUIFactory {
          * @param runningKey The translation key for the Running state, or "isActive".
          */
         public Builder setWorkingStatusKeys(String idlingKey, String pausedKey, String runningKey) {
-            if (idlingKey != null) this.idlingKey = IKey.str(idlingKey);
-            if (pausedKey != null) this.pausedKey = IKey.str(pausedKey);
-            if (runningKey != null) this.runningKey = IKey.str(runningKey);
+            if (idlingKey != null) this.idlingKey = IKey.lang(idlingKey).format(TextFormatting.GRAY);
+            if (pausedKey != null) this.pausedKey = IKey.lang(pausedKey).format(TextFormatting.GOLD);
+            if (runningKey != null) this.runningKey = IKey.lang(runningKey).format(TextFormatting.GREEN);
             return this;
         }
 
