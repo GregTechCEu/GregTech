@@ -2,6 +2,7 @@ package gregtech.api.util;
 
 import net.minecraft.util.text.TextFormatting;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -84,6 +85,10 @@ public class KeyUtil {
 
     public static IKey number(Supplier<TextFormatting> formatting, LongSupplier supplier, String suffix) {
         return string(formatting, () -> TextFormattingUtil.formatNumbers(supplier.getAsLong()) + suffix);
+    }
+
+    public static IDrawable setHover(IKey body, IDrawable hover) {
+        return body.asTextIcon().asHoverable().addTooltipLine(hover);
     }
 
     private static IKey wrap(TextFormatting formatting) {

@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -14,6 +15,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -32,6 +34,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,6 +142,36 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
         } else {
             return TextFormatting.LIGHT_PURPLE;
         }
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+        IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
+        tier.updateCacheFromSource(true);
+        IntSyncValue coil = new IntSyncValue(() -> coilTier, null);
+        return new MultiblockUIFactory(this)
+                .syncValue("progress", progress)
+                .syncValue("tier", tier)
+                .syncValue("coil", coil)
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
+                        .addEnergyUsageLine(this::getEnergyContainer)
+                        .addEnergyTierLine(tier.getIntValue())
+                        .addCustom(richText -> {
+                            if (!isStructureFormed()) return;
+                            int processingSpeed = coil.getIntValue() == 0 ? 75 : 50 * (coil.getIntValue() + 1);
+                            IKey speed = KeyUtil.number(() -> getSpeedColor(processingSpeed), () -> processingSpeed,
+                                    "%");
+                            IKey body = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.pyrolyse_oven.speed",
+                                    speed);
+                            IKey hover = KeyUtil.lang(TextFormatting.GRAY,
+                                    "gregtech.multiblock.pyrolyse_oven.speed_hover");
+                            richText.addLine(body.asTextIcon().asHoverable().addTooltipLine(hover));
+                        })
+                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                        .addWorkingStatusLine()
+                        .addProgressLine(progress::getDoubleValue));
     }
 
     @Override
