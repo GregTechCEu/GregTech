@@ -8,7 +8,9 @@
     "maxShiftBy": 10
   },
   "mixins": [
+    "IntSyncValueMixin",
     "ItemSlotSHMixin",
+    "KeyCompMixin",
     "PanelSyncHandlerMixin",
     "PanelSyncManagerMixin",
     "StyledTextMixin",

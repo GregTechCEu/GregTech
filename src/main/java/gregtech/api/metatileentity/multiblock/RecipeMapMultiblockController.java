@@ -4,12 +4,14 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -31,6 +33,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -162,6 +166,24 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
+    protected MultiblockUIFactory createUIFactory() {
+        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+        IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
+        return new MultiblockUIFactory(this)
+                .syncValue("progress", progress)
+                .syncValue("tier", tier)
+                .configureDisplayText(builder -> builder
+                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
+                        .addEnergyUsageLine(this::getEnergyContainer)
+                        .addEnergyTierLine(tier.getIntValue())
+                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                        .addWorkingStatusLine()
+                        .addProgressLine(progress::getDoubleValue))
+                .configureWarningText(builder -> builder
+                        .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy()));
+    }
+
+    @Override
     public TraceabilityPredicate autoAbilities() {
         return autoAbilities(true, true, true, true, true, true, true);
     }
@@ -228,12 +250,26 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isDistinct);
+        buf.writeLong(energyContainer.getEnergyCapacity());
+        buf.writeLong(energyContainer.getInputVoltage());
+        buf.writeLong(energyContainer.getInputAmperage());
+        buf.writeLong(energyContainer.getOutputVoltage());
+        buf.writeLong(energyContainer.getOutputAmperage());
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isDistinct = buf.readBoolean();
+
+        long capacity = buf.readLong();
+        long inVoltage = buf.readLong();
+        long inAmps = buf.readLong();
+        long outVoltage = buf.readLong();
+        long outAmps = buf.readLong();
+
+        this.energyContainer = new EnergyContainerHandler(this, capacity,
+                inVoltage, inAmps, outVoltage, outAmps);
     }
 
     @Override

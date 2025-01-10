@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.IOException;
 
+// todo check if can remove once rc3 is released
 @Mixin(value = ClientEventHandler.class, remap = false)
 @SuppressWarnings("UnstableApiUsage")
 public abstract class ClientEventHandlerMixin {
