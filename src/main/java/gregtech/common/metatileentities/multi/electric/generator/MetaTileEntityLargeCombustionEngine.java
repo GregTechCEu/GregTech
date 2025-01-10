@@ -140,30 +140,31 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
                     }
 
+                    // todo fix prev duration being 0 on first ui open
                     builder.addFuelNeededLine(fuelAmount.getValue(), prevDuration::getIntValue)
-                            .addCustom(tl -> {
+                            .addCustom(richText -> {
                                 if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
                                     String key = isExtreme ?
                                             "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
                                             "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
-                                    tl.add(KeyUtil.lang(TextFormatting.AQUA, key));
+                                    richText.addLine(KeyUtil.lang(TextFormatting.AQUA, key));
                                 }
                             })
                             .addWorkingStatusLine();
                 })
                 .configureErrorText(builder -> builder.addCustom(keyList -> {
-                    if (isStructureFormed()) {
-                        if (checkIntakesObstructed()) {
-                            keyList.add(KeyUtil.lang(TextFormatting.RED,
-                                    "gregtech.multiblock.large_combustion_engine.obstructed"));
-                            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
-                        }
+                    if (!isStructureFormed()) return;
 
-                        if (!hasLubricant.getBoolValue()) {
-                            keyList.add(KeyUtil.lang(TextFormatting.RED,
-                                    "gregtech.multiblock.large_combustion_engine.no_lubricant"));
-                        }
+                    if (checkIntakesObstructed()) {
+                        keyList.add(KeyUtil.lang(TextFormatting.RED,
+                                "gregtech.multiblock.large_combustion_engine.obstructed"));
+                        keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
+                    }
+
+                    if (!hasLubricant.getBoolValue()) {
+                        keyList.add(KeyUtil.lang(TextFormatting.RED,
+                                "gregtech.multiblock.large_combustion_engine.no_lubricant"));
                     }
                 }));
     }

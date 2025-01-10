@@ -22,7 +22,7 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.drawable.text.RichText;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -35,6 +35,7 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
+import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.RichTextWidget;
@@ -46,7 +47,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -139,22 +139,27 @@ public class MultiblockUIFactory {
     private Widget<?> createIndicator() {
         var builder = builder();
         return new Widget<>()
+                .size(18)
                 .pos(174 - 5, screenHeight - 18 - 3)
-                .onUpdateListener(w -> w.overlay(getIndicatorOverlay(builder)))
+                .overlay(new DynamicDrawable(() -> getIndicatorOverlay(builder)))
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                .tooltipBuilder(builder::buildTooltip);
+                .tooltipBuilder(builder::build);
     }
 
     private IDrawable getIndicatorOverlay(Builder builder) {
-        if (!builder.isEmpty()) builder.clear();
+        builder.clear();
+        RichTooltip test = new RichTooltip(new Area());
 
         this.errorText.accept(builder);
-        if (!builder.isEmpty()) {
+        builder.build(test);
+        if (!test.isEmpty()) {
             // error
             return GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
         }
+
         this.warningText.accept(builder);
-        if (!builder.isEmpty()) {
+        builder.build(test);
+        if (!test.isEmpty()) {
             // warn
             return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
         }
@@ -306,45 +311,20 @@ public class MultiblockUIFactory {
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
         final var builder = builder();
         this.displayText.accept(builder);
-        var richTextWidget = new RichTextWidget();
-        builder.buildDisplay(richTextWidget);
-        final var compare = builder();
 
         return new ParentWidget<>()
-                .child(createIndicator())
                 .child(customScreen != null ? customScreen.get() : new ScrollWidget<>(new VerticalScrollData())
                         .sizeRel(1f)
-                        .child(richTextWidget.sizeRel(1f)
+                        .child(new RichTextWidget()
+                                .sizeRel(1f)
                                 .alignment(Alignment.TopLeft)
                                 .margin(4, 4)
-                                .onUpdateListener(column -> {
-                                    // really debating on if the display screen should be its own widget
-                                    // compare.clear();
-                                    this.displayText.accept(compare);
-                                    // if (!builder.hasChanged(compare) && !dirty) return;
-                                    // builder.clear();
-                                    if (builder.hasChanged(compare))
-                                        column.markDirty();
-                                    // this.displayText.accept(builder);
-                                    // builder.build(column);
-                                    // resize(column);
-                                    // dirty = false;
-                                })))
+                                .autoUpdate(true)
+                                .textBuilder(builder::build)))
+                .child(createIndicator())
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)
                 .pos(4, 4);
-    }
-
-    private void resize(IWidget parent) {
-        int top = parent.getArea().getPadding().top;
-        for (IWidget widget : parent.getChildren()) {
-            widget.resizer().resize(widget);
-            var area = widget.getArea();
-            area.rx = parent.getArea().getPadding().left;
-            area.ry = top;
-            area.applyPos(parent);
-            top += area.requestedHeight();
-        }
     }
 
     @NotNull
@@ -380,7 +360,6 @@ public class MultiblockUIFactory {
         return new CycleButtonWidget()
                 .size(18, 18)
                 .value(distinctValue)
-                // .textureGetter(i -> GTGuiTextures.BUTTON_DISTINCT_BUSES[i])
                 .stateBackground(true, GTGuiTextures.BUTTON_DISTINCT_BUSES[1])
                 .stateBackground(false, GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
                 .background(GTGuiTextures.BUTTON)
@@ -394,14 +373,13 @@ public class MultiblockUIFactory {
         if (!mte.shouldShowVoidingModeButton()) {
             return GTGuiTextures.BUTTON_VOID_NONE.asWidget()
                     .size(18, 18)
-                    .tooltip(t -> t.addLine(IKey.lang("gregtech.gui.multiblock_voiding_not_supported")));
+                    .addTooltipLine(IKey.lang("gregtech.gui.multiblock_voiding_not_supported"));
         }
 
         IntSyncValue voidingValue = new IntSyncValue(mte::getVoidingMode, mte::setVoidingMode);
 
         return new CycleButtonWidget()
                 .size(18, 18)
-                // .textureGetter(i -> GTGuiTextures.MULTIBLOCK_VOID[i])
                 .stateOverlay(0, GTGuiTextures.MULTIBLOCK_VOID[0])
                 .stateOverlay(1, GTGuiTextures.MULTIBLOCK_VOID[1])
                 .stateOverlay(2, GTGuiTextures.MULTIBLOCK_VOID[2])
@@ -428,7 +406,6 @@ public class MultiblockUIFactory {
 
         return new CycleButtonWidget()
                 .size(18)
-                // .textureGetter(i -> GTGuiTextures.BUTTON_POWER[i])
                 .stateOverlay(true, GTGuiTextures.BUTTON_POWER[1])
                 .stateOverlay(false, GTGuiTextures.BUTTON_POWER[0])
                 .disableHoverBackground()
@@ -465,8 +442,8 @@ public class MultiblockUIFactory {
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
     public static class Builder {
 
-        private final RichText text = new RichText();
-        private final List<Consumer<IRichTextBuilder<? extends IRichTextBuilder<?>>>> textList = new ArrayList<>();
+        // private final RichText text = new RichText();
+        private final List<Consumer<IRichTextBuilder<?>>> textList = new ArrayList<>();
         // private final List<IDrawable> textList;
         // private Function<IDrawable, Widget<?>> widgetFunction = Builder::keyMapper;
         // private final Int2ObjectMap<IDrawable> tooltips = new Int2ObjectArrayMap<>();
@@ -480,16 +457,6 @@ public class MultiblockUIFactory {
         private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").format(TextFormatting.GOLD);
         private IKey runningKey = IKey.lang("gregtech.multiblock.running").format(TextFormatting.GREEN);
         private boolean dirty;
-
-        // protected static Widget<?> keyMapper(IDrawable key) {
-        // return key.asWidget()
-        // .widthRel(1f)
-        // .height(12);
-        // }
-
-        // private Builder() {
-        // this.textList = new ArrayList<>();
-        // }
 
         public Builder structureFormed(boolean structureFormed) {
             this.isStructureFormed = structureFormed;
@@ -883,13 +850,13 @@ public class MultiblockUIFactory {
 
         /** Insert an empty line into the text list. */
         public Builder addEmptyLine() {
-            this.text.newLine();
+            this.textList.add(IRichTextBuilder::newLine);
             return this;
         }
 
         /** Add custom text dynamically, allowing for custom application logic. */
-        public Builder addCustom(Consumer<RichText> customConsumer) {
-            customConsumer.accept(this.text);
+        public Builder addCustom(Consumer<IRichTextBuilder<?>> customConsumer) {
+            textList.add(customConsumer);
             return this;
         }
 
@@ -901,27 +868,8 @@ public class MultiblockUIFactory {
             textList.clear();
         }
 
-        protected void buildDisplay(RichTextWidget parent) {
-            parent.textBuilder(richText -> this.textList.forEach(t -> t.accept(richText)));
-        }
-
-        protected void buildTooltip(RichTooltip tooltip) {
-            this.textList.forEach(t -> t.accept(tooltip));
-        }
-
-        protected RichText getTextList() {
-            return this.text;
-        }
-
-        protected boolean hasChanged(Builder other) {
-            List<String> cur = text.getStringRepresentation();
-            List<String> oth = other.text.getStringRepresentation();
-            if (cur.size() != oth.size()) return true;
-            for (int i = 0; i < cur.size(); i++) {
-                if (!Objects.equals(cur.get(i), oth.get(i)))
-                    return true;
-            }
-            return false;
+        protected void build(IRichTextBuilder<?> richText) {
+            this.textList.forEach(t -> t.accept(richText));
         }
 
         private void addKey(IDrawable key) {
