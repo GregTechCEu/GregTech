@@ -80,19 +80,10 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
             NBTTagCompound entryTag = (NBTTagCompound) entryBase;
             for (String discriminatorKey : entryTag.getKeySet()) {
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
-                receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
+                int dataId = Integer.parseInt(discriminatorKey);
+                receiveCustomData(dataId, new PacketBuffer(backedBuffer));
                 if (backedBuffer.readableBytes() != 0) {
-                    String className = null;
-                    if (this instanceof IGregTechTileEntity gtte) {
-                        MetaTileEntity mte = gtte.getMetaTileEntity();
-                        if (mte != null) className = mte.getClass().getName();
-                    }
-                    if (className == null) {
-                        className = this.getClass().getName();
-                    }
-                    GTLog.logger.error(
-                            "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
-                            className, discriminatorKey, backedBuffer.readableBytes());
+                    ISyncedTileEntity.handleUnreadPacket(dataId, backedBuffer, this);
                 }
             }
         }

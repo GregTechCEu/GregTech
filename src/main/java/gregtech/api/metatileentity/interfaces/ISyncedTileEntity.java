@@ -1,7 +1,13 @@
 package gregtech.api.metatileentity.interfaces;
 
-import net.minecraft.network.PacketBuffer;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.util.GTLog;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
+
+import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -25,7 +31,7 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Server-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#getUpdateTag}.
+     * Equivalent to {@link TileEntity#getUpdateTag}.
      *
      * @param buf the buffer to write data to
      */
@@ -43,7 +49,7 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Client-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#handleUpdateTag}.
+     * Equivalent to {@link TileEntity#handleUpdateTag}.
      *
      * @param buf the buffer to read data from
      */
@@ -62,11 +68,11 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Server-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#getUpdatePacket}
+     * Equivalent to {@link TileEntity#getUpdatePacket}
      *
      * @param discriminator the discriminator determining the packet sent.
      * @param dataWriter    a consumer which writes packet data to a buffer.
-     * @see gregtech.api.capability.GregtechDataCodes
+     * @see GregtechDataCodes
      */
     void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter);
 
@@ -82,10 +88,10 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Server-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#getUpdatePacket}
+     * Equivalent to {@link TileEntity#getUpdatePacket}
      *
      * @param discriminator the discriminator determining the packet sent.
-     * @see gregtech.api.capability.GregtechDataCodes
+     * @see GregtechDataCodes
      */
     default void writeCustomData(int discriminator) {
         writeCustomData(discriminator, NO_OP);
@@ -103,11 +109,24 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Client-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#onDataPacket}
+     * Equivalent to {@link TileEntity#onDataPacket}
      *
      * @param discriminator the discriminator determining the packet sent.
      * @param buf           the buffer containing the packet data.
-     * @see gregtech.api.capability.GregtechDataCodes
+     * @see GregtechDataCodes
      */
     void receiveCustomData(int discriminator, @NotNull PacketBuffer buf);
+
+    static void handleUnreadPacket(int discriminator, @NotNull ByteBuf buf, ISyncedTileEntity syncedTile) {
+        String className = null;
+        if (syncedTile instanceof IGregTechTileEntity gtte) {
+            MetaTileEntity mte = gtte.getMetaTileEntity();
+            if (mte != null) className = mte.getClass().getSimpleName();
+        } else {
+            className = syncedTile.getClass().getSimpleName();
+        }
+        GTLog.logger.error(
+                "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
+                className, GregtechDataCodes.getNameFor(discriminator), buf.readableBytes());
+    }
 }

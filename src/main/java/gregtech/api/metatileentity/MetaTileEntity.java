@@ -1096,6 +1096,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             if (cover != null) {
                 cover.readCustomData(internalId, buf);
             }
+            if (buf.readableBytes() != 0)
+                ISyncedTileEntity.handleUnreadPacket(internalId, buf, this);
+            buf.clear(); // clear data so holder doesn't log error
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
             if (muffled) {

@@ -1,5 +1,10 @@
 package gregtech.api.capability;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+
+import java.lang.reflect.Field;
+
 public class GregtechDataCodes {
 
     private static int nextId = 0;
@@ -180,4 +185,20 @@ public class GregtechDataCodes {
     // ME Parts
     public static final int UPDATE_AUTO_PULL = assignId();
     public static final int UPDATE_ONLINE_STATUS = assignId();
+
+    // Everything below MUST be last in the class!
+    public static final Int2ObjectMap<String> NAMES = new Int2ObjectArrayMap<>();
+
+    static {
+        try {
+            for (Field field : GregtechDataCodes.class.getFields()) {
+                if (field.getType() != Integer.TYPE) continue;
+                NAMES.put(field.getInt(null), field.getName());
+            }
+        } catch (IllegalAccessException ignored) {}
+    }
+
+    public static String getNameFor(int id) {
+        return NAMES.getOrDefault(id, "Unknown DataCode: " + id);
+    }
 }
