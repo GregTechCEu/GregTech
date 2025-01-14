@@ -1,9 +1,14 @@
 package gregtech.api.capability;
 
+import gregtech.common.covers.ender.CoverAbstractEnderLink;
+import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
+
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public class GregtechDataCodes {
 
@@ -190,15 +195,34 @@ public class GregtechDataCodes {
     public static final Int2ObjectMap<String> NAMES = new Int2ObjectArrayMap<>();
 
     static {
-        try {
-            for (Field field : GregtechDataCodes.class.getFields()) {
-                if (field.getType() != Integer.TYPE) continue;
-                NAMES.put(field.getInt(null), field.getName());
-            }
-        } catch (IllegalAccessException ignored) {}
+        registerFields(GregtechDataCodes.class);
+        // todo these really should be moved to this class
+        registerFields(CoverAbstractEnderLink.class, CoverAbstractEnderLink.UPDATE_PRIVATE);
+        registerFields(MetaTileEntityFluidHatch.class, MetaTileEntityFluidHatch.LOCK_FILL);
     }
 
     public static String getNameFor(int id) {
-        return NAMES.getOrDefault(id, "Unknown DataCode: " + id);
+        return NAMES.getOrDefault(id, "Unknown_DataCode:" + id);
+    }
+
+    /**
+     * Registers all fields from the passed in class to the name registry.
+     * Optionally, you can pass in a list of valid ids to check against so that errant ids are not added
+     * 
+     * @param clazz    Class to iterate fields
+     * @param validIds optional array of valid ids to check against class fields
+     */
+    public static void registerFields(Class<?> clazz, int... validIds) {
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.getType() != Integer.TYPE) continue;
+                if (!Modifier.isStatic(field.getModifiers())) continue;
+                if (!Modifier.isFinal(field.getModifiers())) continue;
+                int id = field.getInt(null);
+                if (!ArrayUtils.isEmpty(validIds) && !ArrayUtils.contains(validIds, id))
+                    continue;
+                NAMES.put(id, field.getName() + ":" + id);
+            }
+        } catch (IllegalAccessException ignored) {}
     }
 }
