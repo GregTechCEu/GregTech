@@ -215,7 +215,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                             if (efficiency.getIntValue() > 0) {
                                 IKey efficiencyInfo = KeyUtil.number(TextFormatting.AQUA,
                                         total.getIntValue(), "%");
-                                richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                                richText.add(KeyUtil.lang(TextFormatting.GRAY,
                                         "gregtech.multiblock.turbine.efficiency",
                                         efficiencyInfo));
                             }
@@ -228,7 +228,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                             if (!isStructureFormed()) return;
 
                             if (efficiency.getIntValue() > 0 && durability.getIntValue() <= MIN_DURABILITY_TO_WARN) {
-                                richText.addLine(KeyUtil.lang(TextFormatting.YELLOW,
+                                richText.add(KeyUtil.lang(TextFormatting.YELLOW,
                                         "gregtech.multiblock.turbine.rotor_durability_low"));
                             }
                         })
@@ -239,15 +239,15 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                             if (!isStructureFormed()) return;
 
                             if (!rotorFree.getBoolValue()) {
-                                richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                                richText.add(KeyUtil.lang(TextFormatting.RED,
                                         "gregtech.multiblock.turbine.obstructed"));
-                                richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                                richText.add(KeyUtil.lang(TextFormatting.GRAY,
                                         "gregtech.multiblock.turbine.obstructed.desc"));
                             }
 
                             // todo fix "no rotor" tooltip always being shown on first ui open
                             if (efficiency.getIntValue() <= 0) {
-                                richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                                richText.add(KeyUtil.lang(TextFormatting.RED,
                                         "gregtech.multiblock.turbine.no_rotor"));
                             }
                         }));
