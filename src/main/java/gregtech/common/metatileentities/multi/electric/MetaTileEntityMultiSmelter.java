@@ -138,7 +138,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                                 IKey hoverText = KeyUtil.lang(TextFormatting.GRAY,
                                         "gregtech.multiblock.multi_furnace.heating_coil_discount_hover");
 
-                                richText.addLine(KeyUtil.setHover(base, hoverText));
+                                richText.add(KeyUtil.setHover(base, hoverText));
                             }
 
                             if (parallel.getIntValue() > 0) {
@@ -152,7 +152,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                                 IKey hoverText = KeyUtil.lang(TextFormatting.GRAY,
                                         "gregtech.multiblock.multi_furnace.parallel_hover");
 
-                                richText.addLine(KeyUtil.setHover(bodyText, hoverText));
+                                richText.add(KeyUtil.setHover(bodyText, hoverText));
                             }
                         })
                         .addWorkingStatusLine()

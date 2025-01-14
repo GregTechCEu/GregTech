@@ -124,7 +124,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
                         .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
                         .addEnergyUsageLine(this::getEnergyContainer)
                         .addEnergyTierLine(tier.getIntValue())
-                        .addCustom(richText -> {
+                        .addCustom(textList -> {
                             if (!isStructureFormed()) return;
 
                             // Coil energy discount line
@@ -139,7 +139,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
                                     TextFormatting.GRAY,
                                     "gregtech.multiblock.cracking_unit.energy_hover");
 
-                            richText.addLine(KeyUtil.setHover(base, hover));
+                            textList.add(KeyUtil.setHover(base, hover));
                         })
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
