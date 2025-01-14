@@ -448,7 +448,7 @@ public class MultiblockUIFactory {
          * display needs RichText, and warning/error need RichTooltip
          * then compare the builder (requires mixin) to see if update is needed
          **/
-        private final List<Consumer<IRichTextBuilder<?>>> textList = new ArrayList<>();
+        private final List<IDrawable> textList = new ArrayList<>();
 
         private BooleanSupplier isWorkingEnabled = () -> false;
         private BooleanSupplier isActive = () -> false;
@@ -852,13 +852,13 @@ public class MultiblockUIFactory {
 
         /** Insert an empty line into the text list. */
         public Builder addEmptyLine() {
-            this.textList.add(IRichTextBuilder::newLine);
+            this.textList.add(IKey.LINE_FEED);
             return this;
         }
 
         /** Add custom text dynamically, allowing for custom application logic. */
-        public Builder addCustom(Consumer<IRichTextBuilder<?>> customConsumer) {
-            textList.add(customConsumer);
+        public Builder addCustom(Consumer<List<IDrawable>> customConsumer) {
+            customConsumer.accept(this.textList);
             return this;
         }
 
@@ -871,11 +871,11 @@ public class MultiblockUIFactory {
         }
 
         protected void build(IRichTextBuilder<?> richText) {
-            this.textList.forEach(t -> t.accept(richText));
+            richText.addDrawableLines(this.textList);
         }
 
         private void addKey(IDrawable key) {
-            textList.add(richText -> richText.addLine(key));
+            this.textList.add(key);
         }
 
         private void addKey(IKey key, IDrawable hover) {

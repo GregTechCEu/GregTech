@@ -147,7 +147,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                                     String key = isExtreme ?
                                             "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
                                             "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
-                                    richText.addLine(KeyUtil.lang(TextFormatting.AQUA, key));
+                                    richText.add(KeyUtil.lang(TextFormatting.AQUA, key));
                                 }
                             })
                             .addWorkingStatusLine();

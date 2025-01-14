@@ -55,8 +55,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -479,7 +479,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
                             // Energy Usage
                             String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())];
-                            richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                            richText.add(KeyUtil.lang(TextFormatting.GRAY,
                                     "gregtech.multiblock.hpca.energy",
                                     TextFormattingUtil.formatNumbers(curCWUt.getIntValue()),
                                     TextFormattingUtil.formatNumbers(maxCWUt.getIntValue()),
@@ -489,7 +489,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                             IKey cwutInfo = KeyUtil.string(TextFormatting.AQUA,
                                     curCWUt.getIntValue() + " / " + maxCWUt.getIntValue() + " CWU/t");
 
-                            richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                            richText.add(KeyUtil.lang(TextFormatting.GRAY,
                                     "gregtech.multiblock.hpca.computation",
                                     cwutInfo));
                         })
@@ -521,7 +521,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                             if (!isStructureFormed()) return;
 
                             if (temp.getDoubleValue() > 1000) {
-                                richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                                richText.add(KeyUtil.lang(TextFormatting.RED,
                                         "gregtech.multiblock.hpca.error_temperature"));
                             }
                             // hpcaHandler.addErrors(textList);
@@ -999,7 +999,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
-        public void addWarnings2(IRichTextBuilder<?> richText) {
+        public void addWarnings2(List<IDrawable> richText) {
             List<IKey> warnings = new ArrayList<>();
             if (numBridges > 1) {
                 warnings.add(KeyUtil.lang(TextFormatting.GRAY,
@@ -1014,16 +1014,16 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         "gregtech.multiblock.hpca.warning_low_cooling"));
             }
             if (!warnings.isEmpty()) {
-                richText.addLine(KeyUtil.lang(TextFormatting.YELLOW,
+                richText.add(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.hpca.warning_structure_header"));
-                warnings.forEach(richText::addLine);
+                richText.addAll(warnings);
             }
         }
 
-        public void addErrors2(IRichTextBuilder<?> richText) {
+        public void addErrors2(List<IDrawable> richText) {
             for (IHPCAComponentHatch component : components) {
                 if (component.isDamaged()) {
-                    richText.addLine(KeyUtil.lang(TextFormatting.RED,
+                    richText.add(KeyUtil.lang(TextFormatting.RED,
                             "gregtech.multiblock.hpca.error_damaged"));
                     return;
                 }
