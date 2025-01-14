@@ -39,8 +39,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.GuiAxis;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
@@ -217,27 +217,27 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 });
     }
 
-    private void addCustomData(IRichTextBuilder<?> keyList) {
+    private void addCustomData(List<IDrawable> keyList) {
         if (isStructureFormed()) {
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
                     recipeLogic::getLastTickSteam, " L/t");
 
-            keyList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.steam_output", steamOutput));
 
             // Efficiency line
             IKey efficiency = KeyUtil.number(
                     () -> getNumberColor(recipeLogic.getHeatScaled()),
                     recipeLogic::getHeatScaled, "%");
-            keyList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.efficiency", efficiency));
 
             // Throttle line
             IKey throttle = KeyUtil.number(
                     () -> getNumberColor(getThrottle()),
                     this::getThrottle, "%");
-            keyList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.throttle", throttle));
         }
     }
