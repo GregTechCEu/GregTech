@@ -1,11 +1,13 @@
 package gregtech.api.metatileentity.interfaces;
 
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTLog;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -117,16 +119,43 @@ public interface ISyncedTileEntity {
      */
     void receiveCustomData(int discriminator, @NotNull PacketBuffer buf);
 
-    static void handleUnreadPacket(int discriminator, @NotNull ByteBuf buf, ISyncedTileEntity syncedTile) {
-        String className = null;
-        if (syncedTile instanceof IGregTechTileEntity gtte) {
-            MetaTileEntity mte = gtte.getMetaTileEntity();
-            if (mte != null) className = mte.getClass().getSimpleName();
-        } else {
-            className = syncedTile.getClass().getSimpleName();
-        }
+    static void checkCustomData(int discriminator, @NotNull ByteBuf buf, Object obj) {
+        if (buf.readableBytes() == 0) return;
+
         GTLog.logger.error(
                 "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
-                className, GregtechDataCodes.getNameFor(discriminator), buf.readableBytes());
+                stringify(obj), GregtechDataCodes.getNameFor(discriminator), buf.readableBytes());
+
+        buf.clear(); // clear to prevent further logging
+    }
+
+    static void checkInitialData(@NotNull ByteBuf buf, Object obj) {
+        if (buf.readableBytes() == 0) return;
+
+        GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
+                stringify(obj), buf.readableBytes());
+
+        buf.clear(); // clear to prevent further logging
+    }
+
+    static String stringify(Object obj) {
+        StringBuilder builder = new StringBuilder(obj.getClass().getSimpleName());
+
+        BlockPos pos = null;
+        if (obj instanceof TileEntity tileEntity) {
+            pos = tileEntity.getPos(); // TE pos
+        } else if (obj instanceof CoverableView view) {
+            pos = view.getPos(); // MTE pos
+        } else if (obj instanceof Cover cover) {
+            pos = cover.getPos(); // Cover pos and side
+            builder.append("[side=").append(cover.getAttachedSide()).append("]");
+        }
+
+        if (pos != null) builder.append(" @ {")
+                .append(pos.getX()).append("X, ")
+                .append(pos.getY()).append("Y, ")
+                .append(pos.getZ()).append("Z}");
+
+        return builder.toString();
     }
 }

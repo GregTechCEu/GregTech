@@ -4,7 +4,6 @@ import gregtech.api.block.BlockStateTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
-import gregtech.api.util.GTLog;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTBase;
@@ -82,9 +81,11 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
                 int dataId = Integer.parseInt(discriminatorKey);
                 receiveCustomData(dataId, new PacketBuffer(backedBuffer));
-                if (backedBuffer.readableBytes() != 0) {
-                    ISyncedTileEntity.handleUnreadPacket(dataId, backedBuffer, this);
-                }
+
+                MetaTileEntity mte = null;
+                if (this instanceof IGregTechTileEntity gtte)
+                    mte = gtte.getMetaTileEntity();
+                ISyncedTileEntity.checkCustomData(dataId, backedBuffer, mte == null ? this : mte);
             }
         }
     }
@@ -105,18 +106,10 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         byte[] updateData = tag.getByteArray("d");
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
-        if (backedBuffer.readableBytes() != 0) {
-            String className = null;
-            if (this instanceof IGregTechTileEntity gtte) {
-                MetaTileEntity mte = gtte.getMetaTileEntity();
-                if (mte != null) className = mte.getClass().getName();
-            }
-            if (className == null) {
-                className = this.getClass().getName();
-            }
 
-            GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
-                    className, backedBuffer.readableBytes());
-        }
+        MetaTileEntity mte = null;
+        if (this instanceof IGregTechTileEntity gtte)
+            mte = gtte.getMetaTileEntity();
+        ISyncedTileEntity.checkInitialData(backedBuffer, mte == null ? this : mte);
     }
 }
