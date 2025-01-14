@@ -157,7 +157,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
                         .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
                         .addEnergyUsageLine(this::getEnergyContainer)
                         .addEnergyTierLine(tier.getIntValue())
-                        .addCustom(richText -> {
+                        .addCustom(textList -> {
                             if (!isStructureFormed()) return;
                             int processingSpeed = coil.getIntValue() == 0 ? 75 : 50 * (coil.getIntValue() + 1);
                             IKey speed = KeyUtil.number(() -> getSpeedColor(processingSpeed), () -> processingSpeed,
@@ -166,7 +166,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
                                     speed);
                             IKey hover = KeyUtil.lang(TextFormatting.GRAY,
                                     "gregtech.multiblock.pyrolyse_oven.speed_hover");
-                            richText.addLine(body.asTextIcon().asHoverable().addTooltipLine(hover));
+                            textList.add(body.asTextIcon().asHoverable().addTooltipLine(hover));
                         })
                         .addParallelsLine(recipeMapWorkable.getParallelLimit())
                         .addWorkingStatusLine()
