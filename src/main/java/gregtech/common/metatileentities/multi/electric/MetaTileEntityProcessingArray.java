@@ -210,7 +210,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                                         "gregtech.machine.machine_hatch.machines", noneText);
                                 IKey hoverText1 = KeyUtil.lang(TextFormatting.GRAY,
                                         "gregtech.machine.machine_hatch.machines_none_hover");
-                                richText.addLine(KeyUtil.setHover(bodyText, hoverText1, maxMachinesText));
+                                richText.add(KeyUtil.setHover(bodyText, hoverText1, maxMachinesText));
                             } else {
                                 // Some amount of machines in hatch
                                 String key = logic.getMachineStack().getTranslationKey();
@@ -230,12 +230,12 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                                         TextFormatting.GRAY,
                                         "gregtech.machine.machine_hatch.machines_max_eut",
                                         energyFormatted, amps, voltageName);
-                                richText.addLine(KeyUtil.setHover(bodyText, hoverText, maxMachinesText));
+                                richText.add(KeyUtil.setHover(bodyText, hoverText, maxMachinesText));
                             }
 
                             // Hatch locked status
                             if (isActive()) {
-                                richText.addLine(KeyUtil.lang(TextFormatting.DARK_RED,
+                                richText.add(KeyUtil.lang(TextFormatting.DARK_RED,
                                         "gregtech.machine.machine_hatch.locked"));
                             }
                         })

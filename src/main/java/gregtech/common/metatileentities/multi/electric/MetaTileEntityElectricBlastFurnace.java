@@ -47,7 +47,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
@@ -118,13 +118,13 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                         .addProgressLine(progress::getDoubleValue));
     }
 
-    private Consumer<IRichTextBuilder<?>> addHeatCapacity(IntSyncValue temp) {
+    private Consumer<List<IDrawable>> addHeatCapacity(IntSyncValue temp) {
         return richText -> {
             if (isStructureFormed()) {
                 var heatString = KeyUtil.number(TextFormatting.RED,
                         temp::getIntValue, "K");
 
-                richText.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                richText.add(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.blast_furnace.max_temperature", heatString));
             }
         };
