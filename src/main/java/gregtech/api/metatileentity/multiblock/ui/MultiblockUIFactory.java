@@ -444,9 +444,9 @@ public class MultiblockUIFactory {
 
         /*
          * NOTE:
-         * instead of this, hold an IRichTextBuilder and set with a method
-         * display needs RichText, and warning/error need RichTooltip
-         * then compare the builder (requires mixin) to see if update is needed
+         * nvm
+         * need to figure out how best to serialize this shit
+         * copying from GregTechDisplayScreen is easy, but extremely tedious to implement
          **/
         private final List<IDrawable> textList = new ArrayList<>();
 
