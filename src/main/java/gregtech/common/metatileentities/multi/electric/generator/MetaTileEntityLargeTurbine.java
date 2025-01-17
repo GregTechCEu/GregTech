@@ -34,7 +34,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
@@ -186,71 +185,67 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-        IntSyncValue efficiency = new IntSyncValue(
-                () -> getRotorHolder() == null ? 0 : getRotorHolder().getRotorEfficiency(), null);
-        IntSyncValue total = new IntSyncValue(
-                () -> getRotorHolder() == null ? 0 : getRotorHolder().getTotalEfficiency(), null);
-        IntSyncValue durability = new IntSyncValue(
-                () -> getRotorHolder() == null ? 0 : getRotorHolder().getRotorDurabilityPercent(), null);
-        BooleanSyncValue rotorFree = new BooleanSyncValue(
-                this::isRotorFaceFree, null);
-        StringSyncValue fuelAmount = new StringSyncValue(recipeLogic::getRecipeFluidInputInfo, null);
-        IntSyncValue prevDuration = new IntSyncValue(recipeLogic::getPreviousRecipeDuration, null);
+        builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
+                .addCustom(keyList -> {
+                    if (!isStructureFormed()) return;
+                    if (getRotorHolder() == null) return;
 
-        return new MultiblockUIFactory(this)
-                .syncValue("efficiency", efficiency)
-                .syncValue("total", total)
-                .syncValue("durability", durability)
-                .syncValue("rotor_free", rotorFree)
-                .syncValue("fuel_amount", fuelAmount)
-                .syncValue("prev_duration", prevDuration)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
-                        .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
-                        .addCustom(richText -> {
-                            if (!isStructureFormed()) return;
+                    int rotorEfficiency = getRotorHolder().getRotorEfficiency();
+                    int totalEfficiency = getRotorHolder().getTotalEfficiency();
 
-                            if (efficiency.getIntValue() > 0) {
-                                IKey efficiencyInfo = KeyUtil.number(TextFormatting.AQUA,
-                                        total.getIntValue(), "%");
-                                richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                                        "gregtech.multiblock.turbine.efficiency",
-                                        efficiencyInfo));
-                            }
-                        })
-                        // todo fix prev duration being 0 on first ui open
-                        .addFuelNeededLine(fuelAmount.getValue(), prevDuration::getIntValue)
-                        .addWorkingStatusLine())
-                .configureWarningText(false, builder -> builder
-                        .addCustom(richText -> {
-                            if (!isStructureFormed()) return;
+                    if (rotorEfficiency > 0) {
+                        IKey efficiencyInfo = KeyUtil.number(TextFormatting.AQUA,
+                                totalEfficiency, "%");
+                        keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.turbine.efficiency",
+                                efficiencyInfo));
+                    }
+                })
+                // todo fix prev duration being 0 on first ui open
+                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
+                .addWorkingStatusLine();
+    }
 
-                            if (efficiency.getIntValue() > 0 && durability.getIntValue() <= MIN_DURABILITY_TO_WARN) {
-                                richText.add(KeyUtil.lang(TextFormatting.YELLOW,
-                                        "gregtech.multiblock.turbine.rotor_durability_low"));
-                            }
-                        })
-                        .addLowDynamoTierLine(isDynamoTierTooLow())
-                        .addMaintenanceProblemLines(getMaintenanceProblems()))
-                .configureErrorText(builder -> builder
-                        .addCustom(richText -> {
-                            if (!isStructureFormed()) return;
+    @Override
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addCustom(keyList -> {
+            if (!isStructureFormed()) return;
+            if (getRotorHolder() == null) return;
 
-                            if (!rotorFree.getBoolValue()) {
-                                richText.add(KeyUtil.lang(TextFormatting.RED,
-                                        "gregtech.multiblock.turbine.obstructed"));
-                                richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                                        "gregtech.multiblock.turbine.obstructed.desc"));
-                            }
+            int rotorEfficiency = getRotorHolder().getRotorEfficiency();
+            int rotorDurability = getRotorHolder().getRotorDurabilityPercent();
 
-                            // todo fix "no rotor" tooltip always being shown on first ui open
-                            if (efficiency.getIntValue() <= 0) {
-                                richText.add(KeyUtil.lang(TextFormatting.RED,
-                                        "gregtech.multiblock.turbine.no_rotor"));
-                            }
-                        }));
+            if (rotorEfficiency > 0 && rotorDurability <= MIN_DURABILITY_TO_WARN) {
+                keyList.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.turbine.rotor_durability_low"));
+            }
+        });
+        super.configureWarningText(builder);
+    }
+
+    @Override
+    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+        builder.addCustom(keyList -> {
+            if (!isStructureFormed()) return;
+            if (getRotorHolder() == null) return;
+
+            if (!isRotorFaceFree()) {
+                keyList.add(KeyUtil.lang(TextFormatting.RED,
+                        "gregtech.multiblock.turbine.obstructed"));
+                keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.turbine.obstructed.desc"));
+            }
+            int rotorEfficiency = getRotorHolder().getRotorEfficiency();
+
+            // todo fix "no rotor" tooltip always being shown on first ui open
+            if (rotorEfficiency <= 0) {
+                keyList.add(KeyUtil.lang(TextFormatting.RED,
+                        "gregtech.multiblock.turbine.no_rotor"));
+            }
+        });
     }
 
     @Override
@@ -365,6 +360,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         .progress(() -> fuelValue.getValue()[1] == 0 ? 0 :
                                 1.0 * fuelValue.getValue()[0] / fuelValue.getValue()[1])
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, MultiblockUIFactory.Bars.THIRD_WIDTH)
+                        .tooltip(t -> t.setAutoUpdate(true))
                         .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
             }
             case 1 -> {
