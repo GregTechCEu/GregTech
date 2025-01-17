@@ -469,17 +469,13 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                     String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())];
                     richText.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.hpca.energy",
-                            TextFormattingUtil.formatNumbers(hpcaHandler.cachedCWUt),
-                            TextFormattingUtil.formatNumbers(hpcaHandler.getMaxCWUt()),
+                            TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt),
+                            TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt()),
                             voltageName));
 
                     // Provided Computation
-                    IKey cwutInfo = KeyUtil.string(TextFormatting.AQUA,
-                            hpcaHandler.cachedCWUt + " / " + hpcaHandler.getMaxCWUt() + " CWU/t");
-
-                    richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                            "gregtech.multiblock.hpca.computation",
-                            cwutInfo));
+                    richText.add(KeyUtil.lang("gregtech.multiblock.hpca.computation",
+                            hpcaHandler.cachedCWUt, hpcaHandler.getMaxCWUt()));
                 })
                 .addWorkingStatusLine();
     }
