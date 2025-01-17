@@ -57,7 +57,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -457,76 +456,69 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
-        IntSyncValue curCWUt = new IntSyncValue(() -> hpcaHandler.cachedCWUt, null);
-        IntSyncValue maxCWUt = new IntSyncValue(hpcaHandler::getMaxCWUt, null);
-        BooleanSyncValue hasNoEnergy = new BooleanSyncValue(() -> hasNotEnoughEnergy, null);
-        DoubleSyncValue temp = new DoubleSyncValue(() -> temperature, null);
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0)
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.data_bank.providing")
+                .addCustom(richText -> {
+                    if (!isStructureFormed()) return;
 
-        return new MultiblockUIFactory(this)
-                .syncValue("cur_cwut", curCWUt)
-                .syncValue("max_cwut", maxCWUt)
-                .syncValue("no_energy", hasNoEnergy)
-                .syncValue("temp", temp)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(() -> true, () -> hpcaHandler.getAllocatedCWUt() > 0)
-                        .setWorkingStatusKeys(
-                                "gregtech.multiblock.idling",
-                                "gregtech.multiblock.idling",
-                                "gregtech.multiblock.data_bank.providing")
-                        .addCustom(richText -> {
-                            if (!isStructureFormed()) return;
+                    // Energy Usage
+                    String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())];
+                    richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.hpca.energy",
+                            TextFormattingUtil.formatNumbers(hpcaHandler.cachedCWUt),
+                            TextFormattingUtil.formatNumbers(hpcaHandler.getMaxCWUt()),
+                            voltageName));
 
-                            // Energy Usage
-                            String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())];
-                            richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.hpca.energy",
-                                    TextFormattingUtil.formatNumbers(curCWUt.getIntValue()),
-                                    TextFormattingUtil.formatNumbers(maxCWUt.getIntValue()),
-                                    voltageName));
+                    // Provided Computation
+                    IKey cwutInfo = KeyUtil.string(TextFormatting.AQUA,
+                            hpcaHandler.cachedCWUt + " / " + hpcaHandler.getMaxCWUt() + " CWU/t");
 
-                            // Provided Computation
-                            IKey cwutInfo = KeyUtil.string(TextFormatting.AQUA,
-                                    curCWUt.getIntValue() + " / " + maxCWUt.getIntValue() + " CWU/t");
+                    richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.hpca.computation",
+                            cwutInfo));
+                })
+                .addWorkingStatusLine();
+    }
 
-                            richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.hpca.computation",
-                                    cwutInfo));
-                        })
-                        .addWorkingStatusLine())
-                .configureWarningText(builder -> builder
-                        .addLowPowerLine(hasNoEnergy.getBoolValue())
-                        .addCustom(richText -> {
-                            if (!isStructureFormed()) return;
+    @Override
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(hasNotEnoughEnergy)
+                .addCustom(richText -> {
+                    if (!isStructureFormed()) return;
 
-                            if (temp.getDoubleValue() > 500) {
-                                // Temperature warning
-                                richText.add(KeyUtil.lang(
-                                        TextFormatting.YELLOW,
-                                        "gregtech.multiblock.hpca.warning_temperature"));
+                    if (temperature > 500) {
+                        // Temperature warning
+                        richText.add(KeyUtil.lang(TextFormatting.YELLOW,
+                                "gregtech.multiblock.hpca.warning_temperature"));
 
-                                // Active cooler overdrive warning
-                                richText.add(KeyUtil.lang(
-                                        TextFormatting.GRAY,
-                                        "gregtech.multiblock.hpca.warning_temperature_active_cool"));
-                            }
+                        // Active cooler overdrive warning
+                        richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.hpca.warning_temperature_active_cool"));
+                    }
 
-                            // Structure warnings
-                            // hpcaHandler.addWarnings(richText);
-                            hpcaHandler.addWarnings2(richText);
-                        })
-                        .addMaintenanceProblemLines(getMaintenanceProblems()))
-                .configureErrorText(builder -> builder
-                        .addCustom(richText -> {
-                            if (!isStructureFormed()) return;
+                    // Structure warnings
+                    // hpcaHandler.addWarnings(richText);
+                    hpcaHandler.addWarnings2(richText);
+                })
+                .addMaintenanceProblemLines(getMaintenanceProblems());
+    }
 
-                            if (temp.getDoubleValue() > 1000) {
-                                richText.add(KeyUtil.lang(TextFormatting.RED,
-                                        "gregtech.multiblock.hpca.error_temperature"));
-                            }
-                            // hpcaHandler.addErrors(textList);
-                            hpcaHandler.addErrors2(richText);
-                        }));
+    @Override
+    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+        builder.addCustom(richText -> {
+            if (!isStructureFormed()) return;
+
+            if (temperature > 1000) {
+                richText.add(KeyUtil.lang(TextFormatting.RED,
+                        "gregtech.multiblock.hpca.error_temperature"));
+            }
+            // hpcaHandler.addErrors(textList);
+            hpcaHandler.addErrors2(richText);
+        });
     }
 
     @Override

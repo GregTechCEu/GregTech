@@ -49,7 +49,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     private static final String NBT_VOIDING_MODE = "VoidingMode";
     private static final String NBT_VOIDING_ITEMS = "VoidingItems";
     private static final String NBT_VOIDING_FLUIDS = "VoidingFluids";
-    private static final int UI_SYNC = GregtechDataCodes.assignId();
     private MultiblockUIFactory uiFactory;
 
     private boolean voidingItems = false;
@@ -206,8 +205,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         this.variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
         replaceVariantBlocksActive(false);
-        if (uiFactory != null)
-            writeCustomData(UI_SYNC, uiFactory::writeInitialSync);;
     }
 
     @Override
@@ -355,6 +352,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * each element of list is displayed on new line
      * to use translation, use TextComponentTranslation
      */
+    @Deprecated
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed());
     }
@@ -503,6 +501,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Returns a list of text indicating any current warnings in this Multiblock.
      * Recommended to only display warnings if the structure is already formed.
      */
+    @Deprecated
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
@@ -512,6 +511,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Returns a list of translation keys indicating any current errors in this Multiblock.
      * Prioritized over any warnings provided by {@link MultiblockWithDisplayBase#addWarningText}.
      */
+    @Deprecated
     protected void addErrorText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
                 .addMufflerObstructedLine(hasMufflerMechanics() && !isMufflerFaceFree());
@@ -552,14 +552,22 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return true;
     }
 
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {}
+
+    protected void configureErrorText(MultiblockUIFactory.Builder builder) {}
+
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {}
+
     protected MultiblockUIFactory createUIFactory() {
-        return new MultiblockUIFactory(this);
+        return new MultiblockUIFactory(this)
+                .configureDisplayText(this::configureDisplayText)
+                .configureWarningText(this::configureWarningText)
+                .configureErrorText(this::configureErrorText);
     }
 
     @Override
     public final ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        if (uiFactory == null) return null;
-        writeCustomData(UI_SYNC, uiFactory::writeInitialSync); // is this too early to sync?
+        if (uiFactory == null) uiFactory = createUIFactory();
         return this.uiFactory.buildUI(guiData, panelSyncManager);
     }
 
@@ -607,8 +615,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         buf.writeBoolean(voidingFluids);
         buf.writeBoolean(voidingItems);
         buf.writeInt(voidingMode.ordinal());
-        if (uiFactory == null) uiFactory = createUIFactory();
-        this.uiFactory.writeInitialSync(buf);
     }
 
     @Override
@@ -619,8 +625,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         voidingFluids = buf.readBoolean();
         voidingItems = buf.readBoolean();
         voidingMode = VoidingMode.values()[buf.readInt()];
-        if (uiFactory == null) uiFactory = createUIFactory();
-        this.uiFactory.readInitialSync(buf);
     }
 
     @Override
@@ -660,10 +664,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
         if (dataId == IS_WORKING) {
             lastActive = buf.readBoolean();
-        }
-        if (dataId == UI_SYNC) {
-            uiFactory.readInitialSync(buf);
-            uiFactory.markDirty();
         }
     }
 

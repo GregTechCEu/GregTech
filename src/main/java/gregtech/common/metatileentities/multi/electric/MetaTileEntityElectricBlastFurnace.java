@@ -48,15 +48,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -99,35 +96,24 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
-        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
-        IntSyncValue temp = new IntSyncValue(this::getCurrentTemperature, null);
-        IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-
-        return new MultiblockUIFactory(this)
-                .syncValue("progress", progress)
-                .syncValue("temp", temp)
-                .syncValue("tier", tier)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
-                        .addEnergyUsageLine(this::getEnergyContainer)
-                        .addEnergyTierLine(tier.getIntValue())
-                        .addCustom(addHeatCapacity(temp))
-                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                        .addWorkingStatusLine()
-                        .addProgressLine(progress::getDoubleValue));
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(this.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addCustom(this::addHeatCapacity)
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
-    private Consumer<List<IDrawable>> addHeatCapacity(IntSyncValue temp) {
-        return richText -> {
-            if (isStructureFormed()) {
-                var heatString = KeyUtil.number(TextFormatting.RED,
-                        temp::getIntValue, "K");
+    private void addHeatCapacity(List<IDrawable> keyList) {
+        if (isStructureFormed()) {
+            var heatString = KeyUtil.number(TextFormatting.RED,
+                    getCurrentTemperature(), "K");
 
-                richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                        "gregtech.multiblock.blast_furnace.max_temperature", heatString));
-            }
-        };
+            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.blast_furnace.max_temperature", heatString));
+        }
     }
 
     @Override

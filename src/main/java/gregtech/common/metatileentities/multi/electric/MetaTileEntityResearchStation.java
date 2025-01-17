@@ -40,8 +40,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -250,28 +248,25 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
-        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
-        IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-        return new MultiblockUIFactory(this)
-                .syncValue("progress", progress)
-                .syncValue("tier", tier)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
-                        .setWorkingStatusKeys(
-                                "gregtech.multiblock.idling",
-                                "gregtech.multiblock.work_paused",
-                                "gregtech.machine.research_station.researching")
-                        .addEnergyUsageLine(recipeMapWorkable::getEnergyContainer)
-                        .addEnergyTierLine(tier.getIntValue())
-                        .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
-                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                        .addWorkingStatusLine()
-                        .addProgressLine(progress::getDoubleValue))
-                .configureWarningText(builder -> builder
-                        .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
-                        .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
-                        .addMaintenanceProblemLines(getMaintenanceProblems()));
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.work_paused",
+                        "gregtech.machine.research_station.researching")
+                .addEnergyUsageLine(this.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
+    }
+
+    @Override
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
+                .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
+                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     private static class ResearchStationRecipeLogic extends ComputationRecipeLogic {
