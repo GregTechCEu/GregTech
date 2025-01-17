@@ -88,4 +88,8 @@ public class FixedIntArraySyncValue extends ValueSyncHandler<int[]> {
     public int[] getValue() {
         return this.cache;
     }
+
+    public int getValue(int index) {
+        return this.cache[index];
+    }
 }

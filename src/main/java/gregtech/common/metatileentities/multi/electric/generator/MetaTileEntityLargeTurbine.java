@@ -357,8 +357,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                 panelSyncManager.syncValue("fuel_name", fuelNameValue);
 
                 yield new ProgressWidget()
-                        .progress(() -> fuelValue.getValue()[1] == 0 ? 0 :
-                                1.0 * fuelValue.getValue()[0] / fuelValue.getValue()[1])
+                        .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
+                                1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, MultiblockUIFactory.Bars.THIRD_WIDTH)
                         .tooltip(t -> t.setAutoUpdate(true))
                         .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
