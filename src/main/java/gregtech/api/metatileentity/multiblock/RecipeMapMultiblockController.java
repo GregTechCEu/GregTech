@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -245,26 +244,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isDistinct);
-        buf.writeLong(energyContainer.getEnergyCapacity());
-        buf.writeLong(energyContainer.getInputVoltage());
-        buf.writeLong(energyContainer.getInputAmperage());
-        buf.writeLong(energyContainer.getOutputVoltage());
-        buf.writeLong(energyContainer.getOutputAmperage());
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isDistinct = buf.readBoolean();
-
-        long capacity = buf.readLong();
-        long inVoltage = buf.readLong();
-        long inAmps = buf.readLong();
-        long outVoltage = buf.readLong();
-        long outAmps = buf.readLong();
-
-        this.energyContainer = new EnergyContainerHandler(this, capacity,
-                inVoltage, inAmps, outVoltage, outAmps);
     }
 
     @Override
