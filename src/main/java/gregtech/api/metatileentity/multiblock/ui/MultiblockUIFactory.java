@@ -11,6 +11,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.JsonUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
@@ -24,18 +25,18 @@ import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
 import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
-import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.RichTextWidget;
@@ -136,8 +137,9 @@ public class MultiblockUIFactory {
                         .child(createButtons(panel, panelSyncManager)));
     }
 
-    private Widget<?> createIndicator() {
+    private Widget<?> createIndicator(PanelSyncManager syncManager) {
         var builder = builder();
+        builder.sync("indicator", syncManager);
         return new Widget<>()
                 .size(18)
                 .pos(174 - 5, screenHeight - 18 - 3)
@@ -147,19 +149,16 @@ public class MultiblockUIFactory {
     }
 
     private IDrawable getIndicatorOverlay(Builder builder) {
-        builder.clear();
-        RichTooltip test = new RichTooltip(new Area());
-
-        this.errorText.accept(builder);
-        builder.build(test);
-        if (!test.isEmpty()) {
+        builder.setAction(this.errorText);
+        builder.build();
+        if (!builder.isEmpty()) {
             // error
             return GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
         }
 
-        this.warningText.accept(builder);
-        builder.build(test);
-        if (!test.isEmpty()) {
+        builder.setAction(this.warningText);
+        builder.build();
+        if (!builder.isEmpty()) {
             // warn
             return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
         }
@@ -309,19 +308,25 @@ public class MultiblockUIFactory {
     }
 
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
-        final var builder = builder();
-        this.displayText.accept(builder);
+        ParentWidget<?> root = new ParentWidget<>();
+        if (customScreen != null && customScreen.get() != null) {
+            root.child(customScreen.get());
+        } else {
+            Builder display = builder();
+            display.setAction(this.displayText);
+            display.sync("display", syncManager);
 
-        return new ParentWidget<>()
-                .child(customScreen != null ? customScreen.get() : new ScrollWidget<>(new VerticalScrollData())
-                        .sizeRel(1f)
-                        .child(new RichTextWidget()
-                                .sizeRel(1f)
-                                .alignment(Alignment.TopLeft)
-                                .margin(4, 4)
-                                .autoUpdate(true)
-                                .textBuilder(builder::build)))
-                .child(createIndicator())
+            root.child(new ScrollWidget<>(new VerticalScrollData())
+                    .sizeRel(1f)
+                    .child(new RichTextWidget()
+                            .sizeRel(1f)
+                            .alignment(Alignment.TopLeft)
+                            .margin(4, 4)
+                            .autoUpdate(true)
+                            .textBuilder(display::build)));
+        }
+
+        return root.child(createIndicator(syncManager))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)
                 .pos(4, 4);
@@ -449,6 +454,8 @@ public class MultiblockUIFactory {
          * copying from GregTechDisplayScreen is easy, but extremely tedious to implement
          **/
         private final List<IDrawable> textList = new ArrayList<>();
+        private Consumer<Builder> action;
+        private final SyncHandler syncHandler = makeSyncHandler();
 
         private BooleanSupplier isWorkingEnabled = () -> false;
         private BooleanSupplier isActive = () -> false;
@@ -870,8 +877,69 @@ public class MultiblockUIFactory {
             textList.clear();
         }
 
+        protected boolean hasChanged() {
+            if (this.action == null) return false;
+            List<String> old = new ArrayList<>();
+            for (var drawable : this.textList) old.add(JsonUtils.toJsonString(drawable));
+            build();
+            if (textList.size() != old.size()) return true;
+            for (int i = 0; i < textList.size(); i++) {
+                if (!JsonUtils.toJsonString(textList.get(i)).equals(old.get(i)))
+                    return true;
+            }
+            return false;
+        }
+
+        protected void sync(String key, PanelSyncManager syncManager) {
+            syncManager.syncValue(key, this.syncHandler);
+        }
+
+        private SyncHandler makeSyncHandler() {
+            return new SyncHandler() {
+
+                @Override
+                public void detectAndSendChanges(boolean init) {
+                    if (init || hasChanged()) {
+                        sync(0, this::syncText);
+                    }
+                }
+
+                private void syncText(PacketBuffer buffer) {
+                    buffer.writeVarInt(textList.size());
+                    for (IDrawable drawable : textList) {
+                        var jsonString = JsonUtils.toJsonString(drawable);
+                        NetworkUtils.writeStringSafe(buffer, jsonString);
+                    }
+                }
+
+                @Override
+                public void readOnClient(int id, PacketBuffer buf) {
+                    if (id == 0) {
+                        clear();
+                        for (int i = buf.readVarInt(); i > 0; i--) {
+                            String jsonString = NetworkUtils.readStringSafe(buf);
+                            addKey(JsonUtils.fromJsonString(jsonString));
+                        }
+                    }
+                }
+
+                @Override
+                public void readOnServer(int id, PacketBuffer buf) {}
+            };
+        }
+
         protected void build(IRichTextBuilder<?> richText) {
+            if (dirty) build();
             richText.addDrawableLines(this.textList);
+        }
+
+        protected void build() {
+            this.textList.clear();
+            if (this.action != null) this.action.accept(this);
+        }
+
+        protected void setAction(Consumer<Builder> action) {
+            this.action = action;
         }
 
         private void addKey(IDrawable key) {
