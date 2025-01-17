@@ -85,6 +85,14 @@ public class KeyUtil {
         return string(formatting, () -> TextFormattingUtil.formatNumbers(supplier.getAsLong()));
     }
 
+    public static IKey number(Supplier<TextFormatting> formatting, long number) {
+        return string(formatting, () -> TextFormattingUtil.formatNumbers(number));
+    }
+
+    public static IKey number(Supplier<TextFormatting> formatting, long number, String suffix) {
+        return string(formatting, () -> TextFormattingUtil.formatNumbers(number) + suffix);
+    }
+
     public static IKey number(Supplier<TextFormatting> formatting, LongSupplier supplier, String suffix) {
         return string(formatting, () -> TextFormattingUtil.formatNumbers(supplier.getAsLong()) + suffix);
     }

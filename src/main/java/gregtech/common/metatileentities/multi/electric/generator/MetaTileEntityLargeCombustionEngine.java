@@ -47,7 +47,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
@@ -121,52 +120,50 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
-        final BooleanSyncValue hasLubricant = new BooleanSyncValue(() -> getLubricantAmount()[0] > 0, null);
-        StringSyncValue fuelAmount = new StringSyncValue(recipeLogic::getRecipeFluidInputInfo, null);
-        IntSyncValue prevDuration = new IntSyncValue(recipeLogic::getPreviousRecipeDuration, null);
 
-        return new MultiblockUIFactory(this)
-                .syncValue("lubricant", hasLubricant)
-                .syncValue("fuel_amount", fuelAmount)
-                .syncValue("prev_duration", prevDuration)
-                .configureDisplayText(builder -> {
-                    builder.setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive);
+        builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
 
-                    if (isExtreme) {
-                        builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
-                    } else {
-                        builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
+        if (isExtreme) {
+            builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
+        } else {
+            builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
+        }
+
+        // todo fix prev duration being 0 on first ui open
+        builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
+                .addCustom(richText -> {
+                    if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
+                        String key = isExtreme ?
+                                "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
+                                "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
+                        richText.add(KeyUtil.lang(TextFormatting.AQUA, key));
                     }
-
-                    // todo fix prev duration being 0 on first ui open
-                    builder.addFuelNeededLine(fuelAmount.getValue(), prevDuration::getIntValue)
-                            .addCustom(richText -> {
-                                if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
-                                    String key = isExtreme ?
-                                            "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
-                                            "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
-                                    richText.add(KeyUtil.lang(TextFormatting.AQUA, key));
-                                }
-                            })
-                            .addWorkingStatusLine();
                 })
-                .configureErrorText(builder -> builder.addCustom(keyList -> {
-                    if (!isStructureFormed()) return;
+                .addWorkingStatusLine();
+    }
 
-                    if (checkIntakesObstructed()) {
-                        keyList.add(KeyUtil.lang(TextFormatting.RED,
-                                "gregtech.multiblock.large_combustion_engine.obstructed"));
-                        keyList.add(KeyUtil.lang(TextFormatting.GRAY,
-                                "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
-                    }
+    @Override
+    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+        super.configureErrorText(builder);
+        var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
-                    if (!hasLubricant.getBoolValue()) {
-                        keyList.add(KeyUtil.lang(TextFormatting.RED,
-                                "gregtech.multiblock.large_combustion_engine.no_lubricant"));
-                    }
-                }));
+        builder.addCustom(keyList -> {
+            if (!isStructureFormed()) return;
+
+            if (checkIntakesObstructed()) {
+                keyList.add(KeyUtil.lang(TextFormatting.RED,
+                        "gregtech.multiblock.large_combustion_engine.obstructed"));
+                keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
+            }
+
+            if (!recipeLogic.checkLubricant()) {
+                keyList.add(KeyUtil.lang(TextFormatting.RED,
+                        "gregtech.multiblock.large_combustion_engine.no_lubricant"));
+            }
+        });
     }
 
     @Override
@@ -310,6 +307,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         .progress(() -> fuelValue.getValue()[1] == 0 ? 0 :
                                 1.0 * fuelValue.getValue()[0] / fuelValue.getValue()[1])
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, MultiblockUIFactory.Bars.THIRD_WIDTH)
+                        .tooltip(t -> t.setAutoUpdate(true))
                         .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
             }
             case 1 -> {

@@ -35,8 +35,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,38 +112,34 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
-        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
-        IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-        return new MultiblockUIFactory(this)
-                .syncValue("progress", progress)
-                .syncValue("tier", tier)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
-                        .addEnergyUsageLine(this::getEnergyContainer)
-                        .addEnergyTierLine(tier.getIntValue())
-                        .addCustom(textList -> {
-                            if (!isStructureFormed()) return;
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addCustom(textList -> {
+                    if (!isStructureFormed()) return;
 
-                            // Coil energy discount line
-                            IKey energyDiscount = KeyUtil.number(TextFormatting.AQUA,
-                                    100 - 10L * coilTier, "%");
+                    // Coil energy discount line
+                    IKey energyDiscount = KeyUtil.number(TextFormatting.AQUA,
+                            100 - 10L * getCoilTier(), "%");
 
-                            IKey base = KeyUtil.lang(TextFormatting.GRAY,
-                                    "gregtech.multiblock.cracking_unit.energy",
-                                    energyDiscount);
+                    IKey base = KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.cracking_unit.energy",
+                            energyDiscount);
 
-                            IKey hover = KeyUtil.lang(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.cracking_unit.energy_hover");
+                    IKey hover = KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.cracking_unit.energy_hover");
 
-                            textList.add(KeyUtil.setHover(base, hover));
-                        })
-                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                        .addWorkingStatusLine()
-                        .addProgressLine(progress::getDoubleValue))
-                .configureWarningText(builder -> builder
-                        .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy()));
+                    textList.add(KeyUtil.setHover(base, hover));
+                })
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
+    }
+
+    @Override
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
     }
 
     @Override
