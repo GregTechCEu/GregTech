@@ -5,10 +5,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -33,26 +35,47 @@ public interface JsonHandler<T> extends JsonSerializer<T>, JsonDeserializer<T> {
 
     default <R> JsonArray serializeArray(R[] objects, JsonSerializationContext context) {
         JsonArray array = new JsonArray();
+        if (ArrayUtils.isEmpty(objects)) return array;
         Type arrayType = objects.getClass().getComponentType();
         for (R t : objects) {
-            array.add(context.serialize(t, arrayType));
+            JsonElement element = context.serialize(t, arrayType);
+            if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
+                JsonObject typed = new JsonObject();
+                typed.addProperty("typed", t.getClass().getSimpleName());
+                typed.add("element", element);
+                array.add(typed);
+            } else {
+                array.add(element);
+            }
         }
         return array;
     }
 
-    default <R> R[] deserializeArray(JsonArray jsonElements, JsonDeserializationContext context,
+    default <R> R[] deserializeArray(JsonArray jsonArray, JsonDeserializationContext context,
                                      IntFunction<R[]> function) {
-        if (jsonElements == null) return function.apply(0);
-        R[] array2 = function.apply(jsonElements.size());
-        Type arrayType = array2.getClass().getComponentType();
-        Arrays.setAll(array2, i -> handleArg(jsonElements.get(i), context, arrayType));
-        return array2;
+        if (jsonArray == null || jsonArray.size() == 0) return function.apply(0);
+        R[] array = function.apply(jsonArray.size());
+        Type arrayType = array.getClass().getComponentType();
+        Arrays.setAll(array, i -> handleArg(jsonArray.get(i), context, arrayType));
+        return array;
     }
 
     static Object handleArg(JsonElement element, JsonDeserializationContext context, Type arrayType) {
         // args can sometimes be keys
         if (element.isJsonObject()) {
-            return context.deserialize(element.getAsJsonObject(), IDrawable.class);
+            JsonObject object = element.getAsJsonObject();
+            if (!object.has("typed"))
+                return context.deserialize(object, IDrawable.class);
+
+            JsonElement value = object.get("element");
+            return switch (object.get("typed").getAsString()) {
+                case "Integer" -> value.getAsInt();
+                case "Long" -> value.getAsLong();
+                case "Double" -> value.getAsDouble();
+                case "Float" -> value.getAsFloat();
+                case "Byte" -> value.getAsByte();
+                default -> value.getAsNumber();
+            };
         } else if (element instanceof JsonPrimitive primitive && primitive.isNumber()) {
             return primitive.getAsNumber();
         } else {
