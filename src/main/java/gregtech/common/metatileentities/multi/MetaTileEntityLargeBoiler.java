@@ -46,7 +46,6 @@ import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
-import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
@@ -176,24 +175,28 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
-        final var waterFilled = new BooleanSyncValue(
-                () -> getWaterFilled() > 0, null);
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                .addCustom(this::addCustomData)
+                .addWorkingStatusLine();
+    }
 
-        return new MultiblockUIFactory(this)
-                .syncValue("water_filled", waterFilled)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeLogic::isWorkingEnabled, recipeLogic::isActive)
-                        .addCustom(this::addCustomData)
-                        .addWorkingStatusLine())
-                .configureWarningText(builder -> builder.addCustom(richText -> {
-                    if (isStructureFormed() && !waterFilled.getBoolValue()) {
-                        richText.add(KeyUtil.lang(TextFormatting.YELLOW,
-                                "gregtech.multiblock.large_boiler.no_water"));
-                        richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                                "gregtech.multiblock.large_boiler.explosion_tooltip"));
-                    }
-                }))
+    @Override
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        super.configureWarningText(builder);
+        builder.addCustom(richText -> {
+            if (isStructureFormed() && getWaterFilled() == 0) {
+                richText.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.large_boiler.no_water"));
+                richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.large_boiler.explosion_tooltip"));
+            }
+        });
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
                 .createFlexButton((panel, syncManager) -> {
                     PanelSyncHandler throttle = (PanelSyncHandler) syncManager.panel("throttle_panel",
                             this::makeThrottlePanel, true);
@@ -221,7 +224,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         if (isStructureFormed()) {
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
-                    recipeLogic::getLastTickSteam, " L/t");
+                    recipeLogic.getLastTickSteam(), " L/t");
 
             keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.steam_output", steamOutput));
@@ -229,14 +232,14 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             // Efficiency line
             IKey efficiency = KeyUtil.number(
                     () -> getNumberColor(recipeLogic.getHeatScaled()),
-                    recipeLogic::getHeatScaled, "%");
+                    recipeLogic.getHeatScaled(), "%");
             keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.efficiency", efficiency));
 
             // Throttle line
             IKey throttle = KeyUtil.number(
                     () -> getNumberColor(getThrottle()),
-                    this::getThrottle, "%");
+                    getThrottle(), "%");
             keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.throttle", throttle));
         }
