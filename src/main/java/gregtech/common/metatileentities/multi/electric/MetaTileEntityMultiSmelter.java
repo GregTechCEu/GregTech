@@ -39,8 +39,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -110,53 +108,43 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected MultiblockUIFactory createUIFactory() {
-        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
-        IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-        IntSyncValue discount = new IntSyncValue(() -> heatingCoilDiscount, null);
-        IntSyncValue parallel = new IntSyncValue(() -> getRecipeMapWorkable().getParallelLimit(), null);
-        return new MultiblockUIFactory(this)
-                .syncValue("progress", progress)
-                .syncValue("tier", tier)
-                .syncValue("discount", discount)
-                .syncValue("para", parallel)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
-                        .addEnergyUsageLine(this::getEnergyContainer)
-                        .addEnergyTierLine(tier.getIntValue())
-                        .addCustom(richText -> {
-                            if (!isStructureFormed()) return;
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addCustom(richText -> {
+                    if (!isStructureFormed()) return;
 
-                            if (discount.getIntValue() > 1) {
-                                IKey coilDiscount = KeyUtil.number(TextFormatting.AQUA,
-                                        (long) (100.0 / discount.getIntValue()), "%");
+                    if (heatingCoilDiscount > 1) {
+                        IKey coilDiscount = KeyUtil.number(TextFormatting.AQUA,
+                                (long) (100.0 / heatingCoilDiscount), "%");
 
-                                IKey base = KeyUtil.lang(TextFormatting.GRAY,
-                                        "gregtech.multiblock.multi_furnace.heating_coil_discount",
-                                        coilDiscount);
+                        IKey base = KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.multi_furnace.heating_coil_discount",
+                                coilDiscount);
 
-                                IKey hoverText = KeyUtil.lang(TextFormatting.GRAY,
-                                        "gregtech.multiblock.multi_furnace.heating_coil_discount_hover");
+                        IKey hoverText = KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.multi_furnace.heating_coil_discount_hover");
 
-                                richText.add(KeyUtil.setHover(base, hoverText));
-                            }
+                        richText.add(KeyUtil.setHover(base, hoverText));
+                    }
 
-                            if (parallel.getIntValue() > 0) {
-                                IKey parallels = KeyUtil.number(TextFormatting.DARK_PURPLE,
-                                        parallel.getIntValue());
+                    if (recipeMapWorkable.getParallelLimit() > 0) {
+                        IKey parallels = KeyUtil.number(TextFormatting.DARK_PURPLE,
+                                recipeMapWorkable.getParallelLimit());
 
-                                IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
-                                        "gregtech.multiblock.parallel",
-                                        parallels);
+                        IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.parallel",
+                                parallels);
 
-                                IKey hoverText = KeyUtil.lang(TextFormatting.GRAY,
-                                        "gregtech.multiblock.multi_furnace.parallel_hover");
+                        IKey hoverText = KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.multi_furnace.parallel_hover");
 
-                                richText.add(KeyUtil.setHover(bodyText, hoverText));
-                            }
-                        })
-                        .addWorkingStatusLine()
-                        .addProgressLine(progress::getDoubleValue));
+                        richText.add(KeyUtil.setHover(bodyText, hoverText));
+                    }
+                })
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
     @Override

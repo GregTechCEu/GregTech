@@ -32,7 +32,6 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
-import com.cleanroommc.modularui.value.sync.ValueSyncHandler;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.Widget;
@@ -45,74 +44,30 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
-    protected Consumer<PanelSyncManager> valueSyncer;
     protected Consumer<Builder> displayText, warningText, errorText;
-    protected BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton = (panel, syncManager) -> null;
-    private Consumer<PacketBuffer> writer, reader;
+    protected BiFunction<ModularPanel, PanelSyncManager, IWidget> flexButton = (panel, syncManager) -> null;
     private int width = 198, height = 202;
     private int screenHeight = 109;
-    private Supplier<ParentWidget<?>> customScreen;
-    private boolean dirty;
+    private Supplier<IWidget> customScreen;
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
-        var mufflerObstructed = new BooleanSyncValue(
-                () -> mte.hasMufflerMechanics() && !mte.isMufflerFaceFree(), null);
-
-        this.valueSyncer = syncManager -> syncManager.syncValue("muffler", mufflerObstructed);
-        this.errorText = builder -> builder.addMufflerObstructedLine(mufflerObstructed.getBoolValue());
-        this.warningText = builder -> builder.addMaintenanceProblemLines(mte.getMaintenanceProblems());
-        this.displayText = builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed());
-        this.writer = mufflerObstructed::write;
-        this.reader = mufflerObstructed::read;
+        configureErrorText(builder -> builder.addMufflerObstructedLine(!mte.isMufflerFaceFree()));
+        configureWarningText(builder -> builder.addMaintenanceProblemLines(mte.getMaintenanceProblems()));
+        configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));
     }
 
-    /**
-     * Use this to sync a value to the PanelSyncManager <br />
-     * Also initially syncs the value before ui is constructed
-     */
-    public MultiblockUIFactory syncValue(String name, ValueSyncHandler<?> syncHandler) {
-        this.valueSyncer = this.valueSyncer.andThen(syncManager -> syncManager.syncValue(name, syncHandler));
-        return syncValue(syncHandler);
-    }
-
-    /**
-     * Initially syncs the value before ui is constructed <br />
-     * Use this if the value will be passed into a widget.
-     */
-    public MultiblockUIFactory syncValue(ValueSyncHandler<?> syncHandler) {
-        this.writer = this.writer.andThen(buffer -> {
-            try {
-                syncHandler.write(buffer);
-            } catch (IOException ignored) {}
-        });
-        this.reader = this.reader.andThen(buffer -> {
-            try {
-                syncHandler.read(buffer);
-            } catch (IOException ignored) {}
-        });
-        return this;
-    }
-
-    public void writeInitialSync(PacketBuffer buffer) {
-        this.writer.accept(buffer);
-    }
-
-    public void readInitialSync(PacketBuffer buffer) {
-        this.reader.accept(buffer);
+    private static @NotNull <T> Consumer<T> addAction(@Nullable Consumer<T> first, @NotNull Consumer<T> andThen) {
+        return first == null ? andThen : first.andThen(andThen);
     }
 
     /**
@@ -120,7 +75,7 @@ public class MultiblockUIFactory {
      * <i>It is not recommended to override this method</i>
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        this.valueSyncer.accept(panelSyncManager);
+        // this.valueSyncer.accept(panelSyncManager);
         var panel = createRootPanel();
 
         // TODO createExtras() hook for overrides?
@@ -138,14 +93,37 @@ public class MultiblockUIFactory {
     }
 
     private Widget<?> createIndicator(PanelSyncManager syncManager) {
-        var builder = builder();
-        builder.sync("indicator", syncManager);
+        Builder error = builder();
+        error.sync("error", syncManager);
+        error.setAction(this.errorText);
+
+        Builder warning = builder();
+        warning.sync("warning", syncManager);
+        warning.setAction(this.warningText);
+
+        IDrawable indicator = new DynamicDrawable(() -> {
+            if (!error.isEmpty()) {
+                return GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
+            } else if (!warning.isEmpty()) {
+                return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
+            } else {
+                // todo getLogo()?
+                return GTGuiTextures.GREGTECH_LOGO;
+            }
+        });
+
         return new Widget<>()
                 .size(18)
                 .pos(174 - 5, screenHeight - 18 - 3)
-                .overlay(new DynamicDrawable(() -> getIndicatorOverlay(builder)))
+                .overlay(indicator)
                 .tooltip(tooltip -> tooltip.setAutoUpdate(true))
-                .tooltipBuilder(builder::build);
+                .tooltipBuilder(t -> {
+                    if (!error.isEmpty()) {
+                        error.build(t);
+                    } else if (!warning.isEmpty()) {
+                        warning.build(t);
+                    }
+                });
     }
 
     private IDrawable getIndicatorOverlay(Builder builder) {
@@ -173,7 +151,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureWarningText(boolean merge, Consumer<Builder> warningText) {
-        this.warningText = merge ? this.warningText.andThen(warningText) : warningText;
+        this.warningText = merge ? addAction(this.warningText, warningText) : warningText;
         return this;
     }
 
@@ -192,7 +170,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureErrorText(boolean merge, Consumer<Builder> errorText) {
-        this.errorText = merge ? this.errorText.andThen(errorText) : errorText;
+        this.errorText = merge ? addAction(this.errorText, errorText) : errorText;
         return this;
     }
 
@@ -212,7 +190,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(boolean merge, Consumer<Builder> displayText) {
-        this.displayText = merge ? this.displayText.andThen(displayText) : displayText;
+        this.displayText = merge ? addAction(this.displayText, displayText) : displayText;
         return this;
     }
 
@@ -232,7 +210,7 @@ public class MultiblockUIFactory {
      * <br>
      * Size will be 18x18.
      */
-    public MultiblockUIFactory createFlexButton(BiFunction<ModularPanel, PanelSyncManager, Widget<?>> flexButton) {
+    public MultiblockUIFactory createFlexButton(BiFunction<ModularPanel, PanelSyncManager, IWidget> flexButton) {
         this.flexButton = flexButton;
         return this;
     }
@@ -302,7 +280,7 @@ public class MultiblockUIFactory {
         return column;
     }
 
-    public MultiblockUIFactory customScreen(Supplier<ParentWidget<?>> customScreen) {
+    public MultiblockUIFactory customScreen(Supplier<IWidget> customScreen) {
         this.customScreen = customScreen;
         return this;
     }
@@ -334,7 +312,7 @@ public class MultiblockUIFactory {
 
     @NotNull
     protected Flow createButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager) {
-        var flexButton = this.flexButton.apply(mainPanel, panelSyncManager);
+        IWidget flexButton = this.flexButton.apply(mainPanel, panelSyncManager);
         if (flexButton == null) {
             flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
                     .size(18)
@@ -419,10 +397,6 @@ public class MultiblockUIFactory {
                 .marginTop(5);
     }
 
-    public void markDirty() {
-        dirty = true;
-    }
-
     public static final class Screen {
 
         public static int WIDTH = 190;
@@ -451,8 +425,8 @@ public class MultiblockUIFactory {
         private Consumer<Builder> action;
         private final SyncHandler syncHandler = makeSyncHandler();
 
-        private BooleanSupplier isWorkingEnabled = () -> false;
-        private BooleanSupplier isActive = () -> false;
+        private boolean isWorkingEnabled;
+        private boolean isActive;
         private boolean isStructureFormed;
 
         // Keys for the three-state working system, can be set custom by multiblocks.
@@ -478,7 +452,7 @@ public class MultiblockUIFactory {
         }
 
         /** Set the current working enabled and active status of this multiblock, used by many line addition calls. */
-        public Builder setWorkingStatus(BooleanSupplier isWorkingEnabled, BooleanSupplier isActive) {
+        public Builder setWorkingStatus(boolean isWorkingEnabled, boolean isActive) {
             this.isWorkingEnabled = isWorkingEnabled;
             this.isActive = isActive;
             return this;
@@ -506,21 +480,20 @@ public class MultiblockUIFactory {
          * <br>
          * Added if the structure is formed and if the passed energy container has greater than zero capacity.
          */
-        public Builder addEnergyUsageLine(Supplier<IEnergyContainer> energyContainer) {
-            if (!isStructureFormed || energyContainer.get() == null) return this;
-            if (energyContainer.get().getEnergyCapacity() <= 0) return this;
+        public Builder addEnergyUsageLine(IEnergyContainer energyContainer) {
+            if (!isStructureFormed || energyContainer == null) return this;
+            if (energyContainer.getEnergyCapacity() <= 0) return this;
 
-            IKey bodyText = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.max_energy_per_tick", () -> {
-                var e = energyContainer.get();
-                long maxVoltage = Math.max(e.getInputVoltage(), e.getOutputVoltage());
-                return TextFormattingUtil.formatNumbers(maxVoltage);
-            }, () -> {
-                var e = energyContainer.get();
-                long maxVoltage = Math.max(e.getInputVoltage(), e.getOutputVoltage());
-                return GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)];
-            });
+            long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
+
+            IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.max_energy_per_tick",
+                    TextFormattingUtil.formatNumbers(maxVoltage),
+                    GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+
             var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_energy_per_tick_hover");
+
             addKey(bodyText, hoverText);
             return this;
         }
@@ -625,7 +598,7 @@ public class MultiblockUIFactory {
          */
         public Builder addComputationUsageExactLine(int currentCWUt) {
             if (!isStructureFormed) return this;
-            if (isActive.getAsBoolean() && currentCWUt > 0) {
+            if (isActive && currentCWUt > 0) {
                 var computation = KeyUtil.string(TextFormatting.AQUA,
                         TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
@@ -642,15 +615,13 @@ public class MultiblockUIFactory {
         public Builder addWorkingStatusLine() {
             if (!isStructureFormed) return this;
 
-            addKey(KeyUtil.string(() -> {
-                if (!isWorkingEnabled.getAsBoolean()) {
-                    return pausedKey.getFormatted();
-                } else if (isActive.getAsBoolean()) {
-                    return runningKey.getFormatted();
-                } else {
-                    return idlingKey.getFormatted();
-                }
-            }));
+            if (!isWorkingEnabled) {
+                addKey(pausedKey);
+            } else if (isActive) {
+                addKey(runningKey);
+            } else {
+                addKey(idlingKey);
+            }
             return this;
         }
 
@@ -662,7 +633,7 @@ public class MultiblockUIFactory {
          */
         public Builder addWorkPausedLine(boolean checkState) {
             if (!isStructureFormed) return this;
-            if (!checkState || !isWorkingEnabled.getAsBoolean()) {
+            if (!checkState || !isWorkingEnabled) {
                 addKey(pausedKey);
             }
             return this;
@@ -676,7 +647,7 @@ public class MultiblockUIFactory {
          */
         public Builder addRunningPerfectlyLine(boolean checkState) {
             if (!isStructureFormed) return this;
-            if (!checkState || isActive.getAsBoolean()) {
+            if (!checkState || isActive) {
                 addKey(runningKey);
             }
             return this;
@@ -690,7 +661,7 @@ public class MultiblockUIFactory {
          */
         public Builder addIdlingLine(boolean checkState) {
             if (!isStructureFormed) return this;
-            if (!checkState || (isWorkingEnabled.getAsBoolean() && !isActive.getAsBoolean())) {
+            if (!checkState || (isWorkingEnabled && !isActive)) {
                 addKey(idlingKey);
             }
             return this;
@@ -703,10 +674,11 @@ public class MultiblockUIFactory {
          *
          * @param progressPercent Progress formatted as a range of [0,1] representing the progress of the recipe.
          */
-        public Builder addProgressLine(DoubleSupplier progressPercent) {
-            if (!isStructureFormed || !isActive.getAsBoolean()) return this;
-            addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.progress",
-                    () -> ((int) (progressPercent.getAsDouble() * 100))));
+        public Builder addProgressLine(double progressPercent) {
+            if (!isStructureFormed || !isActive) return this;
+            addKey(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.progress",
+                    (int) (progressPercent * 100)));
             return this;
         }
 
@@ -749,8 +721,8 @@ public class MultiblockUIFactory {
         public Builder addLowComputationLine(boolean isLowComputation) {
             if (!isStructureFormed) return this;
             if (isLowComputation) {
-                addKey(IKey.comp(IKey.str(TextFormatting.YELLOW.toString()),
-                        IKey.lang("gregtech.multiblock.computation.not_enough_computation")));
+                addKey(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.computation.not_enough_computation"));
             }
             return this;
         }
@@ -841,13 +813,13 @@ public class MultiblockUIFactory {
          * <br>
          * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
          */
-        public Builder addFuelNeededLine(String fuelName, IntSupplier previousRecipeDuration) {
-            if (!isStructureFormed || !isActive.getAsBoolean() || fuelName == null) return this;
+        public Builder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
+            if (!isStructureFormed || !isActive || fuelName == null) return this;
 
             addKey(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.turbine.fuel_needed",
                     KeyUtil.string(TextFormatting.RED, fuelName),
-                    KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration::getAsInt)));
+                    KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
             return this;
         }
 
@@ -894,6 +866,7 @@ public class MultiblockUIFactory {
                 @Override
                 public void detectAndSendChanges(boolean init) {
                     if (init || hasChanged()) {
+                        if (init) build();
                         sync(0, this::syncText);
                     }
                 }
@@ -940,7 +913,7 @@ public class MultiblockUIFactory {
             this.textList.add(key);
         }
 
-        private void addKey(IKey key, IDrawable hover) {
+        private void addKey(IKey key, IDrawable... hover) {
             addKey(KeyUtil.setHover(key, hover));
         }
     }
