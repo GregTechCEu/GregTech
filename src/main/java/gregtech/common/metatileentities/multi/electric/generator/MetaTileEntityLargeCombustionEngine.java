@@ -304,8 +304,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 panelSyncManager.syncValue("fuel_name", fuelNameValue);
 
                 yield new ProgressWidget()
-                        .progress(() -> fuelValue.getValue()[1] == 0 ? 0 :
-                                1.0 * fuelValue.getValue()[0] / fuelValue.getValue()[1])
+                        .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
+                                1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, MultiblockUIFactory.Bars.THIRD_WIDTH)
                         .tooltip(t -> t.setAutoUpdate(true))
                         .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
@@ -315,17 +315,17 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 panelSyncManager.syncValue("lubricant_amount", lubricantValue);
 
                 yield new ProgressWidget()
-                        .progress(() -> lubricantValue.getValue()[1] == 0 ? 0 :
-                                1.0 * lubricantValue.getValue()[0] / lubricantValue.getValue()[1])
+                        .progress(() -> lubricantValue.getValue(1) == 0 ? 0 :
+                                1.0 * lubricantValue.getValue(0) / lubricantValue.getValue(1))
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_LUBRICANT, MultiblockUIFactory.Bars.THIRD_WIDTH)
                         .tooltip(tooltip -> tooltip.setAutoUpdate(true))
                         .tooltipBuilder(t -> {
                             if (isStructureFormed()) {
-                                if (lubricantValue.getValue()[0] == 0) {
+                                if (lubricantValue.getValue(0) == 0) {
                                     t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.no_lubricant"));
                                 } else {
                                     t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.lubricant_amount",
-                                            lubricantValue.getValue()[0], lubricantValue.getValue()[1]));
+                                            lubricantValue.getValue(0), lubricantValue.getValue(0)));
                                 }
                             } else {
                                 t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
@@ -339,22 +339,22 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                 panelSyncManager.syncValue("boost_allowed", boostValue);
 
                 yield new ProgressWidget()
-                        .progress(() -> oxygenValue.getValue()[1] == 0 ? 0 :
-                                1.0 * oxygenValue.getValue()[0] / oxygenValue.getValue()[1])
+                        .progress(() -> oxygenValue.getValue(1) == 0 ? 0 :
+                                1.0 * oxygenValue.getValue(0) / oxygenValue.getValue(1))
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_OXYGEN, MultiblockUIFactory.Bars.THIRD_WIDTH)
                         .tooltipBuilder(t -> {
                             t.setAutoUpdate(true);
                             if (isStructureFormed()) {
                                 if (boostValue.getBoolValue()) {
-                                    if (oxygenValue.getValue()[0] == 0) {
+                                    if (oxygenValue.getValue(0) == 0) {
                                         t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_none"));
                                     } else if (isExtreme) {
                                         t.addLine(IKey.lang(
                                                 "gregtech.multiblock.large_combustion_engine.liquid_oxygen_amount",
-                                                oxygenValue.getValue()[0], oxygenValue.getValue()[1]));
+                                                oxygenValue.getValue(0), oxygenValue.getValue(0)));
                                     } else {
                                         t.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.oxygen_amount",
-                                                oxygenValue.getValue()[0], oxygenValue.getValue()[1]));
+                                                oxygenValue.getValue(0), oxygenValue.getValue(1)));
                                     }
                                 } else if (isExtreme) {
                                     t.addLine(IKey.lang(
