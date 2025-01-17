@@ -209,8 +209,8 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 tooltip.addLine(IKey.lang("gregtech.multiblock.large_combustion_engine.fuel_none"));
             } else {
                 tooltip.addLine(
-                        IKey.lang("gregtech.multiblock.large_combustion_engine.fuel_amount", amounts.getValue()[0],
-                                amounts.getValue()[1], fluid.getLocalizedName(new FluidStack(fluid, 1))));
+                        IKey.lang("gregtech.multiblock.large_combustion_engine.fuel_amount", amounts.getValue(0),
+                                amounts.getValue(1), fluid.getLocalizedName(new FluidStack(fluid, 1))));
             }
         } else {
             tooltip.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
