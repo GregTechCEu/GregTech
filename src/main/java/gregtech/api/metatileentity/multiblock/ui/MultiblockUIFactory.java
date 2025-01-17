@@ -447,12 +447,6 @@ public class MultiblockUIFactory {
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
     public static class Builder {
 
-        /*
-         * NOTE:
-         * nvm
-         * need to figure out how best to serialize this shit
-         * copying from GregTechDisplayScreen is easy, but extremely tedious to implement
-         **/
         private final List<IDrawable> textList = new ArrayList<>();
         private Consumer<Builder> action;
         private final SyncHandler syncHandler = makeSyncHandler();
