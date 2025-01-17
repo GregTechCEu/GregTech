@@ -1,5 +1,7 @@
 package gregtech.api.util;
 
+import gregtech.api.mui.drawables.HoverableKey;
+
 import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
@@ -89,7 +91,7 @@ public class KeyUtil {
 
     public static IDrawable setHover(IKey body, IDrawable... hover) {
         if (ArrayUtils.isEmpty(hover)) return body;
-        return body.asTextIcon().asHoverable().addTooltipDrawableLines(Arrays.asList(hover));
+        return HoverableKey.of(body, hover);
     }
 
     private static IKey wrap(TextFormatting formatting) {
