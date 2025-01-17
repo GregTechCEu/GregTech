@@ -451,7 +451,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
         return new MultiblockUIFactory(this)
-                .syncValue(progress)
                 .setSize(198, 236)
                 .setScreenHeight(138)
                 .configureDisplayText(false, builder -> {})

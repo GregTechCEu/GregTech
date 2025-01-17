@@ -33,8 +33,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
-import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -165,22 +163,18 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
-    @Override
-    protected MultiblockUIFactory createUIFactory() {
-        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
-        IntSyncValue tier = new IntSyncValue(() -> GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()), null);
-        return new MultiblockUIFactory(this)
-                .syncValue("progress", progress)
-                .syncValue("tier", tier)
-                .configureDisplayText(builder -> builder
-                        .setWorkingStatus(recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::isActive)
-                        .addEnergyUsageLine(this::getEnergyContainer)
-                        .addEnergyTierLine(tier.getIntValue())
-                        .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                        .addWorkingStatusLine()
-                        .addProgressLine(progress::getDoubleValue))
-                .configureWarningText(builder -> builder
-                        .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy()));
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addEnergyUsageLine(this.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
+    }
+
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
+        super.configureWarningText(builder);
     }
 
     @Override
