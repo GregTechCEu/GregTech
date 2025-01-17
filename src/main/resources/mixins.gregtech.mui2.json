@@ -10,14 +10,15 @@
   "mixins": [
     "IntSyncValueMixin",
     "ItemSlotSHMixin",
-    "KeyCompMixin",
     "PanelSyncHandlerMixin",
     "PanelSyncManagerMixin",
     "StyledTextMixin",
+    "TextMixins$BaseKeyMixin",
+    "TextMixins$KeyCompMixin",
+    "TextMixins$RichTextWidgetMixin",
+    "TextMixins$TooltipMixin",
     "TextWidgetMixin",
-    "ToggleButtonMixin",
-    "TooltipMixin",
-    "TooltipMixin$RichTextWidgetMixin"
+    "ToggleButtonMixin"
   ],
   "client": [
     "ClientEventHandlerMixin"
