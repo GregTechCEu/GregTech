@@ -129,11 +129,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
             if (fluidHandler == null || fluidHandler.getTankProperties().length == 0)
                 return;
 
-            FluidStack stack = fluidTank.getFluid();
-            int canInsertAmount = fluidHandler.fill(stack, false);
-            stack.amount = Math.min(mBPerCycle, canInsertAmount);
-
-            fluidHandler.fill(stack, true);
+            fluidHandler.fill(fluidTank.drain(mBPerCycle, false), true);
         }
     }
 
@@ -230,18 +226,6 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
         @Override
         public int fill(FluidStack resource, boolean doFill) {
             return 0;
-        }
-
-        @Override
-        public FluidStack getFluid() {
-            FluidStack fluid = super.getFluid();
-
-            if (fluid != null) {
-                fluid = fluid.copy();
-                fluid.amount = mBPerCycle;
-            }
-
-            return fluid;
         }
     }
 }
