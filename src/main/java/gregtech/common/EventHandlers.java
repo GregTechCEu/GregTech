@@ -2,12 +2,12 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.IWalkingSpeedBonus;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.longdist.LongDistanceNetwork;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.longdist.LongDistanceNetwork;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.CapesRegistry;
@@ -101,7 +101,7 @@ public class EventHandlers {
         TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
         if (tileEntity instanceof IGregTechTileEntity) {
             event.setUseBlock(Event.Result.ALLOW);
-        } else if (tileEntity instanceof IPipeTile<?, ?>) {
+        } else if (tileEntity instanceof PipeTileEntity) {
             event.setUseBlock(Event.Result.ALLOW);
         }
 

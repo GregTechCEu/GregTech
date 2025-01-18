@@ -5,63 +5,61 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.unification.material.properties.IMaterialProperty;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.ore.IOreRegistrationHandler;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
 import net.minecraft.item.ItemStack;
 
 import com.google.common.base.CaseFormat;
 
+import java.util.function.BiConsumer;
+
 import static gregtech.api.GTValues.*;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.Glue;
 import static gregtech.api.unification.material.info.MaterialFlags.NO_SMASHING;
+import static gregtech.api.unification.material.info.MaterialFlags.NO_UNIFICATION;
 import static gregtech.api.unification.ore.OrePrefix.plate;
 import static gregtech.api.unification.ore.OrePrefix.plateDouble;
 
 public class PipeRecipeHandler {
 
     public static void register() {
-        OrePrefix.pipeTinyFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeTiny);
-        OrePrefix.pipeSmallFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeSmall);
-        OrePrefix.pipeNormalFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNormal);
-        OrePrefix.pipeLargeFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeLarge);
-        OrePrefix.pipeHugeFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeHuge);
-
-        OrePrefix.pipeQuadrupleFluid.addProcessingHandler(PropertyKey.FLUID_PIPE,
+        processStandard(OrePrefix.pipeTiny, OrePrefix.pipeTinyRestrictive, PipeRecipeHandler::processPipeTiny);
+        processStandard(OrePrefix.pipeSmall, OrePrefix.pipeSmallRestrictive, PipeRecipeHandler::processPipeSmall);
+        processStandard(OrePrefix.pipeNormal, OrePrefix.pipeNormalRestrictive, PipeRecipeHandler::processPipeNormal);
+        processStandard(OrePrefix.pipeLarge, OrePrefix.pipeLargeRestrictive, PipeRecipeHandler::processPipeLarge);
+        processStandard(OrePrefix.pipeHuge, OrePrefix.pipeHugeRestrictive, PipeRecipeHandler::processPipeHuge);
+        processStandard(OrePrefix.pipeQuadruple, OrePrefix.pipeQuadrupleRestrictive,
                 PipeRecipeHandler::processPipeQuadruple);
-        OrePrefix.pipeNonupleFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNonuple);
-
-        OrePrefix.pipeTinyItem.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeTiny);
-        OrePrefix.pipeSmallItem.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeSmall);
-        OrePrefix.pipeNormalItem.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeNormal);
-        OrePrefix.pipeLargeItem.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeLarge);
-        OrePrefix.pipeHugeItem.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeHuge);
-
-        OrePrefix.pipeSmallRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE,
-                PipeRecipeHandler::processRestrictivePipe);
-        OrePrefix.pipeNormalRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE,
-                PipeRecipeHandler::processRestrictivePipe);
-        OrePrefix.pipeLargeRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE,
-                PipeRecipeHandler::processRestrictivePipe);
-        OrePrefix.pipeHugeRestrictive.addProcessingHandler(PropertyKey.ITEM_PIPE,
-                PipeRecipeHandler::processRestrictivePipe);
+        processStandard(OrePrefix.pipeNonuple, OrePrefix.pipeNonupleRestrictive, PipeRecipeHandler::processPipeNonuple);
     }
 
-    private static void processRestrictivePipe(OrePrefix pipePrefix, Material material, ItemPipeProperties property) {
-        OrePrefix unrestrictive;
-        if (pipePrefix == OrePrefix.pipeSmallRestrictive) unrestrictive = OrePrefix.pipeSmallItem;
-        else if (pipePrefix == OrePrefix.pipeNormalRestrictive) unrestrictive = OrePrefix.pipeNormalItem;
-        else if (pipePrefix == OrePrefix.pipeLargeRestrictive) unrestrictive = OrePrefix.pipeLargeItem;
-        else if (pipePrefix == OrePrefix.pipeHugeRestrictive) unrestrictive = OrePrefix.pipeHugeItem;
-        else return;
+    private static void processStandard(OrePrefix pipePrefix, OrePrefix restrictivePrefix,
+                                        BiConsumer<OrePrefix, Material> processor) {
+        pipePrefix.addProcessingHandler(registrationHandler(processor));
+        restrictivePrefix.addProcessingHandler(registrationHandler((o, m) -> processRestrictivePipe(o, m, pipePrefix)));
+    }
 
+    public static IOreRegistrationHandler registrationHandler(BiConsumer<OrePrefix, Material> handler) {
+        return (orePrefix, material) -> {
+            if (material.hasFlag(NO_UNIFICATION)) return;
+            PipeNetProperties properties = material.getProperty(PropertyKey.PIPENET_PROPERTIES);
+            if (properties != null && (properties.hasProperty(MaterialFluidProperties.KEY) ||
+                    properties.hasProperty(MaterialItemProperties.KEY))) {
+                handler.accept(orePrefix, material);
+            }
+        };
+    }
+
+    private static void processRestrictivePipe(OrePrefix pipePrefix, Material material, OrePrefix unrestrictive) {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(unrestrictive, material)
                 .input(OrePrefix.ring, Materials.Iron, 2)
@@ -78,7 +76,7 @@ public class PipeRecipeHandler {
                 OreDictUnifier.get(OrePrefix.ring, Materials.Iron));
     }
 
-    private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
+    private static void processPipeTiny(OrePrefix pipePrefix, Material material) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
         // Some pipes like wood do not have an ingot
@@ -120,7 +118,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
+    private static void processPipeSmall(OrePrefix pipePrefix, Material material) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
         if (material.hasProperty(PropertyKey.INGOT)) {
@@ -162,7 +160,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
+    private static void processPipeNormal(OrePrefix pipePrefix, Material material) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
         if (material.hasProperty(PropertyKey.INGOT)) {
@@ -204,7 +202,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
+    private static void processPipeLarge(OrePrefix pipePrefix, Material material) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
         if (material.hasProperty(PropertyKey.INGOT)) {
@@ -245,7 +243,7 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
+    private static void processPipeHuge(OrePrefix pipePrefix, Material material) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
 
         if (material.hasProperty(PropertyKey.INGOT)) {
@@ -286,8 +284,9 @@ public class PipeRecipeHandler {
         }
     }
 
-    private static void processPipeQuadruple(OrePrefix pipePrefix, Material material, FluidPipeProperties property) {
-        ItemStack smallPipe = OreDictUnifier.get(OrePrefix.pipeSmallFluid, material);
+    private static void processPipeQuadruple(OrePrefix pipePrefix, Material material) {
+        // TODO should quadruple pipes be mode of normal pipes instead?
+        ItemStack smallPipe = OreDictUnifier.get(OrePrefix.pipeSmall, material);
         ItemStack quadPipe = OreDictUnifier.get(pipePrefix, material);
         ModHandler.addShapedRecipe(String.format("quadruple_%s_pipe", material.toString()),
                 quadPipe, "XX", "XX",
@@ -302,8 +301,8 @@ public class PipeRecipeHandler {
                 .buildAndRegister();
     }
 
-    private static void processPipeNonuple(OrePrefix pipePrefix, Material material, FluidPipeProperties property) {
-        ItemStack smallPipe = OreDictUnifier.get(OrePrefix.pipeSmallFluid, material);
+    private static void processPipeNonuple(OrePrefix pipePrefix, Material material) {
+        ItemStack smallPipe = OreDictUnifier.get(OrePrefix.pipeSmall, material);
         ItemStack nonuplePipe = OreDictUnifier.get(pipePrefix, material);
         ModHandler.addShapedRecipe(String.format("nonuple_%s_pipe", material.toString()),
                 nonuplePipe, "XXX", "XXX", "XXX",

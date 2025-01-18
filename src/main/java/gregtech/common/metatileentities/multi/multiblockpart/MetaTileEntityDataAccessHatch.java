@@ -1,7 +1,10 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.query.DataAccessFormat;
+import gregtech.api.capability.data.query.DataQueryObject;
+import gregtech.api.capability.data.query.RecipeDataQuery;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -46,7 +49,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotifiablePart
-                                           implements IMultiblockAbilityPart<IDataAccessHatch>, IDataAccessHatch,
+                                           implements IMultiblockAbilityPart<IDataAccess>, IDataAccess,
                                            IDataInfoProvider {
 
     private final Set<Recipe> recipes;
@@ -61,7 +64,7 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDataAccessHatch(metaTileEntityId, getTier(), isCreative());
+        return new MetaTileEntityDataAccessHatch(metaTileEntityId, getTier(), isCreative);
     }
 
     @Override
@@ -147,14 +150,19 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public boolean isRecipeAvailable(@NotNull Recipe recipe, @NotNull Collection<IDataAccessHatch> seen) {
-        seen.add(this);
-        return recipes.contains(recipe);
+    public boolean accessData(@NotNull DataQueryObject queryObject) {
+        if (queryObject instanceof RecipeDataQuery query) {
+            if (isCreative || recipes.contains(query.getRecipe())) {
+                query.setFound();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public boolean isCreative() {
-        return this.isCreative;
+    public @NotNull DataAccessFormat getFormat() {
+        return DataAccessFormat.STANDARD;
     }
 
     @Override
@@ -208,12 +216,12 @@ public class MetaTileEntityDataAccessHatch extends MetaTileEntityMultiblockNotif
     }
 
     @Override
-    public MultiblockAbility<IDataAccessHatch> getAbility() {
+    public MultiblockAbility<IDataAccess> getAbility() {
         return MultiblockAbility.DATA_ACCESS_HATCH;
     }
 
     @Override
-    public void registerAbilities(List<IDataAccessHatch> abilityList) {
+    public void registerAbilities(List<IDataAccess> abilityList) {
         abilityList.add(this);
     }
 

@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.electric.centralmonitor;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
@@ -15,7 +16,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.FacingPos;
 import gregtech.api.util.GTLog;
 import gregtech.client.utils.RenderUtil;
@@ -128,8 +128,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         IGregTechTileEntity holder = getHolderFromPos(posFacing.getPos());
         if (holder == null) {
             TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.getPos());
-            if (te instanceof IPipeTile<?, ?>pipeTile) {
-                coverHolder = pipeTile.getCoverableImplementation();
+            if (te instanceof PipeTileEntity pipeTile) {
+                coverHolder = pipeTile.getCoverHolder();
             }
         } else {
             coverHolder = holder.getMetaTileEntity();

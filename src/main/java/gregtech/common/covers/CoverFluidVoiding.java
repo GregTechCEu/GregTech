@@ -4,6 +4,8 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTTransferUtils;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.covers.filter.FluidFilterContainer;
 
@@ -12,6 +14,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -19,7 +22,6 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -72,6 +74,17 @@ public class CoverFluidVoiding extends CoverPump {
     }
 
     @Override
+    public @NotNull CoverRenderer getRenderer() {
+        if (renderer == null) renderer = buildRenderer();
+        return renderer;
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.FLUID_VOIDING).build();
+    }
+
+    @Override
     public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         return super.buildUI(guiData, guiSyncManager).height(192 - 22);
     }
@@ -99,13 +112,18 @@ public class CoverFluidVoiding extends CoverPump {
     }
 
     @Override
+    protected boolean createDistributionModeRow() {
+        return false;
+    }
+
+    @Override
     protected boolean createThroughputRow() {
         return false;
     }
 
     @Override
     public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                       @NotNull CuboidRayTraceResult hitResult) {
+                                                       @NotNull RayTraceResult hitResult) {
         this.isWorkingAllowed = !this.isWorkingAllowed;
         if (!playerIn.world.isRemote) {
             playerIn.sendStatusMessage(new TextComponentTranslation(isWorkingEnabled() ?

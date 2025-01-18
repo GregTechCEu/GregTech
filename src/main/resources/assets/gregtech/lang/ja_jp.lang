@@ -5505,7 +5505,7 @@ gregtech.fluid_pipe.cryo_proof=§6極低温の液体を運搬可能
 gregtech.fluid_pipe.plasma_proof=§6全てのプラズマを運搬可能
 gregtech.fluid_pipe.not_gas_proof=§4気体を密封できない!
 
-gregtech.item_pipe.priority=§9優先度: %d
+gregtech.pipe.priority=§9優先度: %d
 
 gregtech.multiblock.work_paused=一時停止中
 gregtech.multiblock.running=完璧に動作中

@@ -4,6 +4,8 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.util.BlockRenderLayer;
@@ -25,13 +27,18 @@ public class CoverDetectorActivity extends CoverDetectorBase implements ITickabl
 
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
-        return coverable.getCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null) != null;
+        return coverable.hasCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, null);
     }
 
     @Override
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.DETECTOR_ACTIVITY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.DETECTOR_ACTIVITY).build();
     }
 
     @Override

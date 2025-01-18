@@ -79,4 +79,12 @@ public class SimpleOverlayRenderer implements ICubeRenderer {
     public TextureAtlasSprite getParticleSprite() {
         return sprite;
     }
+
+    public TextureAtlasSprite getSprite() {
+        return sprite;
+    }
+
+    public @Nullable TextureAtlasSprite getSpriteEmissive() {
+        return spriteEmissive;
+    }
 }
