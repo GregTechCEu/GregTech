@@ -5741,9 +5741,7 @@ gregtech.multiblock.large_combustion_engine.obstructed.desc=Engine Intakes must 
 
 gregtech.multiblock.turbine.fuel_amount=Fuel: %sL %s
 gregtech.multiblock.turbine.fuel_needed=Consumes %s per %s ticks
-gregtech.multiblock.turbine.rotor_speed.high=§7Rotor Speed: §a%,d / %,d RPM
-gregtech.multiblock.turbine.rotor_speed.medium=§7Rotor Speed: §e%,d / %,d RPM
-gregtech.multiblock.turbine.rotor_speed.low=§7Rotor Speed: §c%,d / %,d RPM
+gregtech.multiblock.turbine.rotor_speed=§7Rotor Speed: %s%,d / %,d RPM
 gregtech.multiblock.turbine.rotor_durability.high=§7Rotor Durability: §a%,d%%
 gregtech.multiblock.turbine.rotor_durability.medium=§7Rotor Durability: §e%,d%%
 gregtech.multiblock.turbine.rotor_durability.low=§cRotor durability low!
