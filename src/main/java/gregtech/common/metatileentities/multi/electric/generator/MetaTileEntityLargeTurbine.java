@@ -392,19 +392,9 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                             if (isStructureFormed()) {
                                 int speed = rotorSpeedValue.getIntValue();
                                 int maxSpeed = rotorMaxSpeedValue.getIntValue();
-                                float percent = maxSpeed == 0 ? 0 : 1.0f * speed / maxSpeed;
 
-                                // TODO working dynamic color substitutions into IKey.lang
-                                if (percent < 0.4) {
-                                    t.addLine(
-                                            IKey.lang("gregtech.multiblock.turbine.rotor_speed.low", speed, maxSpeed));
-                                } else if (percent < 0.8) {
-                                    t.addLine(IKey.lang("gregtech.multiblock.turbine.rotor_speed.medium", speed,
-                                            maxSpeed));
-                                } else {
-                                    t.addLine(
-                                            IKey.lang("gregtech.multiblock.turbine.rotor_speed.high", speed, maxSpeed));
-                                }
+                                t.addLine(KeyUtil.lang("gregtech.multiblock.turbine.rotor_speed",
+                                        getSpeedFormat(maxSpeed, speed), speed, maxSpeed));
                             } else {
                                 t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
                             }
@@ -459,6 +449,18 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
             }
             default -> throw new IllegalStateException("Invalid index received " + index);
         };
+    }
+
+    private @NotNull TextFormatting getSpeedFormat(int maxSpeed, int speed) {
+        float percent = maxSpeed == 0 ? 0 : 1.0f * speed / maxSpeed;
+
+        if (percent < 0.4) {
+            return TextFormatting.RED;
+        } else if (percent < 0.8) {
+            return TextFormatting.YELLOW;
+        } else {
+            return TextFormatting.GREEN;
+        }
     }
 
     /**
