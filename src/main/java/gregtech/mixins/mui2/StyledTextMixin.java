@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+// todo remove this and interface once rc3 is released
 @Mixin(value = StyledText.class, remap = false)
 public abstract class StyledTextMixin implements UnboxFix {
 
