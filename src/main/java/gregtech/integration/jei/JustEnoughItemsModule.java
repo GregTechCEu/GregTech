@@ -29,6 +29,7 @@ import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.jei.basic.GTFluidVeinCategory;
@@ -83,6 +84,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_BOLT_SCREW;
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_RING;
 
 @JEIPlugin
 @GregTechModule(
@@ -237,11 +241,22 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         List<OreByProduct> oreByproductList = new ArrayList<>();
+        List<MaterialTree> materialTreeList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 oreByproductList.add(new OreByProduct(material));
             }
+            if (material.hasProperty(PropertyKey.DUST)) {
+                materialTreeList.add(new MaterialTree(material));
+            }
+            if (material.hasFlag(GENERATE_BOLT_SCREW) && material.hasFlag(GENERATE_RING) &&
+                    material.hasProperty(PropertyKey.TOOL)) {
+                registry.addIngredientInfo(ToolItems.TOOLBELT.get(material), VanillaTypes.ITEM,
+                        "item.gt.tool.toolbelt.tooltip", "item.gt.tool.toolbelt.paint", "item.gt.tool.toolbelt.dye",
+                        "item.gt.tool.toolbelt.maintenance");
+            }
         }
+
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
         MetaTileEntity[][] machineLists = {
@@ -259,12 +274,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         // Material Tree
-        List<MaterialTree> materialTreeList = new ArrayList<>();
-        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
-            if (material.hasProperty(PropertyKey.DUST)) {
-                materialTreeList.add(new MaterialTree(material));
-            }
-        }
         registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
 
         // Ore Veins
