@@ -129,11 +129,7 @@ public class MetaTileEntityCreativeTank extends MetaTileEntityQuantumTank {
             if (fluidHandler == null || fluidHandler.getTankProperties().length == 0)
                 return;
 
-            FluidStack stack = fluidTank.getFluid().copy();
-            int canInsertAmount = fluidHandler.fill(stack, false);
-            stack.amount = Math.min(mBPerCycle, canInsertAmount);
-
-            fluidHandler.fill(stack, true);
+            fluidHandler.fill(fluidTank.drain(mBPerCycle, false), true);
         }
     }
 
