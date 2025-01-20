@@ -8,7 +8,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
@@ -77,16 +79,16 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        // GuiScreen guiScreen = getScreen().getScreenWrapper().getGuiScreen();
         ItemStack itemstack = this.syncHandler.getStack();
         if (itemstack.isEmpty()) return;
-        // guiScreen.getItemRenderer().zLevel = 0.0F;
-        // guiScreen.setZ(0f);
-        RenderUtil.renderItemInGUI(itemstack, 1, 1);
 
         if (!this.hasIngredients) {
             RenderUtil.renderRect(0, 0, 18, 18, 200, 0x80FF0000);
         }
+
+        GuiDraw.drawItem(itemstack, 1, 1, 16, 16);
+        var renderer = MCHelper.getMc().getRenderItem();
+        renderer.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), itemstack, 1, 1, null);
     }
 
     @Override

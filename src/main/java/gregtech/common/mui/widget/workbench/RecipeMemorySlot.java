@@ -1,7 +1,6 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.mui.GTGuiTextures;
-import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -10,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import com.cleanroommc.modularui.api.MCHelper;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -26,11 +26,11 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         this.memory = memory;
         this.index = index;
         tooltip().setAutoUpdate(true);
-        // .setHasTitleMargin(true);
         tooltipBuilder(tooltip -> {
             var recipe = memory.getRecipeAtIndex(this.index);
             if (recipe == null) return;
             var list = MCHelper.getItemToolTip(recipe.getRecipeResult());
+            // todo lang
             list.add(1, IKey.lang("Times Used: " + recipe.timesUsed).get());
             tooltip.addStringLines(list);
         });
@@ -38,16 +38,12 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        // GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
         ItemStack itemstack = this.memory.getRecipeOutputAtIndex(this.index);
         if (itemstack.isEmpty()) return;
 
-        // guiScreen.setZ(100f);
-        // guiScreen.getItemRenderer().zLevel = 100.0F;
-
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
-        RenderUtil.renderItemInGUI(itemstack, 1, 1);
+        GuiDraw.drawItem(itemstack, 1, 1, 16, 16);
         itemstack.setCount(cachedCount);
 
         if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
@@ -55,9 +51,6 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
             GlStateManager.enableDepth();
         }
-
-        // guiScreen.getItemRenderer().zLevel = 0.0F;
-        // guiScreen.setZ(0f);
     }
 
     @Override
