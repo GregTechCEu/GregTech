@@ -155,7 +155,7 @@ public class MultiblockDisplayText {
          */
         public Builder addEnergyProductionLine(long maxVoltage, long recipeEUt) {
             if (!isStructureFormed) return this;
-            if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
+            if (maxVoltage != 0 && maxVoltage >= recipeEUt) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
                 ITextComponent voltageName = new TextComponentString(
