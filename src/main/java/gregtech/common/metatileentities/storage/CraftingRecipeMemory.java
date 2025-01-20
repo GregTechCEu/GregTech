@@ -9,13 +9,13 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class CraftingRecipeMemory extends SyncHandler {
@@ -161,7 +161,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             int index = buf.readByte();
             var recipe = memorizedRecipes[index];
             if (recipe == null) recipe = new MemorizedRecipe(index);
-            recipe.recipeResult = readStackSafe(buf);
+            recipe.recipeResult = NetworkUtils.readItemStack(buf);
             recipe.index = index;
             memorizedRecipes[index] = recipe;
         } else if (id == 4) {
@@ -183,7 +183,7 @@ public class CraftingRecipeMemory extends SyncHandler {
         for (var entry : written.entrySet()) {
             var recipe = memorizedRecipes[entry.getKey()];
             buf.writeByte(recipe.index);
-            buf.writeItemStack(recipe.recipeResult);
+            NetworkUtils.writeItemStack(buf, recipe.recipeResult);
             buf.writeInt(recipe.timesUsed);
             buf.writeBoolean(recipe.isRecipeLocked());
         }
@@ -196,7 +196,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             if (!hasRecipe(index))
                 memorizedRecipes[index] = new MemorizedRecipe(index);
 
-            memorizedRecipes[index].recipeResult = readStackSafe(buf);
+            memorizedRecipes[index].recipeResult = NetworkUtils.readItemStack(buf);
             memorizedRecipes[index].timesUsed = buf.readInt();
             memorizedRecipes[index].recipeLocked = buf.readBoolean();
         }
@@ -221,14 +221,6 @@ public class CraftingRecipeMemory extends SyncHandler {
                     removeRecipe(index);
             }
         }
-    }
-
-    private static ItemStack readStackSafe(PacketBuffer buffer) {
-        ItemStack ret = ItemStack.EMPTY;
-        try {
-            ret = buffer.readItemStack();
-        } catch (IOException ignored) {}
-        return ret;
     }
 
     public static class MemorizedRecipe {
@@ -264,13 +256,13 @@ public class CraftingRecipeMemory extends SyncHandler {
         private void writeToBuffer(PacketBuffer buffer) {
             buffer.writeByte(this.index);
             buffer.writeInt(this.timesUsed);
-            buffer.writeItemStack(this.recipeResult);
+            NetworkUtils.writeItemStack(buffer, this.recipeResult);
         }
 
         private static @NotNull MemorizedRecipe fromBuffer(PacketBuffer buffer) {
             var recipe = new MemorizedRecipe(buffer.readByte());
             recipe.timesUsed = buffer.readInt();
-            recipe.recipeResult = readStackSafe(buffer);
+            recipe.recipeResult = NetworkUtils.readItemStack(buffer);
             return recipe;
         }
 

@@ -1,5 +1,6 @@
 package gregtech.common.mui.widget.workbench;
 
+import gregtech.api.util.GTUtility;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 
@@ -13,6 +14,7 @@ import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -22,8 +24,6 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.slot.IOnSlotChanged;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Interactable,
                                JeiGhostIngredientSlot<ItemStack>,
@@ -149,21 +149,22 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
             if (id == 1) {
-                boolean c = buf.readBoolean();
-                var s = readStackSafe(buf);
-                boolean i = buf.readBoolean();
-                this.handler.setStackInSlot(this.index, s);
-                this.listener.onChange(s, c, true, i);
+                boolean onlyAmt = buf.readBoolean();
+                var stack = NetworkUtils.readItemStack(buf);
+                boolean init = buf.readBoolean();
+
+                this.handler.setStackInSlot(this.index, stack);
+                this.listener.onChange(stack, onlyAmt, true, init);
             }
         }
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
             if (id == 1) {
-                var b = buf.readBoolean();
-                var s = readStackSafe(buf);
-                this.handler.setStackInSlot(this.index, s);
-                this.listener.onChange(s, b, false, false);
+                var onlyAmt = buf.readBoolean();
+                var stack = NetworkUtils.readItemStack(buf);
+                this.handler.setStackInSlot(this.index, stack);
+                this.listener.onChange(stack, onlyAmt, false, false);
             }
         }
 
@@ -184,15 +185,14 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
                 final boolean finalOnlyAmountChanged = onlyAmountChanged;
                 syncToClient(1, buffer -> {
                     buffer.writeBoolean(finalOnlyAmountChanged);
-                    buffer.writeItemStack(itemStack);
+                    NetworkUtils.writeItemStack(buffer, itemStack);
                     buffer.writeBoolean(init);
                 });
             }
         }
 
         public void syncStack() {
-            final var cursorStack = getSyncManager().getCursorItem().copy();
-            cursorStack.setCount(1);
+            final var cursorStack = GTUtility.copy(1, getSyncManager().getCursorItem());
             final var curStack = getStack();
             final boolean onlyAmt = ItemHandlerHelper.canItemStacksStackRelaxed(curStack, cursorStack);
 
@@ -200,7 +200,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             this.listener.onChange(cursorStack, onlyAmt, true, false);
             syncToServer(1, buffer -> {
                 buffer.writeBoolean(onlyAmt);
-                buffer.writeItemStack(cursorStack);
+                NetworkUtils.writeItemStack(buffer, cursorStack);
             });
         }
 
@@ -216,14 +216,6 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         public void setStack(ItemStack stack) {
             this.handler.setStackInSlot(this.index, stack);
             this.listener.onChange(stack, false, getSyncManager().isClient(), false);
-        }
-
-        private ItemStack readStackSafe(PacketBuffer buffer) {
-            ItemStack ret = ItemStack.EMPTY;
-            try {
-                ret = buffer.readItemStack();
-            } catch (IOException ignored) {}
-            return ret;
         }
     }
 }
