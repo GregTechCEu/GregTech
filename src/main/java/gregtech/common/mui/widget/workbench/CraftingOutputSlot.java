@@ -1,7 +1,6 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.util.GTLog;
-import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
@@ -16,6 +15,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -72,17 +72,10 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
     @Override
     public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
-        // GuiScreenWrapper guiScreen = getScreen().getScreenWrapper();
         ItemStack itemstack = this.syncHandler.getOutputStack();
         if (itemstack.isEmpty()) return;
 
-        // guiScreen.setZ(100f);
-        // guiScreen.getItemRenderer().zLevel = 100.0F;
-
-        RenderUtil.renderItemInGUI(itemstack, 1, 1);
-
-        // guiScreen.getItemRenderer().zLevel = 0.0F;
-        // guiScreen.setZ(0f);
+        GuiDraw.drawItem(itemstack, 1, 1, 16, 16);
     }
 
     @Override
