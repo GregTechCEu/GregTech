@@ -1,7 +1,6 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.Recipe;
@@ -46,11 +45,6 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     public IFluidTank getSteamFluidTankCombined() {
         combineSteamTanks();
         return steamFluidTankCombined;
-    }
-
-    @Override
-    protected IEnergyContainer getEnergyContainer() {
-        return IEnergyContainer.DEFAULT;
     }
 
     @Override

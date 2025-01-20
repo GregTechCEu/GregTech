@@ -120,7 +120,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return getEnergyContainer().getEnergyCapacity();
     }
 
-    protected abstract IEnergyContainer getEnergyContainer();
+    protected IEnergyContainer getEnergyContainer() {
+        return IEnergyContainer.DEFAULT;
+    }
 
     /**
      * Draw energy from the energy container

@@ -334,7 +334,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     @Override
     protected IEnergyContainer getEnergyContainer() {
         GTLog.logger.error("Large Boiler called getEnergyContainer(), this should not be possible!");
-        return IEnergyContainer.DEFAULT;
+        return super.getEnergyContainer();
     }
 
     /**
