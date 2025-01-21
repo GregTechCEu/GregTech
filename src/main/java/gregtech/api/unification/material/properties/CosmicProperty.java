@@ -57,7 +57,7 @@ public class CosmicProperty implements IMaterialProperty {
     private Float maskOpacity;
 
     public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
-                          boolean shouldDrawPulse, boolean shouldDrawCosmic, Float maskOpacity) {
+                          boolean shouldDrawPulse, boolean shouldDrawCosmic) {
         if (Avaritia.isModLoaded()) {
             this.shouldDrawHalo = shouldDrawHalo;
             this.haloTexture = haloTexture;
@@ -65,7 +65,6 @@ public class CosmicProperty implements IMaterialProperty {
             this.haloSize = haloSize;
             this.shouldDrawPulse = shouldDrawPulse;
             this.shouldDrawCosmic = shouldDrawCosmic;
-            this.maskOpacity = maskOpacity;
             CosmicTexture.registerHaloIcon(haloTexture);
         }
     }
@@ -146,7 +145,6 @@ public class CosmicProperty implements IMaterialProperty {
         private int haloSize;
         private boolean shouldDrawPulse;
         private boolean shouldDrawCosmic;
-        private Float maskOpacity;
 
         public Builder() {}
 
@@ -177,11 +175,6 @@ public class CosmicProperty implements IMaterialProperty {
 
         public Builder shouldDrawCosmic(boolean shouldDrawCosmic) {
             this.shouldDrawCosmic = shouldDrawCosmic;
-            return this;
-        }
-
-        public Builder maskOpacity(Float maskOpacity) {
-            this.maskOpacity = maskOpacity;
             return this;
         }
     }

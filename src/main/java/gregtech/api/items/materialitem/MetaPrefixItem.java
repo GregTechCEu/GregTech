@@ -399,21 +399,12 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
             String identifier = resourceLocation.toString().replace("gregtech:material_sets", "identifier");
             return CosmicTexture.specialMaskTextures.get(identifier + "_mask");
         } else {
-            return CosmicTexture.specialMaskTextures.get("fallback");
+            return null;
         }
     }
 
     @SideOnly(Side.CLIENT)
     public float getMaskOpacity(ItemStack stack, EntityLivingBase player) {
-        Material material = getMaterial(stack);
-        assert material != null;
-
-        CosmicProperty prop = material.getProperty(PropertyKey.COSMIC);
-
-        if (material.hasProperty(PropertyKey.COSMIC) && prop.getMaskOpacity() != null) {
-            return prop.getMaskOpacity();
-        } else {
-            return 0.0f;
-        }
+        return 1.0f;
     }
 }

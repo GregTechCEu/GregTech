@@ -852,11 +852,11 @@ public class Material implements Comparable<Material> {
          */
         @Optional.Method(modid = Mods.Names.AVARITIA)
         public Builder cosmic(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
-                              boolean shouldDrawPulse, boolean shouldDrawCosmic, Float maskOpacity) {
+                              boolean shouldDrawPulse, boolean shouldDrawCosmic) {
             if (Avaritia.isModLoaded()) {
                 properties.setProperty(PropertyKey.COSMIC,
                         new CosmicProperty(shouldDrawHalo, haloTexture, haloColour, haloSize, shouldDrawPulse,
-                                shouldDrawCosmic, maskOpacity));
+                                shouldDrawCosmic));
             }
             return this;
         }

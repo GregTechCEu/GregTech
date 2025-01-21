@@ -854,19 +854,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getMaskTexture(ItemStack stack, EntityLivingBase player) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem.registerMaskTexture(stack) == null) {
-            return MetaValueItem.CosmicTexture.specialMaskTextures.get("fallback");
+        if (metaValueItem.registerMaskTexture(stack) != null) {
+            return MetaValueItem.CosmicTexture.maskTextures.get(metaValueItem.registerMaskTexture(stack));
         }
-        return MetaValueItem.CosmicTexture.maskTextures.get(metaValueItem.registerMaskTexture(stack));
+        return null;
     }
 
     @SideOnly(Side.CLIENT)
     public float getMaskOpacity(ItemStack stack, EntityLivingBase player) {
-        T metaValueItem = getItem(stack);
-        if (metaValueItem == null) {
-            return 0.0f;
-        }
-        return metaValueItem.registerMaskOpacity(stack);
+        return 1.0f;
     }
 
     public class MetaValueItem {
@@ -903,7 +899,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private int haloSize;
         private boolean haloPulse;
         private String maskPath;
-        private float maskOpacity;
 
         @Nullable
         private CreativeTabs[] creativeTabsOverride;
@@ -1012,15 +1007,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
          *                        color for green).<br>
          * @param haloSize        The size of the halo : Example 10.<br>
          * @param shouldDrawPulse Whether the MetaItem will pulse like Avaritia's Infinity Ingot : Example true.<br>
-         * @param maskTexture     The String Location of the Mask texture the MetaItem will use as a Cosmic Effect :
-         *                        Example "nan".<br>
-         * @param maskOpacity     The Opacity of the Cosmic Effect, Use in combination with maskTexture : Example
-         *                        1.0f.<br>
+         * @param maskTexture     The String Location of the Mask texture the MetaItem will use as a Cosmic Effect : Example "nan".
          */
         @Optional.Method(modid = Mods.Names.AVARITIA)
         public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
-                                              int haloSize, boolean shouldDrawPulse, String maskTexture,
-                                              float maskOpacity) {
+                                              int haloSize, boolean shouldDrawPulse, String maskTexture) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
@@ -1028,7 +1019,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 this.haloSize = haloSize;
                 this.haloPulse = shouldDrawPulse;
                 this.maskPath = maskTexture;
-                this.maskOpacity = maskOpacity;
                 if (haloTexture == null) {
                     throw new IllegalArgumentException("Cannot add null haloTexture.");
                 } else {
@@ -1045,14 +1035,13 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
         public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
-                                              int haloSize, String maskTexture, float maskOpacity) {
+                                              int haloSize, String maskTexture) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
                 this.haloColour = haloColour;
                 this.haloSize = haloSize;
                 this.maskPath = maskTexture;
-                this.maskOpacity = maskOpacity;
                 if (haloTexture == null) {
                     throw new IllegalArgumentException("Cannot add null haloTexture.");
                 } else {
@@ -1101,10 +1090,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(String maskTexture, Float maskOpacity) {
+        public MetaValueItem cosmicProperties(String maskTexture) {
             if (Avaritia.isModLoaded()) {
                 this.maskPath = maskTexture;
-                this.maskOpacity = maskOpacity;
                 if (maskTexture == null) {
                     throw new IllegalArgumentException("Cannot add null Mask.");
                 }
@@ -1356,10 +1344,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return maskPath;
         }
 
-        public float registerMaskOpacity(ItemStack stack) {
-            return maskOpacity;
-        }
-
         public static class CosmicTexture implements TextureUtils.IIconRegister {
 
             public static Map<String, TextureAtlasSprite> haloTextures = new HashMap<>();
@@ -1394,8 +1378,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
                 specialCosmicPath.forEach((key, value) -> {
                     specialMaskTextures.put(key, textureMap.registerSprite(new ResourceLocation(value)));
-                    specialMaskTextures.put("fallback",
-                            textureMap.registerSprite(new ResourceLocation("gregtech:items/cosmic/mask/fallback")));
                 });
             }
         }
