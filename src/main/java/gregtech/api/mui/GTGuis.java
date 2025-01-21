@@ -1,5 +1,7 @@
 package gregtech.api.mui;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
+
 import gregtech.api.cover.Cover;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -103,6 +105,9 @@ public class GTGuis {
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
                             this.closeIfOpen(true);
+                            if (isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
+                                handler.deleteCachedPanel();
+                            }
                             return true;
                         }
                         return false;
