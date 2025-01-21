@@ -828,7 +828,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (metaValueItem == null) {
             return 0;
         }
-        return Integer.decode("0x7F" + metaValueItem.registerHaloColour(stack));
+        return metaValueItem.registerHaloColour(stack);
     }
 
     @Override
@@ -895,7 +895,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         private boolean drawHalo;
         private String haloPath;
-        private String haloColour;
+        private int haloColour;
         private int haloSize;
         private boolean haloPulse;
         private String maskPath;
@@ -1003,19 +1003,18 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
          * @param shouldDrawHalo  enables the Halo effect for a specified MetaItem.<br>
          * @param haloTexture     the Halo Texture for a specified MetaItem in the form of a String : Example
          *                        "halo".<br>
-         * @param haloColour      the Colour the Halo will have in the form of a Hex String : Example "00FF00" (hex
-         *                        color for green).<br>
+         * @param haloColour      the Colour the Halo will have in the form of a long Hex: Example 0xFF000000L.<br>
          * @param haloSize        The size of the halo : Example 10.<br>
          * @param shouldDrawPulse Whether the MetaItem will pulse like Avaritia's Infinity Ingot : Example true.<br>
          * @param maskTexture     The String Location of the Mask texture the MetaItem will use as a Cosmic Effect : Example "nan".
          */
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, long haloColour,
                                               int haloSize, boolean shouldDrawPulse, String maskTexture) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
-                this.haloColour = haloColour;
+                this.haloColour = (int) haloColour;
                 this.haloSize = haloSize;
                 this.haloPulse = shouldDrawPulse;
                 this.maskPath = maskTexture;
@@ -1034,12 +1033,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, long haloColour,
                                               int haloSize, String maskTexture) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
-                this.haloColour = haloColour;
+                this.haloColour = (int) haloColour;
                 this.haloSize = haloSize;
                 this.maskPath = maskTexture;
                 if (haloTexture == null) {
@@ -1057,12 +1056,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, long haloColour,
                                               int haloSize, boolean shouldDrawPulse) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
-                this.haloColour = haloColour;
+                this.haloColour = (int) haloColour;
                 this.haloSize = haloSize;
                 this.haloPulse = shouldDrawPulse;
                 if (haloTexture == null) {
@@ -1074,12 +1073,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, String haloColour,
+        public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, long haloColour,
                                               int haloSize) {
             if (Avaritia.isModLoaded()) {
                 this.drawHalo = shouldDrawHalo;
                 this.haloPath = haloTexture;
-                this.haloColour = haloColour;
+                this.haloColour = (int) haloColour;
                 this.haloSize = haloSize;
                 if (haloTexture == null) {
                     throw new IllegalArgumentException("Cannot add null Halo.");
@@ -1328,7 +1327,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return haloPath;
         }
 
-        public String registerHaloColour(ItemStack stack) {
+        public int registerHaloColour(ItemStack stack) {
             return haloColour;
         }
 

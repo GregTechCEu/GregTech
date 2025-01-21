@@ -839,8 +839,7 @@ public class Material implements Comparable<Material> {
          * @param shouldDrawHalo   enables the Halo effect for a specified Material.<br>
          * @param haloTexture      the Halo Texture for a specific Material in the form of a String : Example
          *                         "halo".<br>
-         * @param haloColour       the Colour the Halo will have in the form of a Hex String : Example "00FF00" (hex
-         *                         color for green).<br>
+         * @param haloColour       the Colour the Halo will have in the form of a long Hex : Example 0x33FFFFFFL.<br>
          * @param haloSize         The size of the halo : Example 10.<br>
          * @param shouldDrawPulse  If the Material Item will pulse like Avaritia's Infinity Ingot : Example true.<br>
          * @param shouldDrawCosmic If the Material Item will have Avaritia's Cosmic Effect : Example true.<br>
@@ -851,31 +850,31 @@ public class Material implements Comparable<Material> {
          *                         1.0f.<br>
          */
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public Builder cosmic(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
-                              boolean shouldDrawPulse, boolean shouldDrawCosmic) {
+        public Builder cosmic(boolean shouldDrawHalo, String haloTexture, long haloColour, int haloSize,
+                              boolean shouldDrawPulse, boolean shouldDrawCosmic, float maskOpacity) {
             if (Avaritia.isModLoaded()) {
                 properties.setProperty(PropertyKey.COSMIC,
-                        new CosmicProperty(shouldDrawHalo, haloTexture, haloColour, haloSize, shouldDrawPulse,
-                                shouldDrawCosmic));
+                        new CosmicProperty(shouldDrawHalo, haloTexture, (int) haloColour, haloSize, shouldDrawPulse,
+                                shouldDrawCosmic, maskOpacity));
             }
             return this;
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public Builder cosmic(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
+        public Builder cosmic(boolean shouldDrawHalo, String haloTexture, long haloColour, int haloSize,
                               boolean shouldDrawPulse) {
             if (Avaritia.isModLoaded()) {
                 properties.setProperty(PropertyKey.COSMIC,
-                        new CosmicProperty(shouldDrawHalo, haloTexture, haloColour, haloSize, shouldDrawPulse));
+                        new CosmicProperty(shouldDrawHalo, haloTexture, (int) haloColour, haloSize, shouldDrawPulse));
             }
             return this;
         }
 
         @Optional.Method(modid = Mods.Names.AVARITIA)
-        public Builder cosmic(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize) {
+        public Builder cosmic(boolean shouldDrawHalo, String haloTexture, long haloColour, int haloSize) {
             if (Avaritia.isModLoaded()) {
                 properties.setProperty(PropertyKey.COSMIC,
-                        new CosmicProperty(shouldDrawHalo, haloTexture, haloColour, haloSize));
+                        new CosmicProperty(shouldDrawHalo, haloTexture, (int) haloColour, haloSize));
             }
             return this;
         }

@@ -348,8 +348,8 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
 
         CosmicProperty prop = material.getProperty(PropertyKey.COSMIC);
 
-        if (material.hasProperty(PropertyKey.COSMIC) && prop.getHaloColour() != null) {
-            return Integer.decode("0x7F" + prop.getHaloColour());
+        if (material.hasProperty(PropertyKey.COSMIC) && prop.getHaloColour() != 0) {
+            return prop.getHaloColour();
         } else {
             return 0;
         }
@@ -405,6 +405,6 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
 
     @SideOnly(Side.CLIENT)
     public float getMaskOpacity(ItemStack stack, EntityLivingBase player) {
-        return 1.0f;
+        return getMaterial(stack).getProperty(PropertyKey.COSMIC).getMaskOpacity();
     }
 }

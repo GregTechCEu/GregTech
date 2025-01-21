@@ -24,7 +24,7 @@ public class CosmicProperty implements IMaterialProperty {
      * Example: "00FF00" Hex colour for Green
      * </p>
      */
-    private String haloColour;
+    private int haloColour;
 
     /**
      * Halo Size, Use this with shouldDrawHalo
@@ -56,8 +56,8 @@ public class CosmicProperty implements IMaterialProperty {
      */
     private Float maskOpacity;
 
-    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
-                          boolean shouldDrawPulse, boolean shouldDrawCosmic) {
+    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, int haloColour, int haloSize,
+                          boolean shouldDrawPulse, boolean shouldDrawCosmic, float maskOpacity) {
         if (Avaritia.isModLoaded()) {
             this.shouldDrawHalo = shouldDrawHalo;
             this.haloTexture = haloTexture;
@@ -65,11 +65,12 @@ public class CosmicProperty implements IMaterialProperty {
             this.haloSize = haloSize;
             this.shouldDrawPulse = shouldDrawPulse;
             this.shouldDrawCosmic = shouldDrawCosmic;
+            this.maskOpacity = maskOpacity;
             CosmicTexture.registerHaloIcon(haloTexture);
         }
     }
 
-    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize,
+    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, int haloColour, int haloSize,
                           boolean shouldDrawPulse) {
         if (Avaritia.isModLoaded()) {
             this.shouldDrawHalo = shouldDrawHalo;
@@ -81,7 +82,7 @@ public class CosmicProperty implements IMaterialProperty {
         }
     }
 
-    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, String haloColour, int haloSize) {
+    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, int haloColour, int haloSize) {
         if (Avaritia.isModLoaded()) {
             this.shouldDrawHalo = shouldDrawHalo;
             this.haloTexture = haloTexture;
@@ -112,7 +113,7 @@ public class CosmicProperty implements IMaterialProperty {
         return haloTexture;
     }
 
-    public String getHaloColour() {
+    public int getHaloColour() {
         return haloColour;
     }
 
@@ -141,7 +142,7 @@ public class CosmicProperty implements IMaterialProperty {
 
         private boolean shouldDrawHalo;
         private String haloTexture;
-        private String haloColour;
+        private int haloColour;
         private int haloSize;
         private boolean shouldDrawPulse;
         private boolean shouldDrawCosmic;
@@ -158,7 +159,7 @@ public class CosmicProperty implements IMaterialProperty {
             return this;
         }
 
-        public Builder haloColour(String haloColour) {
+        public Builder haloColour(int haloColour) {
             this.haloColour = haloColour;
             return this;
         }
