@@ -50,8 +50,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -284,14 +285,19 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected PanelSyncHandler.IPanelBuilder entrySelector(EntryTypes<T> type) {
         return (syncManager, syncHandler) -> {
-            Set<String> names = VirtualEnderRegistry.getEntryNames(getOwner(), type);
+            List<IWidget> rows = new ArrayList<>();
+            for (String name : VirtualEnderRegistry.getEntryNames(getOwner(), type)) {
+                rows.add(createRow(name, syncManager, type));
+            }
             return GTGuis.createPopupPanel("entry_selector", 168, 112)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR)
                             .asWidget()
                             .top(6)
                             .left(4))
-                    .child(ListWidget.builder(names, name -> createRow(name, syncManager, type))
+                    .child(new ListWidget<>()
+                            .children(rows)
+                            // .builder(names, name -> createRow(name, syncManager, type))
                             .background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
                                     .height(112 - 20))
