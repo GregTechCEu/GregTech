@@ -839,7 +839,14 @@ public class Material implements Comparable<Material> {
          * @param shouldDrawHalo   enables the Halo effect for a specified Material.<br>
          * @param haloTexture      the Halo Texture for a specific Material in the form of a String : Example
          *                         "halo".<br>
-         * @param haloColour       the Colour the Halo will have in the form of a long Hex : Example 0x33FFFFFFL.<br>
+         * @param haloColour       the Colour the Halo will have in the form of a long Hex : Example 0xFFFFFFFFL.<br>
+         *                         If you are unfamiliar with Hex Colors then here is a rundown of how they work
+         *                         The first two characters after 0x represent the alpha channel or the opacity of the color 00 to FF
+         *                         The second two characters after the alpha channel define the red channel 00 to FF
+         *                         the third two characters after the red channel define the green channel 00 to FF
+         *                         Lastly the last two characters after the green channel define the blue channel 00 to FF
+         *                         All of these can and will control the total color of the Halo and can be used to make all colors
+         *
          * @param haloSize         The size of the halo : Example 10.<br>
          * @param shouldDrawPulse  If the Material Item will pulse like Avaritia's Infinity Ingot : Example true.<br>
          * @param shouldDrawCosmic If the Material Item will have Avaritia's Cosmic Effect : Example true.<br>
@@ -856,6 +863,16 @@ public class Material implements Comparable<Material> {
                 properties.setProperty(PropertyKey.COSMIC,
                         new CosmicProperty(shouldDrawHalo, haloTexture, (int) haloColour, haloSize, shouldDrawPulse,
                                 shouldDrawCosmic, maskOpacity));
+            }
+            return this;
+        }
+
+        @Optional.Method(modid = Mods.Names.AVARITIA)
+        public Builder cosmic(boolean shouldDrawHalo, String haloTexture, long haloColour, int haloSize,
+                              boolean shouldDrawCosmic, float maskOpacity) {
+            if (Avaritia.isModLoaded()) {
+                properties.setProperty(PropertyKey.COSMIC,
+                        new CosmicProperty(shouldDrawHalo, haloTexture, (int) haloColour, haloSize, shouldDrawCosmic, maskOpacity));
             }
             return this;
         }

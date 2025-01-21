@@ -1003,7 +1003,14 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
          * @param shouldDrawHalo  enables the Halo effect for a specified MetaItem.<br>
          * @param haloTexture     the Halo Texture for a specified MetaItem in the form of a String : Example
          *                        "halo".<br>
-         * @param haloColour      the Colour the Halo will have in the form of a long Hex: Example 0xFF000000L.<br>
+         * @param haloColour      the Colour the Halo will have in the form of a long Hex: Example 0xFFFFFFFFL.<br>
+         *                        If you are unfamiliar with Hex Colors then here is a rundown of how they work
+     *                            The first two characters after 0x represent the alpha channel or the opacity of the color 00 to FF
+         *                        The second two characters after the alpha channel define the red channel 00 to FF
+         *                        the third two characters after the red channel define the green channel 00 to FF
+         *                        Lastly the last two characters after the green channel define the blue channel 00 to FF
+         *                        All of these can and will control the total color of the Halo and can be used to make all colors
+         *
          * @param haloSize        The size of the halo : Example 10.<br>
          * @param shouldDrawPulse Whether the MetaItem will pulse like Avaritia's Infinity Ingot : Example true.<br>
          * @param maskTexture     The String Location of the Mask texture the MetaItem will use as a Cosmic Effect : Example "nan".
