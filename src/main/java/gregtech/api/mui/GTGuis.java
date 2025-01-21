@@ -1,7 +1,5 @@
 package gregtech.api.mui;
 
-import com.cleanroommc.modularui.api.IPanelHandler;
-
 import gregtech.api.cover.Cover;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -11,6 +9,7 @@ import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
