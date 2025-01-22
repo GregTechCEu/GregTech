@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.Cover;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -440,7 +441,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         writePipeProperties(buf);
         buf.writeVarInt(connections);
         buf.writeVarInt(blockedConnections);
@@ -451,7 +452,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         if (this.tickingPipe != null) {
             this.tickingPipe.receiveInitialSyncData(buf);
             return;

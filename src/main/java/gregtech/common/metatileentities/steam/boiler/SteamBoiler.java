@@ -14,6 +14,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -151,13 +152,13 @@ public abstract class SteamBoiler extends MetaTileEntity implements IDataInfoPro
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isBurning);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isBurning = buf.readBoolean();
     }

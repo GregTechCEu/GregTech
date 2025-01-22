@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
 
@@ -252,13 +253,13 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         this.minerLogic.writeInitialSyncData(buf);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.minerLogic.receiveInitialSyncData(buf);
     }

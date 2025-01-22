@@ -6,6 +6,7 @@ import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.LocalizationUtils;
@@ -179,13 +180,13 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(recipeMapIndex);
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         recipeMapIndex = buf.readByte();
     }

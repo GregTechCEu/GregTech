@@ -3,6 +3,7 @@ package gregtech.api.metatileentity;
 import gregtech.api.block.BlockStateTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.network.PacketDataList;
 
 import net.minecraft.block.state.IBlockState;
@@ -93,10 +94,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
     @Override
     public final @NotNull NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
-        ByteBuf backedBuffer = Unpooled.buffer();
-        writeInitialSyncData(new PacketBuffer(backedBuffer));
-        byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
-        updateTag.setByteArray("d", updateData);
+        AdvancedPacketBuffer buffer = new AdvancedPacketBuffer(Unpooled::buffer);
+        writeInitialSyncData(buffer);
+        updateTag.setByteArray("d", Arrays.copyOfRange(buffer.array(), 0, buffer.writerIndex()));
         return updateTag;
     }
 
@@ -104,12 +104,12 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
     public final void handleUpdateTag(@NotNull NBTTagCompound tag) {
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
-        ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
-        receiveInitialSyncData(new PacketBuffer(backedBuffer));
+        AdvancedPacketBuffer buffer = new AdvancedPacketBuffer(Unpooled.copiedBuffer(updateData), Unpooled::buffer);
+        receiveInitialSyncData(buffer);
 
         MetaTileEntity mte = null;
         if (this instanceof IGregTechTileEntity gtte)
             mte = gtte.getMetaTileEntity();
-        ISyncedTileEntity.checkInitialData(backedBuffer, mte == null ? this : mte);
+        ISyncedTileEntity.checkInitialData(buffer, mte == null ? this : mte);
     }
 }

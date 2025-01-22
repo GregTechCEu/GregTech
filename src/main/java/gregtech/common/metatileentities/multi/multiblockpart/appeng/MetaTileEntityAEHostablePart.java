@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
 import gregtech.api.capability.IControllable;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMultiblockNotifiablePart;
 
@@ -71,7 +72,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     public void clearMachineInventory(@NotNull List<@NotNull ItemStack> itemBuffer) {}
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         if (this.aeProxy != null) {
             buf.writeBoolean(true);
@@ -87,7 +88,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         if (buf.readBoolean()) {
             NBTTagCompound nbtTagCompound;

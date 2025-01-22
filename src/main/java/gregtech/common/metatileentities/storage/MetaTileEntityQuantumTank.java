@@ -24,6 +24,7 @@ import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
@@ -492,7 +493,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputFluids);
@@ -503,7 +504,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntityQuantumStorage<IFlu
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
 

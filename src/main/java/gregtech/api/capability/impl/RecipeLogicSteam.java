@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IVentable;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
@@ -111,7 +112,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getVentingSide().getIndex());
         buf.writeBoolean(needsVenting);
@@ -119,7 +120,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic implements IVentable {
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.ventingSide = EnumFacing.VALUES[buf.readByte()];
         this.needsVenting = buf.readBoolean();

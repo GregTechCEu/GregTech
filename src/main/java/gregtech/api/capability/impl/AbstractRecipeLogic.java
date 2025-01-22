@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.CleanroomType;
 import gregtech.api.metatileentity.multiblock.ICleanroomProvider;
 import gregtech.api.metatileentity.multiblock.ICleanroomReceiver;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -1178,13 +1179,13 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         buf.writeBoolean(this.isActive);
         buf.writeBoolean(this.workingEnabled);
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         this.isActive = buf.readBoolean();
         this.workingEnabled = buf.readBoolean();
     }

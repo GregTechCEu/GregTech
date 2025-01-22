@@ -7,6 +7,7 @@ import gregtech.api.cover.Cover;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.registry.MTERegistry;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Mods;
 import gregtech.api.util.TextFormattingUtil;
@@ -304,7 +305,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         buf.writeString(getName());
         if (metaTileEntity != null) {
             buf.writeBoolean(true);
@@ -315,7 +316,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         setCustomName(buf.readString(Short.MAX_VALUE));
         if (buf.readBoolean()) {
             receiveMTEInitializationData(buf);

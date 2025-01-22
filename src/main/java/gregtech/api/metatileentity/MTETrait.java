@@ -9,7 +9,6 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import it.unimi.dsi.fastutil.objects.Object2IntFunction;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -76,34 +75,6 @@ public abstract class MTETrait implements ISyncedTileEntity {
     }
 
     public void deserializeNBT(@NotNull NBTTagCompound compound) {}
-
-    @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {}
-
-    /**
-     * Deprecated since 2.8 and will be removed in 2.9.
-     *
-     * @deprecated Use {@link #writeInitialSyncData(PacketBuffer)}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public void writeInitialData(@NotNull PacketBuffer buffer) {
-        writeInitialSyncData(buffer);
-    }
-
-    @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {}
-
-    /**
-     * Deprecated since 2.8 and will be removed in 2.9.
-     *
-     * @deprecated use {@link #receiveInitialSyncData(PacketBuffer)}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public void receiveInitialData(@NotNull PacketBuffer buffer) {
-        receiveInitialSyncData(buffer);
-    }
 
     @Override
     public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {}

@@ -28,6 +28,7 @@ import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
@@ -1017,13 +1018,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         buf.writeByte(this.frontFacing.getIndex());
         buf.writeInt(this.paintingColor);
         buf.writeShort(this.mteTraitByNetworkId.size());
         for (Int2ObjectMap.Entry<MTETrait> entry : mteTraitByNetworkId.int2ObjectEntrySet()) {
             buf.writeVarInt(entry.getIntKey());
-            entry.getValue().writeInitialData(buf);
+            entry.getValue().writeInitialSyncData(buf.openSubBuffer());
+            buf.writeSubBuffer();
         }
         CoverSaveHandler.writeInitialSyncData(buf, this);
         buf.writeBoolean(muffled);
@@ -1034,7 +1036,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         this.frontFacing = EnumFacing.VALUES[buf.readByte()];
         this.paintingColor = buf.readInt();
         int amountOfTraits = buf.readShort();
@@ -1044,8 +1046,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
-                trait.receiveInitialSyncData(buf);
-                ISyncedTileEntity.checkInitialData(buf, trait);
+                AdvancedPacketBuffer b = buf.readSubBuffer();
+                trait.receiveInitialSyncData(b);
+                ISyncedTileEntity.checkInitialData(b, trait);
+                buf.closeSubBuffer();
             }
         }
         CoverSaveHandler.receiveInitialSyncData(buf, this);

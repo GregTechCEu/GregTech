@@ -6,6 +6,7 @@ import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.handler.BlockPosHighlightRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -127,7 +128,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(controllerPos != null);
         if (controllerPos != null) {
@@ -136,7 +137,7 @@ public abstract class MetaTileEntityQuantumStorage<T> extends MetaTileEntity imp
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         if (buf.readBoolean()) {
             controllerPos = buf.readBlockPos();

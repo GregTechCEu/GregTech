@@ -3,6 +3,7 @@ package gregtech.common.pipelike.laser.tile;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.TaskScheduler;
@@ -191,7 +192,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(this.isActive);
 
@@ -203,7 +204,7 @@ public class TileEntityLaserPipe extends TileEntityPipeBase<LaserPipeType, Laser
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.isActive = buf.readBoolean();
         scheduleChunkForRenderUpdate();

@@ -13,6 +13,7 @@ import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
@@ -592,7 +593,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(maintenance_problems);
         buf.writeInt(timeActive);
@@ -602,7 +603,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         maintenance_problems = buf.readByte();
         timeActive = buf.readInt();

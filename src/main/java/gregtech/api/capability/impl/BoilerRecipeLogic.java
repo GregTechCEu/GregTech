@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
@@ -275,14 +276,14 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     }
 
     @Override
-    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeVarInt(currentHeat);
         buf.writeInt(lastTickSteamOutput);
     }
 
     @Override
-    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.currentHeat = buf.readVarInt();
         this.lastTickSteamOutput = buf.readInt();

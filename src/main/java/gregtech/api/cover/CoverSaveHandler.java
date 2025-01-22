@@ -1,6 +1,7 @@
 package gregtech.api.cover;
 
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.util.GTLog;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +25,7 @@ public final class CoverSaveHandler {
      * @param buf           the buf to write to
      * @param coverableView the CoverableView containing the covers
      */
-    public static void writeInitialSyncData(@NotNull PacketBuffer buf, @NotNull CoverableView coverableView) {
+    public static void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf, @NotNull CoverableView coverableView) {
         Cover[] covers = new Cover[EnumFacing.VALUES.length];
         int count = 0;
         for (EnumFacing facing : EnumFacing.VALUES) {
@@ -42,7 +43,8 @@ public final class CoverSaveHandler {
             Cover cover = covers[i];
             buf.writeByte(cover.getAttachedSide().ordinal());
             buf.writeVarInt(CoverDefinition.getNetworkIdForCover(cover.getDefinition()));
-            cover.writeInitialSyncData(buf);
+            cover.writeInitialSyncData(buf.openSubBuffer());
+            buf.writeSubBuffer();
         }
     }
 
@@ -52,7 +54,7 @@ public final class CoverSaveHandler {
      * @param buf         the buf to read from
      * @param coverHolder the CoverHolder containing the covers
      */
-    public static void receiveInitialSyncData(@NotNull PacketBuffer buf, @NotNull CoverHolder coverHolder) {
+    public static void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf, @NotNull CoverHolder coverHolder) {
         final int count = buf.readByte();
         if (count == 0) return;
 
@@ -66,8 +68,10 @@ public final class CoverSaveHandler {
                         coverHolder.getPos());
             } else {
                 Cover cover = definition.createCover(coverHolder, facing);
-                cover.readInitialSyncData(buf);
-                ISyncedTileEntity.checkInitialData(buf, cover);
+                AdvancedPacketBuffer b = buf.readSubBuffer();
+                cover.readInitialSyncData(b);
+                ISyncedTileEntity.checkInitialData(b, cover);
+                buf.closeSubBuffer();
                 coverHolder.addCover(facing, cover);
             }
         }
