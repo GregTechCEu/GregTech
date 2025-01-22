@@ -97,6 +97,7 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.machine_hatch.processing_array"));
+        tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 
     @Override
