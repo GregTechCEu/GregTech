@@ -1042,6 +1042,14 @@ item.gt.tool.plunger.tooltip=§8Removes Fluids from Machines
 item.gt.tool.wire_cutter_lv.name=%s Wire Cutter (LV)
 item.gt.tool.wire_cutter_hv.name=%s Wire Cutter (HV)
 item.gt.tool.wire_cutter_iv.name=%s Wire Cutter (IV)
+item.gt.tool.toolbelt.name=%s Toolbelt%s
+item.gt.tool.toolbelt.size=§a%s Tool Slots
+item.gt.tool.toolbelt.tooltip=Holds GT or vanilla-esque tools that can be manually selected for in-world use, automatically selected for crafting, or stored for maintenance repair.
+item.gt.tool.toolbelt.paint=Also supports Spray Cans.
+item.gt.tool.toolbelt.dye=Can be dyed like leather equipment, and the dye can be removed via water cauldron, also like leather equipment.
+item.gt.tool.toolbelt.maintenance=Repairs maintenance problems with only inserted tools upon interacting with a maintenance hatch in-world.
+item.gt.tool.toolbelt.tool=§aSlot %s: §f%s
+item.gt.tool.toolbelt.selected=- §aSlot %s: §f%s
 
 
 item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses
@@ -6166,6 +6174,9 @@ gregtech.subtitle.entity.portal_opening=Portal opens
 gregtech.subtitle.entity.portal_closing=Portal closes
 gregtech.subtitle.maintenance.electrical=Electrical breakdown
 gregtech.subtitle.maintenance.mechanical=Mechanical breakdown
+gregtech.subtitle.alarm=Alarm Whines
+gregtech.subtitle.click=Something Clicks
+
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more
