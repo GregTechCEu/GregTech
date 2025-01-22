@@ -32,7 +32,7 @@ import com.cleanroommc.modularui.value.sync.EnumSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -121,7 +121,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
 
         return GTGuis.createPanel(this, 176, 112)
                 .child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(new Column()
+                .child(Flow.column()
                         .widthRel(1.0f).margin(7, 0)
                         .top(24).coverChildrenHeight()
 
@@ -151,7 +151,7 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
 
                         // Controlling selector
                         .child(createSettingsRow().height(16 + 2 + 16)
-                                .child(new Column().heightRel(1.0f).coverChildrenWidth()
+                                .child(Flow.column().heightRel(1.0f).coverChildrenWidth()
                                         .child(IKey.lang("cover.machine_controller.control").asWidget()
                                                 .left(0).height(16).marginBottom(2))
                                         .child(modeButton(controllerModeValue, ControllerMode.MACHINE).left(0)))
@@ -169,8 +169,8 @@ public class CoverMachineController extends CoverBase implements CoverWithUI {
                                         .right(0))));
     }
 
-    private Column modeColumn(EnumSyncValue<ControllerMode> syncValue, ControllerMode mode, IKey title) {
-        return new Column().coverChildrenHeight().width(18)
+    private Flow modeColumn(EnumSyncValue<ControllerMode> syncValue, ControllerMode mode, IKey title) {
+        return Flow.column().coverChildrenHeight().width(18)
                 .child(title.asWidget().size(16).marginBottom(2).alignment(Alignment.Center))
                 .child(modeButton(syncValue, mode));
     }

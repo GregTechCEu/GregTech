@@ -6,6 +6,7 @@ import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.pipelike.cable.Insulation;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,7 +15,6 @@ import net.minecraft.util.ResourceLocation;
 
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.uv.IconTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -84,11 +84,11 @@ public class CableRenderer extends PipeRenderer {
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<?, ?> pipeTile) {
         if (pipeTile == null) {
-            return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+            return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
         }
         IPipeType<?> pipeType = pipeTile.getPipeType();
         if (!(pipeType instanceof Insulation)) {
-            return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+            return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
         }
         Material material = pipeTile instanceof TileEntityMaterialPipeBase ?
                 ((TileEntityMaterialPipeBase<?, ?>) pipeTile).getPipeMaterial() : null;

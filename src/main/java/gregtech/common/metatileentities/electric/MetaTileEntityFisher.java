@@ -163,6 +163,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.fisher.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.fisher.speed", fishingTicks));
         tooltip.add(I18n.format("gregtech.machine.fisher.requirement", (int) Math.sqrt(WATER_CHECK_SIZE),
@@ -171,7 +172,6 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
                 GTValues.VNF[getTier()]));
         tooltip.add(
                 I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        super.addInformation(stack, player, tooltip, advanced);
     }
 
     @Override

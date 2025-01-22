@@ -11,6 +11,8 @@ import java.util.function.Consumer;
  */
 public interface ISyncedTileEntity {
 
+    Consumer<PacketBuffer> NO_OP = buf -> {};
+
     /**
      * Used to sync data from Server -> Client.
      * Called during initial loading of the chunk or when many blocks change at once.
@@ -67,6 +69,27 @@ public interface ISyncedTileEntity {
      * @see gregtech.api.capability.GregtechDataCodes
      */
     void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter);
+
+    /**
+     * Used to send an empty anonymous Server -> Client packet.
+     * <p>
+     * Data is received in {@link #receiveCustomData(int, PacketBuffer)};
+     * <p>
+     * Typically used to signal to the client that a rendering update is needed
+     * when sending a server-side state update.
+     * <p>
+     * <em>Should be called manually</em>.
+     * <p>
+     * This method is called <strong>Server-Side</strong>.
+     * <p>
+     * Equivalent to {@link net.minecraft.tileentity.TileEntity#getUpdatePacket}
+     *
+     * @param discriminator the discriminator determining the packet sent.
+     * @see gregtech.api.capability.GregtechDataCodes
+     */
+    default void writeCustomData(int discriminator) {
+        writeCustomData(discriminator, NO_OP);
+    }
 
     /**
      * Used to receive an anonymous Server -> Client packet.
