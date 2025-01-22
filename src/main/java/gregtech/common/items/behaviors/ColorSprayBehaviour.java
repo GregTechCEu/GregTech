@@ -1,5 +1,7 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -66,6 +68,29 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
                 SoundCategory.PLAYERS, 1.0f, 1.0f);
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+    }
+
+    @Nullable
+    public static ColorSprayBehaviour getBehavior(ItemStack spraycan) {
+        if (!(spraycan.getItem() instanceof MetaItem<?>meta)) return null;
+        for (IItemBehaviour behaviour : meta.getBehaviours(spraycan)) {
+            if (behaviour instanceof ColorSprayBehaviour spray) return spray;
+        }
+        return null;
+    }
+
+    public EnumActionResult useFromToolbelt(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+                                            EnumFacing facing, float hitX, float hitY, float hitZ, ItemStack spraycan) {
+        if (!player.canPlayerEdit(pos, facing, spraycan)) {
+            return EnumActionResult.FAIL;
+        }
+        if (!tryPaintBlock(player, world, pos, facing)) {
+            return EnumActionResult.PASS;
+        }
+        useItemDurability(player, hand, spraycan, empty.copy());
+        world.playSound(null, player.posX, player.posY, player.posZ, GTSoundEvents.SPRAY_CAN_TOOL,
+                SoundCategory.PLAYERS, 1.0f, 1.0f);
+        return EnumActionResult.SUCCESS;
     }
 
     private boolean tryPaintBlock(EntityPlayer player, World world, BlockPos pos, EnumFacing side) {
