@@ -1084,6 +1084,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
                 trait.receiveCustomData(internalId, buf);
+
+                // this should be fine, as nothing else is read after this
                 ISyncedTileEntity.checkCustomData(internalId, buf, trait);
             }
         } else if (dataId == COVER_ATTACHED_MTE) {
@@ -1101,6 +1103,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             int internalId = buf.readVarInt();
             if (cover != null) {
                 cover.readCustomData(internalId, buf);
+
+                // this should be fine, as nothing else is read after this
                 ISyncedTileEntity.checkCustomData(internalId, buf, cover);
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
