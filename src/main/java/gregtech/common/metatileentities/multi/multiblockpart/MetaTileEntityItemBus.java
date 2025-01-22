@@ -47,7 +47,7 @@ import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
@@ -310,7 +310,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                         .minColWidth(18).minRowHeight(18)
                         .alignX(0.5f)
                         .matrix(widgets))
-                .child(new Column()
+                .child(Flow.column()
                         .pos(backgroundWidth - 7 - 18, backgroundHeight - 18 * 4 - 7 - 5)
                         .width(18).height(18 * 4 + 5)
                         .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))

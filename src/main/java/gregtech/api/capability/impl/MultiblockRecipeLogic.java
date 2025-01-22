@@ -12,7 +12,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
@@ -281,7 +281,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPre(@NotNull OCParams ocParams, @NotNull RecipePropertyStorage storage) {
         super.modifyOverclockPre(ocParams, storage);
 
         // apply maintenance bonuses
@@ -295,13 +295,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     @Override
     protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull IRecipePropertyStorage propertyStorage, long maxVoltage) {
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
         subTickParallelOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
                 getOverclockingVoltageFactor());
     }
 
     @Override
-    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull IRecipePropertyStorage storage) {
+    protected void modifyOverclockPost(@NotNull OCResult ocResult, @NotNull RecipePropertyStorage storage) {
         super.modifyOverclockPost(ocResult, storage);
 
         // apply maintenance penalties
@@ -331,7 +331,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 // amperage is 1 when the energy is not exactly on a tier
 
                 // the voltage for recipe search is always on tier, so take the closest lower tier
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             } else {
                 // amperage != 1 means the voltage is exactly on a tier
                 // ignore amperage, since only the voltage is relevant for recipe search
@@ -420,7 +420,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 // The voltage for recipe search is always on tier, so take the closest lower tier.
                 // List check is done because single hatches will always be a "clean voltage," no need
                 // for any additional checks.
-                return GTValues.V[GTUtility.getFloorTierByVoltage(voltage)];
+                return GTValues.VOC[GTUtility.getFloorTierByVoltage(voltage)];
             }
             return voltage;
         } else {

@@ -5,6 +5,8 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IQuantumController;
+import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class TricorderBehavior implements IItemBehaviour {
 
@@ -141,12 +144,28 @@ public class TricorderBehavior implements IItemBehaviour {
 
             // name of the machine
             list.add(new TextComponentTranslation("behavior.tricorder.block_name",
-                    new TextComponentTranslation(LocalizationUtils.format(metaTileEntity.getMetaFullName()))
+                    new TextComponentTranslation(metaTileEntity.getMetaFullName())
                             .setStyle(new Style().setColor(TextFormatting.BLUE)),
                     new TextComponentTranslation(TextFormattingUtil
                             .formatNumbers(
                                     metaTileEntity.getRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId)))
                                             .setStyle(new Style().setColor(TextFormatting.BLUE))));
+
+            UUID owner = metaTileEntity.getOwner();
+            if (owner != null) {
+                EntityPlayer ownerEntity = metaTileEntity.getWorld().getPlayerEntityByUUID(owner);
+                if (ownerEntity != null) {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner",
+                            new TextComponentTranslation(ownerEntity.getName())
+                                    .setStyle(new Style().setColor(TextFormatting.AQUA))));
+                } else {
+                    list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_offline")
+                            .setStyle(new Style().setColor(TextFormatting.YELLOW)));
+                }
+            } else {
+                list.add(new TextComponentTranslation("behavior.tricorder.mte_owner_null")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
 
             list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
@@ -265,6 +284,30 @@ public class TricorderBehavior implements IItemBehaviour {
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
                 list.addAll(provider.getDataInfo());
+            }
+
+            // quantum storage
+            if (metaTileEntity instanceof IQuantumController quantumController) {
+                list.add(new TextComponentTranslation("behavior.tricorder.divider"));
+                long eut = quantumController.getEnergyUsage(); // eu per 10 ticks
+                int tier = GTUtility.getTierByVoltage(eut / 10);
+                list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.usage",
+                        TextFormatting.RED + String.format("%.1f", eut / 10d) + TextFormatting.RESET,
+                        GTValues.VNF[tier]));
+                var handler = quantumController.getHandler();
+                list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_items",
+                        TextFormatting.RED.toString() + handler.getItemHandlers().getSlots()));
+                list.add(new TextComponentTranslation("behavior.tricorder.quantum_controller.connected_fluids",
+                        TextFormatting.RED.toString() + handler.getFluidTanks().getTanks()));
+            } else if (metaTileEntity instanceof IQuantumStorage<?>storage) {
+                var qcontrollor = storage.getQuantumController();
+                if (qcontrollor != null) {
+                    long eut = qcontrollor.getTypeEnergy(storage);
+
+                    list.add(new TextComponentTranslation("behavior.tricorder.divider"));
+                    list.add(new TextComponentTranslation("behavior.tricorder.quantum_storage.usage",
+                            TextFormatting.RED + String.format("%.1f", eut / 10d)));
+                }
             }
 
         } else if (tileEntity instanceof IPipeTile) {

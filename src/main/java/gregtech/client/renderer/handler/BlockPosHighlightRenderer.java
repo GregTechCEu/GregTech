@@ -19,22 +19,33 @@ import org.lwjgl.opengl.GL11;
 public class BlockPosHighlightRenderer {
 
     private static BlockPos posHighLight;
-    private static long hlEndTime;
+    private static long duration;
+    private static long offset;
+    private static long start;
 
     public static void renderBlockBoxHighLight(BlockPos blockpos, long durTimeMillis) {
         posHighLight = blockpos;
-        hlEndTime = System.currentTimeMillis() + durTimeMillis;
+        duration = durTimeMillis;
+        offset = 1500;
+        start = System.currentTimeMillis();
+    }
+
+    public static void renderBlockBoxHighLight(BlockPos blockpos, long durTimeMillis, long offsetTimeMillis) {
+        posHighLight = blockpos;
+        duration = durTimeMillis;
+        offset = offsetTimeMillis;
+        start = System.currentTimeMillis();
     }
 
     public static void renderWorldLastEvent(RenderWorldLastEvent evt) {
         if (posHighLight != null) {
             long time = System.currentTimeMillis();
-            if (time > hlEndTime) {
+            if (time > duration + start) {
                 posHighLight = null;
-                hlEndTime = 0;
+                duration = 0;
                 return;
             }
-            if (((time / 500) & 1) == 0) {
+            if (time % offset >= offset / 2) {
                 return;
             }
             EntityPlayerSP p = Minecraft.getMinecraft().player;

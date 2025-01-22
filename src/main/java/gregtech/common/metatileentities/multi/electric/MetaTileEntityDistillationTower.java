@@ -15,9 +15,7 @@ import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.GTTransferUtils;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.TextComponentUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
@@ -28,15 +26,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Function;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -84,22 +78,6 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     public boolean allowsExtendedFacing() {
         return false;
-    }
-
-    @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        if (isStructureFormed()) {
-            FluidStack stackInTank = importFluids.drain(Integer.MAX_VALUE, false);
-            if (stackInTank != null && stackInTank.amount > 0) {
-                ITextComponent fluidName = TextComponentUtil.setColor(GTUtility.getFluidTranslation(stackInTank),
-                        TextFormatting.AQUA);
-                textList.add(TextComponentUtil.translationWithColor(
-                        TextFormatting.GRAY,
-                        "gregtech.multiblock.distillation_tower.distilling_fluid",
-                        fluidName));
-            }
-        }
-        super.addDisplayText(textList);
     }
 
     @Override

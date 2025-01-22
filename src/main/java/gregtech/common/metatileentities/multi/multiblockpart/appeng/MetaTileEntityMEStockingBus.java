@@ -64,9 +64,22 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
-            refreshList();
-            syncME();
+        if (!getWorld().isRemote) {
+            if (isWorkingEnabled() && autoPull && getOffsetTimer() % 100 == 0) {
+                refreshList();
+                syncME();
+            }
+
+            // Immediately clear cached items if the status changed, to prevent running recipes while offline
+            if (this.meStatusChanged && !this.isOnline) {
+                if (autoPull) {
+                    clearInventory(0);
+                } else {
+                    for (int i = 0; i < CONFIG_SIZE; i++) {
+                        getAEItemHandler().getInventory()[i].setStack(null);
+                    }
+                }
+            }
         }
     }
 
@@ -360,6 +373,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         tooltip.add(I18n.format("gregtech.machine.me_import_item_hatch.configs.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.copy_paste.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.me.stocking_item.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.machine.me.extra_connections.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 

@@ -16,13 +16,14 @@ import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.recipes.machines.IResearchRecipeMap;
 import gregtech.api.recipes.machines.IScannerRecipeMap;
-import gregtech.api.recipes.recipeproperties.ComputationProperty;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.recipes.recipeproperties.ScanProperty;
-import gregtech.api.recipes.recipeproperties.TotalComputationProperty;
+import gregtech.api.recipes.properties.RecipeProperty;
+import gregtech.api.recipes.properties.impl.ComputationProperty;
+import gregtech.api.recipes.properties.impl.ScanProperty;
+import gregtech.api.recipes.properties.impl.TotalComputationProperty;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.integration.RecipeCompatUtil;
@@ -44,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
@@ -239,7 +239,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public void drawInfo(@NotNull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         super.drawInfo(minecraft, recipeWidth, recipeHeight, mouseX, mouseY);
-        var properties = recipe.getPropertyTypes();
+        var storage = recipe.propertyStorage();
+        var properties = storage.values();
         boolean drawTotalEU = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideTotalEU);
         boolean drawEUt = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideEUt);
         boolean drawDuration = properties.isEmpty() || properties.stream().noneMatch(RecipeProperty::hideDuration);
@@ -249,15 +250,18 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         if (drawEUt) defaultLines++;
         if (drawDuration) defaultLines++;
 
-        int yPosition = recipeHeight - ((recipe.getUnhiddenPropertyCount() + defaultLines) * 10 - 3);
+        int unhiddenCount = (int) storage.entrySet().stream()
+                .filter((property) -> !property.getKey().isHidden())
+                .count();
+        int yPosition = recipeHeight - ((unhiddenCount + defaultLines) * 10 - 3);
 
         // Default entries
         if (drawTotalEU) {
             long eu = recipe.getEUt() * recipe.getDuration();
             // sadly we still need a custom override here, since computation uses duration and EU/t very differently
-            if (recipe.hasProperty(TotalComputationProperty.getInstance()) &&
-                    recipe.hasProperty(ComputationProperty.getInstance())) {
-                int minimumCWUt = recipe.getProperty(ComputationProperty.getInstance(), 1);
+            if (storage.contains(TotalComputationProperty.getInstance()) &&
+                    storage.contains(ComputationProperty.getInstance())) {
+                int minimumCWUt = storage.get(ComputationProperty.getInstance(), 1);
                 minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.max_eu", eu / minimumCWUt), 0, yPosition,
                         0x111111);
             } else {
@@ -280,10 +284,10 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         }
 
         // Property custom entries
-        for (Map.Entry<RecipeProperty<?>, Object> propertyEntry : recipe.getPropertyValues()) {
+        for (var propertyEntry : storage.entrySet()) {
             if (!propertyEntry.getKey().isHidden()) {
                 RecipeProperty<?> property = propertyEntry.getKey();
-                Object value = propertyEntry.getValue();
+                var value = propertyEntry.getValue();
                 property.drawInfo(minecraft, 0, yPosition += property.getInfoHeight(value), 0x111111, value, mouseX,
                         mouseY);
             }
@@ -294,7 +298,7 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         List<String> tooltips = new ArrayList<>();
-        for (var entry : recipe.getPropertyValues()) {
+        for (var entry : recipe.propertyStorage().entrySet()) {
             if (!entry.getKey().isHidden()) {
                 RecipeProperty<?> property = entry.getKey();
                 Object value = entry.getValue();
@@ -306,15 +310,22 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
 
     @Override
     public void initExtras() {
-        // do not add the X button if no tweaker mod is present
+        // do not add the info or X button if no tweaker mod is present
         if (!RecipeCompatUtil.isTweakerLoaded()) return;
 
-        BooleanSupplier creativePlayerCtPredicate = () -> Minecraft.getMinecraft().player != null &&
+        BooleanSupplier creativePlayerPredicate = () -> Minecraft.getMinecraft().player != null &&
                 Minecraft.getMinecraft().player.isCreative();
+        BooleanSupplier creativeTweaker = () -> creativePlayerPredicate.getAsBoolean() &&
+                (recipe.getIsCTRecipe() || recipe.isGroovyRecipe());
+        BooleanSupplier creativeDefault = () -> creativePlayerPredicate.getAsBoolean() && !recipe.getIsCTRecipe() &&
+                !recipe.isGroovyRecipe();
+
+        // X Button
         buttons.add(new JeiButton(166, 2, 10, 10)
                 .setTextures(GuiTextures.BUTTON_CLEAR_GRID)
-                .setTooltipBuilder(lines -> lines.add("Copies a " + RecipeCompatUtil.getTweakerName() +
-                        " script, to remove this recipe, to the clipboard"))
+                .setTooltipBuilder(lines -> lines.add(
+                        LocalizationUtils.format("gregtech.jei.remove_recipe.tooltip",
+                                RecipeCompatUtil.getTweakerName())))
                 .setClickAction((minecraft, mouseX, mouseY, mouseButton) -> {
                     String recipeLine = RecipeCompatUtil.getRecipeRemoveLine(recipeMap, recipe);
                     String output = RecipeCompatUtil.getFirstOutputString(recipe);
@@ -327,7 +338,16 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
                             new TextComponentString("Copied [\u00A76" + recipeLine + "\u00A7r] to the clipboard"));
                     return true;
                 })
-                .setActiveSupplier(creativePlayerCtPredicate));
+                .setActiveSupplier(creativeDefault));
+
+        // CT/GS Info
+        buttons.add(new JeiButton(166, 2, 10, 10)
+                .setTextures(GuiTextures.INFO_ICON)
+                .setTooltipBuilder(lines -> lines.add(recipe.isGroovyRecipe() ?
+                        LocalizationUtils.format("gregtech.jei.gs_recipe.tooltip") :
+                        LocalizationUtils.format("gregtech.jei.ct_recipe.tooltip")))
+                .setClickAction((mc, x, y, button) -> false)
+                .setActiveSupplier(creativeTweaker));
     }
 
     public ChancedItemOutput getOutputChance(int slot) {

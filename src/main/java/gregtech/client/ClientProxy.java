@@ -4,11 +4,12 @@ import gregtech.api.GTValues;
 import gregtech.api.fluids.GTFluidRegistration;
 import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.terminal.TerminalRegistry;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.IBlockOre;
 import gregtech.api.util.Mods;
 import gregtech.client.model.customtexture.CustomTextureModelHandler;
@@ -21,6 +22,7 @@ import gregtech.client.renderer.pipe.ItemPipeRenderer;
 import gregtech.client.renderer.pipe.LaserPipeRenderer;
 import gregtech.client.renderer.pipe.OpticalPipeRenderer;
 import gregtech.client.renderer.pipe.PipeRenderer;
+import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.ItemRenderCompat;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.CommonProxy;
@@ -34,9 +36,16 @@ import gregtech.common.items.ToolItems;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
@@ -46,7 +55,12 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -60,7 +74,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-import codechicken.lib.texture.TextureUtils;
 import org.jetbrains.annotations.NotNull;
 import paulscode.sound.SoundSystemConfig;
 
@@ -92,8 +105,6 @@ public class ClientProxy extends CommonProxy {
         OpticalPipeRenderer.INSTANCE.preInit();
         LaserPipeRenderer.INSTANCE.preInit();
         MetaEntities.initRenderers();
-        TextureUtils.addIconRegister(GTFluidRegistration.INSTANCE::registerSprites);
-        TextureUtils.addIconRegister(PipeRenderer::initializeRestrictor);
     }
 
     @Override
@@ -105,7 +116,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onPostLoad() {
         super.onPostLoad();
-        TerminalRegistry.initTerminalFiles();
         ItemRenderCompat.init();
         FacadeRenderer.init();
     }
@@ -117,11 +127,32 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    public static void textureStitchPre(@NotNull TextureStitchEvent.Pre event) {
+        TextureMap map = event.getMap();
+        GTFluidRegistration.INSTANCE.registerSprites(map);
+        PipeRenderer.initializeRestrictor(map);
+        Textures.register(map);
+        CableRenderer.INSTANCE.registerIcons(map);
+        FluidPipeRenderer.INSTANCE.registerIcons(map);
+        ItemPipeRenderer.INSTANCE.registerIcons(map);
+        OpticalPipeRenderer.INSTANCE.registerIcons(map);
+        LaserPipeRenderer.INSTANCE.registerIcons(map);
+    }
+
+    @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         MetaBlocks.registerStateMappers();
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
         ToolItems.registerModels();
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public static void registerBakedModels(ModelBakeEvent event) {
+        GTLog.logger.info("Registering special item models");
+        MetaItems.registerBakedModels(event);
+        ToolItems.registerBakedModels(event);
     }
 
     @SubscribeEvent
@@ -314,5 +345,84 @@ public class ClientProxy extends CommonProxy {
     @Override
     public boolean isFancyGraphics() {
         return Minecraft.getMinecraft().gameSettings.fancyGraphics;
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onMouseEvent(@NotNull MouseEvent event) {
+        if (!ConfigHolder.client.toolbeltConfig.enableToolbeltScrollingCapture) return;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (event.getDwheel() != 0 && player.isSneaking()) {
+            ItemStack stack = player.getHeldItemMainhand();
+            if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+                // vanilla code in GuiIngame line 1235 does not copy the stack before storing it in the highlighting
+                // item stack, so unless we copy the stack the tool highlight will not refresh.
+                stack = stack.copy();
+                toolbelt.changeSelectedToolMousewheel(event.getDwheel(), stack);
+                InventoryPlayer inv = Minecraft.getMinecraft().player.inventory;
+                inv.mainInventory.set(inv.currentItem, stack);
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRenderGameOverlayPostEvent(RenderGameOverlayEvent.Post event) {
+        if (!ConfigHolder.client.toolbeltConfig.enableToolbeltHotbarDisplay) return;
+        if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR) {
+            if (Minecraft.getMinecraft().ingameGUI instanceof GuiIngameForge gui) {
+                ItemStack stack = Minecraft.getMinecraft().player.getHeldItemMainhand();
+                if (stack.getItem() instanceof ItemGTToolbelt toolbelt) {
+                    renderToolbeltHotbar(gui, stack, toolbelt, event.getResolution(), event.getPartialTicks());
+                }
+            }
+        }
+    }
+
+    private static void renderToolbeltHotbar(GuiIngameForge gui, ItemStack stack, ItemGTToolbelt toolbelt,
+                                             ScaledResolution sr, float partialTicks) {
+        Minecraft mc = Minecraft.getMinecraft();
+        int offset = 31;
+        int slots = Math.min(9, toolbelt.getSlotCount(stack));
+        GuiIngameForge.left_height += offset - 6;
+        if (slots > 4) {
+            GuiIngameForge.right_height += offset - 6;
+        }
+        if (mc.getRenderViewEntity() instanceof EntityPlayer entityplayer) {
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            mc.getTextureManager().bindTexture(GuiIngame.WIDGETS_TEX_PATH);
+            int i = sr.getScaledWidth() / 2;
+            float f = gui.zLevel;
+            gui.zLevel = -90.0F;
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+                    GlStateManager.DestFactor.ZERO);
+            // draw the left side of the hotbar
+            gui.drawTexturedModalRect(i - 91, sr.getScaledHeight() - 22 - offset, 0, 0, slots * 20 - 18, 22);
+            // draw the endpiece to the hotbar
+            gui.drawTexturedModalRect(i - 91 + slots * 20 - 18, sr.getScaledHeight() - 22 - offset, 162, 0, 20, 22);
+            int selected = toolbelt.getSelectedSlot(stack);
+            if (selected != -1) {
+                gui.drawTexturedModalRect(i - 91 - 1 + selected * 20, sr.getScaledHeight() - 22 - 1 - offset, 0, 22, 24,
+                        24);
+            }
+            gui.zLevel = -80f;
+            GlStateManager.enableRescaleNormal();
+            RenderHelper.enableGUIStandardItemLighting();
+
+            for (int l = 0; l < slots; ++l) {
+                ItemStack stack1 = toolbelt.getToolInSlot(stack, l);
+                if (stack1.isEmpty()) continue;
+                int i1 = i - 90 + l * 20 + 2;
+                int j1 = sr.getScaledHeight() - 16 - 3 - offset;
+                gui.renderHotbarItem(i1, j1, partialTicks, entityplayer, stack1);
+            }
+
+            gui.zLevel = f;
+
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.disableRescaleNormal();
+            GlStateManager.disableBlend();
+        }
     }
 }

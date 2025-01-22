@@ -11,7 +11,6 @@ import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.items.metaitem.stats.ItemFluidContainer;
-import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -48,7 +47,6 @@ import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.items.behaviors.MultiblockBuilderBehavior;
 import gregtech.common.items.behaviors.NanoSaberBehavior;
 import gregtech.common.items.behaviors.ProspectorScannerBehavior;
-import gregtech.common.items.behaviors.TerminalBehaviour;
 import gregtech.common.items.behaviors.TooltipBehavior;
 import gregtech.common.items.behaviors.TricorderBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
@@ -792,7 +790,6 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TERMINAL = addItem(465, "terminal")
-                .addComponents(new HardwareProvider(), new TerminalBehaviour())
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         PROSPECTOR_LV = addItem(466, "prospector.lv")
@@ -1000,11 +997,11 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_HULL_HV = addItem(719, "battery.hull.hv")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 9))); // plate * 9
         BATTERY_HULL_SMALL_VANADIUM = addItem(720, "battery.hull.ev")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlueSteel, M * 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RedSteel, M * 2)));
         BATTERY_HULL_MEDIUM_VANADIUM = addItem(721, "battery.hull.iv")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RoseGold, M * 6)));
         BATTERY_HULL_LARGE_VANADIUM = addItem(722, "battery.hull.luv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RedSteel, M * 18)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlueSteel, M * 18)));
         BATTERY_HULL_MEDIUM_NAQUADRIA = addItem(723, "battery.hull.zpm")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, M * 6)));
         BATTERY_HULL_LARGE_NAQUADRIA = addItem(724, "battery.hull.uv")

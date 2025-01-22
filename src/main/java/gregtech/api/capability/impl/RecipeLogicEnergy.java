@@ -5,7 +5,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ public class RecipeLogicEnergy extends AbstractRecipeLogic {
 
     @Override
     protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                        @NotNull IRecipePropertyStorage propertyStorage, long maxVoltage) {
+                                        @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
         subTickNonParallelOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
                 getOverclockingVoltageFactor());
     }

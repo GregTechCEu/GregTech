@@ -390,7 +390,7 @@ public class BlockPattern {
                                 MetaTileEntity sampleMetaTileEntity = registry.getObjectById(found.getItemDamage());
                                 if (sampleMetaTileEntity != null) {
                                     MetaTileEntity metaTileEntity = igtte.setMetaTileEntity(sampleMetaTileEntity);
-                                    metaTileEntity.onPlacement();
+                                    metaTileEntity.onPlacement(player);
                                     blocks.put(pos, metaTileEntity);
                                     if (found.getTagCompound() != null) {
                                         metaTileEntity.initFromItemStackData(found.getTagCompound());

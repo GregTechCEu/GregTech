@@ -17,7 +17,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.logic.OCParams;
 import gregtech.api.recipes.logic.OCResult;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
-import gregtech.api.recipes.recipeproperties.IRecipePropertyStorage;
+import gregtech.api.recipes.properties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -208,7 +208,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
         @Override
         protected void runOverclockingLogic(@NotNull OCParams ocParams, @NotNull OCResult ocResult,
-                                            @NotNull IRecipePropertyStorage propertyStorage, long maxVoltage) {
+                                            @NotNull RecipePropertyStorage propertyStorage, long maxVoltage) {
             standardOC(ocParams, ocResult, maxVoltage, getOverclockingDurationFactor(),
                     getOverclockingVoltageFactor());
         }

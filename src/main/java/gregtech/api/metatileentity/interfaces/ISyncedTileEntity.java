@@ -1,7 +1,15 @@
 package gregtech.api.metatileentity.interfaces;
 
-import net.minecraft.network.PacketBuffer;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.cover.Cover;
+import gregtech.api.cover.CoverableView;
+import gregtech.api.util.GTLog;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+
+import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -10,6 +18,8 @@ import java.util.function.Consumer;
  * Functions which sync data between the Server and Client sides in a TileEntity.
  */
 public interface ISyncedTileEntity {
+
+    Consumer<PacketBuffer> NO_OP = buf -> {};
 
     /**
      * Used to sync data from Server -> Client.
@@ -23,7 +33,7 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Server-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#getUpdateTag}.
+     * Equivalent to {@link TileEntity#getUpdateTag}.
      *
      * @param buf the buffer to write data to
      */
@@ -41,7 +51,7 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Client-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#handleUpdateTag}.
+     * Equivalent to {@link TileEntity#handleUpdateTag}.
      *
      * @param buf the buffer to read data from
      */
@@ -60,13 +70,34 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Server-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#getUpdatePacket}
+     * Equivalent to {@link TileEntity#getUpdatePacket}
      *
      * @param discriminator the discriminator determining the packet sent.
      * @param dataWriter    a consumer which writes packet data to a buffer.
-     * @see gregtech.api.capability.GregtechDataCodes
+     * @see GregtechDataCodes
      */
     void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter);
+
+    /**
+     * Used to send an empty anonymous Server -> Client packet.
+     * <p>
+     * Data is received in {@link #receiveCustomData(int, PacketBuffer)};
+     * <p>
+     * Typically used to signal to the client that a rendering update is needed
+     * when sending a server-side state update.
+     * <p>
+     * <em>Should be called manually</em>.
+     * <p>
+     * This method is called <strong>Server-Side</strong>.
+     * <p>
+     * Equivalent to {@link TileEntity#getUpdatePacket}
+     *
+     * @param discriminator the discriminator determining the packet sent.
+     * @see GregtechDataCodes
+     */
+    default void writeCustomData(int discriminator) {
+        writeCustomData(discriminator, NO_OP);
+    }
 
     /**
      * Used to receive an anonymous Server -> Client packet.
@@ -80,11 +111,51 @@ public interface ISyncedTileEntity {
      * <p>
      * This method is called <strong>Client-Side</strong>.
      * <p>
-     * Equivalent to {@link net.minecraft.tileentity.TileEntity#onDataPacket}
+     * Equivalent to {@link TileEntity#onDataPacket}
      *
      * @param discriminator the discriminator determining the packet sent.
      * @param buf           the buffer containing the packet data.
-     * @see gregtech.api.capability.GregtechDataCodes
+     * @see GregtechDataCodes
      */
     void receiveCustomData(int discriminator, @NotNull PacketBuffer buf);
+
+    static void checkCustomData(int discriminator, @NotNull ByteBuf buf, Object obj) {
+        if (buf.readableBytes() == 0) return;
+
+        GTLog.logger.error(
+                "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
+                stringify(obj), GregtechDataCodes.getNameFor(discriminator), buf.readableBytes());
+
+        buf.clear(); // clear to prevent further logging
+    }
+
+    static void checkInitialData(@NotNull ByteBuf buf, Object obj) {
+        if (buf.readableBytes() == 0) return;
+
+        GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
+                stringify(obj), buf.readableBytes());
+
+        buf.clear(); // clear to prevent further logging
+    }
+
+    static String stringify(Object obj) {
+        StringBuilder builder = new StringBuilder(obj.getClass().getSimpleName());
+
+        BlockPos pos = null;
+        if (obj instanceof TileEntity tileEntity) {
+            pos = tileEntity.getPos(); // TE pos
+        } else if (obj instanceof CoverableView view) {
+            pos = view.getPos(); // MTE pos
+        } else if (obj instanceof Cover cover) {
+            pos = cover.getPos(); // Cover pos and side
+            builder.append("[side=").append(cover.getAttachedSide()).append("]");
+        }
+
+        if (pos != null) builder.append(" @ {")
+                .append(pos.getX()).append("X, ")
+                .append(pos.getY()).append("Y, ")
+                .append(pos.getZ()).append("Z}");
+
+        return builder.toString();
+    }
 }
