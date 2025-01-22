@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
+import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -196,7 +197,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart != null) {
             // part rendering
-            if (sourcePart instanceof IDataAccessHatch) {
+            if (sourcePart instanceof IDataAccess) {
                 return Textures.COMPUTER_CASING;
             } else {
                 return Textures.HIGH_POWER_CASING;

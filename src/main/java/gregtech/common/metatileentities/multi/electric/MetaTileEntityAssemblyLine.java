@@ -2,7 +2,8 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.capability.IDataAccessHatch;
+import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.query.RecipeDataQuery;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -151,7 +152,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         if (sourcePart != null) {
             // part rendering
-            if (sourcePart instanceof IDataAccessHatch) {
+            if (sourcePart instanceof IDataAccess) {
                 return Textures.GRATE_CASING_STEEL_FRONT;
             } else {
                 return Textures.SOLID_STEEL_CASING;
@@ -368,16 +369,14 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
     }
 
-    private static boolean isRecipeAvailable(@NotNull Iterable<? extends IDataAccessHatch> hatches,
+    private static boolean isRecipeAvailable(@NotNull Iterable<? extends IDataAccess> hatches,
                                              @NotNull Recipe recipe) {
-        for (IDataAccessHatch hatch : hatches) {
-            // creative hatches do not need to check, they always have the recipe
-            if (hatch.isCreative()) return true;
-
+        RecipeDataQuery query = new RecipeDataQuery(recipe);
+        for (IDataAccess hatch : hatches) {
             // hatches need to have the recipe available
-            if (hatch.isRecipeAvailable(recipe)) return true;
+            if (query.traverseTo(hatch) && hatch.accessData(query)) break;
         }
-        return false;
+        return query.isFound();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.IOpticalComputationProvider;
-import gregtech.api.capability.IOpticalComputationReceiver;
+import gregtech.api.capability.data.IComputationUser;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.properties.impl.ComputationProperty;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Recipe Logic for multiblocks that require computation.
  * Used with RecipeMaps that contain recipes using the {@link ComputationProperty}.
- * The Multiblock holding this logic must implement {@link IOpticalComputationProvider}.
+ * The Multiblock holding this logic must implement {@link IComputationUser}.
  */
 public class ComputationRecipeLogic extends MultiblockRecipeLogic {
 
@@ -30,18 +29,15 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
     private boolean hasNotEnoughComputation;
     private int currentDrawnCWUt;
 
-    public ComputationRecipeLogic(RecipeMapMultiblockController metaTileEntity, ComputationType type) {
+    public <T extends RecipeMapMultiblockController & IComputationUser> ComputationRecipeLogic(T metaTileEntity,
+                                                                                               ComputationType type) {
         super(metaTileEntity);
         this.type = type;
-        if (!(metaTileEntity instanceof IOpticalComputationReceiver)) {
-            throw new IllegalArgumentException("MetaTileEntity must be instanceof IOpticalComputationReceiver");
-        }
     }
 
     @NotNull
-    public IOpticalComputationProvider getComputationProvider() {
-        IOpticalComputationReceiver controller = (IOpticalComputationReceiver) metaTileEntity;
-        return controller.getComputationProvider();
+    public IComputationUser getComputationProvider() {
+        return (IComputationUser) getMetaTileEntity();
     }
 
     @Override
@@ -54,8 +50,8 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
             return true;
         }
 
-        IOpticalComputationProvider provider = getComputationProvider();
-        return provider.requestCWUt(recipeCWUt, true) >= recipeCWUt;
+        IComputationUser provider = getComputationProvider();
+        return provider.requestCWU(recipeCWUt, true) >= recipeCWUt;
     }
 
     @Override
@@ -75,18 +71,18 @@ public class ComputationRecipeLogic extends MultiblockRecipeLogic {
         if (canRecipeProgress && drawEnergy(recipeEUt, true)) {
             drawEnergy(recipeEUt, false);
 
-            IOpticalComputationProvider provider = getComputationProvider();
-            int availableCWUt = provider.requestCWUt(Integer.MAX_VALUE, true);
+            IComputationUser provider = getComputationProvider();
+            int availableCWUt = (int) provider.requestCWU(Integer.MAX_VALUE, true);
             if (availableCWUt >= recipeCWUt) {
                 // carry on as normal
                 this.hasNotEnoughComputation = false;
                 if (isDurationTotalCWU) {
                     // draw as much CWU as possible, and increase progress by this amount
-                    currentDrawnCWUt = provider.requestCWUt(availableCWUt, false);
+                    currentDrawnCWUt = (int) provider.requestCWU(availableCWUt, false);
                     progressTime += currentDrawnCWUt;
                 } else {
                     // draw only the recipe CWU/t, and increase progress by 1
-                    provider.requestCWUt(recipeCWUt, false);
+                    provider.requestCWU(recipeCWUt, false);
                     progressTime++;
                 }
                 if (progressTime > maxProgressTime) {

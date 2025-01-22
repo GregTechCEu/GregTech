@@ -143,7 +143,7 @@ public class OrganicChemistryMaterials {
                 .color(0x646464)
                 .flags(STD_METAL, GENERATE_FRAME, GENERATE_FOIL)
                 .components(Carbon, 2, Fluorine, 4)
-                .fluidPipeProperties(600, 100, true, true, false, false)
+                .fluidPipeProperties(600, 100, true, true, false)
                 .build();
 
         Sugar = new Material.Builder(1017, gregtechId("sugar"))
