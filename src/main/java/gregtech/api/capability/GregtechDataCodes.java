@@ -1,8 +1,5 @@
 package gregtech.api.capability;
 
-import gregtech.common.covers.ender.CoverAbstractEnderLink;
-import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityFluidHatch;
-
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.apache.commons.lang3.ArrayUtils;
@@ -12,6 +9,8 @@ import java.lang.reflect.Modifier;
 
 public class GregtechDataCodes {
 
+    public static final int UPDATE_PRIVATE = assignId();
+    public static final int LOCK_FILL = assignId();
     private static int nextId = 0;
 
     public static int assignId() {
@@ -196,9 +195,6 @@ public class GregtechDataCodes {
 
     static {
         registerFields(GregtechDataCodes.class);
-        // todo these really should be moved to this class
-        registerFields(CoverAbstractEnderLink.class, CoverAbstractEnderLink.UPDATE_PRIVATE);
-        registerFields(MetaTileEntityFluidHatch.class, MetaTileEntityFluidHatch.LOCK_FILL);
     }
 
     public static String getNameFor(int id) {
