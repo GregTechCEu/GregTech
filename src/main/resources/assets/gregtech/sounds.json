@@ -400,7 +400,7 @@
   },
   "click" : {
     "subtitle" : "gregtech.subtitle.click",
-    "category" : "block",
+    "category" : "players",
     "sounds" : [
       {
         "name" : "gregtech:click",
