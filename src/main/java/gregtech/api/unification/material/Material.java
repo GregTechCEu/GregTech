@@ -841,11 +841,14 @@ public class Material implements Comparable<Material> {
          *                         "halo".<br>
          * @param haloColour       the Colour the Halo will have in the form of a long Hex : Example 0xFFFFFFFFL.<br>
          *                         If you are unfamiliar with Hex Colors then here is a rundown of how they work
-         *                         The first two characters after 0x represent the alpha channel or the opacity of the color 00 to FF
+         *                         The first two characters after 0x represent the alpha channel or the opacity of the
+         *                         color 00 to FF
          *                         The second two characters after the alpha channel define the red channel 00 to FF
          *                         the third two characters after the red channel define the green channel 00 to FF
-         *                         Lastly the last two characters after the green channel define the blue channel 00 to FF
-         *                         All of these can and will control the total color of the Halo and can be used to make all colors
+         *                         Lastly the last two characters after the green channel define the blue channel 00 to
+         *                         FF
+         *                         All of these can and will control the total color of the Halo and can be used to make
+         *                         all colors
          *
          * @param haloSize         The size of the halo : Example 10.<br>
          * @param shouldDrawPulse  If the Material Item will pulse like Avaritia's Infinity Ingot : Example true.<br>
@@ -854,7 +857,8 @@ public class Material implements Comparable<Material> {
          *                         MaterialIconSet the material uses: Example
          *                         "gregtech:textures/items/material_sets/dull/dust_mask
          *
-         * @param maskOpacity      The Opacity of the Cosmic Effect, Use in combination with shouldDrawCosmic : Example 1.0F.<br>
+         * @param maskOpacity      The Opacity of the Cosmic Effect, Use in combination with shouldDrawCosmic : Example
+         *                         1.0F.<br>
          */
         @Optional.Method(modid = Mods.Names.AVARITIA)
         public Builder cosmic(boolean shouldDrawHalo, String haloTexture, long haloColour, int haloSize,
@@ -872,7 +876,8 @@ public class Material implements Comparable<Material> {
                               boolean shouldDrawCosmic, float maskOpacity) {
             if (Avaritia.isModLoaded()) {
                 properties.setProperty(PropertyKey.COSMIC,
-                        new CosmicProperty(shouldDrawHalo, haloTexture, (int) haloColour, haloSize, shouldDrawCosmic, maskOpacity));
+                        new CosmicProperty(shouldDrawHalo, haloTexture, (int) haloColour, haloSize, shouldDrawCosmic,
+                                maskOpacity));
             }
             return this;
         }

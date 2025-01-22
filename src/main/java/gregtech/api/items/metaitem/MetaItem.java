@@ -36,8 +36,6 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.covers.filter.IFilter;
 import gregtech.common.creativetab.GTCreativeTabs;
 
-import morph.avaritia.client.render.item.CosmicHaloItemRender;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -93,6 +91,7 @@ import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import morph.avaritia.api.ICosmicRenderItem;
 import morph.avaritia.api.IHaloRenderItem;
 import morph.avaritia.api.registration.IModelRegister;
+import morph.avaritia.client.render.item.CosmicHaloItemRender;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -863,7 +862,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     @SideOnly(Side.CLIENT)
     public float getMaskOpacity(ItemStack stack, EntityLivingBase player) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem.registerMaskTexture(stack) != null){
+        if (metaValueItem.registerMaskTexture(stack) != null) {
             return 1.0f;
         } else {
             return 0.0f;
@@ -1010,15 +1009,19 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
          *                        "halo".<br>
          * @param haloColour      the Colour the Halo will have in the form of a long Hex: Example 0xFFFFFFFFL.<br>
          *                        If you are unfamiliar with Hex Colors then here is a rundown of how they work
-     *                            The first two characters after 0x represent the alpha channel or the opacity of the color 00 to FF
+         *                        The first two characters after 0x represent the alpha channel or the opacity of the
+         *                        color 00 to FF
          *                        The second two characters after the alpha channel define the red channel 00 to FF
          *                        the third two characters after the red channel define the green channel 00 to FF
-         *                        Lastly the last two characters after the green channel define the blue channel 00 to FF
-         *                        All of these can and will control the total color of the Halo and can be used to make all colors
+         *                        Lastly the last two characters after the green channel define the blue channel 00 to
+         *                        FF
+         *                        All of these can and will control the total color of the Halo and can be used to make
+         *                        all colors
          *
          * @param haloSize        The size of the halo : Example 10.<br>
          * @param shouldDrawPulse Whether the MetaItem will pulse like Avaritia's Infinity Ingot : Example true.<br>
-         * @param maskTexture     The String Location of the Mask texture the MetaItem will use as a Cosmic Effect : Example "nan".
+         * @param maskTexture     The String Location of the Mask texture the MetaItem will use as a Cosmic Effect :
+         *                        Example "nan".
          */
         @Optional.Method(modid = Mods.Names.AVARITIA)
         public MetaValueItem cosmicProperties(boolean shouldDrawHalo, String haloTexture, long haloColour,

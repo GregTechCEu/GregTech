@@ -70,7 +70,8 @@ public class CosmicProperty implements IMaterialProperty {
         }
     }
 
-    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, int haloColour, int haloSize, boolean shouldDrawCosmic, float maskOpacity) {
+    public CosmicProperty(boolean shouldDrawHalo, String haloTexture, int haloColour, int haloSize,
+                          boolean shouldDrawCosmic, float maskOpacity) {
         if (Avaritia.isModLoaded()) {
             this.shouldDrawHalo = shouldDrawHalo;
             this.haloTexture = haloTexture;

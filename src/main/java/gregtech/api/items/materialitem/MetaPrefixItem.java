@@ -19,8 +19,6 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.Mods;
 import gregtech.common.creativetab.GTCreativeTabs;
 
-import morph.avaritia.client.render.item.CosmicHaloItemRender;
-
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -46,6 +44,7 @@ import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import morph.avaritia.api.ICosmicRenderItem;
 import morph.avaritia.api.IHaloRenderItem;
 import morph.avaritia.api.registration.IModelRegister;
+import morph.avaritia.client.render.item.CosmicHaloItemRender;
 import morph.avaritia.init.AvaritiaTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
