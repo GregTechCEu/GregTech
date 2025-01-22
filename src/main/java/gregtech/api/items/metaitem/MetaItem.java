@@ -862,7 +862,12 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @SideOnly(Side.CLIENT)
     public float getMaskOpacity(ItemStack stack, EntityLivingBase player) {
-        return 1.0f;
+        T metaValueItem = getItem(stack);
+        if (metaValueItem.registerMaskTexture(stack) != null){
+            return 1.0f;
+        } else {
+            return 0.0f;
+        }
     }
 
     public class MetaValueItem {
