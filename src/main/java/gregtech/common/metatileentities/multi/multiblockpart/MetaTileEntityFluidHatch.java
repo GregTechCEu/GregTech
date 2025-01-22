@@ -54,7 +54,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                                       implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
     public static final int INITIAL_INVENTORY_SIZE = 8000;
-    public static final int LOCK_FILL = GregtechDataCodes.assignId();
 
     // only holding this for convenience
     protected final HatchFluidTank fluidTank;
@@ -168,7 +167,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
-        } else if (dataId == LOCK_FILL) {
+        } else if (dataId == GregtechDataCodes.LOCK_FILL) {
             this.lockedFluid = NetworkUtils.readFluidStack(buf);
         }
     }
@@ -352,7 +351,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
                 lockedFluid.amount = 1;
-                writeCustomData(LOCK_FILL, buffer -> NetworkUtils.writeFluidStack(buffer, lockedFluid));
+                writeCustomData(GregtechDataCodes.LOCK_FILL,
+                        buffer -> NetworkUtils.writeFluidStack(buffer, lockedFluid));
             }
             return accepted;
         }
