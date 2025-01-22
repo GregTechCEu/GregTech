@@ -1045,7 +1045,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
                 trait.receiveInitialSyncData(buf);
-                ISyncedTileEntity.checkInitialData(buf, trait);
             }
         }
         CoverSaveHandler.receiveInitialSyncData(buf, this);

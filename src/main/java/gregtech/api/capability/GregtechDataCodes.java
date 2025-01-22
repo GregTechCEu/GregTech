@@ -9,8 +9,6 @@ import java.lang.reflect.Modifier;
 
 public class GregtechDataCodes {
 
-    public static final int UPDATE_PRIVATE = assignId();
-    public static final int LOCK_FILL = assignId();
     private static int nextId = 0;
 
     public static int assignId() {
@@ -97,6 +95,7 @@ public class GregtechDataCodes {
     public static final int MAINTENANCE_MULTIPLIER = assignId();
     public static final int UPDATE_UPWARDS_FACING = assignId();
     public static final int UPDATE_FLIP = assignId();
+    public static final int LOCK_FILL = assignId();
 
     // Item Bus Item Stack Auto Collapsing
     public static final int TOGGLE_COLLAPSE_ITEMS = assignId();
@@ -156,6 +155,9 @@ public class GregtechDataCodes {
 
     // Detector Covers
     public static final int UPDATE_INVERTED = assignId();
+
+    // Ender Covers
+    public static final int UPDATE_PRIVATE = assignId();
 
     // HPCA / Research Station
     public static final int DAMAGE_STATE = assignId();

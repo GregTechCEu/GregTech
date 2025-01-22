@@ -1,6 +1,5 @@
 package gregtech.api.cover;
 
-import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.util.GTLog;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,7 +66,6 @@ public final class CoverSaveHandler {
             } else {
                 Cover cover = definition.createCover(coverHolder, facing);
                 cover.readInitialSyncData(buf);
-                ISyncedTileEntity.checkInitialData(buf, cover);
                 coverHolder.addCover(facing, cover);
             }
         }
@@ -109,7 +107,6 @@ public final class CoverSaveHandler {
             coverHolder.addCover(placementSide, cover);
 
             cover.readInitialSyncData(buf);
-            ISyncedTileEntity.checkInitialData(buf, cover);
         }
         coverHolder.scheduleRenderUpdate();
     }
