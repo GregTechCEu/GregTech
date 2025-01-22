@@ -124,7 +124,7 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart
 
         // TODO: Use controlsAmount(false) in the sync handler when #2622 is done
         GTFluidSyncHandler tankSyncHandler = new GTFluidSyncHandler(this.exportFluids.getTankAt(0))
-                .canDrainSlot(true).canFillSlot(false);
+                .accessibility(true, false);
 
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)

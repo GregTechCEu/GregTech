@@ -130,9 +130,8 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         guiSyncManager.registerSlotGroup("item_inv", 2);
 
-        // TODO: Use controlsAmount(false) in the sync handler when #2622 is done
         GTFluidSyncHandler tankSyncHandler = new GTFluidSyncHandler(this.fluidTank)
-                .canDrainSlot(true).canFillSlot(false);
+                .accessibility(true, false);
 
         // TODO: Change the position of the name when it's standardized.
         return GTGuis.createPanel(this, 176, 166)

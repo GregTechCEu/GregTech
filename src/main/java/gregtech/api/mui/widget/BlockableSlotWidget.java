@@ -1,7 +1,7 @@
 package gregtech.api.mui.widget;
 
 import com.cleanroommc.modularui.drawable.GuiDraw;
-import com.cleanroommc.modularui.screen.viewport.GuiContext;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 
@@ -32,7 +32,7 @@ public class BlockableSlotWidget extends ItemSlot {
     }
 
     @Override
-    public void draw(GuiContext context, WidgetTheme widgetTheme) {
+    public void draw(ModularGuiContext context, WidgetTheme widgetTheme) {
         super.draw(context, widgetTheme);
         if (isBlocked.getAsBoolean()) {
             GuiDraw.drawRect(1, 1, 16, 16, OVERLAY_COLOR);
@@ -40,7 +40,7 @@ public class BlockableSlotWidget extends ItemSlot {
     }
 
     @Override
-    public void drawForeground(GuiContext context) {
+    public void drawForeground(ModularGuiContext context) {
         if (isBlocked.getAsBoolean()) return;
         super.drawForeground(context);
     }

@@ -138,8 +138,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         guiSyncManager.registerSlotGroup("item_inv", 1);
 
-        GTFluidSyncHandler tankSyncHandler = new GTFluidSyncHandler(this.importFluids.getTankAt(0))
-                .canFillSlot(false).canDrainSlot(true);
+        GTFluidSyncHandler tankSyncHandler = new GTFluidSyncHandler(this.importFluids.getTankAt(0));
 
         return GTGuis.createPanel(this, 176, 166)
                 .background(IS_STEEL ? GTGuiTextures.BACKGROUND_STEEL : GTGuiTextures.BACKGROUND_BRONZE)
