@@ -60,7 +60,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                             implements CoverWithUI, ITickable, IControllable {
 
     protected static final Pattern COLOR_INPUT_PATTERN = Pattern.compile("[0-9a-fA-F]*");
-    public static final int UPDATE_PRIVATE = GregtechDataCodes.assignId();
 
     protected T activeEntry = null;
     protected String color = VirtualEntry.DEFAULT_COLOR;
@@ -100,7 +99,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     @Override
     public void readCustomData(int discriminator, @NotNull PacketBuffer buf) {
         super.readCustomData(discriminator, buf);
-        if (discriminator == UPDATE_PRIVATE) {
+        if (discriminator == GregtechDataCodes.UPDATE_PRIVATE) {
             setPrivate(buf.readBoolean());
             updateLink();
         }
@@ -246,7 +245,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     private void setPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
         updateLink();
-        writeCustomData(UPDATE_PRIVATE, buffer -> buffer.writeBoolean(this.isPrivate));
+        writeCustomData(GregtechDataCodes.UPDATE_PRIVATE, buffer -> buffer.writeBoolean(this.isPrivate));
     }
 
     @Override
