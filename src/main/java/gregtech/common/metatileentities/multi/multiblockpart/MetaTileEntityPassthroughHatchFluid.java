@@ -166,10 +166,10 @@ public class MetaTileEntityPassthroughHatchFluid extends MetaTileEntityMultibloc
                         .top(18 * 2).left(18 * 8 + 7)
                         .value(workingStateValue)
                         .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
-                        .tooltipBuilder(t -> t.setAutoUpdate(true)
-                                .addLine(workingStateValue.getBoolValue() ?
-                                        IKey.lang("gregtech.gui.fluid_passthrough.enabled") :
-                                        IKey.lang("gregtech.gui.fluid_passthrough.disabled"))));
+                        .tooltip(t -> t.setAutoUpdate(true))
+                        .tooltipBuilder(t -> t.addLine(workingStateValue.getBoolValue() ?
+                                IKey.lang("gregtech.gui.fluid_passthrough.enabled") :
+                                IKey.lang("gregtech.gui.fluid_passthrough.disabled"))));
     }
 
     @Override

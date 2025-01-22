@@ -173,10 +173,10 @@ public class MetaTileEntityPassthroughHatchItem extends MetaTileEntityMultiblock
                         .top(18 * 4).left(18 * 8 + 7)
                         .value(workingStateValue)
                         .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                        .tooltipBuilder(t -> t.setAutoUpdate(true)
-                                .addLine(workingStateValue.getBoolValue() ?
-                                        IKey.lang("gregtech.gui.item_passthrough.enabled") :
-                                        IKey.lang("gregtech.gui.item_passthrough.disabled"))));
+                        .tooltip(t -> t.setAutoUpdate(true))
+                        .tooltipBuilder(t -> t.addLine(workingStateValue.getBoolValue() ?
+                                IKey.lang("gregtech.gui.item_passthrough.enabled") :
+                                IKey.lang("gregtech.gui.item_passthrough.disabled"))));
     }
 
     @Override
