@@ -3,6 +3,7 @@ package gregtech.api.pipenet.tile;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverSaveHandler;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -208,11 +209,11 @@ public class PipeCoverableImplementation implements CoverHolder {
         });
     }
 
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(AdvancedPacketBuffer buf) {
         CoverSaveHandler.writeInitialSyncData(buf, this);
     }
 
-    public void readInitialSyncData(PacketBuffer buf) {
+    public void readInitialSyncData(AdvancedPacketBuffer buf) {
         CoverSaveHandler.receiveInitialSyncData(buf, this);
     }
 
