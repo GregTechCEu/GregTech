@@ -3840,7 +3840,6 @@ gregtech.machine.transformer.hi_amp.opv.name=Высокотоковый тран
 # Diodes
 gregtech.machine.diode.message=Макс. пропускная способность: %s
 gregtech.machine.diode.tooltip_general=Пропускает электричество лишь в одном Направлении и ограниченной Силой тока
-gregtech.machine.diode.tooltip_tool_usage=Ударьте Киянкой, чтобы изменить силу тока.
 gregtech.machine.diode.tooltip_starts_at=Начиная с 1 Ампера, используйте Киянку чтобы изменить силу тока
 gregtech.machine.diode.ulv.name=Диод (§8ULV§r)
 gregtech.machine.diode.lv.name=Диод (§7LV§r)
