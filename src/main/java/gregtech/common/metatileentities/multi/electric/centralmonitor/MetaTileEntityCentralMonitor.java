@@ -330,7 +330,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     }
 
     @Override
-    public void receiveCustomData(int id, PacketBuffer buf) {
+    public void receiveCustomData(int id, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(id, buf);
         if (id == GregtechDataCodes.UPDATE_ALL) {
             this.width = buf.readInt();

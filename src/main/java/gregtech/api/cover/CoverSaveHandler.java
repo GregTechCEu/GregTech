@@ -6,7 +6,6 @@ import gregtech.api.util.GTLog;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
@@ -90,7 +89,8 @@ public final class CoverSaveHandler {
         coverHolder.writeCustomData(discriminator, buf -> {
             buf.writeByte(side.getIndex());
             buf.writeVarInt(CoverDefinition.getNetworkIdForCover(cover.getDefinition()));
-            cover.writeInitialSyncData(buf);
+            cover.writeInitialSyncData(buf.openSubBuffer());
+            buf.writeSubBuffer();
         });
     }
 
@@ -100,7 +100,7 @@ public final class CoverSaveHandler {
      * @param buf         the buffer to read from
      * @param coverHolder the CoverHolder the cover is placed on
      */
-    public static void readCoverPlacement(@NotNull PacketBuffer buf, @NotNull CoverHolder coverHolder) {
+    public static void readCoverPlacement(@NotNull AdvancedPacketBuffer buf, @NotNull CoverHolder coverHolder) {
         // cover placement event
         EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
         int id = buf.readVarInt();
@@ -112,8 +112,10 @@ public final class CoverSaveHandler {
             Cover cover = coverDefinition.createCover(coverHolder, placementSide);
             coverHolder.addCover(placementSide, cover);
 
-            cover.readInitialSyncData(buf);
-            ISyncedTileEntity.checkInitialData(buf, cover);
+            AdvancedPacketBuffer b = buf.readSubBuffer();
+            cover.readInitialSyncData(b);
+            ISyncedTileEntity.checkInitialData(b, cover);
+            buf.closeSubBuffer();
         }
         coverHolder.scheduleRenderUpdate();
     }

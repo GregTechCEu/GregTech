@@ -29,7 +29,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -499,7 +498,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             isActive = buf.readBoolean();

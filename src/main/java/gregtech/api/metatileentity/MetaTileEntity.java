@@ -55,7 +55,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
@@ -235,7 +234,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
+    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull AdvancedPacketBuffer> dataWriter) {
         if (holder != null) {
             holder.writeCustomData(discriminator, dataWriter);
         }
@@ -1056,25 +1055,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         this.muffled = buf.readBoolean();
     }
 
-    public void writeTraitData(MTETrait trait, int internalId, Consumer<PacketBuffer> dataWriter) {
+    public void writeTraitData(MTETrait trait, int internalId, Consumer<AdvancedPacketBuffer> dataWriter) {
         writeCustomData(SYNC_MTE_TRAITS, buffer -> {
             buffer.writeVarInt(trait.getNetworkID());
             buffer.writeVarInt(internalId);
-            dataWriter.accept(buffer);
+            dataWriter.accept(buffer.openSubBuffer());
+            buffer.writeSubBuffer();
         });
     }
 
     @Override
-    public void writeCoverData(@NotNull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
+    public void writeCoverData(@NotNull Cover cover, int discriminator,
+                               @NotNull Consumer<@NotNull AdvancedPacketBuffer> buf) {
         writeCustomData(UPDATE_COVER_DATA_MTE, buffer -> {
             buffer.writeByte(cover.getAttachedSide().getIndex());
             buffer.writeVarInt(discriminator);
-            buf.accept(buffer);
+            buf.accept(buffer.openSubBuffer());
+            buffer.writeSubBuffer();
         });
     }
 
     @Override
-    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         if (dataId == UPDATE_FRONT_FACING) {
             this.frontFacing = EnumFacing.VALUES[buf.readByte()];
             scheduleRenderUpdate();
@@ -1088,8 +1090,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
-                trait.receiveCustomData(internalId, buf);
-                ISyncedTileEntity.checkCustomData(internalId, buf, trait);
+                AdvancedPacketBuffer b = buf.readSubBuffer();
+                trait.receiveCustomData(internalId, b);
+                ISyncedTileEntity.checkCustomData(internalId, b, trait);
+                buf.closeSubBuffer();
             }
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
@@ -1105,8 +1109,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
             if (cover != null) {
-                cover.readCustomData(internalId, buf);
-                ISyncedTileEntity.checkCustomData(internalId, buf, cover);
+                AdvancedPacketBuffer b = buf.readSubBuffer();
+                cover.readCustomData(internalId, b);
+                ISyncedTileEntity.checkCustomData(internalId, b, cover);
+                buf.closeSubBuffer();
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();

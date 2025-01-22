@@ -19,7 +19,6 @@ import net.minecraft.entity.boss.dragon.phase.PhaseChargingPlayer;
 import net.minecraft.entity.boss.dragon.phase.PhaseList;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumParticleTypes;
@@ -128,7 +127,7 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();

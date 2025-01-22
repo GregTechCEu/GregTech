@@ -282,7 +282,7 @@ public interface Cover {
 
     default void readInitialSyncData(@NotNull AdvancedPacketBuffer packetBuffer) {}
 
-    default void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
+    default void writeCustomData(int discriminator, @NotNull Consumer<@NotNull AdvancedPacketBuffer> buf) {
         getCoverableView().writeCoverData(this, discriminator, buf);
     }
 

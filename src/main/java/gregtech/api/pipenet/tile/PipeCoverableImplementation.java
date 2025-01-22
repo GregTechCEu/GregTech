@@ -3,6 +3,7 @@ package gregtech.api.pipenet.tile;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverSaveHandler;
+import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
@@ -10,7 +11,6 @@ import gregtech.common.ConfigHolder;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -201,11 +201,13 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public void writeCoverData(@NotNull Cover cover, int discriminator, @NotNull Consumer<@NotNull PacketBuffer> buf) {
+    public void writeCoverData(@NotNull Cover cover, int discriminator,
+                               @NotNull Consumer<@NotNull AdvancedPacketBuffer> buf) {
         writeCustomData(UPDATE_COVER_DATA_PIPE, buffer -> {
             buffer.writeByte(cover.getAttachedSide().getIndex());
             buffer.writeVarInt(discriminator);
-            buf.accept(buffer);
+            buf.accept(buffer.openSubBuffer());
+            buffer.writeSubBuffer();
         });
     }
 
@@ -218,11 +220,11 @@ public class PipeCoverableImplementation implements CoverHolder {
     }
 
     @Override
-    public void writeCustomData(int dataId, @NotNull Consumer<PacketBuffer> writer) {
+    public void writeCustomData(int dataId, @NotNull Consumer<AdvancedPacketBuffer> writer) {
         holder.writeCoverCustomData(dataId, writer);
     }
 
-    public void readCustomData(int dataId, PacketBuffer buf) {
+    public void readCustomData(int dataId, AdvancedPacketBuffer buf) {
         if (dataId == COVER_ATTACHED_PIPE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_PIPE) {
@@ -236,7 +238,10 @@ public class PipeCoverableImplementation implements CoverHolder {
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
             if (cover != null) {
-                cover.readCustomData(internalId, buf);
+                AdvancedPacketBuffer b = buf.readSubBuffer();
+                cover.readCustomData(internalId, b);
+                ISyncedTileEntity.checkCustomData(dataId, b, cover);
+                b.closeSubBuffer();
             }
         }
     }

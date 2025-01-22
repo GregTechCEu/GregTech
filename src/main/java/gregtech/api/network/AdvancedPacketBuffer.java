@@ -51,7 +51,6 @@ public class AdvancedPacketBuffer extends PacketBuffer {
      */
     public void writeSubBuffer() {
         if (subBuffer == null) return;
-        subBuffer.writeSubBuffer();
         this.writeByteArray(Arrays.copyOfRange(subBuffer.array(), 0, subBuffer.writerIndex()));
         subBuffer = null;
     }

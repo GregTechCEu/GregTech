@@ -12,7 +12,6 @@ import gregtech.client.renderer.texture.cube.SimpleOrientedCubeRenderer;
 import gregtech.client.renderer.texture.custom.FireboxActiveRenderer;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -127,7 +126,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == SYNC_CONTROLLER) {
             if (buf.readBoolean()) {

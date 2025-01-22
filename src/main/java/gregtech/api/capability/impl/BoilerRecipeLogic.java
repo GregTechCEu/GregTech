@@ -16,7 +16,6 @@ import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -290,7 +289,7 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     }
 
     @Override
-    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == BOILER_HEAT) {
             this.currentHeat = buf.readVarInt();

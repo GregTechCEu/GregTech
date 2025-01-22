@@ -8,7 +8,6 @@ import gregtech.common.metatileentities.multi.multiblockpart.MetaTileEntityMulti
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -108,7 +107,7 @@ public abstract class MetaTileEntityAEHostablePart<T extends IAEStack<T>> extend
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_ONLINE_STATUS) {
             boolean isOnline = buf.readBoolean();

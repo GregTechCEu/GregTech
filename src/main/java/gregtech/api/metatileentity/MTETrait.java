@@ -1,9 +1,9 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -77,10 +77,10 @@ public abstract class MTETrait implements ISyncedTileEntity {
     public void deserializeNBT(@NotNull NBTTagCompound compound) {}
 
     @Override
-    public void receiveCustomData(int discriminator, @NotNull PacketBuffer buf) {}
+    public void receiveCustomData(int discriminator, @NotNull AdvancedPacketBuffer buf) {}
 
     @Override
-    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
+    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull AdvancedPacketBuffer> dataWriter) {
         metaTileEntity.writeTraitData(this, discriminator, dataWriter);
     }
 

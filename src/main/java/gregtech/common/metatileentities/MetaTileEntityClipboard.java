@@ -450,7 +450,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId >= UPDATE_UI) {
             int windowID = buf.readVarInt();

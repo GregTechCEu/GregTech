@@ -225,7 +225,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         if (dataId == GregtechDataCodes.UPDATE_PARTICLE) {
             readParticles(buf);
         } else {

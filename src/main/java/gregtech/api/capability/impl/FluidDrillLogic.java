@@ -308,7 +308,7 @@ public class FluidDrillLogic {
     /**
      * reads all needed values from CustomData
      * This MUST be called and returned in the MetaTileEntity's
-     * {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)} method
+     * {@link ISyncedTileEntity#receiveCustomData(int, gregtech.api.network.AdvancedPacketBuffer)} method
      */
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {

@@ -30,7 +30,6 @@ import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -1168,7 +1167,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     @Override
-    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
             this.isActive = buf.readBoolean();
             getMetaTileEntity().scheduleRenderUpdate();

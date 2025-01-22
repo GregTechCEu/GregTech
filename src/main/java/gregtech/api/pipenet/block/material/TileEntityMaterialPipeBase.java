@@ -94,7 +94,7 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     }
 
     @Override
-    public void receiveCustomData(int discriminator, PacketBuffer buf) {
+    public void receiveCustomData(int discriminator, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(discriminator, buf);
         if (discriminator == UPDATE_PIPE_MATERIAL) {
             readPipeMaterial(buf);

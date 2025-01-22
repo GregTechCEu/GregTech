@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  */
 public interface ISyncedTileEntity {
 
-    Consumer<PacketBuffer> NO_OP = buf -> {};
+    Consumer<AdvancedPacketBuffer> NO_OP = buf -> {};
 
     /**
      * Used to sync data from Server -> Client.
@@ -111,7 +111,7 @@ public interface ISyncedTileEntity {
      * Used to send an anonymous Server -> Client packet.
      * Call to build up the packet to send to the client when it is re-synced.
      * <p>
-     * Data is received in {@link #receiveCustomData(int, PacketBuffer)};
+     * Data is received in {@link #receiveCustomData(int, AdvancedPacketBuffer)};
      * <p>
      * Typically used to signal to the client that a rendering update is needed
      * when sending a server-side state update.
@@ -126,12 +126,12 @@ public interface ISyncedTileEntity {
      * @param dataWriter    a consumer which writes packet data to a buffer.
      * @see GregtechDataCodes
      */
-    void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter);
+    void writeCustomData(int discriminator, @NotNull Consumer<@NotNull AdvancedPacketBuffer> dataWriter);
 
     /**
      * Used to send an empty anonymous Server -> Client packet.
      * <p>
-     * Data is received in {@link #receiveCustomData(int, PacketBuffer)};
+     * Data is received in {@link #receiveCustomData(int, AdvancedPacketBuffer)};
      * <p>
      * Typically used to signal to the client that a rendering update is needed
      * when sending a server-side state update.
@@ -167,7 +167,7 @@ public interface ISyncedTileEntity {
      * @param buf           the buffer containing the packet data.
      * @see GregtechDataCodes
      */
-    void receiveCustomData(int discriminator, @NotNull PacketBuffer buf);
+    void receiveCustomData(int discriminator, @NotNull AdvancedPacketBuffer buf);
 
     static void checkCustomData(int discriminator, @NotNull ByteBuf buf, Object obj) {
         if (buf.readableBytes() == 0) return;

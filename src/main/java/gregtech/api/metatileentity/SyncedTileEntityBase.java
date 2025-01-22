@@ -11,13 +11,11 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,10 +33,10 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
     }
 
     @Override
-    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull PacketBuffer> dataWriter) {
-        ByteBuf backedBuffer = Unpooled.buffer();
-        dataWriter.accept(new PacketBuffer(backedBuffer));
-        byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
+    public final void writeCustomData(int discriminator, @NotNull Consumer<@NotNull AdvancedPacketBuffer> dataWriter) {
+        AdvancedPacketBuffer buf = new AdvancedPacketBuffer(Unpooled::buffer);
+        dataWriter.accept(buf);
+        byte[] updateData = Arrays.copyOfRange(buf.array(), 0, buf.writerIndex());
         this.updates.add(discriminator, updateData);
         notifyWorld();
     }
@@ -79,14 +77,15 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         for (NBTBase entryBase : listTag) {
             NBTTagCompound entryTag = (NBTTagCompound) entryBase;
             for (String discriminatorKey : entryTag.getKeySet()) {
-                ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
+                AdvancedPacketBuffer buf = new AdvancedPacketBuffer(
+                        Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey)), Unpooled::buffer);
                 int dataId = Integer.parseInt(discriminatorKey);
-                receiveCustomData(dataId, new PacketBuffer(backedBuffer));
+                receiveCustomData(dataId, buf);
 
                 MetaTileEntity mte = null;
                 if (this instanceof IGregTechTileEntity gtte)
                     mte = gtte.getMetaTileEntity();
-                ISyncedTileEntity.checkCustomData(dataId, backedBuffer, mte == null ? this : mte);
+                ISyncedTileEntity.checkCustomData(dataId, buf, mte == null ? this : mte);
             }
         }
     }

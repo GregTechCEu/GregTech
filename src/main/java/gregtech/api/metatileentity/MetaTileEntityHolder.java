@@ -19,7 +19,6 @@ import gregtech.core.network.packets.PacketRecoverMTE;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
@@ -324,7 +323,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
     }
 
     @Override
-    public void receiveCustomData(int discriminator, @NotNull PacketBuffer buffer) {
+    public void receiveCustomData(int discriminator, @NotNull AdvancedPacketBuffer buffer) {
         if (discriminator == INITIALIZE_MTE) {
             receiveMTEInitializationData(buffer);
         } else if (metaTileEntity != null) {
@@ -337,7 +336,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IGre
      *
      * @param buf the buffer to read data from
      */
-    private void receiveMTEInitializationData(@NotNull PacketBuffer buf) {
+    private void receiveMTEInitializationData(@NotNull AdvancedPacketBuffer buf) {
         int networkId = buf.readVarInt();
         int metaTileEntityId = buf.readVarInt();
         MTERegistry registry = GregTechAPI.mteManager.getRegistry(networkId);
