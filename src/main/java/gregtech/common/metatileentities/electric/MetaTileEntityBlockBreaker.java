@@ -9,6 +9,7 @@ import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.util.BlockUtility;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GregFakePlayer;
@@ -23,7 +24,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -38,6 +38,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -172,19 +173,19 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     }
 
     @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
+    public void writeInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
     }
 
     @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
+    public void receiveInitialSyncData(@NotNull AdvancedPacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
     }
 
     @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
+    public void receiveCustomData(int dataId, @NotNull AdvancedPacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
