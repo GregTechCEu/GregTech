@@ -73,14 +73,17 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         int rowSize = (int) Math.sqrt(inventorySize);
         guiSyncManager.registerSlotGroup("item_in", 1);
+        guiSyncManager.registerSlotGroup("item_out", rowSize);
 
         List<List<IWidget>> widgets = new ArrayList<>();
         for (int i = 0; i < rowSize; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < rowSize; j++) {
                 int index = i * rowSize + j;
-                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(exportItems, index)
-                        .accessibility(false, true)));
+                widgets.get(i).add(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(exportItems, index)
+                                .slotGroup("item_out")
+                                .accessibility(false, true)));
             }
         }
 
