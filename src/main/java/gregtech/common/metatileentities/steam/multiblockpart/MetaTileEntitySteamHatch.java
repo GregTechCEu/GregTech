@@ -11,9 +11,9 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.GTFluidSyncHandler;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
@@ -38,9 +38,12 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,59 +139,50 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
-        guiSyncManager.registerSlotGroup("item_inv", 1);
+        guiSyncManager.registerSlotGroup("item_inv", 2);
 
-        GTFluidSyncHandler tankSyncHandler = new GTFluidSyncHandler(this.importFluids.getTankAt(0));
+        GTFluidSyncHandler tankSyncHandler = GTFluidSlot.sync(this.importFluids.getTankAt(0))
+                .showAmount(false);
 
         return GTGuis.createPanel(this, 176, 166)
-                .background(IS_STEEL ? GTGuiTextures.BACKGROUND_STEEL : GTGuiTextures.BACKGROUND_BRONZE)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
-                .child(SlotGroupWidget
-                        .playerInventory((index, slot) -> slot
-                                .background(IS_STEEL ? GTGuiTextures.SLOT_STEEL : GTGuiTextures.SLOT_BRONZE))
-                        .left(7).bottom(7))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
                 .child((IS_STEEL ? GTGuiTextures.DISPLAY_STEEL : GTGuiTextures.DISPLAY_BRONZE).asWidget()
                         .left(7).top(16)
                         .size(81, 55))
                 .child(GTGuiTextures.TANK_ICON.asWidget()
                         .left(92).top(36)
                         .size(14, 15))
-                .child(IKey.lang("gregtech.gui.fluid_amount").color(0xFFFFFF).asWidget().pos(11, 20))
-                .child(IKey.dynamic(() -> getFluidAmountFormatted(tankSyncHandler))
-                        .color(0xFFFFFF)
-                        .asWidget().pos(11, 30))
-                .child(IKey.dynamic(() -> getFluidNameTranslated(tankSyncHandler))
-                        .color(0xFFFFFF)
-                        .asWidget().pos(11, 40))
+                .child(new RichTextWidget()
+                        .size(75, 47)
+                        .pos(10, 20)
+                        .textColor(Color.WHITE.main)
+                        .alignment(Alignment.TopLeft)
+                        .autoUpdate(true)
+                        .textBuilder(richText -> {
+                            richText.addLine(IKey.lang("gregtech.gui.fluid_amount"));
+                            String name = tankSyncHandler.getFluidLocalizedName();
+                            if (name == null) return;
+
+                            richText.addLine(IKey.str(name));
+                            richText.addLine(IKey.str(tankSyncHandler.getFormattedFluidAmount()));
+                        }))
                 .child(new GTFluidSlot().syncHandler(tankSyncHandler)
-                        .pos(69, 52))
+                        .pos(69, 52)
+                        .disableBackground())
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.importItems, 0)
                         .slotGroup("item_inv")
                         .filter(itemStack -> FluidUtil.getFluidHandler(itemStack) != null))
-                        .background(IS_STEEL ? GTGuiTextures.SLOT_STEEL : GTGuiTextures.SLOT_BRONZE,
-                                IS_STEEL ? GTGuiTextures.IN_SLOT_OVERLAY_STEEL : GTGuiTextures.IN_SLOT_OVERLAY_BRONZE)
                         .pos(90, 16))
                 .child(new ItemSlot().slot(SyncHandlers.itemSlot(this.exportItems, 0)
+                        .slotGroup("item_inv")
                         .accessibility(false, true))
-                        .background(IS_STEEL ? GTGuiTextures.SLOT_STEEL : GTGuiTextures.SLOT_BRONZE,
-                                IS_STEEL ? GTGuiTextures.OUT_SLOT_OVERLAY_STEEL : GTGuiTextures.OUT_SLOT_OVERLAY_BRONZE)
                         .pos(90, 53));
     }
 
-    private String getFluidNameTranslated(GTFluidSyncHandler tankSyncHandler) {
-        if (tankSyncHandler.getFluid() == null) {
-            return "";
-        } else {
-            return tankSyncHandler.getFluid().getLocalizedName();
-        }
-    }
-
-    private String getFluidAmountFormatted(GTFluidSyncHandler tankSyncHandler) {
-        if (tankSyncHandler.getFluid() == null) {
-            return "0";
-        } else {
-            return TextFormattingUtil.formatNumbers(tankSyncHandler.getFluid().amount);
-        }
+    @Override
+    public GTGuiTheme getUITheme() {
+        return IS_STEEL ? GTGuiTheme.STEEL : GTGuiTheme.BRONZE;
     }
 
     @Override
