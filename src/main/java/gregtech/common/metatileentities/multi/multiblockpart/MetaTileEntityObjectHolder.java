@@ -14,7 +14,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.widget.BlockableSlotWidget;
+import gregtech.api.mui.drawable.DrawableColorOverlay;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
@@ -35,6 +35,7 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,17 +76,19 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
                 .child(GTGuiTextures.PROGRESS_BAR_RESEARCH_STATION_BASE.asWidget()
                         .left(46).top(18)
                         .size(84, 60))
-                .child(new BlockableSlotWidget()
-                        .setIsBlocked(this::isSlotBlocked)
+                .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(heldItems, 0)
-                                .slotGroup("item_inv"))
+                                .slotGroup("item_inv")
+                                .filter(itemStack -> !isSlotBlocked()))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.RESEARCH_STATION_OVERLAY)
+                        .overlay(new DrawableColorOverlay(this::isSlotBlocked))
                         .left(79).top(39))
-                .child(new BlockableSlotWidget()
-                        .setIsBlocked(this::isSlotBlocked)
+                .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(heldItems, 1)
-                                .slotGroup("item_inv"))
+                                .slotGroup("item_inv")
+                                .filter(itemStack -> !isSlotBlocked()))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.DATA_ORB_OVERLAY)
+                        .overlay(new DrawableColorOverlay(this::isSlotBlocked))
                         .left(15).top(39));
     }
 

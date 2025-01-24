@@ -9,7 +9,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.widget.BlockableSlotWidget;
+import gregtech.api.mui.drawable.DrawableColorOverlay;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
@@ -26,8 +26,10 @@ import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,9 +80,17 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         return GTGuis.createPanel(this, 176, 18 + 18 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
-                .child(new BlockableSlotWidget()
-                        .setIsBlocked(this::isSlotBlocked)
-                        .slot(SyncHandlers.itemSlot(machineHandler, 0).slotGroup("item_inv"))
+                .child(new ItemSlot() {
+
+                    // Don't draw tooltip if the slot is blocked
+                    @Override
+                    public void drawForeground(ModularGuiContext context) {
+                        if (!isSlotBlocked()) super.drawForeground(context);
+                    }
+                }
+                        .slot(SyncHandlers.itemSlot(machineHandler, 0)
+                                .slotGroup("item_inv"))
+                        .overlay(new DrawableColorOverlay(this::isSlotBlocked))
                         .left(79).top(18));
     }
 
