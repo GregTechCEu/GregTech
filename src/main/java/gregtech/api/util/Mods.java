@@ -24,7 +24,10 @@ public enum Mods {
 
     AdvancedRocketry(Names.ADVANCED_ROCKETRY),
     AppliedEnergistics2(Names.APPLIED_ENERGISTICS2),
-    Avaritia(Names.AVARITIA),
+    Avaritia(Names.AVARITIA, mod -> {
+        var container = Loader.instance().getIndexedModList().get(Names.AVARITIA).getVersion();
+        return Integer.parseInt(container.toString().replace(".", "")) >= 33042;
+    }),
     Baubles(Names.BAUBLES),
     BetterQuestingUnofficial(Names.BETTER_QUESTING, mod -> {
         var container = Loader.instance().getIndexedModList().get(Names.BETTER_QUESTING);
