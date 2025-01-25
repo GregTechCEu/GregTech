@@ -321,6 +321,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     public void setCleanroom(ICleanroomProvider provider) {
-        this.cleanroom = provider;
+        if (cleanroom == null || provider.getPriority() > cleanroom.getPriority()) {
+            this.cleanroom = provider;
+        }
     }
 }
