@@ -1,14 +1,17 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.client.renderer.texture.Textures;
@@ -38,18 +41,25 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifiablePart
-                                          implements IMultiblockAbilityPart<IFluidTank> {
+                                          implements IMultiblockAbilityPart<IFluidTank>,
+                                          IGhostSlotConfigurable {
 
     private static final int FLUID_AMOUNT = 2_000_000_000;
     private final InfiniteWaterTank fluidTank;
+    private GhostCircuitItemStackHandler circuitInventory;
 
     public MetaTileEntityReservoirHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, GTValues.EV, false);
         this.fluidTank = new InfiniteWaterTank(getInventorySize(), this);
+        if (this.hasGhostCircuitInventory()) {
+            this.circuitInventory = new GhostCircuitItemStackHandler(this);
+            this.circuitInventory.addNotifiableMetaTileEntity(this);
+        }
         initializeInventory();
     }
 
@@ -107,13 +117,17 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return MultiblockAbility.IMPORT_FLUIDS;
+    public @NotNull List<MultiblockAbility<?>> getAbilities() {
+        return Arrays.asList(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS);
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.add(fluidTank);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        if (abilityInstances.isKey(MultiblockAbility.IMPORT_FLUIDS))
+            abilityInstances.add(fluidTank);
+        else if (abilityInstances.isKey(MultiblockAbility.IMPORT_ITEMS)) {
+            abilityInstances.add(circuitInventory);
+        }
     }
 
     @Override
@@ -134,6 +148,21 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
                 .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
                 .widget(new SlotWidget(exportItems, 0, 90, 53, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
+
+        builder.widget(new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY)
+                .setConsumer(w -> {
+                    String configString;
+                    if (circuitInventory == null ||
+                            circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
+                        configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value")
+                                .getFormattedText();
+                    } else {
+                        configString = String.valueOf(circuitInventory.getCircuitValue());
+                    }
+
+                    w.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
+                }));
 
         // Add general widgets
         return builder.label(6, 6, title)
@@ -175,6 +204,22 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
     public void addToolUsages(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.tool_action.screwdriver.access_covers"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return true;
+    }
+
+    @Override
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
     }
 
     private static class InfiniteWaterTank extends NotifiableFluidTank {
