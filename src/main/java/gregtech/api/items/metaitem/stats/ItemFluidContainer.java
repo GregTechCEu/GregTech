@@ -60,7 +60,6 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
         ItemStack stack = player.getHeldItem(hand);
         if (!isBucket) return pass(stack);
 
-        // can the player modify the clicked block
         ItemStack cellStack = GTUtility.copy(1, stack);
 
         var cellHandler = FluidUtil.getFluidHandler(cellStack);
@@ -87,6 +86,7 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
 
         var pos = result.getBlockPos();
 
+        // can the player modify the clicked block
         if (!world.isBlockModifiable(player, pos)) {
             return fail(stack);
         }
