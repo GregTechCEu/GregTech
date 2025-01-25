@@ -149,7 +149,20 @@ public class MetaTileEntityReservoirHatch extends MetaTileEntityMultiblockNotifi
                 .widget(new SlotWidget(exportItems, 0, 90, 53, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY));
 
-        builder.widget(new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62));
+        builder.widget(new GhostCircuitSlotWidget(circuitInventory, 0, 124, 62)
+                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INT_CIRCUIT_OVERLAY)
+                .setConsumer(w -> {
+                    String configString;
+                    if (circuitInventory == null ||
+                            circuitInventory.getCircuitValue() == GhostCircuitItemStackHandler.NO_CONFIG) {
+                        configString = new TextComponentTranslation("gregtech.gui.configurator_slot.no_value")
+                                .getFormattedText();
+                    } else {
+                        configString = String.valueOf(circuitInventory.getCircuitValue());
+                    }
+
+                    w.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
+                }));
 
         // Add general widgets
         return builder.label(6, 6, title)
