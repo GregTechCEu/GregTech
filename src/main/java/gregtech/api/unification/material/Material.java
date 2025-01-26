@@ -381,8 +381,11 @@ public class Material implements Comparable<Material> {
             throw new IllegalArgumentException(
                     "Cannot set working tier for material " + materialInfo.resourceLocation + "to less than 0 (ULV)!");
         }
-        if (workingTier == GTValues.ULV) {
-            workingTier = GTValues.LV;
+        if (workingTier > GTValues.MAX_TRUE) {
+            throw new IllegalArgumentException(
+                    "Cannot set working tier for material " + materialInfo.resourceLocation +
+                            "to greater than 30 (MAX_TRUE)!");
+
         }
         materialInfo.workingTier = workingTier;
     }
@@ -1123,15 +1126,18 @@ public class Material implements Comparable<Material> {
          *
          * @param tier The tier. Defaults to {@link GTValues#LV} if unset,
          *             though some recipes may still vary (such as Extruder recipes or Dense Plates).
-         *             Applying ULV is no different from LV.
          */
         public Builder workingTier(int tier) {
             if (tier < 0) {
                 throw new IllegalArgumentException(
-                        "Working tier for material" + materialInfo.resourceLocation + "cannot be less than 0 (ULV)!");
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to less than 0 (ULV)!");
             }
-            if (tier == GTValues.ULV) {
-                tier = GTValues.LV;
+            if (tier > GTValues.MAX_TRUE) {
+                throw new IllegalArgumentException(
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to greater than 30 (MAX_TRUE)!");
+
             }
             materialInfo.workingTier = tier;
             return this;

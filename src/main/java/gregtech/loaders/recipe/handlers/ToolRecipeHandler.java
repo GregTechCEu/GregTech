@@ -238,7 +238,7 @@ public class ToolRecipeHandler {
     }
 
     private static void processElectricTool(OrePrefix prefix, Material material, ToolProperty property) {
-        final int voltageMultiplier = material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
+        final long voltageMultiplier = material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
         OrePrefix toolPrefix;
 
         if (material.hasFlag(GENERATE_PLATE)) {

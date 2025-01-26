@@ -8,7 +8,11 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.*;
+import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.IngotProperty;
+import gregtech.api.unification.material.properties.OreProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
@@ -67,6 +71,7 @@ public class MaterialRecipeHandler {
     public static void processDust(OrePrefix dustPrefix, Material mat, DustProperty property) {
         ItemStack dustStack = OreDictUnifier.get(dustPrefix, mat);
         OreProperty oreProperty = mat.hasProperty(PropertyKey.ORE) ? mat.getProperty(PropertyKey.ORE) : null;
+        int workingTier = mat.getWorkingTier();
         if (mat.hasProperty(PropertyKey.GEM)) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, mat);
 
@@ -75,14 +80,14 @@ public class MaterialRecipeHandler {
                         .inputs(dustStack)
                         .fluidInputs(Materials.Water.getFluid(250))
                         .chancedOutput(gemStack, 7000, 1000)
-                        .duration(1200).EUt(24)
+                        .duration(1200).EUt(GTUtility.scaleVoltage(24, workingTier))
                         .buildAndRegister();
 
                 RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
                         .inputs(dustStack)
                         .fluidInputs(Materials.DistilledWater.getFluid(50))
                         .outputs(gemStack)
-                        .duration(600).EUt(24)
+                        .duration(600).EUt(GTUtility.scaleVoltage(24, workingTier))
                         .buildAndRegister();
             }
 
@@ -92,6 +97,7 @@ public class MaterialRecipeHandler {
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosives(new ItemStack(MetaBlocks.POWDERBARREL, 8))
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
@@ -99,6 +105,7 @@ public class MaterialRecipeHandler {
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosives(4)
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
@@ -106,6 +113,7 @@ public class MaterialRecipeHandler {
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosives(MetaItems.DYNAMITE.getStackForm(2))
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
 
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
@@ -113,6 +121,7 @@ public class MaterialRecipeHandler {
                         .outputs(GTUtility.copy(3, gemStack))
                         .chancedOutput(dust, Materials.DarkAsh, 2500, 0)
                         .explosives(new ItemStack(MetaBlocks.ITNT))
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
             }
 
@@ -378,7 +387,7 @@ public class MaterialRecipeHandler {
                 }
             }
 
-            int voltageMultiplier = getVoltageMultiplier(material);
+            long voltageMultiplier = getVoltageMultiplier(material);
             if (!OreDictUnifier.get(plate, material).isEmpty()) {
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                         .input(ingotPrefix, material)
@@ -555,7 +564,7 @@ public class MaterialRecipeHandler {
             }
 
             if (material.hasProperty(PropertyKey.INGOT)) {
-                int voltageMultiplier = getVoltageMultiplier(material);
+                long voltageMultiplier = getVoltageMultiplier(material);
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                         .input(OrePrefix.ingot, material, (int) (materialAmount / M))
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_BLOCK)
@@ -589,7 +598,7 @@ public class MaterialRecipeHandler {
         }
     }
 
-    private static int getVoltageMultiplier(Material material) {
+    private static long getVoltageMultiplier(Material material) {
         return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

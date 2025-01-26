@@ -183,7 +183,7 @@ public class PartsRecipeHandler {
 
         ItemStack stack = OreDictUnifier.get(gearPrefix, material);
         if (gearPrefix == OrePrefix.gear && material.hasProperty(PropertyKey.INGOT)) {
-            int voltageMultiplier = getVoltageMultiplier(material);
+            long voltageMultiplier = getVoltageMultiplier(material);
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(OrePrefix.ingot, material, 4)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_GEAR)
@@ -275,7 +275,7 @@ public class PartsRecipeHandler {
                 .output(lens, material)
                 .output(dustSmall, material)
                 .duration(1200)
-                .EUt(GTUtility.scaleVoltage(120, workingTier))
+                .EUt(GTUtility.scaleVoltage(VA[MV], workingTier))
                 .buildAndRegister();
 
         if (!OreDictUnifier.get(gemExquisite, material).isEmpty()) {
@@ -284,7 +284,7 @@ public class PartsRecipeHandler {
                     .output(lens, material)
                     .output(dust, material, 2)
                     .duration(2400)
-                    .EUt(GTUtility.scaleVoltage(30, workingTier))
+                    .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                     .buildAndRegister();
         }
 
@@ -626,7 +626,7 @@ public class PartsRecipeHandler {
                 .buildAndRegister();
     }
 
-    private static int getVoltageMultiplier(Material material) {
+    private static long getVoltageMultiplier(Material material) {
         return material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
     }
 }
