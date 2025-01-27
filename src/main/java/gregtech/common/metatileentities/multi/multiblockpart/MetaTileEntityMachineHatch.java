@@ -86,11 +86,9 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
                         .tooltip(t -> t.setAutoUpdate(false))
                         .onUpdateListener(itemSlot -> {
                             RichTooltip tooltip = itemSlot.tooltip();
+                            tooltip.buildTooltip();
                             if (isSlotBlocked()) {
-                                tooltip.buildTooltip();
                                 tooltip.clearText();
-                            } else if (tooltip.isEmpty()) {
-                                tooltip.markDirty();
                             }
                         })
                         .overlay((context, x, y, width, height, widgetTheme) -> {
