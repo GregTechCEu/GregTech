@@ -9,7 +9,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.drawable.DrawableColorOverlay;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
@@ -24,6 +23,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -90,7 +90,8 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
                 }
                         .slot(SyncHandlers.itemSlot(machineHandler, 0)
                                 .slotGroup("item_inv"))
-                        .overlay(new DrawableColorOverlay(this::isSlotBlocked))
+                        .overlay((context, x, y, width, height, widgetTheme) -> GuiDraw.drawRect(x, y, width, height,
+                                0x80404040))
                         .left(79).top(18));
     }
 

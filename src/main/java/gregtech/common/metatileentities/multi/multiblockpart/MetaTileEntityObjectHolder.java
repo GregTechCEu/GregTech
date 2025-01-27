@@ -14,7 +14,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.mui.drawable.DrawableColorOverlay;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
@@ -31,6 +30,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -81,14 +81,16 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
                                 .slotGroup("item_inv")
                                 .filter(itemStack -> !isSlotBlocked()))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.RESEARCH_STATION_OVERLAY)
-                        .overlay(new DrawableColorOverlay(this::isSlotBlocked))
+                        .overlay((context, x, y, width, height, widgetTheme) -> GuiDraw.drawRect(x, y, width, height,
+                                0x80404040))
                         .left(79).top(39))
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(heldItems, 1)
                                 .slotGroup("item_inv")
                                 .filter(itemStack -> !isSlotBlocked()))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.DATA_ORB_OVERLAY)
-                        .overlay(new DrawableColorOverlay(this::isSlotBlocked))
+                        .overlay((context, x, y, width, height, widgetTheme) -> GuiDraw.drawRect(x, y, width, height,
+                                0x80404040))
                         .left(15).top(39));
     }
 
