@@ -26,7 +26,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -80,16 +80,19 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
         return GTGuis.createPanel(this, 176, 18 + 18 + 94)
                 .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
                 .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
-                .child(new ItemSlot() {
-
-                    // Don't draw tooltip if the slot is blocked
-                    @Override
-                    public void drawForeground(ModularGuiContext context) {
-                        if (!isSlotBlocked()) super.drawForeground(context);
-                    }
-                }
+                .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(machineHandler, 0)
                                 .slotGroup("item_inv"))
+                        .tooltip(t -> t.setAutoUpdate(false))
+                        .onUpdateListener(itemSlot -> {
+                            RichTooltip tooltip = itemSlot.tooltip();
+                            if (isSlotBlocked()) {
+                                tooltip.buildTooltip();
+                                tooltip.clearText();
+                            } else if (tooltip.isEmpty()) {
+                                tooltip.markDirty();
+                            }
+                        })
                         .overlay((context, x, y, width, height, widgetTheme) -> GuiDraw.drawRect(x, y, width, height,
                                 0x80404040))
                         .left(79).top(18));
