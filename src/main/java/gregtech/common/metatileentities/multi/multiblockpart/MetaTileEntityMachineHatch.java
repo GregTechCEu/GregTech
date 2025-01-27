@@ -93,8 +93,11 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
                                 tooltip.markDirty();
                             }
                         })
-                        .overlay((context, x, y, width, height, widgetTheme) -> GuiDraw.drawRect(x, y, width, height,
-                                0x80404040))
+                        .overlay((context, x, y, width, height, widgetTheme) -> {
+                            if (isSlotBlocked()) {
+                                GuiDraw.drawRect(x, y, width, height, 0x80404040);
+                            }
+                        })
                         .left(79).top(18));
     }
 

@@ -81,16 +81,22 @@ public class MetaTileEntityObjectHolder extends MetaTileEntityMultiblockNotifiab
                                 .slotGroup("item_inv")
                                 .filter(itemStack -> !isSlotBlocked()))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.RESEARCH_STATION_OVERLAY)
-                        .overlay((context, x, y, width, height, widgetTheme) -> GuiDraw.drawRect(x, y, width, height,
-                                0x80404040))
+                        .overlay((context, x, y, width, height, widgetTheme) -> {
+                            if (isSlotBlocked()) {
+                                GuiDraw.drawRect(x, y, width, height, 0x80404040);
+                            }
+                        })
                         .left(79).top(39))
                 .child(new ItemSlot()
                         .slot(SyncHandlers.itemSlot(heldItems, 1)
                                 .slotGroup("item_inv")
                                 .filter(itemStack -> !isSlotBlocked()))
                         .background(GTGuiTextures.SLOT, GTGuiTextures.DATA_ORB_OVERLAY)
-                        .overlay((context, x, y, width, height, widgetTheme) -> GuiDraw.drawRect(x, y, width, height,
-                                0x80404040))
+                        .overlay((context, x, y, width, height, widgetTheme) -> {
+                            if (isSlotBlocked()) {
+                                GuiDraw.drawRect(x, y, width, height, 0x80404040);
+                            }
+                        })
                         .left(15).top(39));
     }
 
