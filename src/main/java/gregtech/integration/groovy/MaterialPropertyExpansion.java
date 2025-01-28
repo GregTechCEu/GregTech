@@ -327,7 +327,7 @@ public class MaterialPropertyExpansion {
             properties = new PipeNetProperties();
             m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
         }
-        properties.setProperty(new MaterialItemProperties((long) (transferRate * 16), priority));
+        properties.setProperty(new MaterialItemProperties((long) (transferRate * 4), priority));
     }
 
     public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock) {

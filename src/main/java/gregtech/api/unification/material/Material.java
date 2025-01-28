@@ -1112,7 +1112,7 @@ public class Material implements Comparable<Material> {
 
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
             getOrCreatePipeNetProperties()
-                    .setProperty(new MaterialItemProperties((long) (stacksPerSec * 16), priority));
+                    .setProperty(new MaterialItemProperties((long) (stacksPerSec * 4), priority));
             return this;
         }
 
