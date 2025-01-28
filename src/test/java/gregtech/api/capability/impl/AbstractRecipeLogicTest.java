@@ -1,7 +1,6 @@
 package gregtech.api.capability.impl;
 
 import gregtech.Bootstrap;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
@@ -161,11 +160,6 @@ public class AbstractRecipeLogicTest {
             @Override
             protected boolean drawEnergy(long recipeEUt, boolean simulate) {
                 return true;
-            }
-
-            @Override
-            protected IEnergyContainer getEnergyContainer() {
-                return IEnergyContainer.DEFAULT;
             }
 
             @Override
