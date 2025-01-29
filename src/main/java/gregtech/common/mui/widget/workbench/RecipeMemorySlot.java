@@ -1,5 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
+import com.cleanroommc.modularui.drawable.text.Spacer;
+
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
@@ -15,6 +17,9 @@ import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.widget.Widget;
+
+import net.minecraft.util.text.TextFormatting;
+
 import org.jetbrains.annotations.NotNull;
 
 public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable {
@@ -29,10 +34,14 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         tooltipBuilder(tooltip -> {
             var recipe = memory.getRecipeAtIndex(this.index);
             if (recipe == null) return;
-            var list = MCHelper.getItemToolTip(recipe.getRecipeResult());
-            // todo lang
-            list.add(1, IKey.lang("Times Used: " + recipe.timesUsed).get());
-            tooltip.addStringLines(list);
+
+            tooltip.addFromItem(recipe.getRecipeResult());
+
+            tooltip.spaceLine(2);
+            tooltip.addLine(IKey.lang("gregtech.recipe_memory_widget.tooltip.1"));
+            tooltip.addLine(IKey.lang("gregtech.recipe_memory_widget.tooltip.2"));
+            tooltip.addLine(IKey.lang("gregtech.recipe_memory_widget.tooltip.0", recipe.timesUsed)
+                    .format(TextFormatting.WHITE));
         });
     }
 
