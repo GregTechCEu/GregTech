@@ -50,7 +50,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         GuiDraw.drawItem(itemstack, 1, 1, 16, 16);
         itemstack.setCount(cachedCount);
 
-        //noinspection DataFlowIssue
+        // noinspection DataFlowIssue
         if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
             GlStateManager.disableDepth();
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
