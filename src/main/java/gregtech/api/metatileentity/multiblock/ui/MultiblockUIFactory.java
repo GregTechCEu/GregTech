@@ -127,25 +127,6 @@ public class MultiblockUIFactory {
                 });
     }
 
-    private IDrawable getIndicatorOverlay(Builder builder) {
-        builder.setAction(this.errorText);
-        builder.build();
-        if (!builder.isEmpty()) {
-            // error
-            return GTGuiTextures.GREGTECH_LOGO_BLINKING_RED;
-        }
-
-        builder.setAction(this.warningText);
-        builder.build();
-        if (!builder.isEmpty()) {
-            // warn
-            return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
-        }
-
-        // todo getLogo()?
-        return GTGuiTextures.GREGTECH_LOGO_DARK;
-    }
-
     /**
      * Returns a list of text indicating any current warnings in this Multiblock. <br />
      * Recommended to only display warnings if the structure is already formed. <br />
