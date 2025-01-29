@@ -10,7 +10,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -34,8 +33,12 @@ public interface JsonHandler<T> extends JsonSerializer<T>, JsonDeserializer<T> {
     T deserialize(JsonElement json, JsonDeserializationContext context) throws JsonParseException;
 
     default <R> JsonArray serializeArray(R[] objects, JsonSerializationContext context) {
+        return serializeArray(Arrays.asList(objects), context);
+    }
+
+    default <R> JsonArray serializeArray(Iterable<R> objects, JsonSerializationContext context) {
         JsonArray array = new JsonArray();
-        if (ArrayUtils.isEmpty(objects)) return array;
+        if (objects == null) return array;
         Type arrayType = objects.getClass().getComponentType();
         for (R t : objects) {
             JsonElement element = context.serialize(t, arrayType);
