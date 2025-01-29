@@ -26,7 +26,6 @@ import net.minecraft.util.ITickable;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.Rectangle;
@@ -397,7 +396,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                         getOwner() == null ? "null" : getOwner().toString());
                                 NetworkUtils.writeStringSafe(buffer, name);
                             });
-                            Interactable.playButtonClickSound();
                             return true;
                         }));
     }
