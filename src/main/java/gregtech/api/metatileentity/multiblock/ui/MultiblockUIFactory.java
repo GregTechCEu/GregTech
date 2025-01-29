@@ -281,44 +281,34 @@ public class MultiblockUIFactory {
         return column;
     }
 
-    public MultiblockUIFactory customScreen(Supplier<IWidget> customScreen) {
-        this.customScreen = customScreen;
-        return this;
-    }
-
     public MultiblockUIFactory addScreenChildren(Consumer<List<IWidget>> consumer) {
         this.childrenConsumer = consumer;
         return this;
     }
 
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
-        ParentWidget<?> root = new ParentWidget<>();
-        if (customScreen != null && customScreen.get() != null) {
-            root.child(customScreen.get());
-        } else {
-            Builder display = builder();
-            display.setAction(this.displayText);
-            display.sync("display", syncManager);
+        Builder display = builder();
+        display.setAction(this.displayText);
+        display.sync("display", syncManager);
 
-            var scrollWidget = new ScrollWidget<>(new VerticalScrollData())
-                    .sizeRel(1f)
-                    .child(new RichTextWidget()
-                            .sizeRel(1f)
-                            .alignment(Alignment.TopLeft)
-                            .margin(4, 4)
-                            .autoUpdate(true)
-                            .textBuilder(display::build));
+        var scrollWidget = new ScrollWidget<>(new VerticalScrollData())
+                .sizeRel(1f)
+                .child(new RichTextWidget()
+                        .sizeRel(1f)
+                        .alignment(Alignment.TopLeft)
+                        .margin(4, 4)
+                        .autoUpdate(true)
+                        .textBuilder(display::build));
 
-            if (this.childrenConsumer != null) {
-                List<IWidget> extra = new ArrayList<>();
-                this.childrenConsumer.accept(extra);
-                extra.forEach(scrollWidget::child);
-            }
-
-            root.child(scrollWidget);
+        if (this.childrenConsumer != null) {
+            List<IWidget> extra = new ArrayList<>();
+            this.childrenConsumer.accept(extra);
+            extra.forEach(scrollWidget::child);
         }
 
-        return root.child(createIndicator(syncManager))
+        return new ParentWidget<>()
+                .child(scrollWidget)
+                .child(createIndicator(syncManager))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)
                 .pos(4, 4);
