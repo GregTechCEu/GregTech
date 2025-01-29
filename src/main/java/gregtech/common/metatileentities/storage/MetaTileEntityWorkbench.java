@@ -64,7 +64,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
 
@@ -325,12 +324,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         var connected = new SlotGroup("connected_inventory", 8, true);
         syncManager.registerSlotGroup(connected);
 
-        List<IWidget> list = new ArrayList<>(this.connectedInventory.getSlots());
-        Predicate<ItemSlot> checkSlotValid = itemSlot -> {
-            int slot = itemSlot.getSlot().getSlotIndex();
-            return slot < this.connectedInventory.getSlots();
-        };
-
         if (this.connectedInventory.getSlots() == 0) {
             return Flow.column()
                     .debugName("inventory page - empty")
@@ -341,14 +334,29 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                     .background(GTGuiTextures.DISPLAY);
         }
 
+        List<ItemSlot> list = new ArrayList<>(this.connectedInventory.getSlots());
+
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
-            var widget = new ItemSlot()
-                    .setEnabledIf(checkSlotValid)
+            list.add(new ItemSlot()
+                    .setEnabledIf(itemSlot -> {
+                        int slot = itemSlot.getSlot().getSlotIndex();
+                        return slot < this.connectedInventory.getSlots();
+                    })
                     .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
-                            .slotGroup(connected));
-            // widget.setEnabled(checkSlotValid.test(widget));
-            list.add(widget);
+                            .slotGroup(connected)));
         }
+
+        // sort list
+        list.sort((o1, o2) -> {
+            var left = o1.getSlot().getStack();
+            var right = o2.getSlot().getStack();
+
+            if (!left.isEmpty() && !right.isEmpty()) return 0;
+            if (left.isEmpty() && right.isEmpty()) return 0;
+
+            return right.isEmpty() ? -1 : 1;
+        });
+
         return Flow.column()
                 .debugName("inventory page")
                 .padding(2)
