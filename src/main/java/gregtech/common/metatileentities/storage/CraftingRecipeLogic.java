@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.util.DummyContainer;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -20,6 +19,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2BooleanArrayMap;
@@ -31,10 +31,16 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 
-import java.io.IOException;
 import java.util.*;
 
 public class CraftingRecipeLogic extends SyncHandler {
+
+    // client only
+    public static final int UPDATE_INGREDIENTS = 1;
+    public static final int SYNC_STACK = 4;
+
+    // server only
+    public static final int UPDATE_MATRIX = 0;
 
     private final World world;
     private IItemHandlerModifiable availableHandlers;
@@ -365,7 +371,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
         // only sync when something has changed
         if (!map.isEmpty()) {
-            syncToClient(1, buffer -> {
+            syncToClient(UPDATE_INGREDIENTS, buffer -> {
                 buffer.writeByte(map.size());
                 for (var set : map.entrySet()) {
                     buffer.writeByte(set.getKey());
@@ -406,53 +412,26 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
-        if (id == 1) {
+        if (id == UPDATE_INGREDIENTS) {
             int size = buf.readByte();
             for (int i = 0; i < size; i++) {
                 this.inputSlots[buf.readByte()].hasIngredients = buf.readBoolean();
             }
         }
-        if (id == 4) {
-            getSyncManager().setCursorItem(readStackSafe(buf));
+        if (id == SYNC_STACK) {
+            getSyncManager().setCursorItem(NetworkUtils.readItemStack(buf));
         }
     }
 
     @Override
     public void readOnServer(int id, PacketBuffer buf) {
-        if (id == 0) {
+        if (id == UPDATE_MATRIX) {
             int size = buf.readVarInt();
             for (int i = 0; i < size; i++) {
-                try {
-                    this.craftingMatrix.setInventorySlotContents(i, buf.readItemStack());
-                } catch (IOException ignore) {}
-                this.updateCurrentRecipe();
+                this.craftingMatrix.setInventorySlotContents(i, NetworkUtils.readItemStack(buf));
             }
-        } else if (id == 4) {
-            int slot = buf.readVarInt();
-            syncToClient(5, buffer -> {
-                buffer.writeVarInt(slot);
-                writeStackSafe(buffer, availableHandlers.getStackInSlot(slot));
-            });
+            this.updateCurrentRecipe();
         }
-    }
-
-    private static ItemStack readStackSafe(PacketBuffer buffer) {
-        var stack = ItemStack.EMPTY;
-        try {
-            var tag = buffer.readCompoundTag();
-            if (tag == null) throw new IOException();
-            // GTLog.logger.warn(String.format("Received: %s", tag));
-            stack = new ItemStack(tag);
-        } catch (IOException ignore) {
-            GTLog.logger.warn("A stack was read incorrectly, something is seriously wrong!");
-        }
-        return stack;
-    }
-
-    private static void writeStackSafe(PacketBuffer buffer, ItemStack stack) {
-        var tag = stack.serializeNBT();
-        // GTLog.logger.warn(String.format("Sent: %s", tag));
-        buffer.writeCompoundTag(tag);
     }
 
     public static InventoryCrafting wrapHandler(IItemHandlerModifiable handler) {

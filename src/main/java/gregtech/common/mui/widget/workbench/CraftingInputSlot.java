@@ -35,14 +35,12 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     public CraftingInputSlot(IItemHandlerModifiable handler, int index) {
         this.syncHandler = new InputSyncHandler(handler, index);
         setSyncHandler(this.syncHandler);
-        tooltip().setAutoUpdate(true);
-        // .setHasTitleMargin(true);
+        tooltipAutoUpdate(true);
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
             ItemStack stack = this.syncHandler.getStack();
             if (stack.isEmpty()) return;
             tooltip.addFromItem(stack);
-            // tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
         });
     }
 
@@ -126,9 +124,9 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         this.syncHandler.setStack(stack);
     }
 
-    @SuppressWarnings("OverrideOnly")
     protected static class InputSyncHandler extends SyncHandler {
 
+        public static final int SYNC_STACK = 1;
         private final IItemHandlerModifiable handler;
         private final int index;
         private ItemStack lastStoredItem;
@@ -148,7 +146,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
-            if (id == 1) {
+            if (id == SYNC_STACK) {
                 boolean onlyAmt = buf.readBoolean();
                 var stack = NetworkUtils.readItemStack(buf);
                 boolean init = buf.readBoolean();
@@ -160,7 +158,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
-            if (id == 1) {
+            if (id == SYNC_STACK) {
                 var onlyAmt = buf.readBoolean();
                 var stack = NetworkUtils.readItemStack(buf);
                 this.handler.setStackInSlot(this.index, stack);
@@ -198,7 +196,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
             this.handler.setStackInSlot(this.index, cursorStack);
             this.listener.onChange(cursorStack, onlyAmt, true, false);
-            syncToServer(1, buffer -> {
+            syncToServer(SYNC_STACK, buffer -> {
                 buffer.writeBoolean(onlyAmt);
                 NetworkUtils.writeItemStack(buffer, cursorStack);
             });
