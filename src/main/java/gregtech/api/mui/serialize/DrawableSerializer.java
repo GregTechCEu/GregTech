@@ -4,15 +4,13 @@ import gregtech.api.mui.drawables.HoverableKey;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class DrawableSerializer implements JsonHandler<IDrawable> {
 
@@ -24,11 +22,8 @@ public class DrawableSerializer implements JsonHandler<IDrawable> {
         if (parsed.has("key") && parsed.has("tooltip")) {
             IKey key = context.deserialize(parsed.get("key"), IKey.class);
 
-            List<IDrawable> list = new ArrayList<>();
-            for (JsonElement jsonElement : parsed.getAsJsonArray("tooltip")) {
-                list.add(context.deserialize(jsonElement, IDrawable.class));
-            }
-            return HoverableKey.of(key).addLines(list);
+            IDrawable[] list = deserializeArray(parsed.getAsJsonArray("tooltip"), context, IDrawable[]::new);
+            return HoverableKey.of(key).addLines(Arrays.asList(list));
         } else {
             return context.deserialize(parsed, IKey.class);
         }
@@ -40,12 +35,7 @@ public class DrawableSerializer implements JsonHandler<IDrawable> {
         JsonObject object = new JsonObject();
         if (src instanceof HoverableKey hoverable) {
             object.add("key", context.serialize(hoverable.getKey(), IKey.class));
-            JsonArray array = new JsonArray();
-            for (IDrawable tooltipLine : hoverable.getTooltipLines()) {
-                array.add(context.serialize(tooltipLine, IDrawable.class));
-            }
-            object.add("tooltip", array);
-            return object;
+            object.add("tooltip", serializeArray(hoverable.getTooltipLines(), context));
         }
         return object;
     }
