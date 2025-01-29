@@ -25,7 +25,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
     public RecipeMemorySlot(CraftingRecipeMemory memory, int index) {
         this.memory = memory;
         this.index = index;
-        tooltip().setAutoUpdate(true);
+        tooltipAutoUpdate(true);
         tooltipBuilder(tooltip -> {
             var recipe = memory.getRecipeAtIndex(this.index);
             if (recipe == null) return;
@@ -50,6 +50,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         GuiDraw.drawItem(itemstack, 1, 1, 16, 16);
         itemstack.setCount(cachedCount);
 
+        //noinspection DataFlowIssue
         if (this.memory.getRecipeAtIndex(this.index).isRecipeLocked()) {
             GlStateManager.disableDepth();
             GTGuiTextures.RECIPE_LOCK.draw(context, 10, 1, 8, 8, widgetTheme);
@@ -80,10 +81,8 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
         if (data.shift && data.mouseButton == 0) {
             recipe.setRecipeLocked(!recipe.isRecipeLocked());
-        }
-
-        if (!data.shift && data.mouseButton == 1) {
-            memory.removeRecipe(this.index);
+        } else if (data.mouseButton == 1 && !recipe.isRecipeLocked()) {
+            this.memory.removeRecipe(index);
         }
 
         return Result.ACCEPT;

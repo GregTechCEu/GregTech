@@ -215,7 +215,6 @@ public class CraftingRecipeMemory extends SyncHandler {
     }
 
     @Override
-    @SuppressWarnings("DataFlowIssue")
     public void readOnServer(int id, PacketBuffer buf) {
         if (id == UPDATE_RECIPES) {
             syncToClient(UPDATE_RECIPES, this::writeRecipes);
@@ -223,14 +222,15 @@ public class CraftingRecipeMemory extends SyncHandler {
             // read mouse data
             int index = buf.readByte();
             var data = MouseData.readPacket(buf);
-            if (data.shift && data.mouseButton == 0 && hasRecipe(index)) {
-                var recipe = getRecipeAtIndex(index);
+            var recipe = getRecipeAtIndex(index);
+            if (recipe == null) return;
+
+            if (data.shift && data.mouseButton == 0) {
                 recipe.setRecipeLocked(!recipe.isRecipeLocked());
             } else if (data.mouseButton == 0) {
                 loadRecipe(index);
-            } else if (data.mouseButton == 1) {
-                if (hasRecipe(index) && !getRecipeAtIndex(index).isRecipeLocked())
-                    removeRecipe(index);
+            } else if (data.mouseButton == 1 && !recipe.isRecipeLocked()) {
+                removeRecipe(index);
             }
         }
     }
@@ -268,12 +268,14 @@ public class CraftingRecipeMemory extends SyncHandler {
         private void writeToBuffer(PacketBuffer buffer) {
             buffer.writeByte(this.index);
             buffer.writeInt(this.timesUsed);
+            buffer.writeBoolean(this.recipeLocked);
             NetworkUtils.writeItemStack(buffer, this.recipeResult);
         }
 
         private static @NotNull MemorizedRecipe fromBuffer(PacketBuffer buffer) {
             var recipe = new MemorizedRecipe(buffer.readByte());
             recipe.timesUsed = buffer.readInt();
+            recipe.recipeLocked = buffer.readBoolean();
             recipe.recipeResult = NetworkUtils.readItemStack(buffer);
             return recipe;
         }
@@ -310,6 +312,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             var recipe = new MemorizedRecipe(this.index);
             recipe.initialize(this.recipeResult);
             recipe.updateCraftingMatrix(this.craftingMatrix);
+            recipe.recipeLocked = this.recipeLocked;
             recipe.timesUsed = this.timesUsed;
             return recipe;
         }
