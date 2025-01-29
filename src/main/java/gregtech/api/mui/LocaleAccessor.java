@@ -2,6 +2,7 @@ package gregtech.api.mui;
 
 import net.minecraft.client.resources.Locale;
 
+// todo remove in next mui2 version
 public interface LocaleAccessor {
 
     String gregtech$getRawKey(String s);

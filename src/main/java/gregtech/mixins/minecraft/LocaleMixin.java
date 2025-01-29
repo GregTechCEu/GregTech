@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Map;
 
+// todo remove in next mui2 version
 @Mixin(Locale.class)
 public abstract class LocaleMixin implements LocaleAccessor {
 

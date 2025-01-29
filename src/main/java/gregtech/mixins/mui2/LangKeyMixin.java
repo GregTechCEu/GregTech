@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+// todo remove in next mui2 version
 @Mixin(value = LangKey.class, remap = false)
 public abstract class LangKeyMixin extends BaseKey {
 
