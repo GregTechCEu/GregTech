@@ -34,6 +34,7 @@ public class QuantumStorageProvider implements IProbeInfoProvider {
                 String eutText = configureEnergyUsage(controller.getEnergyUsage() / 10);
                 if (controller.getCount(IQuantumStorage.Type.ENERGY) == 0) {
                     probeInfo.text("{*gregtech.top.quantum_controller.no_hatches*}");
+                    probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_required*} " + eutText);
                 } else if (!controller.isPowered()) {
                     probeInfo.text("{*gregtech.top.quantum_controller.no_power*}");
                     probeInfo.text(TextStyleClass.INFO + "{*gregtech.top.energy_required*} " + eutText);
