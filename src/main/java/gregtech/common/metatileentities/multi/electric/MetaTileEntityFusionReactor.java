@@ -454,7 +454,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 .setSize(198, 236)
                 .setScreenHeight(138)
                 .configureDisplayText(false, builder -> {})
-                .customScreen(() -> new Column()
+                .addScreenChildren(widgets -> widgets.add(new Column()
                         .padding(4)
                         .expanded()
                         .child(title.asWidget()
@@ -462,6 +462,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                                 .size(69, 12))
                         .child(new ProgressWidget()
                                 .size(77, 77)
+                                // todo status tooltip
                                 .background(GTGuiTextures.FUSION_DIAGRAM.asIcon()
                                         .size(89, 101)
                                         .marginTop(11))
@@ -471,7 +472,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                         .child(GTGuiTextures.FUSION_LEGEND.asWidget()
                                 .left(4)
                                 .bottom(4)
-                                .size(108, 41)));
+                                .size(108, 41))));
     }
 
     private void addEnergyBarHoverText(List<ITextComponent> hoverList) {
