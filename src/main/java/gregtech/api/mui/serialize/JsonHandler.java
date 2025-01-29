@@ -11,8 +11,10 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.IntFunction;
 
 public interface JsonHandler<T> extends JsonSerializer<T>, JsonDeserializer<T> {
@@ -33,10 +35,6 @@ public interface JsonHandler<T> extends JsonSerializer<T>, JsonDeserializer<T> {
     T deserialize(JsonElement json, JsonDeserializationContext context) throws JsonParseException;
 
     default <R> JsonArray serializeArray(R[] objects, JsonSerializationContext context) {
-        return serializeArray(Arrays.asList(objects), context);
-    }
-
-    default <R> JsonArray serializeArray(Iterable<R> objects, JsonSerializationContext context) {
         JsonArray array = new JsonArray();
         if (objects == null) return array;
         Type arrayType = objects.getClass().getComponentType();
@@ -52,6 +50,17 @@ public interface JsonHandler<T> extends JsonSerializer<T>, JsonDeserializer<T> {
             }
         }
         return array;
+    }
+
+    @SuppressWarnings("unchecked")
+    default <R> JsonArray serializeArray(Collection<R> objects, JsonSerializationContext context) {
+        R[] array = null;
+        int i = 0;
+        for (R object : objects) {
+            if (array == null) array = (R[]) Array.newInstance(object.getClass(), objects.size());
+            array[i++] = object;
+        }
+        return serializeArray(array, context);
     }
 
     default <R> R[] deserializeArray(JsonArray jsonArray, JsonDeserializationContext context,
