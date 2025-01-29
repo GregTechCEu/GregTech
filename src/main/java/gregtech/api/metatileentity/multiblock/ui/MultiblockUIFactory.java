@@ -58,6 +58,7 @@ public class MultiblockUIFactory {
     private int width = 198, height = 202;
     private int screenHeight = 109;
     private Supplier<IWidget> customScreen;
+    private Consumer<List<IWidget>> childrenConsumer;
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
@@ -285,6 +286,11 @@ public class MultiblockUIFactory {
         return this;
     }
 
+    public MultiblockUIFactory addScreenChildren(Consumer<List<IWidget>> consumer) {
+        this.childrenConsumer = consumer;
+        return this;
+    }
+
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
         ParentWidget<?> root = new ParentWidget<>();
         if (customScreen != null && customScreen.get() != null) {
@@ -294,14 +300,22 @@ public class MultiblockUIFactory {
             display.setAction(this.displayText);
             display.sync("display", syncManager);
 
-            root.child(new ScrollWidget<>(new VerticalScrollData())
+            var scrollWidget = new ScrollWidget<>(new VerticalScrollData())
                     .sizeRel(1f)
                     .child(new RichTextWidget()
                             .sizeRel(1f)
                             .alignment(Alignment.TopLeft)
                             .margin(4, 4)
                             .autoUpdate(true)
-                            .textBuilder(display::build)));
+                            .textBuilder(display::build));
+
+            if (this.childrenConsumer != null) {
+                List<IWidget> extra = new ArrayList<>();
+                this.childrenConsumer.accept(extra);
+                extra.forEach(scrollWidget::child);
+            }
+
+            root.child(scrollWidget);
         }
 
         return root.child(createIndicator(syncManager))
