@@ -126,7 +126,8 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     protected static class InputSyncHandler extends SyncHandler {
 
-        public static final int SYNC_STACK = 1;
+        public static final int SLOT_CHANGED = 1;
+
         private final IItemHandlerModifiable handler;
         private final int index;
         private ItemStack lastStoredItem;
@@ -146,7 +147,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
-            if (id == SYNC_STACK) {
+            if (id == SLOT_CHANGED) {
                 boolean onlyAmt = buf.readBoolean();
                 var stack = NetworkUtils.readItemStack(buf);
                 boolean init = buf.readBoolean();
@@ -158,7 +159,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
-            if (id == SYNC_STACK) {
+            if (id == SLOT_CHANGED) {
                 var onlyAmt = buf.readBoolean();
                 var stack = NetworkUtils.readItemStack(buf);
                 this.handler.setStackInSlot(this.index, stack);
@@ -181,7 +182,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
                     this.lastStoredItem = itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy();
                 }
                 final boolean finalOnlyAmountChanged = onlyAmountChanged;
-                syncToClient(1, buffer -> {
+                syncToClient(SLOT_CHANGED, buffer -> {
                     buffer.writeBoolean(finalOnlyAmountChanged);
                     NetworkUtils.writeItemStack(buffer, itemStack);
                     buffer.writeBoolean(init);
@@ -194,9 +195,8 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             final var curStack = getStack();
             final boolean onlyAmt = ItemHandlerHelper.canItemStacksStackRelaxed(curStack, cursorStack);
 
-            this.handler.setStackInSlot(this.index, cursorStack);
-            this.listener.onChange(cursorStack, onlyAmt, true, false);
-            syncToServer(SYNC_STACK, buffer -> {
+            setStack(cursorStack);
+            syncToServer(SLOT_CHANGED, buffer -> {
                 buffer.writeBoolean(onlyAmt);
                 NetworkUtils.writeItemStack(buffer, cursorStack);
             });
