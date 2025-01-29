@@ -35,7 +35,6 @@ public class MetaTileEntityCleaningMaintenanceHatch extends MetaTileEntityAutoMa
 
     static {
         CLEANED_TYPES.add(CleanroomType.CLEANROOM);
-        CLEANED_TYPES.add(CleanroomType.STERILE_CLEANROOM);
     }
 
     // must come after the static block
