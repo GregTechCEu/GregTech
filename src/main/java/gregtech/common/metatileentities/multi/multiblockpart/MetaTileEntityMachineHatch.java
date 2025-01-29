@@ -1,9 +1,6 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.BlockableSlotWidget;
 import gregtech.api.metatileentity.IMachineHatchMultiblock;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -11,12 +8,12 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -25,6 +22,15 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiDraw;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.RichTooltip;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,17 +68,35 @@ public class MetaTileEntityMachineHatch extends MetaTileEntityMultiblockNotifiab
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 + 94)
-                .label(10, 5, getMetaFullName());
+    public boolean usesMui2() {
+        return true;
+    }
 
-        builder.widget(new BlockableSlotWidget(machineHandler, 0, 81, 18, true, true)
-                .setIsBlocked(this::isSlotBlocked)
-                .setBackgroundTexture(GuiTextures.SLOT));
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+        guiSyncManager.registerSlotGroup("item_inv", 1);
 
-        return builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 + 12).build(getHolder(),
-                entityPlayer);
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 176, 18 + 18 + 94)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(new ItemSlot()
+                        .slot(SyncHandlers.itemSlot(machineHandler, 0)
+                                .slotGroup("item_inv"))
+                        .tooltip(t -> t.setAutoUpdate(false))
+                        .onUpdateListener(itemSlot -> {
+                            RichTooltip tooltip = itemSlot.tooltip();
+                            tooltip.buildTooltip();
+                            if (isSlotBlocked()) {
+                                tooltip.clearText();
+                            }
+                        })
+                        .overlay((context, x, y, width, height, widgetTheme) -> {
+                            if (isSlotBlocked()) {
+                                GuiDraw.drawRect(x, y, width, height, 0x80404040);
+                            }
+                        })
+                        .left(79).top(18));
     }
 
     @Override
