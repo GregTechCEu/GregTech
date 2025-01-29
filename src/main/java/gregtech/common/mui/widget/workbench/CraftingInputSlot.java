@@ -32,7 +32,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     private final InputSyncHandler syncHandler;
     public boolean hasIngredients = true;
 
-    public CraftingInputSlot(IItemHandlerModifiable handler, int index) {
+    private CraftingInputSlot(IItemHandlerModifiable handler, int index) {
         this.syncHandler = new InputSyncHandler(handler, index);
         setSyncHandler(this.syncHandler);
         tooltipAutoUpdate(true);
