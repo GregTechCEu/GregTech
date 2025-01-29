@@ -1,12 +1,12 @@
 package gregtech.common.mui.widget.workbench;
 
-import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -17,6 +17,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -31,7 +32,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +39,8 @@ import java.util.stream.Collectors;
 
 public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements Interactable, JeiIngredientProvider {
 
+    private static final int MOUSE_CLICK = 2;
+    private static final int SYNC_STACK = 5;
     private final CraftingSlotSH syncHandler;
 
     public CraftingOutputSlot(IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
@@ -47,14 +49,12 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                         workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
                         syncValue, workbench));
         setSyncHandler(this.syncHandler);
-        tooltip().setAutoUpdate(true);
-        // .setHasTitleMargin(true);
+        tooltipAutoUpdate(true);
         tooltipBuilder(tooltip -> {
             if (!isSynced()) return;
             ItemStack stack = this.syncHandler.getOutputStack();
             if (stack.isEmpty()) return;
             tooltip.addFromItem(stack);
-            // tooltip.addStringLines(getScreen().getScreenWrapper().getItemToolTip(stack));
         });
     }
 
@@ -66,7 +66,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
     @Override
     public @NotNull Result onMousePressed(int mouseButton) {
         MouseData mouseData = MouseData.create(mouseButton);
-        this.syncHandler.syncToServer(2, mouseData::writeToPacket);
+        this.syncHandler.syncToServer(MOUSE_CLICK, mouseData::writeToPacket);
         return Result.SUCCESS;
     }
 
@@ -104,24 +104,24 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         }
 
         @Override
-        @SuppressWarnings({ "OverrideOnly" })
         public void init(String key, PanelSyncManager syncManager) {
             super.init(key, syncManager);
             getSyncManager().getSlotGroups().stream()
                     .filter(SlotGroup::allowShiftTransfer)
                     .sorted(Comparator.comparingInt(SlotGroup::getShiftClickPriority))
                     .collect(Collectors.toList())
-                    .forEach(slotGroup -> slotGroup.getSlots()
-                            .forEach(slot1 -> {
-                                if (slot1 instanceof ModularSlot modularSlot) {
-                                    this.shiftClickSlots.add(modularSlot);
-                                }
-                            }));
+                    .forEach(slotGroup -> {
+                        for (Slot slot : slotGroup.getSlots()) {
+                            if (slot instanceof ModularSlot modularSlot) {
+                                this.shiftClickSlots.add(modularSlot);
+                            }
+                        }
+                    });
         }
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
-            if (id == 2) {
+            if (id == MOUSE_CLICK) {
                 var data = MouseData.readPacket(buf);
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
@@ -131,7 +131,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                         if (data.shift) {
                             quickTransfer(craftedStack);
                         } else {
-                            syncToClient(5, this::syncCraftedStack);
+                            syncToClient(SYNC_STACK, this::syncCraftedStack);
                         }
                         handleItemCraft(craftedStack, getSyncManager().getPlayer());
                     }
@@ -186,19 +186,9 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
-            if (id == 5) {
-                getSyncManager().setCursorItem(readStackSafe(buf));
+            if (id == SYNC_STACK) {
+                getSyncManager().setCursorItem(NetworkUtils.readItemStack(buf));
             }
-        }
-
-        private static ItemStack readStackSafe(PacketBuffer buffer) {
-            var stack = ItemStack.EMPTY;
-            try {
-                stack = buffer.readItemStack();
-            } catch (IOException ignore) {
-                GTLog.logger.warn("A stack was read incorrectly, something is seriously wrong!");
-            }
-            return stack;
         }
 
         private void syncCraftedStack(PacketBuffer buf) {
@@ -218,7 +208,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             } else if (!curStack.isEmpty()) {
                 toSync = curStack;
             }
-            buf.writeItemStack(toSync);
+            NetworkUtils.writeItemStack(buf, toSync);
         }
 
         public ItemStack getOutputStack() {
