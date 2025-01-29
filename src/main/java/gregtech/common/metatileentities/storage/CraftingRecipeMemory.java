@@ -20,6 +20,18 @@ import java.util.Map;
 
 public class CraftingRecipeMemory extends SyncHandler {
 
+    // client and server
+    public static final int UPDATE_RECIPES = 1;
+
+    // client only
+    public static final int SYNC_RECIPE = 4;
+    public static final int OFFSET_RECIPE = 5;
+    public static final int REMOVE_RECIPE = 2;
+    public static final int MAKE_RECIPE = 3;
+
+    // server only
+    public static final int MOUSE_CLICK = 2;
+
     private final MemorizedRecipe[] memorizedRecipes;
     private final IItemHandlerModifiable craftingMatrix;
 
@@ -80,7 +92,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             } else {
                 memorizedRecipe = offsetRecipe(i);
                 final int startIndex = i;
-                syncToClient(5, buffer -> buffer.writeByte(startIndex));
+                syncToClient(OFFSET_RECIPE, buffer -> buffer.writeByte(startIndex));
                 if (memorizedRecipe == null) {
                     memorizedRecipe = new MemorizedRecipe(i);
                 }
@@ -97,7 +109,7 @@ public class CraftingRecipeMemory extends SyncHandler {
             // notify slot and sync to client
             recipe.updateCraftingMatrix(craftingGrid);
             recipe.timesUsed++;
-            syncToClient(4, recipe::writeToBuffer);
+            syncToClient(SYNC_RECIPE, recipe::writeToBuffer);
         }
     }
 
@@ -153,21 +165,21 @@ public class CraftingRecipeMemory extends SyncHandler {
 
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
-        if (id == 1) {
+        if (id == UPDATE_RECIPES) {
             this.readRecipes(buf);
-        } else if (id == 2) {
+        } else if (id == REMOVE_RECIPE) {
             this.removeRecipe(buf.readByte());
-        } else if (id == 3) {
+        } else if (id == MAKE_RECIPE) {
             int index = buf.readByte();
             var recipe = memorizedRecipes[index];
             if (recipe == null) recipe = new MemorizedRecipe(index);
             recipe.recipeResult = NetworkUtils.readItemStack(buf);
             recipe.index = index;
             memorizedRecipes[index] = recipe;
-        } else if (id == 4) {
+        } else if (id == SYNC_RECIPE) {
             var recipe = MemorizedRecipe.fromBuffer(buf);
             memorizedRecipes[recipe.index] = recipe;
-        } else if (id == 5) {
+        } else if (id == OFFSET_RECIPE) {
             this.offsetRecipe(buf.readByte());
         }
     }
@@ -205,9 +217,9 @@ public class CraftingRecipeMemory extends SyncHandler {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public void readOnServer(int id, PacketBuffer buf) {
-        if (id == 1) {
-            syncToClient(1, this::writeRecipes);
-        } else if (id == 2) {
+        if (id == UPDATE_RECIPES) {
+            syncToClient(UPDATE_RECIPES, this::writeRecipes);
+        } else if (id == MOUSE_CLICK) {
             // read mouse data
             int index = buf.readByte();
             var data = MouseData.readPacket(buf);

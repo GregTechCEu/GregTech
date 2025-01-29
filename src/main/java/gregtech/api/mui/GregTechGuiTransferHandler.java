@@ -7,6 +7,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularContainer;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -50,7 +51,7 @@ public class GregTechGuiTransferHandler implements IRecipeTransferHandler<Modula
             this.craftingMatrix.setInventorySlotContents(i, ing == null ? ItemStack.EMPTY : ing);
         }
 
-        recipeLogic.syncToServer(0, this::writeCraftingMatrix);
+        recipeLogic.syncToServer(CraftingRecipeLogic.UPDATE_MATRIX, this::writeCraftingMatrix);
         recipeLogic.updateCurrentRecipe();
         return null;
     }
@@ -59,7 +60,7 @@ public class GregTechGuiTransferHandler implements IRecipeTransferHandler<Modula
         buffer.writeVarInt(this.craftingMatrix.getSizeInventory());
         for (int i = 0; i < this.craftingMatrix.getSizeInventory(); i++) {
             var stack = this.craftingMatrix.getStackInSlot(i);
-            buffer.writeItemStack(stack);
+            NetworkUtils.writeItemStack(buffer, stack);
         }
     }
 }
