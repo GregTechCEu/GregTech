@@ -14,6 +14,8 @@ import java.util.Arrays;
 
 public class DrawableSerializer implements JsonHandler<IDrawable> {
 
+    KeySerializer keySerializer = new KeySerializer();
+
     @Override
     public IDrawable deserialize(JsonElement json, JsonDeserializationContext context)
                                                                                        throws JsonParseException {
@@ -25,16 +27,17 @@ public class DrawableSerializer implements JsonHandler<IDrawable> {
             IDrawable[] list = deserializeArray(parsed.getAsJsonArray("tooltip"), context, IDrawable[]::new);
             return HoverableKey.of(key).addLines(Arrays.asList(list));
         } else {
-            return context.deserialize(parsed, IKey.class);
+            return keySerializer.deserialize(json, context);
         }
     }
 
     @Override
     public JsonElement serialize(IDrawable src, JsonSerializationContext context) {
-        if (src instanceof IKey) return context.serialize(src, IKey.class);
         JsonObject object = new JsonObject();
-        if (src instanceof HoverableKey hoverable) {
-            object.add("key", context.serialize(hoverable.getKey(), IKey.class));
+        if (src instanceof IKey key) {
+            return keySerializer.serialize(key, context);
+        } else if (src instanceof HoverableKey hoverable) {
+            object.add("key", keySerializer.serialize(hoverable.getKey(), context));
             object.add("tooltip", serializeArray(hoverable.getTooltipLines(), context));
         }
         return object;
