@@ -51,6 +51,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     private boolean isDistinct = false;
 
+    @Nullable
     private ICleanroomProvider cleanroom;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
@@ -320,9 +321,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
         if (cleanroom == null || provider.getPriority() > cleanroom.getPriority()) {
             this.cleanroom = provider;
         }
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        this.cleanroom = null;
     }
 }

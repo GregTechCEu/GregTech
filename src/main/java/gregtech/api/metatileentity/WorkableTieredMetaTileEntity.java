@@ -47,6 +47,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
 
     public final boolean handlesRecipeOutputs;
 
+    @Nullable
     private ICleanroomProvider cleanroom;
 
     public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
@@ -210,7 +211,12 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
         this.cleanroom = provider;
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        this.cleanroom = null;
     }
 }
