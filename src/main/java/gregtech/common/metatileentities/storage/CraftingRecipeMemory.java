@@ -64,6 +64,7 @@ public class CraftingRecipeMemory extends SyncHandler {
      */
     private void offsetRecipe(int startIndex) {
         MemorizedRecipe previousRecipe = removeRecipe(startIndex);
+        if (previousRecipe == null) return;
         for (int i = startIndex + 1; i < memorizedRecipes.length; i++) {
             MemorizedRecipe recipe = memorizedRecipes[i];
             if (recipe != null && recipe.recipeLocked) continue;
@@ -92,6 +93,7 @@ public class CraftingRecipeMemory extends SyncHandler {
         // we already have a recipe that matches
         // move it to the front
         if (existing != null && !existing.recipeLocked) {
+            if (existing.index == 0) return existing; // it's already at the front
             int removed = existing.index;
             removeRecipe(existing.index);
             syncToClient(REMOVE_RECIPE, buffer -> buffer.writeByte(removed));
