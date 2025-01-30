@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -217,9 +218,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .topRel(0f, 3, 1f)
                         .child(new PageButton(0, controller)
                                 .tab(GuiTextures.TAB_TOP, 0)
+                                .addTooltipLine(IKey.lang("gregtech.machine.workbench.tab.workbench"))
                                 .overlay(WORKSTATION))
                         .child(new PageButton(1, controller)
                                 .tab(GuiTextures.TAB_TOP, 0)
+                                .addTooltipLine(IKey.lang("gregtech.machine.workbench.tab.item_list"))
+                                .addTooltipLine(IKey.lang("gregtech.machine.workbench.storage_note")
+                                        .format(TextFormatting.DARK_GRAY))
                                 .overlay(CHEST)))
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
@@ -235,7 +240,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 .debugName("crafting page")
                                 .coverChildrenWidth()
                                 .child(Flow.row()
-                                        // todo add clear crafting grid button
                                         .debugName("crafting row")
                                         .coverChildrenHeight()
                                         .widthRel(1f)
@@ -299,6 +303,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .topRel(0f)
                         .rightRel(0f, 0, 1f)
                         .background(GTGuiTextures.BUTTON_CLEAR_GRID)
+                        .addTooltipLine(IKey.lang("gregtech.machine.workbench.clear_grid"))
                         .disableHoverBackground()
                         .onMousePressed(mouseButton -> {
                             this.recipeLogic.clearCraftingGrid();
