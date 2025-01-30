@@ -1,6 +1,7 @@
 package gregtech.common.mui.widget.workbench;
 
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.client.utils.RenderUtil;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,7 +10,6 @@ import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
@@ -47,7 +47,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
 
         int cachedCount = itemstack.getCount();
         itemstack.setCount(1); // required to not render the amount overlay
-        GuiDraw.drawItem(itemstack, 1, 1, 16, 16);
+        RenderUtil.renderItem(itemstack, 1, 1, 16, 16);
         itemstack.setCount(cachedCount);
 
         // noinspection DataFlowIssue
