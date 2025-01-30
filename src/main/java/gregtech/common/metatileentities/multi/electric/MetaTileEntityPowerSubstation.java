@@ -15,7 +15,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.BigIntegerSyncValue;
 import gregtech.api.pattern.*;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -34,8 +34,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -332,112 +330,83 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
-                .setWorkingStatusKeys(
-                        "gregtech.multiblock.idling",
-                        "gregtech.multiblock.idling",
-                        "gregtech.machine.active_transformer.routing")
-                .addCustom(tl -> {
-                    if (isStructureFormed() && energyBank != null) {
-                        BigInteger energyStored = energyBank.getStored();
-                        BigInteger energyCapacity = energyBank.getCapacity();
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.structureFormed(isStructureFormed());
+        builder.setWorkingStatus(true, isActive() && isWorkingEnabled()); // transform into two-state system for display
+        builder.setWorkingStatusKeys("gregtech.multiblock.idling", "gregtech.multiblock.idling",
+                "gregtech.machine.active_transformer.routing");
+        builder.addCustom(list -> {
+            if (isStructureFormed() && energyBank != null) {
+                BigInteger energyStored = energyBank.getStored();
+                BigInteger energyCapacity = energyBank.getCapacity();
 
-                        // Stored EU line
-                        ITextComponent storedFormatted = TextComponentUtil.stringWithColor(
-                                TextFormatting.GOLD,
-                                TextFormattingUtil.formatNumbers(energyStored) + " EU");
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.stored",
-                                storedFormatted));
+                // Stored EU line
+                IKey storedFormatted = KeyUtil.string(TextFormatting.GOLD,
+                        TextFormattingUtil.formatNumbers(energyStored) + " EU");
+                list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.stored",
+                        storedFormatted));
 
-                        // EU Capacity line
-                        ITextComponent capacityFormatted = TextComponentUtil.stringWithColor(
-                                TextFormatting.GOLD,
-                                TextFormattingUtil.formatNumbers(energyCapacity) + " EU");
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.capacity",
-                                capacityFormatted));
+                // EU Capacity line
+                IKey capacityFormatted = KeyUtil.string(TextFormatting.GOLD,
+                        TextFormattingUtil.formatNumbers(energyCapacity) + " EU");
+                list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.capacity",
+                        capacityFormatted));
 
-                        // Passive Drain line
-                        ITextComponent passiveDrain = TextComponentUtil.stringWithColor(
-                                TextFormatting.DARK_RED,
-                                TextFormattingUtil.formatNumbers(getPassiveDrain()) + " EU/t");
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.passive_drain",
-                                passiveDrain));
+                // Passive Drain line
+                IKey passiveDrain = KeyUtil.string(TextFormatting.DARK_RED,
+                        TextFormattingUtil.formatNumbers(getPassiveDrain()) + " EU/t");
+                list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.passive_drain",
+                        passiveDrain));
 
-                        // Average EU IN line
-                        ITextComponent avgValue = TextComponentUtil.stringWithColor(
-                                TextFormatting.GREEN,
-                                TextFormattingUtil.formatNumbers(averageInLastSec) + " EU/t");
-                        ITextComponent base = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_in",
-                                avgValue);
-                        ITextComponent hover = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_in_hover");
-                        tl.add(TextComponentUtil.setHover(base, hover));
+                // Average EU IN line
+                IKey avgValue = KeyUtil.string(TextFormatting.GREEN,
+                        TextFormattingUtil.formatNumbers(averageInLastSec) + " EU/t");
+                IKey base = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_in",
+                        avgValue);
+                IKey hover = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_in_hover");
+                list.add(KeyUtil.setHover(base, hover));
 
-                        // Average EU OUT line
-                        avgValue = TextComponentUtil.stringWithColor(
-                                TextFormatting.RED,
-                                TextFormattingUtil.formatNumbers(averageOutLastSec) + " EU/t");
-                        base = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_out",
-                                avgValue);
-                        hover = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.power_substation.average_out_hover");
-                        tl.add(TextComponentUtil.setHover(base, hover));
+                // Average EU OUT line
+                avgValue = KeyUtil.string(TextFormatting.RED,
+                        TextFormattingUtil.formatNumbers(averageOutLastSec) + " EU/t");
+                base = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_out", avgValue);
+                hover = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_out_hover");
+                list.add(KeyUtil.setHover(base, hover));
 
-                        // Time to fill/drain line
-                        if (averageInLastSec > averageOutLastSec) {
-                            ITextComponent timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
-                                    .divide(BigInteger.valueOf((averageInLastSec - averageOutLastSec) * 20)));
-                            TextComponentUtil.setColor(timeToFill, TextFormatting.GREEN);
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.power_substation.time_to_fill",
-                                    timeToFill));
-                        } else if (averageInLastSec < averageOutLastSec) {
-                            ITextComponent timeToDrain = getTimeToFillDrainText(
-                                    energyStored.divide(BigInteger.valueOf(
-                                            (averageOutLastSec - averageInLastSec) * 20)));
-                            TextComponentUtil.setColor(timeToDrain, TextFormatting.RED);
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.power_substation.time_to_drain",
-                                    timeToDrain));
-                        }
-                    }
-                })
-                .addWorkingStatusLine();
+                // Time to fill/drain line
+                if (averageInLastSec > averageOutLastSec) {
+                    IKey timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
+                            .divide(BigInteger.valueOf((averageInLastSec - averageOutLastSec) * 20)));
+                    timeToFill.format(TextFormatting.GREEN);
+                    list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_fill",
+                            timeToFill));
+                } else if (averageInLastSec < averageOutLastSec) {
+                    IKey timeToDrain = getTimeToFillDrainText(
+                            energyStored.divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20)));
+                    timeToDrain.format(TextFormatting.RED);
+                    list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_drain",
+                            timeToDrain));
+                }
+            }
+        });
+        builder.addWorkingStatusLine();
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (averageInLastSec < averageOutLastSec) { // decreasing
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addCustom(list -> {
+            if (isStructureFormed() && averageInLastSec < averageOutLastSec) {
                 BigInteger timeToDrainSeconds = energyBank.getStored()
                         .divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20));
                 if (timeToDrainSeconds.compareTo(BigInteger.valueOf(60 * 60)) < 0) { // less than 1 hour left
-                    textList.add(TextComponentUtil.translationWithColor(
-                            TextFormatting.YELLOW,
+                    list.add(KeyUtil.lang(TextFormatting.YELLOW,
                             "gregtech.multiblock.power_substation.under_one_hour_left"));
                 }
             }
-        }
+        });
     }
 
-    private static ITextComponent getTimeToFillDrainText(BigInteger timeToFillSeconds) {
+    private static IKey getTimeToFillDrainText(BigInteger timeToFillSeconds) {
         if (timeToFillSeconds.compareTo(BIG_INTEGER_MAX_LONG) > 0) {
             // too large to represent in a java Duration
             timeToFillSeconds = BIG_INTEGER_MAX_LONG;
@@ -462,10 +431,10 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             fillTime = duration.toDays() / 365;
             key = "gregtech.multiblock.power_substation.time_years";
         } else {
-            return new TextComponentTranslation("gregtech.multiblock.power_substation.time_forever");
+            return KeyUtil.lang("gregtech.multiblock.power_substation.time_forever");
         }
 
-        return new TextComponentTranslation(key, TextFormattingUtil.formatNumbers(fillTime));
+        return KeyUtil.lang(key, TextFormattingUtil.formatNumbers(fillTime));
     }
 
     @Override
