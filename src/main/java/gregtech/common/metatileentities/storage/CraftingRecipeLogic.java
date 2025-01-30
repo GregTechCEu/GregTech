@@ -410,6 +410,13 @@ public class CraftingRecipeLogic extends SyncHandler {
         return -1;
     }
 
+    public void writeMatrix(PacketBuffer buffer) {
+        buffer.writeVarInt(craftingMatrix.getSizeInventory());
+        for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
+            NetworkUtils.writeItemStack(buffer, craftingMatrix.getStackInSlot(i));
+        }
+    }
+
     @Override
     public void readOnClient(int id, PacketBuffer buf) {
         if (id == UPDATE_INGREDIENTS) {
