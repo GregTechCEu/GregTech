@@ -74,7 +74,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             return Result.IGNORE;
 
         var data = MouseData.create(mouseButton);
-        this.memory.syncToServer(2, buffer -> {
+        this.memory.syncToServer(CraftingRecipeMemory.MOUSE_CLICK, buffer -> {
             buffer.writeByte(this.index);
             data.writeToPacket(buffer);
         });
