@@ -57,31 +57,50 @@ public class CraftingRecipeMemory extends SyncHandler {
         return hasRecipe(index) ? getRecipeAtIndex(index).getRecipeResult() : ItemStack.EMPTY;
     }
 
-    @Nullable
-    private MemorizedRecipe offsetRecipe(int startIndex) {
-        MemorizedRecipe previousRecipe = memorizedRecipes[startIndex];
+    /**
+     * Offsets recipes from {@code startIndex} to the right, skipping locked recipes
+     *
+     * @param startIndex the index to start offsetting recipes
+     */
+    private void offsetRecipe(int startIndex) {
+        MemorizedRecipe previousRecipe = removeRecipe(startIndex);
         for (int i = startIndex + 1; i < memorizedRecipes.length; i++) {
             MemorizedRecipe recipe = memorizedRecipes[i];
             if (recipe != null && recipe.recipeLocked) continue;
             memorizedRecipes[i] = previousRecipe;
             memorizedRecipes[i].index = i;
-            if (recipe == null)
-                return memorizedRecipes[startIndex] = null;
+
+            // we found a null recipe and there's no more recipes to check,
+            if (recipe == null) return;
 
             previousRecipe = recipe;
         }
-        return previousRecipe;
     }
 
     @Nullable
     private MemorizedRecipe findOrCreateRecipe(ItemStack resultItemStack) {
         // search preexisting recipe with identical recipe result
+        MemorizedRecipe existing = null;
         for (MemorizedRecipe memorizedRecipe : memorizedRecipes) {
             if (memorizedRecipe != null &&
                     ItemStack.areItemStacksEqual(memorizedRecipe.recipeResult, resultItemStack)) {
-                return memorizedRecipe;
+                existing = memorizedRecipe;
+                break;
             }
         }
+
+        // we already have a recipe that matches
+        // move it to the front
+        if (existing != null && !existing.recipeLocked) {
+            int removed = existing.index;
+            removeRecipe(existing.index);
+            syncToClient(REMOVE_RECIPE, buffer -> buffer.writeByte(removed));
+            offsetRecipe(0);
+            syncToClient(OFFSET_RECIPE, buffer -> buffer.writeByte(0));
+            existing.index = 0;
+            return memorizedRecipes[0] = existing;
+        }
+
         // put new memorized recipe into array
         for (int i = 0; i < memorizedRecipes.length; i++) {
             MemorizedRecipe memorizedRecipe;
@@ -90,12 +109,9 @@ public class CraftingRecipeMemory extends SyncHandler {
             } else if (memorizedRecipes[i].recipeLocked) {
                 continue;
             } else {
-                memorizedRecipe = offsetRecipe(i);
-                final int startIndex = i;
-                syncToClient(OFFSET_RECIPE, buffer -> buffer.writeByte(startIndex));
-                if (memorizedRecipe == null) {
-                    memorizedRecipe = new MemorizedRecipe(i);
-                }
+                offsetRecipe(i);
+                memorizedRecipe = new MemorizedRecipe(i);
+                syncToClient(OFFSET_RECIPE, buffer -> buffer.writeByte(memorizedRecipe.index));
             }
             memorizedRecipe.initialize(resultItemStack);
             return memorizedRecipes[i] = memorizedRecipe;
@@ -145,10 +161,13 @@ public class CraftingRecipeMemory extends SyncHandler {
         }
     }
 
-    public final void removeRecipe(int index) {
+    public final MemorizedRecipe removeRecipe(int index) {
         if (hasRecipe(index)) {
+            MemorizedRecipe removed = memorizedRecipes[index];
             memorizedRecipes[index] = null;
+            return removed;
         }
+        return null;
     }
 
     public final boolean hasRecipe(int index) {
@@ -238,7 +257,7 @@ public class CraftingRecipeMemory extends SyncHandler {
     public static class MemorizedRecipe {
 
         private final ItemStackHandler craftingMatrix = new ItemStackHandler(9);
-        private ItemStack recipeResult;
+        private ItemStack recipeResult = ItemStack.EMPTY;
         private boolean recipeLocked = false;
         public int timesUsed = 0;
         public int index;
@@ -315,6 +334,15 @@ public class CraftingRecipeMemory extends SyncHandler {
             recipe.recipeLocked = this.recipeLocked;
             recipe.timesUsed = this.timesUsed;
             return recipe;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("MemorizedRecipe{%dx %s, locked: %s, times used: %d}",
+                    getRecipeResult().getCount(),
+                    getRecipeResult().getDisplayName(),
+                    recipeLocked,
+                    timesUsed);
         }
     }
 }
