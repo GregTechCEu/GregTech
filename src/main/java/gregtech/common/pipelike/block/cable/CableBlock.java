@@ -10,6 +10,7 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TickUtil;
 import gregtech.common.creativetab.GTCreativeTabs;
 import gregtech.common.pipelike.net.energy.EnergyFlowData;
 import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
@@ -25,7 +26,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -103,7 +103,7 @@ public class CableBlock extends PipeMaterialBlock implements IBurnable {
                 if (node.getData().getLogicEntryNullable(SuperconductorLogic.TYPE) != null) return;
                 EnergyFlowLogic logic = node.getData().getLogicEntryNullable(EnergyFlowLogic.TYPE);
                 if (logic != null) {
-                    long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+                    int tick = TickUtil.getTick();
                     long cumulativeDamage = 0;
                     for (EnergyFlowData data : logic.getFlow(tick)) {
                         cumulativeDamage += (GTUtility.getTierByVoltage(data.voltage()) + 1) * data.amperage() * 4;

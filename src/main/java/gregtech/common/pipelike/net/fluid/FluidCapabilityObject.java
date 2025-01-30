@@ -20,7 +20,7 @@ import gregtech.api.graphnet.traverse.EdgeDirection;
 import gregtech.api.graphnet.traverse.EdgeSelector;
 import gregtech.api.graphnet.traverse.ResilientNetClosestIterator;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.MapUtil;
+import gregtech.api.util.TickUtil;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -29,10 +29,10 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Reference2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,21 +103,23 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         FluidTestObject testObject = new FluidTestObject(resource);
         ResilientNetClosestIterator iter = new ResilientNetClosestIterator(node,
                 EdgeSelector.filtered(EdgeDirection.OUTGOING, GraphNetUtility.standardEdgeBlacklist(testObject)));
-        Object2IntOpenHashMap<NetNode> availableDemandCache = new Object2IntOpenHashMap<>();
-        Object2IntOpenHashMap<NetNode> flowLimitCache = new Object2IntOpenHashMap<>();
-        Object2BooleanOpenHashMap<NetNode> lossyCache = new Object2BooleanOpenHashMap<>();
+        int maxPredictedSize = node.getGroupSafe().getNodes().size();
+        Reference2IntOpenHashMap<NetNode> availableDemandCache = new Reference2IntOpenHashMap<>(maxPredictedSize);
+        Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>(maxPredictedSize);
+        Reference2BooleanOpenHashMap<NetNode> lossyCache = new Reference2BooleanOpenHashMap<>(maxPredictedSize);
         List<Runnable> postActions = new ObjectArrayList<>();
         int total = 0;
         main:
         while (iter.hasNext()) {
             if (flow <= 0) break;
             final NetNode next = iter.next();
-            int limit = Math.min(MapUtil.computeIfAbsent(flowLimitCache, next, n -> getFlowLimit(n, testObject)), flow);
+            int limit = Math
+                    .min(GraphNetUtility.computeIfAbsent(flowLimitCache, next, n -> getFlowLimit(n, testObject)), flow);
             if (limit <= 0) {
                 iter.markInvalid(next);
                 continue;
             }
-            int supply = MapUtil.computeIfAbsent(availableDemandCache, next,
+            int supply = GraphNetUtility.computeIfAbsent(availableDemandCache, next,
                     n -> getSupplyOrDemand(n, testObject, false));
             if (supply <= 0) continue;
             supply = Math.min(supply, limit);
@@ -128,7 +130,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             while ((span = iter.getSpanningTreeEdge(trace)) != null) {
                 trace = span.getOppositeNode(trace);
                 if (trace == null) continue main;
-                int l = MapUtil.computeIfAbsent(flowLimitCache, trace, n -> getFlowLimit(n, testObject));
+                int l = GraphNetUtility.computeIfAbsent(flowLimitCache, trace, n -> getFlowLimit(n, testObject));
                 if (l == 0) {
                     iter.markInvalid(node);
                     continue main;
@@ -148,7 +150,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                 if (remaining <= 0) {
                     iter.markInvalid(n);
                 }
-                if (MapUtil.computeIfAbsent(lossyCache, n, a -> isLossyNode(a, testObject))) {
+                if (GraphNetUtility.computeIfAbsent(lossyCache, n, a -> isLossyNode(a, testObject))) {
                     // reporting loss can cause misc pipe destruction which causes graph modification while iterating.
                     if (doFill) postActions.add(() -> handleLoss(n, finalSupply, testObject));
                     continue main;
@@ -178,21 +180,22 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         FluidTestObject testObject = new FluidTestObject(resource);
         ResilientNetClosestIterator iter = new ResilientNetClosestIterator(node,
                 EdgeSelector.filtered(EdgeDirection.INCOMING, GraphNetUtility.standardEdgeBlacklist(testObject)));
-        Object2IntOpenHashMap<NetNode> availableSupplyCache = new Object2IntOpenHashMap<>();
-        Object2IntOpenHashMap<NetNode> flowLimitCache = new Object2IntOpenHashMap<>();
-        Object2BooleanOpenHashMap<NetNode> lossyCache = new Object2BooleanOpenHashMap<>();
+        Reference2IntOpenHashMap<NetNode> availableSupplyCache = new Reference2IntOpenHashMap<>();
+        Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>();
+        Reference2BooleanOpenHashMap<NetNode> lossyCache = new Reference2BooleanOpenHashMap<>();
         List<Runnable> postActions = new ObjectArrayList<>();
         int total = 0;
         main:
         while (iter.hasNext()) {
             if (flow <= 0) break;
             final NetNode next = iter.next();
-            int limit = Math.min(MapUtil.computeIfAbsent(flowLimitCache, next, n -> getFlowLimit(n, testObject)), flow);
+            int limit = Math
+                    .min(GraphNetUtility.computeIfAbsent(flowLimitCache, next, n -> getFlowLimit(n, testObject)), flow);
             if (limit <= 0) {
                 iter.markInvalid(next);
                 continue;
             }
-            int supply = MapUtil.computeIfAbsent(availableSupplyCache, next,
+            int supply = GraphNetUtility.computeIfAbsent(availableSupplyCache, next,
                     n -> getSupplyOrDemand(n, testObject, true));
             if (supply <= 0) continue;
             supply = Math.min(supply, limit);
@@ -203,7 +206,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             while ((span = iter.getSpanningTreeEdge(trace)) != null) {
                 trace = span.getOppositeNode(trace);
                 if (trace == null) continue main;
-                int l = MapUtil.computeIfAbsent(flowLimitCache, trace, n -> getFlowLimit(n, testObject));
+                int l = GraphNetUtility.computeIfAbsent(flowLimitCache, trace, n -> getFlowLimit(n, testObject));
                 if (l == 0) {
                     iter.markInvalid(node);
                     continue main;
@@ -223,7 +226,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                 if (remaining <= 0) {
                     iter.markInvalid(n);
                 }
-                if (MapUtil.computeIfAbsent(lossyCache, n, a -> isLossyNode(a, testObject))) {
+                if (GraphNetUtility.computeIfAbsent(lossyCache, n, a -> isLossyNode(a, testObject))) {
                     // reporting loss can cause misc pipe destruction which causes graph modification while iterating.
                     if (doDrain) postActions.add(() -> handleLoss(n, finalSupply, testObject));
                     continue main;
@@ -263,13 +266,13 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             logic = FluidFlowLogic.TYPE.getNew();
             node.getData().setLogicEntry(logic);
         }
-        logic.recordFlow(GTUtility.getTick(), testObject, flow);
+        logic.recordFlow(TickUtil.getTick(), testObject, flow);
         TemperatureLogic temp = node.getData().getLogicEntryNullable(TemperatureLogic.TYPE);
         if (temp != null) {
             FluidStack stack = testObject.recombine(flow);
             FluidContainmentLogic cont = node.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE);
             int t = stack.getFluid().getTemperature(stack);
-            temp.moveTowardsTemperature(t, GTUtility.getTick(), stack.amount, cont.getMaximumTemperature() >= t);
+            temp.moveTowardsTemperature(t, TickUtil.getTick(), stack.amount, cont.getMaximumTemperature() >= t);
             if (node instanceof WorldPipeNode n) {
                 temp.defaultHandleTemperature(n.getNet().getWorld(), n.getEquivalencyData());
             }

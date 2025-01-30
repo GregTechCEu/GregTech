@@ -1,13 +1,13 @@
 package gregtech.common.pipelike.net.energy;
 
 import gregtech.api.GTValues;
+import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.logic.AbstractTransientLogicData;
 import gregtech.api.graphnet.logic.NetLogicType;
+import gregtech.api.util.TickUtil;
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,33 +21,34 @@ public class EnergyFlowLogic extends AbstractTransientLogicData<EnergyFlowLogic>
 
     public static final int MEMORY_TICKS = 10;
 
-    private final Long2ObjectOpenHashMap<List<EnergyFlowData>> memory = new Long2ObjectOpenHashMap<>();
+    private final Int2ObjectArrayMap<List<EnergyFlowData>> memory = new Int2ObjectArrayMap<>(MEMORY_TICKS);
 
     @Override
     public @NotNull NetLogicType<EnergyFlowLogic> getType() {
         return TYPE;
     }
 
-    public @NotNull Long2ObjectOpenHashMap<List<EnergyFlowData>> getMemory() {
-        updateMemory(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
+    public @NotNull Int2ObjectMap<List<EnergyFlowData>> getMemory() {
+        updateMemory(TickUtil.getTick());
         return memory;
     }
 
-    public @NotNull List<EnergyFlowData> getFlow(long tick) {
+    public @NotNull List<EnergyFlowData> getFlow(int tick) {
         updateMemory(tick);
-        return memory.getOrDefault(tick, Collections.emptyList());
+        List<EnergyFlowData> fetch = memory.get(tick);
+        return fetch != null ? fetch : Collections.emptyList();
     }
 
-    public void recordFlow(long tick, EnergyFlowData flow) {
+    public void recordFlow(int tick, EnergyFlowData flow) {
         updateMemory(tick);
-        memory.computeIfAbsent(tick, k -> new ObjectArrayList<>()).add(flow);
+        GraphNetUtility.computeIfAbsent(memory, tick, k -> new ObjectArrayList<>(4)).add(flow);
     }
 
-    private void updateMemory(long tick) {
-        var iter = memory.long2ObjectEntrySet().fastIterator();
+    private void updateMemory(int tick) {
+        var iter = memory.int2ObjectEntrySet().fastIterator();
         while (iter.hasNext()) {
-            Long2ObjectMap.Entry<List<EnergyFlowData>> entry = iter.next();
-            if (entry.getLongKey() + MEMORY_TICKS < tick) {
+            var entry = iter.next();
+            if (entry.getIntKey() + MEMORY_TICKS < tick) {
                 iter.remove();
             }
         }

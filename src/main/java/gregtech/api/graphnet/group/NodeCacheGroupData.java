@@ -2,7 +2,7 @@ package gregtech.api.graphnet.group;
 
 import gregtech.api.graphnet.net.NetNode;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -11,13 +11,13 @@ import java.util.Set;
 
 public abstract class NodeCacheGroupData<T> extends GroupData {
 
-    protected final @NotNull Object2ObjectOpenHashMap<NetNode, T> cache;
+    protected final @NotNull Reference2ReferenceOpenHashMap<NetNode, T> cache;
 
     public NodeCacheGroupData() {
-        this(new Object2ObjectOpenHashMap<>());
+        this(new Reference2ReferenceOpenHashMap<>());
     }
 
-    public NodeCacheGroupData(@NotNull Object2ObjectOpenHashMap<NetNode, T> cache) {
+    public NodeCacheGroupData(@NotNull Reference2ReferenceOpenHashMap<NetNode, T> cache) {
         this.cache = cache;
     }
 

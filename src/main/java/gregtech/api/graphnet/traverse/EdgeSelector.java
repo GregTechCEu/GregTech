@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.traverse;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jgrapht.Graph;
+import org.jgrapht.util.ArrayUnenforcedSet;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -17,15 +17,25 @@ public interface EdgeSelector {
 
             @Override
             public <V, E> Set<E> selectEdges(Graph<V, E> graph, V vertex) {
-                Set<E> set = new ObjectOpenHashSet<>(basis.selectEdges(graph, vertex));
-                set.removeIf(blacklist);
+                Set<E> select = basis.selectEdges(graph, vertex);
+                Set<E> set = new ArrayUnenforcedSet<>(select.size());
+                for (E e : select) {
+                    if (!blacklist.test(e)) {
+                        set.add(e);
+                    }
+                }
                 return set;
             }
 
             @Override
             public <V, E> Set<E> selectReversedEdges(Graph<V, E> graph, V vertex) {
-                Set<E> set = new ObjectOpenHashSet<>(basis.selectReversedEdges(graph, vertex));
-                set.removeIf(blacklist);
+                Set<E> select = basis.selectReversedEdges(graph, vertex);
+                Set<E> set = new ArrayUnenforcedSet<>(select.size());
+                for (E e : select) {
+                    if (!blacklist.test(e)) {
+                        set.add(e);
+                    }
+                }
                 return set;
             }
         };

@@ -104,11 +104,6 @@ public class WorldPipeNode extends BlockPosNode
     }
 
     @Override
-    public @NotNull BlockPos getEquivalencyData() {
-        return super.getEquivalencyData();
-    }
-
-    @Override
     public @NotNull GraphClassType<? extends WorldPipeNode> getType() {
         return TYPE;
     }

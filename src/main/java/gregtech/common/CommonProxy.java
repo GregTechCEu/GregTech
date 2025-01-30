@@ -38,6 +38,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.TickUtil;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockLamp;
@@ -92,6 +93,7 @@ import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -427,6 +429,11 @@ public class CommonProxy {
     public static void registerNetPredicates(NetPredicateRegistrationEvent event) {
         event.accept(BlockedPredicate.TYPE);
         event.accept(FilterPredicate.TYPE);
+    }
+
+    @SubscribeEvent
+    public static void updateTickUtil(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) TickUtil.update();
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

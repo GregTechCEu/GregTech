@@ -10,7 +10,7 @@ import gregtech.api.graphnet.traverse.EdgeDirection;
 import gregtech.api.graphnet.traverse.NetIterator;
 import gregtech.api.graphnet.traverse.NetIteratorSupplier;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,11 +22,11 @@ public class PathCacheGroupData extends NodeCacheGroupData<PathCacheGroupData.Se
     protected final NetIteratorSupplier iteratorSupplier;
 
     public PathCacheGroupData(NetIteratorSupplier iteratorSupplier) {
-        this(iteratorSupplier, new Object2ObjectOpenHashMap<>());
+        this(iteratorSupplier, new Reference2ReferenceOpenHashMap<>());
     }
 
     public PathCacheGroupData(NetIteratorSupplier iteratorSupplier,
-                              @NotNull Object2ObjectOpenHashMap<NetNode, SecondaryCache> cache) {
+                              @NotNull Reference2ReferenceOpenHashMap<NetNode, SecondaryCache> cache) {
         super(cache);
         this.iteratorSupplier = iteratorSupplier;
     }
@@ -104,7 +104,8 @@ public class PathCacheGroupData extends NodeCacheGroupData<PathCacheGroupData.Se
     }
 
     protected @NotNull PathCacheGroupData buildFilteredCache(@NotNull Set<NetNode> filterNodes) {
-        Object2ObjectOpenHashMap<NetNode, SecondaryCache> child = new Object2ObjectOpenHashMap<>(this.cache);
+        Reference2ReferenceOpenHashMap<NetNode, SecondaryCache> child = new Reference2ReferenceOpenHashMap<>(
+                this.cache);
         child.entrySet().removeIf(entry -> {
             if (!filterNodes.contains(entry.getKey())) return true;
             SecondaryCache cache = entry.getValue();
@@ -114,7 +115,7 @@ public class PathCacheGroupData extends NodeCacheGroupData<PathCacheGroupData.Se
         return new PathCacheGroupData(iteratorSupplier, child);
     }
 
-    public class SecondaryCache extends Object2ObjectOpenHashMap<NetNode, NetPath> {
+    public class SecondaryCache extends Reference2ReferenceOpenHashMap<NetNode, NetPath> {
 
         protected final @NotNull NetNode source;
         protected @Nullable NetIterator searchFrontier;

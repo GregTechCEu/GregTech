@@ -8,12 +8,13 @@ import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Map;
 
 /**
  * MultiNodeHelpers are utility objects used to preserve sync between multiple nodes owned by different graphs. They do
@@ -28,7 +29,7 @@ import java.util.List;
  */
 public class MultiNodeHelper implements INetLogicEntryListener {
 
-    protected final Object2ObjectOpenHashMap<IGraphNet, LogicDataHandler> handledDatas = new Object2ObjectOpenHashMap<>();
+    protected final Map<IGraphNet, NetLogicData.ListenerCallback<LogicDataHandler>> handledDatas = new Reference2ObjectOpenHashMap<>();
 
     protected final Object2LongOpenHashMap<IGraphNet> recentTransferNets = new Object2LongOpenHashMap<>();
     protected final int transferTimeout;
@@ -62,7 +63,7 @@ public class MultiNodeHelper implements INetLogicEntryListener {
     @Override
     public void markLogicEntryAsUpdated(NetLogicEntry<?, ?> entry, boolean fullChange) {
         // TODO have a helper or something on clientside to avoid redundant packets
-        handledDatas.forEach((k, v) -> v.data.markLogicEntryAsUpdated(entry, fullChange));
+        handledDatas.forEach((k, v) -> v.getListener().data.markLogicEntryAsUpdated(entry, fullChange));
     }
 
     public void addNode(@NotNull NetNode node) {
@@ -79,26 +80,27 @@ public class MultiNodeHelper implements INetLogicEntryListener {
                 }
             }
         }
-        handledDatas.put(node.getNet(), new LogicDataHandler(node));
+        handledDatas.put(node.getNet(), new LogicDataHandler(node).register());
         for (NetLogicEntry<?, ?> entry : toSet) {
             node.getData().setLogicEntry(entry);
         }
     }
 
     public void removeNode(@NotNull NetNode node) {
-        LogicDataHandler removed = handledDatas.remove(node.getNet());
+        NetLogicData.ListenerCallback<LogicDataHandler> removed = handledDatas.remove(node.getNet());
         if (removed != null) {
             for (NetLogicEntry<?, ?> entry : this.mergedData.getEntries()) {
                 node.getData().removeLogicEntry(entry);
                 entry.unmerge(node);
             }
+            removed.retire();
         }
     }
 
     private void addNewLogicEntry(@NotNull NetLogicEntry<?, ?> entry) {
         entry.registerToMultiNodeHelper(this);
         mergedData.setLogicEntry(entry);
-        handledDatas.values().forEach(h -> h.data.setLogicEntry(entry));
+        handledDatas.values().forEach(h -> h.getListener().data.setLogicEntry(entry));
     }
 
     protected class LogicDataHandler implements NetLogicData.ILogicDataListener {
@@ -108,8 +110,11 @@ public class MultiNodeHelper implements INetLogicEntryListener {
 
         public LogicDataHandler(@NotNull NetNode node) {
             this.data = node.getData();
-            data.addListener(this);
             this.nodeRef = new WeakReference<>(node);
+        }
+
+        public NetLogicData.ListenerCallback<LogicDataHandler> register() {
+            return data.addListener(this);
         }
 
         @Override

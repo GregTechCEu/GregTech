@@ -20,6 +20,8 @@ import java.util.Objects;
 public class StandardNetPath implements NetPath {
 
     protected final ImmutableCollection<NetNode> nodes;
+    protected final NetNode source;
+    protected final NetNode target;
 
     protected final ImmutableCollection<NetEdge> edges;
 
@@ -38,7 +40,9 @@ public class StandardNetPath implements NetPath {
         this.edges = edges;
         this.weight = weight;
         ImmutableList<NetNode> listForm = nodes.asList();
-        this.hash = Objects.hash(nodes, edges, weight, listForm.get(0), listForm.get(listForm.size() - 1));
+        this.source = listForm.get(0);
+        this.target = listForm.get(listForm.size() - 1);
+        this.hash = Objects.hash(nodes, edges, weight, source, target);
     }
 
     public StandardNetPath(@NotNull StandardNetPath reverse) {
@@ -58,13 +62,25 @@ public class StandardNetPath implements NetPath {
         this.edges = builderEdges.build();
         this.weight = reverse.weight;
         ImmutableList<NetNode> listForm = nodes.asList();
-        this.hash = Objects.hash(nodes, edges, weight, listForm.get(0), listForm.get(listForm.size() - 1));
+        this.source = listForm.get(0);
+        this.target = listForm.get(listForm.size() - 1);
+        this.hash = Objects.hash(nodes, edges, weight, source, target);
         this.reversed = reverse;
     }
 
     @Override
     public @NotNull @Unmodifiable ImmutableCollection<NetNode> getOrderedNodes() {
         return nodes;
+    }
+
+    @Override
+    public @NotNull NetNode getSourceNode() {
+        return source;
+    }
+
+    @Override
+    public @NotNull NetNode getTargetNode() {
+        return target;
     }
 
     @Override

@@ -8,7 +8,7 @@ import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.reference.WeakHashSet;
+import gregtech.api.util.collection.WeakHashSet;
 import gregtech.client.renderer.pipe.cache.ColorQuadCache;
 import gregtech.client.renderer.pipe.cache.StructureQuadCache;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;

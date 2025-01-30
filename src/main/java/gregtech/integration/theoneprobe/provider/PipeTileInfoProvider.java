@@ -86,10 +86,11 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
     private void addFluidFlowInformation(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer,
                                          IProbeHitData iProbeHitData, FluidFlowLogic logic) {
         if (logic.getMemory().isEmpty()) {
+            FluidStack last = logic.getLast().recombine();
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .text(TextStyleClass.INFO + "{*gregtech.top.pipe.fluid_last*} ")
-                    .element(new FluidStackElement(logic.getLast()))
-                    .text(" " + logic.getLast().getLocalizedName());
+                    .element(new FluidStackElement(last))
+                    .text(" " + last.getLocalizedName());
         }
 
         Object2LongMap<FluidTestObject> counts = logic.getSum();
@@ -106,12 +107,11 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
     private void addItemFlowInformation(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer,
                                         IProbeHitData iProbeHitData, ItemFlowLogic logic) {
         if (logic.getMemory().isEmpty()) {
-            ItemStack countlessLast = logic.getLast().copy();
-            countlessLast.setCount(1);
+            ItemStack last = logic.getLast().recombine();
             iProbeInfo.horizontal(iProbeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                     .text(TextStyleClass.INFO + "{*gregtech.top.pipe.item_last*} ")
-                    .item(countlessLast)
-                    .text(" " + logic.getLast().getDisplayName());
+                    .item(last)
+                    .text(" " + last.getDisplayName());
         }
 
         Object2LongMap<ItemTestObject> counts = logic.getSum();

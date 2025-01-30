@@ -14,6 +14,7 @@ import gregtech.api.graphnet.traverse.EdgeDirection;
 import gregtech.api.graphnet.traverse.EdgeSelector;
 import gregtech.api.graphnet.traverse.ResilientNetClosestIterator;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TickUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -95,7 +96,8 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(targetNode,
                             EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
                     insertable = GraphNetUtility.p2pWalk(simulate, insertable, n -> getFlowLimit(n, testObject),
-                            (n, i) -> reportFlow(n, i, testObject), forwardFrontier, backwardFrontier);
+                            (n, i) -> reportFlow(n, i, testObject), node.getGroupSafe().getNodes().size(),
+                            forwardFrontier, backwardFrontier);
                     if (!simulate) targetHandler.insertItem(handlerSlot, testObject.recombine(insertable), false);
                     result = testObject.recombine(stack.getCount() - insertable);
                 }
@@ -128,7 +130,8 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(targetNode,
                             EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
                     extractable = GraphNetUtility.p2pWalk(simulate, extractable, n -> getFlowLimit(n, testObject),
-                            (n, i) -> reportFlow(n, i, testObject), forwardFrontier, backwardFrontier);
+                            (n, i) -> reportFlow(n, i, testObject), node.getGroupSafe().getNodes().size(),
+                            forwardFrontier, backwardFrontier);
                     if (!simulate) targetHandler.extractItem(handlerSlot, extractable, false);
                     result = testObject.recombine(extractable);
                 }
@@ -160,7 +163,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
             logic = ItemFlowLogic.TYPE.getNew();
             node.getData().setLogicEntry(logic);
         }
-        logic.recordFlow(GTUtility.getTick(), testObject.recombine(flow));
+        logic.recordFlow(TickUtil.getTick(), testObject.recombine(flow));
     }
 
     public @NotNull ItemNetworkView getNetworkView() {

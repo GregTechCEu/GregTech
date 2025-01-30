@@ -16,6 +16,7 @@ import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.block.RayTraceAABB;
 import gregtech.api.metatileentity.NeighborCacheTileEntityBase;
+import gregtech.api.network.PacketDataList;
 import gregtech.api.unification.material.Material;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.particle.GTParticleManager;
@@ -46,8 +47,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +67,8 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     public static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
     private final Int2ObjectOpenHashMap<NetLogicData> netLogicDatas = new Int2ObjectOpenHashMap<>();
-    private final ObjectOpenHashSet<NetLogicData.ILogicDataListener> listeners = new ObjectOpenHashSet<>();
+    private final Reference2ReferenceOpenHashMap<NetLogicType<?>, PendingLogicSync> pendingSyncs = new Reference2ReferenceOpenHashMap<>();
+    private final ObjectOpenHashSet<NetLogicData.ListenerCallback<?>> listeners = new ObjectOpenHashSet<>();
 
     // this tile was loaded from datafixed NBT and needs to initialize its connections
     private boolean legacy;
@@ -84,8 +86,7 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private final Set<ITickable> tickers = new ObjectOpenHashSet<>();
 
     protected final PipeCoverHolder covers = new PipeCoverHolder(this);
-    private final Object2ObjectOpenCustomHashMap<NetNode, PipeCapabilityWrapper> netCapabilities = WorldPipeNet
-            .getSensitiveHashMap();
+    private final Reference2ReferenceOpenHashMap<NetNode, PipeCapabilityWrapper> netCapabilities = new Reference2ReferenceOpenHashMap<>();
 
     @Nullable
     private TemperatureLogic temperatureLogic;
@@ -94,9 +95,6 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     private GTOverheatParticle overheatParticle;
 
     private final int offset = (int) (Math.random() * 20);
-
-    private long nextDamageTime = 0;
-    private long nextSoundTime = 0;
 
     @Nullable
     public PipeTileEntity getPipeNeighbor(EnumFacing facing, boolean allowChunkloading) {
@@ -497,15 +495,16 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         if (!getWorld().isRemote) {
             this.netLogicDatas.clear();
             this.netCapabilities.clear();
+            this.listeners.forEach(NetLogicData.ListenerCallback::retire);
             this.listeners.clear();
             for (WorldPipeNode node : PipeBlock.getNodesForTile(this)) {
                 WorldPipeNet net = node.getNet();
                 this.netCapabilities.put(node, net.buildCapabilityWrapper(this, node));
                 int networkID = net.getNetworkID();
                 netLogicDatas.put(networkID, node.getData());
-                listeners.add(node.getData().addListener((e, r, f) -> writeLogicData(networkID, e, r, f)));
+                listeners.add(node.getData().addListener((e, r, f) -> markDataForSync(networkID, e, r, f)));
                 for (NetLogicEntry<?, ?> entry : node.getData().getEntries()) {
-                    writeLogicData(networkID, entry, false, true);
+                    markDataForSync(networkID, entry, false, true);
                 }
                 if (this.temperatureLogic == null) {
                     TemperatureLogic candidate = node.getData().getLogicEntryNullable(TemperatureLogic.TYPE);
@@ -536,13 +535,36 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
         }
     }
 
-    private void writeLogicData(int networkID, NetLogicEntry<?, ?> entry, boolean removed, boolean fullChange) {
-        writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
-            buf.writeVarInt(networkID);
-            buf.writeBoolean(removed);
-            if (removed) buf.writeVarInt(NetLogicRegistry.getNetworkID(entry.getType()));
-            else NetLogicData.writeEntry(buf, entry, fullChange);
-        });
+    private void markDataForSync(int networkID, NetLogicEntry<?, ?> entry, boolean removed, boolean fullChange) {
+        // attempt to collapse multiple updates to the same data that occur before a sync packet is sent
+        PendingLogicSync existing = pendingSyncs.get(entry.getType());
+        if (existing != null) {
+            if (removed && !existing.isRemoved()) existing.markRemoved();
+            else if (!removed && existing.isRemoved()) {
+                // if the previous change was a removal and then this change is not a removal,
+                // then this is equivalent to a full change.
+                existing.markRemoved();
+                existing.markFullChange();
+            }
+            if (fullChange) existing.markFullChange();
+        } else {
+            pendingSyncs.put(entry.getType(), new PendingLogicSync(networkID, entry, removed, fullChange));
+        }
+        notifyWorldOfPendingPackets();
+    }
+
+    @Override
+    protected void beforeUpdatePacket(PacketDataList pendingUpdates) {
+        for (PendingLogicSync pendingSync : pendingSyncs.values()) {
+            writeCustomData(UPDATE_PIPE_LOGIC, buf -> {
+                buf.writeVarInt(pendingSync.networkID());
+                buf.writeBoolean(pendingSync.isRemoved());
+                if (pendingSync.isRemoved())
+                    buf.writeVarInt(NetLogicRegistry.getNetworkID(pendingSync.entry().getType()));
+                else NetLogicData.writeEntry(buf, pendingSync.entry(), pendingSync.isFullChange());
+            });
+        }
+        pendingSyncs.clear();
     }
 
     @Override

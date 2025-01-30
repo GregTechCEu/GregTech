@@ -44,6 +44,6 @@ public final class GraphVertex {
 
     @Override
     public int hashCode() {
-        return Objects.hash(wrapped);
+        return wrapped == null ? 0 : wrapped.hashCode();
     }
 }

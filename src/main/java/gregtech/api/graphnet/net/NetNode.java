@@ -130,6 +130,6 @@ public abstract class NetNode implements INBTSerializable<NBTTagCompound> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEquivalencyData());
+        return getEquivalencyData().hashCode();
     }
 }

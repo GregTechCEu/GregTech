@@ -9,7 +9,7 @@ import gregtech.api.graphnet.logic.NetLogicType;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.physical.IBurnable;
 import gregtech.api.graphnet.pipenet.physical.IFreezable;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.TickUtil;
 import gregtech.client.particle.GTOverheatParticle;
 
 import net.minecraft.block.state.IBlockState;
@@ -20,7 +20,6 @@ import net.minecraft.world.World;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
@@ -34,7 +33,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
     private boolean isMultiNodeHelper = false;
 
     private int temperatureMaximum;
-    private @Nullable Integer partialBurnTemperature;
+    private int partialBurnTemperature = -1;
     private int temperatureMinimum;
     private float energy;
     private int thermalMass;
@@ -83,7 +82,8 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
     }
 
     public boolean isOverPartialBurnThreshold(int temperature) {
-        return getPartialBurnTemperature() != null && temperature > getPartialBurnTemperature();
+        int partial = getPartialBurnTemperature();
+        return partial > 0 && temperature > getPartialBurnTemperature();
     }
 
     public boolean isUnderMinimum(int temperature) {
@@ -91,7 +91,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
     }
 
     public void defaultHandleTemperature(World world, BlockPos pos) {
-        int temp = getTemperature(GTUtility.getTick());
+        int temp = getTemperature(TickUtil.getTick());
         if (isUnderMinimum(temp)) {
             IBlockState state = world.getBlockState(pos);
             if (state.getBlock() instanceof IFreezable freezable) {
@@ -180,12 +180,12 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
         return temperatureMaximum;
     }
 
-    public TemperatureLogic setPartialBurnTemperature(@Nullable Integer partialBurnTemperature) {
+    public TemperatureLogic setPartialBurnTemperature(int partialBurnTemperature) {
         this.partialBurnTemperature = partialBurnTemperature;
         return this;
     }
 
-    public @Nullable Integer getPartialBurnTemperature() {
+    public int getPartialBurnTemperature() {
         return partialBurnTemperature;
     }
 
@@ -229,8 +229,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
             this.setRestorationFunction(other.getRestorationFunction());
             this.setFunctionPriority(other.getFunctionPriority());
         }
-        if (other.getPartialBurnTemperature() != null && (this.getPartialBurnTemperature() == null ||
-                other.getPartialBurnTemperature() < this.getPartialBurnTemperature()))
+        if (other.getPartialBurnTemperature() < this.getPartialBurnTemperature())
             this.setPartialBurnTemperature(other.getPartialBurnTemperature());
     }
 
@@ -243,7 +242,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
         tag.setInteger("ThermalMass", this.thermalMass);
         tag.setTag("RestorationFunction", this.temperatureLossFunction.serializeNBT());
         tag.setInteger("FunctionPrio", this.functionPriority);
-        if (partialBurnTemperature != null) tag.setInteger("PartialBurn", partialBurnTemperature);
+        if (partialBurnTemperature != -1) tag.setInteger("PartialBurn", partialBurnTemperature);
         return tag;
     }
 
@@ -257,7 +256,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
         this.functionPriority = nbt.getInteger("FunctionPrio");
         if (nbt.hasKey("PartialBurn")) {
             this.partialBurnTemperature = nbt.getInteger("PartialBurn");
-        } else this.partialBurnTemperature = null;
+        } else this.partialBurnTemperature = -1;
     }
 
     @Override
@@ -269,10 +268,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
             buf.writeVarInt(this.thermalMass);
             this.temperatureLossFunction.encode(buf);
             buf.writeVarInt(this.functionPriority);
-            // laughs in java 9
-            // noinspection ReplaceNullCheck
-            if (this.partialBurnTemperature == null) buf.writeVarInt(-1);
-            else buf.writeVarInt(this.partialBurnTemperature);
+            buf.writeVarInt(this.partialBurnTemperature);
         }
     }
 
@@ -285,9 +281,7 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
             this.thermalMass = buf.readVarInt();
             this.temperatureLossFunction.decode(buf);
             this.functionPriority = buf.readVarInt();
-            int partialBurn = buf.readVarInt();
-            if (partialBurn != -1) this.partialBurnTemperature = partialBurn;
-            else this.partialBurnTemperature = null;
+            this.partialBurnTemperature = buf.readVarInt();
         }
     }
 
@@ -309,19 +303,19 @@ public final class TemperatureLogic extends NetLogicEntry<TemperatureLogic, NBTT
 
         public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
                                         int temperatureMaximum, int temperatureMinimum, int thermalMass) {
-            return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass, 0);
+            return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass, -1);
         }
 
         public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
                                         int temperatureMaximum, int temperatureMinimum, int thermalMass,
-                                        @Nullable Integer partialBurnTemperature) {
+                                        int partialBurnTemperature) {
             return getWith(temperatureRestorationFunction, temperatureMaximum, temperatureMinimum, thermalMass,
                     partialBurnTemperature, 0);
         }
 
         public TemperatureLogic getWith(@NotNull TemperatureLossFunction temperatureRestorationFunction,
                                         int temperatureMaximum, int temperatureMinimum, int thermalMass,
-                                        @Nullable Integer partialBurnTemperature, int functionPriority) {
+                                        int partialBurnTemperature, int functionPriority) {
             return getNew()
                     .setRestorationFunction(temperatureRestorationFunction)
                     .setTemperatureMaximum(temperatureMaximum)

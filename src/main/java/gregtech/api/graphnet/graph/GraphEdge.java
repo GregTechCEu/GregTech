@@ -6,11 +6,16 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.Objects;
 
-public final class GraphEdge extends DefaultWeightedEdge {
+public final class GraphEdge {
+
+    private GraphVertex source;
+
+    private GraphVertex target;
+
+    private double weight;
 
     @ApiStatus.Internal
     public final NetEdge wrapped;
@@ -35,14 +40,22 @@ public final class GraphEdge extends DefaultWeightedEdge {
         return wrapped;
     }
 
-    @Override
     public GraphVertex getSource() {
-        return (GraphVertex) super.getSource();
+        return source;
     }
 
-    @Override
+    @ApiStatus.Internal
+    public void setSource(GraphVertex source) {
+        this.source = source;
+    }
+
     public GraphVertex getTarget() {
-        return (GraphVertex) super.getTarget();
+        return target;
+    }
+
+    @ApiStatus.Internal
+    public void setTarget(GraphVertex target) {
+        this.target = target;
     }
 
     public @Nullable GraphVertex getOppositeVertex(@NotNull GraphVertex node) {
@@ -51,15 +64,13 @@ public final class GraphEdge extends DefaultWeightedEdge {
         else return null;
     }
 
-    /**
-     * Use this very sparingly. It's significantly better to go through {@link org.jgrapht.Graph#getEdgeWeight(Object)}
-     * instead, unless you are doing nbt serialization for example.
-     * 
-     * @return the edge weight.
-     */
-    @Override
     public double getWeight() {
-        return super.getWeight();
+        return weight;
+    }
+
+    @ApiStatus.Internal
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     @Override
@@ -72,6 +83,6 @@ public final class GraphEdge extends DefaultWeightedEdge {
 
     @Override
     public int hashCode() {
-        return Objects.hash(wrapped);
+        return wrapped == null ? 0 : wrapped.hashCode();
     }
 }

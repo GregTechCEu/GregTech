@@ -24,6 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.function.Consumer;
@@ -276,8 +277,8 @@ public class PipeCoverHolder implements CoverHolder, ITickable, INBTSerializable
     }
 
     @Override
-    public boolean hasAnyCover() {
-        return !covers.isEmpty();
+    public @NotNull Collection<Cover> getAttachedCovers() {
+        return covers.values();
     }
 
     @Override

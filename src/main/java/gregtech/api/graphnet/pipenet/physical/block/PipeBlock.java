@@ -230,9 +230,6 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                         ToolHelper.damageItem(item, playerIn);
                         ToolHelper.playToolSound(item, playerIn);
                         connectTile(tile, other, facing);
-                    } else {
-                        // if the covers disallow the connection, simply try to render a connection.
-                        connectTile(tile, null, facing);
                     }
                 }
                 return true;

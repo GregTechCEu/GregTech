@@ -5,8 +5,9 @@ import gregtech.api.graphnet.graph.GraphVertex;
 import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,7 @@ import org.jheaps.AddressableHeap;
 import org.jheaps.tree.PairingHeap;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -89,7 +91,7 @@ public class ResilientNetClosestIterator implements NetIterator {
 
         public final double radius;
 
-        public final Set<GraphVertex> invalidated = new ObjectOpenHashSet<>();
+        public final Set<GraphVertex> invalidated = new ReferenceOpenHashSet<>();
 
         public InternalIterator(Graph<GraphVertex, GraphEdge> graph, GraphVertex startVertex, EdgeSelector selector,
                                 int expectedSize) {
@@ -102,7 +104,15 @@ public class ResilientNetClosestIterator implements NetIterator {
             this.selector = selector;
             this.radius = radius;
             this.heap = new PairingHeap<>();
-            this.seen = new Object2ObjectOpenHashMap<>(expectedSize);
+            this.seen = new Reference2ReferenceOpenHashMap<>(expectedSize) {
+
+                // prevent rehashing to shrink the seen map, we are a shortlived object, this is expensive, and it grows
+                // and shrinks rapidly.
+                @Override
+                protected void rehash(int newN) {
+                    if (newN > n) super.rehash(newN);
+                }
+            };
             encounterVertexFirst(startVertex, null);
         }
 
@@ -129,7 +139,6 @@ public class ResilientNetClosestIterator implements NetIterator {
 
         private void addUnseenChildrenOf(GraphVertex vertex) {
             for (GraphEdge edge : selector.selectEdges(graph, vertex)) {
-
                 GraphVertex oppositeV = edge.getOppositeVertex(vertex);
                 encounterVertex(oppositeV, edge);
             }
@@ -139,7 +148,7 @@ public class ResilientNetClosestIterator implements NetIterator {
             if (!invalidated.add(vertex)) return;
             AddressableHeap.Handle<Double, SeenData> handle = seen.get(vertex);
             if (handle != null) {
-                Set<GraphEdge> regenerationCandidates = new ObjectOpenHashSet<>();
+                Set<GraphEdge> regenerationCandidates = new ReferenceOpenHashSet<>(seen.size());
                 handle.getValue().applySelfAndChildren(c -> {
                     seen.remove(c.vertex);
                     c.outdated = true;
@@ -192,7 +201,7 @@ public class ResilientNetClosestIterator implements NetIterator {
                 GraphVertex otherVertex = edge.getOppositeVertex(vertex);
                 AddressableHeap.Handle<Double, SeenData> otherEntry = seen.get(otherVertex);
                 if (otherEntry == null) return;
-                shortestPathLength = otherEntry.getKey() + graph.getEdgeWeight(edge);
+                shortestPathLength = otherEntry.getKey() + edge.getWeight();
 
                 data = new SeenData(vertex, edge, otherEntry.getValue());
                 otherEntry.getValue().spanningChildren.add(data);
@@ -234,7 +243,7 @@ public class ResilientNetClosestIterator implements NetIterator {
         public boolean outdated = false;
 
         // all nodes whose spanning tree edges point at this node
-        public final Set<SeenData> spanningChildren = new ObjectOpenHashSet<>(6);
+        public final List<SeenData> spanningChildren = new ObjectArrayList<>(6);
 
         public SeenData(GraphVertex vertex, GraphEdge spanningTreeEdge, SeenData parent) {
             this.vertex = vertex;

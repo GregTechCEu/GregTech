@@ -1,14 +1,16 @@
 package gregtech.common.pipelike.net.item;
 
 import gregtech.api.GTValues;
+import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.logic.AbstractTransientLogicData;
 import gregtech.api.graphnet.logic.NetLogicType;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.TickUtil;
 
 import net.minecraft.item.ItemStack;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMaps;
@@ -22,16 +24,16 @@ public class ItemFlowLogic extends AbstractTransientLogicData<ItemFlowLogic> {
     public static final int MEMORY_TICKS = WorldItemNet.getBufferTicks();
     public static final int BUFFER_MULT = MEMORY_TICKS / WorldItemNet.getBufferRegenerationFactor();
 
-    private final Long2ObjectOpenHashMap<Object2LongMap<ItemTestObject>> memory = new Long2ObjectOpenHashMap<>();
-    private ItemStack last;
+    private final Int2ObjectArrayMap<Object2LongMap<ItemTestObject>> memory = new Int2ObjectArrayMap<>(MEMORY_TICKS);
+    private ItemTestObject last;
 
     @Override
     public @NotNull NetLogicType<ItemFlowLogic> getType() {
         return TYPE;
     }
 
-    public @NotNull Long2ObjectOpenHashMap<Object2LongMap<ItemTestObject>> getMemory() {
-        updateMemory(GTUtility.getTick());
+    public @NotNull Int2ObjectMap<Object2LongMap<ItemTestObject>> getMemory() {
+        updateMemory(TickUtil.getTick());
         return memory;
     }
 
@@ -45,31 +47,33 @@ public class ItemFlowLogic extends AbstractTransientLogicData<ItemFlowLogic> {
         return sum;
     }
 
-    public @NotNull Object2LongMap<ItemTestObject> getFlow(long tick) {
+    public @NotNull Object2LongMap<ItemTestObject> getFlow(int tick) {
         updateMemory(tick);
-        return memory.getOrDefault(tick, Object2LongMaps.emptyMap());
+        Object2LongMap<ItemTestObject> fetch = memory.get(tick);
+        return fetch != null ? fetch : Object2LongMaps.emptyMap();
     }
 
-    public void recordFlow(long tick, @NotNull ItemStack flow) {
+    public void recordFlow(int tick, @NotNull ItemStack flow) {
         recordFlow(tick, new ItemTestObject(flow), flow.getCount());
     }
 
-    public void recordFlow(long tick, @NotNull ItemTestObject testObject, int amount) {
+    public void recordFlow(int tick, @NotNull ItemTestObject testObject, int amount) {
         updateMemory(tick);
-        Object2LongMap<ItemTestObject> map = memory.computeIfAbsent(tick, k -> new Object2LongArrayMap<>());
+        Object2LongMap<ItemTestObject> map = GraphNetUtility.computeIfAbsent(memory, tick,
+                k -> new Object2LongArrayMap<>(4));
         map.put(testObject, map.getLong(testObject) + amount);
-        last = testObject.recombine(amount);
+        last = testObject;
     }
 
-    public ItemStack getLast() {
+    public ItemTestObject getLast() {
         return last;
     }
 
-    private void updateMemory(long tick) {
-        var iter = memory.long2ObjectEntrySet().fastIterator();
+    private void updateMemory(int tick) {
+        var iter = memory.int2ObjectEntrySet().fastIterator();
         while (iter.hasNext()) {
             var entry = iter.next();
-            if (entry.getLongKey() + MEMORY_TICKS < tick) {
+            if (entry.getIntKey() + MEMORY_TICKS < tick) {
                 iter.remove();
             }
         }

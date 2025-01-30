@@ -8,11 +8,12 @@ import gregtech.api.graphnet.group.PathCacheGroupData;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
+import gregtech.api.graphnet.pipenet.physical.tile.IWorldPipeNetTile;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.GTLog;
-import gregtech.common.covers.CoverShutter;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -21,6 +22,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.List;
 
 public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyContainer {
@@ -54,6 +56,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
         PathCacheGroupData.SecondaryCache cache = data.getOrCreate(node);
         List<EnergyPath> paths = new ObjectArrayList<>(group.getNodesUnderKey(ACTIVE_KEY).size());
         for (NetNode dest : group.getNodesUnderKey(ACTIVE_KEY)) {
+            if (!(dest instanceof WorldPipeNode)) continue;
             EnergyPath path = (EnergyPath) cache.getOrCompute(dest);
             if (path == null) continue;
             // construct the path list in order of ascending weight
@@ -65,26 +68,27 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
             paths.add(i, path);
         }
         long available = amperage;
-        for (EnergyPath path : paths) {
+        for (int i = 0; i < paths.size(); i++) {
+            EnergyPath path = paths.get(i);
             NetNode target = path.getTargetNode();
-            if (!(target instanceof WorldPipeNode n)) continue;
-            for (var capability : n.getTileEntity().getTargetsWithCapabilities(n).entrySet()) {
-                if (n == node && capability.getKey() == side) continue; // anti insert-to-our-source logic
-
-                IEnergyContainer container = capability.getValue().getCapability(
-                        GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, capability.getKey().getOpposite());
-                if (container != null && !(n.getTileEntity().getCoverHolder()
-                        .getCoverAtSide(capability.getKey()) instanceof CoverShutter)) {
-                    long allowed = container.acceptEnergyFromNetwork(capability.getKey(), voltage, amperage, true);
-                    EnergyPath.PathFlowReport flow = path.traverse(voltage, allowed);
-                    if (flow.euOut() > 0) {
-                        available -= allowed;
-                        if (!simulate) {
-                            flow.report();
-                            container.acceptEnergyFromNetwork(capability.getKey(), flow.voltageOut(),
-                                    flow.amperageOut(), false);
-                        }
-                    }
+            // WorldPipeNode-ness was already determined in earlier loop
+            IWorldPipeNetTile pipeTile = ((WorldPipeNode) target).getTileEntity();
+            EnumMap<EnumFacing, TileEntity> targets = pipeTile.getTargetsWithCapabilities(((WorldPipeNode) target));
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                if (target == node && facing == side) continue; // anti insert-to-our-source logic
+                TileEntity tile = targets.get(facing);
+                if (tile == null) continue;
+                IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
+                        facing.getOpposite());
+                if (container == null) continue;
+                long allowed = container.acceptEnergyFromNetwork(facing, voltage, amperage, true);
+                if (allowed <= 0) continue;
+                EnergyPath.PathFlowReport flow = path.traverse(voltage, allowed);
+                if (flow.euOut() <= 0) continue;
+                available -= allowed;
+                if (!simulate) {
+                    flow.report();
+                    container.acceptEnergyFromNetwork(facing, flow.voltageOut(), flow.amperageOut(), false);
                 }
             }
         }

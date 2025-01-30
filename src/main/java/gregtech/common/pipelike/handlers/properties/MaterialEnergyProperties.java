@@ -201,7 +201,7 @@ public final class MaterialEnergyProperties implements PipeNetProperties.IPipeNe
                     .setLogicEntry(VoltageLimitLogic.TYPE.getWith(voltageLimit))
                     .setLogicEntry(TemperatureLogic.TYPE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature, 1,
-                                    50 * pipe.material(), null)
+                                    50 * pipe.material(), -1)
                             .setInitialThermalEnergy(energy));
             if (superconductor) {
                 data.setLogicEntry(SuperconductorLogic.TYPE.getNew());

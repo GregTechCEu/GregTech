@@ -210,7 +210,7 @@ public final class MaterialFluidProperties implements PipeNetProperties.IPipeNet
                             maxFluidTemperature))
                     .setLogicEntry(TemperatureLogic.TYPE
                             .getWith(TemperatureLossFunction.getOrCreatePipe(coolingFactor), materialMeltTemperature,
-                                    minFluidTemperature, 50 * pipe.material(), null)
+                                    minFluidTemperature, 50 * pipe.material(), -1)
                             .setInitialThermalEnergy(energy));
             if (pipe.channelCount() > 1) {
                 data.setLogicEntry(ChannelCountLogic.TYPE.getWith(pipe.channelCount()));

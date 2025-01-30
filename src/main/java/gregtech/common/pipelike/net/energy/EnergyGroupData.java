@@ -6,7 +6,7 @@ import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.path.PathBuilder;
 import gregtech.api.graphnet.traverse.NetIteratorSupplier;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -24,7 +24,7 @@ public class EnergyGroupData extends PathCacheGroupData {
     }
 
     public EnergyGroupData(NetIteratorSupplier iteratorSupplier,
-                           @NotNull Object2ObjectOpenHashMap<NetNode, SecondaryCache> cache) {
+                           @NotNull Reference2ReferenceOpenHashMap<NetNode, SecondaryCache> cache) {
         super(iteratorSupplier, cache);
     }
 
@@ -74,7 +74,8 @@ public class EnergyGroupData extends PathCacheGroupData {
 
     @Override
     protected @NotNull PathCacheGroupData buildFilteredCache(@NotNull Set<NetNode> filterNodes) {
-        Object2ObjectOpenHashMap<NetNode, SecondaryCache> child = new Object2ObjectOpenHashMap<>(this.cache);
+        Reference2ReferenceOpenHashMap<NetNode, SecondaryCache> child = new Reference2ReferenceOpenHashMap<>(
+                this.cache);
         child.entrySet().removeIf(entry -> {
             if (!filterNodes.contains(entry.getKey())) return true;
             SecondaryCache cache = entry.getValue();

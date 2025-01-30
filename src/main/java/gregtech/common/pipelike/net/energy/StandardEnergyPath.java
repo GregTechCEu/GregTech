@@ -11,10 +11,10 @@ import gregtech.api.graphnet.path.StandardNetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.predicate.test.IPredicateTestObject;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import gregtech.api.util.TickUtil;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.longs.LongComparator;
@@ -65,22 +65,26 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
     public PathFlowReport traverse(final long voltage, final long amperage) {
         long resultVoltage = voltage - loss;
         if (resultVoltage <= 0) return EMPTY;
-        for (NetEdge edge : getOrderedEdges()) {
+        ImmutableList<NetEdge> asList = getOrderedEdges().asList();
+        for (int i = 0; i < asList.size(); i++) {
+            NetEdge edge = asList.get(i);
             if (!edge.test(IPredicateTestObject.INSTANCE)) return EMPTY;
         }
 
-        var set = voltageLimitInfo.tailMap(resultVoltage).long2ObjectEntrySet();
-        for (var entry : set) {
+        for (var entry : voltageLimitInfo.tailMap(resultVoltage).long2ObjectEntrySet()) {
             long key = entry.getLongKey();
             if (key >= resultVoltage) continue;
             // move 90% of the way towards the limiting voltage for every node with this limit
             int count = entry.getValue().size();
             resultVoltage = (long) (key + (resultVoltage - key) * Math.pow(0.1, count));
         }
-        long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        int tick = TickUtil.getTick();
         long resultAmperage = amperage;
         List<Runnable> postActions = new ObjectArrayList<>();
-        for (NetNode node : getOrderedNodes()) {
+        ImmutableList<NetNode> list = getOrderedNodes().asList();
+        for (int i = 0; i < list.size(); i++) {
+            NetNode node = list.get(i);
+
             NetLogicData data = node.getData();
             EnergyFlowLogic energyFlow = data.getLogicEntryNullable(EnergyFlowLogic.TYPE);
             if (energyFlow == null) {
@@ -113,15 +117,14 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
             });
             resultAmperage = correctedAmperage;
         }
-        long finalResultVoltage = resultVoltage;
-        long finalResultAmperage = resultAmperage;
-        postActions.add(() -> {
-            NetGroup group = getSourceNode().getGroupUnsafe();
-            if (group != null && group.getData() instanceof EnergyGroupData data) {
+        NetGroup group = list.get(0).getGroupUnsafe();
+        if (group != null && group.getData() instanceof EnergyGroupData data) {
+            long resultEU = resultVoltage * resultAmperage;
+            postActions.add(() -> {
                 data.addEnergyInPerSec(voltage * amperage, tick);
-                data.addEnergyOutPerSec(finalResultVoltage * finalResultAmperage, tick);
-            }
-        });
+                data.addEnergyOutPerSec(resultEU, tick);
+            });
+        }
         return new StandardReport(resultAmperage, resultVoltage, postActions);
     }
 
@@ -239,7 +242,7 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
                 energyFlow = new EnergyFlowLogic();
                 data.setLogicEntry(energyFlow);
             }
-            long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+            int tick = TickUtil.getTick();
             long sum = 0L;
             for (EnergyFlowData energyFlowData : energyFlow.getFlow(tick)) {
                 long amperaged = energyFlowData.amperage();
@@ -284,6 +287,11 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
         }
 
         @Override
+        public long euOut() {
+            return 0;
+        }
+
+        @Override
         public void report() {}
     };
 
@@ -291,18 +299,21 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
 
         private final long amperage;
         private final long voltage;
-        private final Runnable[] report;
+        private final long eu;
+        private final List<Runnable> report;
 
         public StandardReport(long amperage, long voltage, @NotNull Runnable @NotNull... report) {
             this.amperage = amperage;
             this.voltage = voltage;
-            this.report = report;
+            this.report = ObjectArrayList.wrap(report);
+            this.eu = amperage * voltage;
         }
 
         public StandardReport(long amperage, long voltage, @NotNull List<@NotNull Runnable> report) {
             this.amperage = amperage;
             this.voltage = voltage;
-            this.report = report.toArray(new Runnable[0]);
+            this.report = report;
+            this.eu = amperage * voltage;
         }
 
         @Override
@@ -313,6 +324,11 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
         @Override
         public long amperageOut() {
             return amperage;
+        }
+
+        @Override
+        public long euOut() {
+            return eu;
         }
 
         @Override

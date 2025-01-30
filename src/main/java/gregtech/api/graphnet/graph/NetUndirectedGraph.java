@@ -2,15 +2,13 @@ package gregtech.api.graphnet.graph;
 
 import gregtech.api.graphnet.net.IGraphNet;
 
-import org.jgrapht.graph.SimpleWeightedGraph;
-
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class NetUndirectedGraph extends SimpleWeightedGraph<GraphVertex, GraphEdge> implements INetGraph {
+public class NetUndirectedGraph extends BaseNetGraph {
 
     public NetUndirectedGraph(Supplier<GraphVertex> vertexSupplier, Supplier<GraphEdge> edgeSupplier) {
-        super(vertexSupplier, edgeSupplier);
+        super(vertexSupplier, edgeSupplier, false);
     }
 
     public static Function<IGraphNet, INetGraph> standardBuilder() {

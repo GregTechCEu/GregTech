@@ -83,8 +83,7 @@ public interface CoverHolder extends CoverableView {
      * Updates all covers. Should be called every tick.
      */
     default void updateCovers() {
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            Cover cover = getCoverAtSide(facing);
+        for (Cover cover : getAttachedCovers()) {
             if (cover instanceof ITickable tickable) {
                 tickable.update();
             }

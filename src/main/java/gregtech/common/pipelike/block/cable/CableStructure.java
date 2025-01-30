@@ -14,21 +14,21 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("unused")
 @Desugar
 public record CableStructure(String name, int material, int costFactor, OrePrefix ore,
-                             @Nullable CableStructure partialBurnStructure, @Nullable Integer partialBurnThreshold,
+                             @Nullable CableStructure partialBurnStructure, int partialBurnThreshold,
                              float renderThickness, PipeModelRedirector model)
         implements IPipeMaterialStructure, IInsulatable {
 
     public static final int INSULATION_BURN_TEMP = 1000;
 
     public static final CableStructure WIRE_SINGLE = new CableStructure("wire_single", 1, 2, OrePrefix.wireGtSingle,
-            null, null, 0.125f, PipeModelRegistry.getCableModel(0));
+            null, -1, 0.125f, PipeModelRegistry.getCableModel(0));
     public static final CableStructure WIRE_DOUBLE = new CableStructure("wire_double", 2, 2, OrePrefix.wireGtDouble,
-            null, null, 0.25f, PipeModelRegistry.getCableModel(0));
+            null, -1, 0.25f, PipeModelRegistry.getCableModel(0));
     public static final CableStructure WIRE_QUADRUPLE = new CableStructure("wire_quadruple", 4, 3,
-            OrePrefix.wireGtQuadruple, null, null, 0.375f, PipeModelRegistry.getCableModel(0));
+            OrePrefix.wireGtQuadruple, null, -1, 0.375f, PipeModelRegistry.getCableModel(0));
     public static final CableStructure WIRE_OCTAL = new CableStructure("wire_octal", 8, 3, OrePrefix.wireGtOctal, null,
-            null, 0.5f, PipeModelRegistry.getCableModel(0));
-    public static final CableStructure WIRE_HEX = new CableStructure("wire_hex", 16, 3, OrePrefix.wireGtHex, null, null,
+            -1, 0.5f, PipeModelRegistry.getCableModel(0));
+    public static final CableStructure WIRE_HEX = new CableStructure("wire_hex", 16, 3, OrePrefix.wireGtHex, null, -1,
             0.75f, PipeModelRegistry.getCableModel(0));
 
     public static final CableStructure CABLE_SINGLE = new CableStructure("cable_single", 1, 1, OrePrefix.cableGtSingle,

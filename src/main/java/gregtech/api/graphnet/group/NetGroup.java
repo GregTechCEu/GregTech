@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public final class NetGroup {
     private GroupGraphView graphView;
 
     public NetGroup(IGraphNet net) {
-        this(net, new ObjectOpenHashSet<>(), new Int2ObjectOpenHashMap<>());
+        this(net, new ReferenceOpenHashSet<>(), new Int2ObjectOpenHashMap<>());
     }
 
     public NetGroup(@NotNull IGraphNet net, @NotNull Set<NetNode> nodes) {
@@ -70,7 +71,7 @@ public final class NetGroup {
     private void initialSort(NetNode node) {
         int key = node.getSortingKey();
         Set<NetNode> s = this.sortingNodes.get(key);
-        if (s == null) this.sortingNodes.put(key, s = new ObjectOpenHashSet<>());
+        if (s == null) this.sortingNodes.put(key, s = new ReferenceOpenHashSet<>());
         s.add(node);
     }
 
@@ -212,7 +213,7 @@ public final class NetGroup {
         if (edge == null) return false;
         if (data != null) data.notifyOfRemovedEdge(edge);
         if (this.net.getBacker().removeEdge(source.wrapper, target.wrapper) != null) {
-            Set<NetNode> targetGroup = new ObjectOpenHashSet<>();
+            Set<NetNode> targetGroup = new ReferenceOpenHashSet<>();
             NetBreadthIterator i = new NetBreadthIterator(target, EdgeDirection.ALL);
             NetNode temp;
             while (i.hasNext()) {

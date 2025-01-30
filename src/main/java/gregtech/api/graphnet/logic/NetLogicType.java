@@ -44,4 +44,14 @@ public class NetLogicType<T extends NetLogicEntry<T, ?>> implements IStringSeria
     public final @NotNull String getName() {
         return name;
     }
+
+    @Override
+    public final boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public final int hashCode() {
+        return super.hashCode();
+    }
 }

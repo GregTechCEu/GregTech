@@ -1,7 +1,6 @@
 package gregtech.api.graphnet.logic;
 
 import gregtech.api.network.IPacket;
-import gregtech.api.util.reference.WeakHashSet;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,23 +8,24 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.INBTSerializable;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket, INetLogicEntryListener {
 
-    private final Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> logicEntrySet;
+    private final Reference2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> logicEntrySet;
 
-    private final WeakHashSet<ILogicDataListener> listeners = new WeakHashSet<>();
+    private final ReferenceArrayList<ILogicDataListener> listeners = new ReferenceArrayList<>(1);
 
     public NetLogicData() {
-        logicEntrySet = new Object2ObjectOpenHashMap<>(4);
+        logicEntrySet = new Reference2ObjectOpenHashMap<>(4);
     }
 
-    private NetLogicData(Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> logicEntrySet) {
+    private NetLogicData(Reference2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> logicEntrySet) {
         this.logicEntrySet = logicEntrySet;
     }
 
@@ -79,7 +79,10 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     @Override
     public void markLogicEntryAsUpdated(NetLogicEntry<?, ?> entry, boolean fullChange) {
-        this.listeners.forEach(l -> l.markChanged(entry, false, fullChange));
+        for (int i = 0; i < listeners.size(); i++) {
+            ILogicDataListener l = listeners.get(i);
+            l.markChanged(entry, false, fullChange);
+        }
     }
 
     public boolean hasLogicEntry(@NotNull NetLogicType<?> type) {
@@ -105,7 +108,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     @Contract("_, _ -> new")
     public static @NotNull NetLogicData union(@NotNull NetLogicData sourceData, @Nullable NetLogicData targetData) {
-        Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
+        Reference2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> newLogic = new Reference2ObjectOpenHashMap<>(
                 sourceData.logicEntrySet);
         if (targetData != null) {
             for (NetLogicType<?> key : newLogic.keySet()) {
@@ -118,7 +121,7 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     @Contract("_, _ -> new")
     public static @NotNull NetLogicData union(@NotNull NetLogicData first, @NotNull NetLogicData... others) {
-        Object2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> newLogic = new Object2ObjectOpenHashMap<>(
+        Reference2ObjectOpenHashMap<NetLogicType<?>, NetLogicEntry<?, ?>> newLogic = new Reference2ObjectOpenHashMap<>(
                 first.logicEntrySet);
         for (NetLogicData other : others) {
             for (NetLogicType<?> key : newLogic.keySet()) {
@@ -212,18 +215,38 @@ public final class NetLogicData implements INBTSerializable<NBTTagList>, IPacket
 
     /**
      * Adds a listener to a weak set which is then notified for as long as it is not collected by the garbage collector.
-     * 
+     *
      * @param listener the listener.
-     * @return the listener, for convenience when working with lambdas.
+     * @return the callback for the listener, allowing access to the registered listener and the ability to retire it in
+     *         the future.
+     *         WARNING- FAILING TO RETIRE THE LISTENER WHEN IT IS NO LONGER IN USE WILL CAUSE A MEMORY LEAK
      */
-    public ILogicDataListener addListener(ILogicDataListener listener) {
+    public <T extends ILogicDataListener> ListenerCallback<T> addListener(T listener) {
+        int index = listeners.size();
         listeners.add(listener);
-        return listener;
+        return new ListenerCallback<>() {
+
+            @Override
+            public T getListener() {
+                return listener;
+            }
+
+            @Override
+            public void retire() {
+                listeners.remove(index);
+            }
+        };
     }
 
-    @FunctionalInterface
     public interface ILogicDataListener {
 
         void markChanged(NetLogicEntry<?, ?> updatedEntry, boolean removed, boolean fullChange);
+    }
+
+    public interface ListenerCallback<T extends ILogicDataListener> {
+
+        T getListener();
+
+        void retire();
     }
 }

@@ -17,7 +17,7 @@ import gregtech.api.graphnet.predicate.EdgePredicate;
 import gregtech.api.graphnet.predicate.NetPredicateType;
 import gregtech.api.graphnet.traverse.EdgeDirection;
 import gregtech.api.util.IDirtyNotifiable;
-import gregtech.api.util.reference.WeakHashSet;
+import gregtech.api.util.collection.WeakHashSet;
 import gregtech.common.covers.CoverShutter;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -253,7 +253,7 @@ public abstract class WorldPipeNet extends WorldSavedNet {
 
         @Override
         public int hashCode(NetNode o) {
-            return Objects.hash(o, o.getNet());
+            return o.hashCode() * 31 + o.getNet().hashCode();
         }
 
         @Override

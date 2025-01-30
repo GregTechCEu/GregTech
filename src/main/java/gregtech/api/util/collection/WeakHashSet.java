@@ -1,4 +1,4 @@
-package gregtech.api.util.reference;
+package gregtech.api.util.collection;
 
 import org.jetbrains.annotations.NotNull;
 
