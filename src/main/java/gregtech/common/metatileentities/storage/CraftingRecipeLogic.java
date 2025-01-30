@@ -52,7 +52,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * Used to lookup a list of slots for a given stack
-     * filled by {@link CraftingRecipeLogic#handleCacheMiss(ItemStack)}
+     * filled by {@link CraftingRecipeLogic#refreshStackMap()}
      **/
     private final Map<ItemStack, Set<Integer>> stackLookupMap = new Object2ObjectOpenCustomHashMap<>(this.strategy);
 
@@ -139,11 +139,6 @@ public class CraftingRecipeLogic extends SyncHandler {
             int extractedAmount = 0;
             for (int slot : slotList) {
                 var extracted = availableHandlers.extractItem(slot, requestedAmount, true);
-                // i don't know if this is necessary
-                if (!this.strategy.equals(extracted, stack)) {
-                    handleCacheMiss(stack);
-                    continue;
-                }
                 gatheredItems.put(slot, extracted.getCount());
                 extractedAmount += extracted.getCount();
                 requestedAmount -= extracted.getCount();
@@ -292,25 +287,13 @@ public class CraftingRecipeLogic extends SyncHandler {
      */
     private boolean simulateExtractItem(ItemStack itemStack, int count) {
         if (itemStack.isEmpty()) return true;
-        if (!stackLookupMap.containsKey(itemStack) || stackLookupMap.get(itemStack).isEmpty()) {
-            if (handleCacheMiss(itemStack) == -1)
-                return false;
-        }
+        if (!stackLookupMap.containsKey(itemStack)) return false;
 
         int extracted = 0;
 
-        Iterator<Integer> slotItr = stackLookupMap.get(itemStack).iterator();
-        while (slotItr.hasNext()) {
-            int slot = slotItr.next();
+        for (int slot : stackLookupMap.get(itemStack)) {
             var slotStack = availableHandlers.extractItem(slot, count, true);
-            // cache is not correct
-            if (slotStack.isEmpty() || !this.strategy.equals(slotStack, itemStack)) {
-                slotItr.remove();
-                if (!slotItr.hasNext()) stackLookupMap.remove(itemStack);
-                slot = handleCacheMiss(itemStack);
-                if (slot == -1) return false;
-                slotStack = availableHandlers.getStackInSlot(slot);
-            }
+            // we are certain the stack map is correct
             extracted += slotStack.getCount();
             if (extracted >= count) return true;
         }
@@ -349,6 +332,7 @@ public class CraftingRecipeLogic extends SyncHandler {
         }
 
         requiredItems.clear();
+        refreshStackMap();
         final Map<Integer, Boolean> map = new Int2BooleanArrayMap();
         for (CraftingInputSlot slot : this.inputSlots) {
             final boolean old = slot.hasIngredients;
@@ -392,15 +376,13 @@ public class CraftingRecipeLogic extends SyncHandler {
     }
 
     /**
-     * searches available handlers for the stack directly and
+     * Searches available handlers and
      * adds the stack and slots the stack lookup map
-     * 
-     * @param stack stack to check for in available handlers
-     * @return the slot index containing the desired stack, -1 if the stack was not found
      */
-    public int handleCacheMiss(ItemStack stack) {
-        if (stack.isEmpty()) return -1;
-
+    public void refreshStackMap() {
+        // the stack lookup map is a pain to do "correctly"
+        // so just clear and reset every tick in detectAndSendChanges()
+        stackLookupMap.clear();
         for (int i = 0; i < this.availableHandlers.getSlots(); i++) {
             var curStack = this.availableHandlers.getStackInSlot(i);
             if (curStack.isEmpty()) continue;
@@ -412,12 +394,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 stackLookupMap.put(curStack.copy(), slots = new IntArraySet());
             }
             slots.add(i);
-
-            if (this.strategy.equals(stack, curStack)) {
-                return i;
-            }
         }
-        return -1;
     }
 
     public void writeMatrix(PacketBuffer buffer) {
