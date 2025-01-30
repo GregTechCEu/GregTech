@@ -127,6 +127,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
                     if (recipeLogic.performRecipe()) {
                         ItemStack craftedStack = getOutputStack();
+                        handleItemCraft(craftedStack, getSyncManager().getPlayer());
 
                         if (data.shift) {
                             ItemStack finalStack = craftedStack.copy();
@@ -138,7 +139,6 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                             quickTransfer(finalStack);
                         } else {
                             syncToClient(SYNC_STACK, this::syncCraftedStack);
-                            handleItemCraft(craftedStack, getSyncManager().getPlayer());
                         }
                     }
                 }
