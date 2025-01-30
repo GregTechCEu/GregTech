@@ -125,7 +125,10 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 var data = MouseData.readPacket(buf);
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
-                    if (quickTransfer(getOutputStack(), true) && recipeLogic.performRecipe()) {
+                    boolean hasSpace = data.shift ?
+                            quickTransfer(getOutputStack(), true) :
+                            getSyncManager().getCursorItem().isEmpty();
+                    if (hasSpace && recipeLogic.performRecipe()) {
                         ItemStack craftedStack = getOutputStack();
                         handleItemCraft(craftedStack, getSyncManager().getPlayer());
 
