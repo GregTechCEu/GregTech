@@ -197,7 +197,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .createFlexButton((panel, syncManager) -> {
+                .createFlexButton((panel, syncManager, guiData) -> {
                     PanelSyncHandler throttle = (PanelSyncHandler) syncManager.panel("throttle_panel",
                             this::makeThrottlePanel, true);
 
