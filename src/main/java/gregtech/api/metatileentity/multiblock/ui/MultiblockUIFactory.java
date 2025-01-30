@@ -879,7 +879,9 @@ public class MultiblockUIFactory {
 
         protected void build(IRichTextBuilder<?> richText) {
             if (dirty) build();
-            richText.addDrawableLines(this.textList);
+            for (IDrawable drawable : textList) {
+                richText.addLine(drawable).spaceLine(2);
+            }
         }
 
         protected void build() {
