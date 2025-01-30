@@ -136,7 +136,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
     protected MultiblockUIFactory createUIFactory() {
         IntSyncValue recipeMapValue = new IntSyncValue(this::getRecipeMapIndex, this::setRecipeMapIndex);
         return super.createUIFactory()
-                .createFlexButton((panel, syncManager, guiData) -> {
+                .createFlexButton((guiData, syncManager) -> {
                     if (getAvailableRecipeMaps() == null || getAvailableRecipeMaps().length <= 1)
                         return null;
 
