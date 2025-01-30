@@ -79,18 +79,22 @@ public class MultiblockUIFactory {
         // this.valueSyncer.accept(panelSyncManager);
         var panel = createRootPanel();
 
-        // TODO createExtras() hook for overrides?
-        var bars = createBars(panel, panelSyncManager);
+        panel.child(createScreen(panelSyncManager));
 
-        return panel.child(createScreen(panelSyncManager))
-                .childIf(bars != null, bars)
-                .child(Flow.row()
-                        .bottom(7)
-                        .height(77)
-                        .margin(4, 0)
-                        .child(SlotGroupWidget.playerInventory(0)
-                                .alignX(0f))
-                        .child(createButtons(panel, panelSyncManager)));
+        // TODO createExtras() hook for overrides?
+        if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
+                progressBarMultiblock.getProgressBarCount() > 0) {
+            panel.height(height + (Bars.HEIGHT * 2) - 2);
+            panel.child(createBars(progressBarMultiblock, panelSyncManager));
+        }
+
+        return panel.child(Flow.row()
+                .bottom(7)
+                .height(77)
+                .margin(4, 0)
+                .child(SlotGroupWidget.playerInventory(0)
+                        .alignX(0f))
+                .child(createButtons(panel, panelSyncManager)));
     }
 
     private Widget<?> createIndicator(PanelSyncManager syncManager) {
@@ -213,18 +217,12 @@ public class MultiblockUIFactory {
     }
 
     /**
-     * @param mainPanel        the main panel, needed for creating popup panels
+     * @param progressMulti    the multiblock with progress bars
      * @param panelSyncManager the sync manager for synchronizing widgets
      */
     @Nullable
-    protected Flow createBars(@NotNull ModularPanel mainPanel,
+    protected Flow createBars(@NotNull ProgressBarMultiblock progressMulti,
                               @NotNull PanelSyncManager panelSyncManager) {
-        if (!(mte instanceof ProgressBarMultiblock progressMulti)) return null;
-
-        final int count = progressMulti.getProgressBarCount();
-        if (count < 1) return null;
-        mainPanel.height(height + (Bars.HEIGHT * 2) - 2);
-
         final int rows = progressMulti.getProgressBarRows();
         final int cols = progressMulti.getProgressBarCols();
 
@@ -233,27 +231,26 @@ public class MultiblockUIFactory {
                 .top(114)
                 .widthRel(1f)
                 .height(Bars.HEIGHT * 2);
-        int rowWidth = (Bars.FULL_WIDTH / cols) - (cols - 1);
 
         for (int r = 0; r < rows; r++) {
 
             Flow row = Flow.row()
                     .widthRel(1f)
+                    .mainAxisAlignment(Alignment.MainAxis.SPACE_BETWEEN)
                     .height(Bars.HEIGHT);
 
+            // the numbers for the given row of bars
             int from = r * cols;
             int to = Math.min(from + cols, cols);
 
-            if (to - from > 1) {
-                // TODO MUI2 bug workaround, should be able to apply this to every row but it crashes with single
-                // element rows
-                row.mainAxisAlignment(Alignment.MainAxis.SPACE_BETWEEN);
-            }
+            // calculate bar width
+            int barCount = Math.max(1, to - from);
+            int barWidth = (Bars.FULL_WIDTH / barCount) - (barCount - 1);
 
             for (int i = from; i < to; i++) {
                 row.child(progressMulti.createProgressBar(panelSyncManager, i)
                         .height(Bars.HEIGHT)
-                        .width(rowWidth)
+                        .width(barWidth)
                         .direction(ProgressWidget.Direction.RIGHT));
             }
 
