@@ -68,6 +68,7 @@ gregtech.top.working_disabled=Working Disabled
 
 gregtech.top.energy_consumption=Using
 gregtech.top.energy_production=Producing
+gregtech.top.energy_required=Requires
 
 gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
