@@ -125,18 +125,19 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 var data = MouseData.readPacket(buf);
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
-                    if (recipeLogic.performRecipe()) {
+                    if (quickTransfer(getOutputStack(), true) && recipeLogic.performRecipe()) {
                         ItemStack craftedStack = getOutputStack();
                         handleItemCraft(craftedStack, getSyncManager().getPlayer());
 
                         if (data.shift) {
                             ItemStack finalStack = craftedStack.copy();
-                            while (finalStack.getCount() < craftedStack.getMaxStackSize()) {
+                            while (quickTransfer(finalStack, true) &&
+                                    finalStack.getCount() < craftedStack.getMaxStackSize()) {
                                 if (!recipeLogic.performRecipe()) break;
                                 finalStack.setCount(finalStack.getCount() + craftedStack.getCount());
                                 handleItemCraft(craftedStack, getSyncManager().getPlayer());
                             }
-                            quickTransfer(finalStack);
+                            quickTransfer(finalStack, false);
                         } else {
                             syncToClient(SYNC_STACK, this::syncCraftedStack);
                         }
@@ -145,49 +146,57 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             }
         }
 
-        public void quickTransfer(ItemStack fromStack) {
+        private boolean insertStack(ItemStack fromStack, ModularSlot toSlot, boolean simulate) {
+            ItemStack toStack = toSlot.getStack().copy();
+            if (ItemHandlerHelper.canItemStacksStack(fromStack, toStack)) {
+                int j = toStack.getCount() + fromStack.getCount();
+                int maxSize = Math.min(toSlot.getSlotStackLimit(), fromStack.getMaxStackSize());
+
+                if (j <= maxSize) {
+                    if (simulate) return true;
+                    fromStack.setCount(0);
+                    toStack.setCount(j);
+                    toSlot.putStack(toStack);
+                } else if (toStack.getCount() < maxSize) {
+                    if (simulate) return true;
+                    fromStack.shrink(maxSize - toStack.getCount());
+                    toStack.setCount(maxSize);
+                    toSlot.putStack(toStack);
+                }
+
+                return fromStack.isEmpty();
+            } else if (toStack.isEmpty()) {
+                if (simulate) return true;
+                int maxSize = Math.max(toSlot.getSlotStackLimit(), fromStack.getCount());
+                toSlot.putStack(fromStack.splitStack(maxSize));
+                return fromStack.isEmpty();
+            }
+            return false;
+        }
+
+        public boolean quickTransfer(ItemStack fromStack, boolean simulate) {
             List<ModularSlot> emptySlots = new ArrayList<>();
             for (ModularSlot toSlot : this.shiftClickSlots) {
                 if (toSlot.isEnabled() && toSlot.isItemValid(fromStack)) {
-                    ItemStack toStack = toSlot.getStack().copy();
-                    if (toStack.isEmpty()) {
+                    if (toSlot.getStack().isEmpty()) {
                         emptySlots.add(toSlot);
                         continue;
                     }
 
-                    if (ItemHandlerHelper.canItemStacksStack(fromStack, toStack)) {
-                        int j = toStack.getCount() + fromStack.getCount();
-                        int maxSize = Math.min(toSlot.getSlotStackLimit(), fromStack.getMaxStackSize());
-
-                        if (j <= maxSize) {
-                            fromStack.setCount(0);
-                            toStack.setCount(j);
-                            toSlot.putStack(toStack);
-                        } else if (toStack.getCount() < maxSize) {
-                            fromStack.shrink(maxSize - toStack.getCount());
-                            toStack.setCount(maxSize);
-                            toSlot.putStack(toStack);
-                        }
-
-                        if (fromStack.isEmpty()) {
-                            return;
-                        }
+                    if (insertStack(fromStack, toSlot, simulate)) {
+                        if (simulate || fromStack.isEmpty()) return true;
                     }
                 }
             }
             for (ModularSlot emptySlot : emptySlots) {
                 ItemStack itemstack = emptySlot.getStack();
                 if (emptySlot.isEnabled() && itemstack.isEmpty() && emptySlot.isItemValid(fromStack)) {
-                    if (fromStack.getCount() > emptySlot.getSlotStackLimit()) {
-                        emptySlot.putStack(fromStack.splitStack(emptySlot.getSlotStackLimit()));
-                    } else {
-                        emptySlot.putStack(fromStack.splitStack(fromStack.getCount()));
-                    }
-                    if (fromStack.isEmpty()) {
-                        return;
+                    if (insertStack(fromStack, emptySlot, simulate)) {
+                        if (simulate || fromStack.isEmpty()) return true;
                     }
                 }
             }
+            return false;
         }
 
         @Override
