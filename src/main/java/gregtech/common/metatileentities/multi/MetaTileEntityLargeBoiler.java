@@ -197,7 +197,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .createFlexButton((panel, syncManager, guiData) -> {
+                .createFlexButton((guiData, syncManager) -> {
+                    // todo remove cast in next mui2 version
                     PanelSyncHandler throttle = (PanelSyncHandler) syncManager.panel("throttle_panel",
                             this::makeThrottlePanel, true);
 
@@ -206,7 +207,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                             .overlay(GTGuiTextures.FILTER_SETTINGS_OVERLAY)
                             // todo lang
                             .addTooltipLine("Configure Boiler Throttle")
-                            // TODO make this work
                             .background(GTGuiTextures.BUTTON)
                             .onMousePressed(i -> {
                                 if (throttle.isPanelOpen()) {
@@ -214,6 +214,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                 } else {
                                     throttle.openPanel();
                                 }
+                                // todo remove this call in next mui2 version
                                 Interactable.playButtonClickSound();
                                 return true;
                             });
