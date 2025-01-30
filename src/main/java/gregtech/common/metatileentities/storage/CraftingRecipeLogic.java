@@ -37,6 +37,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     // client only
     public static final int UPDATE_INGREDIENTS = 1;
+    public static final int RESET_INGREDIENTS = 2;
     public static final int SYNC_STACK = 4;
 
     // server only
@@ -336,7 +337,16 @@ public class CraftingRecipeLogic extends SyncHandler {
     @Override
     public void detectAndSendChanges(boolean init) {
         var recipe = getCachedRecipe();
-        if (recipe == null) return;
+        if (recipe == null) {
+            var prevRecipe = cachedRecipeData.getPreviousRecipe();
+            if (prevRecipe == null) return;
+            cachedRecipeData.setRecipe(null);
+            for (CraftingInputSlot inputSlot : this.inputSlots) {
+                inputSlot.hasIngredients = true;
+            }
+            syncToClient(RESET_INGREDIENTS);
+            return;
+        }
 
         requiredItems.clear();
         final Map<Integer, Boolean> map = new Int2BooleanArrayMap();
@@ -424,9 +434,12 @@ public class CraftingRecipeLogic extends SyncHandler {
             for (int i = 0; i < size; i++) {
                 this.inputSlots[buf.readByte()].hasIngredients = buf.readBoolean();
             }
-        }
-        if (id == SYNC_STACK) {
+        } else if (id == SYNC_STACK) {
             getSyncManager().setCursorItem(NetworkUtils.readItemStack(buf));
+        } else if (id == RESET_INGREDIENTS) {
+            for (CraftingInputSlot inputSlot : this.inputSlots) {
+                inputSlot.hasIngredients = true;
+            }
         }
     }
 
