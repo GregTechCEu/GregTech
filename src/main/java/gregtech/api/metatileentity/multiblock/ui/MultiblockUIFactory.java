@@ -14,7 +14,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.JsonUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
-import gregtech.api.util.function.TriFunction;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.network.PacketBuffer;
@@ -47,18 +46,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class MultiblockUIFactory {
 
     private final MultiblockWithDisplayBase mte;
     protected Consumer<Builder> displayText, warningText, errorText;
-    protected TriFunction<ModularPanel, PanelSyncManager, PosGuiData, IWidget> flexButton = (panel, syncManager,
-                                                                                             posGuiData) -> null;
+    protected BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton = (guiData, syncManager) -> null;
     private int width = 198, height = 202;
     private int screenHeight = 109;
-    private Supplier<IWidget> customScreen;
     private Consumer<List<IWidget>> childrenConsumer;
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
@@ -197,7 +194,8 @@ public class MultiblockUIFactory {
      * <br>
      * Size will be 18x18.
      */
-    public MultiblockUIFactory createFlexButton(TriFunction<ModularPanel, PanelSyncManager, PosGuiData, IWidget> flexButton) {
+    public MultiblockUIFactory createFlexButton(
+                                                BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
         this.flexButton = flexButton;
         return this;
     }
@@ -296,7 +294,7 @@ public class MultiblockUIFactory {
     @NotNull
     protected Flow createButtons(@NotNull ModularPanel mainPanel, @NotNull PanelSyncManager panelSyncManager,
                                  PosGuiData guiData) {
-        IWidget flexButton = this.flexButton.apply(mainPanel, panelSyncManager, guiData);
+        IWidget flexButton = this.flexButton.apply(guiData, panelSyncManager);
         if (flexButton == null) {
             flexButton = GTGuiTextures.BUTTON_NO_FLEX.asWidget()
                     .size(18)
