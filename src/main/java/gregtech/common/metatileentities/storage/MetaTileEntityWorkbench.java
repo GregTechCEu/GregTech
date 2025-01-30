@@ -47,6 +47,7 @@ import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.PageButton;
 import com.cleanroommc.modularui.widgets.PagedWidget;
@@ -291,7 +292,21 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                             }
                         })
                         .background(GTGuiTextures.SLOT))
-                .build();
+                .build()
+                .child(new ButtonWidget<>()
+                        .margin(2)
+                        .size(8)
+                        .topRel(0f)
+                        .rightRel(0f, 0, 1f)
+                        .background(GTGuiTextures.BUTTON_CLEAR_GRID)
+                        .disableHoverBackground()
+                        .onMousePressed(mouseButton -> {
+                            this.recipeLogic.clearCraftingGrid();
+                            this.recipeLogic.syncToServer(
+                                    CraftingRecipeLogic.UPDATE_MATRIX,
+                                    this.recipeLogic::writeMatrix);
+                            return true;
+                        }));
     }
 
     public IWidget createCraftingOutput(PosGuiData guiData, PanelSyncManager syncManager) {
