@@ -2832,8 +2832,8 @@ gregtech.machine.workbench.tooltip1=Better than Forestry
 gregtech.machine.workbench.tooltip2=Has Item Storage, Tool Storage, pulls from adjacent Inventories, and saves Recipes.
 gregtech.machine.workbench.tab.workbench=Crafting
 gregtech.machine.workbench.tab.item_list=Storage
-gregtech.machine.workbench.storage_note_1=(Available items from connected
-gregtech.machine.workbench.storage_note_2=inventories usable for crafting)
+gregtech.machine.workbench.storage_note=(Available items from connected\ninventories usable for crafting)
+gregtech.machine.workbench.clear_grid=Clear Crafting Grid
 gregtech.item_list.item_stored=§7Stored: %,d
 
 gregtech.machine.workbench.tab.crafting=Crafting
