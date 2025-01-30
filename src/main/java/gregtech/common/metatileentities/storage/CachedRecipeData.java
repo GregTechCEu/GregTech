@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class CachedRecipeData {
 
     private IRecipe recipe;
+    private IRecipe previousRecipe;
 
     public CachedRecipeData() {
         this(null);
@@ -27,11 +28,16 @@ public class CachedRecipeData {
     }
 
     public void setRecipe(IRecipe newRecipe) {
+        this.previousRecipe = this.recipe;
         this.recipe = newRecipe;
     }
 
     public IRecipe getRecipe() {
         return recipe;
+    }
+
+    public IRecipe getPreviousRecipe() {
+        return previousRecipe;
     }
 
     public ItemStack getRecipeOutput() {
