@@ -126,14 +126,20 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
                     if (recipeLogic.performRecipe()) {
-                        ItemStack craftedStack = this.slot.getStack();
+                        ItemStack craftedStack = getOutputStack();
 
                         if (data.shift) {
-                            quickTransfer(craftedStack);
+                            ItemStack finalStack = craftedStack.copy();
+                            while (finalStack.getCount() < craftedStack.getMaxStackSize()) {
+                                if (!recipeLogic.performRecipe()) break;
+                                finalStack.setCount(finalStack.getCount() + craftedStack.getCount());
+                                handleItemCraft(craftedStack, getSyncManager().getPlayer());
+                            }
+                            quickTransfer(finalStack);
                         } else {
                             syncToClient(SYNC_STACK, this::syncCraftedStack);
+                            handleItemCraft(craftedStack, getSyncManager().getPlayer());
                         }
-                        handleItemCraft(craftedStack, getSyncManager().getPlayer());
                     }
                 }
             }
@@ -215,13 +221,13 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             return slot.getStack();
         }
 
-        public void handleItemCraft(ItemStack itemStack, EntityPlayer player) {
-            itemStack.onCrafting(player.world, player, 1);
+        public void handleItemCraft(ItemStack craftedStack, EntityPlayer player) {
+            craftedStack.onCrafting(player.world, player, 1);
 
             var inventoryCrafting = recipeLogic.getCraftingMatrix();
 
             // if we're not simulated, fire the event, unlock recipe and add crafted items, and play sounds
-            FMLCommonHandler.instance().firePlayerCraftingEvent(player, itemStack, inventoryCrafting);
+            FMLCommonHandler.instance().firePlayerCraftingEvent(player, craftedStack, inventoryCrafting);
 
             var cachedRecipe = recipeLogic.getCachedRecipe();
             if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
@@ -229,7 +235,6 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             }
             if (cachedRecipe != null) {
                 ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
-                // itemsCrafted += resultStack.getCount();
                 this.slot.notifyRecipePerformed(resultStack);
             }
         }
