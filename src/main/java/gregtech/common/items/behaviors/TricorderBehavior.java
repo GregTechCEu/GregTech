@@ -328,7 +328,7 @@ public class TricorderBehavior implements IItemBehaviour {
             if (data != null) {
                 long cumulativeVoltage = 0;
                 long cumulativeAmperage = 0;
-                for (var memory : data.getLogicEntryDefaultable(EnergyFlowLogic.TYPE).getMemory().values()) {
+                for (var memory : data.getLogicEntryDefaultable(EnergyFlowLogic.TYPE).getMemory(true).values()) {
                     double voltage = 0;
                     long amperage = 0;
                     for (EnergyFlowData flow : memory) {

@@ -106,14 +106,14 @@ public class ResilientNetClosestIterator implements NetIterator {
             this.heap = new PairingHeap<>();
             this.seen = new Reference2ReferenceOpenHashMap<>(expectedSize) {
 
-                // prevent rehashing to shrink the seen map, we are a shortlived object, this is expensive, and it grows
-                // and shrinks rapidly.
+                // prevent rehashing to shrink the seen map, we are a shortlived object, this is expensive,
+                // and it grows and shrinks rapidly.
                 @Override
                 protected void rehash(int newN) {
                     if (newN > n) super.rehash(newN);
                 }
             };
-            encounterVertexFirst(startVertex, null);
+            encounterVertexFirst(null, startVertex, null);
         }
 
         @Override
@@ -140,7 +140,7 @@ public class ResilientNetClosestIterator implements NetIterator {
         private void addUnseenChildrenOf(GraphVertex vertex) {
             for (GraphEdge edge : selector.selectEdges(graph, vertex)) {
                 GraphVertex oppositeV = edge.getOppositeVertex(vertex);
-                encounterVertex(oppositeV, edge);
+                encounterVertex(vertex, oppositeV, edge);
             }
         }
 
@@ -148,19 +148,20 @@ public class ResilientNetClosestIterator implements NetIterator {
             if (!invalidated.add(vertex)) return;
             AddressableHeap.Handle<Double, SeenData> handle = seen.get(vertex);
             if (handle != null) {
-                Set<GraphEdge> regenerationCandidates = new ReferenceOpenHashSet<>(seen.size());
                 handle.getValue().applySelfAndChildren(c -> {
                     seen.remove(c.vertex);
                     c.outdated = true;
-                    regenerationCandidates.addAll(selector.selectReversedEdges(graph, c.vertex));
                 });
-                for (GraphEdge candidate : regenerationCandidates) {
-                    if (seen.containsKey(candidate.getSource())) {
-                        encounterVertex(candidate.getTarget(), candidate);
-                    } else if (seen.containsKey(candidate.getTarget())) {
-                        encounterVertex(candidate.getSource(), candidate);
+                handle.getValue().applySelfAndChildren(c -> {
+                    for (int i = 0; i < c.weakParents.size(); i++) {
+                        GraphVertex v = c.weakParents.get(i).vertex;
+                        if (seen.containsKey(v)) {
+                            // one of the weak parents is still a seen node, regenerate
+                            GraphEdge e = graph.getEdge(v, c.vertex);
+                            if (e != null) encounterVertex(v, c.vertex, e);
+                        }
                     }
-                }
+                });
             }
         }
 
@@ -182,49 +183,55 @@ public class ResilientNetClosestIterator implements NetIterator {
             }
         }
 
-        private void encounterVertex(GraphVertex vertex, GraphEdge edge) {
-            if (invalidated.contains(vertex)) return;
-            if (seen.containsKey(vertex)) {
-                encounterVertexAgain(vertex, edge);
+        private void encounterVertex(GraphVertex source, GraphVertex dest, GraphEdge edge) {
+            if (invalidated.contains(dest)) return;
+            if (seen.containsKey(dest)) {
+                encounterVertexAgain(source, dest, edge);
             } else {
-                encounterVertexFirst(vertex, edge);
+                encounterVertexFirst(source, dest, edge);
             }
         }
 
-        private void encounterVertexFirst(GraphVertex vertex, GraphEdge edge) {
+        private void encounterVertexFirst(GraphVertex source, GraphVertex dest, GraphEdge edge) {
             double shortestPathLength;
             SeenData data;
             if (edge == null) {
                 shortestPathLength = 0;
-                data = new SeenData(vertex, null, null);
+                data = new SeenData(dest, null, null);
             } else {
-                GraphVertex otherVertex = edge.getOppositeVertex(vertex);
-                AddressableHeap.Handle<Double, SeenData> otherEntry = seen.get(otherVertex);
+                AddressableHeap.Handle<Double, SeenData> otherEntry = seen.get(source);
                 if (otherEntry == null) return;
                 shortestPathLength = otherEntry.getKey() + edge.getWeight();
 
-                data = new SeenData(vertex, edge, otherEntry.getValue());
+                data = new SeenData(dest, edge, otherEntry.getValue());
                 otherEntry.getValue().spanningChildren.add(data);
             }
             AddressableHeap.Handle<Double, SeenData> handle = heap.insert(shortestPathLength, data);
-            seen.put(vertex, handle);
+            seen.put(dest, handle);
         }
 
-        private void encounterVertexAgain(GraphVertex vertex, GraphEdge edge) {
-            AddressableHeap.Handle<Double, SeenData> node = seen.get(vertex);
+        private void encounterVertexAgain(GraphVertex source, GraphVertex dest, GraphEdge edge) {
+            AddressableHeap.Handle<Double, SeenData> node = seen.get(dest);
+            AddressableHeap.Handle<Double, SeenData> otherEntry = seen.get(source);
 
-            if (node.getValue().foundMinimum) {
+            SeenData data = node.getValue();
+
+            if (data.foundMinimum) {
                 // no improvement for this vertex possible
+                data.weakParents.add(otherEntry.getValue());
                 return;
             }
-            GraphVertex otherVertex = edge.getOppositeVertex(vertex);
-            AddressableHeap.Handle<Double, SeenData> otherEntry = seen.get(otherVertex);
 
             double candidatePathLength = otherEntry.getKey() + graph.getEdgeWeight(edge);
             if (candidatePathLength < node.getKey()) {
-                node.getValue().parent = otherEntry.getValue();
-                node.getValue().spanningTreeEdge = edge;
+                data.weakParents.add(data.parent);
+
+                data.parent = otherEntry.getValue();
+                data.spanningTreeEdge = edge;
+
                 node.decreaseKey(candidatePathLength);
+            } else {
+                data.weakParents.add(otherEntry.getValue());
             }
         }
     }
@@ -244,6 +251,9 @@ public class ResilientNetClosestIterator implements NetIterator {
 
         // all nodes whose spanning tree edges point at this node
         public final List<SeenData> spanningChildren = new ObjectArrayList<>(6);
+
+        // weak parents are regeneration candidates
+        public final List<SeenData> weakParents = new ObjectArrayList<>(6);
 
         public SeenData(GraphVertex vertex, GraphEdge spanningTreeEdge, SeenData parent) {
             this.vertex = vertex;

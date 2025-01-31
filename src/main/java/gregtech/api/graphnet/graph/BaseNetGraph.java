@@ -1,12 +1,14 @@
 package gregtech.api.graphnet.graph;
 
-import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import gregtech.api.util.collection.PairedBiMap;
+
+import com.google.common.collect.BiMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
-import org.jgrapht.alg.util.Pair;
-import org.jgrapht.alg.util.UnorderedPair;
 import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.GraphSpecificsStrategy;
@@ -94,18 +96,21 @@ public class BaseNetGraph extends AbstractBaseGraph<GraphVertex, GraphEdge> impl
             return (g, t) -> t.isDirected() ? new DirectedSpecifics() : new UndirectedSpecifics();
         }
 
+        private static BiMap<GraphVertex, GraphEdge> standardBiMap() {
+            return new PairedBiMap<>(Reference2ReferenceOpenHashMap::new, 1);
+        }
+
         private static final class DirectedSpecifics implements Specifics<GraphVertex, GraphEdge> {
 
-            // vertex -> incoming edges, outgoing edges
-            Map<GraphVertex, Pair<Set<GraphEdge>, Set<GraphEdge>>> map = new Reference2ReferenceOpenHashMap<>();
+            // vertex -> (source -> incoming edge), (target -> outgoing edge)
+            final Map<GraphVertex, Pair<BiMap<GraphVertex, GraphEdge>, BiMap<GraphVertex, GraphEdge>>> map = new Reference2ReferenceOpenHashMap<>();
 
-            // source, target -> edge
-            Map<Pair<GraphVertex, GraphVertex>, GraphEdge> edges = new Object2ReferenceOpenHashMap<>();
+            static final Pair<Map<GraphVertex, GraphEdge>, Map<GraphVertex, GraphEdge>> defaultable = new ImmutablePair<>(
+                    Collections.emptyMap(), Collections.emptyMap());
 
             @Override
             public boolean addVertex(GraphVertex vertex) {
-                return map.putIfAbsent(vertex, new Pair<>(new ArrayUnenforcedSet<>(1), new ArrayUnenforcedSet<>(1))) ==
-                        null;
+                return map.putIfAbsent(vertex, new ImmutablePair<>(standardBiMap(), standardBiMap())) == null;
             }
 
             @Override
@@ -122,24 +127,27 @@ public class BaseNetGraph extends AbstractBaseGraph<GraphVertex, GraphEdge> impl
 
             @Override
             public GraphEdge getEdge(GraphVertex sourceVertex, GraphVertex targetVertex) {
-                return edges.get(new Pair<>(sourceVertex, targetVertex));
+                var fetch = map.get(sourceVertex);
+                return fetch == null ? null : fetch.getRight().get(targetVertex);
             }
 
             @Override
             public boolean addEdgeToTouchingVertices(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                      GraphEdge edge) {
-                edges.put(new Pair<>(sourceVertex, targetVertex), edge);
-                map.get(sourceVertex).getSecond().add(edge);
-                map.get(targetVertex).getFirst().add(edge);
+                var fetch = map.get(sourceVertex);
+                if (fetch != null) fetch.getRight().put(targetVertex, edge);
+                fetch = map.get(targetVertex);
+                if (fetch != null) fetch.getLeft().put(sourceVertex, edge);
                 return true;
             }
 
             @Override
             public boolean addEdgeToTouchingVerticesIfAbsent(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                              GraphEdge edge) {
-                if (edges.putIfAbsent(new Pair<>(sourceVertex, targetVertex), edge) == null) {
-                    map.get(sourceVertex).getSecond().add(edge);
-                    map.get(targetVertex).getFirst().add(edge);
+                var fetch = map.get(sourceVertex);
+                if (fetch != null && fetch.getRight().putIfAbsent(targetVertex, edge) == null) {
+                    fetch = map.get(targetVertex);
+                    if (fetch != null) fetch.getLeft().put(sourceVertex, edge);
                     return true;
                 }
                 return false;
@@ -148,76 +156,74 @@ public class BaseNetGraph extends AbstractBaseGraph<GraphVertex, GraphEdge> impl
             @Override
             public GraphEdge createEdgeToTouchingVerticesIfAbsent(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                                   Supplier<GraphEdge> edgeSupplier) {
-                Pair<GraphVertex, GraphVertex> pair = new Pair<>(sourceVertex, targetVertex);
-                if (edges.containsKey(pair)) return null;
+                var fetch = map.get(sourceVertex);
+                if (fetch == null || fetch.getRight().containsKey(targetVertex)) return null;
                 GraphEdge edge = edgeSupplier.get();
-                edges.put(pair, edge);
-                map.get(sourceVertex).getSecond().add(edge);
-                map.get(targetVertex).getFirst().add(edge);
+                fetch.getRight().put(targetVertex, edge);
+                fetch = map.get(targetVertex);
+                if (fetch != null) fetch.getLeft().put(sourceVertex, edge);
                 return edge;
             }
 
             @Override
             public int degreeOf(GraphVertex vertex) {
-                Pair<Set<GraphEdge>, Set<GraphEdge>> pair = map.get(vertex);
-                return pair == null ? 0 : pair.getFirst().size() + pair.getSecond().size();
+                var fetch = map.get(vertex);
+                return fetch == null ? 0 : fetch.getLeft().size() + fetch.getRight().size();
             }
 
             @Override
             public Set<GraphEdge> edgesOf(GraphVertex vertex) {
-                Pair<Set<GraphEdge>, Set<GraphEdge>> get = map.get(vertex);
-                if (get == null) return Collections.emptySet();
-                Set<GraphEdge> set = new ArrayUnenforcedSet<>(get.getFirst().size() + get.getSecond().size());
-                set.addAll(get.getFirst());
-                set.addAll(get.getSecond());
+                var fetch = map.get(vertex);
+                if (fetch == null) return Collections.emptySet();
+                Set<GraphEdge> set = new ArrayUnenforcedSet<>(fetch.getLeft().size() + fetch.getRight().size());
+                set.addAll(fetch.getLeft().values());
+                set.addAll(fetch.getRight().values());
                 return set;
             }
 
             @Override
             public int inDegreeOf(GraphVertex vertex) {
-                Pair<Set<GraphEdge>, Set<GraphEdge>> pair = map.get(vertex);
-                return pair == null ? 0 : pair.getFirst().size();
+                var fetch = map.get(vertex);
+                return fetch == null ? 0 : fetch.getLeft().size();
             }
 
             @Override
             public Set<GraphEdge> incomingEdgesOf(GraphVertex vertex) {
-                Pair<Set<GraphEdge>, Set<GraphEdge>> get = map.get(vertex);
-                return get == null ? Collections.emptySet() : get.getFirst();
+                var fetch = map.get(vertex);
+                return fetch == null ? Collections.emptySet() : fetch.getLeft().values();
             }
 
             @Override
             public int outDegreeOf(GraphVertex vertex) {
-                Pair<Set<GraphEdge>, Set<GraphEdge>> pair = map.get(vertex);
-                return pair == null ? 0 : pair.getSecond().size();
+                var fetch = map.get(vertex);
+                return fetch == null ? 0 : fetch.getRight().size();
             }
 
             @Override
             public Set<GraphEdge> outgoingEdgesOf(GraphVertex vertex) {
-                Pair<Set<GraphEdge>, Set<GraphEdge>> get = map.get(vertex);
-                return get == null ? Collections.emptySet() : get.getSecond();
+                var fetch = map.get(vertex);
+                return fetch == null ? Collections.emptySet() : fetch.getRight().values();
             }
 
             @Override
             public void removeEdgeFromTouchingVertices(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                        GraphEdge edge) {
-                if (edges.remove(new Pair<>(sourceVertex, targetVertex)) != null) {
-                    map.get(sourceVertex).getSecond().remove(edge);
-                    map.get(targetVertex).getFirst().remove(edge);
+                var fetch = map.get(sourceVertex);
+                if (fetch != null && fetch.getRight().remove(targetVertex) != null) {
+                    fetch = map.get(targetVertex);
+                    if (fetch != null) fetch.getLeft().remove(sourceVertex);
                 }
             }
         }
 
         private static final class UndirectedSpecifics implements Specifics<GraphVertex, GraphEdge> {
 
-            // vertex -> edges
-            Map<GraphVertex, Set<GraphEdge>> map = new Reference2ReferenceOpenHashMap<>();
-
-            // vertices -> edge
-            Map<UnorderedPair<GraphVertex, GraphVertex>, GraphEdge> edges = new Object2ReferenceOpenHashMap<>();
+            // vertex -> vertex -> edge
+            Map<GraphVertex, BiMap<GraphVertex, GraphEdge>> map = new Reference2ReferenceOpenHashMap<>();
 
             @Override
             public boolean addVertex(GraphVertex vertex) {
-                return map.putIfAbsent(vertex, new ArrayUnenforcedSet<>(1)) == null;
+                return map.putIfAbsent(vertex, standardBiMap()) == null;
             }
 
             @Override
@@ -234,24 +240,27 @@ public class BaseNetGraph extends AbstractBaseGraph<GraphVertex, GraphEdge> impl
 
             @Override
             public GraphEdge getEdge(GraphVertex sourceVertex, GraphVertex targetVertex) {
-                return edges.get(new UnorderedPair<>(sourceVertex, targetVertex));
+                var fetch = map.get(sourceVertex);
+                return fetch == null ? null : fetch.get(targetVertex);
             }
 
             @Override
             public boolean addEdgeToTouchingVertices(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                      GraphEdge edge) {
-                edges.put(new UnorderedPair<>(sourceVertex, targetVertex), edge);
-                map.get(sourceVertex).add(edge);
-                map.get(targetVertex).add(edge);
+                var fetch = map.get(sourceVertex);
+                if (fetch != null) fetch.put(targetVertex, edge);
+                fetch = map.get(targetVertex);
+                if (fetch != null) fetch.put(sourceVertex, edge);
                 return true;
             }
 
             @Override
             public boolean addEdgeToTouchingVerticesIfAbsent(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                              GraphEdge edge) {
-                if (edges.putIfAbsent(new UnorderedPair<>(sourceVertex, targetVertex), edge) == null) {
-                    map.get(sourceVertex).add(edge);
-                    map.get(targetVertex).add(edge);
+                var fetch = map.get(sourceVertex);
+                if (fetch != null && fetch.putIfAbsent(targetVertex, edge) == null) {
+                    fetch = map.get(targetVertex);
+                    if (fetch != null) fetch.put(sourceVertex, edge);
                     return true;
                 }
                 return false;
@@ -260,25 +269,26 @@ public class BaseNetGraph extends AbstractBaseGraph<GraphVertex, GraphEdge> impl
             @Override
             public GraphEdge createEdgeToTouchingVerticesIfAbsent(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                                   Supplier<GraphEdge> edgeSupplier) {
-                UnorderedPair<GraphVertex, GraphVertex> pair = new UnorderedPair<>(sourceVertex, targetVertex);
-                if (edges.containsKey(pair)) return null;
+                var fetch = map.get(sourceVertex);
+                if (fetch == null || fetch.containsKey(targetVertex)) return null;
                 GraphEdge edge = edgeSupplier.get();
-                edges.put(pair, edge);
-                map.get(sourceVertex).add(edge);
-                map.get(targetVertex).add(edge);
+                fetch.put(targetVertex, edge);
+                fetch = map.get(targetVertex);
+                if (fetch != null) fetch.put(sourceVertex, edge);
                 return edge;
             }
 
             @Override
             public int degreeOf(GraphVertex vertex) {
-                Set<GraphEdge> set = map.get(vertex);
-                return set == null ? 0 : set.size();
+                var fetch = map.get(vertex);
+                return fetch == null ? 0 : fetch.size();
             }
 
             @Override
             public Set<GraphEdge> edgesOf(GraphVertex vertex) {
-                Set<GraphEdge> get = map.get(vertex);
-                return get == null ? Collections.emptySet() : get;
+                var fetch = map.get(vertex);
+                if (fetch == null) return Collections.emptySet();
+                return fetch.values();
             }
 
             @Override
@@ -304,9 +314,10 @@ public class BaseNetGraph extends AbstractBaseGraph<GraphVertex, GraphEdge> impl
             @Override
             public void removeEdgeFromTouchingVertices(GraphVertex sourceVertex, GraphVertex targetVertex,
                                                        GraphEdge edge) {
-                if (edges.remove(new UnorderedPair<>(sourceVertex, targetVertex)) != null) {
-                    map.get(sourceVertex).remove(edge);
-                    map.get(targetVertex).remove(edge);
+                var fetch = map.get(sourceVertex);
+                if (fetch != null && fetch.remove(targetVertex) != null) {
+                    fetch = map.get(targetVertex);
+                    if (fetch != null) fetch.remove(sourceVertex);
                 }
             }
         }

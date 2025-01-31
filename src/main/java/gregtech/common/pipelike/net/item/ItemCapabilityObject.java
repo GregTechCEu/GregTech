@@ -147,7 +147,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         if (throughput == null) return Integer.MAX_VALUE;
         ItemFlowLogic history = node.getData().getLogicEntryNullable(ItemFlowLogic.TYPE);
         if (history == null) return GTUtility.safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT);
-        Object2LongMap<ItemTestObject> sum = history.getSum();
+        Object2LongMap<ItemTestObject> sum = history.getSum(false);
         if (sum.isEmpty()) return GTUtility.safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT);
         if (sum.size() < node.getData().getLogicEntryDefaultable(ChannelCountLogic.TYPE).getValue() ||
                 sum.containsKey(testObject)) {

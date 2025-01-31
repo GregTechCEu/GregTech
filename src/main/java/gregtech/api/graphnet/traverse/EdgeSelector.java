@@ -24,7 +24,7 @@ public interface EdgeSelector {
                         set.add(e);
                     }
                 }
-                return set;
+                return set.size() == select.size() ? select : set;
             }
 
             @Override
@@ -36,7 +36,7 @@ public interface EdgeSelector {
                         set.add(e);
                     }
                 }
-                return set;
+                return set.size() == select.size() ? select : set;
             }
         };
     }

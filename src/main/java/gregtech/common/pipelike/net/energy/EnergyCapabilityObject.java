@@ -68,6 +68,7 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
             paths.add(i, path);
         }
         long available = amperage;
+        mainloop:
         for (int i = 0; i < paths.size(); i++) {
             EnergyPath path = paths.get(i);
             NetNode target = path.getTargetNode();
@@ -81,15 +82,16 @@ public class EnergyCapabilityObject implements IPipeCapabilityObject, IEnergyCon
                 IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
                         facing.getOpposite());
                 if (container == null) continue;
-                long allowed = container.acceptEnergyFromNetwork(facing, voltage, amperage, true);
+                long allowed = container.acceptEnergyFromNetwork(facing, voltage, available, true);
                 if (allowed <= 0) continue;
                 EnergyPath.PathFlowReport flow = path.traverse(voltage, allowed);
-                if (flow.euOut() <= 0) continue;
                 available -= allowed;
                 if (!simulate) {
                     flow.report();
-                    container.acceptEnergyFromNetwork(facing, flow.voltageOut(), flow.amperageOut(), false);
+                    if (flow.euOut() > 0)
+                        container.acceptEnergyFromNetwork(facing, flow.voltageOut(), flow.amperageOut(), false);
                 }
+                if (available <= 0) break mainloop;
             }
         }
 

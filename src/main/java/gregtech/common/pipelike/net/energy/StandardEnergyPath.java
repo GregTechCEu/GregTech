@@ -78,6 +78,9 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
             int count = entry.getValue().size();
             resultVoltage = (long) (key + (resultVoltage - key) * Math.pow(0.1, count));
         }
+        if (resultVoltage <= 0) return EMPTY;
+        long finalResultVoltage = resultVoltage;
+
         int tick = TickUtil.getTick();
         long resultAmperage = amperage;
         List<Runnable> postActions = new ObjectArrayList<>();
@@ -98,25 +101,29 @@ public class StandardEnergyPath extends StandardNetPath implements EnergyPath {
             }
             long correctedAmperage = Math.min(data.getLogicEntryDefaultable(AmperageLimitLogic.TYPE).getValue() -
                     sum, resultAmperage);
-
-            EnergyFlowLogic finalEnergyFlow = energyFlow;
-            long finalResultVoltage = resultVoltage;
-            long finalResultAmperage = resultAmperage;
-            postActions.add(() -> {
-                TemperatureLogic tempLogic = data.getLogicEntryNullable(TemperatureLogic.TYPE);
-                if (tempLogic != null) {
-                    long endVoltage = Math.min(voltage,
-                            data.getLogicEntryDefaultable(VoltageLimitLogic.TYPE).getValue());
-                    float heat = (float) computeHeat(voltage, endVoltage, finalResultAmperage, correctedAmperage);
-                    if (heat > 0) tempLogic.applyThermalEnergy(heat, tick);
-                    if (node instanceof WorldPipeNode n) {
-                        tempLogic.defaultHandleTemperature(n.getNet().getWorld(), n.getEquivalencyData());
+            long endVoltage = Math.min(voltage,
+                    data.getLogicEntryDefaultable(VoltageLimitLogic.TYPE).getValue());
+            float heat = (float) computeHeat(voltage, endVoltage, resultAmperage, correctedAmperage);
+            if (heat > 0) {
+                postActions.add(() -> {
+                    TemperatureLogic tempLogic = data.getLogicEntryNullable(TemperatureLogic.TYPE);
+                    if (tempLogic != null) {
+                        tempLogic.applyThermalEnergy(heat, tick);
+                        if (node instanceof WorldPipeNode n) {
+                            tempLogic.defaultHandleTemperature(n.getNet().getWorld(), n.getEquivalencyData());
+                        }
                     }
-                }
-                finalEnergyFlow.recordFlow(tick, new EnergyFlowData(correctedAmperage, finalResultVoltage));
-            });
+                });
+            }
+            if (correctedAmperage > 0) {
+                EnergyFlowLogic finalEnergyFlow = energyFlow;
+                postActions.add(() -> {
+                    finalEnergyFlow.recordFlow(tick, new EnergyFlowData(correctedAmperage, finalResultVoltage));
+                });
+            }
             resultAmperage = correctedAmperage;
         }
+
         NetGroup group = list.get(0).getGroupUnsafe();
         if (group != null && group.getData() instanceof EnergyGroupData data) {
             long resultEU = resultVoltage * resultAmperage;

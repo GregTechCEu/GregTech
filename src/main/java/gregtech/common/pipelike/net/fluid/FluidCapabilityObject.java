@@ -245,7 +245,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         if (throughput == null) return Integer.MAX_VALUE;
         FluidFlowLogic history = node.getData().getLogicEntryNullable(FluidFlowLogic.TYPE);
         if (history == null) return GTUtility.safeCastLongToInt(throughput.getValue() * FluidFlowLogic.MEMORY_TICKS);
-        Object2LongMap<FluidTestObject> sum = history.getSum();
+        Object2LongMap<FluidTestObject> sum = history.getSum(false);
         if (sum.isEmpty()) return GTUtility.safeCastLongToInt(throughput.getValue() * FluidFlowLogic.MEMORY_TICKS);
         if (sum.size() < node.getData().getLogicEntryDefaultable(ChannelCountLogic.TYPE).getValue() ||
                 sum.containsKey(testObject)) {
