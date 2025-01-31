@@ -9,6 +9,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.integration.jei.JeiGhostIngredientSlot;
 import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
@@ -29,6 +30,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     private final InputSyncHandler syncHandler;
     public boolean hasIngredients = true;
+    private static boolean dragging = false;
 
     private CraftingInputSlot(IItemHandlerModifiable handler, int index) {
         this.syncHandler = new InputSyncHandler(handler, index);
@@ -39,6 +41,21 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             ItemStack stack = this.syncHandler.getStack();
             if (stack.isEmpty()) return;
             tooltip.addFromItem(stack);
+        });
+
+        listenGuiAction((IGuiAction.MouseDrag) (m, t) -> {
+            if (isHovering() && dragging && syncHandler.isValid()) {
+                var player = syncHandler.getSyncManager().getCursorItem();
+                if (!ItemHandlerHelper.canItemStacksStack(player, getStack()))
+                    syncHandler.syncStack();
+                return true;
+            }
+            return false;
+        });
+
+        listenGuiAction((IGuiAction.MouseReleased) mouseButton -> {
+            dragging = false;
+            return true;
         });
     }
 
@@ -66,11 +83,18 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     @NotNull
     @Override
     public Result onMousePressed(int mouseButton) {
-        if (!this.syncHandler.isValid())
+        if (!this.syncHandler.isValid() || dragging)
             return Result.IGNORE;
 
         this.syncHandler.syncStack();
         return Result.SUCCESS;
+    }
+
+    @Override
+    public void onMouseDrag(int mouseButton, long timeSinceClick) {
+        if (!dragging && timeSinceClick > 100) {
+            dragging = true;
+        }
     }
 
     @Override
