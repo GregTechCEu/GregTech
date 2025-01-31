@@ -1,5 +1,15 @@
 package gregtech.common.metatileentities.multi.electric;
 
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
+import com.cleanroommc.modularui.value.sync.StringSyncValue;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+
+import com.cleanroommc.modularui.widgets.textfield.BaseTextFieldWidget;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
@@ -12,6 +22,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.BigIntegerSyncValue;
 import gregtech.api.pattern.*;
 import gregtech.api.util.BlockInfo;
@@ -327,6 +338,56 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), this.isActive(),
                 this.isWorkingEnabled());
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
+                .createFlexButton((guiData, syncManager) -> {
+                    if (!guiData.getPlayer().isCreative()) return null;
+
+                    // todo remove cast in next mui2 version
+                    PanelSyncHandler setEnergy = (PanelSyncHandler) syncManager.panel("energy_panel", this::makeEnergyPanel, true);
+                    return new ButtonWidget<>()
+                            .width(18)
+                            .addTooltipLine(I18n.format("gregtech.multiblock.power_substation.energy_button"))
+                            .background(GTGuiTextures.BUTTON)
+                            .onMousePressed(i -> {
+                                if (setEnergy.isPanelOpen()) {
+                                    setEnergy.closePanel();
+                                } else {
+                                    setEnergy.openPanel();
+                                }
+                                // todo remove this call in next mui2 version
+                                Interactable.playButtonClickSound();
+                                return true;
+                            });
+                });
+    }
+
+    private ModularPanel makeEnergyPanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
+        BigIntegerSyncValue storedEnergy = new BigIntegerSyncValue(
+                () -> energyBank == null ? BigInteger.ZERO : energyBank.getStored(),
+                bigInteger -> {
+                    if (energyBank != null) {
+                        energyBank.set(bigInteger);
+                    }
+                });
+
+        StringSyncValue syncValue = new StringSyncValue(
+                () -> energyBank == null ? BigInteger.ZERO.toString() : energyBank.getStored().toString(),
+                str -> {
+                    if (energyBank != null) {
+                        energyBank.set(new BigInteger(str));
+                    }
+                });
+
+        return GTGuis.createPopupPanel("energy_panel", 150, 40)
+                .child(new TextFieldWidget()
+                        .widthRel(0.95f)
+                        .align(Alignment.Center)
+                        .setPattern(BaseTextFieldWidget.WHOLE_NUMS)
+                        .value(syncValue));
     }
 
     @Override
@@ -691,6 +752,22 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             // other drain not necessary, either because the storage is now completely empty,
             // or we were able to drain all the energy from this "battery"
             return maxDrain;
+        }
+
+        public void set(BigInteger bigInteger) {
+            if (bigInteger.compareTo(BigInteger.ZERO) < 0) throw new IllegalArgumentException("Amount cannot be negative!");
+
+            Arrays.fill(storage, 0);
+
+            for (int x = 0; x < storage.length; x++) {
+                if (bigInteger.compareTo(BIG_INTEGER_MAX_LONG) > 0) {
+                    storage[x] = Long.MAX_VALUE;
+                    bigInteger = bigInteger.subtract(BIG_INTEGER_MAX_LONG);
+                } else {
+                    storage[x] = bigInteger.longValue();
+                    break;
+                }
+            }
         }
 
         public BigInteger getCapacity() {

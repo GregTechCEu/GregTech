@@ -4927,6 +4927,7 @@ gregtech.machine.power_substation.tooltip5=Capped at §f%,d EU/t§7 passive loss
 gregtech.machine.power_substation.tooltip6=Can use
 gregtech.machine.power_substation.tooltip6.5= Laser Hatches§7.
 gregtech.multiblock.power_substation.description=The Power Substation is a multiblock structure used for storing immense amounts of Energy. Capable of holding up to 18 layers of Batteries. Can also use Empty Capacitors to fill space, as layers must be fully filled.
+gregtech.multiblock.power_substation.energy_button=Configure the stored energy
 
 gregtech.machine.active_transformer.name=Active Transformer
 gregtech.machine.active_transformer.tooltip1=Transformers: Lasers in Disguise
