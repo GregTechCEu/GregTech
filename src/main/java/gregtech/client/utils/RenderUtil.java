@@ -386,6 +386,7 @@ public class RenderUtil {
     }
 
     // adapted from com.cleanroommc.modularui.drawable.GuiDraw.java
+    // todo merge this with the method from the qstorage mui2 port
     public static void renderItem(ItemStack item, int x, int y, float width, float height) {
         if (item.isEmpty()) return;
         GlStateManager.pushMatrix();
