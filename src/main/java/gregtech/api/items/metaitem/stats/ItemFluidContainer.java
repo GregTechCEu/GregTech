@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,8 @@ import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class ItemFluidContainer implements IItemContainerItemProvider, IItemBehaviour {
 
     private final boolean isBucket;
@@ -53,6 +56,13 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
             return handler.getContainer().copy();
         }
         return itemStack;
+    }
+
+    @Override
+    public void addInformation(ItemStack itemStack, List<String> lines) {
+        if (isBucket) {
+            lines.add(I18n.format("behaviour.cell_bucket.tooltip"));
+        }
     }
 
     @Override
