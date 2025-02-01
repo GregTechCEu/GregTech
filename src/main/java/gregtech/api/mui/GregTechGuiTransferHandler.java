@@ -9,6 +9,7 @@ import net.minecraft.network.PacketBuffer;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularContainer;
+import com.cleanroommc.modularui.value.sync.ModularSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -34,8 +35,12 @@ public class GregTechGuiTransferHandler implements IRecipeTransferHandler<Modula
     @Override
     public @Nullable IRecipeTransferError transferRecipe(ModularContainer container, IRecipeLayout recipeLayout,
                                                          EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+        ModularSyncManager syncManager = container.getSyncManager();
+        if (!syncManager.isOpen("workbench")) {
+            return null;
+        }
         String key = PanelSyncManager.makeSyncKey("recipe_logic", 0);
-        CraftingRecipeLogic recipeLogic = (CraftingRecipeLogic) container.getSyncManager()
+        var recipeLogic = (CraftingRecipeLogic) syncManager
                 .getSyncHandler("workbench", key);
 
         if (!doTransfer) {
