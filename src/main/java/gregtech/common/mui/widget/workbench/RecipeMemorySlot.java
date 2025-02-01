@@ -10,14 +10,16 @@ import net.minecraft.util.text.TextFormatting;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.widget.Widget;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable {
+public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Interactable, JeiIngredientProvider {
 
     private final CraftingRecipeMemory memory;
     private final int index;
@@ -86,5 +88,11 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
         }
 
         return Result.ACCEPT;
+    }
+
+    @Override
+    public @Nullable Object getIngredient() {
+        if (!this.memory.hasRecipe(this.index)) return null;
+        return this.memory.getRecipeOutputAtIndex(this.index);
     }
 }
