@@ -10,6 +10,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -122,23 +123,29 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
             if (id == MOUSE_CLICK) {
+                ForgeHooks.setCraftingPlayer(getSyncManager().getPlayer());
                 var data = MouseData.readPacket(buf);
 
                 if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(getSyncManager().getPlayer())) {
-                    boolean hasSpace = data.shift ?
-                            quickTransfer(getOutputStack(), true) :
-                            getSyncManager().getCursorItem().isEmpty();
+                    ItemStack cursorStack = getSyncManager().getCursorItem();
+                    ItemStack outputStack = getOutputStack();
+                    boolean hasSpace;
+                    if (data.shift) {
+                        hasSpace = quickTransfer(getOutputStack(), true);
+                    } else {
+                        hasSpace = cursorStack.isEmpty() ||
+                                ItemHandlerHelper.canItemStacksStack(cursorStack, outputStack);
+                    }
                     if (hasSpace && recipeLogic.performRecipe()) {
-                        ItemStack craftedStack = getOutputStack();
-                        handleItemCraft(craftedStack, getSyncManager().getPlayer());
+                        handleItemCraft(outputStack, getSyncManager().getPlayer());
 
                         if (data.shift) {
-                            ItemStack finalStack = craftedStack.copy();
+                            ItemStack finalStack = outputStack.copy();
                             while (quickTransfer(finalStack, true) &&
-                                    finalStack.getCount() < craftedStack.getMaxStackSize()) {
+                                    finalStack.getCount() < outputStack.getMaxStackSize()) {
                                 if (!recipeLogic.performRecipe()) break;
-                                finalStack.setCount(finalStack.getCount() + craftedStack.getCount());
-                                handleItemCraft(craftedStack, getSyncManager().getPlayer());
+                                finalStack.setCount(finalStack.getCount() + outputStack.getCount());
+                                handleItemCraft(outputStack, getSyncManager().getPlayer());
                             }
                             quickTransfer(finalStack, false);
                         } else {
@@ -146,6 +153,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                         }
                     }
                 }
+                ForgeHooks.setCraftingPlayer(null);
             }
         }
 
@@ -213,10 +221,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             ItemStack curStack = getSyncManager().getCursorItem();
             ItemStack outStack = this.slot.getStack();
             ItemStack toSync = outStack.copy();
-            if (curStack.getItem() == outStack.getItem() &&
-                    curStack.getMetadata() == outStack.getMetadata() &&
-                    ItemStack.areItemStackTagsEqual(curStack, outStack)) {
-
+            if (ItemHandlerHelper.canItemStacksStack(curStack, outStack)) {
                 int combined = curStack.getCount() + outStack.getCount();
                 if (combined <= outStack.getMaxStackSize()) {
                     toSync.setCount(curStack.getCount() + outStack.getCount());
