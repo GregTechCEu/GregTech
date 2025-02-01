@@ -397,7 +397,7 @@ public class RenderUtil {
         RenderItem renderItem = MCHelper.getMc().getRenderItem();
         renderItem.zLevel = 200;
         renderItem.renderItemAndEffectIntoGUI(MCHelper.getPlayer(), item, 0, 0);
-        renderItem.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), item, x, y, null);
+        renderItem.renderItemOverlayIntoGUI(MCHelper.getFontRenderer(), item, 0, 0, null);
         renderItem.zLevel = 0;
         GlStateManager.disableDepth();
         RenderHelper.enableStandardItemLighting();
