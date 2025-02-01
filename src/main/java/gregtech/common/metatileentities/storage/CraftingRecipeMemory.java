@@ -1,5 +1,7 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.util.ItemStackHashStrategy;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,6 +14,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +34,11 @@ public class CraftingRecipeMemory extends SyncHandler {
 
     // server only
     public static final int MOUSE_CLICK = 2;
+
+    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.builder()
+            .compareItem(true)
+            .compareMetadata(true)
+            .build();
 
     private final MemorizedRecipe[] memorizedRecipes;
     private final IItemHandlerModifiable craftingMatrix;
@@ -84,7 +92,7 @@ public class CraftingRecipeMemory extends SyncHandler {
         MemorizedRecipe existing = null;
         for (MemorizedRecipe memorizedRecipe : memorizedRecipes) {
             if (memorizedRecipe != null &&
-                    ItemStack.areItemStacksEqual(memorizedRecipe.recipeResult, resultItemStack)) {
+                    strategy.equals(memorizedRecipe.recipeResult, resultItemStack)) {
                 existing = memorizedRecipe;
                 break;
             }
@@ -92,8 +100,10 @@ public class CraftingRecipeMemory extends SyncHandler {
 
         // we already have a recipe that matches
         // move it to the front
-        if (existing != null && !existing.recipeLocked) {
-            if (existing.index == 0) return existing; // it's already at the front
+        if (existing != null) {
+            // it's already at the front or it's locked
+            if (existing.index == 0 || existing.recipeLocked) return existing;
+
             int removed = existing.index;
             removeRecipe(existing.index);
             syncToClient(REMOVE_RECIPE, buffer -> buffer.writeByte(removed));
