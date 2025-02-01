@@ -7,9 +7,7 @@
   "injectors": {
     "maxShiftBy": 10
   },
-  "mixins": [
-    "TextCompilerMixin"
-  ],
+  "mixins": [],
   "client": [
     "LangKeyMixin"
   ],

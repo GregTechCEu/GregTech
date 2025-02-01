@@ -16,6 +16,6 @@ public abstract class LangKeyMixin extends BaseKey {
               at = @At(value = "INVOKE",
                        target = "Lnet/minecraft/client/resources/I18n;format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"))
     public String getTranslateKey(String translateKey, Object[] parameters) {
-        return LocaleAccessor.getRawKey(translateKey);
+        return LocaleAccessor.getRawKey(translateKey).replace("\\n", "\n");
     }
 }
