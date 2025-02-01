@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -17,6 +16,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.cleanroommc.modularui.network.NetworkUtils;
@@ -153,14 +153,11 @@ public class CraftingRecipeLogic extends SyncHandler {
             var stack = availableHandlers.getStackInSlot(slot);
 
             if (stack.isItemStackDamageable()) {
-                int damage = 1;
-                if (stack.getItem() instanceof IGTTool gtTool) {
-                    damage = gtTool.getToolStats().getDamagePerCraftingAction(stack);
-                }
-                stack.damageItem(damage, getSyncManager().getPlayer());
+                var usedStack = ForgeHooks.getContainerItem(stack);
+                availableHandlers.setStackInSlot(slot, usedStack);
             } else if (stack.getItem().hasContainerItem(stack)) {
-                var useStack = stack.splitStack(1);
-                var newStack = useStack.getItem().getContainerItem(useStack);
+                var useStack = stack.getCount() > 1 ? stack.splitStack(1) : stack;
+                var newStack = ForgeHooks.getContainerItem(useStack);
                 if (newStack.isEmpty()) return false;
 
                 GTTransferUtils.insertItem(this.availableHandlers, newStack, false);
