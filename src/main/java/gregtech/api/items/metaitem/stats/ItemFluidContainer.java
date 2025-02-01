@@ -65,23 +65,9 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
         var cellHandler = FluidUtil.getFluidHandler(cellStack);
         if (cellHandler == null) return pass(stack);
 
-        var cellFluid = cellHandler.drain(Fluid.BUCKET_VOLUME, false);
-
-        var result = rayTrace(world, player, false);
+        var result = rayTrace(world, player, true);
         if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) {
             return pass(stack);
-        }
-
-        var blockHandler = FluidUtil.getFluidHandler(world, result.getBlockPos().offset(result.sideHit),
-                result.sideHit);
-        int freeSpace = cellHandler.getTankProperties()[0].getCapacity() - (cellFluid == null ? 0 : cellFluid.amount);
-        boolean pickup = blockHandler != null && blockHandler.drain(Fluid.BUCKET_VOLUME, false) != null &&
-                freeSpace > 0;
-        if (pickup) {
-            result = rayTrace(world, player, true);
-            if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) {
-                return pass(stack);
-            }
         }
 
         var pos = result.getBlockPos();
@@ -96,27 +82,22 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
             return fail(stack);
         }
 
-        FluidStack soundFluid;
-        if (blockHandler != null && cellFluid == null) {
-            soundFluid = blockHandler.drain(Fluid.BUCKET_VOLUME, false);
-            if (soundFluid == null) return pass(stack);
-            soundFluid = soundFluid.copy();
-        } else if (cellFluid != null) {
-            soundFluid = cellFluid.copy();
+        // prioritize filling the cell if there's space, otherwise place fluid
+        if (fillCell(cellStack, world, pos, result.sideHit, player)) {
+            addToPlayerInventory(stack, cellHandler.getContainer(), player, hand);
+            return success(stack);
+
         } else {
-            return pass(stack);
-        }
+            result = rayTrace(world, player, false);
+            if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) {
+                return pass(stack);
+            }
+            pos = result.getBlockPos();
 
-        // the defualt assumption is placing fluid, then picking up fluid
-        if (!pickup && tryPlace(cellHandler, world, pos.offset(result.sideHit), result.sideHit, player)) {
-            playSound(soundFluid, true, player);
-            addToPlayerInventory(stack, cellHandler.getContainer(), player, hand);
-            return success(stack);
-
-        } else if (fillCell(cellStack, world, pos, result.sideHit, player)) {
-            playSound(soundFluid, false, player);
-            addToPlayerInventory(stack, cellHandler.getContainer(), player, hand);
-            return success(stack);
+            if (tryPlace(cellHandler, world, pos.offset(result.sideHit), result.sideHit, player)) {
+                addToPlayerInventory(stack, cellHandler.getContainer(), player, hand);
+                return success(stack);
+            }
         }
 
         return pass(stack);
@@ -153,6 +134,7 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
 
         if (filled != Fluid.BUCKET_VOLUME) return false;
 
+        playSound(cellFluid, true, player);
         boolean consume = !player.isSpectator() && !player.isCreative();
         blockHandler.fill(cellHandler.drain(Fluid.BUCKET_VOLUME, consume), true);
         return true;
@@ -171,6 +153,7 @@ public class ItemFluidContainer implements IItemContainerItemProvider, IItemBeha
 
         if (filled != Fluid.BUCKET_VOLUME) return false;
 
+        playSound(stack, false, player);
         boolean consume = !player.isSpectator() && !player.isCreative();
         cellHandler.fill(blockHandler.drain(Fluid.BUCKET_VOLUME, true), consume);
         return true;
