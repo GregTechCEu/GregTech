@@ -37,7 +37,8 @@ public class KeyUtil {
         return IKey.dynamic(stringSupplier).style(formatting);
     }
 
-    public static IKey string(TextFormatting formatting, Supplier<String> stringSupplier, Supplier<Object[]> argSupplier) {
+    public static IKey string(TextFormatting formatting, Supplier<String> stringSupplier,
+                              Supplier<Object[]> argSupplier) {
         return IKey.dynamic(() -> String.format(stringSupplier.get(), argSupplier.get())).style(formatting);
     }
 
