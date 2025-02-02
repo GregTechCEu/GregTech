@@ -39,16 +39,15 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.GuiAxis;
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
@@ -198,9 +197,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
                 .createFlexButton((guiData, syncManager) -> {
-                    // todo remove cast in next mui2 version
-                    PanelSyncHandler throttle = (PanelSyncHandler) syncManager.panel("throttle_panel",
-                            this::makeThrottlePanel, true);
+                    var throttle = syncManager.panel("throttle_panel", this::makeThrottlePanel, true);
 
                     return new ButtonWidget<>()
                             .width(18)
@@ -214,8 +211,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                 } else {
                                     throttle.openPanel();
                                 }
-                                // todo remove this call in next mui2 version
-                                Interactable.playButtonClickSound();
                                 return true;
                             });
                 });
@@ -246,7 +241,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         }
     }
 
-    private ModularPanel makeThrottlePanel(PanelSyncManager syncManager, PanelSyncHandler syncHandler) {
+    private ModularPanel makeThrottlePanel(PanelSyncManager syncManager, IPanelHandler syncHandler) {
         IntSyncValue throttleValue = new IntSyncValue(this::getThrottlePercentage, this::setThrottlePercentage);
         DoubleSyncValue sliderValue = new DoubleSyncValue(
                 () -> (double) getThrottlePercentage() / 100,
@@ -437,8 +432,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
-        IntSyncValue waterFilledValue = new IntSyncValue(this::getWaterFilled, null);
-        IntSyncValue waterCapacityValue = new IntSyncValue(this::getWaterCapacity, null);
+        IntSyncValue waterFilledValue = new IntSyncValue(this::getWaterFilled);
+        IntSyncValue waterCapacityValue = new IntSyncValue(this::getWaterCapacity);
         panelSyncManager.syncValue("water_filled", waterFilledValue);
         panelSyncManager.syncValue("water_capacity", waterCapacityValue);
 
