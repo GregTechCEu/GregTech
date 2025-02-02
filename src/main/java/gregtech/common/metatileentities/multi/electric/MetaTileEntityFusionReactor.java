@@ -462,7 +462,14 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                                 .size(69, 12))
                         .child(new ProgressWidget()
                                 .size(77, 77)
-                                // todo status tooltip
+                                .tooltipAutoUpdate(true)
+                                // this is fine client only because these values are already synced
+                                .tooltipBuilder(tooltip -> MultiblockUIFactory.builder()
+                                        .structureFormed(isStructureFormed())
+                                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(),
+                                                recipeMapWorkable.isActive())
+                                        .addWorkingStatusLine()
+                                        .build(tooltip))
                                 .background(GTGuiTextures.FUSION_DIAGRAM.asIcon()
                                         .size(89, 101)
                                         .marginTop(11))
