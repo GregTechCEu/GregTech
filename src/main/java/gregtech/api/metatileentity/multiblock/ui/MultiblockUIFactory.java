@@ -10,7 +10,6 @@ import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.JsonUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -472,7 +471,7 @@ public class MultiblockUIFactory {
             IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_energy_per_tick",
                     KeyUtil.number(maxVoltage),
-                    KeyUtil.string(GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]));
+                    KeyUtil.voltage(GTValues.VOCNF, maxVoltage));
 
             var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_energy_per_tick_hover");
@@ -509,8 +508,7 @@ public class MultiblockUIFactory {
             if (energyUsage > 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
                 // wrap in text component to keep it from being formatted
-                var voltageName = KeyUtil.string(
-                        GTValues.VOCNF[GTUtility.getOCTierByVoltage(energyUsage)]);
+                var voltageName = KeyUtil.overclock(GTValues.VOCNF, energyUsage);
 
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.energy_consumption", energyFormatted, voltageName));
@@ -528,8 +526,7 @@ public class MultiblockUIFactory {
             if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
-                var voltageName = KeyUtil.string(
-                        GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                var voltageName = KeyUtil.voltage(GTValues.VOCNF, maxVoltage);
 
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick", energyFormatted, voltageName));
@@ -549,8 +546,7 @@ public class MultiblockUIFactory {
             if (maxVoltage != 0 && amperage != 0) {
                 String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
                 // wrap in text component to keep it from being formatted
-                var voltageName = KeyUtil.string(
-                        GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                var voltageName = KeyUtil.voltage(GTValues.VOCNF, maxVoltage);
 
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.max_energy_per_tick_amps",
@@ -567,7 +563,7 @@ public class MultiblockUIFactory {
         public Builder addComputationUsageLine(int maxCWUt) {
             if (!isStructureFormed) return this;
             if (maxCWUt > 0) {
-                var computation = KeyUtil.string(TextFormatting.AQUA, TextFormattingUtil.formatNumbers(maxCWUt));
+                var computation = KeyUtil.number(TextFormatting.AQUA, maxCWUt);
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.computation.max", computation));
             }
@@ -582,8 +578,7 @@ public class MultiblockUIFactory {
         public Builder addComputationUsageExactLine(int currentCWUt) {
             if (!isStructureFormed) return this;
             if (isActive && currentCWUt > 0) {
-                var computation = KeyUtil.string(TextFormatting.AQUA,
-                        TextFormattingUtil.formatNumbers(currentCWUt) + " CWU/t");
+                var computation = KeyUtil.number(TextFormatting.AQUA, currentCWUt, " CWU/t");
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.computation.usage", computation));
             }
@@ -673,8 +668,7 @@ public class MultiblockUIFactory {
         public Builder addParallelsLine(int numParallels) {
             if (!isStructureFormed) return this;
             if (numParallels > 1) {
-                var parallels = KeyUtil.string(TextFormatting.DARK_PURPLE,
-                        TextFormattingUtil.formatNumbers(numParallels));
+                var parallels = KeyUtil.number(TextFormatting.DARK_PURPLE, numParallels);
 
                 addKey(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.parallel", parallels));
