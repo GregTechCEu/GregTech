@@ -449,7 +449,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
             title = GTGuiTextures.FUSION_REACTOR_MK3_TITLE;
         }
 
-        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent, null);
+        DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent);
         return new MultiblockUIFactory(this)
                 .setSize(198, 236)
                 .setScreenHeight(138)

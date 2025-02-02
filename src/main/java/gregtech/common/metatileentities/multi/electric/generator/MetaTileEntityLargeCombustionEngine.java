@@ -299,7 +299,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         return null;
                     }
                     return fluid.getName();
-                }, null);
+                });
                 panelSyncManager.syncValue("fuel_amount", fuelValue);
                 panelSyncManager.syncValue("fuel_name", fuelNameValue);
 
@@ -334,7 +334,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             }
             case 2 -> {
                 FixedIntArraySyncValue oxygenValue = new FixedIntArraySyncValue(this::getOxygenAmount, null);
-                BooleanSyncValue boostValue = new BooleanSyncValue(this::isBoostAllowed, null);
+                BooleanSyncValue boostValue = new BooleanSyncValue(this::isBoostAllowed);
                 panelSyncManager.syncValue("oxygen_amount", oxygenValue);
                 panelSyncManager.syncValue("boost_allowed", boostValue);
 

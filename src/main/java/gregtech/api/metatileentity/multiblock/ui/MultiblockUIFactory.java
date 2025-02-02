@@ -412,9 +412,9 @@ public class MultiblockUIFactory {
         private boolean isStructureFormed;
 
         // Keys for the three-state working system, can be set custom by multiblocks.
-        private IKey idlingKey = IKey.lang("gregtech.multiblock.idling").format(TextFormatting.GRAY);
-        private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").format(TextFormatting.GOLD);
-        private IKey runningKey = IKey.lang("gregtech.multiblock.running").format(TextFormatting.GREEN);
+        private IKey idlingKey = IKey.lang("gregtech.multiblock.idling").style(TextFormatting.GRAY);
+        private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").style(TextFormatting.GOLD);
+        private IKey runningKey = IKey.lang("gregtech.multiblock.running").style(TextFormatting.GREEN);
         private boolean dirty;
 
         public Builder structureFormed(boolean structureFormed) {
@@ -451,9 +451,9 @@ public class MultiblockUIFactory {
          * @param runningKey The translation key for the Running state, or "isActive".
          */
         public Builder setWorkingStatusKeys(String idlingKey, String pausedKey, String runningKey) {
-            if (idlingKey != null) this.idlingKey = IKey.lang(idlingKey).format(TextFormatting.GRAY);
-            if (pausedKey != null) this.pausedKey = IKey.lang(pausedKey).format(TextFormatting.GOLD);
-            if (runningKey != null) this.runningKey = IKey.lang(runningKey).format(TextFormatting.GREEN);
+            if (idlingKey != null) this.idlingKey = IKey.lang(idlingKey).style(TextFormatting.GRAY);
+            if (pausedKey != null) this.pausedKey = IKey.lang(pausedKey).style(TextFormatting.GOLD);
+            if (runningKey != null) this.runningKey = IKey.lang(runningKey).style(TextFormatting.GREEN);
             return this;
         }
 
