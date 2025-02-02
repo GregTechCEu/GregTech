@@ -268,6 +268,7 @@ public class MultiblockUIFactory {
         display.setAction(this.displayText);
         display.sync("display", syncManager);
 
+        // todo scrolling doesn't work for rich text widget
         var scrollWidget = new ScrollWidget<>(new VerticalScrollData())
                 .sizeRel(1f)
                 .child(new RichTextWidget()
