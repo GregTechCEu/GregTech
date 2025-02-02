@@ -8,8 +8,6 @@
     "maxShiftBy": 10
   },
   "mixins": [
-    "IntSyncValueMixin",
-    "KeyCompMixin",
     "ModularPanelMixin"
   ],
   "client": [

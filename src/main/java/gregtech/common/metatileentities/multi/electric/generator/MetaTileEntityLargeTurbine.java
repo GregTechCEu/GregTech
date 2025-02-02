@@ -352,7 +352,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         return null;
                     }
                     return fluid.getName();
-                }, null);
+                });
                 panelSyncManager.syncValue("fuel_amount", fuelValue);
                 panelSyncManager.syncValue("fuel_name", fuelNameValue);
 
@@ -370,7 +370,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         return 0;
                     }
                     return rotorHolder.getRotorSpeed();
-                }, null);
+                });
 
                 IntSyncValue rotorMaxSpeedValue = new IntSyncValue(() -> {
                     IRotorHolder rotorHolder = getRotorHolder();
@@ -378,7 +378,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         return 0;
                     }
                     return rotorHolder.getMaxRotorHolderSpeed();
-                }, null);
+                });
 
                 panelSyncManager.syncValue("rotor_speed", rotorSpeedValue);
                 panelSyncManager.syncValue("rotor_max_speed", rotorMaxSpeedValue);
@@ -407,14 +407,14 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         return 0;
                     }
                     return rotorHolder.getRotorDurabilityPercent();
-                }, null);
+                });
                 IntSyncValue efficiencyValue = new IntSyncValue(() -> {
                     IRotorHolder rotorHolder = getRotorHolder();
                     if (rotorHolder == null) {
                         return 0;
                     }
                     return rotorHolder.getRotorEfficiency();
-                }, null);
+                });
 
                 panelSyncManager.syncValue("rotor_durability", durabilityValue);
                 panelSyncManager.syncValue("rotor_efficiency", efficiencyValue);
