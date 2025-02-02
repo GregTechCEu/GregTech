@@ -389,7 +389,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     @Override
     public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager, int index) {
         IntSyncValue operationsValue = new IntSyncValue(() -> BedrockFluidVeinHandler.getOperationsRemaining(getWorld(),
-                minerLogic.getChunkX(), minerLogic.getChunkZ()), null);
+                minerLogic.getChunkX(), minerLogic.getChunkZ()));
         panelSyncManager.syncValue("operations_remaining", operationsValue);
 
         return new ProgressWidget()
