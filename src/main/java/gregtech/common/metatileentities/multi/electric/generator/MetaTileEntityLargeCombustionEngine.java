@@ -131,7 +131,6 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
             builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
         }
 
-        // todo fix prev duration being 0 on first ui open
         builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
                 .addCustom(richText -> {
                     if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
