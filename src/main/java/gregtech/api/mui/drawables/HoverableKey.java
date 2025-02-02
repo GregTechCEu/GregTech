@@ -30,7 +30,7 @@ public class HoverableKey implements IIcon, IHoverable, ITooltip<HoverableKey> {
     private IKey key;
 
     private HoverableKey() {
-        tooltip(t -> t.setAutoUpdate(true));
+        tooltipAutoUpdate(true);
         tooltipBuilder(t -> t.addDrawableLines(getTooltipLines()));
     }
 
