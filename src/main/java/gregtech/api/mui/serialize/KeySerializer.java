@@ -16,6 +16,8 @@ import org.apache.commons.lang3.ArrayUtils;
 
 public class KeySerializer implements JsonHandler<IKey> {
 
+    // todo fix formatting
+
     @Override
     public IKey deserialize(JsonElement json, JsonDeserializationContext context)
                                                                                   throws JsonParseException {
@@ -24,17 +26,17 @@ public class KeySerializer implements JsonHandler<IKey> {
             return IKey.str(object.get("string").getAsString());
         } else if (object.has("lang")) {
             String lang = context.deserialize(object.get("lang"), String.class);
-            TextFormatting[] formatting = deserializeArray(
-                    object.getAsJsonArray("format"), context, TextFormatting[]::new);
+            // FormattingState formatting = new FormattingState();
+            // formatting.parseFrom(object.get("format").getAsString());
             Object[] args = deserializeArray(
                     object.getAsJsonArray("args"), context, Object[]::new);
-            return IKey.lang(lang, args).format(formatting);
+            return IKey.lang(lang, args);
         } else if (object.has("keys")) {
             IKey[] keys = deserializeArray(
                     object.getAsJsonArray("keys"), context, IKey[]::new);
             TextFormatting[] formatting = deserializeArray(
                     object.getAsJsonArray("format"), context, TextFormatting[]::new);
-            return IKey.comp(keys).format(formatting);
+            return IKey.comp(keys).style(formatting);
         }
         return IKey.EMPTY;
     }
@@ -46,13 +48,15 @@ public class KeySerializer implements JsonHandler<IKey> {
             obj.add("string", context.serialize(src.getFormatted()));
         } else if (src instanceof LangKey langKey) {
             obj.add("lang", context.serialize(langKey.getKeySupplier().get()));
-            obj.add("format", serializeArray(langKey.getFormatting(), context));
+            // var formatting = langKey.getFormatting();
+            // if (formatting != null)
+            // obj.addProperty("format", formatting.toString());
             Object[] args = langKey.getArgsSupplier().get();
             if (!ArrayUtils.isEmpty(args))
                 obj.add("args", serializeArray(args, context));
         } else if (src instanceof CompoundKey compoundKey) {
             obj.add("keys", serializeArray(compoundKey.getKeys(), context));
-            obj.add("format", context.serialize(compoundKey.getFormatting()));
+            // obj.add("format", context.serialize(compoundKey.getFormatting()));
         }
         return obj;
     }
