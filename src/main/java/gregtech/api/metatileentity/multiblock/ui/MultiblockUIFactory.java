@@ -396,7 +396,7 @@ public class MultiblockUIFactory {
         private Bars() {}
     }
 
-    protected static Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -812,11 +812,11 @@ public class MultiblockUIFactory {
             return this;
         }
 
-        protected boolean isEmpty() {
+        public boolean isEmpty() {
             return textList.isEmpty();
         }
 
-        protected void clear() {
+        public void clear() {
             textList.clear();
         }
 
@@ -872,11 +872,18 @@ public class MultiblockUIFactory {
             };
         }
 
-        protected void build(IRichTextBuilder<?> richText) {
-            if (dirty) build();
+        public void build(IRichTextBuilder<?> richText) {
+            if (dirty) {
+                build();
+                dirty = false;
+            }
             for (IDrawable drawable : textList) {
                 richText.addLine(drawable).spaceLine(2);
             }
+        }
+
+        public void markDirty() {
+            dirty = true;
         }
 
         protected void build() {
