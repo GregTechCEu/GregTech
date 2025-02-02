@@ -600,8 +600,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                                                      int index) {
         return switch (index) {
             case 0 -> {
-                IntSyncValue currentCWUtValue = new IntSyncValue(() -> hpcaHandler.cachedCWUt, null);
-                IntSyncValue maxCWUtValue = new IntSyncValue(hpcaHandler::getMaxCWUt, null);
+                IntSyncValue currentCWUtValue = new IntSyncValue(() -> hpcaHandler.cachedCWUt);
+                IntSyncValue maxCWUtValue = new IntSyncValue(hpcaHandler::getMaxCWUt);
                 panelSyncManager.syncValue("current_cwut", currentCWUtValue);
                 panelSyncManager.syncValue("max_cwut", maxCWUtValue);
 
@@ -619,7 +619,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         });
             }
             case 1 -> {
-                DoubleSyncValue temperatureValue = new DoubleSyncValue(() -> temperature, null);
+                DoubleSyncValue temperatureValue = new DoubleSyncValue(() -> temperature);
                 panelSyncManager.syncValue("temperature", temperatureValue);
 
                 yield new ProgressWidget()

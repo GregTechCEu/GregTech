@@ -11,16 +11,15 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IBatteryData;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.IProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.pattern.BlockPattern;
-import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.BigIntegerSyncValue;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.BlockInfo;
@@ -391,13 +390,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 if (averageInLastSec > averageOutLastSec) {
                     IKey timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
                             .divide(BigInteger.valueOf((averageInLastSec - averageOutLastSec) * 20)));
-                    timeToFill.format(TextFormatting.GREEN);
+                    timeToFill.style(TextFormatting.GREEN);
                     list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_fill",
                             timeToFill));
                 } else if (averageInLastSec < averageOutLastSec) {
                     IKey timeToDrain = getTimeToFillDrainText(
                             energyStored.divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20)));
-                    timeToDrain.format(TextFormatting.RED);
+                    timeToDrain.style(TextFormatting.RED);
                     list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_drain",
                             timeToDrain));
                 }
