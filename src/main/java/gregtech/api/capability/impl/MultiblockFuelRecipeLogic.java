@@ -23,6 +23,7 @@ import java.util.List;
 public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
 
     protected long totalContinuousRunningTime;
+    private int previousDuration = 0;
 
     public MultiblockFuelRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity);
@@ -137,6 +138,7 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
         } else {
             recipe = previousRecipe;
         }
+        previousDuration = recipe.getDuration();
         FluidStack requiredFluidInput = recipe.getFluidInputs().get(0).getInputFluidStack();
 
         int ocAmount = GTUtility.safeCastLongToInt(getMaxVoltage() / recipe.getEUt());
@@ -147,6 +149,11 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
             return null;
         }
         return TextFormatting.RED + TextFormattingUtil.formatNumbers(neededAmount) + "L";
+    }
+
+    @Override
+    public int getPreviousRecipeDuration() {
+        return previousDuration;
     }
 
     public FluidStack getInputFluidStack() {
