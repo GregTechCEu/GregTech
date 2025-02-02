@@ -212,8 +212,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     @Override
     protected void configureWarningText(MultiblockUIFactory.Builder builder) {
         builder.addCustom(keyList -> {
-            if (!isStructureFormed()) return;
-            if (getRotorHolder() == null) return;
+            if (!isStructureFormed() || getRotorHolder() == null)
+                return;
 
             int rotorEfficiency = getRotorHolder().getRotorEfficiency();
             int rotorDurability = getRotorHolder().getRotorDurabilityPercent();
@@ -229,8 +229,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     @Override
     protected void configureErrorText(MultiblockUIFactory.Builder builder) {
         builder.addCustom(keyList -> {
-            if (!isStructureFormed()) return;
-            if (getRotorHolder() == null) return;
+            if (!isStructureFormed() || getRotorHolder() == null)
+                return;
 
             if (!isRotorFaceFree()) {
                 keyList.add(KeyUtil.lang(TextFormatting.RED,
@@ -240,7 +240,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
             }
             int rotorEfficiency = getRotorHolder().getRotorEfficiency();
 
-            // todo fix "no rotor" tooltip always being shown on first ui open
             if (rotorEfficiency <= 0) {
                 keyList.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.turbine.no_rotor"));
