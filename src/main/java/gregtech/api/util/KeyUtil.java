@@ -28,8 +28,17 @@ public class KeyUtil {
         return IKey.str(string).style(formatting);
     }
 
+    public static IKey string(TextFormatting formatting, String string, Object... args) {
+        if (string == null) return IKey.EMPTY;
+        return IKey.str(string, args).style(formatting);
+    }
+
     public static IKey string(TextFormatting formatting, Supplier<String> stringSupplier) {
         return IKey.dynamic(stringSupplier).style(formatting);
+    }
+
+    public static IKey string(TextFormatting formatting, Supplier<String> stringSupplier, Supplier<Object[]> argSupplier) {
+        return IKey.dynamic(() -> String.format(stringSupplier.get(), argSupplier.get())).style(formatting);
     }
 
     public static IKey string(Supplier<TextFormatting> formatting, String s) {
@@ -56,8 +65,12 @@ public class KeyUtil {
         return IKey.dynamic(() -> lang(lang, argSupplier.get()).style(formatting.get()).getFormatted());
     }
 
+    public static IKey number(long number) {
+        return string(TextFormattingUtil.formatNumbers(number));
+    }
+
     public static IKey number(TextFormatting formatting, long number) {
-        return string(formatting, TextFormattingUtil.formatNumbers(number));
+        return number(number).style(formatting);
     }
 
     public static IKey number(TextFormatting formatting, long number, String suffix) {

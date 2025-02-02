@@ -471,8 +471,8 @@ public class MultiblockUIFactory {
 
             IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_energy_per_tick",
-                    TextFormattingUtil.formatNumbers(maxVoltage),
-                    GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]);
+                    KeyUtil.number(maxVoltage),
+                    KeyUtil.string(GTValues.VOCNF[GTUtility.getFloorTierByVoltage(maxVoltage)]));
 
             var hoverText = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.max_energy_per_tick_hover");
