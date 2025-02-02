@@ -208,7 +208,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                         String key = logic.getMachineStack().getTranslationKey();
                         IKey mapText = KeyUtil.lang(TextFormatting.DARK_PURPLE,
                                 key + ".name");
-                        mapText = KeyUtil.lang(
+                        mapText = KeyUtil.string(
                                 TextFormatting.DARK_PURPLE,
                                 "%sx %s",
                                 logic.getParallelLimit(), mapText);
