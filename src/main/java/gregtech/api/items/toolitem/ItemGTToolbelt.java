@@ -115,7 +115,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         int heightBonus = (handler.getSlots() / 9) * 18;
 
-        SlotGroup group = new SlotGroup("toolbelt_inventory", 9);
+        SlotGroup group = new SlotGroup("toolbelt_inventory", Math.min(handler.getSlots(), 9));
         guiSyncManager.registerSlotGroup(group);
 
         List<ItemSlot> slots = new ArrayList<>();

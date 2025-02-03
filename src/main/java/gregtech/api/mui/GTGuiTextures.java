@@ -214,6 +214,8 @@ public class GTGuiTextures {
 
     public static final UITexture MENU_OVERLAY = fullImage("textures/gui/overlay/menu_overlay.png");
 
+    public static final UITexture RECIPE_LOCK = fullImage("textures/gui/widget/lock.png");
+
     // todo bronze/steel/primitive fluid slots?
 
     // SLOT OVERLAYS
@@ -355,6 +357,7 @@ public class GTGuiTextures {
     public static final UITexture BUTTON_AUTO_COLLAPSE = fullImage(
             "textures/gui/widget/button_auto_collapse_overlay.png");
     public static final UITexture BUTTON_X = fullImage("textures/gui/widget/button_x_overlay.png", true);
+    public static final UITexture BUTTON_CLEAR_GRID = fullImage("textures/gui/widget/button_clear_grid.png", false);
 
     public static final UITexture BUTTON_CROSS = fullImage("textures/gui/widget/button_cross.png");
     public static final UITexture BUTTON_REDSTONE_ON = fullImage("textures/gui/widget/button_redstone_on.png");
