@@ -305,7 +305,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         .progress(() -> fuelValue.getValue(1) == 0 ? 0 :
                                 1.0 * fuelValue.getValue(0) / fuelValue.getValue(1))
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_FUEL, MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltip(t -> t.setAutoUpdate(true))
+                        .tooltipAutoUpdate(true)
                         .tooltipBuilder(t -> createFuelTooltip(t, fuelValue, fuelNameValue));
             }
             case 1 -> {
@@ -316,7 +316,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         .progress(() -> lubricantValue.getValue(1) == 0 ? 0 :
                                 1.0 * lubricantValue.getValue(0) / lubricantValue.getValue(1))
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_LUBRICANT, MultiblockUIFactory.Bars.THIRD_WIDTH)
-                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                        .tooltipAutoUpdate(true)
                         .tooltipBuilder(t -> {
                             if (isStructureFormed()) {
                                 if (lubricantValue.getValue(0) == 0) {
@@ -340,8 +340,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
                         .progress(() -> oxygenValue.getValue(1) == 0 ? 0 :
                                 1.0 * oxygenValue.getValue(0) / oxygenValue.getValue(1))
                         .texture(GTGuiTextures.PROGRESS_BAR_LCE_OXYGEN, MultiblockUIFactory.Bars.THIRD_WIDTH)
+                        .tooltipAutoUpdate(true)
                         .tooltipBuilder(t -> {
-                            t.setAutoUpdate(true);
                             if (isStructureFormed()) {
                                 if (boostValue.getBoolValue()) {
                                     if (oxygenValue.getValue(0) == 0) {

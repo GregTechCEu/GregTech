@@ -608,7 +608,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 yield new ProgressWidget()
                         .progress(() -> 1.0 * currentCWUtValue.getIntValue() / maxCWUtValue.getIntValue())
                         .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION, MultiblockUIFactory.Bars.HALF_WIDTH)
-                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                        .tooltipAutoUpdate(true)
                         .tooltipBuilder(t -> {
                             if (isStructureFormed()) {
                                 t.addLine(IKey.lang("gregtech.multiblock.hpca.computation",
@@ -625,7 +625,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 yield new ProgressWidget()
                         .progress(() -> Math.min(1.0, temperatureValue.getDoubleValue() / DAMAGE_TEMPERATURE))
                         .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
-                        .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                        .tooltipAutoUpdate(true)
                         .tooltipBuilder(t -> {
                             if (isStructureFormed()) {
                                 double temp = temperatureValue.getDoubleValue();
