@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -201,7 +202,7 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
@@ -242,6 +243,28 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
+                .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
+                .addMaintenanceProblemLines(getMaintenanceProblems());
+    }
+
+    @Override
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .setWorkingStatusKeys(
+                        "gregtech.multiblock.idling",
+                        "gregtech.multiblock.work_paused",
+                        "gregtech.machine.research_station.researching")
+                .addEnergyUsageLine(this.getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
+                .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
+                .addParallelsLine(recipeMapWorkable.getParallelLimit())
+                .addWorkingStatusLine()
+                .addProgressLine(recipeMapWorkable.getProgressPercent());
+    }
+
+    @Override
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
                 .addLowComputationLine(getRecipeMapWorkable().isHasNotEnoughComputation())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
