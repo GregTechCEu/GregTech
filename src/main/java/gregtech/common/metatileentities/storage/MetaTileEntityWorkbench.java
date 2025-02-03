@@ -224,7 +224,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                 .tab(GuiTextures.TAB_TOP, 0)
                                 .addTooltipLine(IKey.lang("gregtech.machine.workbench.tab.item_list"))
                                 .addTooltipLine(IKey.lang("gregtech.machine.workbench.storage_note")
-                                        .format(TextFormatting.DARK_GRAY))
+                                        .style(TextFormatting.DARK_GRAY))
                                 .overlay(CHEST)))
                 .child(IKey.lang(getMetaFullName())
                         .asWidget()
@@ -354,6 +354,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                     .background(GTGuiTextures.DISPLAY);
         }
 
+        // this is actually supposed to include the tool and storage inventory
+        // but that causes problems
         List<ItemSlot> list = new ArrayList<>(this.connectedInventory.getSlots());
 
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
