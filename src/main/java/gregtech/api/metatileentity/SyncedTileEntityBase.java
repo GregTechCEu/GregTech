@@ -1,7 +1,6 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
 
@@ -80,12 +79,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
             for (String discriminatorKey : entryTag.getKeySet()) {
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
                 int dataId = Integer.parseInt(discriminatorKey);
+                ISyncedTileEntity.addCode(dataId, this);
                 receiveCustomData(dataId, new PacketBuffer(backedBuffer));
-
-                MetaTileEntity mte = null;
-                if (this instanceof IGregTechTileEntity gtte)
-                    mte = gtte.getMetaTileEntity();
-                ISyncedTileEntity.checkCustomData(dataId, backedBuffer, mte == null ? this : mte);
+                ISyncedTileEntity.checkData(backedBuffer);
             }
         }
     }
@@ -105,11 +101,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
+        ISyncedTileEntity.track(this);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
-
-        MetaTileEntity mte = null;
-        if (this instanceof IGregTechTileEntity gtte)
-            mte = gtte.getMetaTileEntity();
-        ISyncedTileEntity.checkInitialData(backedBuffer, mte == null ? this : mte);
+        ISyncedTileEntity.checkData(backedBuffer);
     }
 }
