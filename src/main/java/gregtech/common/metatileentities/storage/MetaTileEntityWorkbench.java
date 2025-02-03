@@ -5,8 +5,16 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AbstractWidgetGroup;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.CraftingStationInputWidgetGroup;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.TabGroup;
 import gregtech.api.gui.widgets.TabGroup.TabLocation;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -251,6 +259,11 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
 
     @Override
     public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
+        return false;
+    }
+
+    @Override
+    public boolean acceptsCovers() {
         return false;
     }
 

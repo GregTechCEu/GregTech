@@ -737,7 +737,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public final boolean acceptsCovers() {
+    public boolean acceptsCovers() {
         return covers.size() < EnumFacing.VALUES.length;
     }
 
