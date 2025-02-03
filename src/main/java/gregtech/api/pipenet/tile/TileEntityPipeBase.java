@@ -489,9 +489,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.connections = buf.readVarInt();
             scheduleChunkForRenderUpdate();
         } else if (discriminator == SYNC_COVER_IMPLEMENTATION) {
-            AdvancedPacketBuffer b = buf.readSubBuffer();
-            this.coverableImplementation.readCustomData(buf.readVarInt(), b);
-            ISyncedTileEntity.checkCustomData(discriminator, b, this.coverableImplementation);
+            int internalID = buf.readVarInt();
+            AdvancedPacketBuffer b = buf.readSubBuffer(internalID);
+            this.coverableImplementation.readCustomData(internalID, b);
+            ISyncedTileEntity.checkData(b, this.coverableImplementation);
             buf.closeSubBuffer();
         } else if (discriminator == UPDATE_PIPE_TYPE) {
             readPipeProperties(buf);

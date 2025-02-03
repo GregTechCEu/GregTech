@@ -62,17 +62,17 @@ public final class CoverSaveHandler {
             int id = buf.readVarInt();
             CoverDefinition definition = CoverDefinition.getCoverByNetworkId(id);
 
+            AdvancedPacketBuffer b = buf.readSubBuffer();
             if (definition == null) {
                 GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id,
                         coverHolder.getPos());
             } else {
                 Cover cover = definition.createCover(coverHolder, facing);
-                AdvancedPacketBuffer b = buf.readSubBuffer();
                 cover.readInitialSyncData(b);
-                ISyncedTileEntity.checkInitialData(b, cover);
-                buf.closeSubBuffer();
+                ISyncedTileEntity.checkData(b, cover);
                 coverHolder.addCover(facing, cover);
             }
+            buf.closeSubBuffer();
         }
     }
 
@@ -105,6 +105,7 @@ public final class CoverSaveHandler {
         EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
         int id = buf.readVarInt();
         CoverDefinition coverDefinition = CoverDefinition.getCoverByNetworkId(id);
+        AdvancedPacketBuffer b = buf.readSubBuffer();
         if (coverDefinition == null) {
             GTLog.logger.warn("Unable to find CoverDefinition for Network ID {} at position {}", id,
                     coverHolder.getPos());
@@ -112,11 +113,10 @@ public final class CoverSaveHandler {
             Cover cover = coverDefinition.createCover(coverHolder, placementSide);
             coverHolder.addCover(placementSide, cover);
 
-            AdvancedPacketBuffer b = buf.readSubBuffer();
             cover.readInitialSyncData(b);
-            ISyncedTileEntity.checkInitialData(b, cover);
-            buf.closeSubBuffer();
+            ISyncedTileEntity.checkData(b, cover);
         }
+        buf.closeSubBuffer();
         coverHolder.scheduleRenderUpdate();
     }
 

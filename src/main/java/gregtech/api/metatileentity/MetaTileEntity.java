@@ -1042,14 +1042,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         for (int i = 0; i < amountOfTraits; i++) {
             int traitNetworkId = buf.readVarInt();
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
+            AdvancedPacketBuffer b = buf.readSubBuffer();
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
-                AdvancedPacketBuffer b = buf.readSubBuffer();
                 trait.receiveInitialSyncData(b);
-                ISyncedTileEntity.checkInitialData(b, trait);
-                buf.closeSubBuffer();
+                ISyncedTileEntity.checkData(b, trait);
             }
+            buf.closeSubBuffer();
         }
         CoverSaveHandler.receiveInitialSyncData(buf, this);
         this.muffled = buf.readBoolean();
@@ -1086,17 +1086,15 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
             int internalId = buf.readVarInt();
+            AdvancedPacketBuffer b = buf.readSubBuffer(internalId);
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
-                ISyncedTileEntity.addCode(internalId, trait);
-                trait.receiveCustomData(internalId, buf);
-                AdvancedPacketBuffer b = buf.readSubBuffer();
                 trait.receiveCustomData(internalId, b);
-                ISyncedTileEntity.checkCustomData(internalId, b, trait);
-                buf.closeSubBuffer();
+                ISyncedTileEntity.checkData(b, internalId);
             }
+            buf.closeSubBuffer();
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_MTE) {
@@ -1110,14 +1108,15 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
-            if (cover != null) {
-                ISyncedTileEntity.addCode(internalId, cover);
-                cover.readCustomData(internalId, buf);
-                AdvancedPacketBuffer b = buf.readSubBuffer();
+            AdvancedPacketBuffer b = buf.readSubBuffer(internalId);
+            if (cover == null) {
+                GTLog.logger.warn("Unable to find cover for side {} at position {}", coverSide,
+                        this.getPos());
+            } else {
                 cover.readCustomData(internalId, b);
-                ISyncedTileEntity.checkCustomData(internalId, b, cover);
-                buf.closeSubBuffer();
+                ISyncedTileEntity.checkData(b, cover);
             }
+            buf.closeSubBuffer();
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
             if (muffled) {

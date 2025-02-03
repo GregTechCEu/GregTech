@@ -6,6 +6,7 @@ import gregtech.api.cover.CoverSaveHandler;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 
@@ -237,12 +238,15 @@ public class PipeCoverableImplementation implements CoverHolder {
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
-            if (cover != null) {
-                AdvancedPacketBuffer b = buf.readSubBuffer();
+            AdvancedPacketBuffer b = buf.readSubBuffer(internalId);
+            if (cover == null) {
+                GTLog.logger.warn("Unable to find cover for side {} at position {}", coverSide,
+                        this.getPos());
+            } else {
                 cover.readCustomData(internalId, b);
-                ISyncedTileEntity.checkCustomData(dataId, b, cover);
-                b.closeSubBuffer();
+                ISyncedTileEntity.checkData(b, cover);
             }
+            b.closeSubBuffer();
         }
     }
 

@@ -3,6 +3,7 @@ package gregtech.api.network;
 import net.minecraft.network.PacketBuffer;
 
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +14,8 @@ public class AdvancedPacketBuffer extends PacketBuffer {
 
     private final @NotNull Supplier<ByteBuf> subBufferCreator;
     private @Nullable AdvancedPacketBuffer subBuffer;
+
+    protected final @NotNull IntArrayList datacodes = new IntArrayList();
 
     public AdvancedPacketBuffer(@NotNull Supplier<ByteBuf> subBufferCreator) {
         super(subBufferCreator.get());
@@ -67,6 +70,17 @@ public class AdvancedPacketBuffer extends PacketBuffer {
 
     /**
      * Reads a sub buffer from this buffer, then makes it the currently open sub buffer.
+     * Closes any old open sub buffer in the process without writing it.
+     *
+     * @param datacode the datacode of the opened sub buffer. Used for improved logging.
+     * @return the newly read sub buffer.
+     */
+    public AdvancedPacketBuffer readSubBuffer(int datacode) {
+        return readSubBuffer(datacode, false);
+    }
+
+    /**
+     * Reads a sub buffer from this buffer, then makes it the currently open sub buffer.
      * 
      * @param writeOld whether any already open buffer should be written to this buffer in the process of closing it.
      * @return the newly read sub buffer.
@@ -80,6 +94,24 @@ public class AdvancedPacketBuffer extends PacketBuffer {
         return subBuffer;
     }
 
+    /**
+     * Reads a sub buffer from this buffer, then makes it the currently open sub buffer.
+     *
+     * @param datacode the datacode of the opened sub buffer. Used for improved logging.
+     * @param writeOld whether any already open buffer should be written to this buffer in the process of closing it.
+     * @return the newly read sub buffer.
+     */
+    public AdvancedPacketBuffer readSubBuffer(int datacode, boolean writeOld) {
+        if (writeOld) writeSubBuffer();
+        else closeSubBuffer();
+        ByteBuf backer = subBufferCreator.get();
+        backer.writeBytes(this.readByteArray());
+        subBuffer = new AdvancedPacketBuffer(backer, subBufferCreator);
+        subBuffer.getDatacodes().addAll(this.datacodes);
+        subBuffer.getDatacodes().add(datacode);
+        return subBuffer;
+    }
+
     public void closeSubBuffer() {
         subBuffer = null;
     }
@@ -89,5 +121,12 @@ public class AdvancedPacketBuffer extends PacketBuffer {
      */
     public @Nullable AdvancedPacketBuffer getSubBuffer() {
         return subBuffer;
+    }
+
+    /**
+     * @return the datacode stack for this buffer for improved logging. May be empty.
+     */
+    public @NotNull IntArrayList getDatacodes() {
+        return datacodes;
     }
 }

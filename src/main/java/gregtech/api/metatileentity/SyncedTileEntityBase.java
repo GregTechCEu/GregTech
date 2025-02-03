@@ -79,9 +79,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                 AdvancedPacketBuffer buf = new AdvancedPacketBuffer(
                         Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey)), Unpooled::buffer);
                 int dataId = Integer.parseInt(discriminatorKey);
-                ISyncedTileEntity.addCode(dataId, this);
+                buf.getDatacodes().add(dataId);
                 receiveCustomData(dataId, buf);
-                ISyncedTileEntity.checkData(buf);
+                ISyncedTileEntity.checkData(buf, this);
             }
         }
     }
@@ -100,8 +100,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
         AdvancedPacketBuffer buffer = new AdvancedPacketBuffer(Unpooled.copiedBuffer(updateData), Unpooled::buffer);
-        ISyncedTileEntity.track(this);
         receiveInitialSyncData(buffer);
-        ISyncedTileEntity.checkData(buffer);
+        ISyncedTileEntity.checkData(buffer, this);
     }
 }

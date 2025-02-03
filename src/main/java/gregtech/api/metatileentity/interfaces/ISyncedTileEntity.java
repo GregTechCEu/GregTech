@@ -11,9 +11,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.ApiStatus;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -23,9 +22,6 @@ import java.util.function.Consumer;
  */
 public interface ISyncedTileEntity {
 
-    Consumer<PacketBuffer> NO_OP = buf -> {};
-    IntList datacodes = new IntArrayList();
-    ThreadLocal<Object> tracked = ThreadLocal.withInitial(() -> null);
     Consumer<AdvancedPacketBuffer> NO_OP = buf -> {};
 
     /**
@@ -174,19 +170,17 @@ public interface ISyncedTileEntity {
      */
     void receiveCustomData(int discriminator, @NotNull AdvancedPacketBuffer buf);
 
-    static void checkData(@NotNull ByteBuf buf) {
+    static void checkData(@NotNull ByteBuf buf, Object tracked) {
         if (buf.readableBytes() != 0) {
-            if (datacodes.isEmpty()) {
+            if (!(buf instanceof AdvancedPacketBuffer adv) || adv.getDatacodes().isEmpty()) {
                 GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
-                        stringify(tracked.get()), buf.readableBytes());
+                        stringify(tracked), buf.readableBytes());
             } else {
                 GTLog.logger.error(
                         "Class {} failed to finish reading receiveCustomData at code path [{}] with {} bytes remaining",
-                        stringify(tracked.get()), getCodePath(), buf.readableBytes());
+                        stringify(tracked), getCodePath(adv.getDatacodes()), buf.readableBytes());
             }
         }
-
-        reset();
     }
 
     static String stringify(Object obj) {
@@ -213,26 +207,12 @@ public interface ISyncedTileEntity {
         return builder.toString();
     }
 
-    static void addCode(int code, Object trackedObject) {
-        datacodes.add(code);
-        track(trackedObject);
-    }
-
-    static void track(Object trackedObject) {
-        tracked.set(trackedObject);
-    }
-
-    static String getCodePath() {
+    static String getCodePath(IntList datacodes) {
         var builder = new StringBuilder();
         for (int i = 0; i < datacodes.size(); i++) {
             builder.append(GregtechDataCodes.getNameFor(datacodes.get(i)));
             if (i < datacodes.size() - 1) builder.append(" > ");
         }
         return builder.toString();
-    }
-
-    static void reset() {
-        datacodes.clear();
-        tracked.remove();
     }
 }

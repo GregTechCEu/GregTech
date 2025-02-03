@@ -786,7 +786,7 @@ public class MetaTileEntities {
 
         // Import/Export Buses/Hatches, IDs 1150-1209
         endPos = GregTechAPI.isHighTier() ? ITEM_IMPORT_BUS.length : GTValues.UHV;
-        for (int i = 0; i < endPos; i++) {
+        for (int i = 0; i <= endPos; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             ITEM_IMPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.import." + voltageName), i, false);
             ITEM_EXPORT_BUS[i] = new MetaTileEntityItemBus(gregtechId("item_bus.export." + voltageName), i, true);
