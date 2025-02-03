@@ -427,7 +427,8 @@ public class GTGuiTextures {
             "textures/gui/widget/button_no_distinct_buses.png", true);
     public static final UITexture BUTTON_NO_FLEX = fullImage("textures/gui/widget/button_no_flex.png", true);
     public static final UITexture BUTTON_MULTI_MAP = fullImage("textures/gui/widget/button_multi_map.png", true);
-    public static final UITexture BUTTON_MINER_MODES = fullImage("textures/gui/widget/button_miner_modes.png", true);
+    public static final UITexture[] BUTTON_MINER_MODES = slice("textures/gui/widget/button_miner_modes.png", 18, 72, 18,
+            18, true);
     public static final UITexture BUTTON_THROTTLE_MINUS = fullImage("textures/gui/widget/button_throttle_minus.png",
             true); // TODO new texture
     public static final UITexture BUTTON_THROTTLE_PLUS = fullImage("textures/gui/widget/button_throttle_plus.png",
