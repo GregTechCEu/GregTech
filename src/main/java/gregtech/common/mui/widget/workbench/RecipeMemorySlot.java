@@ -38,7 +38,7 @@ public class RecipeMemorySlot extends Widget<RecipeMemorySlot> implements Intera
             tooltip.addLine(IKey.lang("gregtech.recipe_memory_widget.tooltip.1"));
             tooltip.addLine(IKey.lang("gregtech.recipe_memory_widget.tooltip.2"));
             tooltip.addLine(IKey.lang("gregtech.recipe_memory_widget.tooltip.0", recipe.timesUsed)
-                    .format(TextFormatting.WHITE));
+                    .style(TextFormatting.WHITE));
         });
     }
 
