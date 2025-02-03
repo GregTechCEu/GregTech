@@ -25,6 +25,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.vec.Vector3;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
@@ -33,8 +35,6 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.vecmath.Vector3f;
@@ -61,7 +61,7 @@ public abstract class WorldSceneRenderer {
             .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
     public final World world;
-    public final Map<Collection<BlockPos>, ISceneRenderHook> renderedBlocksMap;
+    public final Collection<BlockPos> renderedBlocks = new ObjectOpenHashSet<>();
     private Consumer<WorldSceneRenderer> beforeRender;
     private Consumer<WorldSceneRenderer> afterRender;
     private Consumer<RayTraceResult> onLookingAt;
@@ -73,7 +73,6 @@ public abstract class WorldSceneRenderer {
 
     public WorldSceneRenderer(World world) {
         this.world = world;
-        renderedBlocksMap = new LinkedHashMap<>();
     }
 
     public WorldSceneRenderer setBeforeWorldRender(Consumer<WorldSceneRenderer> callback) {
@@ -86,9 +85,9 @@ public abstract class WorldSceneRenderer {
         return this;
     }
 
-    public WorldSceneRenderer addRenderedBlocks(Collection<BlockPos> blocks, ISceneRenderHook renderHook) {
+    public WorldSceneRenderer addRenderedBlocks(@Nullable Collection<BlockPos> blocks) {
         if (blocks != null) {
-            this.renderedBlocksMap.put(blocks, renderHook);
+            this.renderedBlocks.addAll(blocks);
         }
         return this;
     }
@@ -240,31 +239,24 @@ public abstract class WorldSceneRenderer {
             for (BlockRenderLayer layer : BlockRenderLayer.values()) {
                 ForgeHooksClient.setRenderLayer(layer);
                 int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
+                setDefaultPassRenderState(pass);
 
-                renderedBlocksMap.forEach((renderedBlocks, hook) -> {
-                    if (hook != null) {
-                        hook.apply(false, pass, layer);
-                    } else {
-                        setDefaultPassRenderState(pass);
+                BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+                buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRendererDispatcher();
+
+                for (BlockPos pos : renderedBlocks) {
+                    IBlockState state = world.getBlockState(pos);
+                    Block block = state.getBlock();
+                    if (block == Blocks.AIR) continue;
+                    state = state.getActualState(world, pos);
+                    if (block.canRenderInLayer(state, layer)) {
+                        blockrendererdispatcher.renderBlock(state, pos, world, buffer);
                     }
+                }
 
-                    BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-                    buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                    BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRendererDispatcher();
-
-                    for (BlockPos pos : renderedBlocks) {
-                        IBlockState state = world.getBlockState(pos);
-                        Block block = state.getBlock();
-                        if (block == Blocks.AIR) continue;
-                        state = state.getActualState(world, pos);
-                        if (block.canRenderInLayer(state, layer)) {
-                            blockrendererdispatcher.renderBlock(state, pos, world, buffer);
-                        }
-                    }
-
-                    Tessellator.getInstance().draw();
-                    Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
-                });
+                Tessellator.getInstance().draw();
+                Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
             }
         } finally {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
@@ -276,22 +268,15 @@ public abstract class WorldSceneRenderer {
         // render TESR
         for (int pass = 0; pass < 2; pass++) {
             ForgeHooksClient.setRenderPass(pass);
-            int finalPass = pass;
-            renderedBlocksMap.forEach((renderedBlocks, hook) -> {
-                if (hook != null) {
-                    hook.apply(true, finalPass, null);
-                } else {
-                    setDefaultPassRenderState(finalPass);
-                }
-                for (BlockPos pos : renderedBlocks) {
-                    TileEntity tile = world.getTileEntity(pos);
-                    if (tile != null) {
-                        if (tile.shouldRenderInPass(finalPass)) {
-                            TileEntityRendererDispatcher.instance.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
-                        }
+            setDefaultPassRenderState(pass);
+            for (BlockPos pos : renderedBlocks) {
+                TileEntity tile = world.getTileEntity(pos);
+                if (tile != null) {
+                    if (tile.shouldRenderInPass(pass)) {
+                        TileEntityRendererDispatcher.instance.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
                     }
                 }
-            });
+            }
         }
         ForgeHooksClient.setRenderPass(-1);
         GlStateManager.enableDepth();
