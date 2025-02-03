@@ -199,7 +199,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     protected void configureWarningText(MultiblockUIFactory.Builder builder) {
         builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
-        super.configureWarningText(builder);
     }
 
     @Override
