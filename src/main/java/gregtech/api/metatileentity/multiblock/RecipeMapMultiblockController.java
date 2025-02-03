@@ -152,7 +152,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
+                .addProgressLine(recipeMapWorkable.getProgressPercent())
+                .addRecipeOutputsLine(recipeMapWorkable.getPreviousRecipe());
     }
 
     @Override
