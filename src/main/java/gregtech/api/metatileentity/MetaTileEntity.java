@@ -737,7 +737,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public final boolean acceptsCovers() {
+    public boolean acceptsCovers() {
         return covers.size() < EnumFacing.VALUES.length;
     }
 
@@ -1090,6 +1090,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
+                ISyncedTileEntity.addCode(internalId, trait);
+                trait.receiveCustomData(internalId, buf);
                 AdvancedPacketBuffer b = buf.readSubBuffer();
                 trait.receiveCustomData(internalId, b);
                 ISyncedTileEntity.checkCustomData(internalId, b, trait);
@@ -1109,6 +1111,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
             if (cover != null) {
+                ISyncedTileEntity.addCode(internalId, cover);
+                cover.readCustomData(internalId, buf);
                 AdvancedPacketBuffer b = buf.readSubBuffer();
                 cover.readCustomData(internalId, b);
                 ISyncedTileEntity.checkCustomData(internalId, b, cover);

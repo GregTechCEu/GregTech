@@ -531,6 +531,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
+    public boolean acceptsCovers() {
+        return false;
+    }
+
+    @Override
     public boolean canRenderMachineGrid(@NotNull ItemStack mainHandStack, @NotNull ItemStack offHandStack) {
         return false;
     }

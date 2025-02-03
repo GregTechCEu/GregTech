@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.network.AdvancedPacketBuffer;
@@ -328,6 +329,12 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     public long getMaxVoltage() {
         GTLog.logger.error("Large Boiler called getMaxVoltage(), this should not be possible!");
         return 0;
+    }
+
+    @Override
+    protected IEnergyContainer getEnergyContainer() {
+        GTLog.logger.error("Large Boiler called getEnergyContainer(), this should not be possible!");
+        return super.getEnergyContainer();
     }
 
     /**

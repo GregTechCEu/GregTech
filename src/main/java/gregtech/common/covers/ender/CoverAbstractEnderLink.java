@@ -27,7 +27,6 @@ import net.minecraft.util.ITickable;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.Rectangle;
@@ -51,8 +50,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -150,8 +150,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected Flow createWidgets(GuiData data, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
-        // todo unneeded cast in mui2 rc3
-        var entrySelectorSH = (PanelSyncHandler) syncManager.panel("entry_selector", entrySelector(getType()), true);
+        var entrySelectorSH = syncManager.panel("entry_selector", entrySelector(getType()), true);
 
         return Flow.column().coverChildrenHeight().top(24)
                 .margin(7, 0).widthRel(1f)
@@ -174,6 +173,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                 .onMousePressed(i -> {
                                     if (entrySelectorSH.isPanelOpen()) {
                                         entrySelectorSH.closePanel();
+                                        entrySelectorSH.deleteCachedPanel();
                                     } else {
                                         entrySelectorSH.openPanel();
                                     }
@@ -285,14 +285,19 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected PanelSyncHandler.IPanelBuilder entrySelector(EntryTypes<T> type) {
         return (syncManager, syncHandler) -> {
-            Set<String> names = VirtualEnderRegistry.getEntryNames(getOwner(), type);
+            List<IWidget> rows = new ArrayList<>();
+            for (String name : VirtualEnderRegistry.getEntryNames(getOwner(), type)) {
+                rows.add(createRow(name, syncManager, type));
+            }
             return GTGuis.createPopupPanel("entry_selector", 168, 112)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR)
                             .asWidget()
                             .top(6)
                             .left(4))
-                    .child(ListWidget.builder(names, name -> createRow(name, syncManager, type))
+                    .child(new ListWidget<>()
+                            .children(rows)
+                            // .builder(names, name -> createRow(name, syncManager, type))
                             .background(GTGuiTextures.DISPLAY.asIcon()
                                     .width(168 - 8)
                                     .height(112 - 20))
@@ -392,7 +397,6 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                         getOwner() == null ? "null" : getOwner().toString());
                                 NetworkUtils.writeStringSafe(buffer, name);
                             });
-                            Interactable.playButtonClickSound();
                             return true;
                         }));
     }

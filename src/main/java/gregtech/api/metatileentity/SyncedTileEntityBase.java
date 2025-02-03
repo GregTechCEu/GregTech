@@ -1,7 +1,6 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.AdvancedPacketBuffer;
 import gregtech.api.network.PacketDataList;
@@ -80,12 +79,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
                 AdvancedPacketBuffer buf = new AdvancedPacketBuffer(
                         Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey)), Unpooled::buffer);
                 int dataId = Integer.parseInt(discriminatorKey);
+                ISyncedTileEntity.addCode(dataId, this);
                 receiveCustomData(dataId, buf);
-
-                MetaTileEntity mte = null;
-                if (this instanceof IGregTechTileEntity gtte)
-                    mte = gtte.getMetaTileEntity();
-                ISyncedTileEntity.checkCustomData(dataId, buf, mte == null ? this : mte);
+                ISyncedTileEntity.checkData(buf);
             }
         }
     }
@@ -104,11 +100,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
         AdvancedPacketBuffer buffer = new AdvancedPacketBuffer(Unpooled.copiedBuffer(updateData), Unpooled::buffer);
+        ISyncedTileEntity.track(this);
         receiveInitialSyncData(buffer);
-
-        MetaTileEntity mte = null;
-        if (this instanceof IGregTechTileEntity gtte)
-            mte = gtte.getMetaTileEntity();
-        ISyncedTileEntity.checkInitialData(buffer, mte == null ? this : mte);
+        ISyncedTileEntity.checkData(buffer);
     }
 }

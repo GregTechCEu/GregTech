@@ -12,6 +12,8 @@ import net.minecraft.util.math.BlockPos;
 
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.ApiStatus;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -21,6 +23,9 @@ import java.util.function.Consumer;
  */
 public interface ISyncedTileEntity {
 
+    Consumer<PacketBuffer> NO_OP = buf -> {};
+    IntList datacodes = new IntArrayList();
+    ThreadLocal<Object> tracked = ThreadLocal.withInitial(() -> null);
     Consumer<AdvancedPacketBuffer> NO_OP = buf -> {};
 
     /**
@@ -169,26 +174,25 @@ public interface ISyncedTileEntity {
      */
     void receiveCustomData(int discriminator, @NotNull AdvancedPacketBuffer buf);
 
-    static void checkCustomData(int discriminator, @NotNull ByteBuf buf, Object obj) {
-        if (buf.readableBytes() == 0) return;
+    static void checkData(@NotNull ByteBuf buf) {
+        if (buf.readableBytes() != 0) {
+            if (datacodes.isEmpty()) {
+                GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
+                        stringify(tracked.get()), buf.readableBytes());
+            } else {
+                GTLog.logger.error(
+                        "Class {} failed to finish reading receiveCustomData at code path [{}] with {} bytes remaining",
+                        stringify(tracked.get()), getCodePath(), buf.readableBytes());
+            }
+        }
 
-        GTLog.logger.error(
-                "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
-                stringify(obj), GregtechDataCodes.getNameFor(discriminator), buf.readableBytes());
-
-        buf.clear(); // clear to prevent further logging
-    }
-
-    static void checkInitialData(@NotNull ByteBuf buf, Object obj) {
-        if (buf.readableBytes() == 0) return;
-
-        GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
-                stringify(obj), buf.readableBytes());
-
-        buf.clear(); // clear to prevent further logging
+        reset();
     }
 
     static String stringify(Object obj) {
+        if (obj instanceof IGregTechTileEntity gtte && gtte.getMetaTileEntity() != null)
+            obj = gtte.getMetaTileEntity();
+
         StringBuilder builder = new StringBuilder(obj.getClass().getSimpleName());
 
         BlockPos pos = null;
@@ -207,5 +211,28 @@ public interface ISyncedTileEntity {
                 .append(pos.getZ()).append("Z}");
 
         return builder.toString();
+    }
+
+    static void addCode(int code, Object trackedObject) {
+        datacodes.add(code);
+        track(trackedObject);
+    }
+
+    static void track(Object trackedObject) {
+        tracked.set(trackedObject);
+    }
+
+    static String getCodePath() {
+        var builder = new StringBuilder();
+        for (int i = 0; i < datacodes.size(); i++) {
+            builder.append(GregtechDataCodes.getNameFor(datacodes.get(i)));
+            if (i < datacodes.size() - 1) builder.append(" > ");
+        }
+        return builder.toString();
+    }
+
+    static void reset() {
+        datacodes.clear();
+        tracked.remove();
     }
 }

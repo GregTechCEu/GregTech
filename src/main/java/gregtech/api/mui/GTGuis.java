@@ -9,6 +9,7 @@ import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
 
 import net.minecraft.item.ItemStack;
 
+import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.factory.GuiManager;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -103,6 +104,9 @@ public class GTGuis {
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
                             this.closeIfOpen(true);
+                            if (isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
+                                handler.deleteCachedPanel();
+                            }
                             return true;
                         }
                         return false;

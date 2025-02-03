@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
@@ -101,17 +102,27 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * @return the energy container's energy input per second
      */
-    protected abstract long getEnergyInputPerSecond();
+    protected long getEnergyInputPerSecond() {
+        return getEnergyContainer().getInputPerSec();
+    }
 
     /**
      * @return the energy container's current stored energy
      */
-    protected abstract long getEnergyStored();
+    protected long getEnergyStored() {
+        return getEnergyContainer().getEnergyStored();
+    }
 
     /**
      * @return the energy container's maximum energy capacity
      */
-    protected abstract long getEnergyCapacity();
+    protected long getEnergyCapacity() {
+        return getEnergyContainer().getEnergyCapacity();
+    }
+
+    protected IEnergyContainer getEnergyContainer() {
+        return IEnergyContainer.DEFAULT;
+    }
 
     /**
      * Draw energy from the energy container
@@ -120,12 +131,22 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param simulate  whether to simulate energy extraction or not
      * @return true if the energy can/was drained, otherwise false
      */
-    protected abstract boolean drawEnergy(long recipeEUt, boolean simulate);
+    protected boolean drawEnergy(long recipeEUt, boolean simulate) {
+        // this should be the ONLY time eut is negative!
+        if (consumesEnergy()) recipeEUt = -recipeEUt;
+        long resultEnergy = getEnergyStored() + recipeEUt;
+        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
+            if (!simulate) getEnergyContainer().changeEnergy(recipeEUt);
+            return true;
+        } else return false;
+    }
 
     /**
      * @return the maximum voltage the machine can use/handle for recipe searching
      */
-    public abstract long getMaxVoltage();
+    public long getMaxVoltage() {
+        return Math.max(getEnergyContainer().getInputVoltage(), getEnergyContainer().getOutputVoltage());
+    }
 
     /**
      *
@@ -941,7 +962,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected void setupRecipe(@NotNull Recipe recipe) {
         this.progressTime = 1;
         setMaxProgress(ocResult.duration());
-        this.recipeEUt = consumesEnergy() ? ocResult.eut() : -ocResult.eut();
+        this.recipeEUt = ocResult.eut();
 
         int recipeTier = GTUtility.getTierByVoltage(recipe.getEUt());
         int machineTier = getOverclockForTier(getMaximumOverclockVoltage());
@@ -1226,7 +1247,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         if (progressTime > 0) {
             this.isActive = true;
             this.maxProgressTime = compound.getInteger("MaxProgress");
-            this.recipeEUt = compound.getLong("RecipeEUt");
+            this.recipeEUt = Math.abs(compound.getLong("RecipeEUt"));
             NBTTagList itemOutputsList = compound.getTagList("ItemOutputs", Constants.NBT.TAG_COMPOUND);
             this.itemOutputs = new ArrayList<>(itemOutputsList.tagCount());
             for (int i = 0; i < itemOutputsList.tagCount(); i++) {

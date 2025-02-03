@@ -150,7 +150,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         resetTileAbilities();
         this.cleanroomLogic.invalidate();
         this.cleanAmount = MIN_CLEAN_AMOUNT;
-        cleanroomReceivers.forEach(receiver -> receiver.setCleanroom(null));
+        cleanroomReceivers.forEach(receiver -> {
+            if (receiver.getCleanroom() == this) {
+                receiver.unsetCleanroom();
+            }
+        });
         cleanroomReceivers.clear();
     }
 
