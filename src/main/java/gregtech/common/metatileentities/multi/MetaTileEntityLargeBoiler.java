@@ -441,7 +441,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .progress(() -> waterCapacityValue.getIntValue() == 0 ? 0 :
                         waterFilledValue.getIntValue() * 1.0 / waterCapacityValue.getIntValue())
                 .texture(GTGuiTextures.PROGRESS_BAR_FLUID_RIG_DEPLETION, MultiblockUIFactory.Bars.FULL_WIDTH)
-                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipAutoUpdate(true)
                 .tooltipBuilder(t -> {
                     if (isStructureFormed()) {
                         if (waterFilledValue.getIntValue() == 0) {
