@@ -174,6 +174,25 @@ public class GTGuiTextures {
             .canApplyTheme()
             .build();
 
+    // HPCA Component icons
+    public static final UITexture BLANK_TRANSPARENT = fullImage("textures/gui/base/blank_transparent.png");
+    public static final UITexture HPCA_COMPONENT_OUTLINE = fullImage("textures/gui/widget/hpca/component_outline.png");
+    public static final UITexture HPCA_ICON_EMPTY_COMPONENT = fullImage("textures/gui/widget/hpca/empty_component.png");
+    public static final UITexture HPCA_ICON_ADVANCED_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/advanced_computation_component.png");
+    public static final UITexture HPCA_ICON_BRIDGE_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/bridge_component.png");
+    public static final UITexture HPCA_ICON_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/computation_component.png");
+    public static final UITexture HPCA_ICON_ACTIVE_COOLER_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/active_cooler_component.png");
+    public static final UITexture HPCA_ICON_HEAT_SINK_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/heat_sink_component.png");
+    public static final UITexture HPCA_ICON_DAMAGED_ADVANCED_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/damaged_advanced_computation_component.png");
+    public static final UITexture HPCA_ICON_DAMAGED_COMPUTATION_COMPONENT = fullImage(
+            "textures/gui/widget/hpca/damaged_computation_component.png");
+
     public static final UITexture[] BUTTON_BLACKLIST = slice("textures/gui/widget/button_blacklist.png",
             16, 32, 16, 16, true);
     public static final UITexture[] BUTTON_IGNORE_DAMAGE = slice("textures/gui/widget/button_filter_damage.png",
