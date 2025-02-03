@@ -7,9 +7,7 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.miner.MultiblockMinerLogic;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -17,8 +15,9 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -27,7 +26,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.TextComponentUtil;
+import gregtech.api.util.KeyUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
@@ -57,6 +56,9 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -232,79 +234,75 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        super.addDisplayText(textList);
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
+                .createFlexButton((posGuiData, panelSyncManager) -> {
+                    IntSyncValue buttonSync = new IntSyncValue(this::getCurrentMode, this::setCurrentMode);
 
-        if (this.isStructureFormed()) {
-            if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
-                int energyContainer = getEnergyTier();
-                long maxVoltage = GTValues.V[energyContainer];
-                String voltageName = GTValues.VNF[energyContainer];
-                textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage,
-                        voltageName));
-            }
-
-            int workingAreaChunks = this.minerLogic.getCurrentRadius() * 2 / CHUNK_LENGTH;
-            int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.startx",
-                    this.minerLogic.getX().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getX().get()));
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.starty",
-                    this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get()));
-            textList.add(new TextComponentTranslation("gregtech.machine.miner.startz",
-                    this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get()));
-            if (this.minerLogic.isChunkMode()) {
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.working_area_chunks",
-                        workingAreaChunks, workingAreaChunks));
-            } else {
-                textList.add(
-                        new TextComponentTranslation("gregtech.machine.miner.working_area", workingArea, workingArea));
-            }
-            if (this.minerLogic.isDone())
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.done")
-                        .setStyle(new Style().setColor(TextFormatting.GREEN)));
-            else if (this.minerLogic.isWorking())
-                textList.add(new TextComponentTranslation("gregtech.machine.miner.working")
-                        .setStyle(new Style().setColor(TextFormatting.GOLD)));
-            else if (!this.isWorkingEnabled())
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        }
-    }
-
-    private void addDisplayText2(List<ITextComponent> textList) {
-        if (this.isStructureFormed()) {
-            ITextComponent mCoords = new TextComponentString("    ")
-                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minex",
-                            this.minerLogic.getMineX().get()))
-                    .appendText("\n    ")
-                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.miney",
-                            this.minerLogic.getMineY().get()))
-                    .appendText("\n    ")
-                    .appendSibling(new TextComponentTranslation("gregtech.machine.miner.minez",
-                            this.minerLogic.getMineZ().get()));
-            textList.add(mCoords);
-        }
+                    return new CycleButtonWidget()
+                            .stateCount(4)
+                            .value(buttonSync)
+                            .addTooltip(0, IKey.lang("gregtech.multiblock.miner.neither_mode"))
+                            .addTooltip(1, IKey.lang("gregtech.multiblock.miner.chunk_mode"))
+                            .addTooltip(2, IKey.lang("gregtech.multiblock.miner.silk_touch_mode"))
+                            .addTooltip(3, IKey.lang("gregtech.multiblock.miner.both_modes"))
+                            .stateBackground(0, GTGuiTextures.BUTTON_MINER_MODES[0])
+                            .stateBackground(1, GTGuiTextures.BUTTON_MINER_MODES[1])
+                            .stateBackground(2, GTGuiTextures.BUTTON_MINER_MODES[2])
+                            .stateBackground(3, GTGuiTextures.BUTTON_MINER_MODES[3]);
+                });
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
-                .addCustom(tl -> {
-                    if (isStructureFormed() && isInventoryFull) {
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.YELLOW,
-                                "gregtech.machine.miner.invfull"));
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
+                .addEnergyUsageLine(energyContainer)
+                .addCustom(list -> {
+                    if (isStructureFormed()) {
+                        int workingAreaChunks = this.minerLogic.getCurrentRadius() * 2 / CHUNK_LENGTH;
+                        int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
+
+                        list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_at"));
+                        list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_pos",
+                                minerLogic.getX().get(), minerLogic.getY().get(), minerLogic.getZ().get()));
+
+                        if (minerLogic.isChunkMode()) {
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.working_area_chunks",
+                                    workingAreaChunks,
+                                    workingAreaChunks));
+                        } else {
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.working_area",
+                                    workingArea, workingArea));
+                        }
+
+                        if (minerLogic.isDone()) {
+                            list.add(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.miner.done"));
+                        } else if (minerLogic.isWorking()) {
+                            list.add(KeyUtil.lang(TextFormatting.GOLD, "gregtech.machine.miner.working"));
+                        } else if (!isWorkingEnabled()) {
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.work_paused"));
+                        }
                     }
                 });
     }
 
     @Override
-    protected void addErrorText(List<ITextComponent> textList) {
-        super.addErrorText(textList);
-        if (isStructureFormed() && !drainFluid(true)) {
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                    "gregtech.machine.miner.multi.needsfluid"));
-        }
+    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+        builder.addCustom(list -> {
+            if (isStructureFormed() && !drainFluid(false)) {
+                list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
+            }
+        });
+    }
+
+    @Override
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(!drainEnergy(true));
+        builder.addCustom(list -> {
+            if (isStructureFormed() && isInventoryFull) {
+                list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
+            }
+        });
     }
 
     public IBlockState getCasingState() {
@@ -381,14 +379,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
 
     public long getMaxVoltage() {
         return GTValues.V[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())];
-    }
-
-    @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = super.createUITemplate(entityPlayer);
-        builder.widget(new AdvancedTextWidget(63, 31, this::addDisplayText2, 0xFFFFFF)
-                .setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
-        return builder;
     }
 
     // used for UI
