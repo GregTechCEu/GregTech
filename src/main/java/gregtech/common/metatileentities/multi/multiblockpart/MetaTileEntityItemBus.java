@@ -297,9 +297,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         }
 
         BooleanSyncValue workingStateValue = new BooleanSyncValue(() -> workingEnabled, val -> workingEnabled = val);
-        panelSyncManager.syncValue("working_state", workingStateValue);
         BooleanSyncValue collapseStateValue = new BooleanSyncValue(() -> autoCollapse, val -> autoCollapse = val);
-        panelSyncManager.syncValue("collapse_state", collapseStateValue);
 
         boolean hasGhostCircuit = hasGhostCircuitInventory() && this.circuitInventory != null;
 
@@ -318,26 +316,24 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                         .child(GTGuiTextures.getLogo(getUITheme()).asWidget().size(17).top(18 * 3 + 5))
                         .child(new ToggleButton()
                                 .top(18 * 2)
-                                .value(new BoolValue.Dynamic(workingStateValue::getBoolValue,
-                                        workingStateValue::setBoolValue))
+                                .value(workingStateValue)
                                 .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
-                                .tooltipBuilder(t -> t.setAutoUpdate(true)
-                                        .addLine(isExportHatch ?
-                                                (workingStateValue.getBoolValue() ?
-                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
-                                                        IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")) :
-                                                (workingStateValue.getBoolValue() ?
-                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.enabled") :
-                                                        IKey.lang("gregtech.gui.item_auto_input.tooltip.disabled")))))
+                                .tooltipAutoUpdate(true)
+                                .tooltipBuilder(t -> t.addLine(isExportHatch ?
+                                        (workingStateValue.getBoolValue() ?
+                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.enabled") :
+                                                IKey.lang("gregtech.gui.item_auto_output.tooltip.disabled")) :
+                                        (workingStateValue.getBoolValue() ?
+                                                IKey.lang("gregtech.gui.item_auto_input.tooltip.enabled") :
+                                                IKey.lang("gregtech.gui.item_auto_input.tooltip.disabled")))))
                         .child(new ToggleButton()
                                 .top(18)
-                                .value(new BoolValue.Dynamic(collapseStateValue::getBoolValue,
-                                        collapseStateValue::setBoolValue))
+                                .value(collapseStateValue)
                                 .overlay(GTGuiTextures.BUTTON_AUTO_COLLAPSE)
-                                .tooltipBuilder(t -> t.setAutoUpdate(true)
-                                        .addLine(collapseStateValue.getBoolValue() ?
-                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
-                                                IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
+                                .tooltipAutoUpdate(true)
+                                .tooltipBuilder(t -> t.addLine(collapseStateValue.getBoolValue() ?
+                                        IKey.lang("gregtech.gui.item_auto_collapse.tooltip.enabled") :
+                                        IKey.lang("gregtech.gui.item_auto_collapse.tooltip.disabled"))))
                         .childIf(hasGhostCircuit, new GhostCircuitSlotWidget()
                                 .slot(SyncHandlers.itemSlot(circuitInventory, 0))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
