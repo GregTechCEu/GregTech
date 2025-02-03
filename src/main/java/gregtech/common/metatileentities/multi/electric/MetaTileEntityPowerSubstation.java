@@ -354,16 +354,28 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 BigInteger energyCapacity = energyBank.getCapacity();
 
                 // Stored EU line
-                IKey storedFormatted = KeyUtil.string(TextFormatting.GOLD,
+                IKey storedFormatted = KeyUtil.string(
                         TextFormattingUtil.formatNumbers(energyStored) + " EU");
-                list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.stored",
-                        storedFormatted));
+
+                IKey truncated = KeyUtil.string(TextFormatting.GOLD,
+                        TextFormattingUtil.formatBigIntToCompactString(energyStored, 7) + " EU");
+
+                IKey bodyStored = (KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.stored",
+                        truncated));
+
+                list.add(KeyUtil.setHover(bodyStored, storedFormatted));
 
                 // EU Capacity line
-                IKey capacityFormatted = KeyUtil.string(TextFormatting.GOLD,
+                IKey capacityFormatted = KeyUtil.string(
                         TextFormattingUtil.formatNumbers(energyCapacity) + " EU");
-                list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.capacity",
-                        capacityFormatted));
+
+                IKey capCompact = KeyUtil.string(TextFormatting.GOLD,
+                        TextFormattingUtil.formatBigIntToCompactString(energyCapacity, 7) + " EU");
+
+                IKey bodyCap = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.capacity",
+                        capCompact);
+
+                list.add(KeyUtil.setHover(bodyCap, capacityFormatted));
 
                 // Passive Drain line
                 IKey passiveDrain = KeyUtil.string(TextFormatting.DARK_RED,
