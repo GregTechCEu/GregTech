@@ -59,8 +59,14 @@ public class MultiblockUIFactory {
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
-        configureErrorText(builder -> builder.addMufflerObstructedLine(!mte.isMufflerFaceFree()));
-        configureWarningText(builder -> builder.addMaintenanceProblemLines(mte.getMaintenanceProblems()));
+        configureErrorText(builder -> {
+            if (mte.hasMufflerMechanics())
+                builder.addMufflerObstructedLine(!mte.isMufflerFaceFree());
+        });
+        configureWarningText(builder -> {
+            if (mte.hasMaintenanceMechanics())
+                builder.addMaintenanceProblemLines(mte.getMaintenanceProblems());
+        });
         configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));
     }
 
@@ -816,11 +822,11 @@ public class MultiblockUIFactory {
         }
 
         public boolean isEmpty() {
-            return textList.isEmpty();
+            return this.textList.isEmpty();
         }
 
         public void clear() {
-            textList.clear();
+            this.textList.clear();
         }
 
         protected boolean hasChanged() {
@@ -846,8 +852,12 @@ public class MultiblockUIFactory {
                 @Override
                 public void detectAndSendChanges(boolean init) {
                     if (init || hasChanged()) {
-                        if (init) build();
+                        if (init) {
+                            onRebuild();
+                            build();
+                        }
                         sync(0, this::syncText);
+                        markDirty();
                     }
                 }
 
@@ -877,9 +887,7 @@ public class MultiblockUIFactory {
 
         public void build(IRichTextBuilder<?> richText) {
             if (dirty) {
-                if (this.onRebuild != null) {
-                    this.onRebuild.run();
-                }
+                onRebuild();
                 build();
                 dirty = false;
             }
@@ -888,12 +896,18 @@ public class MultiblockUIFactory {
             }
         }
 
+        private void onRebuild() {
+            if (this.onRebuild != null) {
+                this.onRebuild.run();
+            }
+        }
+
         public void markDirty() {
             dirty = true;
         }
 
         protected void build() {
-            this.textList.clear();
+            clear();
             if (this.action != null) this.action.accept(this);
         }
 
