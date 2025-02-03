@@ -5,6 +5,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.toolitem.IGTTool;
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.util.GTUtility;
 
@@ -113,6 +114,13 @@ public final class ToolChargeBarRenderer {
     }
 
     public static void renderBarsTool(IGTTool tool, ItemStack stack, int xPosition, int yPosition) {
+        if (tool instanceof ItemGTToolbelt toolbelt) {
+            ItemStack selected = toolbelt.getSelectedTool(stack);
+            if (!selected.isEmpty() && selected.getItem() instanceof IGTTool toool) {
+                tool = toool;
+                stack = selected;
+            }
+        }
         boolean renderedDurability = false;
         NBTTagCompound tag = GTUtility.getOrCreateNbtCompound(stack);
         if (!tag.getBoolean(ToolHelper.UNBREAKABLE_KEY)) {

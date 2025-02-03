@@ -1,6 +1,7 @@
 package gregtech.client.renderer;
 
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.client.texture.IconRegistrar;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -11,13 +12,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ICubeRenderer extends IIconRegister {
+public interface ICubeRenderer extends IconRegistrar {
 
     String EMISSIVE = "_emissive";
 

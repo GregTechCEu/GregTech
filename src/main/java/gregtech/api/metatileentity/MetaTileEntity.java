@@ -35,6 +35,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.BloomEffectUtil;
+import gregtech.client.utils.RenderUtil;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.creativetab.GTCreativeTabs;
@@ -88,7 +89,6 @@ import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.IGuiHolder;
@@ -100,6 +100,7 @@ import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -107,6 +108,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -165,6 +167,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Nullable
     private UUID owner = null;
+
+    private final Set<CreativeTabs> creativeTabs = new ObjectArraySet<>();
+
+    {
+        creativeTabs.add(CreativeTabs.SEARCH);
+        creativeTabs.add(GTCreativeTabs.TAB_GREGTECH_MACHINES);
+    }
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -235,7 +244,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
-                               boolean advanced) {}
+                               boolean advanced) {
+        if (ConfigHolder.machines.doTerrainExplosion && getIsWeatherOrTerrainResistant())
+            tooltip.add(I18n.format("gregtech.universal.tooltip.terrain_resist"));
+    }
 
     /**
      * Override this to add extended tool information to the "Hold SHIFT to show Tool Info" tooltip section.
@@ -270,7 +282,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
+        return Pair.of(RenderUtil.getMissingSprite(), 0xFFFFFF);
     }
 
     /**
@@ -296,7 +308,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      */
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        TextureAtlasSprite atlasSprite = TextureUtils.getMissingSprite();
+        TextureAtlasSprite atlasSprite = RenderUtil.getMissingSprite();
         IVertexOperation[] renderPipeline = ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -362,7 +374,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
      *      MachineItemBlock#addCreativeTab(CreativeTabs)
      */
     public boolean isInCreativeTab(CreativeTabs creativeTab) {
-        return creativeTab == CreativeTabs.SEARCH || creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES;
+        return creativeTabs.contains(creativeTab);
     }
 
     public String getItemSubTypeId(ItemStack itemStack) {
@@ -1031,7 +1043,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
-            } else trait.receiveInitialData(buf);
+            } else {
+                trait.receiveInitialSyncData(buf);
+            }
         }
         CoverSaveHandler.receiveInitialSyncData(buf, this);
         this.muffled = buf.readBoolean();
@@ -1064,10 +1078,16 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
+            int internalId = buf.readVarInt();
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
-            } else trait.receiveCustomData(buf.readVarInt(), buf);
+            } else {
+                trait.receiveCustomData(internalId, buf);
+
+                // this should be fine, as nothing else is read after this
+                ISyncedTileEntity.checkCustomData(internalId, buf, trait);
+            }
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_MTE) {
@@ -1083,6 +1103,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             int internalId = buf.readVarInt();
             if (cover != null) {
                 cover.readCustomData(internalId, buf);
+
+                // this should be fine, as nothing else is read after this
+                ISyncedTileEntity.checkCustomData(internalId, buf, cover);
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
@@ -1661,4 +1684,45 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Method(modid = Mods.Names.APPLIED_ENERGISTICS2)
     public void gridChanged() {}
+
+    /**
+     * Add MTE to a creative tab. Ensure that the creative tab has been registered via
+     * {@link gregtech.api.block.machines.MachineItemBlock#addCreativeTab(CreativeTabs)
+     * MachineItemBlock#addCreativeTab(CreativeTabs)} beforehand.
+     */
+    public void addAdditionalCreativeTabs(CreativeTabs creativeTab) {
+        Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (creativeTabs.contains(creativeTab)) {
+            GTLog.logger.error("{} is already in the creative tab {}.", this, creativeTab.tabLabel,
+                    new IllegalArgumentException());
+            return;
+        }
+
+        creativeTabs.add(creativeTab);
+    }
+
+    public void removeFromCreativeTab(CreativeTabs creativeTab) {
+        Preconditions.checkNotNull(creativeTab, "creativeTab");
+        if (creativeTab == CreativeTabs.SEARCH) {
+            GTLog.logger.error("Cannot remove MTEs from the creative search tab.",
+                    new IllegalArgumentException());
+            return;
+        }
+        if (creativeTab == GTCreativeTabs.TAB_GREGTECH_MACHINES &&
+                metaTileEntityId.getNamespace().equals(GTValues.MODID)) {
+            GTLog.logger.error("Cannot remove GT MTEs from the GT machines tab.", new IllegalArgumentException());
+            return;
+        }
+        if (!creativeTabs.contains(creativeTab)) {
+            GTLog.logger.error("{} is not in the creative tab {}.", this, creativeTab.tabLabel,
+                    new IllegalArgumentException());
+            return;
+        }
+
+        creativeTabs.remove(creativeTab);
+    }
+
+    public Set<CreativeTabs> getCreativeTabs() {
+        return Collections.unmodifiableSet(creativeTabs);
+    }
 }

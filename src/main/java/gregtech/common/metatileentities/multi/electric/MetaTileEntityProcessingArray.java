@@ -239,10 +239,17 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
         super.setCleanroom(provider);
 
         // Sync Cleanroom Change to Internal Workable MTE
+        ((ProcessingArrayWorkable) this.recipeMapWorkable).updateCleanroom();
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        super.unsetCleanroom();
+
         ((ProcessingArrayWorkable) this.recipeMapWorkable).updateCleanroom();
     }
 
@@ -269,8 +276,8 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
             super.invalidate();
 
             // invalidate mte's cleanroom reference
-            if (mte != null && mte instanceof ICleanroomReceiver) {
-                ((ICleanroomReceiver) mte).setCleanroom(null);
+            if (mte != null && mte instanceof ICleanroomReceiver cleanroomMTE) {
+                cleanroomMTE.unsetCleanroom();
             }
 
             // Reset locally cached variables upon invalidation
@@ -284,7 +291,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
 
         /**
          * Checks if a provided Recipe Map is valid to be used in the processing array
-         * Will filter out anything in the config blacklist, and also any non-singleblock machines
+         * Will filter out anything in the config blacklist, and also any non-single block machines
          *
          * @param recipeMap The recipeMap to check
          * @return {@code true} if the provided recipeMap is valid for use
@@ -360,7 +367,11 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                     receiver.setCleanroom(DUMMY_CLEANROOM);
                 } else {
                     ICleanroomProvider provider = ((RecipeMapMultiblockController) metaTileEntity).getCleanroom();
-                    if (provider != null) receiver.setCleanroom(provider);
+                    if (provider == null) {
+                        receiver.unsetCleanroom();
+                    } else {
+                        receiver.setCleanroom(provider);
+                    }
                 }
             }
         }

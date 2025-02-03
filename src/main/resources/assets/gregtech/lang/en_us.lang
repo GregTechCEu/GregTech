@@ -57,10 +57,18 @@ gregtech.multiblock.steam_oven.description=A Multi Smelter at the Steam Age. Req
 gregtech.multiblock.require_steam_parts=Requires Steam Hatches and Buses!
 gregtech.multiblock.steam_.duration_modifier=Takes §f1.5x §7base duration to process, not affected by number of items.
 
+gregtech.top.quantum_status.label=Status:
+gregtech.top.quantum_status.powered=§bOnline
+gregtech.top.quantum_status.connected=§cNo Power
+gregtech.top.quantum_status.disconnected=Not connected
+gregtech.top.quantum_controller.no_hatches=§cNo Energy Hatches Connected
+gregtech.top.quantum_controller.no_power=§cNo Power
+
 gregtech.top.working_disabled=Working Disabled
 
 gregtech.top.energy_consumption=Using
 gregtech.top.energy_production=Producing
+gregtech.top.energy_required=Requires
 
 gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
@@ -1035,6 +1043,14 @@ item.gt.tool.plunger.tooltip=§8Removes Fluids from Machines
 item.gt.tool.wire_cutter_lv.name=%s Wire Cutter (LV)
 item.gt.tool.wire_cutter_hv.name=%s Wire Cutter (HV)
 item.gt.tool.wire_cutter_iv.name=%s Wire Cutter (IV)
+item.gt.tool.toolbelt.name=%s Toolbelt%s
+item.gt.tool.toolbelt.size=§a%s Tool Slots
+item.gt.tool.toolbelt.tooltip=Holds GT or vanilla-esque tools that can be manually selected for in-world use, automatically selected for crafting, or stored for maintenance repair.
+item.gt.tool.toolbelt.paint=Also supports Spray Cans.
+item.gt.tool.toolbelt.dye=Can be dyed like leather equipment, and the dye can be removed via water cauldron, also like leather equipment.
+item.gt.tool.toolbelt.maintenance=Repairs maintenance problems with only inserted tools upon interacting with a maintenance hatch in-world.
+item.gt.tool.toolbelt.tool=§aSlot %s: §f%s
+item.gt.tool.toolbelt.selected=- §aSlot %s: §f%s
 
 
 item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses
@@ -1273,6 +1289,8 @@ cover.filter.mode.title=Filter Mode
 cover.filter.mode.filter_insert=Filter Insert
 cover.filter.mode.filter_extract=Filter Extract
 cover.filter.mode.filter_both=Filter Insert/Extract
+cover.filter.allow_flow.label=Allow Flow
+cover.filter.allow_flow.tooltip=By default, Items/Fluids can only move in the direction\nof the filter with respect to the filter's setting.\n\nIf Enabled, Items/Fluids are allowed to pass unfiltered\nthrough the opposite direction of this filter.
 cover.item_filter.ignore_damage.enabled=Ignore Damage
 cover.item_filter.ignore_damage.disabled=Respect Damage
 cover.item_filter.ignore_nbt.enabled=Ignore NBT
@@ -1302,6 +1320,8 @@ cover.smart_item_filter.filtering_mode.centrifuge=Centrifuge
 cover.smart_item_filter.filtering_mode.sifter=Sifter
 cover.smart_item_filter.filtering_mode.description=Select Machine this Smart Filter will use for filtering./nIt will automatically pick right portions of items for robotic arm.
 
+cover.generic.disabled=Disabled
+cover.generic.enabled=Enabled
 cover.generic.transfer_mode=Transfer Mode
 cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
@@ -2484,6 +2504,10 @@ behavior.tricorder.debug_lag_count=Caused %s Lag Spike Warnings (anything taking
 behavior.tricorder.mte_owner=Owner: %s
 behavior.tricorder.mte_owner_offline=Owner is Offline or Offworld!
 behavior.tricorder.mte_owner_null=This wasn't placed by a player!
+behavior.tricorder.quantum_controller.usage=Using %s EU/t (%s)
+behavior.tricorder.quantum_controller.connected_items=Connected item storages: %s
+behavior.tricorder.quantum_controller.connected_fluids=Connected fluid storages: %s
+behavior.tricorder.quantum_storage.usage=Contributing %s EU/t to Quantum Controller
 
 metaitem.item_magnet.lv.name=Low Voltage Item Magnet
 metaitem.item_magnet.hv.name=High Voltage Item Magnet
@@ -4229,9 +4253,9 @@ gregtech.machine.transformer.adjustable.opv.name=Overpowered Voltage Power Trans
 
 # Diodes
 gregtech.machine.diode.message=Max Amperage throughput: %s
-gregtech.machine.diode.tooltip_tool_usage=Hit with a Soft Mallet to change Amperage flow.
+gregtech.machine.diode.tooltip_tool_usage_screwdriver=§8Use Screwdriver to change Amperage flow or access Covers
 gregtech.machine.diode.tooltip_general=Allows Energy Flow in one direction and limits Amperage
-gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Soft Mallet to change
+gregtech.machine.diode.tooltip_starts_at=Starts as §f1A§7, use Screwdriver to change
 
 gregtech.machine.diode.ulv.name=Ultra Low Voltage Diode
 gregtech.machine.diode.lv.name=Low Voltage Diode
@@ -4360,6 +4384,7 @@ gregtech.machine.alarm.tooltip=Plays a Sound when given a Redstone signal
 
 #Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than Storage Drawers
+gregtech.machine.super_chest.ulv.name=Primitive Chest I
 gregtech.machine.super_chest.lv.name=Super Chest I
 gregtech.machine.super_chest.mv.name=Super Chest II
 gregtech.machine.super_chest.hv.name=Super Chest III
@@ -4375,6 +4400,7 @@ gregtech.machine.quantum_chest.items_stored=Item Amount:
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids
 gregtech.machine.quantum_tank.tooltip.voiding_enabled=Excess Fluid Voiding §aEnabled
+gregtech.machine.super_tank.ulv.name=Primitive Tank I
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
 gregtech.machine.super_tank.hv.name=Super Tank III
@@ -4385,6 +4411,16 @@ gregtech.machine.quantum_tank.luv.name=Quantum Tank II
 gregtech.machine.quantum_tank.zpm.name=Quantum Tank III
 gregtech.machine.quantum_tank.uv.name=Quantum Tank IV
 gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
+
+#Quantum Storage Controller
+gregtech.machine.quantum_storage_controller.name=Quantum Storage Controller
+gregtech.machine.quantum_storage_controller.tooltip=Heart of the Quantum Storage Network/nConnect Energy Hatches to power the Quantum Storage Network
+gregtech.machine.quantum_storage_proxy.name=Quantum Storage Proxy
+gregtech.machine.quantum_storage_proxy.tooltip=Proxies the Quantum Storage Network's inventory
+gregtech.machine.quantum_storage_extender.name=Quantum Storage Extender
+gregtech.machine.quantum_storage_extender.tooltip=Extends the Quantum Storage Network to other chests/tanks
+gregtech.machine.quantum_storage.connected=Connected to Quantum Controller at [%d, %d, %d]/n/nClick to highlight the controller
+gregtech.machine.quantum_storage.disconnected=Not Connected
 
 #Buffers
 gregtech.machine.buffer.tooltip=A Small Buffer to store Items and Fluids
@@ -4748,6 +4784,7 @@ behaviour.softhammer=Activates and Deactivates Machines
 behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
+behaviour.cell_bucket.tooltip=Can pickup or place fluids
 behaviour.paintspray.solvent.tooltip=Can remove color from things
 behaviour.paintspray.white.tooltip=Can paint things in White
 behaviour.paintspray.orange.tooltip=Can paint things in Orange
@@ -5393,7 +5430,7 @@ gregtech.universal.tooltip.uses_per_op=Uses §f%,d EU/operation
 gregtech.universal.tooltip.base_production_eut=§eBase Production: §f%,d EU/t
 gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
-gregtech.universal.tooltip.terrain_resist=This Machine will not explode when exposed to the Elements
+gregtech.universal.tooltip.terrain_resist=§eThis Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
 
 gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
@@ -5506,6 +5543,10 @@ gregtech.gui.config_slot.auto_pull_managed=§4Disabled:§7 Managed by Auto-Pull
 gregtech.gui.me_bus.extra_slot=Extra Slot/n§7Put extra items for recipes here, like Molds or Lenses
 gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from ME
 gregtech.gui.alarm.radius=Radius:
+gregtech.gui.item_passthrough.enabled=Item Passthough Enabled
+gregtech.gui.item_passthrough.disabled=Item Passthough Disabled
+gregtech.gui.fluid_passthrough.enabled=Fluid Passthough Enabled
+gregtech.gui.fluid_passthrough.disabled=Fluid Passthough Disabled
 
 
 ore.spawnlocation.name=Ore Spawn Information
@@ -6135,6 +6176,9 @@ gregtech.subtitle.entity.portal_opening=Portal opens
 gregtech.subtitle.entity.portal_closing=Portal closes
 gregtech.subtitle.maintenance.electrical=Electrical breakdown
 gregtech.subtitle.maintenance.mechanical=Mechanical breakdown
+gregtech.subtitle.alarm=Alarm Whines
+gregtech.subtitle.click=Something Clicks
+
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more
