@@ -17,6 +17,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.SimpleToolProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -158,6 +159,10 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         return stack;
     }
 
+    /**
+     * @return A tool made from the given material. The tool property (at least overriding) for the material must be
+     *         set.
+     */
     default ItemStack get(Material material) {
         ItemStack stack = new ItemStack(get());
 
@@ -178,35 +183,38 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         // Set other tool stats (durability)
-        ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-
+        SimpleToolProperty finalToolProperty = getToolProperty(material);
         // Durability formula we are working with:
         // Final Durability = (material durability * material durability multiplier) + (tool definition durability *
         // definition durability multiplier) - 1
         // Subtracts 1 internally since Minecraft treats "0" as a valid durability, but we don't want to display this.
 
-        int durability = toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
+        // Tool material modifiers.
+        int durability = finalToolProperty.getToolDurability() * finalToolProperty.getDurabilityMultiplier();
 
+        // Tool type modifiers.
         // Most Tool Definitions do not set a base durability, which will lead to ignoring the multiplier if present. So
         // apply the multiplier to the material durability if that would happen
         if (toolStats.getBaseDurability(stack) == 0) {
-            durability *= toolStats.getDurabilityMultiplier(stack);
+            durability = (int) (durability * toolStats.getDurabilityMultiplier(stack));
         } else {
-            durability += toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
+            durability += (int) (toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack));
         }
 
-        toolTag.setInteger(MAX_DURABILITY_KEY, durability - 1);
+        durability -= 1; // Finally adjust for MC
+        toolTag.setInteger(MAX_DURABILITY_KEY, durability);
         toolTag.setInteger(DURABILITY_KEY, 0);
-        if (toolProperty.getUnbreakable()) {
+
+        if (finalToolProperty.getUnbreakable()) {
             stackCompound.setBoolean(UNBREAKABLE_KEY, true);
         }
 
         // Set tool and material enchantments
         Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
-        toolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment,
-                level.getLevel(toolProperty.getToolHarvestLevel())));
+        finalToolProperty.getEnchantments().forEach((enchantment, level) -> enchantments.put(enchantment,
+                level.getLevel(finalToolProperty.getToolHarvestLevel())));
         toolStats.getDefaultEnchantments(stack).forEach((enchantment, level) -> enchantments.put(enchantment,
-                level.getLevel(toolProperty.getToolHarvestLevel())));
+                level.getLevel(finalToolProperty.getToolHarvestLevel())));
         enchantments.forEach((enchantment, level) -> {
             if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
                 stack.addEnchantment(enchantment, level);
@@ -226,7 +234,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             behaviourTag.setInteger(AOE_LAYER_KEY, aoeDefinition.layer);
         }
 
-        if (toolProperty.isMagnetic()) {
+        if (finalToolProperty.isMagnetic()) {
             behaviourTag.setBoolean(RELOCATE_MINED_BLOCKS_KEY, true);
         }
 
@@ -261,8 +269,23 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Nullable
-    default ToolProperty getToolProperty(ItemStack stack) {
-        return getToolMaterial(stack).getProperty(PropertyKey.TOOL);
+    default SimpleToolProperty getToolProperty(Material material) {
+        SimpleToolProperty finalToolProperty;
+        {
+            ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
+            if (material.hasProperty(PropertyKey.EXTRATOOL)) {
+                finalToolProperty = material.getProperty(PropertyKey.EXTRATOOL)
+                        .getOverriddenResult(this.getToolId(), toolProperty);
+            } else {
+                finalToolProperty = toolProperty;
+            }
+        }
+        return finalToolProperty;
+    }
+
+    @Nullable
+    default SimpleToolProperty getToolProperty(ItemStack stack) {
+        return getToolProperty(getToolMaterial(stack));
     }
 
     @Nullable
@@ -271,32 +294,32 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default float getMaterialToolSpeed(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolSpeed();
     }
 
     default float getMaterialAttackDamage(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolAttackDamage();
     }
 
     default float getMaterialAttackSpeed(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolAttackSpeed();
     }
 
     default int getMaterialDurability(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
     }
 
     default int getMaterialEnchantability(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolEnchantability();
     }
 
     default int getMaterialHarvestLevel(ItemStack stack) {
-        ToolProperty toolProperty = getToolProperty(stack);
+        SimpleToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolHarvestLevel();
     }
 
@@ -863,7 +886,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
         }
 
-        ToolProperty property = getToolProperty(stack);
+        SimpleToolProperty property = getToolProperty(stack);
         if (property == null) return false;
 
         // Check for any special enchantments specified by the material of this Tool
