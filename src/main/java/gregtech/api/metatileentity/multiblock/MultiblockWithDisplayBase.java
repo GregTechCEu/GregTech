@@ -364,6 +364,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     protected void handleDisplayClick(String componentData, ClickData clickData) {}
 
+    @Deprecated
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 198, 208);
 
