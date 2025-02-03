@@ -98,10 +98,12 @@ public class MultiblockUIFactory {
         Builder error = builder();
         error.sync("error", syncManager);
         error.setAction(this.errorText);
+        error.onRebuild(() -> error.isStructureFormed = mte.isStructureFormed());
 
         Builder warning = builder();
         warning.sync("warning", syncManager);
         warning.setAction(this.warningText);
+        warning.onRebuild(() -> warning.isStructureFormed = mte.isStructureFormed());
 
         IDrawable indicator = new DynamicDrawable(() -> {
             if (!error.isEmpty()) {
@@ -118,7 +120,7 @@ public class MultiblockUIFactory {
                 .size(18)
                 .pos(174 - 5, screenHeight - 18 - 3)
                 .overlay(indicator)
-                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipAutoUpdate(true)
                 .tooltipBuilder(t -> {
                     if (!error.isEmpty()) {
                         error.build(t);
@@ -416,6 +418,7 @@ public class MultiblockUIFactory {
         private IKey pausedKey = IKey.lang("gregtech.multiblock.work_paused").style(TextFormatting.GOLD);
         private IKey runningKey = IKey.lang("gregtech.multiblock.running").style(TextFormatting.GREEN);
         private boolean dirty;
+        private Runnable onRebuild;
 
         public Builder structureFormed(boolean structureFormed) {
             this.isStructureFormed = structureFormed;
@@ -874,6 +877,9 @@ public class MultiblockUIFactory {
 
         public void build(IRichTextBuilder<?> richText) {
             if (dirty) {
+                if (this.onRebuild != null) {
+                    this.onRebuild.run();
+                }
                 build();
                 dirty = false;
             }
@@ -893,6 +899,10 @@ public class MultiblockUIFactory {
 
         protected void setAction(Consumer<Builder> action) {
             this.action = action;
+        }
+
+        public void onRebuild(Runnable onRebuild) {
+            this.onRebuild = onRebuild;
         }
 
         private void addKey(IDrawable key) {
