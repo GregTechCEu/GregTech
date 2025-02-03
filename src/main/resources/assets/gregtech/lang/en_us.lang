@@ -4784,6 +4784,7 @@ behaviour.softhammer=Activates and Deactivates Machines
 behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
+behaviour.cell_bucket.tooltip=Can pickup or place fluids
 behaviour.paintspray.solvent.tooltip=Can remove color from things
 behaviour.paintspray.white.tooltip=Can paint things in White
 behaviour.paintspray.orange.tooltip=Can paint things in Orange
