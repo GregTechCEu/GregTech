@@ -57,10 +57,13 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -453,6 +456,20 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
             hpcaHandler.addErrors(textList);
         }
+    }
+
+    @Override
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
+                .addScreenChildren(iWidgets -> iWidgets.add(new Grid()
+                        .coverChildren()
+                        .leftRel(0.5f)
+                        .bottom(4)
+                        .minElementMargin(1)
+                        .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
+                                .asWidget()
+                                // could add tooltips here showing the name of the component
+                                .size(18))));
     }
 
     @Override
@@ -1018,11 +1035,19 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
+        @Deprecated
         public TextureArea getComponentTexture(int index) {
             if (components.size() <= index) {
                 return GuiTextures.BLANK_TRANSPARENT;
             }
             return components.get(index).getComponentIcon();
+        }
+
+        public UITexture getComponentTexture2(int index) {
+            if (components.size() <= index) {
+                return GTGuiTextures.BLANK_TRANSPARENT;
+            }
+            return components.get(index).getComponentIcon2();
         }
 
         public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing frontFacing,
