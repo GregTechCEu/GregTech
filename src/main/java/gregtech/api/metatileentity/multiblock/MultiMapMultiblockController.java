@@ -148,7 +148,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                             .disableHoverBackground()
                             .value(recipeMapValue)
                             .length(getAvailableRecipeMaps().length)
-                            .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                            .tooltipAutoUpdate(true)
                             .tooltipBuilder(t -> t.addLine(IKey.comp(
                                     IKey.lang("gregtech.multiblock.multiple_recipemaps.value",
                                             IKey.lang(getAvailableRecipeMaps()[recipeMapValue.getIntValue()]

@@ -330,7 +330,7 @@ public class MultiblockUIFactory {
                 .stateBackground(true, GTGuiTextures.BUTTON_DISTINCT_BUSES[1])
                 .stateBackground(false, GTGuiTextures.BUTTON_DISTINCT_BUSES[0])
                 .background(GTGuiTextures.BUTTON)
-                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipAutoUpdate(true)
                 .tooltipBuilder(t -> t.addLine(distinctValue.getBoolValue() ?
                         IKey.lang("gregtech.multiblock.universal.distinct_enabled") :
                         IKey.lang("gregtech.multiblock.universal.distinct_disabled")));
@@ -354,7 +354,7 @@ public class MultiblockUIFactory {
                 .background(GTGuiTextures.BUTTON)
                 .value(voidingValue)
                 .length(4)
-                .tooltip(tooltip -> tooltip.setAutoUpdate(true))
+                .tooltipAutoUpdate(true)
                 .tooltipBuilder(t -> t.addLine(IKey.lang(mte.getVoidingModeTooltip(voidingValue.getIntValue()))));
     }
 
