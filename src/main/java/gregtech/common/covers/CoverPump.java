@@ -40,19 +40,20 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -188,48 +189,42 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     }
 
     @Override
-    public ModularPanel buildUI(SidedPosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(SidedPosGuiData guiData, PanelSyncManager guiSyncManager) {
         var panel = GTGuis.createPanel(this, 176, 192);
 
         getFluidFilterContainer().setMaxTransferSize(getMaxTransferRate());
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createUI(panel, guiSyncManager))
+                .child(createUI(guiData, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected ParentWidget<?> createUI(ModularPanel mainPanel, GuiSyncManager syncManager) {
+    protected ParentWidget<?> createUI(GuiData data, PanelSyncManager syncManager) {
         var manualIOmode = new EnumSyncValue<>(ManualImportExportMode.class,
                 this::getManualImportExportMode, this::setManualImportExportMode);
-        manualIOmode.updateCacheFromSource(true);
 
         var throughput = new IntSyncValue(this::getTransferRate, this::setTransferRate);
-        throughput.updateCacheFromSource(true);
 
         var throughputString = new StringSyncValue(
-                throughput::getStringValue,
-                throughput::setStringValue);
-        throughputString.updateCacheFromSource(true);
+                throughput::getStringValue, throughput::setStringValue);
 
         var pumpMode = new EnumSyncValue<>(PumpMode.class, this::getPumpMode, this::setPumpMode);
-        pumpMode.updateCacheFromSource(true);
 
         syncManager.syncValue("manual_io", manualIOmode);
         syncManager.syncValue("pump_mode", pumpMode);
         syncManager.syncValue("throughput", throughput);
 
-        var column = new Column().top(24).margin(7, 0)
+        var column = Flow.column().top(24).margin(7, 0)
                 .widthRel(1f).coverChildrenHeight();
 
         if (createThroughputRow())
-            column.child(new Row().coverChildrenHeight()
+            column.child(Flow.row().coverChildrenHeight()
                     .marginBottom(2).widthRel(1f)
                     .child(new ButtonWidget<>()
                             .left(0).width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val, true, true);
-                                Interactable.playButtonClickSound();
+                                throughput.setValue(val);
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
@@ -243,21 +238,26 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             .right(0).width(18)
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
-                                throughput.setValue(val, true, true);
-                                Interactable.playButtonClickSound();
+                                throughput.setValue(val);
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
 
         if (createFilterRow())
-            column.child(getFluidFilterContainer()
-                    .initUI(mainPanel, syncManager));
+            column.child(getFluidFilterContainer().initUI(data, syncManager));
 
         if (createManualIOModeRow())
             column.child(new EnumRowBuilder<>(ManualImportExportMode.class)
                     .value(manualIOmode)
                     .lang("cover.generic.manual_io")
-                    .overlay(GTGuiTextures.MANUAL_IO_OVERLAY)
+                    .overlay(new IDrawable[] {
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[0] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[0]),
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[1] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[1]),
+                            new DynamicDrawable(() -> pumpMode.getValue().isImport() ?
+                                    GTGuiTextures.MANUAL_IO_OVERLAY_OUT[2] : GTGuiTextures.MANUAL_IO_OVERLAY_IN[2])
+                    })
                     .build());
 
         if (createPumpModeRow())
@@ -396,8 +396,11 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         this.manualImportExportMode = ManualImportExportMode.VALUES[tagCompound.getInteger("ManualImportExportMode")];
         this.bucketMode = BucketMode.VALUES[tagCompound.getInteger("BucketMode")];
-        this.fluidFilterContainer.deserializeNBT(tagCompound.getCompoundTag("Filter"));
-        this.fluidFilterContainer.handleLegacyNBT(tagCompound);
+        var filterTag = tagCompound.getCompoundTag("Filter");
+        if (filterTag.hasKey("IsBlacklist"))
+            this.fluidFilterContainer.handleLegacyNBT(filterTag);
+        else
+            this.fluidFilterContainer.deserializeNBT(filterTag);
     }
 
     @Override

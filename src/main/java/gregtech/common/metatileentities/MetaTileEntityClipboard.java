@@ -42,6 +42,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
@@ -188,7 +190,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             this.guiContainerCache = fakeModularUIContainer;
             if (getWorld().isRemote)
                 this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
-            this.writeCustomData(CREATE_FAKE_UI, buffer -> {});
+            this.writeCustomData(CREATE_FAKE_UI);
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
@@ -219,7 +221,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
+    public void getDrops(@NotNull List<@NotNull ItemStack> dropsList, @Nullable EntityPlayer harvester) {
         dropsList.clear();
         dropsList.add(this.getClipboard());
     }
@@ -258,7 +260,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
             BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
             World world = this.getWorld(); // Same here
 
-            NonNullList<ItemStack> drops = NonNullList.create();
+            List<ItemStack> drops = new ArrayList<>();
             getDrops(drops, player);
 
             Block.spawnAsEntity(getWorld(), pos, drops.get(0));
@@ -330,6 +332,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(CLIPBOARD_RENDERER.getParticleTexture(), 0xFFFFFF);
     }
@@ -523,6 +526,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public boolean canPlaceCoverOnSide(@NotNull EnumFacing side) {
+        return false;
+    }
+
+    @Override
+    public boolean acceptsCovers() {
         return false;
     }
 

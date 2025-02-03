@@ -11,7 +11,6 @@ import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.items.metaitem.stats.ItemFluidContainer;
-import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -48,7 +47,6 @@ import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.items.behaviors.MultiblockBuilderBehavior;
 import gregtech.common.items.behaviors.NanoSaberBehavior;
 import gregtech.common.items.behaviors.ProspectorScannerBehavior;
-import gregtech.common.items.behaviors.TerminalBehaviour;
 import gregtech.common.items.behaviors.TooltipBehavior;
 import gregtech.common.items.behaviors.TricorderBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
@@ -193,46 +191,51 @@ public class MetaItem1 extends StandardMetaItem {
         // Fluid Cells: ID 78-88
         FLUID_CELL = addItem(78, "fluid_cell")
                 .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, false),
-                        new ItemFluidContainer())
+                        new ItemFluidContainer(true))
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal")
                 .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, true),
-                        new ItemFluidContainer())
+                        new ItemFluidContainer(true))
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
                 .addComponents(new FilteredFluidStats(8000,
                         Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
-                        false, false, true), new ItemFluidContainer())
+                        false, false, true),
+                        new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
                 .addComponents(new FilteredFluidStats(32000,
                         Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
-                        false, false, true), new ItemFluidContainer())
+                        false, false, true),
+                        new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
                 .addComponents(new FilteredFluidStats(64000,
                         Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
-                        true, true, false, true), new ItemFluidContainer())
+                        true, true, false, true),
+                        new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
                 .addComponents(new FilteredFluidStats(128000,
                         Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true,
-                        false, false, true), new ItemFluidContainer())
+                        false, false, true),
+                        new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
                 .addComponents(new FilteredFluidStats(512000,
                         Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
-                        true, false, false, true), new ItemFluidContainer())
+                        true, false, false, true),
+                        new ItemFluidContainer(true))
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
@@ -279,7 +282,7 @@ public class MetaItem1 extends StandardMetaItem {
         VOLTAGE_COIL_HV = addItem(99, "voltage_coil.hv").setMaterialInfo(new ItemMaterialInfo(
                 new MaterialStack(Materials.BlackSteel, M * 2), new MaterialStack(Materials.SteelMagnetic, M / 2)));
         VOLTAGE_COIL_EV = addItem(100, "voltage_coil.ev")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 2),
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, M * 2),
                         new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
         VOLTAGE_COIL_IV = addItem(101, "voltage_coil.iv").setMaterialInfo(new ItemMaterialInfo(
                 new MaterialStack(Materials.Iridium, M * 2), new MaterialStack(Materials.NeodymiumMagnetic, M / 2)));
@@ -792,7 +795,6 @@ public class MetaItem1 extends StandardMetaItem {
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         TERMINAL = addItem(465, "terminal")
-                .addComponents(new HardwareProvider(), new TerminalBehaviour())
                 .setMaxStackSize(1)
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
         PROSPECTOR_LV = addItem(466, "prospector.lv")
@@ -853,7 +855,8 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Circuit Components: ID 516-565
         VACUUM_TUBE = addItem(516, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.ULV);
-        GLASS_TUBE = addItem(517, "component.glass.tube");
+        GLASS_TUBE = addItem(517, "component.glass.tube")
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M)));
         TRANSISTOR = addItem(518, "component.transistor").setUnificationData(OrePrefix.component, Component.Transistor);
         RESISTOR = addItem(519, "component.resistor").setUnificationData(OrePrefix.component, Component.Resistor);
         CAPACITOR = addItem(520, "component.capacitor").setUnificationData(OrePrefix.component, Component.Capacitor);
@@ -999,11 +1002,11 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_HULL_HV = addItem(719, "battery.hull.hv")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, M * 9))); // plate * 9
         BATTERY_HULL_SMALL_VANADIUM = addItem(720, "battery.hull.ev")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlueSteel, M * 2)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RedSteel, M * 2)));
         BATTERY_HULL_MEDIUM_VANADIUM = addItem(721, "battery.hull.iv")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RoseGold, M * 6)));
         BATTERY_HULL_LARGE_VANADIUM = addItem(722, "battery.hull.luv")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.RedSteel, M * 18)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BlueSteel, M * 18)));
         BATTERY_HULL_MEDIUM_NAQUADRIA = addItem(723, "battery.hull.zpm")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Europium, M * 6)));
         BATTERY_HULL_LARGE_NAQUADRIA = addItem(724, "battery.hull.uv")

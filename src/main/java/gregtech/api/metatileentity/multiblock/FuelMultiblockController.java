@@ -34,7 +34,10 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     @Override
     protected void initializeAbilities() {
         super.initializeAbilities();
-        this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        List<IEnergyContainer> outputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
+        outputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
+        outputEnergy.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
+        this.energyContainer = new EnergyContainerList(outputEnergy);
     }
 
     @Override
@@ -69,7 +72,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
             IEnergyContainer energyContainer = recipeMapWorkable.getEnergyContainer();
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
-                return maxVoltage < -recipeMapWorkable.getRecipeEUt();
+                return maxVoltage < recipeMapWorkable.getRecipeEUt();
             }
         }
         return false;

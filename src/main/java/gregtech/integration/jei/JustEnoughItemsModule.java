@@ -10,6 +10,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SteamMetaTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -28,6 +29,7 @@ import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.ToolItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.IntegrationSubmodule;
 import gregtech.integration.jei.basic.GTFluidVeinCategory;
@@ -83,6 +85,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_BOLT_SCREW;
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_RING;
+
 @JEIPlugin
 @GregTechModule(
                 moduleID = GregTechModules.MODULE_JEI,
@@ -114,8 +119,10 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         for (MetaItem<?> metaItem : MetaItems.ITEMS) {
             subtypeRegistry.registerSubtypeInterpreter(metaItem, subtype);
         }
-        subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(MetaBlocks.MACHINE),
-                new MachineSubtypeHandler());
+        for (MTERegistry registry : GregTechAPI.mteManager.getRegistries()) {
+            subtypeRegistry.registerSubtypeInterpreter(Item.getItemFromBlock(registry.getBlock()),
+                    new MachineSubtypeHandler());
+        }
     }
 
     @Override
@@ -191,24 +198,12 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
             }
         }
 
-        for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
-            MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
-            assert metaTileEntity != null;
+        for (MTERegistry mteRegistry : GregTechAPI.mteManager.getRegistries()) {
+            for (ResourceLocation metaTileEntityId : mteRegistry.getKeys()) {
+                MetaTileEntity metaTileEntity = mteRegistry.getObject(metaTileEntityId);
+                assert metaTileEntity != null;
 
-            if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
-                for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
-                    registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
-                }
-                if (override.getJEICategoryOverrides().length != 0)
-                    registry.addRecipeCatalyst(metaTileEntity.getStackForm(), override.getJEICategoryOverrides());
-                if (override.shouldReplace()) continue;
-            }
-
-            if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                IControllable workableCapability = metaTileEntity
-                        .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-
-                if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
+                if (metaTileEntity instanceof ICategoryOverride override && override.shouldOverride()) {
                     for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
                         registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                     }
@@ -217,24 +212,51 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     if (override.shouldReplace()) continue;
                 }
 
-                if (workableCapability instanceof AbstractRecipeLogic logic) {
-                    if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                        for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity).getAvailableRecipeMaps()) {
+                if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
+                    IControllable workableCapability = metaTileEntity
+                            .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+
+                    if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
+                        for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
                             registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                         }
-                    } else if (logic.getRecipeMap() != null) {
-                        registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
+                        if (override.getJEICategoryOverrides().length != 0)
+                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
+                                    override.getJEICategoryOverrides());
+                        if (override.shouldReplace()) continue;
+                    }
+
+                    if (workableCapability instanceof AbstractRecipeLogic logic) {
+                        if (metaTileEntity instanceof IMultipleRecipeMaps) {
+                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
+                                    .getAvailableRecipeMaps()) {
+                                registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
+                            }
+                        } else if (logic.getRecipeMap() != null) {
+                            registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
+                        }
                     }
                 }
             }
         }
 
         List<OreByProduct> oreByproductList = new ArrayList<>();
+        List<MaterialTree> materialTreeList = new ArrayList<>();
         for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 oreByproductList.add(new OreByProduct(material));
             }
+            if (material.hasProperty(PropertyKey.DUST)) {
+                materialTreeList.add(new MaterialTree(material));
+            }
+            if (material.hasFlag(GENERATE_BOLT_SCREW) && material.hasFlag(GENERATE_RING) &&
+                    material.hasProperty(PropertyKey.TOOL)) {
+                registry.addIngredientInfo(ToolItems.TOOLBELT.get(material), VanillaTypes.ITEM,
+                        "item.gt.tool.toolbelt.tooltip", "item.gt.tool.toolbelt.paint", "item.gt.tool.toolbelt.dye",
+                        "item.gt.tool.toolbelt.maintenance");
+            }
         }
+
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
         registry.addRecipes(oreByproductList, oreByProductId);
         MetaTileEntity[][] machineLists = {
@@ -252,12 +274,6 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
         }
 
         // Material Tree
-        List<MaterialTree> materialTreeList = new ArrayList<>();
-        for (Material material : GregTechAPI.materialManager.getRegisteredMaterials()) {
-            if (material.hasProperty(PropertyKey.DUST)) {
-                materialTreeList.add(new MaterialTree(material));
-            }
-        }
         registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
 
         // Ore Veins

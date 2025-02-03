@@ -20,17 +20,16 @@ import net.minecraft.util.text.TextFormatting;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.Tooltip;
+import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.BooleanConsumer;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.StringSyncValue;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +74,7 @@ public class OreDictionaryItemFilter extends BaseFilter {
     public void initUI(Consumer<gregtech.api.gui.Widget> widgetGroup) {}
 
     @Override
-    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
         return GTGuis.createPopupPanel("ore_dict_filter", 188, 76)
                 .padding(7)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
@@ -83,12 +82,12 @@ public class OreDictionaryItemFilter extends BaseFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
         return GTGuis.createPanel("ore_dict_filter", 100, 100);
     }
 
     @Override
-    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
         List<OreFilterTestSlot> oreSlots = new ArrayList<>();
         var expression = new StringSyncValue(this.filterReader::getExpression, this.filterReader::setExpression);
 
@@ -112,7 +111,7 @@ public class OreDictionaryItemFilter extends BaseFilter {
         var caseSensitive = new BooleanSyncValue(this.filterReader::isCaseSensitive, setCaseSensitive);
         var matchAll = new BooleanSyncValue(this.filterReader::shouldMatchAll, setMatchAll);
 
-        return new Column().widthRel(1f).coverChildrenHeight()
+        return Flow.column().widthRel(1f).coverChildrenHeight()
                 .child(new HighlightedTextField()
                         .setHighlightRule(this::highlightRule)
                         .onUnfocus(() -> {
@@ -123,9 +122,9 @@ public class OreDictionaryItemFilter extends BaseFilter {
                         .setTextColor(Color.WHITE.darker(1))
                         .value(expression).marginBottom(4)
                         .height(18).widthRel(1f))
-                .child(new Row().coverChildrenHeight()
+                .child(Flow.row().coverChildrenHeight()
                         .widthRel(1f)
-                        .child(new Column().height(18)
+                        .child(Flow.column().height(18)
                                 .coverChildrenWidth().marginRight(2)
                                 .child(GTGuiTextures.OREDICT_INFO.asWidget()
                                         .size(8).top(0)
@@ -148,7 +147,8 @@ public class OreDictionaryItemFilter extends BaseFilter {
                         .child(new CycleButtonWidget()
                                 .size(18).value(caseSensitive)
                                 .marginRight(2)
-                                .textureGetter(state -> GTGuiTextures.BUTTON_CASE_SENSITIVE[state])
+                                .stateBackground(0, GTGuiTextures.BUTTON_CASE_SENSITIVE[0])
+                                .stateBackground(1, GTGuiTextures.BUTTON_CASE_SENSITIVE[1])
                                 .addTooltip(0,
                                         IKey.lang("cover.ore_dictionary_filter.button.case_sensitive.disabled"))
                                 .addTooltip(1,
@@ -156,7 +156,8 @@ public class OreDictionaryItemFilter extends BaseFilter {
                         .child(new CycleButtonWidget()
                                 .size(18).value(matchAll)
                                 .marginRight(2)
-                                .textureGetter(state -> GTGuiTextures.BUTTON_MATCH_ALL[state])
+                                .stateBackground(0, GTGuiTextures.BUTTON_MATCH_ALL[0])
+                                .stateBackground(1, GTGuiTextures.BUTTON_MATCH_ALL[1])
                                 .addTooltip(0,
                                         IKey.lang("cover.ore_dictionary_filter.button.match_all.disabled"))
                                 .addTooltip(1,
@@ -180,7 +181,7 @@ public class OreDictionaryItemFilter extends BaseFilter {
         widget.background(texture);
     }
 
-    protected void createStatusTooltip(Tooltip tooltip) {
+    protected void createStatusTooltip(RichTooltip tooltip) {
         var result = this.filterReader.getResult();
         if (result == null) return;
         List<String> list = new ArrayList<>();

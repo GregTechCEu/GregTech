@@ -23,7 +23,7 @@ public class VirtualizedRecipeMap extends VirtualizedRegistry<Recipe> {
     public VirtualizedRecipeMap(RecipeMap<?> recipeMap) {
         super(Alias.generateOf(recipeMap.unlocalizedName, CaseFormat.LOWER_UNDERSCORE));
         this.recipeMap = recipeMap;
-        GroovyScriptModule.getInstance().getRegistrar().addRegistry(this);
+        GroovyScriptModule.getInstance().addProperty(this);
     }
 
     @Override

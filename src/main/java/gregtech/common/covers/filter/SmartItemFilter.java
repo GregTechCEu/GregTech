@@ -19,11 +19,10 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.EnumSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ToggleButton;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,25 +97,25 @@ public class SmartItemFilter extends BaseFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
         return GTGuis.createPopupPanel("smart_item_filter", 98 + 27, 81)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22).left(4));
     }
 
     @Override
-    public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
         return GTGuis.createPanel("smart_item_filter", 100, 100).padding(7);
     }
 
     @Override
-    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
         var filterMode = new EnumSyncValue<>(SmartFilteringMode.class, filterReader::getFilteringMode,
                 filterReader::setFilteringMode);
         syncManager.syncValue("filter_mode", filterMode);
 
-        return new Row().coverChildren()
-                .child(new Column().coverChildren().marginRight(4)
+        return Flow.row().coverChildren()
+                .child(Flow.column().coverChildren().marginRight(4)
                         .child(createFilterModeButton(filterMode, SmartFilteringMode.ELECTROLYZER))
                         .child(createFilterModeButton(filterMode, SmartFilteringMode.CENTRIFUGE))
                         .child(createFilterModeButton(filterMode, SmartFilteringMode.SIFTER)))

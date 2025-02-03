@@ -4,7 +4,23 @@ import gregtech.api.GTValues;
 import gregtech.api.modules.GregTechModule;
 import gregtech.api.util.Mods;
 import gregtech.integration.IntegrationSubmodule;
-import gregtech.integration.hwyla.provider.*;
+import gregtech.integration.hwyla.provider.ActiveTransformerDataProvider;
+import gregtech.integration.hwyla.provider.BatteryBufferDataProvider;
+import gregtech.integration.hwyla.provider.BlockOreDataProvider;
+import gregtech.integration.hwyla.provider.ControllableDataProvider;
+import gregtech.integration.hwyla.provider.ConverterDataProvider;
+import gregtech.integration.hwyla.provider.DiodeDataProvider;
+import gregtech.integration.hwyla.provider.ElectricContainerDataProvider;
+import gregtech.integration.hwyla.provider.LampDataProvider;
+import gregtech.integration.hwyla.provider.MaintenanceDataProvider;
+import gregtech.integration.hwyla.provider.MultiRecipeMapDataProvider;
+import gregtech.integration.hwyla.provider.MultiblockDataProvider;
+import gregtech.integration.hwyla.provider.PrimitivePumpDataProvider;
+import gregtech.integration.hwyla.provider.QuantumStorageProvider;
+import gregtech.integration.hwyla.provider.RecipeLogicDataProvider;
+import gregtech.integration.hwyla.provider.SteamBoilerDataProvider;
+import gregtech.integration.hwyla.provider.TransformerDataProvider;
+import gregtech.integration.hwyla.provider.WorkableDataProvider;
 import gregtech.modules.GregTechModules;
 
 import net.minecraft.item.ItemStack;
@@ -40,6 +56,9 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         // one day, if cover provider is ported to waila, register it right here
         BlockOreDataProvider.INSTANCE.register(registrar);
         LampDataProvider.INSTANCE.register(registrar);
+        ActiveTransformerDataProvider.INSTANCE.register(registrar);
+        BatteryBufferDataProvider.INSTANCE.register(registrar);
+        QuantumStorageProvider.INSTANCE.register(registrar);
     }
 
     /** Render an ItemStack. */

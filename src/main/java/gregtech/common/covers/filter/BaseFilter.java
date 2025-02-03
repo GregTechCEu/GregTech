@@ -16,7 +16,7 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
@@ -35,19 +35,19 @@ public abstract class BaseFilter implements IFilter {
         }
 
         @Override
-        public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+        public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
             return GTGuis.createPopupPanel("error", 100, 100)
                     .child(createWidgets(syncManager));
         }
 
         @Override
-        public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+        public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
             return GTGuis.createPanel("error", 100, 100)
                     .child(createWidgets(syncManager));
         }
 
         @Override
-        public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+        public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
             return IKey.lang("INVALID FILTER").alignment(Alignment.Center).asWidget();
         }
 
@@ -144,7 +144,8 @@ public abstract class BaseFilter implements IFilter {
                         .value(new BooleanSyncValue(
                                 this::isBlacklistFilter,
                                 this::setBlacklistFilter))
-                        .textureGetter(state -> GTGuiTextures.BUTTON_BLACKLIST[state])
+                        .stateBackground(0, GTGuiTextures.BUTTON_BLACKLIST[0])
+                        .stateBackground(1, GTGuiTextures.BUTTON_BLACKLIST[1])
                         .addTooltip(0, IKey.lang("cover.filter.blacklist.disabled"))
                         .addTooltip(1, IKey.lang("cover.filter.blacklist.enabled")));
     }

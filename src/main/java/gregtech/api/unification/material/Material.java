@@ -10,7 +10,22 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
-import gregtech.api.unification.material.properties.*;
+import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidProperty;
+import gregtech.api.unification.material.properties.GemProperty;
+import gregtech.api.unification.material.properties.IMaterialProperty;
+import gregtech.api.unification.material.properties.IngotProperty;
+import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.unification.material.properties.MaterialProperties;
+import gregtech.api.unification.material.properties.OreProperty;
+import gregtech.api.unification.material.properties.PolymerProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.RotorProperty;
+import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.unification.material.properties.WoodProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.FluidTooltipUtil;
@@ -35,7 +50,11 @@ import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenOperator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -107,6 +126,14 @@ public class Material implements Comparable<Material> {
     @ZenMethod
     public Material setFormula(String formula, boolean withFormatting) {
         this.chemicalFormula = withFormatting ? SmallDigits.toSmallDownNumbers(formula) : formula;
+        return this;
+    }
+
+    @ZenMethod
+    public Material setComponents(MaterialStack... components) {
+        this.materialInfo.setComponents(components);
+        this.chemicalFormula = null;
+        this.chemicalFormula = calculateChemicalFormula();
         return this;
     }
 
@@ -209,10 +236,7 @@ public class Material implements Comparable<Material> {
             throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
         }
 
-        FluidStorageKey key = prop.getPrimaryKey();
-        Fluid fluid = null;
-
-        if (key != null) fluid = prop.getStorage().get(key);
+        Fluid fluid = prop.get(prop.getPrimaryKey());
         if (fluid != null) return fluid;
 
         fluid = getFluid(FluidStorageKeys.LIQUID);
@@ -231,7 +255,7 @@ public class Material implements Comparable<Material> {
             throw new IllegalArgumentException("Material " + getResourceLocation() + " does not have a Fluid!");
         }
 
-        return prop.getStorage().get(key);
+        return prop.get(key);
     }
 
     /**
@@ -522,7 +546,8 @@ public class Material implements Comparable<Material> {
         public Builder fluid(@NotNull FluidStorageKey key, @NotNull FluidBuilder builder) {
             properties.ensureSet(PropertyKey.FLUID);
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
-            property.getStorage().enqueueRegistration(key, builder);
+            property.enqueueRegistration(key, builder);
+
             return this;
         }
 
@@ -535,7 +560,8 @@ public class Material implements Comparable<Material> {
         public Builder fluid(@NotNull Fluid fluid, @NotNull FluidStorageKey key, @NotNull FluidState state) {
             properties.ensureSet(PropertyKey.FLUID);
             FluidProperty property = properties.getProperty(PropertyKey.FLUID);
-            property.getStorage().store(key, fluid);
+            property.store(key, fluid);
+
             postProcessors.add(
                     m -> FluidTooltipUtil.registerTooltip(fluid, FluidTooltipUtil.createFluidTooltip(m, fluid, state)));
             return this;
@@ -1172,6 +1198,11 @@ public class Material implements Comparable<Material> {
                     color = (int) (colorTemp / divisor);
                 }
             }
+        }
+
+        public MaterialInfo setComponents(MaterialStack... components) {
+            this.componentList = ImmutableList.copyOf(Arrays.asList(components));
+            return this;
         }
     }
 }

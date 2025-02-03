@@ -8,6 +8,7 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.ingredients.GTRecipeInput;
 import gregtech.api.util.GTHashMaps;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
@@ -23,7 +24,11 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class ParallelLogic {
 
@@ -496,9 +501,9 @@ public abstract class ParallelLogic {
         limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids,
                 multiplierByInputs, voidItems, voidFluids);
 
-        int recipeEUt = currentRecipe.getEUt();
+        long recipeEUt = currentRecipe.getEUt();
         if (recipeEUt != 0) {
-            int limitByVoltage = Math.abs((int) (maxVoltage / recipeEUt));
+            int limitByVoltage = GTUtility.safeCastLongToInt(Math.abs(maxVoltage / recipeEUt));
             int parallelizable = Math.min(limitByVoltage, limitByOutput);
             if (parallelizable != 0)
                 // Use the minimum between the amount of recipes we can run with available inputs and amount of recipe

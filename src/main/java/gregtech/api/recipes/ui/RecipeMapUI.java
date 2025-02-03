@@ -34,6 +34,8 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     private final boolean modifyFluidInputs;
     private final boolean modifyFluidOutputs;
 
+    private final boolean isGenerator;
+
     private TextureArea progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
     private ProgressWidget.MoveType moveType = ProgressWidget.MoveType.HORIZONTAL;
     private @Nullable TextureArea specialTexture;
@@ -49,12 +51,13 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param modifyFluidOutputs if fluid output amounts can be modified
      */
     public RecipeMapUI(@NotNull R recipeMap, boolean modifyItemInputs, boolean modifyItemOutputs,
-                       boolean modifyFluidInputs, boolean modifyFluidOutputs) {
+                       boolean modifyFluidInputs, boolean modifyFluidOutputs, boolean isGenerator) {
         this.recipeMap = recipeMap;
         this.modifyItemInputs = modifyItemInputs;
         this.modifyItemOutputs = modifyItemOutputs;
         this.modifyFluidInputs = modifyFluidInputs;
         this.modifyFluidOutputs = modifyFluidOutputs;
+        this.isGenerator = isGenerator;
     }
 
     /**
@@ -280,8 +283,10 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
         int maxPropertyCount = 0;
         if (shouldShiftWidgets()) {
             for (Recipe recipe : recipeMap.getRecipeList()) {
-                if (recipe.getPropertyCount() > maxPropertyCount)
-                    maxPropertyCount = recipe.getPropertyCount();
+                int count = recipe.propertyStorage().size();
+                if (count > maxPropertyCount) {
+                    maxPropertyCount = count;
+                }
             }
         }
         return maxPropertyCount * 10; // GTRecipeWrapper#LINE_HEIGHT
@@ -421,6 +426,13 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      */
     public boolean canModifyFluidOutputs() {
         return modifyFluidOutputs;
+    }
+
+    /**
+     * @return if this UI represents an energy generating recipemap
+     */
+    public boolean isGenerator() {
+        return isGenerator;
     }
 
     /**

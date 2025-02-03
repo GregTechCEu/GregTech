@@ -51,6 +51,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     private boolean isDistinct = false;
 
+    @Nullable
     private ICleanroomProvider cleanroom;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
@@ -124,7 +125,11 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.outputFluidInventory = new FluidTankList(allowSameFluidFillForOutputs(),
                 getAbilities(MultiblockAbility.EXPORT_FLUIDS));
-        this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
+
+        List<IEnergyContainer> inputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.INPUT_ENERGY));
+        inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
+        inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
+        this.energyContainer = new EnergyContainerList(inputEnergy);
     }
 
     private void resetTileAbilities() {
@@ -316,7 +321,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
-    public void setCleanroom(ICleanroomProvider provider) {
-        this.cleanroom = provider;
+    public void setCleanroom(@NotNull ICleanroomProvider provider) {
+        if (cleanroom == null || provider.getPriority() > cleanroom.getPriority()) {
+            this.cleanroom = provider;
+        }
+    }
+
+    @Override
+    public void unsetCleanroom() {
+        this.cleanroom = null;
     }
 }

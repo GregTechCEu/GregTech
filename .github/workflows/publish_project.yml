@@ -35,7 +35,7 @@ jobs:
         run: ./gradlew build --warning-mode all --build-cache
 
       - name: Publish to GitHub
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: "build/libs/*.jar"
           generate_release_notes: true

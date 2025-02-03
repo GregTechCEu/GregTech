@@ -20,14 +20,13 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
-import com.cleanroommc.modularui.widgets.layout.Column;
-import com.cleanroommc.modularui.widgets.layout.Row;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,27 +93,27 @@ public class SimpleItemFilter extends BaseFilter {
     }
 
     @Override
-    public @NotNull ModularPanel createPopupPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
         return GTGuis.createPopupPanel("simple_item_filter", 98, 81)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22).left(4));
     }
 
     @Override
-    public @NotNull ModularPanel createPanel(GuiSyncManager syncManager) {
+    public @NotNull ModularPanel createPanel(PanelSyncManager syncManager) {
         return GTGuis.createPanel("simple_item_filter", 176, 166);
     }
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public @NotNull Widget<?> createWidgets(GuiSyncManager syncManager) {
+    public @NotNull Widget<?> createWidgets(PanelSyncManager syncManager) {
         SlotGroup filterInventory = new SlotGroup("filter_inv", 3, 1000, true);
         var ignoreDamage = new BooleanSyncValue(this.filterReader::isIgnoreDamage, this.filterReader::setIgnoreDamage);
         var ignoreNBT = new BooleanSyncValue(this.filterReader::isIgnoreNBT, this.filterReader::setIgnoreNBT);
 
         syncManager.registerSlotGroup(filterInventory);
 
-        return new Row().coverChildren()
+        return Flow.row().coverChildren()
                 .child(SlotGroupWidget.builder()
                         .matrix("XXX",
                                 "XXX",
@@ -134,7 +133,7 @@ public class SimpleItemFilter extends BaseFilter {
                                                 .getInteger(SimpleItemFilterReader.COUNT);
                                         if (count > 0)
                                             tooltip.addLine(
-                                                    IKey.format("Count: %s", TextFormattingUtil.formatNumbers(count)));
+                                                    IKey.str("Count: %s", TextFormattingUtil.formatNumbers(count)));
                                     }
                                 })
                                 .slot(SyncHandlers.phantomItemSlot(this.filterReader, index)
@@ -146,16 +145,18 @@ public class SimpleItemFilter extends BaseFilter {
                                             }
                                         })))
                         .build().marginRight(4))
-                .child(new Column().width(18).coverChildren()
+                .child(Flow.column().width(18).coverChildren()
                         .child(createBlacklistUI())
                         .child(new CycleButtonWidget()
                                 .value(ignoreDamage)
-                                .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_DAMAGE[state])
+                                .stateBackground(0, GTGuiTextures.BUTTON_IGNORE_DAMAGE[0])
+                                .stateBackground(1, GTGuiTextures.BUTTON_IGNORE_DAMAGE[1])
                                 .addTooltip(0, IKey.lang("cover.item_filter.ignore_damage.disabled"))
                                 .addTooltip(1, IKey.lang("cover.item_filter.ignore_damage.enabled")))
                         .child(new CycleButtonWidget()
                                 .value(ignoreNBT)
-                                .textureGetter(state -> GTGuiTextures.BUTTON_IGNORE_NBT[state])
+                                .stateBackground(0, GTGuiTextures.BUTTON_IGNORE_NBT[0])
+                                .stateBackground(1, GTGuiTextures.BUTTON_IGNORE_NBT[1])
                                 .addTooltip(0, IKey.lang("cover.item_filter.ignore_nbt.disabled"))
                                 .addTooltip(1, IKey.lang("cover.item_filter.ignore_nbt.enabled"))));
     }

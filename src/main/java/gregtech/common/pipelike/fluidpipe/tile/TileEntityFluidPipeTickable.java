@@ -13,7 +13,6 @@ import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.EntityDamageUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.covers.CoverPump;
-import gregtech.common.covers.ManualImportExportMode;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -202,7 +201,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             if (coverPump.getTransferRate() > pipeThroughput) {
                 coverPump.setTransferRate(pipeThroughput);
             }
-            return coverPump.getManualImportExportMode() == ManualImportExportMode.DISABLED;
+            return true; // disable pushing completely if there's a pump
         }
         return false;
     }
