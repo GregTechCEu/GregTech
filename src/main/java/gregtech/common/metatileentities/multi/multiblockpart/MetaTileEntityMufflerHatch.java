@@ -56,7 +56,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
-        this.recoveryChance = Math.max(1, tier * 10);
+        this.recoveryChance = (int) Math.ceil((tier - 1.0f) / 8 * 100);
         this.inventory = new GTItemStackHandler(this, (int) Math.pow(tier + 1, 2));
         this.frontFaceFree = false;
     }
