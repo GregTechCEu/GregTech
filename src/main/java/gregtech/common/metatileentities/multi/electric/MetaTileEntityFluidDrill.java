@@ -22,7 +22,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
-import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.client.renderer.ICubeRenderer;
@@ -37,7 +36,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -177,13 +175,20 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                             // Fluid name
                             Fluid drilledFluid = minerLogic.getDrilledFluid();
                             IKey fluidInfo = GTUtility.getFluidIKey(drilledFluid).style(TextFormatting.GREEN);
-                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid", fluidInfo));
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid",
+                                    fluidInfo));
 
-                            IKey amountInfo = KeyUtil.lang(TextFormatting.BLUE, TextFormattingUtil.formatNumbers(minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) + " L/s");
-                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.fluid_amount", amountInfo));
+                            IKey amountInfo = KeyUtil.lang(TextFormatting.BLUE,
+                                    TextFormattingUtil.formatNumbers(
+                                            minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) +
+                                            " L/s");
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.fluid_amount",
+                                    amountInfo));
                         } else {
-                            IKey noFluid = KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.fluid_rig.no_fluid_in_area");
-                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid", noFluid));
+                            IKey noFluid = KeyUtil.lang(TextFormatting.RED,
+                                    "gregtech.multiblock.fluid_rig.no_fluid_in_area");
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid",
+                                    noFluid));
                         }
                     }
                 })
@@ -195,9 +200,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     protected void configureWarningText(MultiblockUIFactory.Builder builder) {
         builder.addLowPowerLine(isStructureFormed() && !drainEnergy(true))
                 .addCustom(list -> {
-                   if (isStructureFormed() && minerLogic.isInventoryFull()) {
-                       list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
-                   }
+                    if (isStructureFormed() && minerLogic.isInventoryFull()) {
+                        list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
+                    }
                 });
     }
 
