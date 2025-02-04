@@ -264,7 +264,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
 
                         list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_at"));
                         list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_pos",
-                                minerLogic.getX().get(), minerLogic.getY().get(), minerLogic.getZ().get()));
+                                minerLogic.getMineX().get(),
+                                minerLogic.getMineY().get(),
+                                minerLogic.getMineZ().get()));
 
                         if (minerLogic.isChunkMode()) {
                             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.working_area_chunks",
