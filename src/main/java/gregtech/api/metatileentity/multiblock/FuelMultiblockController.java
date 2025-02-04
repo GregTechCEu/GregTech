@@ -48,17 +48,6 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
-                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
-                .addWorkingStatusLine();
-    }
-
-    @Override
     protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
 
@@ -81,13 +70,6 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         } else {
             return 0L;
         }
-    }
-
-    @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowDynamoTierLine(isDynamoTierTooLow())
-                .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     protected boolean isDynamoTierTooLow() {

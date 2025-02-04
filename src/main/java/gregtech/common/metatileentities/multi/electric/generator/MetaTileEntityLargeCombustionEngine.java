@@ -76,50 +76,6 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        LargeCombustionEngineWorkableHandler recipeLogic = ((LargeCombustionEngineWorkableHandler) recipeMapWorkable);
-
-        MultiblockDisplayText.Builder builder = MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
-
-        if (isExtreme) {
-            builder.addEnergyProductionLine(GTValues.V[tier + 1], recipeLogic.getRecipeEUt());
-        } else {
-            builder.addEnergyProductionAmpsLine(GTValues.V[tier] * 3, 3);
-        }
-
-        builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
-                .addCustom(tl -> {
-                    if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
-                        String key = isExtreme ? "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
-                                "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
-                        tl.add(TextComponentUtil.translationWithColor(TextFormatting.AQUA, key));
-                    }
-                })
-                .addWorkingStatusLine();
-    }
-
-    @Override
-    protected void addErrorText(List<ITextComponent> textList) {
-        super.addErrorText(textList);
-        if (isStructureFormed()) {
-            if (checkIntakesObstructed()) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                        "gregtech.multiblock.large_combustion_engine.obstructed"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
-            }
-
-            FluidStack lubricantStack = getInputFluidInventory().drain(Materials.Lubricant.getFluid(Integer.MAX_VALUE),
-                    false);
-            if (lubricantStack == null || lubricantStack.amount == 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                        "gregtech.multiblock.large_combustion_engine.no_lubricant"));
-            }
-        }
-    }
-
-    @Override
     protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
