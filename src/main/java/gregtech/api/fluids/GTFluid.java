@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -63,6 +64,8 @@ public class GTFluid extends Fluid implements AttributedFluid {
             return this.material;
         }
 
+        @Deprecated
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
         public @NotNull TextComponentTranslation toTextComponentTranslation() {
             TextComponentTranslation localizedName;
             String customMaterialTranslation = "fluid." + material.getUnlocalizedName();

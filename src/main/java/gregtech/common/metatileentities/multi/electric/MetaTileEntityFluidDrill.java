@@ -174,7 +174,9 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                         if (minerLogic.getDrilledFluid() != null) {
                             // Fluid name
                             Fluid drilledFluid = minerLogic.getDrilledFluid();
-                            IKey fluidInfo = GTUtility.getFluidIKey(drilledFluid).style(TextFormatting.GREEN);
+                            IKey fluidInfo = KeyUtil.fluid(drilledFluid).style(TextFormatting.GREEN);
+
+                            // todo should this check if fluid info is empty?
                             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid",
                                     fluidInfo));
 
