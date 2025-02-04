@@ -164,60 +164,40 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.work_paused",
                         "gregtech.multiblock.miner.drilling")
                 .addEnergyUsageLine(energyContainer)
-                .addCustom(tl -> {
+                .addCustom(list -> {
                     if (isStructureFormed()) {
                         if (minerLogic.getDrilledFluid() != null) {
                             // Fluid name
                             Fluid drilledFluid = minerLogic.getDrilledFluid();
-                            ITextComponent fluidInfo = TextComponentUtil
-                                    .setColor(GTUtility.getFluidTranslation(drilledFluid), TextFormatting.GREEN);
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.fluid_rig.drilled_fluid",
-                                    fluidInfo));
+                            IKey fluidInfo = GTUtility.getFluidIKey(drilledFluid).style(TextFormatting.GREEN);
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid", fluidInfo));
 
-                            // Fluid amount
-                            ITextComponent amountInfo = TextComponentUtil.stringWithColor(
-                                    TextFormatting.BLUE,
-                                    TextFormattingUtil.formatNumbers(
-                                            minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) +
-                                            " L/s");
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.fluid_rig.fluid_amount",
-                                    amountInfo));
+                            IKey amountInfo = KeyUtil.lang(TextFormatting.BLUE, TextFormattingUtil.formatNumbers(minerLogic.getFluidToProduce() * 20L / FluidDrillLogic.MAX_PROGRESS) + " L/s");
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.fluid_amount", amountInfo));
                         } else {
-                            ITextComponent noFluid = TextComponentUtil.translationWithColor(TextFormatting.RED,
-                                    "gregtech.multiblock.fluid_rig.no_fluid_in_area");
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.fluid_rig.drilled_fluid",
-                                    noFluid));
+                            IKey noFluid = KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.fluid_rig.no_fluid_in_area");
+                            list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.fluid_rig.drilled_fluid", noFluid));
                         }
                     }
                 })
-                .addWorkingStatusLine()
-                .addProgressLine(minerLogic.getProgressPercent());
+                .addProgressLine(minerLogic.getProgressPercent())
+                .addWorkingStatusLine();
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(isStructureFormed() && !drainEnergy(true))
-                .addCustom(tl -> {
-                    if (isStructureFormed() && minerLogic.isInventoryFull()) {
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.YELLOW,
-                                "gregtech.machine.miner.invfull"));
-                    }
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(isStructureFormed() && !drainEnergy(true))
+                .addCustom(list -> {
+                   if (isStructureFormed() && minerLogic.isInventoryFull()) {
+                       list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
+                   }
                 });
     }
 
