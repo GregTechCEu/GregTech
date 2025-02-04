@@ -9,9 +9,11 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -145,9 +147,8 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
@@ -158,13 +159,13 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     }
 
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed() && computationHandler.hasNonBridgingConnections()) {
-            textList.add(TextComponentUtil.translationWithColor(
-                    TextFormatting.YELLOW,
-                    "gregtech.multiblock.computation.non_bridging.detailed"));
-        }
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        super.configureWarningText(builder);
+        builder.addCustom(list -> {
+            if (isStructureFormed() && computationHandler.hasNonBridgingConnections()) {
+                list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.computation.non_bridging.detailed"));
+            }
+        });
     }
 
     /** Handles computation load across multiple receivers and to multiple transmitters. */
