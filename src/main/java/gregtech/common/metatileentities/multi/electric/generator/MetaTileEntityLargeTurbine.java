@@ -122,69 +122,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        IRotorHolder rotorHolder = getRotorHolder();
-                        if (rotorHolder.getRotorEfficiency() > 0) {
-                            ITextComponent efficiencyInfo = TextComponentUtil.stringWithColor(
-                                    TextFormatting.AQUA,
-                                    TextFormattingUtil.formatNumbers(rotorHolder.getTotalEfficiency()) + "%");
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.turbine.efficiency",
-                                    efficiencyInfo));
-                        }
-                    }
-                })
-                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
-                .addWorkingStatusLine();
-    }
-
-    @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        IRotorHolder rotorHolder = getRotorHolder();
-                        if (rotorHolder.getRotorEfficiency() > 0) {
-                            if (rotorHolder.getRotorDurabilityPercent() <= MIN_DURABILITY_TO_WARN) {
-                                tl.add(TextComponentUtil.translationWithColor(
-                                        TextFormatting.YELLOW,
-                                        "gregtech.multiblock.turbine.rotor_durability_low"));
-                            }
-                        }
-                    }
-                })
-                .addLowDynamoTierLine(isDynamoTierTooLow())
-                .addMaintenanceProblemLines(getMaintenanceProblems());
-    }
-
-    @Override
-    protected void addErrorText(List<ITextComponent> textList) {
-        super.addErrorText(textList);
-        if (isStructureFormed()) {
-            if (!isRotorFaceFree()) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                        "gregtech.multiblock.turbine.obstructed"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.turbine.obstructed.desc"));
-            }
-
-            IRotorHolder rotorHolder = getRotorHolder();
-            if (rotorHolder.getRotorEfficiency() <= 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                        "gregtech.multiblock.turbine.no_rotor"));
-            }
-        }
-    }
-
-    @Override
     protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
         builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
