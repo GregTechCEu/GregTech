@@ -362,6 +362,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * with special click event handler
      * Data is the data specified in the component
      */
+    @Deprecated
     protected void handleDisplayClick(String componentData, ClickData clickData) {}
 
     @Deprecated
