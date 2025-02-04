@@ -1,5 +1,7 @@
 package gregtech.api.util;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
@@ -894,6 +896,15 @@ public class GTUtility {
             return materialFluid.toTextComponentTranslation();
         }
         return new TextComponentTranslation(fluid.getUnlocalizedName());
+    }
+
+    @Contract("null -> null")
+    public static IKey getFluidIKey(@Nullable Fluid fluid) {
+        if (fluid == null) return null;
+        if (fluid instanceof GTFluid.GTMaterialFluid materialFluid) {
+            return materialFluid.toIKey();
+        }
+        return IKey.lang(fluid.getUnlocalizedName());
     }
 
     public static @NotNull Pair<DoubleSupplier, DoubleSupplier> createPairedSupplier(int ticksPerCycle, int width,

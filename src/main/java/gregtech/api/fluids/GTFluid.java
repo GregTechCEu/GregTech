@@ -1,5 +1,7 @@
 package gregtech.api.fluids;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+
 import gregtech.api.fluids.attribute.AttributedFluid;
 import gregtech.api.fluids.attribute.FluidAttribute;
 import gregtech.api.unification.material.Material;
@@ -75,6 +77,23 @@ public class GTFluid extends Fluid implements AttributedFluid {
             if (translationKey != null) {
                 return new TextComponentTranslation(translationKey, localizedName);
             }
+            return localizedName;
+        }
+
+        public @NotNull IKey toIKey() {
+            IKey localizedName;
+            String customMaterialTranslation = "fluid." + material.getUnlocalizedName();
+
+            if (net.minecraft.util.text.translation.I18n.canTranslate(customMaterialTranslation)) {
+                localizedName = IKey.lang(customMaterialTranslation);
+            } else {
+                localizedName = IKey.lang(material.getUnlocalizedName());
+            }
+
+            if (translationKey != null) {
+                return IKey.lang(translationKey, localizedName);
+            }
+
             return localizedName;
         }
 
