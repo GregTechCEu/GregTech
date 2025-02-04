@@ -72,30 +72,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(tl -> {
-                    // Coil heat capacity line
-                    if (isStructureFormed()) {
-                        ITextComponent heatString = TextComponentUtil.stringWithColor(
-                                TextFormatting.RED,
-                                TextFormattingUtil.formatNumbers(blastFurnaceTemperature) + "K");
-
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.blast_furnace.max_temperature",
-                                heatString));
-                    }
-                })
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
-    }
-
-    @Override
     protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(this.getEnergyContainer())

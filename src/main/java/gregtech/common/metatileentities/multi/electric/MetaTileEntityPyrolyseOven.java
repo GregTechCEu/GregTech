@@ -100,36 +100,6 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
             this.coilTier = 0;
     }
 
-    @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        int processingSpeed = coilTier == 0 ? 75 : 50 * (coilTier + 1);
-                        ITextComponent speedIncrease = TextComponentUtil.stringWithColor(
-                                getSpeedColor(processingSpeed),
-                                processingSpeed + "%");
-
-                        ITextComponent base = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.pyrolyse_oven.speed",
-                                speedIncrease);
-
-                        ITextComponent hover = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.pyrolyse_oven.speed_hover");
-
-                        tl.add(TextComponentUtil.setHover(base, hover));
-                    }
-                })
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
-    }
-
     private TextFormatting getSpeedColor(int speed) {
         if (speed < 100) {
             return TextFormatting.RED;
