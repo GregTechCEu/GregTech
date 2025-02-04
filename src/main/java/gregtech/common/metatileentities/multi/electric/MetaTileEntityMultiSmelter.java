@@ -61,53 +61,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        // Heating coil discount
-                        if (heatingCoilDiscount > 1) {
-                            ITextComponent coilDiscount = TextComponentUtil.stringWithColor(
-                                    TextFormatting.AQUA,
-                                    TextFormattingUtil.formatNumbers(100.0 / heatingCoilDiscount) + "%");
-
-                            ITextComponent base = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.multi_furnace.heating_coil_discount",
-                                    coilDiscount);
-
-                            ITextComponent hoverText = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.multi_furnace.heating_coil_discount_hover");
-
-                            TextComponentUtil.setHover(base, hoverText);
-                            tl.add(base);
-                        }
-
-                        // Custom parallels line so we can have a hover text
-                        if (recipeMapWorkable.getParallelLimit() > 1) {
-                            ITextComponent parallels = TextComponentUtil.stringWithColor(
-                                    TextFormatting.DARK_PURPLE,
-                                    TextFormattingUtil.formatNumbers(recipeMapWorkable.getParallelLimit()));
-                            ITextComponent bodyText = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.parallel",
-                                    parallels);
-                            ITextComponent hoverText = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.multi_furnace.parallel_hover");
-                            tl.add(TextComponentUtil.setHover(bodyText, hoverText));
-                        }
-                    }
-                })
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
-    }
-
-    @Override
     protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())

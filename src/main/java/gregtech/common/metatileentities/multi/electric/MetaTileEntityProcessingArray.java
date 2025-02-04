@@ -118,66 +118,6 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
-
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(logic.currentMachineStack == ItemStack.EMPTY ? -1 : logic.machineTier)
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-
-                        // Machine mode text
-                        // Shared text components for both states
-                        ITextComponent maxMachinesText = TextComponentUtil.stringWithColor(TextFormatting.DARK_PURPLE,
-                                Integer.toString(getMachineLimit()));
-                        maxMachinesText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                "gregtech.machine.machine_hatch.machines_max", maxMachinesText);
-
-                        if (logic.activeRecipeMap == null) {
-                            // No machines in hatch
-                            ITextComponent noneText = TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                                    "gregtech.machine.machine_hatch.machines_none");
-                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines", noneText);
-                            ITextComponent hoverText1 = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines_none_hover");
-                            tl.add(TextComponentUtil.setHover(bodyText, hoverText1, maxMachinesText));
-                        } else {
-                            // Some amount of machines in hatch
-                            String key = logic.getMachineStack().getTranslationKey();
-                            ITextComponent mapText = TextComponentUtil.translationWithColor(TextFormatting.DARK_PURPLE,
-                                    key + ".name");
-                            mapText = TextComponentUtil.translationWithColor(
-                                    TextFormatting.DARK_PURPLE,
-                                    "%sx %s",
-                                    logic.getParallelLimit(), mapText);
-                            ITextComponent bodyText = TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines", mapText);
-                            ITextComponent voltageName = new TextComponentString(GTValues.VNF[logic.machineTier]);
-                            int amps = logic.getMachineStack().getCount();
-                            String energyFormatted = TextFormattingUtil
-                                    .formatNumbers(GTValues.V[logic.machineTier] * amps);
-                            ITextComponent hoverText = TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.machine.machine_hatch.machines_max_eut",
-                                    energyFormatted, amps, voltageName);
-                            tl.add(TextComponentUtil.setHover(bodyText, hoverText, maxMachinesText));
-                        }
-
-                        // Hatch locked status
-                        if (isActive()) {
-                            tl.add(TextComponentUtil.translationWithColor(TextFormatting.DARK_RED,
-                                    "gregtech.machine.machine_hatch.locked"));
-                        }
-                    }
-                })
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
-    }
-
-    @Override
     protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         ProcessingArrayWorkable logic = (ProcessingArrayWorkable) recipeMapWorkable;
 
@@ -234,11 +174,6 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
-    }
-
-    @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
-        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
     }
 
     @SideOnly(Side.CLIENT)

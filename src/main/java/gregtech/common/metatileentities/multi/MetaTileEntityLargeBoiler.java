@@ -108,46 +108,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         this.steamOutputTank = new FluidTankList(true);
     }
 
-    @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        // Steam Output line
-                        ITextComponent steamOutput = TextComponentUtil.stringWithColor(
-                                TextFormatting.AQUA,
-                                TextFormattingUtil.formatNumbers(recipeLogic.getLastTickSteam()) + " L/t");
-
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.large_boiler.steam_output",
-                                steamOutput));
-
-                        // Efficiency line
-                        ITextComponent efficiency = TextComponentUtil.stringWithColor(
-                                getNumberColor(recipeLogic.getHeatScaled()),
-                                recipeLogic.getHeatScaled() + "%");
-
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.large_boiler.efficiency",
-                                efficiency));
-
-                        // Throttle line
-                        ITextComponent throttle = TextComponentUtil.stringWithColor(
-                                getNumberColor(getThrottle()),
-                                getThrottle() + "%");
-
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.large_boiler.throttle",
-                                throttle));
-                    }
-                })
-                .addWorkingStatusLine();
-    }
-
     private TextFormatting getNumberColor(int number) {
         if (number == 0) {
             return TextFormatting.DARK_RED;
@@ -157,19 +117,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             return TextFormatting.YELLOW;
         } else {
             return TextFormatting.GREEN;
-        }
-    }
-
-    @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        super.addWarningText(textList);
-        if (isStructureFormed()) {
-            if (getWaterFilled() == 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                        "gregtech.multiblock.large_boiler.no_water"));
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.large_boiler.explosion_tooltip"));
-            }
         }
     }
 
