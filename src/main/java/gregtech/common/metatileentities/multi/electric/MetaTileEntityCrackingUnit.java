@@ -83,35 +83,6 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(tl -> {
-                    // Coil energy discount line
-                    if (isStructureFormed()) {
-                        ITextComponent energyDiscount = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
-                                (100 - 10 * coilTier) + "%");
-
-                        ITextComponent base = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.cracking_unit.energy",
-                                energyDiscount);
-
-                        ITextComponent hover = TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.cracking_unit.energy_hover");
-
-                        tl.add(TextComponentUtil.setHover(base, hover));
-                    }
-                })
-                .addParallelsLine(recipeMapWorkable.getParallelLimit())
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
-    }
-
-    @Override
     protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
@@ -135,11 +106,6 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
                 .addParallelsLine(recipeMapWorkable.getParallelLimit())
                 .addWorkingStatusLine()
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
-    }
-
-    @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
-        builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
     }
 
     @Override
