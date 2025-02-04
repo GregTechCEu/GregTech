@@ -4980,13 +4980,14 @@ gregtech.multiblock.high_performance_computing_array.description=The High Perfor
 
 gregtech.machine.central_monitor.name=Central Monitor
 gregtech.multiblock.central_monitor.low_power=Low Power
-gregtech.multiblock.central_monitor.height=Screen Height:
+gregtech.multiblock.central_monitor.height=Screen Height: %d
 gregtech.multiblock.central_monitor.width=Screen Width: %d
 gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
 gregtech.multiblock.central_monitor.tooltip.1=This is a machine that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
 gregtech.multiblock.central_monitor.tooltip.2=You can build the central monitor screen from 3X2 to %dX%d (width X height).
 gregtech.multiblock.central_monitor.tooltip.3=The default height is 3. You can adjust the screen height in the GUI before the structure is formed.
 gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for each screen.
+gregtech.multiblock.central_monitor.button_tooltip=Left click to increase height, right click to decrease height. Middle click to reset
 gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-click of a screwdriver.
 gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
 gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
