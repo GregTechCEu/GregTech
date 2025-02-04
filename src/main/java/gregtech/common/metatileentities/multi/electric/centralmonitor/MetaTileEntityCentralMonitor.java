@@ -285,6 +285,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                     IntSyncValue intSync = new IntSyncValue(() -> height, this::setHeight);
                     panelSyncManager.syncValue("height", intSync);
 
+                    // todo make this a popup?
                     return new ButtonWidget<>()
                             .addTooltipLine(IKey.lang("gregtech.multiblock.central_monitor.button_tooltip"))
                             .onMousePressed(mouseData -> {
