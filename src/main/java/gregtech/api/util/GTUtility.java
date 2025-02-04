@@ -1,7 +1,5 @@
 package gregtech.api.util;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
@@ -56,6 +54,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
 import com.google.common.util.concurrent.AtomicDouble;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import org.apache.commons.lang3.ArrayUtils;
