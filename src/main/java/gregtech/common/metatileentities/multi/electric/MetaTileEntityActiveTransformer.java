@@ -174,8 +174,9 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                 .addCustom(list -> {
                     if (isStructureFormed()) {
                         // Max input line
-                        IKey maxInputFormatted = KeyUtil.string(TextFormatting.WHITE, TextFormattingUtil
-                                .formatNumbers(powerInput.getInputVoltage() * powerInput.getInputAmperage()) + " EU/t");
+                        IKey maxInputFormatted = KeyUtil.number(TextFormatting.WHITE,
+                                powerInput.getInputVoltage() * powerInput.getInputAmperage(),
+                                " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.GREEN, "gregtech.multiblock.active_transformer.max_in",
                                 maxInputFormatted));
 
