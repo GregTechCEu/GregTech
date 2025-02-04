@@ -6,9 +6,6 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.miner.MultiblockMinerLogic;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -57,6 +54,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.google.common.collect.Lists;
@@ -239,17 +237,25 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
                 .createFlexButton((posGuiData, panelSyncManager) -> {
                     IntSyncValue buttonSync = new IntSyncValue(this::getCurrentMode, this::setCurrentMode);
 
-                    return new CycleButtonWidget()
+                    return new CycleButtonWidget() {
+
+                        @Override
+                        public @NotNull Result onMousePressed(int mouseButton) {
+                            if (minerLogic.isWorking()) {
+                                Interactable.playButtonClickSound();
+                                return Result.IGNORE;
+                            } else {
+                                return super.onMousePressed(mouseButton);
+                            }
+                        }
+                    }
                             .stateCount(4)
                             .value(buttonSync)
+                            .stateBackground(GTGuiTextures.BUTTON_MINER_MODES)
                             .addTooltip(0, IKey.lang("gregtech.multiblock.miner.neither_mode"))
                             .addTooltip(1, IKey.lang("gregtech.multiblock.miner.chunk_mode"))
                             .addTooltip(2, IKey.lang("gregtech.multiblock.miner.silk_touch_mode"))
-                            .addTooltip(3, IKey.lang("gregtech.multiblock.miner.both_modes"))
-                            .stateBackground(0, GTGuiTextures.BUTTON_MINER_MODES[0])
-                            .stateBackground(1, GTGuiTextures.BUTTON_MINER_MODES[1])
-                            .stateBackground(2, GTGuiTextures.BUTTON_MINER_MODES[2])
-                            .stateBackground(3, GTGuiTextures.BUTTON_MINER_MODES[3]);
+                            .addTooltip(3, IKey.lang("gregtech.multiblock.miner.both_modes"));
                 });
     }
 
@@ -421,18 +427,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
                 minerLogic.setSilkTouchMode(true);
             }
         }
-    }
-
-    @Override
-    protected @NotNull Widget getFlexButton(int x, int y, int width, int height) {
-        return new ImageCycleButtonWidget(x, y, width, height, GuiTextures.BUTTON_MINER_MODES, 4, this::getCurrentMode,
-                this::setCurrentMode)
-                        .setTooltipHoverString(mode -> switch (mode) {
-                        case 0 -> "gregtech.multiblock.miner.neither_mode";
-                        case 1 -> "gregtech.multiblock.miner.chunk_mode";
-                        case 2 -> "gregtech.multiblock.miner.silk_touch_mode";
-                        default -> "gregtech.multiblock.miner.both_modes";
-                        });
     }
 
     @Override
