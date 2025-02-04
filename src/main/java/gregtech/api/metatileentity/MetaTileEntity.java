@@ -737,7 +737,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public final boolean acceptsCovers() {
+    public boolean acceptsCovers() {
         return covers.size() < EnumFacing.VALUES.length;
     }
 
@@ -1043,7 +1043,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
-            } else trait.receiveInitialData(buf);
+            } else {
+                trait.receiveInitialSyncData(buf);
+            }
         }
         CoverSaveHandler.receiveInitialSyncData(buf, this);
         this.muffled = buf.readBoolean();
@@ -1076,10 +1078,14 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             scheduleRenderUpdate();
         } else if (dataId == SYNC_MTE_TRAITS) {
             int traitNetworkId = buf.readVarInt();
+            int internalId = buf.readVarInt();
             MTETrait trait = mteTraitByNetworkId.get(traitNetworkId);
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
-            } else trait.receiveCustomData(buf.readVarInt(), buf);
+            } else {
+                ISyncedTileEntity.addCode(internalId, trait);
+                trait.receiveCustomData(internalId, buf);
+            }
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
         } else if (dataId == COVER_REMOVED_MTE) {
@@ -1094,6 +1100,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
             if (cover != null) {
+                ISyncedTileEntity.addCode(internalId, cover);
                 cover.readCustomData(internalId, buf);
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {

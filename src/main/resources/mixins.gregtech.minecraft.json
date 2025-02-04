@@ -9,6 +9,7 @@
   },
   "mixins": [
     "BlockConcretePowderMixin",
+    "ContainerMixin",
     "BlockRenderLayerMixin",
     "DamageSourceMixin",
     "EnchantmentCanApplyMixin",
@@ -17,8 +18,10 @@
   "client": [
     "BlockMixin",
     "EntityRendererMixin",
+    "L18nMixin",
     "LayerArmorBaseMixin",
     "LayerCustomHeadMixin",
+    "LocaleMixin",
     "RecipeRepairItemMixin",
     "RegionRenderCacheBuilderMixin",
     "RenderChunkMixin",

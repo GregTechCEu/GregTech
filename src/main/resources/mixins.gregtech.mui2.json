@@ -7,18 +7,9 @@
   "injectors": {
     "maxShiftBy": 10
   },
-  "mixins": [
-    "ItemSlotSHMixin",
-    "PanelSyncHandlerMixin",
-    "PanelSyncManagerMixin",
-    "StyledTextMixin",
-    "TextWidgetMixin",
-    "ToggleButtonMixin",
-    "TooltipMixin",
-    "TooltipMixin$RichTextWidgetMixin"
-  ],
+  "mixins": [],
   "client": [
-    "ClientEventHandlerMixin"
+    "LangKeyMixin"
   ],
   "server": []
 }

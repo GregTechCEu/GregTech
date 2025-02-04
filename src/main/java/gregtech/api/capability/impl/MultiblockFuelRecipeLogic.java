@@ -95,19 +95,9 @@ public class MultiblockFuelRecipeLogic extends MultiblockRecipeLogic {
     }
 
     @Override
-    protected boolean drawEnergy(long recipeEUt, boolean simulate) {
-        long euToDraw = boostProduction(recipeEUt);
-        long resultEnergy = getEnergyStored() - euToDraw;
-        if (resultEnergy >= 0L && resultEnergy <= getEnergyCapacity()) {
-            if (!simulate) getEnergyContainer().changeEnergy(-euToDraw);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public long getInfoProviderEUt() {
-        return boostProduction(super.getInfoProviderEUt());
+    protected void setupRecipe(@NotNull Recipe recipe) {
+        super.setupRecipe(recipe);
+        this.recipeEUt = boostProduction(this.recipeEUt);
     }
 
     @Override

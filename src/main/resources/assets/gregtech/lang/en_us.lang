@@ -68,6 +68,7 @@ gregtech.top.working_disabled=Working Disabled
 
 gregtech.top.energy_consumption=Using
 gregtech.top.energy_production=Producing
+gregtech.top.energy_required=Requires
 
 gregtech.top.transform_up=Step Up
 gregtech.top.transform_down=Step Down
@@ -1042,6 +1043,14 @@ item.gt.tool.plunger.tooltip=§8Removes Fluids from Machines
 item.gt.tool.wire_cutter_lv.name=%s Wire Cutter (LV)
 item.gt.tool.wire_cutter_hv.name=%s Wire Cutter (HV)
 item.gt.tool.wire_cutter_iv.name=%s Wire Cutter (IV)
+item.gt.tool.toolbelt.name=%s Toolbelt%s
+item.gt.tool.toolbelt.size=§a%s Tool Slots
+item.gt.tool.toolbelt.tooltip=Holds GT or vanilla-esque tools that can be manually selected for in-world use, automatically selected for crafting, or stored for maintenance repair.
+item.gt.tool.toolbelt.paint=Also supports Spray Cans.
+item.gt.tool.toolbelt.dye=Can be dyed like leather equipment, and the dye can be removed via water cauldron, also like leather equipment.
+item.gt.tool.toolbelt.maintenance=Repairs maintenance problems with only inserted tools upon interacting with a maintenance hatch in-world.
+item.gt.tool.toolbelt.tool=§aSlot %s: §f%s
+item.gt.tool.toolbelt.selected=- §aSlot %s: §f%s
 
 
 item.gt.tool.tooltip.crafting_uses=§a%s Crafting Uses
@@ -4775,6 +4784,7 @@ behaviour.softhammer=Activates and Deactivates Machines
 behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
+behaviour.cell_bucket.tooltip=Can pickup or place fluids
 behaviour.paintspray.solvent.tooltip=Can remove color from things
 behaviour.paintspray.white.tooltip=Can paint things in White
 behaviour.paintspray.orange.tooltip=Can paint things in Orange
@@ -5033,6 +5043,11 @@ gregtech.machine.item_bus.import.luv.name=LuV Input Bus
 gregtech.machine.item_bus.import.zpm.name=ZPM Input Bus
 gregtech.machine.item_bus.import.uv.name=UV Input Bus
 gregtech.machine.item_bus.import.uhv.name=UHV Input Bus
+gregtech.machine.item_bus.import.uev.name=UEV Input Bus
+gregtech.machine.item_bus.import.uiv.name=UIV Input Bus
+gregtech.machine.item_bus.import.uxv.name=UXV Input Bus
+gregtech.machine.item_bus.import.opv.name=OpV Input Bus
+gregtech.machine.item_bus.import.max.name=MAX Input Bus
 
 gregtech.machine.item_bus.export.tooltip=Item Output for Multiblocks
 
@@ -5046,6 +5061,11 @@ gregtech.machine.item_bus.export.luv.name=LuV Output Bus
 gregtech.machine.item_bus.export.zpm.name=ZPM Output Bus
 gregtech.machine.item_bus.export.uv.name=UV Output Bus
 gregtech.machine.item_bus.export.uhv.name=UHV Output Bus
+gregtech.machine.item_bus.export.uev.name=UEV Output Bus
+gregtech.machine.item_bus.export.uiv.name=UIV Output Bus
+gregtech.machine.item_bus.export.uxv.name=UXV Output Bus
+gregtech.machine.item_bus.export.opv.name=OpV Output Bus
+gregtech.machine.item_bus.export.max.name=MAX Output Bus
 
 gregtech.bus.collapse_true=Bus will collapse Items
 gregtech.bus.collapse_false=Bus will not collapse Items
@@ -5062,6 +5082,11 @@ gregtech.machine.fluid_hatch.import.luv.name=LuV Input Hatch
 gregtech.machine.fluid_hatch.import.zpm.name=ZPM Input Hatch
 gregtech.machine.fluid_hatch.import.uv.name=UV Input Hatch
 gregtech.machine.fluid_hatch.import.uhv.name=UHV Input Hatch
+gregtech.machine.fluid_hatch.import.uev.name=UEV Input Hatch
+gregtech.machine.fluid_hatch.import.uiv.name=UIV Input Hatch
+gregtech.machine.fluid_hatch.import.uxv.name=UXV Input Hatch
+gregtech.machine.fluid_hatch.import.opv.name=OpV Input Hatch
+gregtech.machine.fluid_hatch.import.max.name=MAX Input Hatch
 
 gregtech.machine.fluid_hatch.export.tooltip=Fluid Output for Multiblocks
 
@@ -5071,6 +5096,11 @@ gregtech.machine.fluid_hatch.import_4x.luv.name=LuV Quadruple Input Hatch
 gregtech.machine.fluid_hatch.import_4x.zpm.name=ZPM Quadruple Input Hatch
 gregtech.machine.fluid_hatch.import_4x.uv.name=UV Quadruple Input Hatch
 gregtech.machine.fluid_hatch.import_4x.uhv.name=UHV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.uev.name=UEV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.uiv.name=UIV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.uxv.name=UXV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.opv.name=OpV Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_4x.max.name=MAX Quadruple Input Hatch
 
 gregtech.machine.fluid_hatch.import_9x.name=EV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.iv.name=IV Nonuple Input Hatch
@@ -5078,6 +5108,11 @@ gregtech.machine.fluid_hatch.import_9x.luv.name=LuV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.zpm.name=ZPM Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.uv.name=UV Nonuple Input Hatch
 gregtech.machine.fluid_hatch.import_9x.uhv.name=UHV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.uev.name=UEV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.uiv.name=UIV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.uxv.name=UXV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.opv.name=OpV Nonuple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.max.name=MAX Nonuple Input Hatch
 
 gregtech.machine.fluid_hatch.export_4x.name=EV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.iv.name=IV Quadruple Output Hatch
@@ -5085,6 +5120,11 @@ gregtech.machine.fluid_hatch.export_4x.luv.name=LuV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.zpm.name=ZPM Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.uv.name=UV Quadruple Output Hatch
 gregtech.machine.fluid_hatch.export_4x.uhv.name=UHV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.uev.name=UEV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.uiv.name=UIV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.uxv.name=UXV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.opv.name=OpV Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_4x.max.name=MAX Quadruple Output Hatch
 
 gregtech.machine.fluid_hatch.export_9x.name=EV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.iv.name=IV Nonuple Output Hatch
@@ -5092,6 +5132,11 @@ gregtech.machine.fluid_hatch.export_9x.luv.name=LuV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.zpm.name=ZPM Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.uv.name=UV Nonuple Output Hatch
 gregtech.machine.fluid_hatch.export_9x.uhv.name=UHV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.uev.name=UEV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.uiv.name=UIV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.uxv.name=UXV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.opv.name=OpV Nonuple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.max.name=MAX Nonuple Output Hatch
 
 gregtech.machine.fluid_hatch.export.ulv.name=ULV Output Hatch
 gregtech.machine.fluid_hatch.export.lv.name=LV Output Hatch
@@ -5103,6 +5148,11 @@ gregtech.machine.fluid_hatch.export.luv.name=LuV Output Hatch
 gregtech.machine.fluid_hatch.export.zpm.name=ZPM Output Hatch
 gregtech.machine.fluid_hatch.export.uv.name=UV Output Hatch
 gregtech.machine.fluid_hatch.export.uhv.name=UHV Output Hatch
+gregtech.machine.fluid_hatch.export.uev.name=UEV Output Hatch
+gregtech.machine.fluid_hatch.export.uiv.name=UIV Output Hatch
+gregtech.machine.fluid_hatch.export.uxv.name=UXV Output Hatch
+gregtech.machine.fluid_hatch.export.opv.name=OpV Output Hatch
+gregtech.machine.fluid_hatch.export.max.name=MAX Output Hatch
 
 gregtech.machine.energy_hatch.input.tooltip=Energy Input for Multiblocks
 
@@ -5130,12 +5180,22 @@ gregtech.machine.energy_hatch.input_4a.luv.name=LuV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.zpm.name=ZPM 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.uv.name=UV 4A Energy Hatch
 gregtech.machine.energy_hatch.input_4a.uhv.name=UHV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uev.name=UEV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uiv.name=UIV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.uxv.name=UXV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.opv.name=OpV 4A Energy Hatch
+gregtech.machine.energy_hatch.input_4a.max.name=MAX 4A Energy Hatch
 
 gregtech.machine.energy_hatch.input_16a.iv.name=IV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.luv.name=LuV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.zpm.name=ZPM 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.uv.name=UV 16A Energy Hatch
 gregtech.machine.energy_hatch.input_16a.uhv.name=UHV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uev.name=UEV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uiv.name=UIV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.uxv.name=UXV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.opv.name=OpV 16A Energy Hatch
+gregtech.machine.energy_hatch.input_16a.max.name=MAX 16A Energy Hatch
 
 gregtech.machine.substation_hatch.input.tooltip=Energy Input for the Power Substation
 
@@ -5144,6 +5204,11 @@ gregtech.machine.substation_hatch.input_64a.luv.name=LuV 64A Substation Energy H
 gregtech.machine.substation_hatch.input_64a.zpm.name=ZPM 64A Substation Energy Hatch
 gregtech.machine.substation_hatch.input_64a.uv.name=UV 64A Substation Energy Hatch
 gregtech.machine.substation_hatch.input_64a.uhv.name=UHV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uev.name=UEV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uiv.name=UIV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.uxv.name=UXV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.opv.name=OpV 64A Substation Energy Hatch
+gregtech.machine.substation_hatch.input_64a.max.name=MAX 64A Substation Energy Hatch
 
 gregtech.machine.energy_hatch.output.tooltip=Energy Output for Multiblocks
 
@@ -5171,12 +5236,22 @@ gregtech.machine.energy_hatch.output_4a.luv.name=LuV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.zpm.name=ZPM 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.uv.name=UV 4A Dynamo Hatch
 gregtech.machine.energy_hatch.output_4a.uhv.name=UHV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uev.name=UEV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uiv.name=UIV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.uxv.name=UXV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.opv.name=OpV 4A Dynamo Hatch
+gregtech.machine.energy_hatch.output_4a.max.name=MAX 4A Dynamo Hatch
 
 gregtech.machine.energy_hatch.output_16a.iv.name=IV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.luv.name=LuV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.zpm.name=ZPM 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.uv.name=UV 16A Dynamo Hatch
 gregtech.machine.energy_hatch.output_16a.uhv.name=UHV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uev.name=UEV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uiv.name=UIV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.uxv.name=UXV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.opv.name=OpV 16A Dynamo Hatch
+gregtech.machine.energy_hatch.output_16a.max.name=MAX 16A Dynamo Hatch
 
 gregtech.machine.substation_hatch.output.tooltip=Energy Output for the Power Substation
 
@@ -5185,6 +5260,11 @@ gregtech.machine.substation_hatch.output_64a.luv.name=LuV 64A Substation Dynamo 
 gregtech.machine.substation_hatch.output_64a.zpm.name=ZPM 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.uv.name=UV 64A Substation Dynamo Hatch
 gregtech.machine.substation_hatch.output_64a.uhv.name=UHV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uev.name=UEV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uiv.name=UIV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.uxv.name=UXV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.opv.name=OpV 64A Substation Dynamo Hatch
+gregtech.machine.substation_hatch.output_64a.max.name=MAX 64A Substation Dynamo Hatch
 
 gregtech.machine.rotor_holder.tooltip1=Rotor Holder for Multiblocks
 gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly away
@@ -5533,6 +5613,10 @@ gregtech.gui.config_slot.auto_pull_managed=§4Disabled:§7 Managed by Auto-Pull
 gregtech.gui.me_bus.extra_slot=Extra Slot/n§7Put extra items for recipes here, like Molds or Lenses
 gregtech.gui.me_bus.auto_pull_button=Click to toggle automatic item pulling from ME
 gregtech.gui.alarm.radius=Radius:
+gregtech.gui.item_passthrough.enabled=Item Passthough Enabled
+gregtech.gui.item_passthrough.disabled=Item Passthough Disabled
+gregtech.gui.fluid_passthrough.enabled=Fluid Passthough Enabled
+gregtech.gui.fluid_passthrough.disabled=Fluid Passthough Disabled
 
 
 ore.spawnlocation.name=Ore Spawn Information
@@ -6162,6 +6246,9 @@ gregtech.subtitle.entity.portal_opening=Portal opens
 gregtech.subtitle.entity.portal_closing=Portal closes
 gregtech.subtitle.maintenance.electrical=Electrical breakdown
 gregtech.subtitle.maintenance.mechanical=Mechanical breakdown
+gregtech.subtitle.alarm=Alarm Whines
+gregtech.subtitle.click=Something Clicks
+
 
 # Debug messaging
 gregtech.debug.f3_h.enabled=GregTech has modified the debug info! For Developers: enable the misc:debug config option in the GregTech config file to see more
