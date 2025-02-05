@@ -70,6 +70,18 @@ public class KeyUtil {
         return IKey.dynamic(() -> lang(lang, argSupplier.get()).style(formatting.get()).getFormatted());
     }
 
+    public static IKey number(float number) {
+        return string(TextFormattingUtil.formatNumbers(number));
+    }
+
+    public static IKey number(TextFormatting formatting, float number) {
+        return number(number).style(formatting);
+    }
+
+    public static IKey number(TextFormatting formatting, float number, String suffix) {
+        return string(formatting, TextFormattingUtil.formatNumbers(number) + suffix);
+    }
+
     public static IKey number(long number) {
         return string(TextFormattingUtil.formatNumbers(number));
     }
@@ -131,6 +143,11 @@ public class KeyUtil {
     public static IDrawable setHover(IKey body, IDrawable... hover) {
         if (ArrayUtils.isEmpty(hover)) return body;
         return HoverableKey.of(body, hover);
+    }
+
+    @NotNull
+    public static IKey fluid(TextFormatting formatting, FluidStack fluid) {
+        return fluid(fluid).style(formatting);
     }
 
     @NotNull

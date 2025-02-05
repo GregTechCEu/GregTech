@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
@@ -15,8 +16,10 @@ import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
@@ -670,6 +673,23 @@ public class MultiblockUIFactory {
         }
 
         /**
+         * Adds a progress line that displays recipe progress as "time / total time (percentage)".
+         * <br>
+         * Added if structure is formed and the machine is active.
+         * 
+         * @param progress    current progress.
+         * @param maxProgress total progress to be made.
+         */
+        public Builder addProgressLine(int progress, int maxProgress) {
+            if (!isStructureFormed || !isActive) return this;
+            addKey(KeyUtil.lang(TextFormatting.WHITE, "gregtech.multiblock.recipe_progress",
+                    String.format("%,3.2f", (float) progress / 20),
+                    String.format("%,3.2f", (float) maxProgress / 20),
+                    String.format("%,3.1f", ((float) progress / maxProgress) * 100f)));
+            return this;
+        }
+
+        /**
          * Adds a line indicating how many parallels this multi can potentially perform.
          * <br>
          * Added if structure is formed and the number of parallels is greater than one.
@@ -806,6 +826,44 @@ public class MultiblockUIFactory {
                     "gregtech.multiblock.turbine.fuel_needed",
                     KeyUtil.string(TextFormatting.RED, fuelName),
                     KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
+            return this;
+        }
+
+        /**
+         * Adds the current outputs of a recipe from recipe logic. Items then fluids.
+         * 
+         * @param arl An instance of a {@link AbstractRecipeLogic} to gather the outputs from.
+         */
+        public Builder addRecipeOutputLine(AbstractRecipeLogic arl) {
+            List<ItemStack> itemOutputs = arl.getItemOutputs();
+            List<FluidStack> fluidOutputs = arl.getFluidOutputs();
+
+            if (!isStructureFormed || !isActive || (itemOutputs.isEmpty() && fluidOutputs.isEmpty())) return this;
+
+            int recipeLengthTicks = arl.getMaxProgress();
+
+            itemOutputs.forEach(stack -> {
+                int itemCount = stack.getCount();
+
+                IKey itemName = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
+                IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, itemCount);
+                IKey itemRate = KeyUtil.number(TextFormatting.WHITE,
+                        (float) itemCount / ((float) recipeLengthTicks / 20));
+                addKey(KeyUtil.string(itemName + TextFormatting.WHITE.toString() + " x " + itemAmount +
+                        TextFormatting.WHITE + " (" + itemRate + "/s)"));
+            });
+
+            fluidOutputs.forEach(stack -> {
+                int fluidAmount = stack.amount;
+
+                IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, stack);
+                IKey fluidTextAmount = KeyUtil.number(TextFormatting.GOLD, fluidAmount);
+                IKey fluidRate = KeyUtil.number(TextFormatting.WHITE,
+                        (float) fluidAmount / ((float) recipeLengthTicks / 20), "L");
+                addKey(KeyUtil.string(fluidName + TextFormatting.WHITE.toString() + " x " + fluidTextAmount +
+                        TextFormatting.WHITE + " (" + fluidRate + "/s)"));
+            });
+
             return this;
         }
 
