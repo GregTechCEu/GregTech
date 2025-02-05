@@ -324,13 +324,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         if (distributionMode == DistributionMode.FLOOD || (cap = ItemCapabilityObject.instanceOf(handler)) == null)
             return simpleExtract(handler, testObject, count, simulate);
         NetNode origin = cap.getNode();
-        Predicate<Object> filter = GraphNetUtility.standardEdgeBlacklist(testObject);
+        Predicate<Object> filter = GraphNetUtility.edgeSelectorBlacklist(testObject);
         // if you find yourself here because you added a new distribution mode and now it won't compile,
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
                 ItemNetworkView view = cap.getNetworkView();
-                Iterator<IItemHandler> iter = view.handler().getBackingHandlers().iterator();
+                Iterator<IItemHandler> iter = view.getHandler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IItemHandler> cache = getRoundRobinCache(true, simulate);
                 Set<IItemHandler> backlog = new ObjectOpenHashSet<>();
                 Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
@@ -338,7 +338,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
                         IItemHandler candidate = cache.first();
-                        NetNode linked = view.handlerNetNodeBiMap().get(candidate);
+                        NetNode linked = view.getBiMap().get(candidate);
                         if (linked == null) {
                             cache.removeFirst();
                             continue;
@@ -353,7 +353,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         IItemHandler candidate = iter.next();
                         boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
                         if (frontOfCache || !cache.contains(candidate)) {
-                            NetNode linked = view.handlerNetNodeBiMap().get(candidate);
+                            NetNode linked = view.getBiMap().get(candidate);
                             if (linked == null) {
                                 if (frontOfCache) cache.removeFirst();
                                 continue;
@@ -370,7 +370,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         break;
                     } else {
                         if (!cache.isEmpty()) {
-                            if (view.handler().getBackingHandlers().contains(cache.first()))
+                            if (view.getHandler().getBackingHandlers().contains(cache.first()))
                                 break; // we've already visited the next node in the cache
                             else {
                                 // the network view does not contain the node in the front of the cache, so yeet it.
@@ -486,13 +486,13 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
         if (distributionMode == DistributionMode.FLOOD || (cap = ItemCapabilityObject.instanceOf(handler)) == null)
             return simpleInsert(handler, testObject, count, simulate);
         NetNode origin = cap.getNode();
-        Predicate<Object> filter = GraphNetUtility.standardEdgeBlacklist(testObject);
+        Predicate<Object> filter = GraphNetUtility.edgeSelectorBlacklist(testObject);
         // if you find yourself here because you added a new distribution mode and now it won't compile,
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
                 ItemNetworkView view = cap.getNetworkView();
-                Iterator<IItemHandler> iter = view.handler().getBackingHandlers().iterator();
+                Iterator<IItemHandler> iter = view.getHandler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IItemHandler> cache = getRoundRobinCache(false, simulate);
                 Set<IItemHandler> backlog = new ObjectOpenHashSet<>();
                 Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
@@ -500,7 +500,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
                         IItemHandler candidate = cache.first();
-                        NetNode linked = view.handlerNetNodeBiMap().get(candidate);
+                        NetNode linked = view.getBiMap().get(candidate);
                         if (linked == null) {
                             cache.removeFirst();
                             continue;
@@ -514,7 +514,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         IItemHandler candidate = iter.next();
                         boolean frontOfCache = !cache.isEmpty() && cache.first() == candidate;
                         if (frontOfCache || !cache.contains(candidate)) {
-                            NetNode linked = view.handlerNetNodeBiMap().get(candidate);
+                            NetNode linked = view.getBiMap().get(candidate);
                             if (linked == null) {
                                 if (frontOfCache) cache.removeFirst();
                                 continue;
@@ -531,7 +531,7 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                         break;
                     } else {
                         if (!cache.isEmpty()) {
-                            if (view.handler().getBackingHandlers().contains(cache.first()))
+                            if (view.getHandler().getBackingHandlers().contains(cache.first()))
                                 break; // we've already visited the next node in the cache
                             else {
                                 // the network view does not contain the node in the front of the cache, so yeet it.

@@ -30,11 +30,11 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
 
     public static final MaterialPropertyKey<MaterialItemProperties> KEY = new MaterialPropertyKey<>("ItemProperties");
 
-    private final long baseItemsPer5Ticks;
+    private final long baseItemsPer10Ticks;
     private final float priority;
 
-    public MaterialItemProperties(long baseItemsPer5Ticks, float priority) {
-        this.baseItemsPer5Ticks = baseItemsPer5Ticks;
+    public MaterialItemProperties(long baseItemsPer10Ticks, float priority) {
+        this.baseItemsPer10Ticks = baseItemsPer10Ticks;
         this.priority = priority;
     }
 
@@ -52,10 +52,10 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
                                @NotNull ITooltipFlag flagIn, IPipeMaterialStructure structure) {
         tooltip.add(I18n.format("gregtech.item_pipe"));
         long items = getThroughput(structure);
-        if (items % 16 != 0) {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", items * 4));
+        if (items % 32 != 0) {
+            tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate", items * 2));
         } else {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", items / 16));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.item_transfer_rate_stacks", items / 32));
         }
         tooltip.add(I18n.format("gregtech.pipe.priority",
                 TextFormattingUtil.formatNumbers(getFlowPriority(structure))));
@@ -63,8 +63,8 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
 
     private long getThroughput(IPipeStructure structure) {
         if (structure instanceof MaterialPipeStructure pipe) {
-            return baseItemsPer5Ticks * pipe.material();
-        } else return baseItemsPer5Ticks;
+            return baseItemsPer10Ticks * pipe.material();
+        } else return baseItemsPer10Ticks;
     }
 
     @Override
@@ -88,7 +88,7 @@ public final class MaterialItemProperties implements PipeNetProperties.IPipeNetM
     @Override
     public void mutateData(NetLogicData data, IPipeStructure structure) {
         if (structure instanceof MaterialPipeStructure pipe) {
-            long throughput = baseItemsPer5Ticks * pipe.material();
+            long throughput = baseItemsPer10Ticks * pipe.material();
             data.setLogicEntry(WeightFactorLogic.TYPE.getWith(getFlowPriority(structure)))
                     .setLogicEntry(ThroughputLogic.TYPE.getWith(throughput));
             if (pipe.channelCount() > 1) {

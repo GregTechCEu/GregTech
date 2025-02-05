@@ -90,10 +90,6 @@ public class WorldItemNet extends WorldPipeNet {
         return 10;
     }
 
-    public static int getBufferRegenerationFactor() {
-        return 5;
-    }
-
     @Override
     public int getNetworkID() {
         return 2;

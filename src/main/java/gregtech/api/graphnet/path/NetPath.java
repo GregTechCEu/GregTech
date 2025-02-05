@@ -27,6 +27,9 @@ public interface NetPath {
         return nodes.asList().get(nodes.size() - 1);
     }
 
+    /**
+     * Must always contain 1 more element than {@link #getOrderedNodes()}
+     */
     @NotNull
     @Unmodifiable
     ImmutableCollection<NetEdge> getOrderedEdges();

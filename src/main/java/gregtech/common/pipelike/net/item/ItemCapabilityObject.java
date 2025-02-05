@@ -3,7 +3,9 @@ package gregtech.common.pipelike.net.item;
 import gregtech.api.graphnet.GraphNetUtility;
 import gregtech.api.graphnet.logic.ChannelCountLogic;
 import gregtech.api.graphnet.logic.ThroughputLogic;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
+import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
 import gregtech.api.graphnet.pipenet.physical.tile.NodeManagingPCW;
@@ -11,10 +13,10 @@ import gregtech.api.graphnet.pipenet.physical.tile.PipeCapabilityWrapper;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.graphnet.predicate.test.ItemTestObject;
 import gregtech.api.graphnet.traverse.EdgeDirection;
-import gregtech.api.graphnet.traverse.EdgeSelector;
 import gregtech.api.graphnet.traverse.ResilientNetClosestIterator;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TickUtil;
+import gregtech.api.util.collection.ListHashSet;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -22,12 +24,16 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler {
 
@@ -75,65 +81,132 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         return facing == null ? node : capabilityWrapper.getNodeForFacing(facing);
     }
 
-    protected @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate, EnumFacing side) {
+    protected @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, final boolean simulate,
+                                            EnumFacing side) {
         @NotNull
         ItemStack result = stack;
         if (!this.transferring && !inputDisallowed(side)) {
             NetNode node = getRelevantNode(side);
             if (node == null) node = this.node;
             this.transferring = true;
-            ItemNetworkView networkView = getNetworkView();
-            IItemHandler targetHandler = networkView.handler().getHandlerBySlot(slot);
-            NetNode targetNode = networkView.handlerNetNodeBiMap().get(targetHandler);
+            ItemNetworkView networkView = getNetworkView(node);
+            IItemHandler targetHandler = networkView.getHandler().getHandlerBySlot(slot);
+            NetNode targetNode = networkView.getBiMap().get(targetHandler);
             if (targetNode != null) {
-                int handlerSlot = slot - networkView.handler().getOffsetByHandler(targetHandler);
-                int insertable = stack.getCount() - targetHandler.insertItem(handlerSlot, stack, true).getCount();
+                int handlerSlot = slot - networkView.getHandler().getOffsetByHandler(targetHandler);
+                final ItemStack remainder = targetHandler.insertItem(handlerSlot, stack, true);
+                int insertable = stack.getCount() - remainder.getCount();
                 if (insertable > 0) {
+                    Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>(
+                            node.getGroupSafe().getNodes().size());
                     final ItemTestObject testObject = new ItemTestObject(stack);
-                    Predicate<Object> filter = GraphNetUtility.standardEdgeBlacklist(testObject);
-                    ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(node,
-                            EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
-                    ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(targetNode,
-                            EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
-                    insertable = GraphNetUtility.p2pWalk(simulate, insertable, n -> getFlowLimit(n, testObject),
-                            (n, i) -> reportFlow(n, i, testObject), node.getGroupSafe().getNodes().size(),
-                            forwardFrontier, backwardFrontier);
-                    if (!simulate) targetHandler.insertItem(handlerSlot, testObject.recombine(insertable), false);
-                    result = testObject.recombine(stack.getCount() - insertable);
+                    ListHashSet<NetPath> pathCache = networkView.outgoingCache().computeIfAbsent(targetNode,
+                            k -> new ListHashSet<>(1));
+                    ResilientNetClosestIterator forwardFrontier = null;
+                    ResilientNetClosestIterator backwardFrontier = null;
+                    Iterator<NetPath> iterator = pathCache.iterator();
+                    while (insertable > 0) {
+                        NetPath path;
+                        if (iterator != null && iterator.hasNext()) path = iterator.next();
+                        else {
+                            iterator = null;
+                            if (forwardFrontier == null) {
+                                forwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.OUTGOING);
+                                backwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.INCOMING);
+                            }
+                            path = GraphNetUtility.p2pNextPath(
+                                    n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
+                                            z -> getFlowLimit(z, testObject)) <= 0,
+                                    e -> !e.test(testObject), forwardFrontier, backwardFrontier);
+                            if (path == null) break;
+                            int i = pathCache.size();
+                            while (i > 0 && pathCache.get(i - 1).getWeight() > path.getWeight()) {
+                                i--;
+                            }
+                            if (!pathCache.addSensitive(i, path)) break;
+                        }
+                        int insert = attemptPath(path, insertable,
+                                n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
+                                        z -> getFlowLimit(z, testObject)),
+                                e -> !e.test(testObject));
+                        if (insert > 0) {
+                            insertable -= insert;
+                            ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
+                            for (int j = 0; j < asList.size(); j++) {
+                                NetNode n = asList.get(j);
+                                if (!simulate) reportFlow(n, insert, testObject);
+                                flowLimitCache.put(n, flowLimitCache.getInt(n) - insert);
+                            }
+                            if (!simulate) targetHandler.insertItem(handlerSlot, testObject.recombine(insert), false);
+                        }
+                    }
+                    result = testObject.recombine(remainder.getCount() + insertable);
                 }
             }
             this.transferring = false;
         }
-
         return result;
     }
 
-    protected @NotNull ItemStack extractItem(int slot, int amount, boolean simulate, EnumFacing side) {
+    protected @NotNull ItemStack extractItem(int slot, int amount, final boolean simulate, EnumFacing side) {
         @NotNull
         ItemStack result = ItemStack.EMPTY;
         if (!this.transferring && !inputDisallowed(side)) {
             NetNode node = getRelevantNode(side);
             if (node == null) node = this.node;
             this.transferring = true;
-            ItemNetworkView networkView = getNetworkView();
-            IItemHandler targetHandler = networkView.handler().getHandlerBySlot(slot);
-            NetNode targetNode = networkView.handlerNetNodeBiMap().get(targetHandler);
+            ItemNetworkView networkView = getNetworkView(node);
+            IItemHandler targetHandler = networkView.getHandler().getHandlerBySlot(slot);
+            NetNode targetNode = networkView.getBiMap().get(targetHandler);
             if (targetNode != null) {
-                int handlerSlot = slot - networkView.handler().getOffsetByHandler(targetHandler);
-                ItemStack stack = targetHandler.extractItem(handlerSlot, amount, true);
+                int handlerSlot = slot - networkView.getHandler().getOffsetByHandler(targetHandler);
+                final ItemStack stack = targetHandler.extractItem(handlerSlot, amount, true);
                 int extractable = stack.getCount();
                 if (extractable > 0) {
+                    Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>(
+                            node.getGroupSafe().getNodes().size());
                     final ItemTestObject testObject = new ItemTestObject(stack);
-                    Predicate<Object> filter = GraphNetUtility.standardEdgeBlacklist(testObject);
-                    ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(node,
-                            EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
-                    ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(targetNode,
-                            EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
-                    extractable = GraphNetUtility.p2pWalk(simulate, extractable, n -> getFlowLimit(n, testObject),
-                            (n, i) -> reportFlow(n, i, testObject), node.getGroupSafe().getNodes().size(),
-                            forwardFrontier, backwardFrontier);
-                    if (!simulate) targetHandler.extractItem(handlerSlot, extractable, false);
-                    result = testObject.recombine(extractable);
+                    ListHashSet<NetPath> pathCache = networkView.incomingCache().computeIfAbsent(targetNode,
+                            k -> new ListHashSet<>(1));
+                    ResilientNetClosestIterator forwardFrontier = null;
+                    ResilientNetClosestIterator backwardFrontier = null;
+                    Iterator<NetPath> iterator = pathCache.iterator();
+                    while (extractable > 0) {
+                        NetPath path;
+                        if (iterator != null && iterator.hasNext()) path = iterator.next();
+                        else {
+                            iterator = null;
+                            if (forwardFrontier == null) {
+                                forwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.INCOMING);
+                                backwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.OUTGOING);
+                            }
+                            path = GraphNetUtility.p2pNextPath(
+                                    n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
+                                            z -> getFlowLimit(z, testObject)) <= 0,
+                                    e -> !e.test(testObject), forwardFrontier, backwardFrontier);
+                            if (path == null) break;
+                            int i = pathCache.size();
+                            while (i > 0 && pathCache.get(i - 1).getWeight() > path.getWeight()) {
+                                i--;
+                            }
+                            if (!pathCache.addSensitive(i, path)) break;
+                        }
+                        int extract = attemptPath(path, extractable,
+                                n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
+                                        z -> getFlowLimit(z, testObject)),
+                                e -> !e.test(testObject));
+                        if (extract > 0) {
+                            extractable -= extract;
+                            ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
+                            for (int j = 0; j < asList.size(); j++) {
+                                NetNode n = asList.get(j);
+                                if (!simulate) reportFlow(n, extract, testObject);
+                                flowLimitCache.put(n, flowLimitCache.getInt(n) - extract);
+                            }
+                            if (!simulate) targetHandler.extractItem(handlerSlot, extract, false);
+                        }
+                    }
+                    result = testObject.recombine(stack.getCount() - extractable);
                 }
             }
             this.transferring = false;
@@ -142,17 +215,29 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         return result;
     }
 
+    protected int attemptPath(NetPath path, int available, ToIntFunction<NetNode> limit, Predicate<NetEdge> filter) {
+        ImmutableList<NetEdge> edges = path.getOrderedEdges().asList();
+        for (int i = 0; i < edges.size(); i++) {
+            if (filter.test(edges.get(i))) return 0;
+        }
+        ImmutableList<NetNode> nodes = path.getOrderedNodes().asList();
+        for (int i = 0; i < nodes.size(); i++) {
+            available = Math.min(limit.applyAsInt(nodes.get(i)), available);
+            if (available <= 0) return 0;
+        }
+        return available;
+    }
+
     public static int getFlowLimit(NetNode node, ItemTestObject testObject) {
         ThroughputLogic throughput = node.getData().getLogicEntryNullable(ThroughputLogic.TYPE);
         if (throughput == null) return Integer.MAX_VALUE;
         ItemFlowLogic history = node.getData().getLogicEntryNullable(ItemFlowLogic.TYPE);
-        if (history == null) return GTUtility.safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT);
+        if (history == null) return GTUtility.safeCastLongToInt(throughput.getValue());
         Object2LongMap<ItemTestObject> sum = history.getSum(false);
-        if (sum.isEmpty()) return GTUtility.safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT);
+        if (sum.isEmpty()) return GTUtility.safeCastLongToInt(throughput.getValue());
         if (sum.size() < node.getData().getLogicEntryDefaultable(ChannelCountLogic.TYPE).getValue() ||
                 sum.containsKey(testObject)) {
-            return GTUtility
-                    .safeCastLongToInt(throughput.getValue() * ItemFlowLogic.BUFFER_MULT - sum.getLong(testObject));
+            return GTUtility.safeCastLongToInt(throughput.getValue() - sum.getLong(testObject));
         }
         return 0;
     }
@@ -167,6 +252,10 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
     }
 
     public @NotNull ItemNetworkView getNetworkView() {
+        return getNetworkView(node);
+    }
+
+    public static @NotNull ItemNetworkView getNetworkView(NetNode node) {
         if (node.getGroupSafe().getData() instanceof ItemNetworkViewGroupData data) {
             return data.getOrCreate(node);
         }
@@ -175,12 +264,12 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     @Override
     public int getSlots() {
-        return getNetworkView().handler().getSlots();
+        return getNetworkView().getHandler().getSlots();
     }
 
     @Override
     public @NotNull ItemStack getStackInSlot(int slot) {
-        return getNetworkView().handler().getStackInSlot(slot);
+        return getNetworkView().getHandler().getStackInSlot(slot);
     }
 
     @Override
@@ -195,7 +284,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     @Override
     public int getSlotLimit(int slot) {
-        return getNetworkView().handler().getSlotLimit(slot);
+        return getNetworkView().getHandler().getSlotLimit(slot);
     }
 
     @Nullable
@@ -215,12 +304,16 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
         @Override
         public int getSlots() {
-            return ItemCapabilityObject.this.getSlots();
+            NetNode node = getRelevantNode(facing);
+            if (node == null) return ItemCapabilityObject.this.getSlots();
+            return getNetworkView(node).getHandler().getSlots();
         }
 
         @Override
         public @NotNull ItemStack getStackInSlot(int slot) {
-            return ItemCapabilityObject.this.getStackInSlot(slot);
+            NetNode node = getRelevantNode(facing);
+            if (node == null) return ItemCapabilityObject.this.getStackInSlot(slot);
+            return getNetworkView(node).getHandler().getStackInSlot(slot);
         }
 
         @Override
@@ -235,7 +328,9 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
         @Override
         public int getSlotLimit(int slot) {
-            return ItemCapabilityObject.this.getSlotLimit(slot);
+            NetNode node = getRelevantNode(facing);
+            if (node == null) return ItemCapabilityObject.this.getSlotLimit(slot);
+            return getNetworkView(node).getHandler().getSlotLimit(slot);
         }
 
         public ItemCapabilityObject getParent() {

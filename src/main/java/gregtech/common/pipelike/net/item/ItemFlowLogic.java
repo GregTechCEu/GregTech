@@ -20,9 +20,8 @@ public class ItemFlowLogic extends RingBufferTransientLogicData<ItemFlowLogic, O
             ItemFlowLogic::new, new ItemFlowLogic());
 
     public static final int MEMORY_TICKS = WorldItemNet.getBufferTicks();
-    public static final int BUFFER_MULT = MEMORY_TICKS / WorldItemNet.getBufferRegenerationFactor();
 
-    private Object2LongMap<ItemTestObject> sum = new Object2LongOpenHashMap<>();
+    private final Object2LongMap<ItemTestObject> sum = new Object2LongOpenHashMap<>();
     private ItemTestObject last;
 
     public ItemFlowLogic() {
