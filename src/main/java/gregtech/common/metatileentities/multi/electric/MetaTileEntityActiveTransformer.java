@@ -16,7 +16,6 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.KeyUtil;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -170,31 +169,27 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.machine.active_transformer.routing")
-                .addWorkingStatusLine()
                 .addCustom(list -> {
                     if (isStructureFormed()) {
                         // Max input line
                         IKey maxInputFormatted = KeyUtil.number(TextFormatting.WHITE,
-                                powerInput.getInputVoltage() * powerInput.getInputAmperage(),
-                                " EU/t");
+                                powerInput.getInputVoltage() * powerInput.getInputAmperage(), " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.GREEN, "gregtech.multiblock.active_transformer.max_in",
                                 maxInputFormatted));
 
                         // Max output line
-                        IKey maxOutputFormatted = KeyUtil
-                                .string(TextFormatting.WHITE, TextFormattingUtil.formatNumbers(
-                                        powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage()) +
-                                        " EU/t");
+                        IKey maxOutputFormatted = KeyUtil.number(TextFormatting.WHITE,
+                                powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage(), " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.active_transformer.max_out",
                                 maxOutputFormatted));
 
                         // Average I/O line
-                        IKey avgIOFormatted = KeyUtil.string(TextFormatting.WHITE,
-                                TextFormattingUtil.formatNumbers(averageIOLastSec) + " EU/t");
+                        IKey avgIOFormatted = KeyUtil.number(TextFormatting.WHITE, averageIOLastSec, " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.AQUA, "gregtech.multiblock.active_transformer.average_io",
                                 avgIOFormatted));
                     }
-                });
+                })
+                .addWorkingStatusLine();
     }
 
     @Override
