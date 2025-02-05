@@ -812,6 +812,7 @@ public class MultiblockUIFactory {
 
         /**
          * Adds the name of the current recipe map to the display.
+         * 
          * @param map the {@link RecipeMap} to get the name of
          */
         public Builder addRecipeMapLine(RecipeMap<?> map) {
