@@ -48,7 +48,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -872,29 +872,20 @@ public class MultiblockUIFactory {
          */
         public Builder addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength) {
             Preconditions.checkNotNull(itemOutputs, "Passed null item list to MultiblockUIFactory#addItemOutputLine");
-            if (!isStructureFormed || !isActive) return this;
+            if (!isStructureFormed || !isActive || itemOutputs.isEmpty()) return this;
 
-            if (!itemOutputs.isEmpty()) {
-                Map<String, Long> nameMap = new HashMap<>();
-
-                for (ItemStack stack : itemOutputs) {
-                    if (stack.isEmpty()) continue;
-                    nameMap.merge(stack.getDisplayName(), (long) stack.getCount(), Long::sum);
-                }
-
-                for (Map.Entry<String, Long> entry : nameMap.entrySet()) {
-
-                }
+            Map<String, Long> itemMap = new LinkedHashMap<>();
+            for (ItemStack itemStack : itemOutputs) {
+                if (itemStack.isEmpty()) continue;
+                itemMap.merge(itemStack.getDisplayName(), (long) itemStack.getCount(), Long::sum);
             }
 
-            itemOutputs.forEach(stack -> {
-                int amount = stack.getCount();
-
-                IKey itemName = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
-                IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, amount);
-                IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, amount));
+            for (Map.Entry<String, Long> entry : itemMap.entrySet()) {
+                IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey());
+                IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
+                IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
                 addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s)", itemName, itemAmount, itemRate));
-            });
+            }
 
             return this;
         }
@@ -908,26 +899,30 @@ public class MultiblockUIFactory {
         public Builder addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength) {
             Preconditions.checkNotNull(fluidOutputs,
                     "Passed null fluid list to MultiblockUIFactory#addFluidOutputLine");
-            if (!isStructureFormed || !isActive) return this;
+            if (!isStructureFormed || !isActive || fluidOutputs.isEmpty()) return this;
 
-            fluidOutputs.forEach(stack -> {
-                int amount = stack.amount;
+            Map<FluidStack, Long> fluidMap = new LinkedHashMap<>();
+            for (FluidStack fluidStack : fluidOutputs) {
+                if (fluidStack.amount < 1) continue;
+                fluidMap.merge(fluidStack, (long) fluidStack.amount, Long::sum);
+            }
 
-                IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, stack);
-                IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, amount);
-                IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, amount));
+            for (Map.Entry<FluidStack, Long> entry : fluidMap.entrySet()) {
+                IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
+                IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
+                IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
                 addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s)", fluidName, fluidAmount, fluidRate));
-            });
+            }
 
             return this;
         }
 
-        private static String formatRecipeRate(int recipeLength, int amount) {
+        private static String formatRecipeRate(int recipeLength, long amount) {
             float perSecond = ((float) amount / recipeLength) * 20f;
 
             String rate;
             if (perSecond > 1) {
-                rate = String.format("%.2f", perSecond).replaceAll("\\.?0+$", "") + "s";
+                rate = String.format("%.2f", perSecond).replaceAll("\\.?0+$", "") + "/s";
             } else {
                 rate = String.format("%.2f", 1 / (perSecond)).replaceAll("\\.?0+$", "") + "s/ea";
             }
