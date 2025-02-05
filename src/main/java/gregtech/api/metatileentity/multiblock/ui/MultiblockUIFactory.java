@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.JsonUtils;
 import gregtech.api.util.KeyUtil;
@@ -806,6 +807,19 @@ public class MultiblockUIFactory {
                     "gregtech.multiblock.turbine.fuel_needed",
                     KeyUtil.string(TextFormatting.RED, fuelName),
                     KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
+            return this;
+        }
+
+        /**
+         * Adds the name of the current recipe map to the display.
+         * @param map the {@link RecipeMap} to get the name of
+         */
+        public Builder addRecipeMapLine(RecipeMap<?> map) {
+            if (!isStructureFormed) return this;
+
+            IKey mapName = KeyUtil.lang(TextFormatting.YELLOW, map.getTranslationKey());
+            addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.machine_mode", mapName));
+
             return this;
         }
 
