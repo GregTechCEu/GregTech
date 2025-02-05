@@ -1174,14 +1174,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return an unmodifiable list of the current recipes item outputs
      */
     public List<ItemStack> getItemOutputs() {
-        return Collections.unmodifiableList(itemOutputs);
+        // itemOutputs is null until the first recipe has been run
+        return itemOutputs == null ? Collections.emptyList() : Collections.unmodifiableList(itemOutputs);
     }
 
     /**
      * @return an unmodifiable list of the current recipes fluid outputs
      */
     public List<FluidStack> getFluidOutputs() {
-        return Collections.unmodifiableList(fluidOutputs);
+        // fluidOutputs is null until the first recipe has been run
+        return fluidOutputs == null ? Collections.emptyList() : Collections.unmodifiableList(fluidOutputs);
     }
 
     /**
