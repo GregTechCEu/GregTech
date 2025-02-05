@@ -119,7 +119,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public void setGhostIngredient(@NotNull ItemStack ingredient) {
-        syncHandler.setStack(ingredient);
+        syncHandler.setStack(ingredient, true);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
     }
 
     public void setStack(ItemStack stack) {
-        this.syncHandler.setStack(stack);
+        this.syncHandler.setStack(stack, true);
     }
 
     protected static class InputSyncHandler extends SyncHandler {
@@ -168,22 +168,16 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
             if (id == SLOT_CHANGED) {
-                boolean onlyAmt = buf.readBoolean();
                 var stack = NetworkUtils.readItemStack(buf);
-                boolean init = buf.readBoolean();
-
-                this.handler.setStackInSlot(this.index, stack);
-                this.listener.onChange(stack, onlyAmt, true, init);
+                setStack(stack, false);
             }
         }
 
         @Override
         public void readOnServer(int id, PacketBuffer buf) {
             if (id == SLOT_CHANGED) {
-                var onlyAmt = buf.readBoolean();
                 var stack = NetworkUtils.readItemStack(buf);
-                this.handler.setStackInSlot(this.index, stack);
-                this.listener.onChange(stack, onlyAmt, false, false);
+                this.setStack(stack, false);
             }
         }
 
@@ -201,25 +195,13 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
                 } else {
                     this.lastStoredItem = itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy();
                 }
-                final boolean finalOnlyAmountChanged = onlyAmountChanged;
-                syncToClient(SLOT_CHANGED, buffer -> {
-                    buffer.writeBoolean(finalOnlyAmountChanged);
-                    NetworkUtils.writeItemStack(buffer, itemStack);
-                    buffer.writeBoolean(init);
-                });
+                syncToClient(SLOT_CHANGED, buffer -> NetworkUtils.writeItemStack(buffer, itemStack));
             }
         }
 
         public void syncStack() {
             final var cursorStack = GTUtility.copy(1, getSyncManager().getCursorItem());
-            final var curStack = getStack();
-            final boolean onlyAmt = ItemHandlerHelper.canItemStacksStackRelaxed(curStack, cursorStack);
-
-            setStack(cursorStack);
-            syncToServer(SLOT_CHANGED, buffer -> {
-                buffer.writeBoolean(onlyAmt);
-                NetworkUtils.writeItemStack(buffer, cursorStack);
-            });
+            setStack(cursorStack, true);
         }
 
         public ItemStack getStack() {
@@ -231,9 +213,12 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
          * 
          * @param stack stack to put into this slot
          */
-        public void setStack(ItemStack stack) {
+        public void setStack(ItemStack stack, boolean sync) {
+            var old = getStack();
+            boolean onlyAmt = ItemHandlerHelper.canItemStacksStackRelaxed(stack, old);
             this.handler.setStackInSlot(this.index, stack);
-            this.listener.onChange(stack, false, getSyncManager().isClient(), false);
+            this.listener.onChange(stack, onlyAmt, getSyncManager().isClient(), false);
+            if (sync) syncToServer(SLOT_CHANGED, buffer -> NetworkUtils.writeItemStack(buffer, getStack()));
         }
     }
 }

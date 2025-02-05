@@ -18,7 +18,6 @@ import com.cleanroommc.modularui.utils.ObjectList;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import mezz.jei.gui.ghost.GhostIngredientDrag;
 import mezz.jei.gui.ghost.GhostIngredientDragManager;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -38,9 +37,6 @@ public abstract class ModularPanelMixin extends ParentWidget<ModularPanel> imple
     @Shadow
     public abstract void animateClose();
 
-    @Shadow
-    @Final
-    private @NotNull String name;
     @Unique
     InputAccessor gregTech$mouse = null;
 

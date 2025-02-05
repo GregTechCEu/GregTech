@@ -1,7 +1,6 @@
 package gregtech.common.metatileentities.storage;
 
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
@@ -38,9 +37,5 @@ public class CachedRecipeData {
 
     public IRecipe getPreviousRecipe() {
         return previousRecipe;
-    }
-
-    public ItemStack getRecipeOutput() {
-        return recipe == null ? ItemStack.EMPTY : recipe.getRecipeOutput();
     }
 }
