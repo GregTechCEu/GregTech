@@ -43,6 +43,7 @@ import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -831,32 +832,68 @@ public class MultiblockUIFactory {
 
         /**
          * Adds the current outputs of a recipe from recipe logic. Items then fluids.
-         * 
-         * @param arl An instance of a {@link AbstractRecipeLogic} to gather the outputs from.
+         *
+         * @param arl an instance of an {@link AbstractRecipeLogic} to gather the outputs from.
          */
-        public Builder addRecipeOutputLine(AbstractRecipeLogic arl) {
-            List<ItemStack> itemOutputs = arl.getItemOutputs();
-            List<FluidStack> fluidOutputs = arl.getFluidOutputs();
+        public Builder addRecipeOutputLine(@NotNull AbstractRecipeLogic arl) {
+            Preconditions.checkNotNull(arl,
+                    "Passed null AbstractRecipeLogic to MultiblockUIFactory#addRecipeOutputLine");
+            addRecipeOutputLine(arl.getItemOutputs(), arl.getFluidOutputs(), arl.getMaxProgress());
 
-            if (!isStructureFormed || !isActive || (itemOutputs.isEmpty() && fluidOutputs.isEmpty())) return this;
+            return this;
+        }
 
-            int recipeLengthTicks = arl.getMaxProgress();
+        public Builder addRecipeOutputLine(@NotNull List<ItemStack> itemOutputs, @NotNull List<FluidStack> fluidOutputs,
+                                           int recipeLength) {
+            Preconditions.checkNotNull(itemOutputs, "Passed null item list to MultiblockUIFactory#addRecipeOutputLine");
+            Preconditions.checkNotNull(fluidOutputs,
+                    "Passed null fluid list to MultiblockUIFactory#addRecipeOutputLine");
+
+            addItemOutputLine(itemOutputs, recipeLength);
+            addFluidOutputLine(fluidOutputs, recipeLength);
+
+            return this;
+        }
+
+        /**
+         * Add the item outputs of a recipe to the display.
+         *
+         * @param itemOutputs  a list of {@link ItemStack}s to add.
+         * @param recipeLength the recipe length, in ticks.
+         */
+        public Builder addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength) {
+            Preconditions.checkNotNull(itemOutputs, "Passed null item list to MultiblockUIFactory#addItemOutputLine");
+            if (!isStructureFormed || !isActive) return this;
 
             itemOutputs.forEach(stack -> {
                 int amount = stack.getCount();
 
                 IKey itemName = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
                 IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, amount);
-                IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLengthTicks, amount));
+                IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, amount));
                 addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s/s)", itemName, itemAmount, itemRate));
             });
+
+            return this;
+        }
+
+        /**
+         * Add the fluid outputs of a recipe to the display.
+         *
+         * @param fluidOutputs a list of {@link FluidStack}s to add.
+         * @param recipeLength the recipe length, in ticks.
+         */
+        public Builder addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength) {
+            Preconditions.checkNotNull(fluidOutputs,
+                    "Passed null fluid list to MultiblockUIFactory#addFluidOutputLine");
+            if (!isStructureFormed || !isActive) return this;
 
             fluidOutputs.forEach(stack -> {
                 int amount = stack.amount;
 
                 IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, stack);
                 IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, amount);
-                IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLengthTicks, amount));
+                IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, amount));
                 addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%sL/s)", fluidName, fluidAmount, fluidRate));
             });
 
