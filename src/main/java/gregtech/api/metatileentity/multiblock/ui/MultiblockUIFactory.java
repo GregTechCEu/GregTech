@@ -843,6 +843,12 @@ public class MultiblockUIFactory {
             return this;
         }
 
+        /**
+         * Adds the current outputs of a recipe. Items then fluids.
+         * @param itemOutputs  a list of {@link ItemStack}s to display.
+         * @param fluidOutputs a list of {@link FluidStack}s to display.
+         * @param recipeLength the recipe length, in ticks.
+         */
         public Builder addRecipeOutputLine(@NotNull List<ItemStack> itemOutputs, @NotNull List<FluidStack> fluidOutputs,
                                            int recipeLength) {
             Preconditions.checkNotNull(itemOutputs, "Passed null item list to MultiblockUIFactory#addRecipeOutputLine");
@@ -858,7 +864,7 @@ public class MultiblockUIFactory {
         /**
          * Add the item outputs of a recipe to the display.
          *
-         * @param itemOutputs  a list of {@link ItemStack}s to add.
+         * @param itemOutputs  a list of {@link ItemStack}s to display.
          * @param recipeLength the recipe length, in ticks.
          */
         public Builder addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength) {
@@ -880,7 +886,7 @@ public class MultiblockUIFactory {
         /**
          * Add the fluid outputs of a recipe to the display.
          *
-         * @param fluidOutputs a list of {@link FluidStack}s to add.
+         * @param fluidOutputs a list of {@link FluidStack}s to display.
          * @param recipeLength the recipe length, in ticks.
          */
         public Builder addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength) {
