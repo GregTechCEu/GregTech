@@ -843,28 +843,29 @@ public class MultiblockUIFactory {
             int recipeLengthTicks = arl.getMaxProgress();
 
             itemOutputs.forEach(stack -> {
-                int itemCount = stack.getCount();
+                int amount = stack.getCount();
 
                 IKey itemName = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
-                IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, itemCount);
-                IKey itemRate = KeyUtil.number(TextFormatting.WHITE,
-                        (float) itemCount / ((float) recipeLengthTicks / 20));
-                addKey(KeyUtil.string(itemName + TextFormatting.WHITE.toString() + " x " + itemAmount +
-                        TextFormatting.WHITE + " (" + itemRate + "/s)"));
+                IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, amount);
+                IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLengthTicks, amount));
+                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s/s)", itemName, itemAmount, itemRate));
             });
 
             fluidOutputs.forEach(stack -> {
-                int fluidAmount = stack.amount;
+                int amount = stack.amount;
 
                 IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, stack);
-                IKey fluidTextAmount = KeyUtil.number(TextFormatting.GOLD, fluidAmount);
-                IKey fluidRate = KeyUtil.number(TextFormatting.WHITE,
-                        (float) fluidAmount / ((float) recipeLengthTicks / 20), "L");
-                addKey(KeyUtil.string(fluidName + TextFormatting.WHITE.toString() + " x " + fluidTextAmount +
-                        TextFormatting.WHITE + " (" + fluidRate + "/s)"));
+                IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, amount);
+                IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLengthTicks, amount));
+                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%sL/s)", fluidName, fluidAmount, fluidRate));
             });
 
             return this;
+        }
+
+        private static String formatRecipeRate(int recipeLength, int amount) {
+            float rate = (float) amount / ((float) recipeLength / 20);
+            return String.format("%,.2f", rate).replaceAll("\\.?0+$", "");
         }
 
         /** Insert an empty line into the text list. */
