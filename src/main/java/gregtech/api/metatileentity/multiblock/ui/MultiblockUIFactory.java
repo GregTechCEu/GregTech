@@ -48,7 +48,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -845,6 +847,7 @@ public class MultiblockUIFactory {
 
         /**
          * Adds the current outputs of a recipe. Items then fluids.
+         * 
          * @param itemOutputs  a list of {@link ItemStack}s to display.
          * @param fluidOutputs a list of {@link FluidStack}s to display.
          * @param recipeLength the recipe length, in ticks.
@@ -871,13 +874,26 @@ public class MultiblockUIFactory {
             Preconditions.checkNotNull(itemOutputs, "Passed null item list to MultiblockUIFactory#addItemOutputLine");
             if (!isStructureFormed || !isActive) return this;
 
+            if (!itemOutputs.isEmpty()) {
+                Map<String, Long> nameMap = new HashMap<>();
+
+                for (ItemStack stack : itemOutputs) {
+                    if (stack.isEmpty()) continue;
+                    nameMap.merge(stack.getDisplayName(), (long) stack.getCount(), Long::sum);
+                }
+
+                for (Map.Entry<String, Long> entry : nameMap.entrySet()) {
+
+                }
+            }
+
             itemOutputs.forEach(stack -> {
                 int amount = stack.getCount();
 
                 IKey itemName = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
                 IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, amount);
                 IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, amount));
-                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s/s)", itemName, itemAmount, itemRate));
+                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s)", itemName, itemAmount, itemRate));
             });
 
             return this;
@@ -900,15 +916,23 @@ public class MultiblockUIFactory {
                 IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, stack);
                 IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, amount);
                 IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, amount));
-                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%sL/s)", fluidName, fluidAmount, fluidRate));
+                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s)", fluidName, fluidAmount, fluidRate));
             });
 
             return this;
         }
 
         private static String formatRecipeRate(int recipeLength, int amount) {
-            float rate = (float) amount / ((float) recipeLength / 20);
-            return String.format("%,.2f", rate).replaceAll("\\.?0+$", "");
+            float perSecond = ((float) amount / recipeLength) * 20f;
+
+            String rate;
+            if (perSecond > 1) {
+                rate = String.format("%.2f", perSecond).replaceAll("\\.?0+$", "") + "s";
+            } else {
+                rate = String.format("%.2f", 1 / (perSecond)).replaceAll("\\.?0+$", "") + "s/ea";
+            }
+
+            return rate;
         }
 
         /** Insert an empty line into the text list. */
