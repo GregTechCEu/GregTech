@@ -1,12 +1,15 @@
 package gregtech.common.metatileentities.storage;
 
+import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.util.DummyContainer;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.crafting.ShapedOreEnergyTransferRecipe;
 import gregtech.common.mui.widget.workbench.CraftingInputSlot;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
@@ -158,16 +161,17 @@ public class CraftingRecipeLogic extends SyncHandler {
         for (var gathered : gatheredItems.entrySet()) {
             int slot = gathered.getKey(), amount = gathered.getValue();
             var stack = availableHandlers.getStackInSlot(slot);
+            boolean hasContainer = stack.getItem().hasContainerItem(stack);
 
-            if (stack.isItemStackDamageable()) {
-                var usedStack = ForgeHooks.getContainerItem(stack);
-                availableHandlers.setStackInSlot(slot, usedStack);
-            } else if (stack.getItem().hasContainerItem(stack)) {
-                var useStack = stack.getCount() > 1 ? stack.splitStack(1) : stack;
+            if (hasContainer && stack.getCount() > 1) {
+                var useStack = stack.splitStack(1);
                 var newStack = ForgeHooks.getContainerItem(useStack);
                 if (newStack.isEmpty()) return false;
 
                 GTTransferUtils.insertItem(this.availableHandlers, newStack, false);
+            } else if (hasContainer) {
+                var usedStack = ForgeHooks.getContainerItem(stack);
+                availableHandlers.setStackInSlot(slot, usedStack);
             } else {
                 availableHandlers.extractItem(slot, amount, false);
             }
@@ -264,7 +268,12 @@ public class CraftingRecipeLogic extends SyncHandler {
                 } else {
                     // for shaped recipes, check the exact ingredient instead
                     // ingredients should be in the correct order
-                    matched = ingredients.get(index).apply(itemStack);
+                    if (index >= 0 && index < ingredients.size())
+                        matched = ingredients.get(index).apply(itemStack);
+                    else {
+                        GTLog.logger.warn("Compacted index \"{}\" is out of bounds for list size \"{}\"", index,
+                                ingredients.size());
+                    }
                 }
                 if (!matched) {
                     map.put(GTUtility.copy(1, itemStack), false);
@@ -307,6 +316,11 @@ public class CraftingRecipeLogic extends SyncHandler {
         for (int slot : stackLookupMap.get(itemStack)) {
             var slotStack = availableHandlers.extractItem(slot, count, true);
             // we are certain the stack map is correct
+            if (slotStack.getItem() instanceof ItemGTToolbelt) {
+                // todo this doesn't work correctly
+                // the slots are different on the client for some reason
+                ItemGTToolbelt.setCraftingSlot(slot, (EntityPlayerMP) getSyncManager().getPlayer());
+            }
             extracted += slotStack.getCount();
             if (extracted >= count) return true;
         }
@@ -344,6 +358,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             return;
         }
 
+        compactedIndexes.clear();
         requiredItems.clear();
         refreshStackMap();
         final Map<Integer, Boolean> map = new Int2BooleanArrayMap();

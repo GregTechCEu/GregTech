@@ -31,6 +31,7 @@ public class CraftingRecipeMemory extends SyncHandler {
     public static final int OFFSET_RECIPE = 5;
     public static final int REMOVE_RECIPE = 2;
     public static final int MAKE_RECIPE = 3;
+    public static final int UPDATE_LOGIC = 6;
 
     // server only
     public static final int MOUSE_CLICK = 2;
@@ -52,7 +53,13 @@ public class CraftingRecipeMemory extends SyncHandler {
         MemorizedRecipe recipe = memorizedRecipes[index];
         if (recipe != null) {
             copyInventoryItems(recipe.craftingMatrix, this.craftingMatrix);
+            getRecipeLogic().updateCurrentRecipe();
+            syncToClient(UPDATE_LOGIC);
         }
+    }
+
+    public CraftingRecipeLogic getRecipeLogic() {
+        return (CraftingRecipeLogic) getSyncManager().getSyncHandler("recipe_logic:0");
     }
 
     @Nullable
@@ -212,6 +219,8 @@ public class CraftingRecipeMemory extends SyncHandler {
             memorizedRecipes[recipe.index] = recipe;
         } else if (id == OFFSET_RECIPE) {
             this.offsetRecipe(buf.readByte());
+        } else if (id == UPDATE_LOGIC) {
+            getRecipeLogic().updateCurrentRecipe();
         }
     }
 

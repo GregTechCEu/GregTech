@@ -43,6 +43,7 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -63,7 +64,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -119,7 +119,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         super.writeInitialSyncData(buf);
         buf.writeInt(this.itemsCrafted);
         for (int i = 0; i < craftingGrid.getSlots(); i++) {
-            buf.writeItemStack(craftingGrid.getStackInSlot(i));
+            NetworkUtils.writeItemStack(buf, craftingGrid.getStackInSlot(i));
         }
         this.recipeMemory.writeInitialSyncData(buf);
     }
@@ -128,11 +128,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.itemsCrafted = buf.readInt();
-        try {
-            for (int i = 0; i < craftingGrid.getSlots(); i++) {
-                craftingGrid.setStackInSlot(i, buf.readItemStack());
-            }
-        } catch (IOException ignored) {}
+        for (int i = 0; i < craftingGrid.getSlots(); i++) {
+            craftingGrid.setStackInSlot(i, NetworkUtils.readItemStack(buf));
+        }
         this.recipeMemory.receiveInitialSyncData(buf);
     }
 
