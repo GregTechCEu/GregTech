@@ -341,8 +341,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public IWidget createInventoryPage(PanelSyncManager syncManager) {
-        var connected = new SlotGroup("connected_inventory", 8, true);
-        syncManager.registerSlotGroup(connected);
 
         if (this.connectedInventory.getSlots() == 0) {
             return Flow.column()
@@ -357,6 +355,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         // this is actually supposed to include the tool and storage inventory
         // but that causes problems
         List<ItemSlot> list = new ArrayList<>(this.connectedInventory.getSlots());
+
+        int rowSize = Math.min(this.connectedInventory.getSlots(), 8);
+        var connected = new SlotGroup("connected_inventory", rowSize, true);
+        syncManager.registerSlotGroup(connected);
 
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
             list.add(new ItemSlot()
@@ -387,10 +389,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .background(GTGuiTextures.DISPLAY)
                 .child(new Grid()
                         .scrollable(new VerticalScrollData(), null)
-                        .coverChildrenWidth()
+                        .width(18 * 8 + 4)
                         .height(18 * 6)
-                        .minElementMargin(0, 0)
-                        .mapTo(8, list, (index, value) -> value));
+                        .mapTo(rowSize, list));
     }
 
     public void sendHandlerToClient(PacketBuffer buffer) {
