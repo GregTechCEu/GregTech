@@ -341,7 +341,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public IWidget createInventoryPage(PanelSyncManager syncManager) {
-
         if (this.connectedInventory.getSlots() == 0) {
             return Flow.column()
                     .debugName("inventory page - empty")
