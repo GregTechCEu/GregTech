@@ -182,6 +182,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
         if (this.recipeLogic == null) {
             this.recipeLogic = new CraftingRecipeLogic(getWorld(), getAvailableHandlers(), getCraftingGrid());
+            writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
         }
         return this.recipeLogic;
     }
@@ -395,23 +396,27 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         buffer.writeVarInt(this.connectedInventory.getSlots());
     }
 
+    public void readHandler(PacketBuffer buf) {
+        int connected = buf.readVarInt();
+
+        // set connected inventory
+        this.connectedInventory = new ItemStackHandler(connected);
+
+        // set combined inventory
+        this.combinedInventory = new ItemHandlerList(Arrays.asList(
+                this.internalInventory,
+                this.toolInventory,
+                this.connectedInventory));
+
+        getCraftingRecipeLogic()
+                .updateInventory(this.combinedInventory);
+    }
+
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.UPDATE_CLIENT_HANDLER) {
-            int connected = buf.readVarInt();
-
-            // resize and keep any existing items
-
-            // set connected inventory
-            this.connectedInventory = new ItemStackHandler(connected);
-
-            // set combined inventory
-            this.combinedInventory = new ItemHandlerList(
-                    Arrays.asList(this.internalInventory, this.connectedInventory));
-
-            getCraftingRecipeLogic()
-                    .updateInventory(this.combinedInventory);
+            readHandler(buf);
         }
     }
 
