@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
@@ -200,13 +201,14 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager) {
         getCraftingRecipeLogic().updateCurrentRecipe();
 
-        guiSyncManager.syncValue("recipe_logic", this.recipeLogic);
-        guiSyncManager.syncValue("recipe_memory", this.recipeMemory);
+        syncManager.syncValue("recipe_logic", this.recipeLogic);
+        syncManager.syncValue("recipe_memory", this.recipeMemory);
 
         var controller = new PagedWidget.Controller();
+        syncManager.syncValue("page_controller", new PagedWidgetSyncHandler(controller));
 
         return GTGuis.createPanel(this, 176, 224)
                 .child(Flow.row()
@@ -246,15 +248,15 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                                         // crafting grid
                                         .child(createCraftingGrid())
                                         // crafting output slot
-                                        .child(createCraftingOutput(guiData, guiSyncManager))
+                                        .child(createCraftingOutput(guiData, syncManager))
                                         // recipe memory
-                                        .child(createRecipeMemoryGrid(guiSyncManager)))
+                                        .child(createRecipeMemoryGrid(syncManager)))
                                 // tool inventory
-                                .child(createToolInventory(guiSyncManager))
+                                .child(createToolInventory(syncManager))
                                 // internal inventory
-                                .child(createInternalInventory(guiSyncManager)))
+                                .child(createInternalInventory(syncManager)))
                         // storage page
-                        .addPage(createInventoryPage(guiSyncManager)))
+                        .addPage(createInventoryPage(syncManager)))
                 .bindPlayerInventory();
     }
 
@@ -307,9 +309,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .disableHoverBackground()
                         .onMousePressed(mouseButton -> {
                             this.recipeLogic.clearCraftingGrid();
-                            this.recipeLogic.syncToServer(
-                                    CraftingRecipeLogic.UPDATE_MATRIX,
-                                    this.recipeLogic::writeMatrix);
                             return true;
                         }));
     }

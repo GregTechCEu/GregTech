@@ -101,6 +101,8 @@ public class CraftingRecipeLogic extends SyncHandler {
         for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
             craftingMatrix.setInventorySlotContents(i, ingredients.getOrDefault(i, ItemStack.EMPTY));
         }
+        syncMatrix();
+        updateCurrentRecipe();
     }
 
     public void setInputSlot(CraftingInputSlot slot, int index) {
@@ -445,6 +447,11 @@ public class CraftingRecipeLogic extends SyncHandler {
             }
             this.updateCurrentRecipe();
         }
+    }
+
+    public void syncMatrix() {
+        if (getSyncManager().isClient())
+            syncToServer(UPDATE_MATRIX, this::writeMatrix);
     }
 
     public static InventoryCrafting wrapHandler(IItemHandlerModifiable handler) {

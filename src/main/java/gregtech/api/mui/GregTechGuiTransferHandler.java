@@ -1,16 +1,16 @@
 package gregtech.api.mui;
 
+import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.common.metatileentities.storage.CraftingRecipeLogic;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 
-import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularContainer;
-import com.cleanroommc.modularui.value.sync.ModularSyncManager;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 public class GregTechGuiTransferHandler implements IRecipeTransferHandler<ModularContainer> {
 
     private final IRecipeTransferHandlerHelper handlerHelper;
-    private InventoryCrafting craftingMatrix;
 
     public GregTechGuiTransferHandler(IRecipeTransferHandlerHelper handlerHelper) {
         this.handlerHelper = handlerHelper;
@@ -33,39 +32,38 @@ public class GregTechGuiTransferHandler implements IRecipeTransferHandler<Modula
     }
 
     @Override
-    public @Nullable IRecipeTransferError transferRecipe(ModularContainer container, IRecipeLayout recipeLayout,
-                                                         EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
-        ModularSyncManager syncManager = container.getSyncManager();
-        if (!syncManager.isOpen("workbench")) {
+    public @Nullable IRecipeTransferError transferRecipe(ModularContainer container,
+                                                         @NotNull IRecipeLayout recipeLayout,
+                                                         @NotNull EntityPlayer player, boolean maxTransfer,
+                                                         boolean doTransfer) {
+        if (!container.getSyncManager().isOpen("workbench")) {
             return null;
         }
-        String key = PanelSyncManager.makeSyncKey("recipe_logic", 0);
-        var recipeLogic = (CraftingRecipeLogic) syncManager
-                .getSyncHandler("workbench", key);
+        PanelSyncManager syncManager = container.getSyncManager().getPanelSyncManager("workbench");
+        var recipeLogic = (CraftingRecipeLogic) syncManager.getSyncHandler("recipe_logic:0");
+        var pageController = (PagedWidgetSyncHandler) syncManager.getSyncHandler("page_controller:0");
 
         if (!doTransfer) {
             // todo highlighting in JEI?
             return null;
         }
 
-        var ingredients = recipeLayout.getItemStacks().getGuiIngredients();
-        this.craftingMatrix = recipeLogic.getCraftingMatrix();
-
-        for (int i = 0; i < craftingMatrix.getSizeInventory(); i++) {
-            var ing = ingredients.get(i + 1).getDisplayedIngredient();
-            this.craftingMatrix.setInventorySlotContents(i, ing == null ? ItemStack.EMPTY : ing);
-        }
-
-        recipeLogic.syncToServer(CraftingRecipeLogic.UPDATE_MATRIX, this::writeCraftingMatrix);
-        recipeLogic.updateCurrentRecipe();
+        var matrix = extractMatrix(recipeLayout.getItemStacks());
+        recipeLogic.fillCraftingGrid(matrix);
+        pageController.setPage(0);
         return null;
     }
 
-    private void writeCraftingMatrix(PacketBuffer buffer) {
-        buffer.writeVarInt(this.craftingMatrix.getSizeInventory());
-        for (int i = 0; i < this.craftingMatrix.getSizeInventory(); i++) {
-            var stack = this.craftingMatrix.getStackInSlot(i);
-            NetworkUtils.writeItemStack(buffer, stack);
+    private Int2ObjectMap<ItemStack> extractMatrix(IGuiItemStackGroup stackGroup) {
+        var ingredients = stackGroup.getGuiIngredients();
+        Int2ObjectMap<ItemStack> matrix = new Int2ObjectArrayMap<>(9);
+        for (var slot : ingredients.keySet()) {
+            if (slot != 0) {
+                var ing = ingredients.get(slot).getDisplayedIngredient();
+                if (ing == null) continue;
+                matrix.put(slot - 1, ingredients.get(slot).getDisplayedIngredient());
+            }
         }
+        return matrix;
     }
 }
