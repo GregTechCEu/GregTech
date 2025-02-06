@@ -124,7 +124,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
 
     @Override
     public @Nullable ItemStack castGhostIngredientIfValid(@NotNull Object ingredient) {
-        return ingredient instanceof ItemStack ? (ItemStack) ingredient : null;
+        return areAncestorsEnabled() && ingredient instanceof ItemStack ? (ItemStack) ingredient : null;
     }
 
     @Override
