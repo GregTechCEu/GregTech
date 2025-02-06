@@ -356,7 +356,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         List<ItemSlot> list = new ArrayList<>(this.connectedInventory.getSlots());
 
         int rowSize = Math.min(this.connectedInventory.getSlots(), 8);
-        var connected = new SlotGroup("connected_inventory", rowSize, true);
+        var connected = new SlotGroup("connected_inventory", rowSize, true)
+                .setAllowSorting(false);
         syncManager.registerSlotGroup(connected);
 
         for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
@@ -387,7 +388,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .coverChildren()
                 .background(GTGuiTextures.DISPLAY)
                 .child(new Grid()
-                        .scrollable(new VerticalScrollData(), null)
+                        .scrollable(new VerticalScrollData())
                         .width(18 * 8 + 4)
                         .height(18 * 6)
                         .mapTo(rowSize, list));
