@@ -86,13 +86,15 @@ public class GTGuis {
 
     public static ModularPanel defaultPopupPanel(String name, boolean disableBelow,
                                                  boolean closeOnOutsideClick, boolean deleteCachedPanel) {
-        return new PopupPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT, disableBelow, closeOnOutsideClick, deleteCachedPanel);
+        return new PopupPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT, disableBelow, closeOnOutsideClick,
+                deleteCachedPanel);
     }
 
     private static class PopupPanel extends ModularPanel {
 
         private final boolean disableBelow;
         private final boolean closeOnOutsideClick;
+        private final boolean deleteCachedPanel;
 
         public PopupPanel(@NotNull String name) {
             this(name, DEFAULT_WIDTH, DEFAULT_HIEGHT);
@@ -116,15 +118,21 @@ public class GTGuis {
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
                             this.closeIfOpen(true);
-                            if (deleteCachedPanel && isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
-                                handler.deleteCachedPanel();
-                            }
                             return true;
                         }
                         return false;
                     }));
             this.disableBelow = disableBelow;
             this.closeOnOutsideClick = closeOnOutsideClick;
+            this.deleteCachedPanel = deleteCachedPanel;
+        }
+
+        @Override
+        public void onClose() {
+            super.onClose();
+            if (deleteCachedPanel && isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
+                handler.deleteCachedPanel();
+            }
         }
 
         @Override
