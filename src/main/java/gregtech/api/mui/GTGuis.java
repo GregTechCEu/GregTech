@@ -73,21 +73,20 @@ public class GTGuis {
     }
 
     public static ModularPanel createPopupPanel(String name, int width, int height) {
-        return createPopupPanel(name, width, height, false, false);
+        return new PopupPanel(name, width, height);
     }
 
-    public static ModularPanel createPopupPanel(String name, int width, int height, boolean disableBelow,
-                                                boolean closeOnOutsideClick) {
-        return new PopupPanel(name, width, height, disableBelow, closeOnOutsideClick);
+    public static ModularPanel createPopupPanel(String name, int width, int height, boolean deleteCachedPanel) {
+        return new PopupPanel(name, width, height, false, false, deleteCachedPanel);
     }
 
     public static ModularPanel defaultPopupPanel(String name) {
-        return defaultPopupPanel(name, false, false);
+        return new PopupPanel(name);
     }
 
     public static ModularPanel defaultPopupPanel(String name, boolean disableBelow,
-                                                 boolean closeOnOutsideClick) {
-        return new PopupPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT, disableBelow, closeOnOutsideClick);
+                                                 boolean closeOnOutsideClick, boolean deleteCachedPanel) {
+        return new PopupPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT, disableBelow, closeOnOutsideClick, deleteCachedPanel);
     }
 
     private static class PopupPanel extends ModularPanel {
@@ -95,8 +94,21 @@ public class GTGuis {
         private final boolean disableBelow;
         private final boolean closeOnOutsideClick;
 
+        public PopupPanel(@NotNull String name) {
+            this(name, DEFAULT_WIDTH, DEFAULT_HIEGHT);
+        }
+
+        public PopupPanel(@NotNull String name, int width, int height) {
+            this(name, width, height, false, false);
+        }
+
         public PopupPanel(@NotNull String name, int width, int height, boolean disableBelow,
                           boolean closeOnOutsideClick) {
+            this(name, width, height, disableBelow, closeOnOutsideClick, false);
+        }
+
+        public PopupPanel(@NotNull String name, int width, int height, boolean disableBelow,
+                          boolean closeOnOutsideClick, boolean deleteCachedPanel) {
             super(name);
             size(width, height).align(Alignment.Center);
             background(GTGuiTextures.BACKGROUND_POPUP);
@@ -104,7 +116,7 @@ public class GTGuis {
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
                             this.closeIfOpen(true);
-                            if (isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
+                            if (deleteCachedPanel && isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
                                 handler.deleteCachedPanel();
                             }
                             return true;
