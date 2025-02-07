@@ -6,6 +6,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -16,7 +18,7 @@ import java.util.*;
 public class ItemHandlerList implements IItemHandlerModifiable {
 
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
-    private final Map<IItemHandler, Integer> baseIndexOffset = new IdentityHashMap<>();
+    private final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
 
     public ItemHandlerList(List<? extends IItemHandler> itemHandlerList) {
         int currentSlotIndex = 0;
@@ -31,6 +33,10 @@ public class ItemHandlerList implements IItemHandlerModifiable {
             }
             currentSlotIndex += slotsCount;
         }
+    }
+
+    public int getIndexOffset(IItemHandler handler) {
+        return baseIndexOffset.getOrDefault(handler, -1);
     }
 
     @Override

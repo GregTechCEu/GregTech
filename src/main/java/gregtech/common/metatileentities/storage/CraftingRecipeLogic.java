@@ -70,6 +70,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             this.strategy);
 
     private final Int2IntMap compactedIndexes = new Int2IntArrayMap(9);
+    private final Int2IntMap slotMap = new Int2IntArrayMap();
 
     private final Map<Integer, Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
     private final InventoryCrafting craftingMatrix;
@@ -90,6 +91,14 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     public InventoryCrafting getCraftingMatrix() {
         return this.craftingMatrix;
+    }
+
+    public void updateSlotMap(int offset, int slot) {
+        slotMap.put(offset + slot, slotMap.size());
+    }
+
+    public void clearSlotMap() {
+        slotMap.clear();
     }
 
     public void updateInventory(IItemHandlerModifiable handler) {
@@ -126,9 +135,8 @@ public class CraftingRecipeLogic extends SyncHandler {
      * @return true if all items matched
      */
     public boolean attemptMatchRecipe() {
-        this.requiredItems.clear();
         for (CraftingInputSlot slot : this.inputSlots) {
-            if (!getIngredientEquivalent(slot)) {
+            if (!slot.hasIngredients) {
                 return false;
             }
         }
@@ -244,13 +252,19 @@ public class CraftingRecipeLogic extends SyncHandler {
 
             boolean matchedPreviously = false;
             if (map.containsKey(itemStack)) {
-                if (map.get(itemStack)) {
+                if (map.getBoolean(itemStack)) {
                     // cant return here before checking if:
                     // The item is available for extraction
                     // The recipe output is still the same, as depending on
                     // the ingredient, the output NBT may change
                     matchedPreviously = true;
                 }
+            }
+
+            // this is also every tick
+            if (itemStack.getItem() instanceof ItemGTToolbelt) {
+                // we need to do this here because of ingredient apply
+                ItemGTToolbelt.setCraftingSlot(slotMap.get(i), (EntityPlayerMP) getSyncManager().getPlayer());
             }
 
             if (!matchedPreviously) {
@@ -286,6 +300,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             // update item in slot, and check that recipe matches and output item is equal to the expected one
             craftingMatrix.setInventorySlotContents(craftingIndex, itemStack);
             var newResult = recipe.getCraftingResult(craftingMatrix);
+            // this will send packets every tick for the toolbelt, not sure what can be done
             if ((cachedRecipeData.matches(craftingMatrix, world) &&
                     ItemStack.areItemStacksEqual(newResult, previousResult)) ||
                     recipe instanceof ShapedOreEnergyTransferRecipe) {
@@ -295,7 +310,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 substitute = itemStack;
                 break;
             }
-            map.put(itemStack.copy(), false);
+            map.put(GTUtility.copy(1, itemStack), false);
             craftingMatrix.setInventorySlotContents(craftingIndex, stack);
         }
         return substitute;
@@ -317,9 +332,7 @@ public class CraftingRecipeLogic extends SyncHandler {
             var slotStack = availableHandlers.extractItem(slot, count, true);
             // we are certain the stack map is correct
             if (slotStack.getItem() instanceof ItemGTToolbelt) {
-                // todo this doesn't work correctly
-                // the slots are different on the client for some reason
-                ItemGTToolbelt.setCraftingSlot(slot, (EntityPlayerMP) getSyncManager().getPlayer());
+                ItemGTToolbelt.setCraftingSlot(slotMap.get(slot), (EntityPlayerMP) getSyncManager().getPlayer());
             }
             extracted += slotStack.getCount();
             if (extracted >= count) return true;

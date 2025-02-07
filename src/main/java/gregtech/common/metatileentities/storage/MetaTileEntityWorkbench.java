@@ -48,7 +48,6 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
-import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -57,6 +56,7 @@ import com.cleanroommc.modularui.widgets.PagedWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ArrayUtils;
@@ -66,6 +66,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
@@ -80,8 +81,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
-    private IItemHandlerModifiable combinedInventory;
-    private IItemHandlerModifiable connectedInventory;
+    private ItemHandlerList combinedInventory;
+    private ItemHandlerList connectedInventory;
 
     private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9, this.craftingGrid);
     private CraftingRecipeLogic recipeLogic = null;
@@ -202,6 +203,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager) {
         getCraftingRecipeLogic().updateCurrentRecipe();
+        this.recipeLogic.clearSlotMap();
 
         syncManager.syncValue("recipe_logic", this.recipeLogic);
         syncManager.syncValue("recipe_memory", this.recipeMemory);
@@ -259,6 +261,13 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .bindPlayerInventory();
     }
 
+    private ModularSlot trackSlot(IItemHandler handler, int slot) {
+        int offset = combinedInventory.getIndexOffset(handler);
+        if (offset == -1) throw new NullPointerException("handler cannot be found");
+        this.recipeLogic.updateSlotMap(offset, slot);
+        return new ModularSlot(handler, slot);
+    }
+
     public IWidget createToolInventory(PanelSyncManager syncManager) {
         var toolSlots = new SlotGroup("tool_slots", 9, -120, true);
         syncManager.registerSlotGroup(toolSlots);
@@ -267,7 +276,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .row("XXXXXXXXX")
                 .key('X', i -> new ItemSlot()
                         .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
-                        .slot(SyncHandlers.itemSlot(this.toolInventory, i)
+                        .slot(trackSlot(this.toolInventory, i)
                                 .slotGroup(toolSlots)))
                 .build().marginTop(2);
     }
@@ -280,7 +289,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .row("XXXXXXXXX")
                 .row("XXXXXXXXX")
                 .key('X', i -> new ItemSlot()
-                        .slot(SyncHandlers.itemSlot(this.internalInventory, i)
+                        .slot(trackSlot(this.internalInventory, i)
                                 .slotGroup(inventory)))
                 .build().marginTop(2);
     }
@@ -364,7 +373,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         int slot = itemSlot.getSlot().getSlotIndex();
                         return slot < this.connectedInventory.getSlots();
                     })
-                    .slot(SyncHandlers.itemSlot(this.connectedInventory, i)
+                    .slot(trackSlot(this.connectedInventory, i)
                             .slotGroup(connected)));
         }
 
@@ -400,7 +409,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         int connected = buf.readVarInt();
 
         // set connected inventory
-        this.connectedInventory = new ItemStackHandler(connected);
+        this.connectedInventory = new ItemHandlerList(Collections.singletonList(new ItemStackHandler(connected)));
 
         // set combined inventory
         this.combinedInventory = new ItemHandlerList(Arrays.asList(
