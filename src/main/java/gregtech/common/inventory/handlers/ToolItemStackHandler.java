@@ -1,7 +1,6 @@
 package gregtech.common.inventory.handlers;
 
-import gregtech.api.items.toolitem.IGTTool;
-import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.items.toolitem.ToolHelper;
 
 import net.minecraft.item.ItemStack;
 
@@ -14,18 +13,17 @@ public class ToolItemStackHandler extends SingleItemStackHandler {
     }
 
     @Override
+    public boolean isItemValid(int slot, ItemStack stack) {
+        return ToolHelper.isTool(stack);
+    }
+
+    @Override
     @NotNull
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (stack.getItem().getToolClasses(stack).isEmpty()) return stack;
-        if (stack.getItem() instanceof IGTTool &&
-                ((IGTTool) stack.getItem()).getToolStats().isSuitableForCrafting(stack)) {
+        if (isItemValid(slot, stack)) {
             return super.insertItem(slot, stack, simulate);
         }
 
-        if (stack.isItemStackDamageable() && OreDictUnifier.getOreDictionaryNames(stack).stream()
-                .anyMatch(s -> s.startsWith("craftingTool"))) {
-            return super.insertItem(slot, stack, simulate);
-        }
         return stack;
     }
 }
