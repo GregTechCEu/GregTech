@@ -77,7 +77,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         return null;
     }
 
-    protected @Nullable NetNode getRelevantNode(EnumFacing facing) {
+    protected @Nullable NetNode getRelevantNode(@Nullable EnumFacing facing) {
         return facing == null ? node : capabilityWrapper.getNodeForFacing(facing);
     }
 
@@ -100,8 +100,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>(
                             node.getGroupSafe().getNodes().size());
                     final ItemTestObject testObject = new ItemTestObject(stack);
-                    ListHashSet<NetPath> pathCache = networkView.outgoingCache().computeIfAbsent(targetNode,
-                            k -> new ListHashSet<>(1));
+                    ListHashSet<NetPath> pathCache = networkView.getPathCache(targetNode);
                     ResilientNetClosestIterator forwardFrontier = null;
                     ResilientNetClosestIterator backwardFrontier = null;
                     Iterator<NetPath> iterator = pathCache.iterator();
@@ -115,8 +114,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                                 backwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.INCOMING);
                             }
                             path = GraphNetUtility.p2pNextPath(
-                                    n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
-                                            z -> getFlowLimit(z, testObject)) <= 0,
+                                    n -> getFlowLimitCached(flowLimitCache, n, testObject) <= 0,
                                     e -> !e.test(testObject), forwardFrontier, backwardFrontier);
                             if (path == null) break;
                             int i = pathCache.size();
@@ -126,8 +124,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                             if (!pathCache.addSensitive(i, path)) break;
                         }
                         int insert = attemptPath(path, insertable,
-                                n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
-                                        z -> getFlowLimit(z, testObject)),
+                                n -> getFlowLimitCached(flowLimitCache, n, testObject),
                                 e -> !e.test(testObject));
                         if (insert > 0) {
                             insertable -= insert;
@@ -166,8 +163,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                     Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>(
                             node.getGroupSafe().getNodes().size());
                     final ItemTestObject testObject = new ItemTestObject(stack);
-                    ListHashSet<NetPath> pathCache = networkView.incomingCache().computeIfAbsent(targetNode,
-                            k -> new ListHashSet<>(1));
+                    ListHashSet<NetPath> pathCache = getNetworkView(targetNode).getPathCache(node);
                     ResilientNetClosestIterator forwardFrontier = null;
                     ResilientNetClosestIterator backwardFrontier = null;
                     Iterator<NetPath> iterator = pathCache.iterator();
@@ -177,12 +173,11 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                         else {
                             iterator = null;
                             if (forwardFrontier == null) {
-                                forwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.INCOMING);
-                                backwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.OUTGOING);
+                                forwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.OUTGOING);
+                                backwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.INCOMING);
                             }
                             path = GraphNetUtility.p2pNextPath(
-                                    n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
-                                            z -> getFlowLimit(z, testObject)) <= 0,
+                                    n -> getFlowLimitCached(flowLimitCache, n, testObject) <= 0,
                                     e -> !e.test(testObject), forwardFrontier, backwardFrontier);
                             if (path == null) break;
                             int i = pathCache.size();
@@ -192,8 +187,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
                             if (!pathCache.addSensitive(i, path)) break;
                         }
                         int extract = attemptPath(path, extractable,
-                                n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n,
-                                        z -> getFlowLimit(z, testObject)),
+                                n -> getFlowLimitCached(flowLimitCache, n, testObject),
                                 e -> !e.test(testObject));
                         if (extract > 0) {
                             extractable -= extract;
@@ -228,6 +222,11 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         return available;
     }
 
+    public static int getFlowLimitCached(Reference2IntOpenHashMap<NetNode> cache, NetNode n,
+                                         ItemTestObject testObject) {
+        return GraphNetUtility.computeIfAbsent(cache, n, z -> getFlowLimit(z, testObject));
+    }
+
     public static int getFlowLimit(NetNode node, ItemTestObject testObject) {
         ThroughputLogic throughput = node.getData().getLogicEntryNullable(ThroughputLogic.TYPE);
         if (throughput == null) return Integer.MAX_VALUE;
@@ -251,11 +250,13 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
         logic.recordFlow(TickUtil.getTick(), testObject.recombine(flow));
     }
 
-    public @NotNull ItemNetworkView getNetworkView() {
+    public @NotNull ItemNetworkView getNetworkView(@Nullable EnumFacing facing) {
+        NetNode node = getRelevantNode(facing);
+        if (node == null) node = this.node;
         return getNetworkView(node);
     }
 
-    public static @NotNull ItemNetworkView getNetworkView(NetNode node) {
+    public static @NotNull ItemNetworkView getNetworkView(@NotNull NetNode node) {
         if (node.getGroupSafe().getData() instanceof ItemNetworkViewGroupData data) {
             return data.getOrCreate(node);
         }
@@ -264,12 +265,12 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     @Override
     public int getSlots() {
-        return getNetworkView().getHandler().getSlots();
+        return getNetworkView(node).getHandler().getSlots();
     }
 
     @Override
     public @NotNull ItemStack getStackInSlot(int slot) {
-        return getNetworkView().getHandler().getStackInSlot(slot);
+        return getNetworkView(node).getHandler().getStackInSlot(slot);
     }
 
     @Override
@@ -284,13 +285,21 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
     @Override
     public int getSlotLimit(int slot) {
-        return getNetworkView().getHandler().getSlotLimit(slot);
+        return getNetworkView(node).getHandler().getSlotLimit(slot);
     }
 
     @Nullable
     public static ItemCapabilityObject instanceOf(IItemHandler handler) {
         if (handler instanceof ItemCapabilityObject i) return i;
         if (handler instanceof Wrapper w) return w.getParent();
+        return null;
+    }
+
+    @Nullable
+    public static EnumFacing facingOf(IItemHandler handler) {
+        if (handler instanceof Wrapper w) {
+            return w.facing;
+        }
         return null;
     }
 
@@ -304,16 +313,12 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
         @Override
         public int getSlots() {
-            NetNode node = getRelevantNode(facing);
-            if (node == null) return ItemCapabilityObject.this.getSlots();
-            return getNetworkView(node).getHandler().getSlots();
+            return getNetworkView(facing).getHandler().getSlots();
         }
 
         @Override
         public @NotNull ItemStack getStackInSlot(int slot) {
-            NetNode node = getRelevantNode(facing);
-            if (node == null) return ItemCapabilityObject.this.getStackInSlot(slot);
-            return getNetworkView(node).getHandler().getStackInSlot(slot);
+            return getNetworkView(facing).getHandler().getStackInSlot(slot);
         }
 
         @Override
@@ -328,9 +333,7 @@ public class ItemCapabilityObject implements IPipeCapabilityObject, IItemHandler
 
         @Override
         public int getSlotLimit(int slot) {
-            NetNode node = getRelevantNode(facing);
-            if (node == null) return ItemCapabilityObject.this.getSlotLimit(slot);
-            return getNetworkView(node).getHandler().getSlotLimit(slot);
+            return getNetworkView(facing).getHandler().getSlotLimit(slot);
         }
 
         public ItemCapabilityObject getParent() {

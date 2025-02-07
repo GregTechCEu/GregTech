@@ -10,7 +10,9 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.filter.CoverWithFluidFilter;
 import gregtech.api.graphnet.GraphNetUtility;
+import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
+import gregtech.api.graphnet.path.NetPath;
 import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.predicate.test.FluidTestObject;
 import gregtech.api.graphnet.traverse.EdgeDirection;
@@ -20,6 +22,7 @@ import gregtech.api.graphnet.traverse.ResilientNetClosestIterator;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.collection.ListHashSet;
 import gregtech.api.util.function.BiIntConsumer;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
@@ -29,6 +32,7 @@ import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.covers.filter.MatchResult;
 import gregtech.common.pipelike.net.fluid.FluidCapabilityObject;
 import gregtech.common.pipelike.net.fluid.FluidNetworkView;
+import gregtech.common.pipelike.net.item.ItemCapabilityObject;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -72,18 +76,25 @@ import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
+import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.Reference2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 public class CoverPump extends CoverBase implements CoverWithUI, ITickable, IControllable, CoverWithFluidFilter {
 
@@ -311,16 +322,17 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         if (distributionMode == DistributionMode.FLOOD || (cap = FluidCapabilityObject.instanceOf(handler)) == null)
             return simpleExtract(handler, testObject, count, simulate);
         NetNode origin = cap.getNode();
-        Predicate<Object> filter = GraphNetUtility.edgeSelectorBlacklist(testObject);
         // if you find yourself here because you added a new distribution mode and now it won't compile,
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
-                FluidNetworkView view = cap.getNetworkView();
+                FluidNetworkView view = cap.getNetworkView(FluidCapabilityObject.facingOf(handler));
                 Iterator<IFluidHandler> iter = view.getHandler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IFluidHandler> cache = getRoundRobinCache(true, simulate);
                 Set<IFluidHandler> backlog = new ObjectOpenHashSet<>();
-                Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
+                Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>();
+                Reference2BooleanOpenHashMap<NetNode> lossyCache = new Reference2BooleanOpenHashMap<>();
+                List<Runnable> postActions = new ObjectArrayList<>();
                 int available = count;
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
@@ -332,8 +344,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         } else {
                             cache.addAndMoveToLast(candidate);
                         }
-                        available = rrExtract(testObject, simulate, origin, filter, flows, available, candidate,
-                                linked);
+                        available = rrExtract(testObject, simulate, origin, flowLimitCache, available, candidate,
+                                linked, lossyCache, postActions);
                         continue;
                     }
                     if (iter.hasNext()) {
@@ -347,8 +359,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             } else {
                                 cache.addAndMoveToLast(candidate);
                             }
-                            available = rrExtract(testObject, simulate, origin, filter, flows, available, candidate,
-                                    linked);
+                            available = rrExtract(testObject, simulate, origin, flowLimitCache, available, candidate,
+                                    linked, lossyCache, postActions);
                         } else {
                             backlog.add(candidate);
                         }
@@ -372,15 +384,14 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     cache.add(iter.next());
                 }
                 if (!simulate) {
-                    for (var entry : flows.object2IntEntrySet()) {
-                        FluidCapabilityObject.reportFlow(entry.getKey(), entry.getIntValue(), testObject);
-                    }
+                    postActions.forEach(Runnable::run);
                 }
                 yield count - available;
             }
             case EQUALIZED -> {
                 NetClosestIterator gather = new NetClosestIterator(origin,
-                        EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
+                        EdgeSelector.filtered(EdgeDirection.INCOMING,
+                                GraphNetUtility.edgeSelectorBlacklist(testObject)));
                 Object2ObjectOpenHashMap<NetNode, IFluidHandler> candidates = new Object2ObjectOpenHashMap<>();
                 while (gather.hasNext()) {
                     NetNode node = gather.next();
@@ -393,6 +404,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         }
                     }
                 }
+                if (candidates.isEmpty()) yield 0;
                 int largestMin = count / candidates.size();
                 if (largestMin <= 0) yield 0;
                 for (IFluidHandler value : candidates.values()) {
@@ -400,22 +412,71 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     if (largestMin <= 0) yield 0;
                 }
                 // binary search for largest scale that doesn't exceed flow limits
-                Int2ObjectArrayMap<Object2IntOpenHashMap<NetNode>> flows = new Int2ObjectArrayMap<>();
+                Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>();
+                Int2ObjectArrayMap<Reference2IntOpenHashMap<NetNode>> flows = new Int2ObjectArrayMap<>();
+                Int2IntOpenHashMap losses = new Int2IntOpenHashMap();
+                Int2ObjectArrayMap<List<Runnable>> postActions = new Int2ObjectArrayMap<>();
+                Reference2BooleanOpenHashMap<NetNode> lossyCache = new Reference2BooleanOpenHashMap<>();
                 largestMin = GTUtility.binarySearchInt(0, largestMin, l -> {
                     if (flows.containsKey(l) && flows.get(l) == null) return false;
-                    ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
-                            EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
-                    Object2IntOpenHashMap<NetNode> localFlows = new Object2IntOpenHashMap<>();
+                    ResilientNetClosestIterator backwardFrontier = null;
+                    Reference2IntOpenHashMap<NetNode> localFlows = new Reference2IntOpenHashMap<>();
+                    List<Runnable> postAction = new ObjectArrayList<>();
                     for (NetNode node : candidates.keySet()) {
-                        ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(node,
-                                EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
-                        if (GraphNetUtility.p2pWalk(simulate, l,
-                                n -> FluidCapabilityObject.getFlowLimit(n, testObject) - localFlows.getInt(n),
-                                (n, i) -> localFlows.put(n, localFlows.getInt(n) + i),
-                                forwardFrontier, backwardFrontier) < l)
+                        ListHashSet<NetPath> pathCache = FluidCapabilityObject.getNetworkView(node)
+                                .getPathCache(origin);
+                        ResilientNetClosestIterator forwardFrontier = null;
+                        Iterator<NetPath> iterator = pathCache.iterator();
+                        int needed = l;
+                        while (needed > 0) {
+                            NetPath path;
+                            if (iterator != null && iterator.hasNext()) path = iterator.next();
+                            else {
+                                iterator = null;
+                                if (backwardFrontier == null) {
+                                    backwardFrontier = new ResilientNetClosestIterator(origin, EdgeDirection.INCOMING);
+                                }
+                                if (forwardFrontier == null) {
+                                    forwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.OUTGOING);
+                                }
+                                path = GraphNetUtility.p2pNextPath(
+                                        n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject) <=
+                                                localFlows.getInt(n),
+                                        e -> !e.test(testObject), forwardFrontier, backwardFrontier,
+                                        (f, b) -> f.hasNext());
+                                if (path == null) break;
+                                int i = pathCache.size();
+                                while (i > 0 && pathCache.get(i - 1).getWeight() > path.getWeight()) {
+                                    i--;
+                                }
+                                if (!pathCache.addSensitive(i, path)) break;
+                            }
+                            int extract = attemptPath(path, needed,
+                                    n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject) -
+                                            localFlows.getInt(n),
+                                    e -> !e.test(testObject),
+                                    n -> FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject));
+                            if (extract > 0) {
+                                needed -= extract;
+                                ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
+                                for (int j = 0; j < asList.size(); j++) {
+                                    NetNode n = asList.get(j);
+                                    localFlows.put(n, localFlows.getInt(n) + extract);
+                                    if (FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject)) {
+                                        postAction.add(() -> FluidCapabilityObject.handleLoss(n, extract, testObject));
+                                        IFluidHandler h = candidates.get(node);
+                                        losses.put(l, losses.get(l) + extract);
+                                    }
+                                }
+                            }
+                        }
+                        if (needed > 0) {
+                            flows.put(l, null);
                             return false;
+                        }
                     }
                     flows.put(l, localFlows);
+                    postActions.put(l, postAction);
                     return true;
                 }, false);
                 if (largestMin <= 0 || flows.get(largestMin) == null) yield 0;
@@ -423,32 +484,77 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     for (IFluidHandler value : candidates.values()) {
                         simpleExtract(value, testObject, largestMin, false);
                     }
-                    for (var e : flows.get(largestMin).object2IntEntrySet()) {
-                        FluidCapabilityObject.reportFlow(e.getKey(), e.getIntValue(), testObject);
+                    postActions.get(largestMin).forEach(Runnable::run);
+                    for (var e : flows.get(largestMin).reference2IntEntrySet()) {
+                        Runnable post = FluidCapabilityObject.reportFlow(e.getKey(), e.getIntValue(), testObject);
+                        if (post != null) post.run();
                     }
                 }
-                yield largestMin * candidates.size();
+                yield largestMin * candidates.size() - losses.get(largestMin);
             }
             case FLOOD -> 0; // how are you here?
         };
     }
 
-    protected int rrExtract(FluidTestObject testObject, boolean simulate, NetNode origin, Predicate<Object> filter,
-                            Object2IntOpenHashMap<NetNode> flows, int available, IFluidHandler candidate,
-                            NetNode linked) {
-        int accepted = simpleExtract(candidate, testObject, available, true);
-        if (accepted > 0) {
-            ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
-                    EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
-            ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(linked,
-                    EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
-            accepted = GraphNetUtility.p2pWalk(simulate, accepted,
-                    n -> FluidCapabilityObject.getFlowLimit(n, testObject) - flows.getInt(n),
-                    (n, i) -> flows.put(n, flows.getInt(n) + i),
-                    forwardFrontier, backwardFrontier);
-            if (accepted > 0) {
-                available -= accepted;
-                if (!simulate) simpleExtract(candidate, testObject, accepted, false);
+    protected int rrExtract(FluidTestObject testObject, boolean simulate, NetNode origin,
+                            Reference2IntOpenHashMap<NetNode> flowLimitCache, int available, IFluidHandler candidate,
+                            NetNode linked, Reference2BooleanOpenHashMap<NetNode> lossyCache,
+                            List<Runnable> postActions) {
+        int extractable = simpleExtract(candidate, testObject, available, true);
+        if (extractable > 0) {
+            ListHashSet<NetPath> pathCache = ItemCapabilityObject.getNetworkView(linked).getPathCache(origin);
+            Iterator<NetPath> iterator = pathCache.iterator();
+            ResilientNetClosestIterator forwardFrontier = null;
+            ResilientNetClosestIterator backwardFrontier = null;
+            while (extractable > 0) {
+                NetPath path;
+                if (iterator != null && iterator.hasNext()) path = iterator.next();
+                else {
+                    iterator = null;
+                    if (forwardFrontier == null) {
+                        forwardFrontier = new ResilientNetClosestIterator(linked, EdgeDirection.OUTGOING);
+                        backwardFrontier = new ResilientNetClosestIterator(origin, EdgeDirection.INCOMING);
+                    }
+                    path = GraphNetUtility.p2pNextPath(
+                            n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject) <= 0,
+                            e -> !e.test(testObject), forwardFrontier, backwardFrontier);
+                    if (path == null) break;
+                    int i = pathCache.size();
+                    while (i > 0 && pathCache.get(i - 1).getWeight() > path.getWeight()) {
+                        i--;
+                    }
+                    if (!pathCache.addSensitive(i, path)) break;
+                }
+                int extract = attemptPath(path, extractable,
+                        n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject),
+                        e -> !e.test(testObject),
+                        n -> FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject));
+                if (extract > 0) {
+                    extractable -= extract;
+                    available -= extract;
+                    ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
+                    for (int j = 0; j < asList.size(); j++) {
+                        NetNode n = asList.get(j);
+                        if (!simulate) {
+                            // reporting temp change can cause temperature pipe destruction which causes
+                            // graph modification while iterating.
+                            Runnable post = FluidCapabilityObject.reportFlow(n, extract, testObject);
+                            if (post != null) postActions.add(post);
+                        }
+                        flowLimitCache.put(n, flowLimitCache.getInt(n) - extract);
+                        if (FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject)) {
+                            // reporting loss can cause misc pipe destruction which causes
+                            // graph modification while iterating.
+                            if (!simulate)
+                                postActions.add(() -> FluidCapabilityObject.handleLoss(n, extract, testObject));
+                            // a lossy node will prevent receiving extracted fluid
+                            extractable += extract;
+                            available += extract;
+                            break;
+                        }
+                    }
+                    if (!simulate) simpleExtract(candidate, testObject, extract, false);
+                }
             }
         }
         return available;
@@ -466,16 +572,17 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         if (distributionMode == DistributionMode.FLOOD || (cap = FluidCapabilityObject.instanceOf(handler)) == null)
             return simpleInsert(handler, testObject, count, simulate);
         NetNode origin = cap.getNode();
-        Predicate<Object> filter = GraphNetUtility.edgeSelectorBlacklist(testObject);
         // if you find yourself here because you added a new distribution mode and now it won't compile,
         // good luck.
         return switch (distributionMode) {
             case ROUND_ROBIN -> {
-                FluidNetworkView view = cap.getNetworkView();
+                FluidNetworkView view = cap.getNetworkView(FluidCapabilityObject.facingOf(handler));
                 Iterator<IFluidHandler> iter = view.getHandler().getBackingHandlers().iterator();
                 ObjectLinkedOpenHashSet<IFluidHandler> cache = getRoundRobinCache(false, simulate);
                 Set<IFluidHandler> backlog = new ObjectOpenHashSet<>();
-                Object2IntOpenHashMap<NetNode> flows = new Object2IntOpenHashMap<>();
+                Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>();
+                Reference2BooleanOpenHashMap<NetNode> lossyCache = new Reference2BooleanOpenHashMap<>();
+                List<Runnable> postActions = new ObjectArrayList<>();
                 int available = count;
                 while (available > 0) {
                     if (!cache.isEmpty() && backlog.remove(cache.first())) {
@@ -487,7 +594,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         } else {
                             cache.addAndMoveToLast(candidate);
                         }
-                        available = rrInsert(testObject, simulate, origin, filter, flows, available, candidate, linked);
+                        available = rrInsert(testObject, simulate, origin, flowLimitCache, available, candidate,
+                                linked, lossyCache, postActions);
                         continue;
                     }
                     if (iter.hasNext()) {
@@ -501,8 +609,8 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                             } else {
                                 cache.addAndMoveToLast(candidate);
                             }
-                            available = rrInsert(testObject, simulate, origin, filter, flows, available, candidate,
-                                    linked);
+                            available = rrInsert(testObject, simulate, origin, flowLimitCache, available, candidate,
+                                    linked, lossyCache, postActions);
                         } else {
                             backlog.add(candidate);
                         }
@@ -526,15 +634,15 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     cache.add(iter.next());
                 }
                 if (!simulate) {
-                    for (var entry : flows.object2IntEntrySet()) {
-                        FluidCapabilityObject.reportFlow(entry.getKey(), entry.getIntValue(), testObject);
-                    }
+                    postActions.forEach(Runnable::run);
                 }
                 yield count - available;
             }
             case EQUALIZED -> {
+                // only consider destinations that are not on the other side of a filter that rejects our test object
                 NetClosestIterator gather = new NetClosestIterator(origin,
-                        EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
+                        EdgeSelector.filtered(EdgeDirection.OUTGOING,
+                                GraphNetUtility.edgeSelectorBlacklist(testObject)));
                 Object2ObjectOpenHashMap<NetNode, IFluidHandler> candidates = new Object2ObjectOpenHashMap<>();
                 while (gather.hasNext()) {
                     NetNode node = gather.next();
@@ -547,6 +655,7 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                         }
                     }
                 }
+                if (candidates.isEmpty()) yield 0;
                 int largestMin = count / candidates.size();
                 if (largestMin <= 0) yield 0;
                 for (IFluidHandler value : candidates.values()) {
@@ -554,31 +663,85 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
                     if (largestMin <= 0) yield 0;
                 }
                 // binary search for largest scale that doesn't exceed flow limits
-                Int2ObjectArrayMap<Object2IntOpenHashMap<NetNode>> flows = new Int2ObjectArrayMap<>();
+                Reference2IntOpenHashMap<NetNode> flowLimitCache = new Reference2IntOpenHashMap<>();
+                Int2ObjectArrayMap<Reference2IntOpenHashMap<NetNode>> flows = new Int2ObjectArrayMap<>();
+                Int2ObjectArrayMap<Reference2IntOpenHashMap<IFluidHandler>> losses = new Int2ObjectArrayMap<>();
+                Int2ObjectArrayMap<List<Runnable>> postActions = new Int2ObjectArrayMap<>();
+                Reference2BooleanOpenHashMap<NetNode> lossyCache = new Reference2BooleanOpenHashMap<>();
+                FluidNetworkView view = FluidCapabilityObject.getNetworkView(origin);
                 largestMin = GTUtility.binarySearchInt(0, largestMin, l -> {
                     if (flows.containsKey(l) && flows.get(l) == null) return false;
-                    ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
-                            EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
-                    Object2IntOpenHashMap<NetNode> localFlows = new Object2IntOpenHashMap<>();
+                    ResilientNetClosestIterator forwardFrontier = null;
+                    Reference2IntOpenHashMap<NetNode> localFlows = new Reference2IntOpenHashMap<>();
+                    List<Runnable> postAction = new ObjectArrayList<>();
+                    Reference2IntOpenHashMap<IFluidHandler> loss = new Reference2IntOpenHashMap<>();
                     for (NetNode node : candidates.keySet()) {
-                        ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(node,
-                                EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
-                        if (GraphNetUtility.p2pWalk(simulate, l,
-                                n -> FluidCapabilityObject.getFlowLimit(n, testObject) - localFlows.getInt(n),
-                                (n, i) -> localFlows.put(n, localFlows.getInt(n) + i),
-                                forwardFrontier, backwardFrontier) < l)
+                        ListHashSet<NetPath> pathCache = view.getPathCache(node);
+                        ResilientNetClosestIterator backwardFrontier = null;
+                        Iterator<NetPath> iterator = pathCache.iterator();
+                        int needed = l;
+                        while (needed > 0) {
+                            NetPath path;
+                            if (iterator != null && iterator.hasNext()) path = iterator.next();
+                            else {
+                                iterator = null;
+                                if (forwardFrontier == null) {
+                                    forwardFrontier = new ResilientNetClosestIterator(origin, EdgeDirection.OUTGOING);
+                                }
+                                if (backwardFrontier == null) {
+                                    backwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.INCOMING);
+                                }
+                                path = GraphNetUtility.p2pNextPath(
+                                        n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject) <=
+                                                localFlows.getInt(n),
+                                        e -> !e.test(testObject), forwardFrontier, backwardFrontier,
+                                        (f, b) -> b.hasNext());
+                                if (path == null) break;
+                                int i = pathCache.size();
+                                while (i > 0 && pathCache.get(i - 1).getWeight() > path.getWeight()) {
+                                    i--;
+                                }
+                                if (!pathCache.addSensitive(i, path)) break;
+                            }
+                            int insert = attemptPath(path, needed,
+                                    n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject) -
+                                            localFlows.getInt(n),
+                                    e -> !e.test(testObject),
+                                    n -> FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject));
+                            if (insert > 0) {
+                                needed -= insert;
+                                ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
+                                for (int j = 0; j < asList.size(); j++) {
+                                    NetNode n = asList.get(j);
+                                    localFlows.put(n, localFlows.getInt(n) + insert);
+                                    if (FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject)) {
+                                        postAction.add(() -> FluidCapabilityObject.handleLoss(n, insert, testObject));
+                                        IFluidHandler h = candidates.get(node);
+                                        loss.put(h, loss.getInt(h) + insert);
+                                    }
+                                }
+                            }
+                        }
+                        if (needed > 0) {
+                            flows.put(l, null);
                             return false;
+                        }
                     }
                     flows.put(l, localFlows);
+                    postActions.put(l, postAction);
+                    losses.put(l, loss);
                     return true;
                 }, false);
                 if (largestMin <= 0 || flows.get(largestMin) == null) yield 0;
                 if (!simulate) {
+                    Reference2IntOpenHashMap<IFluidHandler> loss = losses.get(largestMin);
                     for (IFluidHandler value : candidates.values()) {
-                        simpleInsert(value, testObject, largestMin, false);
+                        simpleInsert(value, testObject, largestMin - loss.getInt(value), false);
                     }
-                    for (var e : flows.get(largestMin).object2IntEntrySet()) {
-                        FluidCapabilityObject.reportFlow(e.getKey(), e.getIntValue(), testObject);
+                    postActions.get(largestMin).forEach(Runnable::run);
+                    for (var e : flows.get(largestMin).reference2IntEntrySet()) {
+                        Runnable post = FluidCapabilityObject.reportFlow(e.getKey(), e.getIntValue(), testObject);
+                        if (post != null) post.run();
                     }
                 }
                 yield largestMin * candidates.size();
@@ -587,22 +750,64 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
         };
     }
 
-    protected int rrInsert(FluidTestObject testObject, boolean simulate, NetNode origin, Predicate<Object> filter,
-                           Object2IntOpenHashMap<NetNode> flows, int available, IFluidHandler candidate,
-                           NetNode linked) {
-        int accepted = simpleInsert(candidate, testObject, available, true);
-        if (accepted > 0) {
-            ResilientNetClosestIterator forwardFrontier = new ResilientNetClosestIterator(origin,
-                    EdgeSelector.filtered(EdgeDirection.OUTGOING, filter));
-            ResilientNetClosestIterator backwardFrontier = new ResilientNetClosestIterator(linked,
-                    EdgeSelector.filtered(EdgeDirection.INCOMING, filter));
-            accepted = GraphNetUtility.p2pWalk(simulate, accepted,
-                    n -> FluidCapabilityObject.getFlowLimit(n, testObject) - flows.getInt(n),
-                    (n, i) -> flows.put(n, flows.getInt(n) + i),
-                    forwardFrontier, backwardFrontier);
-            if (accepted > 0) {
-                available -= accepted;
-                if (!simulate) simpleInsert(candidate, testObject, accepted, false);
+    protected int rrInsert(FluidTestObject testObject, boolean simulate, NetNode origin,
+                           Reference2IntOpenHashMap<NetNode> flowLimitCache, int available, IFluidHandler candidate,
+                           NetNode linked, Reference2BooleanOpenHashMap<NetNode> lossyCache,
+                           List<Runnable> postActions) {
+        int insertable = simpleInsert(candidate, testObject, available, true);
+        if (insertable > 0) {
+            ListHashSet<NetPath> pathCache = ItemCapabilityObject.getNetworkView(origin).getPathCache(linked);
+            Iterator<NetPath> iterator = pathCache.iterator();
+            ResilientNetClosestIterator forwardFrontier = null;
+            ResilientNetClosestIterator backwardFrontier = null;
+            pathloop:
+            while (insertable > 0) {
+                NetPath path;
+                if (iterator != null && iterator.hasNext()) path = iterator.next();
+                else {
+                    iterator = null;
+                    if (forwardFrontier == null) {
+                        forwardFrontier = new ResilientNetClosestIterator(origin, EdgeDirection.OUTGOING);
+                        backwardFrontier = new ResilientNetClosestIterator(linked, EdgeDirection.INCOMING);
+                    }
+                    path = GraphNetUtility.p2pNextPath(
+                            n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject) <= 0,
+                            e -> !e.test(testObject), forwardFrontier, backwardFrontier);
+                    if (path == null) break;
+                    int i = pathCache.size();
+                    while (i > 0 && pathCache.get(i - 1).getWeight() > path.getWeight()) {
+                        i--;
+                    }
+                    if (!pathCache.addSensitive(i, path)) break;
+                }
+                int insert = attemptPath(path, insertable,
+                        n -> FluidCapabilityObject.getFlowLimitCached(flowLimitCache, n, testObject),
+                        e -> !e.test(testObject),
+                        n -> FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject));
+                if (insert > 0) {
+                    insertable -= insert;
+                    available -= insert;
+                    ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
+                    for (int j = 0; j < asList.size(); j++) {
+                        NetNode n = asList.get(j);
+                        if (!simulate) {
+                            // reporting temp change can cause temperature pipe destruction which causes
+                            // graph modification while iterating.
+                            Runnable post = FluidCapabilityObject.reportFlow(n, insert, testObject);
+                            if (post != null) postActions.add(post);
+                        }
+                        flowLimitCache.put(n, flowLimitCache.getInt(n) - insert);
+                        if (FluidCapabilityObject.isLossyNodeCached(lossyCache, n, testObject)) {
+                            // reporting loss can cause misc pipe destruction which causes
+                            // graph modification while iterating.
+                            if (!simulate)
+                                postActions.add(() -> FluidCapabilityObject.handleLoss(n, insert, testObject));
+                            // a lossy node will prevent filling the target
+                            continue pathloop;
+                        }
+                    }
+                    if (!simulate) simpleInsert(candidate, testObject, insert, false);
+                }
             }
         }
         return available;
@@ -611,6 +816,22 @@ public class CoverPump extends CoverBase implements CoverWithUI, ITickable, ICon
     protected int simpleInsert(@NotNull IFluidHandler destHandler, FluidTestObject testObject, int count,
                                boolean simulate) {
         return destHandler.fill(testObject.recombine(count), !simulate);
+    }
+
+    protected int attemptPath(NetPath path, int available, ToIntFunction<NetNode> limit, Predicate<NetEdge> filter,
+                              Predicate<NetNode> lossy) {
+        ImmutableList<NetEdge> edges = path.getOrderedEdges().asList();
+        for (int i = 0; i < edges.size(); i++) {
+            if (filter.test(edges.get(i))) return 0;
+        }
+        ImmutableList<NetNode> nodes = path.getOrderedNodes().asList();
+        for (int i = 0; i < nodes.size(); i++) {
+            NetNode n = nodes.get(i);
+            if (lossy.test(n)) return available;
+            available = Math.min(limit.applyAsInt(n), available);
+            if (available <= 0) return 0;
+        }
+        return available;
     }
 
     protected boolean checkInputFluid(FluidStack fluidStack) {

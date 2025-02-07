@@ -4,6 +4,7 @@ import gregtech.api.util.TickUtil;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,31 +71,32 @@ public abstract class RingBufferTransientLogicData<T extends AbstractTransientLo
         if (reducedUpdate) {
             if (update == 1) return;
             update = update - 1;
+            lastBufferUpdateTick = tick - 1;
+        } else {
+            lastBufferUpdateTick = tick;
         }
-        lastBufferUpdateTick = tick;
         if (update < 0) {
             rotateBuffer(ringBuffer.length);
             bufferIndex = 0;
         } else {
             rotateBuffer(update);
         }
-        invalidateViews();
-    }
-
-    protected void invalidateViews() {
-        mapView = null;
     }
 
     protected void rotateBuffer(int rot) {
         if (rot > ringBuffer.length) rot = ringBuffer.length;
         for (int i = 0; i < rot; i++) {
             bufferIndex = wrapPointer(bufferIndex + 1);
-            if (ringBuffer[bufferIndex] != null) dropEntry((B) ringBuffer[bufferIndex]);
+            Object entry = ringBuffer[bufferIndex];
             ringBuffer[bufferIndex] = null;
+            if (entry != null) dropEntry((B) entry);
         }
     }
 
-    protected void dropEntry(B entry) {}
+    @MustBeInvokedByOverriders
+    protected void dropEntry(B entry) {
+        mapView = null;
+    }
 
     protected int wrapPointer(int pointer) {
         pointer = pointer % ringBuffer.length;

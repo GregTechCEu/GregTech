@@ -10,6 +10,7 @@ import net.minecraftforge.items.IItemHandler;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -19,8 +20,7 @@ public final class ItemNetworkView {
     public static final ItemNetworkView EMPTY = ItemNetworkView.of(ImmutableBiMap.of());
     private final ItemHandlerList handler;
     private final BiMap<IItemHandler, NetNode> handlerNetNodeBiMap;
-    private @Nullable Map<NetNode, ListHashSet<NetPath>> incomingCache;
-    private @Nullable Map<NetNode, ListHashSet<NetPath>> outgoingCache;
+    private @Nullable Map<NetNode, ListHashSet<NetPath>> pathCache;
 
     public ItemNetworkView(ItemHandlerList handler, BiMap<IItemHandler, NetNode> handlerNetNodeBiMap) {
         this.handler = handler;
@@ -39,13 +39,13 @@ public final class ItemNetworkView {
         return handlerNetNodeBiMap;
     }
 
-    public Map<NetNode, ListHashSet<NetPath>> outgoingCache() {
-        if (outgoingCache == null) outgoingCache = new Reference2ReferenceOpenHashMap<>();
-        return outgoingCache;
+    public Map<NetNode, ListHashSet<NetPath>> getPathCache() {
+        if (pathCache == null) pathCache = new Reference2ReferenceOpenHashMap<>();
+        return pathCache;
     }
 
-    public Map<NetNode, ListHashSet<NetPath>> incomingCache() {
-        if (incomingCache == null) incomingCache = new Reference2ReferenceOpenHashMap<>();
-        return incomingCache;
+    public ListHashSet<NetPath> getPathCache(@NotNull NetNode target) {
+        if (pathCache == null) pathCache = new Reference2ReferenceOpenHashMap<>();
+        return pathCache.computeIfAbsent(target, n -> new ListHashSet<>(1));
     }
 }

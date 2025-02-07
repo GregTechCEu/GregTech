@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
+import java.util.Iterator;
+import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Predicate;
@@ -157,10 +159,11 @@ public final class GraphNetUtility {
     }
 
     /**
-     * Progresses the two provided frontiers until a valid path is found, or the frontiers are exhausted,
-     * and then reports it.
-     * 
+     * Progresses the two provided frontiers until a valid path is found, or the frontiers are exhausted, and then
+     * reports it.
+     *
      * @param shouldInvalidateNode called to test if a node is valid for traversal.
+     * @param shouldInvalidateEdge called to test if an edge is valid for traversal.
      * @param forwardFrontier      the forward frontier to check.
      * @param backwardFrontier     the backward frontier to check.
      * @return the net path, if one was found.
@@ -169,36 +172,62 @@ public final class GraphNetUtility {
                                                 Predicate<NetEdge> shouldInvalidateEdge,
                                                 ResilientNetClosestIterator forwardFrontier,
                                                 ResilientNetClosestIterator backwardFrontier) {
+        return p2pNextPath(shouldInvalidateNode, shouldInvalidateEdge, forwardFrontier, backwardFrontier,
+                (a, b) -> a.hasNext() && b.hasNext());
+    }
+
+    /**
+     * Progresses the two provided frontiers until a valid path is found, or the frontiers are exhausted, and then
+     * reports it.
+     *
+     * @param shouldInvalidateNode called to test if a node is valid for traversal.
+     * @param shouldInvalidateEdge called to test if an edge is valid for traversal.
+     * @param forwardFrontier      the forward frontier to check.
+     * @param backwardFrontier     the backward frontier to check.
+     * @param exhaustionPredicate  called to determine if frontiers are exhausted and iteration should stop.
+     *                             MUST RETURN FALSE IF BOTH FRONTIERS RETURN FALSE FOR {@link Iterator#hasNext()}
+     * @return the net path, if one was found.
+     */
+    public static @Nullable NetPath p2pNextPath(Predicate<NetNode> shouldInvalidateNode,
+                                                Predicate<NetEdge> shouldInvalidateEdge,
+                                                ResilientNetClosestIterator forwardFrontier,
+                                                ResilientNetClosestIterator backwardFrontier,
+                                                BiPredicate<ResilientNetClosestIterator, ResilientNetClosestIterator> exhaustionPredicate) {
         main:
-        while (forwardFrontier.hasNext() && backwardFrontier.hasNext()) {
-            NetNode next = forwardFrontier.next();
-            if (shouldInvalidateNode.test(next)) {
-                forwardFrontier.markInvalid(next);
-                next = null;
-            } else {
-                NetEdge e = forwardFrontier.getSpanningTreeEdge(next);
-                if (e == null) {
+        while (exhaustionPredicate.test(forwardFrontier, backwardFrontier)) {
+            NetNode next = null;
+            if (forwardFrontier.hasNext()) {
+                next = forwardFrontier.next();
+                if (shouldInvalidateNode.test(next)) {
+                    forwardFrontier.markInvalid(next);
                     next = null;
-                } else if (shouldInvalidateEdge.test(e)) {
-                    forwardFrontier.markInvalid(e);
-                    next = null;
+                } else {
+                    NetEdge e = forwardFrontier.getSpanningTreeEdge(next);
+                    if (e == null) {
+                        next = null;
+                    } else if (shouldInvalidateEdge.test(e)) {
+                        forwardFrontier.markInvalid(e);
+                        next = null;
+                    }
                 }
             }
             if (next == null || !backwardFrontier.hasSeen(next)) {
-                next = backwardFrontier.next();
-                if (shouldInvalidateNode.test(next)) {
-                    backwardFrontier.markInvalid(next);
-                    continue;
-                } else {
-                    NetEdge e = backwardFrontier.getSpanningTreeEdge(next);
-                    if (e == null) {
+                if (backwardFrontier.hasNext()) {
+                    next = backwardFrontier.next();
+                    if (shouldInvalidateNode.test(next)) {
+                        backwardFrontier.markInvalid(next);
                         continue;
-                    } else if (shouldInvalidateEdge.test(e)) {
-                        backwardFrontier.markInvalid(e);
-                        continue;
+                    } else {
+                        NetEdge e = backwardFrontier.getSpanningTreeEdge(next);
+                        if (e == null) {
+                            continue;
+                        } else if (shouldInvalidateEdge.test(e)) {
+                            backwardFrontier.markInvalid(e);
+                            continue;
+                        }
                     }
-                }
-                if (!forwardFrontier.hasSeen(next)) continue;
+                    if (!forwardFrontier.hasSeen(next)) continue;
+                } else continue;
             }
             // next is not null and both frontiers have paths leading to next
             NetEdge span;

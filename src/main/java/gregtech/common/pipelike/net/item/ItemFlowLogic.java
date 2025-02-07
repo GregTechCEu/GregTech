@@ -57,6 +57,7 @@ public class ItemFlowLogic extends RingBufferTransientLogicData<ItemFlowLogic, O
 
     @Override
     protected void dropEntry(Object2LongMap<ItemTestObject> entry) {
+        super.dropEntry(entry);
         for (var e : entry.object2LongEntrySet()) {
             long fetch = sum.getLong(e.getKey());
             if (e.getLongValue() >= fetch) {

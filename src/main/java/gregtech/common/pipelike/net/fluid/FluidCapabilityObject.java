@@ -8,7 +8,6 @@ import gregtech.api.graphnet.logic.ThroughputLogic;
 import gregtech.api.graphnet.net.NetEdge;
 import gregtech.api.graphnet.net.NetNode;
 import gregtech.api.graphnet.path.NetPath;
-import gregtech.api.graphnet.pipenet.NodeExposingCapabilities;
 import gregtech.api.graphnet.pipenet.WorldPipeNode;
 import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
 import gregtech.api.graphnet.pipenet.physical.IPipeCapabilityObject;
@@ -88,7 +87,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         return null;
     }
 
-    protected @Nullable NetNode getRelevantNode(EnumFacing facing) {
+    protected @Nullable NetNode getRelevantNode(@Nullable EnumFacing facing) {
         return facing == null ? node : capabilityWrapper.getNodeForFacing(facing);
     }
 
@@ -113,8 +112,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             final int filled = targetHandler.fill(testObject.recombine(flow), false);
             int insertable = filled;
             if (insertable <= 0) continue;
-            ListHashSet<NetPath> pathCache = networkView.outgoingCache().computeIfAbsent(targetNode,
-                    k -> new ListHashSet<>(1));
+            ListHashSet<NetPath> pathCache = networkView.getPathCache(targetNode);
             ResilientNetClosestIterator forwardFrontier = null;
             ResilientNetClosestIterator backwardFrontier = null;
             Iterator<NetPath> iterator = pathCache.iterator();
@@ -129,8 +127,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                         backwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.INCOMING);
                     }
                     path = GraphNetUtility.p2pNextPath(
-                            n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n, z -> getFlowLimit(z, testObject)) <=
-                                    0,
+                            n -> getFlowLimitCached(flowLimitCache, n, testObject) <= 0,
                             e -> !e.test(testObject), forwardFrontier, backwardFrontier);
                     if (path == null) break;
                     int i = pathCache.size();
@@ -140,9 +137,9 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                     if (!pathCache.addSensitive(i, path)) break;
                 }
                 int insert = attemptPath(path, insertable,
-                        n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n, z -> getFlowLimit(z, testObject)),
+                        n -> getFlowLimitCached(flowLimitCache, n, testObject),
                         e -> !e.test(testObject),
-                        n -> GraphNetUtility.computeIfAbsent(lossyCache, n, v -> isLossyNode(v, testObject)));
+                        n -> isLossyNodeCached(lossyCache, n, testObject));
                 if (insert > 0) {
                     insertable -= insert;
                     ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
@@ -155,10 +152,11 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                             if (post != null) postActions.add(post);
                         }
                         flowLimitCache.put(n, flowLimitCache.getInt(n) - insert);
-                        if (GraphNetUtility.computeIfAbsent(lossyCache, n, v -> isLossyNode(v, testObject))) {
+                        if (isLossyNodeCached(lossyCache, n, testObject)) {
                             // reporting loss can cause misc pipe destruction which causes
                             // graph modification while iterating.
                             if (doFill) postActions.add(() -> handleLoss(n, insert, testObject));
+                            // a lossy node will prevent filling the target
                             continue pathloop;
                         }
                     }
@@ -173,7 +171,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
     }
 
     protected FluidStack drain(int maxDrain, boolean doDrain, EnumFacing side) {
-        FluidStack stack = getNetworkView().getHandler().drain(maxDrain, false);
+        FluidStack stack = getNetworkView(side).getHandler().drain(maxDrain, false);
         if (stack == null) return null;
         return drain(stack, doDrain, side);
     }
@@ -199,24 +197,21 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
             final FluidStack drained = targetHandler.drain(testObject.recombine(flow), false);
             int extractable = drained == null ? 0 : drained.amount;
             if (extractable <= 0) continue;
-            ListHashSet<NetPath> pathCache = networkView.outgoingCache().computeIfAbsent(targetNode,
-                    k -> new ListHashSet<>(1));
+            ListHashSet<NetPath> pathCache = getNetworkView(targetNode).getPathCache(node);
             ResilientNetClosestIterator forwardFrontier = null;
             ResilientNetClosestIterator backwardFrontier = null;
             Iterator<NetPath> iterator = pathCache.iterator();
-            pathloop:
             while (extractable > 0) {
                 NetPath path;
                 if (iterator != null && iterator.hasNext()) path = iterator.next();
                 else {
                     iterator = null;
                     if (forwardFrontier == null) {
-                        forwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.OUTGOING);
-                        backwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.INCOMING);
+                        forwardFrontier = new ResilientNetClosestIterator(targetNode, EdgeDirection.OUTGOING);
+                        backwardFrontier = new ResilientNetClosestIterator(node, EdgeDirection.INCOMING);
                     }
                     path = GraphNetUtility.p2pNextPath(
-                            n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n, z -> getFlowLimit(z, testObject)) <=
-                                    0,
+                            n -> getFlowLimitCached(flowLimitCache, n, testObject) <= 0,
                             e -> !e.test(testObject), forwardFrontier, backwardFrontier);
                     if (path == null) break;
                     int i = pathCache.size();
@@ -226,9 +221,9 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                     if (!pathCache.addSensitive(i, path)) break;
                 }
                 int extract = attemptPath(path, extractable,
-                        n -> GraphNetUtility.computeIfAbsent(flowLimitCache, n, z -> getFlowLimit(z, testObject)),
+                        n -> getFlowLimitCached(flowLimitCache, n, testObject),
                         e -> !e.test(testObject),
-                        n -> GraphNetUtility.computeIfAbsent(lossyCache, n, v -> isLossyNode(v, testObject)));
+                        n -> isLossyNodeCached(lossyCache, n, testObject));
                 if (extract > 0) {
                     extractable -= extract;
                     ImmutableList<NetNode> asList = path.getOrderedNodes().asList();
@@ -241,11 +236,13 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                             if (post != null) postActions.add(post);
                         }
                         flowLimitCache.put(n, flowLimitCache.getInt(n) - extract);
-                        if (GraphNetUtility.computeIfAbsent(lossyCache, n, v -> isLossyNode(v, testObject))) {
+                        if (isLossyNodeCached(lossyCache, n, testObject)) {
                             // reporting loss can cause misc pipe destruction which causes
                             // graph modification while iterating.
                             if (doDrain) postActions.add(() -> handleLoss(n, extract, testObject));
-                            continue pathloop;
+                            // a lossy node will prevent receiving extracted fluid
+                            extractable += extract;
+                            break;
                         }
                     }
                     if (doDrain) targetHandler.drain(testObject.recombine(extract), true);
@@ -274,6 +271,11 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         return available;
     }
 
+    public static int getFlowLimitCached(Reference2IntOpenHashMap<NetNode> cache, NetNode n,
+                                         FluidTestObject testObject) {
+        return GraphNetUtility.computeIfAbsent(cache, n, z -> getFlowLimit(z, testObject));
+    }
+
     public static int getFlowLimit(NetNode node, FluidTestObject testObject) {
         ThroughputLogic throughput = node.getData().getLogicEntryNullable(ThroughputLogic.TYPE);
         if (throughput == null) return Integer.MAX_VALUE;
@@ -287,6 +289,11 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
                     .safeCastLongToInt(throughput.getValue() * FluidFlowLogic.MEMORY_TICKS - sum.getLong(testObject));
         }
         return 0;
+    }
+
+    public static boolean isLossyNodeCached(Reference2BooleanOpenHashMap<NetNode> cache, NetNode n,
+                                            FluidTestObject testObject) {
+        return GraphNetUtility.computeIfAbsent(cache, n, z -> isLossyNode(z, testObject));
     }
 
     public static boolean isLossyNode(NetNode node, FluidTestObject testObject) {
@@ -315,21 +322,6 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         };
     }
 
-    public static void reportExtractedInserted(NetNode node, int flow, FluidTestObject testObject, boolean extracted) {
-        if (flow == 0) return;
-        if (node instanceof NodeExposingCapabilities exposer) {
-            IFluidHandler handler = exposer.getProvider().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
-                    exposer.exposedFacing());
-            if (handler != null) {
-                if (extracted) {
-                    handler.drain(testObject.recombine(flow), true);
-                } else {
-                    handler.fill(testObject.recombine(flow), true);
-                }
-            }
-        }
-    }
-
     public static void handleLoss(NetNode node, int flow, FluidTestObject testObject) {
         if (flow == 0) return;
         FluidContainmentLogic logic = node.getData().getLogicEntryDefaultable(FluidContainmentLogic.TYPE);
@@ -348,11 +340,13 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         }
     }
 
-    public @NotNull FluidNetworkView getNetworkView() {
+    public @NotNull FluidNetworkView getNetworkView(@Nullable EnumFacing facing) {
+        NetNode node = getRelevantNode(facing);
+        if (node == null) node = this.node;
         return getNetworkView(node);
     }
 
-    public static @NotNull FluidNetworkView getNetworkView(NetNode node) {
+    public static @NotNull FluidNetworkView getNetworkView(@NotNull NetNode node) {
         if (node.getGroupSafe().getData() instanceof FluidNetworkViewGroupData data) {
             return data.getOrCreate(node);
         }
@@ -366,7 +360,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        return getNetworkView().getHandler().getTankProperties();
+        return getNetworkView(node).getHandler().getTankProperties();
     }
 
     @Override
@@ -386,6 +380,14 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
         return null;
     }
 
+    @Nullable
+    public static EnumFacing facingOf(IFluidHandler handler) {
+        if (handler instanceof Wrapper w) {
+            return w.facing;
+        }
+        return null;
+    }
+
     protected class Wrapper implements IFluidHandler {
 
         private final EnumFacing facing;
@@ -396,9 +398,7 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
         @Override
         public IFluidTankProperties[] getTankProperties() {
-            NetNode node = getRelevantNode(facing);
-            if (node == null) return FluidCapabilityObject.this.getNetworkView().getHandler().getTankProperties();
-            return getNetworkView().getHandler().getTankProperties();
+            return getNetworkView(facing).getHandler().getTankProperties();
         }
 
         @Override

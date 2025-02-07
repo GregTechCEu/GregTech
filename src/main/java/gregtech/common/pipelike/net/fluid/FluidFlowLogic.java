@@ -57,6 +57,7 @@ public class FluidFlowLogic extends RingBufferTransientLogicData<FluidFlowLogic,
 
     @Override
     protected void dropEntry(Object2LongMap<FluidTestObject> entry) {
+        super.dropEntry(entry);
         for (var e : entry.object2LongEntrySet()) {
             long fetch = sum.getLong(e.getKey());
             if (e.getLongValue() >= fetch) {
