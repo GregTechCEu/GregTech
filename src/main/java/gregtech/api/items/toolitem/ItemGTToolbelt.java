@@ -669,7 +669,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         protected void onContentsChanged(int slot) {
-            if (this.selectedSlot == slot) this.selectedSlot = -1;
             this.updateSlot(slot);
             this.update();
 
