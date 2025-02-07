@@ -53,7 +53,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -119,12 +118,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public static void registerBakedModels(ModelBakeEvent event) {
-        AbstractPipeModel.invalidateCaches();
-        PipeModelRegistry.registerModels(event.getModelRegistry());
-    }
-
-    @SubscribeEvent
     public static void textureStitchPre(@NotNull TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
         GTFluidRegistration.INSTANCE.registerSprites(map);
@@ -145,6 +138,9 @@ public class ClientProxy extends CommonProxy {
         GTLog.logger.info("Registering special item models");
         MetaItems.registerBakedModels(event);
         ToolItems.registerBakedModels(event);
+        GTLog.logger.info("Registering special block models");
+        AbstractPipeModel.invalidateCaches();
+        PipeModelRegistry.registerModels(event.getModelRegistry());
     }
 
     @SubscribeEvent
