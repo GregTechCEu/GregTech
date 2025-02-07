@@ -688,7 +688,7 @@ public class MultiblockUIFactory {
             addKey(KeyUtil.lang(TextFormatting.WHITE, "gregtech.multiblock.recipe_progress",
                     String.format("%,3.2f", (float) progress / 20),
                     String.format("%,3.2f", (float) maxProgress / 20),
-                    String.format("%,3.1f", ((float) progress / maxProgress) * 100f)));
+                    String.format("%,3.1f", (float) progress / maxProgress * 100f)));
             return this;
         }
 
