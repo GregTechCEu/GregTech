@@ -884,7 +884,7 @@ public class MultiblockUIFactory {
                 IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey());
                 IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
                 IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
-                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s)", itemName, itemAmount, itemRate));
+                addKey(IKey.comp(itemName, KeyUtil.string(TextFormatting.WHITE, " x "), itemAmount, IKey.str(" "), itemRate));
             }
 
             return this;
@@ -911,7 +911,7 @@ public class MultiblockUIFactory {
                 IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
                 IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
                 IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
-                addKey(KeyUtil.string(TextFormatting.WHITE, "%s x %s (%s)", fluidName, fluidAmount, fluidRate));
+                addKey(IKey.comp(fluidName, KeyUtil.string(TextFormatting.WHITE, " x "), fluidAmount, IKey.str(" "), fluidRate));
             }
 
             return this;
@@ -922,9 +922,9 @@ public class MultiblockUIFactory {
 
             String rate;
             if (perSecond > 1) {
-                rate = String.format("%.2f", perSecond).replaceAll("\\.?0+$", "") + "/s";
+                rate = "(" + String.format("%,.2f", perSecond).replaceAll("\\.?0+$", "") + "/s)";
             } else {
-                rate = String.format("%.2f", 1 / (perSecond)).replaceAll("\\.?0+$", "") + "s/ea";
+                rate = "(" + String.format("%,.2f", 1 / (perSecond)).replaceAll("\\.?0+$", "") + "s/ea)";
             }
 
             return rate;
