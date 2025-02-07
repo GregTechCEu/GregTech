@@ -13,14 +13,17 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.common.mui.widget.GTFluidSlot;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -54,7 +57,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
                                       implements IMultiblockAbilityPart<IFluidTank>, IControllable {
 
     public static final int INITIAL_INVENTORY_SIZE = 8000;
-    public static final int LOCK_FILL = GregtechDataCodes.assignId();
 
     // only holding this for convenience
     protected final HatchFluidTank fluidTank;
@@ -168,7 +170,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
-        } else if (dataId == LOCK_FILL) {
+        } else if (dataId == GregtechDataCodes.LOCK_FILL) {
             this.lockedFluid = NetworkUtils.readFluidStack(buf);
         }
     }
@@ -186,7 +188,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     protected int getInventorySize() {
-        return INITIAL_INVENTORY_SIZE * (1 << Math.min(9, getTier()));
+        return INITIAL_INVENTORY_SIZE * Math.min(Integer.MAX_VALUE, 1 << getTier());
     }
 
     @Override
@@ -339,6 +341,21 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         fluidTank.onContentsChanged();
     }
 
+    @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (this == MetaTileEntities.FLUID_IMPORT_HATCH[0]) {
+            for (var hatch : MetaTileEntities.FLUID_IMPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+            for (var hatch : MetaTileEntities.FLUID_EXPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+        } else if (this.getClass() != MetaTileEntityFluidHatch.class) {
+            // let subclasses fall through this override
+            super.getSubItems(creativeTab, subItems);
+        }
+    }
+
     protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
@@ -352,7 +369,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
                 lockedFluid.amount = 1;
-                writeCustomData(LOCK_FILL, buffer -> NetworkUtils.writeFluidStack(buffer, lockedFluid));
+                writeCustomData(GregtechDataCodes.LOCK_FILL,
+                        buffer -> NetworkUtils.writeFluidStack(buffer, lockedFluid));
             }
             return accepted;
         }

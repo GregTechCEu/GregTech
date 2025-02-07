@@ -98,7 +98,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_FRAME)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .cableProperties(V[EV], 3, 2)
-                .blast(1200, GasTier.LOW)
+                .blast(1758, GasTier.LOW)
                 .build();
 
         DamascusSteel = new Material.Builder(2012, gregtechId("damascus_steel"))

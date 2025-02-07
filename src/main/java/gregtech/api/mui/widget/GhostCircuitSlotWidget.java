@@ -55,7 +55,7 @@ public class GhostCircuitSlotWidget extends ItemSlot {
         if (isSelectorPanelOpen()) return true;
         MouseData mouseData = MouseData.create(scrollDirection.modifier);
         getSyncHandler().syncToServer(3, mouseData::writeToPacket);
-        return false;
+        return true;
     }
 
     @Override

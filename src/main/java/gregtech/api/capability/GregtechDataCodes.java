@@ -1,5 +1,12 @@
 package gregtech.api.capability;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 public class GregtechDataCodes {
 
     private static int nextId = 0;
@@ -86,6 +93,7 @@ public class GregtechDataCodes {
     public static final int MAINTENANCE_MULTIPLIER = assignId();
     public static final int UPDATE_UPWARDS_FACING = assignId();
     public static final int UPDATE_FLIP = assignId();
+    public static final int LOCK_FILL = assignId();
 
     // Item Bus Item Stack Auto Collapsing
     public static final int TOGGLE_COLLAPSE_ITEMS = assignId();
@@ -146,6 +154,9 @@ public class GregtechDataCodes {
     // Detector Covers
     public static final int UPDATE_INVERTED = assignId();
 
+    // Ender Covers
+    public static final int UPDATE_PRIVATE = assignId();
+
     // HPCA / Research Station
     public static final int DAMAGE_STATE = assignId();
     public static final int LOCK_OBJECT_HOLDER = assignId();
@@ -178,4 +189,36 @@ public class GregtechDataCodes {
     // ME Parts
     public static final int UPDATE_AUTO_PULL = assignId();
     public static final int UPDATE_ONLINE_STATUS = assignId();
+
+    // Everything below MUST be last in the class!
+    public static final Int2ObjectMap<String> NAMES = new Int2ObjectArrayMap<>();
+
+    static {
+        registerFields(GregtechDataCodes.class);
+    }
+
+    public static String getNameFor(int id) {
+        return NAMES.getOrDefault(id, "Unknown_DataCode:" + id);
+    }
+
+    /**
+     * Registers all fields from the passed in class to the name registry.
+     * Optionally, you can pass in a list of valid ids to check against so that errant ids are not added
+     * 
+     * @param clazz    Class to iterate fields
+     * @param validIds optional array of valid ids to check against class fields
+     */
+    public static void registerFields(Class<?> clazz, int... validIds) {
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.getType() != Integer.TYPE) continue;
+                if (!Modifier.isStatic(field.getModifiers())) continue;
+                if (!Modifier.isFinal(field.getModifiers())) continue;
+                int id = field.getInt(null);
+                if (!ArrayUtils.isEmpty(validIds) && !ArrayUtils.contains(validIds, id))
+                    continue;
+                NAMES.put(id, field.getName() + ":" + id);
+            }
+        } catch (IllegalAccessException ignored) {}
+    }
 }

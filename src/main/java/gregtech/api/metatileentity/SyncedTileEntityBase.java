@@ -1,10 +1,8 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.block.BlockStateTileEntity;
-import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.interfaces.ISyncedTileEntity;
 import gregtech.api.network.PacketDataList;
-import gregtech.api.util.GTLog;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTBase;
@@ -86,20 +84,10 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
             NBTTagCompound entryTag = (NBTTagCompound) entryBase;
             for (String discriminatorKey : entryTag.getKeySet()) {
                 ByteBuf backedBuffer = Unpooled.copiedBuffer(entryTag.getByteArray(discriminatorKey));
-                receiveCustomData(Integer.parseInt(discriminatorKey), new PacketBuffer(backedBuffer));
-                if (backedBuffer.readableBytes() != 0) {
-                    String className = null;
-                    if (this instanceof IGregTechTileEntity gtte) {
-                        MetaTileEntity mte = gtte.getMetaTileEntity();
-                        if (mte != null) className = mte.getClass().getName();
-                    }
-                    if (className == null) {
-                        className = this.getClass().getName();
-                    }
-                    GTLog.logger.error(
-                            "Class {} failed to finish reading receiveCustomData with discriminator {} and {} bytes remaining",
-                            className, discriminatorKey, backedBuffer.readableBytes());
-                }
+                int dataId = Integer.parseInt(discriminatorKey);
+                ISyncedTileEntity.addCode(dataId, this);
+                receiveCustomData(dataId, new PacketBuffer(backedBuffer));
+                ISyncedTileEntity.checkData(backedBuffer);
             }
         }
     }
@@ -119,19 +107,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         super.readFromNBT(tag); // deserializes Forge data and capabilities
         byte[] updateData = tag.getByteArray("d");
         ByteBuf backedBuffer = Unpooled.copiedBuffer(updateData);
+        ISyncedTileEntity.track(this);
         receiveInitialSyncData(new PacketBuffer(backedBuffer));
-        if (backedBuffer.readableBytes() != 0) {
-            String className = null;
-            if (this instanceof IGregTechTileEntity gtte) {
-                MetaTileEntity mte = gtte.getMetaTileEntity();
-                if (mte != null) className = mte.getClass().getName();
-            }
-            if (className == null) {
-                className = this.getClass().getName();
-            }
-
-            GTLog.logger.error("Class {} failed to finish reading initialSyncData with {} bytes remaining",
-                    className, backedBuffer.readableBytes());
-        }
+        ISyncedTileEntity.checkData(backedBuffer);
     }
 }

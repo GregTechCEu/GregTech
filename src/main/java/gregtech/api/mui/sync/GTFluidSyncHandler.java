@@ -52,11 +52,10 @@ public class GTFluidSyncHandler extends SyncHandler {
     @Override
     public void detectAndSendChanges(boolean init) {
         var current = getFluid();
-        if (current == null && lastFluid == null) return;
-        if (current == null || lastFluid == null || lastFluid.getFluid() != current.getFluid()) {
+        if (init || current == null || lastFluid == null || current.isFluidEqual(lastFluid)) {
             lastFluid = current == null ? null : current.copy();
             syncToClient(UPDATE_TANK, buffer -> NetworkUtils.writeFluidStack(buffer, current));
-        } else if (current.amount != lastFluid.amount) {
+        } else if (lastFluid != null && current.amount != lastFluid.amount) {
             lastFluid.amount = current.amount;
             syncToClient(UPDATE_AMOUNT, buffer -> buffer.writeInt(current.amount));
         }
