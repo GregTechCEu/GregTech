@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 public abstract class SyncedTileEntityBase extends BlockStateTileEntity implements ISyncedTileEntity {
 
     private final PacketDataList updates = new PacketDataList();
-    private boolean worldNotified = false;
+    private int lastWorldNotifyTick;
 
     public @Nullable TileEntity getNeighbor(EnumFacing facing) {
         if (world == null || pos == null) return null;
@@ -55,11 +55,9 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
     }
 
     protected void notifyWorldOfPendingPackets() {
-        if (!worldNotified) {
-            worldNotified = true;
-            IBlockState blockState = getBlockState();
-            world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
-        }
+        // this must be called every time packets are added, because it doesn't always get picked up the first time.
+        IBlockState blockState = getBlockState();
+        world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
     }
 
     @Override
@@ -70,7 +68,6 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         }
         NBTTagCompound updateTag = new NBTTagCompound();
         updateTag.setTag("d", this.updates.dumpToNbt());
-        worldNotified = false;
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
 
