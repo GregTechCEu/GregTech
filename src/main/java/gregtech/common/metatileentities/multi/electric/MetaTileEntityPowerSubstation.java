@@ -1,15 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.utils.Alignment;
-import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
-import com.cleanroommc.modularui.value.sync.StringSyncValue;
-import com.cleanroommc.modularui.widgets.ButtonWidget;
-
-import com.cleanroommc.modularui.widgets.textfield.BaseTextFieldWidget;
-import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
-
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechDataCodes;
@@ -33,7 +23,6 @@ import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockGlassCasing;
-import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -55,8 +44,18 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.Interactable;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.value.ConstValue;
+import com.cleanroommc.modularui.value.StringValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncHandler;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.textfield.BaseTextFieldWidget;
+import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -291,7 +290,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     }
 
     protected IBlockState getCasingState() {
-        return MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PALLADIUM_SUBSTATION);
+        return MetaBlocks.METAL_CASING.getState(MetalCasingType.PALLADIUM_SUBSTATION);
     }
 
     protected IBlockState getGlassState() {
@@ -347,7 +346,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                     if (!guiData.getPlayer().isCreative()) return null;
 
                     // todo remove cast in next mui2 version
-                    PanelSyncHandler setEnergy = (PanelSyncHandler) syncManager.panel("energy_panel", this::makeEnergyPanel, true);
+                    PanelSyncHandler setEnergy = (PanelSyncHandler) syncManager.panel("energy_panel",
+                            this::makeEnergyPanel, true);
                     return new ButtonWidget<>()
                             .width(18)
                             .addTooltipLine(I18n.format("gregtech.multiblock.power_substation.energy_button"))
@@ -374,20 +374,36 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                     }
                 });
 
-        StringSyncValue syncValue = new StringSyncValue(
-                () -> energyBank == null ? BigInteger.ZERO.toString() : energyBank.getStored().toString(),
-                str -> {
-                    if (energyBank != null) {
-                        energyBank.set(new BigInteger(str));
-                    }
-                });
+        syncManager.syncValue("energy", storedEnergy);
+
+        ConstValue<BigInteger> lastValue = new ConstValue<>(storedEnergy.getValue());
+        BoolValue wasFocused = new BoolValue(false);
 
         return GTGuis.createPopupPanel("energy_panel", 150, 40)
                 .child(new TextFieldWidget()
                         .widthRel(0.95f)
                         .align(Alignment.Center)
                         .setPattern(BaseTextFieldWidget.WHOLE_NUMS)
-                        .value(syncValue));
+                        .value(new StringValue.Dynamic(() -> lastValue.getValue().toString(), null))
+                        .onUpdateListener(textFieldWidget -> {
+                            if (!storedEnergy.isValid()) return;
+                            String text = textFieldWidget.getText();
+                            if (!textFieldWidget.isFocused()) {
+                                if (!wasFocused.getBoolValue()) {
+                                    lastValue.setValue(storedEnergy.getValue());
+                                } else {
+                                    var bigInteger = text.isEmpty() ? BigInteger.ZERO : new BigInteger(text);
+                                    if (bigInteger.equals(lastValue.getValue())) {
+                                        return;
+                                    }
+                                    storedEnergy.sync(0, buffer -> buffer.writeByteArray(bigInteger.toByteArray()));
+                                    lastValue.setValue(bigInteger);
+                                    wasFocused.setBoolValue(false);
+                                }
+                            } else if (!wasFocused.getBoolValue()) {
+                                wasFocused.setBoolValue(true);
+                            }
+                        }));
     }
 
     @Override
@@ -755,7 +771,8 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         }
 
         public void set(BigInteger bigInteger) {
-            if (bigInteger.compareTo(BigInteger.ZERO) < 0) throw new IllegalArgumentException("Amount cannot be negative!");
+            if (bigInteger.compareTo(BigInteger.ZERO) < 0)
+                throw new IllegalArgumentException("Amount cannot be negative!");
 
             Arrays.fill(storage, 0);
 
