@@ -77,12 +77,12 @@ public class BigIntegerSyncValue extends ValueSyncHandler<BigInteger> implements
 
     @Override
     public void write(@NotNull PacketBuffer buffer) throws IOException {
-        buffer.writeByteArray(cache.toByteArray());
+        buffer.writeByteArray(getValue().toByteArray());
     }
 
     @Override
     public void read(@NotNull PacketBuffer buffer) throws IOException {
-        this.cache = new BigInteger(buffer.readByteArray());
+        setValue(new BigInteger(buffer.readByteArray()), true, false);
     }
 
     @Override
