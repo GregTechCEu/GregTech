@@ -939,7 +939,7 @@ public class MultiblockUIFactory {
                 if (printedLines >= maxLines) break;
 
                 IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
-                IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
+                IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue(), "L");
                 IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
 
                 addKey(formatRecipeData(fluidName, fluidAmount, fluidRate));
