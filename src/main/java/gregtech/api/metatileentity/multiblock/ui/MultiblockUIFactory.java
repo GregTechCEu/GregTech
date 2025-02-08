@@ -43,7 +43,6 @@ import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -424,6 +423,8 @@ public class MultiblockUIFactory {
         private boolean isWorkingEnabled;
         private boolean isActive;
         private boolean isStructureFormed;
+
+        private static final int DEFAULT_MAX_RECIPE_LINES = 25;
 
         // Keys for the three-state working system, can be set custom by multiblocks.
         private IKey idlingKey = IKey.lang("gregtech.multiblock.idling").style(TextFormatting.GRAY);
@@ -838,11 +839,30 @@ public class MultiblockUIFactory {
          * @param arl an instance of an {@link AbstractRecipeLogic} to gather the outputs from.
          */
         public Builder addRecipeOutputLine(@NotNull AbstractRecipeLogic arl) {
-            Preconditions.checkNotNull(arl,
-                    "Passed null AbstractRecipeLogic to MultiblockUIFactory#addRecipeOutputLine");
-            addRecipeOutputLine(arl.getItemOutputs(), arl.getFluidOutputs(), arl.getMaxProgress());
+            return addRecipeOutputLine(arl, DEFAULT_MAX_RECIPE_LINES);
+        }
 
-            return this;
+        /**
+         * Adds the current outputs of a recipe from recipe logic. Items then fluids.
+         *
+         * @param arl      an instance of an {@link AbstractRecipeLogic} to gather the outputs from.
+         * @param maxLines the maximum number of lines to print until truncating with {@code ...}
+         */
+        public Builder addRecipeOutputLine(@NotNull AbstractRecipeLogic arl, int maxLines) {
+            return addRecipeOutputLine(arl.getItemOutputs(), arl.getFluidOutputs(), arl.getMaxProgress(), maxLines);
+        }
+
+        /**
+         * Adds the current outputs of a recipe. Items then fluids.
+         *
+         * @param itemOutputs  a list of {@link ItemStack}s to display.
+         * @param fluidOutputs a list of {@link FluidStack}s to display.
+         * @param recipeLength the recipe length, in ticks.
+         */
+        public Builder addRecipeOutputLine(@Nullable List<ItemStack> itemOutputs,
+                                           @Nullable List<FluidStack> fluidOutputs,
+                                           int recipeLength) {
+            return addRecipeOutputLine(itemOutputs, fluidOutputs, recipeLength, DEFAULT_MAX_RECIPE_LINES);
         }
 
         /**
@@ -851,15 +871,22 @@ public class MultiblockUIFactory {
          * @param itemOutputs  a list of {@link ItemStack}s to display.
          * @param fluidOutputs a list of {@link FluidStack}s to display.
          * @param recipeLength the recipe length, in ticks.
+         * @param maxLines     the maximum number of lines to print until truncating with {@code ...}
          */
-        public Builder addRecipeOutputLine(@NotNull List<ItemStack> itemOutputs, @NotNull List<FluidStack> fluidOutputs,
-                                           int recipeLength) {
-            Preconditions.checkNotNull(itemOutputs, "Passed null item list to MultiblockUIFactory#addRecipeOutputLine");
-            Preconditions.checkNotNull(fluidOutputs,
-                    "Passed null fluid list to MultiblockUIFactory#addRecipeOutputLine");
+        public Builder addRecipeOutputLine(@Nullable List<ItemStack> itemOutputs,
+                                           @Nullable List<FluidStack> fluidOutputs,
+                                           int recipeLength, int maxLines) {
+            if (itemOutputs != null) {
+                maxLines -= addItemOutputLine(itemOutputs, recipeLength, maxLines);
+            }
 
-            addItemOutputLine(itemOutputs, recipeLength);
-            addFluidOutputLine(fluidOutputs, recipeLength);
+            if (fluidOutputs != null) {
+                maxLines -= addFluidOutputLine(fluidOutputs, recipeLength, maxLines);
+            }
+
+            if (maxLines == 0) {
+                addKey(KeyUtil.string(TextFormatting.WHITE, "..."));
+            }
 
             return this;
         }
@@ -869,25 +896,29 @@ public class MultiblockUIFactory {
          *
          * @param itemOutputs  a list of {@link ItemStack}s to display.
          * @param recipeLength the recipe length, in ticks.
+         * @return the number of lines printed.
          */
-        public Builder addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength) {
-            Preconditions.checkNotNull(itemOutputs, "Passed null item list to MultiblockUIFactory#addItemOutputLine");
-            if (!isStructureFormed || !isActive || itemOutputs.isEmpty()) return this;
-
+        private int addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength, int maxLines) {
             Map<String, Long> itemMap = new LinkedHashMap<>();
             for (ItemStack itemStack : itemOutputs) {
                 if (itemStack.isEmpty()) continue;
                 itemMap.merge(itemStack.getDisplayName(), (long) itemStack.getCount(), Long::sum);
             }
 
+            int printedLines = 0;
             for (Map.Entry<String, Long> entry : itemMap.entrySet()) {
+                if (printedLines >= maxLines) break;
+
                 IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey());
                 IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
                 IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
+
                 addKey(formatRecipeData(itemName, itemAmount, itemRate));
+
+                printedLines += 1;
             }
 
-            return this;
+            return printedLines;
         }
 
         /**
@@ -896,25 +927,27 @@ public class MultiblockUIFactory {
          * @param fluidOutputs a list of {@link FluidStack}s to display.
          * @param recipeLength the recipe length, in ticks.
          */
-        public Builder addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength) {
-            Preconditions.checkNotNull(fluidOutputs,
-                    "Passed null fluid list to MultiblockUIFactory#addFluidOutputLine");
-            if (!isStructureFormed || !isActive || fluidOutputs.isEmpty()) return this;
-
+        private int addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength, int maxLines) {
             Map<FluidStack, Long> fluidMap = new LinkedHashMap<>();
             for (FluidStack fluidStack : fluidOutputs) {
                 if (fluidStack.amount < 1) continue;
                 fluidMap.merge(fluidStack, (long) fluidStack.amount, Long::sum);
             }
 
+            int printedLines = 0;
             for (Map.Entry<FluidStack, Long> entry : fluidMap.entrySet()) {
+                if (printedLines >= maxLines) break;
+
                 IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
                 IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
                 IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
+
                 addKey(formatRecipeData(fluidName, fluidAmount, fluidRate));
+
+                printedLines += 1;
             }
 
-            return this;
+            return printedLines;
         }
 
         private static String formatRecipeRate(int recipeLength, long amount) {
