@@ -3840,7 +3840,7 @@ gregtech.machine.transformer.hi_amp.opv.name=Высокотоковый тран
 # Diodes
 gregtech.machine.diode.message=Макс. пропускная способность: %s
 gregtech.machine.diode.tooltip_general=Пропускает электричество лишь в одном Направлении и ограниченной Силой тока
-gregtech.machine.diode.tooltip_starts_at=Начиная с 1 Ампера, используйте Киянку чтобы изменить силу тока
+gregtech.machine.diode.tooltip_starts_at=Начиная с 1 Ампера, используйте Отвертку чтобы изменить силу тока
 gregtech.machine.diode.ulv.name=Диод (§8ULV§r)
 gregtech.machine.diode.lv.name=Диод (§7LV§r)
 gregtech.machine.diode.mv.name=Диод (§bMV§r)
@@ -4782,7 +4782,7 @@ gregtech.universal.tooltip.uses_per_op=Использует §f%,d EU/опера
 gregtech.universal.tooltip.base_production_eut=§eПроизводит: §f%,d EU/т
 gregtech.universal.tooltip.base_production_fluid=§eПроизводит: §f%,d Л/т
 gregtech.universal.tooltip.produces_fluid=§eПроизводит: §f%,d Л/т
-gregtech.universal.tooltip.terrain_resist=Эта машина не взорвется
+gregtech.universal.tooltip.terrain_resist=§eЭта машина не взорвется
 gregtech.universal.tooltip.requires_redstone=§4Требуется сигнал Красного камня
 gregtech.block.tooltip.no_mob_spawning=§bМонстры не могут появится на этом блоке
 gregtech.recipe.total=Всего: %d EU
@@ -6047,3 +6047,74 @@ cover.filter.allow_flow.tooltip=По умолчанию предметы/жид�
 cover.generic.disabled=Выключено
 cover.generic.enabled=Включено
 cover.filter.allow_flow.label=Разрешено
+gregtech.top.energy_required=Требует
+gregtech.machine.item_bus.import.uev.name=Предметный входной люк (§aUEV§r)
+gregtech.machine.item_bus.import.uiv.name=Предметный входной люк (§2UIV§r)
+gregtech.machine.item_bus.import.uxv.name=Предметный входной люк (§eUXV§r)
+gregtech.machine.item_bus.import.opv.name=Предметный входной люк (§9§lOpV§r)
+gregtech.machine.item_bus.import.max.name=Предметный входной люк (§c§lMAX§r)
+gregtech.machine.item_bus.export.uev.name=Предметный выходной люк (§aUEV§r)
+gregtech.machine.item_bus.export.uiv.name=Предметный выходной люк (§2UIV§r)
+gregtech.machine.item_bus.export.uxv.name=Предметный выходной люк (§eUXV§r)
+gregtech.machine.item_bus.export.opv.name=Предметный выходной люк (§9§lOpV§r)
+gregtech.machine.item_bus.export.max.name=Предметный выходной люк (§c§lMAX§r)
+gregtech.machine.fluid_hatch.import.uev.name=Жидкостный входной люк (§aUEV§r)
+gregtech.machine.fluid_hatch.import.uiv.name=Жидкостный входной люк (§2UIV§r)
+gregtech.machine.fluid_hatch.import.uxv.name=Жидкостный входной люк (§eUXV§r)
+gregtech.machine.fluid_hatch.import.opv.name=Жидкостный входной люк (§9§lOpV§r)
+gregtech.machine.fluid_hatch.import.max.name=Жидкостный входной люк (§c§lMAX§r)
+gregtech.machine.fluid_hatch.import_4x.uev.name=Четверной входной люк (§aUEV§r)
+gregtech.machine.fluid_hatch.import_4x.uiv.name=Четверной входной люк (§2UIV§r)
+gregtech.machine.fluid_hatch.import_4x.uxv.name=Четверной входной люк (§eUXV§r)
+gregtech.machine.fluid_hatch.import_4x.opv.name=Четверной входной люк (§9§lOpV§r)
+gregtech.machine.fluid_hatch.import_4x.max.name=Четверной входной люк (§c§lMAX§r)
+gregtech.machine.fluid_hatch.import_9x.uev.name=Девятерной входной люк (§aUEV§r)
+gregtech.machine.fluid_hatch.import_9x.uiv.name=Девятерной входной люк (§2UIV§r)
+gregtech.machine.fluid_hatch.import_9x.uxv.name=Девятерной входной люк (§eUXV§r)
+gregtech.machine.fluid_hatch.import_9x.opv.name=Девятерной входной люк (§9§lOpV§r)
+gregtech.machine.fluid_hatch.import_9x.max.name=Девятерной входной люк (§c§lMAX§r)
+gregtech.machine.fluid_hatch.export_4x.uev.name=Четверной выходной люк (§aUEV§r)
+gregtech.machine.fluid_hatch.export_4x.uiv.name=Четверной выходной люк (§2UIV§r)
+gregtech.machine.fluid_hatch.export_4x.uxv.name=Четверной выходной люк (§eUXV§r)
+gregtech.machine.fluid_hatch.export_4x.opv.name=Четверной выходной люк (§9§lOpV§r)
+gregtech.machine.fluid_hatch.export_4x.max.name=Четверной выходной люк (§c§lMAX§r)
+gregtech.machine.fluid_hatch.export_9x.uev.name=Девятерной выходной люк (§aUEV§r)
+gregtech.machine.fluid_hatch.export_9x.uiv.name=Девятерной выходной люк (§2UIV§r)
+gregtech.machine.fluid_hatch.export_9x.uxv.name=Девятерной выходной люк (§eUXV§r)
+gregtech.machine.fluid_hatch.export_9x.opv.name=Девятерной выходной люк (§9§lOpV§r)
+gregtech.machine.fluid_hatch.export_9x.max.name=Девятерной выходной люк (§c§lMAX§r)
+gregtech.machine.fluid_hatch.export.uev.name=Жидкостный выходной люк (§aUEV§r)
+gregtech.machine.fluid_hatch.export.uiv.name=Жидкостный выходной люк (§2UIV§r)
+gregtech.machine.fluid_hatch.export.uxv.name=Жидкостный выходной люк (§eUXV§r)
+gregtech.machine.fluid_hatch.export.opv.name=Жидкостный выходной люк (§9§lOpV§r)
+gregtech.machine.fluid_hatch.export.max.name=Жидкостный выходной люк (§c§lMAX§r)
+gregtech.machine.energy_hatch.input_4a.uev.name=Энергетический входной разъем (4A §aUEV§r)
+gregtech.machine.energy_hatch.input_4a.uiv.name=Энергетический входной разъем (4A §2UIV§r)
+gregtech.machine.energy_hatch.input_4a.uxv.name=Энергетический входной разъем (4A §eUXV§r)
+gregtech.machine.energy_hatch.input_4a.opv.name=Энергетический входной разъем (4A §9§lOpV§r)
+gregtech.machine.energy_hatch.input_4a.max.name=Энергетический входной разъем (4A §c§lMAX§r)
+gregtech.machine.energy_hatch.input_16a.uev.name=Энергетический входной разъем (16A §aUEV§r)
+gregtech.machine.energy_hatch.input_16a.uiv.name=Энергетический входной разъем (16A §2UIV§r)
+gregtech.machine.energy_hatch.input_16a.uxv.name=Энергетический входной разъем (16A §eUXV§r)
+gregtech.machine.energy_hatch.input_16a.opv.name=Энергетический входной разъем (16A §9§lOpV§r)
+gregtech.machine.energy_hatch.input_16a.max.name=Энергетический входной разъем (16A §c§lMAX§r)
+gregtech.machine.substation_hatch.input_64a.uev.name=Энергетический входной разъем Подстанции (64A §aUEV§r)
+gregtech.machine.substation_hatch.input_64a.uiv.name=Энергетический входной разъем Подстанции (64A §2UIV§r)
+gregtech.machine.substation_hatch.input_64a.uxv.name=Энергетический входной разъем Подстанции (64A §eUXV§r)
+gregtech.machine.substation_hatch.input_64a.opv.name=Энергетический входной разъем Подстанции (64A §9§lOpV§r)
+gregtech.machine.substation_hatch.input_64a.max.name=Энергетический входной разъем Подстанции (64A §c§lMAX§r)
+gregtech.machine.energy_hatch.output_4a.uev.name=Энергетический выходной разъем (4A §aUEV§r)
+gregtech.machine.energy_hatch.output_4a.uiv.name=Энергетический выходной разъем (4A §2UIV§r)
+gregtech.machine.energy_hatch.output_4a.uxv.name=Энергетический выходной разъем (4A §eUXV§r)
+gregtech.machine.energy_hatch.output_4a.opv.name=Энергетический выходной разъем (4A §9§lOpV§r)
+gregtech.machine.energy_hatch.output_4a.max.name=Энергетический выходной разъем (4A §c§lMAX§r)
+gregtech.machine.energy_hatch.output_16a.uev.name=Энергетический выходной разъем (16A §aUEV§r)
+gregtech.machine.energy_hatch.output_16a.uiv.name=Энергетический выходной разъем (16A §2UIV§r)
+gregtech.machine.energy_hatch.output_16a.uxv.name=Энергетический выходной разъем (16A §eUXV§r)
+gregtech.machine.energy_hatch.output_16a.opv.name=Энергетический выходной разъем (16A §9§lOpV§r)
+gregtech.machine.energy_hatch.output_16a.max.name=Энергетический выходной разъем (16A §c§lMAX§r)
+gregtech.machine.substation_hatch.output_64a.uev.name=Энергетический выходной разъем Подстанции (64A §aUEV§r)
+gregtech.machine.substation_hatch.output_64a.uiv.name=Энергетический выходной разъем Подстанции (64A §2UIV§r)
+gregtech.machine.substation_hatch.output_64a.uxv.name=Энергетический выходной разъем Подстанции (64A §eUXV§r)
+gregtech.machine.substation_hatch.output_64a.opv.name=Энергетический выходной разъем Подстанции (64A §9§lOpV§r)
+gregtech.machine.substation_hatch.output_64a.max.name=Энергетический выходной разъем Подстанции (64A §c§lMAX§r)
