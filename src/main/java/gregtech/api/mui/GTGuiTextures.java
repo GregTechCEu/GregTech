@@ -29,6 +29,8 @@ public class GTGuiTextures {
         public static final String STEEL_BACKGROUND = "gregtech_steel_bg";
         public static final String PRIMITIVE_BACKGROUND = "gregtech_primitive_bg";
 
+        public static final String TAB_TITLE = "gregtech_tab_title";
+
         public static final String STANDARD_SLOT = "gregtech_standard_slot";
         public static final String BRONZE_SLOT = "gregtech_bronze_slot";
         public static final String STEEL_SLOT = "gregtech_steel_slot";
@@ -123,6 +125,14 @@ public class GTGuiTextures {
             .build();
 
     // todo primitive display?
+
+    // TABS
+    public static final UITexture TAB_TITLE = new UITexture.Builder()
+            .location(GTValues.MODID, "textures/gui/tab/title.png")
+            .imageSize(28, 28)
+            .adaptable(4)
+            .name(IDs.TAB_TITLE)
+            .build();
 
     // FUSION
     public static final UITexture FUSION_REACTOR_MK1_TITLE = fullImage(

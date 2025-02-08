@@ -15,6 +15,8 @@ import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
 
@@ -39,6 +41,7 @@ import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.TextWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,7 +70,7 @@ public class MultiblockUIFactory {
             if (mte.hasMaintenanceMechanics())
                 builder.addMaintenanceProblemLines(mte.getMaintenanceProblems());
         });
-        configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));
+        configureDisplayText(builder -> builder.structureFormed(mte.isStructureFormed()));
     }
 
     private static @NotNull <T> Consumer<T> addAction(@Nullable Consumer<T> first, @NotNull Consumer<T> andThen) {
@@ -91,6 +94,8 @@ public class MultiblockUIFactory {
             panel.child(createBars(progressBarMultiblock, panelSyncManager));
         }
 
+        createTitleTab(panel);
+
         return panel.child(Flow.row()
                 .bottom(7)
                 .height(77)
@@ -98,6 +103,30 @@ public class MultiblockUIFactory {
                 .child(SlotGroupWidget.playerInventory(0)
                         .alignX(0f))
                 .child(createButtons(panel, panelSyncManager, guiData)));
+    }
+
+    private void createTitleTab(ModularPanel panel) {
+        IKey mteName = IKey.lang(mte.getMetaFullName());
+
+        int TAB_PADDING = 3;
+        int TITLE_PADDING = 2;
+
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        List<String> titleLines = fontRenderer.listFormattedStringToWidth(mteName.getFormatted(),
+                width - (TAB_PADDING + TITLE_PADDING) * 2);
+        int titleWidth = titleLines.size() > 1 ? width - (TAB_PADDING + TITLE_PADDING) * 2 :
+                fontRenderer.getStringWidth(mteName.getFormatted());
+        int titleHeight = titleLines.size() * fontRenderer.FONT_HEIGHT + (titleLines.size() - 1);
+
+        TextWidget text = new TextWidget(mteName);
+        var tab = GTGuiTextures.TAB_TITLE.asWidget();
+
+        tab.pos(0, -(titleHeight + TAB_PADDING * 2) + 1)
+                .size(titleWidth + (TAB_PADDING + TITLE_PADDING) * 2, titleHeight + TAB_PADDING * 2 - 1);
+        text.pos(TAB_PADDING + TITLE_PADDING, -titleHeight);
+
+        panel.child(tab);
+        panel.child(text);
     }
 
     private Widget<?> createIndicator(PanelSyncManager syncManager) {

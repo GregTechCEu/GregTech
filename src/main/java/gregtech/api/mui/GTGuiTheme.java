@@ -25,6 +25,7 @@ public class GTGuiTheme {
 
     public static final GTGuiTheme STANDARD = templateBuilder("gregtech_standard")
             .panel(GTGuiTextures.IDs.STANDARD_BACKGROUND)
+            .titleTab(GTGuiTextures.IDs.TAB_TITLE)
             .itemSlot(GTGuiTextures.IDs.STANDARD_SLOT)
             .fluidSlot(GTGuiTextures.IDs.STANDARD_FLUID_SLOT)
             .color(ConfigHolder.client.defaultUIColor)
@@ -195,6 +196,15 @@ public class GTGuiTheme {
                             .add("background", new JsonBuilder()
                                     .add("type", "texture")
                                     .add("id", panelId))));
+            return this;
+        }
+
+        public Builder titleTab(String titleId) {
+            theme.elementBuilder.add(b -> b
+                    .add("titleTab", new JsonBuilder()
+                            .add("background", new JsonBuilder()
+                                    .add("type", "texture")
+                                    .add("id", titleId))));
             return this;
         }
 
