@@ -884,7 +884,7 @@ public class MultiblockUIFactory {
                 IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey());
                 IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
                 IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
-                addKey(IKey.comp(itemName, KeyUtil.string(TextFormatting.WHITE, " x "), itemAmount, IKey.str(" "), itemRate));
+                addKey(formatRecipeData(itemName, itemAmount, itemRate));
             }
 
             return this;
@@ -911,7 +911,7 @@ public class MultiblockUIFactory {
                 IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
                 IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
                 IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
-                addKey(IKey.comp(fluidName, KeyUtil.string(TextFormatting.WHITE, " x "), fluidAmount, IKey.str(" "), fluidRate));
+                addKey(formatRecipeData(fluidName, fluidAmount, fluidRate));
             }
 
             return this;
@@ -928,6 +928,10 @@ public class MultiblockUIFactory {
             }
 
             return rate;
+        }
+
+        private static IKey formatRecipeData(IKey name, IKey amount, IKey rate) {
+            return IKey.comp(name, KeyUtil.string(TextFormatting.WHITE, " x "), amount, IKey.SPACE, rate);
         }
 
         /** Insert an empty line into the text list. */
