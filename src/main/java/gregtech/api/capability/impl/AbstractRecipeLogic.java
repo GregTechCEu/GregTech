@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.GTValues.ULV;
@@ -1167,6 +1168,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      */
     public void setOverclockTier(final int tier) {
         setMaximumOverclockVoltage(GTValues.V[tier]);
+    }
+
+    /**
+     * @return an unmodifiable list of the current recipes item outputs
+     */
+    @NotNull
+    public List<ItemStack> getItemOutputs() {
+        // itemOutputs is null until the first recipe has been run
+        return itemOutputs == null ? Collections.emptyList() : Collections.unmodifiableList(itemOutputs);
+    }
+
+    /**
+     * @return an unmodifiable list of the current recipes fluid outputs
+     */
+    @NotNull
+    public List<FluidStack> getFluidOutputs() {
+        // fluidOutputs is null until the first recipe has been run
+        return fluidOutputs == null ? Collections.emptyList() : Collections.unmodifiableList(fluidOutputs);
     }
 
     /**
