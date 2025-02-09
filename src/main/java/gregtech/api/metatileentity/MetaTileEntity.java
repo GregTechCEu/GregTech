@@ -737,7 +737,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public final boolean acceptsCovers() {
+    public boolean acceptsCovers() {
         return covers.size() < EnumFacing.VALUES.length;
     }
 
@@ -1083,10 +1083,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
+                ISyncedTileEntity.addCode(internalId, trait);
                 trait.receiveCustomData(internalId, buf);
-
-                // this should be fine, as nothing else is read after this
-                ISyncedTileEntity.checkCustomData(internalId, buf, trait);
             }
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
@@ -1102,10 +1100,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
             if (cover != null) {
+                ISyncedTileEntity.addCode(internalId, cover);
                 cover.readCustomData(internalId, buf);
-
-                // this should be fine, as nothing else is read after this
-                ISyncedTileEntity.checkCustomData(internalId, buf, cover);
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
