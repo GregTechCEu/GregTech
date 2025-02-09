@@ -11,8 +11,8 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.materials.SoftToolAddition;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
@@ -122,7 +122,7 @@ public class ToolRecipeHandler {
         }
     }
 
-    private static void processTool(OrePrefix prefix, Material material, ToolProperty property) {
+    private static void processTool(OrePrefix prefix, Material material, MaterialToolProperty property) {
         UnificationEntry stick = new UnificationEntry(OrePrefix.stick, Materials.Wood);
         UnificationEntry plate = new UnificationEntry(OrePrefix.plate, material);
         UnificationEntry ingot = new UnificationEntry(material.hasProperty(GEM) ? OrePrefix.gem : OrePrefix.ingot,
@@ -236,7 +236,7 @@ public class ToolRecipeHandler {
         }
     }
 
-    private static void processElectricTool(OrePrefix prefix, Material material, ToolProperty property) {
+    private static void processElectricTool(OrePrefix prefix, Material material, MaterialToolProperty property) {
         final int voltageMultiplier = material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
         OrePrefix toolPrefix;
 

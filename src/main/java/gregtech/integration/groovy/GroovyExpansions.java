@@ -8,7 +8,7 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.event.MaterialEvent;
 import gregtech.api.unification.material.properties.ExtraToolProperty;
-import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -46,12 +46,12 @@ public class GroovyExpansions {
         return materialBuilder(event, id, new ResourceLocation(domain, path));
     }
 
-    public static ToolProperty.Builder toolBuilder(MaterialEvent event, float harvestSpeed, float attackDamage,
-                                                   int durability, int harvestLevel) {
-        return ToolProperty.Builder.of(harvestSpeed, attackDamage, durability, harvestLevel);
+    public static MaterialToolProperty.Builder toolBuilder(MaterialEvent event, float harvestSpeed, float attackDamage,
+                                                           int durability, int harvestLevel) {
+        return MaterialToolProperty.Builder.of(harvestSpeed, attackDamage, durability, harvestLevel);
     }
 
-    public static ToolProperty.Builder toolBuilder(MaterialEvent event) {
+    public static MaterialToolProperty.Builder toolBuilder(MaterialEvent event) {
         return toolBuilder(event, 1.0F, 1.0F, 100, 2);
     }
 

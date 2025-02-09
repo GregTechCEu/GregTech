@@ -16,8 +16,8 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.SimpleToolProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -183,7 +183,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
 
         // Set other tool stats (durability)
-        SimpleToolProperty finalToolProperty = getToolProperty(material);
+        ToolProperty finalToolProperty = getToolProperty(material);
         // Durability formula we are working with:
         // Final Durability = (material durability * material durability multiplier) + (tool definition durability *
         // definition durability multiplier) - 1
@@ -269,22 +269,22 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     @Nullable
-    default SimpleToolProperty getToolProperty(Material material) {
-        SimpleToolProperty finalToolProperty;
+    default ToolProperty getToolProperty(Material material) {
+        ToolProperty finalToolProperty;
         {
-            ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
+            MaterialToolProperty materialToolProperty = material.getProperty(PropertyKey.TOOL);
             if (material.hasProperty(PropertyKey.EXTRATOOL)) {
                 finalToolProperty = material.getProperty(PropertyKey.EXTRATOOL)
-                        .getOverriddenResult(this.getToolId(), toolProperty);
+                        .getOverriddenResult(this.getToolId(), materialToolProperty);
             } else {
-                finalToolProperty = toolProperty;
+                finalToolProperty = materialToolProperty;
             }
         }
         return finalToolProperty;
     }
 
     @Nullable
-    default SimpleToolProperty getToolProperty(ItemStack stack) {
+    default ToolProperty getToolProperty(ItemStack stack) {
         return getToolProperty(getToolMaterial(stack));
     }
 
@@ -294,32 +294,32 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
     }
 
     default float getMaterialToolSpeed(ItemStack stack) {
-        SimpleToolProperty toolProperty = getToolProperty(stack);
+        ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolSpeed();
     }
 
     default float getMaterialAttackDamage(ItemStack stack) {
-        SimpleToolProperty toolProperty = getToolProperty(stack);
+        ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolAttackDamage();
     }
 
     default float getMaterialAttackSpeed(ItemStack stack) {
-        SimpleToolProperty toolProperty = getToolProperty(stack);
+        ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0F : toolProperty.getToolAttackSpeed();
     }
 
     default int getMaterialDurability(ItemStack stack) {
-        SimpleToolProperty toolProperty = getToolProperty(stack);
+        ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolDurability() * toolProperty.getDurabilityMultiplier();
     }
 
     default int getMaterialEnchantability(ItemStack stack) {
-        SimpleToolProperty toolProperty = getToolProperty(stack);
+        ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolEnchantability();
     }
 
     default int getMaterialHarvestLevel(ItemStack stack) {
-        SimpleToolProperty toolProperty = getToolProperty(stack);
+        ToolProperty toolProperty = getToolProperty(stack);
         return toolProperty == null ? 0 : toolProperty.getToolHarvestLevel();
     }
 
@@ -886,7 +886,7 @@ public interface IGTTool extends ItemUIFactory, IAEWrench, IToolWrench, IToolHam
             }
         }
 
-        SimpleToolProperty property = getToolProperty(stack);
+        ToolProperty property = getToolProperty(stack);
         if (property == null) return false;
 
         // Check for any special enchantments specified by the material of this Tool

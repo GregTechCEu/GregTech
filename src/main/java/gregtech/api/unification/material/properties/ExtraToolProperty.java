@@ -15,7 +15,7 @@ public class ExtraToolProperty implements IMaterialProperty {
      */
     private final Map<String, OverrideToolProperty> overrideMap;
 
-    public static class OverrideToolProperty extends SimpleToolProperty {
+    public static class OverrideToolProperty extends ToolProperty {
 
         public OverrideToolProperty() {
             this.setToolSpeed(Float.NaN);
@@ -40,9 +40,9 @@ public class ExtraToolProperty implements IMaterialProperty {
             throw new UnsupportedOperationException();
         }
 
-        private SimpleToolProperty override(@NotNull SimpleToolProperty property) {
+        private ToolProperty override(@NotNull ToolProperty property) {
             // copy to prevent the previous map is produced
-            SimpleToolProperty result = new SimpleToolProperty(property);
+            ToolProperty result = new ToolProperty(property);
 
             // Set the floating point number fields
             if (!Float.isNaN(this.getToolSpeed()))
@@ -85,10 +85,10 @@ public class ExtraToolProperty implements IMaterialProperty {
         return getOverrideProperty(toolId) != null;
     }
 
-    public SimpleToolProperty getOverriddenResult(String toolId, @Nullable ToolProperty toolProperty) {
-        if (toolProperty == null) toolProperty = new ToolProperty();
+    public ToolProperty getOverriddenResult(String toolId, @Nullable MaterialToolProperty materialToolProperty) {
+        if (materialToolProperty == null) materialToolProperty = new MaterialToolProperty();
         return overrideMap.getOrDefault(toolId, new OverrideToolProperty())
-                .override(toolProperty);
+                .override(materialToolProperty);
     }
 
     @Override

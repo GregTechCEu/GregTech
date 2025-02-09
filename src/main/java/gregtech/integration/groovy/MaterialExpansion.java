@@ -8,9 +8,9 @@ import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.ExtraToolProperty;
 import gregtech.api.unification.material.properties.FluidProperty;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 
 import net.minecraft.enchantment.Enchantment;
 
@@ -97,7 +97,7 @@ public class MaterialExpansion {
     // Tool Property //
     ///////////////////////////////////
     public static float toolSpeed(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolSpeed();
         } else logError(m, "get the tool speed", "Tool");
@@ -105,7 +105,7 @@ public class MaterialExpansion {
     }
 
     public static float attackDamage(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolAttackDamage();
         } else logError(m, "get the tool attack damage", "Tool");
@@ -113,7 +113,7 @@ public class MaterialExpansion {
     }
 
     public static int toolDurability(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolDurability();
         } else logError(m, "get the tool durability", "Tool");
@@ -121,7 +121,7 @@ public class MaterialExpansion {
     }
 
     public static int toolHarvestLevel(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolHarvestLevel();
         } else logError(m, "get the tool harvest level", "Tool");
@@ -129,7 +129,7 @@ public class MaterialExpansion {
     }
 
     public static int toolEnchantability(Material m) {
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             return prop.getToolEnchantability();
         } else logError(m, "get the tool enchantability", "Tool");
@@ -142,7 +142,7 @@ public class MaterialExpansion {
 
     public static void addScaledToolEnchantment(Material m, Enchantment enchantment, int level, double levelGrowth) {
         if (checkFrozen("add tool enchantment")) return;
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             prop.addEnchantmentForTools(enchantment, level, levelGrowth);
         } else logError(m, "change tool enchantments", "Tool");
@@ -176,7 +176,7 @@ public class MaterialExpansion {
                                     int enchantability, int toolHarvestLevel,
                                     boolean shouldIngoreCraftingTools) {
         if (checkFrozen("set tool stats")) return;
-        ToolProperty prop = m.getProperty(PropertyKey.TOOL);
+        MaterialToolProperty prop = m.getProperty(PropertyKey.TOOL);
         if (prop != null) {
             prop.setToolSpeed(toolSpeed);
             prop.setToolAttackDamage(toolAttackDamage);
