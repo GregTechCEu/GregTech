@@ -83,7 +83,8 @@ public class GTGuis {
     }
 
     public static PopupPanel defaultPopupPanel(String name) {
-        return new PopupPanel(name);
+        return new PopupPanel(name)
+                .size(DEFAULT_WIDTH, DEFAULT_HIEGHT);
     }
 
     public static PopupPanel defaultPopupPanel(String name, boolean disableBelow,
