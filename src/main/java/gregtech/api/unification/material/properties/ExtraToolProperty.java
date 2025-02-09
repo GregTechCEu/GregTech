@@ -82,7 +82,7 @@ public class ExtraToolProperty implements IMaterialProperty {
     }
 
     public boolean hasOverrideProperty(String toolId) {
-        return getOverrideProperty(toolId) != null;
+        return this.overrideMap.containsKey(toolId);
     }
 
     public ToolProperty getOverriddenResult(String toolId, @Nullable MaterialToolProperty materialToolProperty) {
