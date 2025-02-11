@@ -10,7 +10,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
-import gregtech.api.unification.material.properties.ToolProperty;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Mods;
@@ -153,7 +153,7 @@ public class CTMaterialBuilder {
     public CTMaterialBuilder toolStats(float speed, float damage, int durability, int harvestLevel,
                                        @Optional int enchantability) {
         if (enchantability == 0) enchantability = 10;
-        backingBuilder.toolStats(ToolProperty.Builder.of(speed, damage, durability, harvestLevel)
+        backingBuilder.toolStats(MaterialToolProperty.Builder.of(speed, damage, durability, harvestLevel)
                 .enchantability(enchantability).build());
         return this;
     }

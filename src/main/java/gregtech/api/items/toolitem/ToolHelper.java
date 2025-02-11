@@ -10,8 +10,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.function.QuintFunction;
@@ -230,11 +230,11 @@ public final class ToolHelper {
         toolTag.setInteger(HARVEST_LEVEL_KEY, harvestLevel);
         toolTag.setFloat(TOOL_SPEED_KEY, toolSpeed);
         toolTag.setFloat(ATTACK_DAMAGE_KEY, attackDamage);
-        ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
-        if (toolProperty != null) {
-            toolProperty.getEnchantments().forEach((enchantment, level) -> {
+        MaterialToolProperty materialToolProperty = material.getProperty(PropertyKey.TOOL);
+        if (materialToolProperty != null) {
+            materialToolProperty.getEnchantments().forEach((enchantment, level) -> {
                 if (stack.getItem().canApplyAtEnchantingTable(stack, enchantment)) {
-                    stack.addEnchantment(enchantment, level.getLevel(toolProperty.getToolHarvestLevel()));
+                    stack.addEnchantment(enchantment, level.getLevel(materialToolProperty.getToolHarvestLevel()));
                 }
             });
         }

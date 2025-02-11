@@ -7,7 +7,7 @@ import net.minecraft.enchantment.Enchantment;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 
-public class ToolProperty implements IMaterialProperty {
+public class ToolProperty {
 
     /**
      * Harvest speed of tools made from this Material.
@@ -49,7 +49,12 @@ public class ToolProperty implements IMaterialProperty {
      * <p>
      * Default: 10
      */
-    private int enchantability = 10;
+    private int enchantability;
+
+    /**
+     * A multiplier to the base durability for this material Mostly for modpack makers
+     */
+    private int durabilityMultiplier;
 
     /**
      * If crafting tools should not be made from this material
@@ -62,31 +67,40 @@ public class ToolProperty implements IMaterialProperty {
     private boolean isUnbreakable;
 
     /**
-     * If tools made of this material should be "magnetic," meaning items go
-     * directly into the player's inventory instead of dropping on the ground.
+     * If tools made of this material should be "magnetic," meaning items go directly into the player's inventory
+     * instead of dropping on the ground.
      */
     private boolean isMagnetic;
 
     /**
-     * A multiplier to the base durability for this material
-     * Mostly for modpack makers
-     */
-    private int durabilityMultiplier = 1;
-
-    /**
      * Enchantment to be applied to tools made from this Material.
      */
-    private final Object2ObjectMap<Enchantment, EnchantmentLevel> enchantments = new Object2ObjectArrayMap<>();
+    private final Object2ObjectMap<Enchantment, EnchantmentLevel> enchantments;
 
     public ToolProperty(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
         this.harvestSpeed = harvestSpeed;
         this.attackDamage = attackDamage;
         this.durability = durability;
         this.harvestLevel = harvestLevel;
+        enchantments = new Object2ObjectArrayMap<>();
     }
 
     public ToolProperty() {
         this(1.0F, 1.0F, 100, 2);
+    }
+
+    public ToolProperty(ToolProperty property) {
+        harvestSpeed = property.harvestSpeed;
+        attackDamage = property.attackDamage;
+        attackSpeed = property.attackSpeed;
+        durability = property.durability;
+        harvestLevel = property.harvestLevel;
+        enchantability = property.enchantability;
+        durabilityMultiplier = property.durabilityMultiplier;
+        ignoreCraftingTools = property.ignoreCraftingTools;
+        isUnbreakable = property.isUnbreakable;
+        isMagnetic = property.isMagnetic;
+        enchantments = new Object2ObjectArrayMap<>(property.enchantments);
     }
 
     public float getToolSpeed() {
@@ -173,68 +187,11 @@ public class ToolProperty implements IMaterialProperty {
         return durabilityMultiplier;
     }
 
-    @Override
-    public void verifyProperty(MaterialProperties properties) {
-        if (!properties.hasProperty(PropertyKey.GEM)) properties.ensureSet(PropertyKey.INGOT, true);
-    }
-
     public void addEnchantmentForTools(Enchantment enchantment, int level) {
         this.addEnchantmentForTools(enchantment, level, 0);
     }
 
     public void addEnchantmentForTools(Enchantment enchantment, double level, double levelGrowth) {
         enchantments.put(enchantment, new EnchantmentLevel(level, levelGrowth));
-    }
-
-    public static class Builder {
-
-        private final ToolProperty toolProperty;
-
-        public static Builder of(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
-            return new Builder(harvestSpeed, attackDamage, durability, harvestLevel);
-        }
-
-        private Builder(float harvestSpeed, float attackDamage, int durability, int harvestLevel) {
-            toolProperty = new ToolProperty(harvestSpeed, attackDamage, durability, harvestLevel);
-        }
-
-        public Builder enchantability(int enchantability) {
-            toolProperty.setToolEnchantability(enchantability);
-            return this;
-        }
-
-        public Builder attackSpeed(float attackSpeed) {
-            toolProperty.setToolAttackSpeed(attackSpeed);
-            return this;
-        }
-
-        public Builder ignoreCraftingTools() {
-            toolProperty.setShouldIgnoreCraftingTools(true);
-            return this;
-        }
-
-        public Builder unbreakable() {
-            toolProperty.setUnbreakable(true);
-            return this;
-        }
-
-        public Builder enchantment(Enchantment enchantment, int level) {
-            toolProperty.addEnchantmentForTools(enchantment, level);
-            return this;
-        }
-
-        public Builder magnetic() {
-            toolProperty.setMagnetic(true);
-            return this;
-        }
-
-        public Builder durabilityMultiplier(int multiplier) {
-            toolProperty.setDurabilityMultiplier(multiplier);
-            return this;
-        }
-
-        public ToolProperty build() {
-            return toolProperty;
-        }
     }
 }

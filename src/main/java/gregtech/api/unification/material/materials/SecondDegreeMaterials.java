@@ -4,8 +4,8 @@ import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty.GasTier;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 
 import net.minecraft.init.Enchantments;
 
@@ -106,7 +106,7 @@ public class SecondDegreeMaterials {
                 .color(0x6E6E6E).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_GEAR)
                 .components(Steel, 1)
-                .toolStats(ToolProperty.Builder.of(6.0F, 4.0F, 1024, 3)
+                .toolStats(MaterialToolProperty.Builder.of(6.0F, 4.0F, 1024, 3)
                         .attackSpeed(0.3F).enchantability(33)
                         .enchantment(Enchantments.LOOTING, 3)
                         .enchantment(Enchantments.FORTUNE, 3).build())
@@ -119,7 +119,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME,
                         GENERATE_SPRING, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Steel, 1, Tungsten, 1)
-                .toolStats(ToolProperty.Builder.of(9.0F, 7.0F, 2048, 4)
+                .toolStats(MaterialToolProperty.Builder.of(9.0F, 7.0F, 2048, 4)
                         .enchantability(14).build())
                 .rotorStats(8.0f, 4.0f, 2560)
                 .fluidPipeProperties(3587, 225, true, true, false, false)
@@ -136,7 +136,7 @@ public class SecondDegreeMaterials {
                 .color(0xB4B4A0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Brass, 7, Aluminium, 1, Cobalt, 1)
-                .toolStats(ToolProperty.Builder.of(2.5F, 2.0F, 1024, 2)
+                .toolStats(MaterialToolProperty.Builder.of(2.5F, 2.0F, 1024, 2)
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(8.0f, 2.0f, 256)
                 .itemPipeProperties(2048, 1)
@@ -287,7 +287,7 @@ public class SecondDegreeMaterials {
                 .color(0xc0c0c0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_DOUBLE_PLATE, GENERATE_FOIL, GENERATE_GEAR)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
-                .toolStats(ToolProperty.Builder.of(3.0F, 3.0F, 1536, 3)
+                .toolStats(MaterialToolProperty.Builder.of(3.0F, 3.0F, 1536, 3)
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(7.0f, 3.0f, 1920)
                 .fluidPipeProperties(2073, 50, true, true, false, false)
@@ -328,7 +328,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_RING, GENERATE_ROTOR, GENERATE_SMALL_GEAR,
                         GENERATE_FRAME, GENERATE_DENSE, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DOUBLE_PLATE)
                 .components(Naquadah, 2, Osmiridium, 1, Trinium, 1)
-                .toolStats(ToolProperty.Builder.of(40.0F, 12.0F, 3072, 5)
+                .toolStats(MaterialToolProperty.Builder.of(40.0F, 12.0F, 3072, 5)
                         .attackSpeed(0.3F).enchantability(33).magnetic().build())
                 .rotorStats(8.0f, 5.0f, 5120)
                 .cableProperties(V[UV], 2, 4)
@@ -383,7 +383,7 @@ public class SecondDegreeMaterials {
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
-                .toolStats(ToolProperty.Builder.of(0.0F, 1.0F, 64, 1)
+                .toolStats(MaterialToolProperty.Builder.of(0.0F, 1.0F, 64, 1)
                         .enchantability(5).ignoreCraftingTools()
                         .enchantment(Enchantments.FIRE_ASPECT, 2).build())
                 .build();

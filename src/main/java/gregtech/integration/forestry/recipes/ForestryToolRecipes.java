@@ -2,8 +2,8 @@ package gregtech.integration.forestry.recipes;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.integration.forestry.ForestryModule;
@@ -18,7 +18,7 @@ public class ForestryToolRecipes {
         OrePrefix.stick.addProcessingHandler(PropertyKey.TOOL, ForestryToolRecipes::processScoop);
     }
 
-    private static void processScoop(OrePrefix prefix, Material material, ToolProperty property) {
+    private static void processScoop(OrePrefix prefix, Material material, MaterialToolProperty property) {
         ToolRecipeHandler.addToolRecipe(material, ForestryModule.SCOOP, false,
                 "SWS", "SSS", "xSh",
                 'S', new UnificationEntry(OrePrefix.stick, material),
