@@ -5,20 +5,19 @@ import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.SuppliedImageWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -32,7 +31,6 @@ import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -53,6 +51,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.UITexture;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -62,12 +69,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
-                                implements IOpticalComputationProvider, IControllable, IProgressBarMultiblock {
+                                implements IOpticalComputationProvider, IControllable, ProgressBarMultiblock {
 
     private static final double IDLE_TEMPERATURE = 200;
     private static final double DAMAGE_TEMPERATURE = 1000;
@@ -82,12 +88,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
-    private final ProgressWidget.TimedProgressSupplier progressSupplier;
+    private final gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier progressSupplier;
 
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
-        this.progressSupplier = new ProgressWidget.TimedProgressSupplier(200, 47, false);
+        this.progressSupplier = new gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier(200, 47, false);
         this.hpcaHandler = new HPCAGridHandler(this);
     }
 
@@ -353,106 +359,79 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        ModularUI.Builder builder = super.createUITemplate(entityPlayer);
-
-        // Create the hover grid
-        builder.widget(new ProgressWidget(
-                () -> hpcaHandler.getAllocatedCWUt() > 0 ? progressSupplier.getAsDouble() : 0,
-                74, 57, 47, 47, GuiTextures.HPCA_COMPONENT_OUTLINE, ProgressWidget.MoveType.HORIZONTAL)
-                        .setIgnoreColor(true)
-                        .setHoverTextConsumer(hpcaHandler::addInfo));
-        int startX = 76;
-        int startY = 59;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                final int index = i * 3 + j;
-                Supplier<IGuiTexture> textureSupplier = () -> hpcaHandler.getComponentTexture(index);
-                builder.widget(new SuppliedImageWidget(startX + (15 * j), startY + (15 * i), 13, 13, textureSupplier)
-                        .setIgnoreColor(true));
-            }
-        }
-        return builder;
+    protected MultiblockUIFactory createUIFactory() {
+        return super.createUIFactory()
+                .addScreenChildren(iWidgets -> iWidgets.add(new Grid()
+                        .coverChildren()
+                        .leftRel(0.5f)
+                        .bottom(4)
+                        .minElementMargin(1)
+                        .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
+                                .asWidget()
+                                // could add tooltips here showing the name of the component
+                                .size(18))));
     }
 
     @Override
-    protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0) // transform into two-state system for
-                // display
+    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+        builder.setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0)
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.data_bank.providing")
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        // Energy Usage
-                        ITextComponent voltageName = new TextComponentString(
-                                GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]);
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.hpca.energy",
-                                TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt),
-                                TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt()),
-                                voltageName));
+                .addCustom(richText -> {
+                    if (!isStructureFormed()) return;
 
-                        // Provided Computation
-                        ITextComponent cwutInfo = TextComponentUtil.stringWithColor(
-                                TextFormatting.AQUA,
-                                hpcaHandler.cachedCWUt + " / " + hpcaHandler.getMaxCWUt() + " CWU/t");
-                        tl.add(TextComponentUtil.translationWithColor(
-                                TextFormatting.GRAY,
-                                "gregtech.multiblock.hpca.computation",
-                                cwutInfo));
-                    }
+                    // Energy Usage
+                    String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())];
+                    richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.hpca.energy",
+                            TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt),
+                            TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt()),
+                            voltageName));
+
+                    // Provided Computation
+                    richText.add(KeyUtil.lang("gregtech.multiblock.hpca.computation",
+                            hpcaHandler.cachedCWUt, hpcaHandler.getMaxCWUt()));
                 })
                 .addWorkingStatusLine();
     }
 
-    private TextFormatting getDisplayTemperatureColor() {
-        if (temperature < 500) {
-            return TextFormatting.GREEN;
-        } else if (temperature < 750) {
-            return TextFormatting.YELLOW;
-        }
-        return TextFormatting.RED;
-    }
-
     @Override
-    protected void addWarningText(List<ITextComponent> textList) {
-        MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(hasNotEnoughEnergy)
-                .addCustom(tl -> {
-                    if (isStructureFormed()) {
-                        if (temperature > 500) {
-                            // Temperature warning
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.YELLOW,
-                                    "gregtech.multiblock.hpca.warning_temperature"));
+    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+        builder.addLowPowerLine(hasNotEnoughEnergy)
+                .addCustom(richText -> {
+                    if (!isStructureFormed()) return;
 
-                            // Active cooler overdrive warning
-                            tl.add(TextComponentUtil.translationWithColor(
-                                    TextFormatting.GRAY,
-                                    "gregtech.multiblock.hpca.warning_temperature_active_cool"));
-                        }
+                    if (temperature > 500) {
+                        // Temperature warning
+                        richText.add(KeyUtil.lang(TextFormatting.YELLOW,
+                                "gregtech.multiblock.hpca.warning_temperature"));
 
-                        // Structure warnings
-                        hpcaHandler.addWarnings(tl);
+                        // Active cooler overdrive warning
+                        richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                                "gregtech.multiblock.hpca.warning_temperature_active_cool"));
                     }
+
+                    // Structure warnings
+                    // hpcaHandler.addWarnings(richText);
+                    hpcaHandler.addWarnings2(richText);
                 })
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override
-    protected void addErrorText(List<ITextComponent> textList) {
-        super.addErrorText(textList);
-        if (isStructureFormed()) {
+    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+        builder.addCustom(richText -> {
+            if (!isStructureFormed()) return;
+
             if (temperature > 1000) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
+                richText.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.hpca.error_temperature"));
             }
-            hpcaHandler.addErrors(textList);
-        }
+            // hpcaHandler.addErrors(textList);
+            hpcaHandler.addErrors2(richText);
+        });
     }
 
     @Override
@@ -465,7 +444,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected boolean shouldShowVoidingModeButton() {
+    public boolean shouldShowVoidingModeButton() {
         return false;
     }
 
@@ -529,40 +508,61 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public int getNumProgressBars() {
+    public int getProgressBarCount() {
         return 2;
     }
 
     @Override
-    public double getFillPercentage(int index) {
-        return index == 0 ? 1.0 * hpcaHandler.cachedCWUt / hpcaHandler.getMaxCWUt() :
-                Math.min(1.0, temperature / DAMAGE_TEMPERATURE);
-    }
+    public @NotNull ProgressWidget createProgressBar(PanelSyncManager panelSyncManager,
+                                                     int index) {
+        return switch (index) {
+            case 0 -> {
+                IntSyncValue currentCWUtValue = new IntSyncValue(() -> hpcaHandler.cachedCWUt);
+                IntSyncValue maxCWUtValue = new IntSyncValue(hpcaHandler::getMaxCWUt);
+                panelSyncManager.syncValue("current_cwut", currentCWUtValue);
+                panelSyncManager.syncValue("max_cwut", maxCWUtValue);
 
-    @Override
-    public TextureArea getProgressBarTexture(int index) {
-        return index == 0 ? GuiTextures.PROGRESS_BAR_HPCA_COMPUTATION : GuiTextures.PROGRESS_BAR_FUSION_HEAT;
-    }
+                yield new ProgressWidget()
+                        .progress(() -> 1.0 * currentCWUtValue.getIntValue() / maxCWUtValue.getIntValue())
+                        .texture(GTGuiTextures.PROGRESS_BAR_HPCA_COMPUTATION, MultiblockUIFactory.Bars.HALF_WIDTH)
+                        .tooltipAutoUpdate(true)
+                        .tooltipBuilder(t -> {
+                            if (isStructureFormed()) {
+                                t.addLine(IKey.lang("gregtech.multiblock.hpca.computation",
+                                        currentCWUtValue.getIntValue(), maxCWUtValue.getIntValue()));
+                            } else {
+                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                            }
+                        });
+            }
+            case 1 -> {
+                DoubleSyncValue temperatureValue = new DoubleSyncValue(() -> temperature);
+                panelSyncManager.syncValue("temperature", temperatureValue);
 
-    @Override
-    public void addBarHoverText(List<ITextComponent> hoverList, int index) {
-        if (index == 0) {
-            ITextComponent cwutInfo = TextComponentUtil.stringWithColor(
-                    TextFormatting.AQUA,
-                    hpcaHandler.cachedCWUt + " / " + hpcaHandler.getMaxCWUt() + " CWU/t");
-            hoverList.add(TextComponentUtil.translationWithColor(
-                    TextFormatting.GRAY,
-                    "gregtech.multiblock.hpca.computation",
-                    cwutInfo));
-        } else {
-            ITextComponent tempInfo = TextComponentUtil.stringWithColor(
-                    getDisplayTemperatureColor(),
-                    Math.round(temperature / 10.0D) + "°C");
-            hoverList.add(TextComponentUtil.translationWithColor(
-                    TextFormatting.GRAY,
-                    "gregtech.multiblock.hpca.temperature",
-                    tempInfo));
-        }
+                yield new ProgressWidget()
+                        .progress(() -> Math.min(1.0, temperatureValue.getDoubleValue() / DAMAGE_TEMPERATURE))
+                        .texture(GTGuiTextures.PROGRESS_BAR_FUSION_HEAT, MultiblockUIFactory.Bars.HALF_WIDTH)
+                        .tooltipAutoUpdate(true)
+                        .tooltipBuilder(t -> {
+                            if (isStructureFormed()) {
+                                double temp = temperatureValue.getDoubleValue();
+                                int degrees = (int) Math.round(temp / 10.0);
+
+                                // TODO working dynamic color substitutions into IKey.lang
+                                if (temp < 500) {
+                                    t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.low", degrees));
+                                } else if (temp < 750) {
+                                    t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.medium", degrees));
+                                } else {
+                                    t.addLine(IKey.lang("gregtech.multiblock.hpca.temperature.high", degrees));
+                                }
+                            } else {
+                                t.addLine(IKey.lang("gregtech.multiblock.invalid_structure"));
+                            }
+                        });
+            }
+            default -> throw new IllegalStateException("Invalid index received " + index);
+        };
     }
 
     // Handles the logic of this structure's specific HPCA component grid
@@ -904,11 +904,50 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
+        public void addWarnings2(List<IDrawable> richText) {
+            List<IKey> warnings = new ArrayList<>();
+            if (numBridges > 1) {
+                warnings.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.hpca.warning_multiple_bridges"));
+            }
+            if (computationProviders.isEmpty()) {
+                warnings.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.hpca.warning_no_computation"));
+            }
+            if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
+                warnings.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.hpca.warning_low_cooling"));
+            }
+            if (!warnings.isEmpty()) {
+                richText.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.hpca.warning_structure_header"));
+                richText.addAll(warnings);
+            }
+        }
+
+        public void addErrors2(List<IDrawable> richText) {
+            for (IHPCAComponentHatch component : components) {
+                if (component.isDamaged()) {
+                    richText.add(KeyUtil.lang(TextFormatting.RED,
+                            "gregtech.multiblock.hpca.error_damaged"));
+                    return;
+                }
+            }
+        }
+
+        @Deprecated
         public TextureArea getComponentTexture(int index) {
             if (components.size() <= index) {
                 return GuiTextures.BLANK_TRANSPARENT;
             }
             return components.get(index).getComponentIcon();
+        }
+
+        public UITexture getComponentTexture2(int index) {
+            if (components.size() <= index) {
+                return GTGuiTextures.BLANK_TRANSPARENT;
+            }
+            return components.get(index).getComponentIcon2();
         }
 
         public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing frontFacing,
