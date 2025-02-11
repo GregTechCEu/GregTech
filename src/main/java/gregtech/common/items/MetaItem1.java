@@ -58,6 +58,7 @@ import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavi
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
 import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.client.resources.I18n;
@@ -190,58 +191,73 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Fluid Cells: ID 78-88
         FLUID_CELL = addItem(78, "fluid_cell")
-                .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, false),
+                .addComponents(new FilteredFluidStats(1000, 1800, 121, true, false, false, false),
                         new ItemFluidContainer(true))
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal")
-                .addComponents(new FilteredFluidStats(1000, 1800, true, false, false, false, true),
+                .addComponents(new FilteredFluidStats(1000, 1800, 121, true, false, false, true),
                         new ItemFluidContainer(true))
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
+        MaterialFluidProperties properties = Materials.Steel.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
+
         FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
-                .addComponents(new FilteredFluidStats(8000,
-                        Materials.Steel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
-                        false, false, true),
+                .addComponents(new FilteredFluidStats(8000, properties.getMaxFluidTemperature(),
+                        properties.getMinFluidTemperature(), true, false,
+                        false, true),
                         new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
+        properties = Materials.Aluminium.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
+
         FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
                 .addComponents(new FilteredFluidStats(32000,
-                        Materials.Aluminium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, false,
-                        false, false, true),
+                        properties.getMaxFluidTemperature(), properties.getMinFluidTemperature(), true, false,
+                        false, true),
                         new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, M * 4))) // ingot * 4
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
+        properties = Materials.StainlessSteel.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
+
         FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
                 .addComponents(new FilteredFluidStats(64000,
-                        Materials.StainlessSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
-                        true, true, false, true),
+                        properties.getMaxFluidTemperature(), properties.getMinFluidTemperature(), true,
+                        true, false, true),
                         new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
+        properties = Materials.Titanium.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
+
         FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
                 .addComponents(new FilteredFluidStats(128000,
-                        Materials.Titanium.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true, true,
-                        false, false, true),
+                        properties.getMaxFluidTemperature(), properties.getMinFluidTemperature(), true, true,
+                        false, true),
                         new ItemFluidContainer(true))
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, M * 6))) // ingot * 6
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
+        properties = Materials.TungstenSteel.getProperty(PropertyKey.PIPENET_PROPERTIES)
+                .getProperty(MaterialFluidProperties.KEY);
+
         FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
                 .addComponents(new FilteredFluidStats(512000,
-                        Materials.TungstenSteel.getProperty(PropertyKey.FLUID_PIPE).getMaxFluidTemperature(), true,
-                        true, false, false, true),
+                        properties.getMaxFluidTemperature(), properties.getMinFluidTemperature(), true,
+                        true, false, true),
                         new ItemFluidContainer(true))
                 .setMaxStackSize(32)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, M * 8))) // ingot * 8
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
 
         FLUID_CELL_GLASS_VIAL = addItem(85, "fluid_cell.glass_vial")
-                .addComponents(new FilteredFluidStats(1000, 1200, false, true, false, false, true),
+                .addComponents(new FilteredFluidStats(1000, 1200, 213, false, true, false, true),
                         new ItemFluidContainer())
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Glass, M / 4))) // small dust
                 .setCreativeTabs(GTCreativeTabs.TAB_GREGTECH_TOOLS);
@@ -1148,5 +1164,7 @@ public class MetaItem1 extends StandardMetaItem {
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
                 .setMaxStackSize(1);
+
+        LASER_REFLECTOR = addItem(1005, "laser_reflector");
     }
 }

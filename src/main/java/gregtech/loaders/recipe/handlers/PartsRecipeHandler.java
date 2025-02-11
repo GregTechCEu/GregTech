@@ -18,6 +18,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -150,7 +151,8 @@ public class PartsRecipeHandler {
                     OreDictUnifier.get(fineWirePrefix, material),
                     'x', new UnificationEntry(OrePrefix.foil, material));
 
-        if (material.hasProperty(PropertyKey.WIRE)) {
+        if (material.hasProperty(PropertyKey.PIPENET_PROPERTIES) &&
+                material.getProperty(PropertyKey.PIPENET_PROPERTIES).hasProperty(MaterialEnergyProperties.KEY)) {
             RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
                     .input(OrePrefix.wireGtSingle, material)
                     .circuitMeta(1)

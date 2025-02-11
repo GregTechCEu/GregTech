@@ -27,18 +27,6 @@ public class MigrateMTEBlockTE implements IFixableData {
     private static final String META_ID = "MetaId";
     private static final String META_TILE_ENTITY = "MetaTileEntity";
 
-    private static final String X = "x";
-    private static final String Y = "y";
-    private static final String Z = "z";
-    private static final String X_POS = "xPos";
-    private static final String Z_POS = "zPos";
-    private static final String CHUNK_SECTION_Y = "Y";
-    private static final String CHUNK_SECTION_BLOCKS = "Blocks";
-    private static final String CHUNK_SECTION_DATA = "Data";
-    private static final String CHUNK_SECTION_ADD = "Add";
-
-    private static final int BLOCKS_PER_SECTION = 4096;
-
     private final MTEMigrator migrator;
 
     public MigrateMTEBlockTE(@NotNull MTEMigrator migrator) {

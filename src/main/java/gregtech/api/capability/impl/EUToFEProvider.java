@@ -57,7 +57,7 @@ public class EUToFEProvider extends CapabilityCompatProvider {
         }
 
         @Override
-        public long acceptEnergyFromNetwork(EnumFacing facing, long voltage, long amperage) {
+        public long acceptEnergyFromNetwork(EnumFacing facing, long voltage, long amperage, boolean simulate) {
             int receive = 0;
 
             // Try to use the internal buffer before consuming a new packet
@@ -70,14 +70,14 @@ public class EUToFEProvider extends CapabilityCompatProvider {
 
                 // Internal Buffer could provide the max RF the consumer could consume
                 if (feBuffer > receive) {
-                    feBuffer -= receive;
-                    energyStorage.receiveEnergy(receive, false);
+                    if (!simulate) feBuffer -= receive;
+                    energyStorage.receiveEnergy(receive, simulate);
                     return 0;
 
                     // Buffer could not provide max value, save the remainder and continue processing
                 } else {
                     receive = safeCastLongToInt(feBuffer);
-                    feBuffer = 0;
+                    if (!simulate) feBuffer = 0;
                 }
             }
 
@@ -95,13 +95,13 @@ public class EUToFEProvider extends CapabilityCompatProvider {
 
                 // Only able to consume our buffered amount
                 if (consumable == receive) {
-                    energyStorage.receiveEnergy(consumable, false);
+                    energyStorage.receiveEnergy(consumable, simulate);
                     return 0;
                 }
 
                 // Able to consume our full packet as well as our remainder buffer
                 if (consumable == maximalValue + receive) {
-                    energyStorage.receiveEnergy(consumable, false);
+                    energyStorage.receiveEnergy(consumable, simulate);
                     return amperage;
                 }
 
@@ -109,13 +109,13 @@ public class EUToFEProvider extends CapabilityCompatProvider {
 
                 // Able to consume buffered amount plus an even amount of packets (no buffer needed)
                 if (newPower % maxPacket == 0) {
-                    return energyStorage.receiveEnergy(consumable, false) / maxPacket;
+                    return energyStorage.receiveEnergy(consumable, simulate) / maxPacket;
                 }
 
                 // Able to consume buffered amount plus some amount of power with a packet remainder
                 int ampsToConsume = safeCastLongToInt((newPower / maxPacket) + 1);
-                feBuffer = safeCastLongToInt((maxPacket * ampsToConsume) - consumable);
-                energyStorage.receiveEnergy(consumable, false);
+                if (!simulate) feBuffer = safeCastLongToInt((maxPacket * ampsToConsume) - consumable);
+                energyStorage.receiveEnergy(consumable, simulate);
                 return ampsToConsume;
 
                 // Else try to draw 1 full packet
@@ -129,19 +129,19 @@ public class EUToFEProvider extends CapabilityCompatProvider {
 
                 // Able to accept the full amount of power
                 if (consumable == maximalValue) {
-                    energyStorage.receiveEnergy(consumable, false);
+                    energyStorage.receiveEnergy(consumable, simulate);
                     return amperage;
                 }
 
                 // Able to consume an even amount of packets
                 if (consumable % maxPacket == 0) {
-                    return energyStorage.receiveEnergy(consumable, false) / maxPacket;
+                    return energyStorage.receiveEnergy(consumable, simulate) / maxPacket;
                 }
 
                 // Able to consume power with some amount of power remainder in the packet
                 int ampsToConsume = safeCastLongToInt((consumable / maxPacket) + 1);
-                feBuffer = safeCastLongToInt((maxPacket * ampsToConsume) - consumable);
-                energyStorage.receiveEnergy(consumable, false);
+                if (!simulate) feBuffer = safeCastLongToInt((maxPacket * ampsToConsume) - consumable);
+                energyStorage.receiveEnergy(consumable, simulate);
                 return ampsToConsume;
             }
         }

@@ -3,6 +3,8 @@ package gregtech.common.covers;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.util.BlockRenderLayer;
@@ -36,6 +38,11 @@ public class CoverInfiniteWater extends CoverBase implements ITickable {
                             IVertexOperation[] iVertexOperations, @NotNull Cuboid6 cuboid6,
                             @NotNull BlockRenderLayer blockRenderLayer) {
         Textures.INFINITE_WATER.renderSided(getAttachedSide(), cuboid6, ccRenderState, iVertexOperations, matrix4);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.INFINITE_WATER).build();
     }
 
     @Override

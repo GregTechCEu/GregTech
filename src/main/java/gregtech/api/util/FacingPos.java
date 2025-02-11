@@ -7,6 +7,8 @@ import java.util.Objects;
 
 public class FacingPos {
 
+    public static final FacingPos ORIGIN = new FacingPos(BlockPos.ORIGIN, null);
+
     private final BlockPos pos;
     private final EnumFacing facing;
     private final int hashCode;

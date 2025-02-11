@@ -4,6 +4,23 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.VariantItemBlock;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.graphnet.GraphClassRegistrationEvent;
+import gregtech.api.graphnet.logic.ChannelCountLogic;
+import gregtech.api.graphnet.logic.NetLogicRegistrationEvent;
+import gregtech.api.graphnet.logic.ThroughputLogic;
+import gregtech.api.graphnet.logic.WeightFactorLogic;
+import gregtech.api.graphnet.net.BlankNetNode;
+import gregtech.api.graphnet.net.BlockPosNode;
+import gregtech.api.graphnet.net.NetEdge;
+import gregtech.api.graphnet.pipenet.WorldPipeCapConnectionNode;
+import gregtech.api.graphnet.pipenet.WorldPipeNode;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.physical.PipeStructureRegistrationEvent;
+import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.ItemPipeMaterialBlock;
+import gregtech.api.graphnet.pipenet.predicate.BlockedPredicate;
+import gregtech.api.graphnet.pipenet.predicate.FilterPredicate;
+import gregtech.api.graphnet.predicate.NetPredicateRegistrationEvent;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
@@ -21,6 +38,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.AssemblyLineManager;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.TickUtil;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockLamp;
@@ -33,16 +51,22 @@ import gregtech.common.blocks.OreItemBlock;
 import gregtech.common.blocks.StoneVariantBlock;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
-import gregtech.common.pipelike.cable.BlockCable;
-import gregtech.common.pipelike.cable.ItemBlockCable;
-import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
-import gregtech.common.pipelike.itempipe.BlockItemPipe;
-import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.common.pipelike.laser.BlockLaserPipe;
-import gregtech.common.pipelike.laser.ItemBlockLaserPipe;
-import gregtech.common.pipelike.optical.BlockOpticalPipe;
-import gregtech.common.pipelike.optical.ItemBlockOpticalPipe;
+import gregtech.common.pipelike.block.cable.CableBlock;
+import gregtech.common.pipelike.block.cable.CableStructure;
+import gregtech.common.pipelike.block.laser.LaserPipeBlock;
+import gregtech.common.pipelike.block.laser.LaserStructure;
+import gregtech.common.pipelike.block.optical.OpticalPipeBlock;
+import gregtech.common.pipelike.block.optical.OpticalStructure;
+import gregtech.common.pipelike.block.pipe.MaterialPipeBlock;
+import gregtech.common.pipelike.block.pipe.MaterialPipeStructure;
+import gregtech.common.pipelike.net.energy.AmperageLimitLogic;
+import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
+import gregtech.common.pipelike.net.energy.SuperconductorLogic;
+import gregtech.common.pipelike.net.energy.VoltageLimitLogic;
+import gregtech.common.pipelike.net.energy.VoltageLossLogic;
+import gregtech.common.pipelike.net.fluid.FluidContainmentLogic;
+import gregtech.common.pipelike.net.fluid.FluidFlowLogic;
+import gregtech.common.pipelike.net.item.ItemFlowLogic;
 import gregtech.datafix.GTDataFixers;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.loaders.MaterialInfoLoader;
@@ -69,6 +93,7 @@ import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -98,36 +123,13 @@ public class CommonProxy {
                 if (material.hasProperty(PropertyKey.ORE) && !material.hasFlag(MaterialFlags.DISABLE_ORE_BLOCK)) {
                     createOreBlock(material);
                 }
-
-                if (material.hasProperty(PropertyKey.WIRE)) {
-                    for (BlockCable cable : CABLES.get(materialRegistry.getModid())) {
-                        if (!cable.getItemPipeType(null).isCable() ||
-                                !material.getProperty(PropertyKey.WIRE).isSuperconductor())
-                            cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
-                    }
-                }
-                if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
-                    for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) {
-                        if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
-                            pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
-                        }
-                    }
-                }
-                if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
-                    for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) {
-                        if (!pipe.getItemPipeType(pipe.getItem(material)).getOrePrefix().isIgnored(material)) {
-                            pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
-                        }
-                    }
-                }
             }
 
-            for (BlockCable cable : CABLES.get(materialRegistry.getModid())) registry.register(cable);
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid())) registry.register(pipe);
-            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid())) registry.register(pipe);
+            for (CableBlock cable : CABLES.get(materialRegistry.getModid())) registry.register(cable);
+            for (MaterialPipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid())) registry.register(cable);
         }
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(pipe);
-        for (BlockLaserPipe pipe : LASER_PIPES) registry.register(pipe);
+        for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(pipe);
+        for (LaserPipeBlock pipe : LASER_PIPES) registry.register(pipe);
 
         registry.register(LD_ITEM_PIPE);
         registry.register(LD_FLUID_PIPE);
@@ -239,15 +241,13 @@ public class CommonProxy {
         }
 
         for (MaterialRegistry materialRegistry : GregTechAPI.materialManager.getRegistries()) {
-            for (BlockCable cable : CABLES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(cable, ItemBlockCable::new));
-            for (BlockFluidPipe pipe : FLUID_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
-            for (BlockItemPipe pipe : ITEM_PIPES.get(materialRegistry.getModid()))
-                registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+            for (CableBlock cable : CABLES.get(materialRegistry.getModid()))
+                registry.register(createItemBlock(cable, ItemPipeMaterialBlock::new));
+            for (MaterialPipeBlock cable : MATERIAL_PIPES.get(materialRegistry.getModid()))
+                registry.register(createItemBlock(cable, ItemPipeMaterialBlock::new));
         }
-        for (BlockOpticalPipe pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemBlockOpticalPipe::new));
-        for (BlockLaserPipe pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemBlockLaserPipe::new));
+        for (OpticalPipeBlock pipe : OPTICAL_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
+        for (LaserPipeBlock pipe : LASER_PIPES) registry.register(createItemBlock(pipe, ItemPipeBlock::new));
 
         registry.register(createItemBlock(LD_ITEM_PIPE, ItemBlock::new));
         registry.register(createItemBlock(LD_FLUID_PIPE, ItemBlock::new));
@@ -390,6 +390,50 @@ public class CommonProxy {
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void registerPipeStructures(PipeStructureRegistrationEvent event) {
+        CableStructure.register(event);
+        MaterialPipeStructure.register(event);
+        LaserStructure.register(event);
+        OpticalStructure.register(event);
+    }
+
+    @SubscribeEvent
+    public static void registerNetLogics(NetLogicRegistrationEvent event) {
+        event.accept(ChannelCountLogic.TYPE);
+        event.accept(EnergyFlowLogic.TYPE);
+        event.accept(FluidFlowLogic.TYPE);
+        event.accept(ItemFlowLogic.TYPE);
+        event.accept(FluidContainmentLogic.TYPE);
+        event.accept(SuperconductorLogic.TYPE);
+        event.accept(TemperatureLogic.TYPE);
+        event.accept(ThroughputLogic.TYPE);
+        event.accept(WeightFactorLogic.TYPE);
+        event.accept(VoltageLimitLogic.TYPE);
+        event.accept(VoltageLossLogic.TYPE);
+        event.accept(AmperageLimitLogic.TYPE);
+    }
+
+    @SubscribeEvent
+    public static void registerGraphClasses(GraphClassRegistrationEvent event) {
+        event.accept(NetEdge.TYPE);
+        event.accept(WorldPipeNode.TYPE);
+        event.accept(WorldPipeCapConnectionNode.TYPE);
+        event.accept(BlockPosNode.TYPE);
+        event.accept(BlankNetNode.TYPE);
+    }
+
+    @SubscribeEvent
+    public static void registerNetPredicates(NetPredicateRegistrationEvent event) {
+        event.accept(BlockedPredicate.TYPE);
+        event.accept(FilterPredicate.TYPE);
+    }
+
+    @SubscribeEvent
+    public static void updateTickUtil(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) TickUtil.update();
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

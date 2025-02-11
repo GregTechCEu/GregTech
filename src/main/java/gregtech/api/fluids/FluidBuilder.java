@@ -21,6 +21,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import com.google.common.base.Preconditions;
 import io.github.drmanganese.topaddons.reference.Colors;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,6 +98,11 @@ public class FluidBuilder {
         Preconditions.checkArgument(temperature > 0, "temperature must be > 0");
         this.temperature = temperature;
         return this;
+    }
+
+    @ApiStatus.Internal
+    public int currentTemp() {
+        return this.temperature;
     }
 
     /**
@@ -412,7 +418,20 @@ public class FluidBuilder {
     }
 
     private void determineTemperature(@Nullable Material material) {
-        if (temperature != INFER_TEMPERATURE) return;
+        this.temperature = getDeterminedTemperature(material, null);
+    }
+
+    public int getDeterminedTemperature(@Nullable Material material, @Nullable FluidStorageKey key) {
+        FluidState state = this.state;
+        if (state == null) {
+            if (key != null && key.getDefaultFluidState() != null) {
+                state = key.getDefaultFluidState();
+            } else {
+                state = FluidState.LIQUID; // default fallback
+            }
+        }
+        int temperature = this.temperature;
+        if (temperature != INFER_TEMPERATURE) return temperature;
         if (material == null) {
             temperature = ROOM_TEMPERATURE;
         } else {
@@ -441,6 +460,7 @@ public class FluidBuilder {
                 };
             }
         }
+        return temperature;
     }
 
     private void determineColor(@Nullable Material material) {

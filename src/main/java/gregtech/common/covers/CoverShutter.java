@@ -5,6 +5,8 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,10 +15,10 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -39,19 +41,24 @@ public class CoverShutter extends CoverBase implements IControllable {
     }
 
     @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.SHUTTER).build();
+    }
+
+    @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
         return true;
     }
 
     @Override
     public @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                  @NotNull CuboidRayTraceResult hitResult) {
+                                                  @NotNull RayTraceResult hitResult) {
         return EnumActionResult.FAIL;
     }
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         return EnumActionResult.FAIL;
     }
 
@@ -64,19 +71,20 @@ public class CoverShutter extends CoverBase implements IControllable {
     }
 
     @Override
-    public boolean shouldAutoConnectToPipes() {
+    public boolean forcePipeRenderConnection() {
         return false;
     }
 
     @Override
     public boolean canPipePassThrough() {
-        return !isWorkingAllowed;
+        // isWorkingAllowed restriction is applied during edge predication
+        return true;
     }
 
     @Override
     public @NotNull EnumActionResult onSoftMalletClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                       @NotNull CuboidRayTraceResult hitResult) {
-        this.isWorkingAllowed = !this.isWorkingAllowed;
+                                                       @NotNull RayTraceResult hitResult) {
+        setWorkingEnabled(!this.isWorkingAllowed);
         if (!playerIn.world.isRemote) {
             playerIn.sendMessage(new TextComponentTranslation(isWorkingEnabled() ?
                     "cover.shutter.message.enabled" : "cover.shutter.message.disabled"));
@@ -91,7 +99,10 @@ public class CoverShutter extends CoverBase implements IControllable {
 
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
-        isWorkingAllowed = isActivationAllowed;
+        if (isActivationAllowed != isWorkingAllowed) {
+            isWorkingAllowed = isActivationAllowed;
+            markDirty();
+        }
     }
 
     @Override

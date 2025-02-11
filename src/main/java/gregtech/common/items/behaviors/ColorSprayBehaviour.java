@@ -1,11 +1,11 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GradientUtil;
 import gregtech.api.util.Mods;
 import gregtech.core.sound.GTSoundEvents;
@@ -123,8 +123,7 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
         if (Mods.AppliedEnergistics2.isModLoaded()) {
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to recolor if it already is this color
                 if (cable.getColor().ordinal() != color.ordinal()) {
                     cable.recolourBlock(null, AEColor.values()[color.ordinal()], player);
@@ -165,18 +164,16 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour implements IIte
         }
 
         // TileEntityPipeBase special case
-        if (te instanceof IPipeTile) {
-            IPipeTile<?, ?> pipe = (IPipeTile<?, ?>) te;
+        if (te instanceof PipeTileEntity pipe) {
             if (pipe.isPainted()) {
-                pipe.setPaintingColor(-1);
+                pipe.setPaintingColor(-1, false);
                 return true;
             } else return false;
         }
 
         // AE2 cable special case
         if (Mods.AppliedEnergistics2.isModLoaded()) {
-            if (te instanceof TileCableBus) {
-                TileCableBus cable = (TileCableBus) te;
+            if (te instanceof TileCableBus cable) {
                 // do not try to strip color if it is already colorless
                 if (cable.getColor() != AEColor.TRANSPARENT) {
                     cable.recolourBlock(null, AEColor.TRANSPARENT, player);
