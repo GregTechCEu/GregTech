@@ -511,10 +511,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing,
                                 CuboidRayTraceResult hitResult) {
         ItemStack heldStack = playerIn.getHeldItem(hand);
-        if (this instanceof IDataStickIntractable dsi) {
-            if (MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack) && dsi.onDataStickRightClick(playerIn, heldStack)) {
-                return true;
-            }
+
+        if (this instanceof IDataStickIntractable dataStickIntractable &&
+                MetaItems.TOOL_DATA_STICK.isItemEqual(heldStack)) {
+
+            return playerIn.isSneaking() ?
+                    dataStickIntractable.onDataStickShiftRightClick(playerIn, heldStack) :
+                    dataStickIntractable.onDataStickRightClick(playerIn, heldStack);
         }
 
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
@@ -689,14 +692,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
-    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (this instanceof IDataStickIntractable dsi) {
-            ItemStack stack = player.getHeldItemMainhand();
-            if (MetaItems.TOOL_DATA_STICK.isItemEqual(stack)) {
-                dsi.onDataStickLeftClick(player, stack);
-            }
-        }
-    }
+    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {}
 
     /**
      * @return true if the player must sneak to rotate this metatileentity, otherwise false
