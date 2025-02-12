@@ -114,8 +114,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     @Override
     public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityCable) {
-            TileEntityCable cable = (TileEntityCable) tile;
+        if (tile instanceof TileEntityCable cable) {
             int temp = cable.getTemperature();
             // max light at 5000 K
             // min light at 500 K
@@ -165,9 +164,10 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
                                   @NotNull Entity entityIn) {
         super.onEntityCollision(worldIn, pos, state, entityIn);
         if (worldIn.isRemote) return;
-        Insulation insulation = getPipeTileEntity(worldIn, pos).getPipeType();
-        if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
-            EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
+        IPipeTile<Insulation, WireProperties> pipeTile = getPipeTileEntity(worldIn, pos);
+        if (pipeTile == null) return;
+        Insulation insulation = pipeTile.getPipeType();
+        if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase entityLiving) {
             TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
             if (cable != null && cable.getFrameMaterial() == null && cable.getNodeData().getLossPerBlock() > 0) {
                 long voltage = cable.getCurrentMaxVoltage();
