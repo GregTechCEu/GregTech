@@ -43,6 +43,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
@@ -410,7 +411,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     private ToolStackHandler getHandler(ItemStack stack) {
-        return (ToolStackHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (handler instanceof ToolStackHandler h) return h;
+        else return FALLBACK;
     }
 
     @Override
@@ -600,6 +603,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         // cap syncing is handled separately, we only need it on the share tag so that changes are detected properly.
         stack.setTagCompound(nbt == null ? null : (nbt.hasKey("NBT") ? nbt.getCompoundTag("NBT") : null));
     }
+
+    protected static final ToolStackHandler FALLBACK = new ToolStackHandler(0);
 
     protected static class ToolStackHandler extends ItemStackHandler {
 
