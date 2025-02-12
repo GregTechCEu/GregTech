@@ -128,15 +128,13 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                 ForgeHooks.setCraftingPlayer(player);
                 var data = MouseData.readPacket(buf);
 
-                if (recipeLogic.isRecipeValid() && this.slot.canTakeStack(player)) {
-                    ItemStack cursorStack = getSyncManager().getCursorItem();
+                if (recipeLogic.isRecipeValid()) {
                     ItemStack outputStack = getOutputStack();
                     boolean hasSpace;
                     if (data.shift) {
                         hasSpace = quickTransfer(getOutputStack(), true);
                     } else {
-                        hasSpace = cursorStack.isEmpty() ||
-                                ItemHandlerHelper.canItemStacksStack(cursorStack, outputStack);
+                        hasSpace = this.slot.canTakeStack(player);
                     }
                     if (hasSpace && recipeLogic.performRecipe()) {
                         handleItemCraft(outputStack, player);
@@ -278,10 +276,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             if (curStack.isEmpty()) return true;
 
             ItemStack outStack = recipeLogic.getCachedRecipe().getRecipeOutput();
-            if (curStack.getItem() == outStack.getItem() &&
-                    curStack.getMetadata() == outStack.getMetadata() &&
-                    ItemStack.areItemStackTagsEqual(curStack, outStack)) {
-
+            if (ItemHandlerHelper.canItemStacksStack(curStack, outStack)) {
                 int combined = curStack.getCount() + outStack.getCount();
                 return combined <= outStack.getMaxStackSize();
             } else {
