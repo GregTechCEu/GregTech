@@ -316,17 +316,17 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         }
 
         @Override
-        public ItemStack getStackInSlot(int slot) {
+        public @NotNull ItemStack getStackInSlot(int slot) {
             return inventory.getStackInSlot(slot).copy();
         }
 
         @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             return stack;
         }
 
         @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
             return inventory.getStackInSlot(slot);
         }
 
@@ -336,7 +336,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         }
 
         @Override
-        public void setStackInSlot(int slot, ItemStack stack) {
+        public void setStackInSlot(int slot, @NotNull ItemStack stack) {
             if (!recipeLogic.isRecipeValid()) {
                 inventory.setInventorySlotContents(slot, ItemStack.EMPTY);
             }
