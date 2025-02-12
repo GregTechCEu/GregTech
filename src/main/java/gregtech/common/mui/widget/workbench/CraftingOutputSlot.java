@@ -160,16 +160,18 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         private boolean insertStack(ItemStack fromStack, ModularSlot toSlot, boolean simulate) {
             ItemStack toStack = toSlot.getStack().copy();
             if (ItemHandlerHelper.canItemStacksStack(fromStack, toStack)) {
-                int j = toStack.getCount() + fromStack.getCount();
+                int combined = toStack.getCount() + fromStack.getCount();
                 int maxSize = Math.min(toSlot.getSlotStackLimit(), fromStack.getMaxStackSize());
 
-                if (j <= maxSize) {
+                // we can fit all of toStack
+                if (combined <= maxSize) {
                     if (simulate) return true;
                     fromStack.setCount(0);
-                    toStack.setCount(j);
+                    toStack.setCount(combined);
                     toSlot.putStack(toStack);
                 } else if (toStack.getCount() < maxSize) {
                     if (simulate) return true;
+                    // we can fit some of toStack, but not all
                     fromStack.shrink(maxSize - toStack.getCount());
                     toStack.setCount(maxSize);
                     toSlot.putStack(toStack);
@@ -244,10 +246,10 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             FMLCommonHandler.instance().firePlayerCraftingEvent(player, craftedStack, inventoryCrafting);
 
             var cachedRecipe = recipeLogic.getCachedRecipe();
-            if (cachedRecipe != null && !cachedRecipe.isDynamic()) {
-                player.unlockRecipes(Lists.newArrayList(cachedRecipe));
-            }
             if (cachedRecipe != null) {
+                if (!cachedRecipe.isDynamic()) {
+                    player.unlockRecipes(Lists.newArrayList(cachedRecipe));
+                }
                 ItemStack resultStack = cachedRecipe.getCraftingResult(inventoryCrafting);
                 this.slot.notifyRecipePerformed(resultStack);
             }
