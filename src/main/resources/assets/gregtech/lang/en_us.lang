@@ -1214,6 +1214,7 @@ gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 gregtech.recipe_memory_widget.tooltip.0=Times used: %d
 gregtech.recipe_memory_widget.tooltip.1=§7Left click to automatically input this recipe into the crafting grid
 gregtech.recipe_memory_widget.tooltip.2=§7Shift click to lock/unlock this recipe
+gregtech.recipe_memory_widget.tooltip.3=§7Right click to remove this recipe if it is unlocked
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
