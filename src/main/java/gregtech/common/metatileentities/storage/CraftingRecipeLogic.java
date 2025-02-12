@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.storage;
 
 import gregtech.api.items.toolitem.ItemGTToolbelt;
 import gregtech.api.util.DummyContainer;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -64,7 +63,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * List of items needed to complete the crafting recipe, filled by
-     * {@link CraftingRecipeLogic#getIngredientEquivalent(CraftingInputSlot)} )}
+     * {@link CraftingRecipeLogic#detectAndSendChanges(boolean)} )}
      **/
     private final Map<ItemStack, Integer> requiredItems = new Object2IntOpenCustomHashMap<>(
             this.strategy);
@@ -190,43 +189,6 @@ public class CraftingRecipeLogic extends SyncHandler {
 
     /**
      * <p>
-     * Searches all connected inventories for the slot's stack, and uses
-     * {@link CraftingRecipeLogic#findSubstitute(int, ItemStack)} to look for valid substitutes
-     * </p>
-     * <br/>
-     * <p>
-     * This method also fills out {@link CraftingRecipeLogic#requiredItems} for use in
-     * {@link CraftingRecipeLogic#consumeRecipeItems()}
-     * </p>
-     *
-     * @param slot slot whose current stack to find a substitute for
-     * @return true if the stack in the slot can be extracted or has a valid substitute
-     */
-    public boolean getIngredientEquivalent(CraftingInputSlot slot) {
-        ItemStack currentStack = slot.getStack();
-        if (currentStack.isEmpty()) {
-            return true; // stack is empty, nothing to return
-        }
-
-        int count = requiredItems.getOrDefault(currentStack, 0);
-        if (simulateExtractItem(currentStack, count + 1)) {
-            requiredItems.put(currentStack, ++count);
-            return true;
-        }
-
-        ItemStack substitute = findSubstitute(slot.getIndex(), currentStack);
-        if (substitute.isEmpty()) return false;
-
-        count = requiredItems.getOrDefault(substitute, 0);
-        if (simulateExtractItem(substitute, count + 1)) {
-            requiredItems.put(substitute, ++count);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * <p>
      * Searches through all connected inventories for a replacement stack that can be used in the recipe
      * </p>
      *
@@ -241,8 +203,6 @@ public class CraftingRecipeLogic extends SyncHandler {
         ItemStack substitute = ItemStack.EMPTY;
 
         var recipe = getCachedRecipe();
-        List<Ingredient> ingredients = new ArrayList<>(recipe.getIngredients());
-        ingredients.removeIf(ingredient -> ingredient == Ingredient.EMPTY);
         int index = compactedIndexes.get(craftingIndex);
 
         // iterate stored items to find equivalent
@@ -273,7 +233,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 // take the stack
                 boolean matched = false;
                 if (!(recipe instanceof IShapedRecipe)) {
-                    for (Ingredient ing : ingredients) {
+                    for (Ingredient ing : recipe.getIngredients()) {
                         if (ing.apply(itemStack)) {
                             matched = true;
                             break;
@@ -282,12 +242,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 } else {
                     // for shaped recipes, check the exact ingredient instead
                     // ingredients should be in the correct order
-                    if (index >= 0 && index < ingredients.size())
-                        matched = ingredients.get(index).apply(itemStack);
-                    else {
-                        GTLog.logger.warn("Compacted index \"{}\" is out of bounds for list size \"{}\"", index,
-                                ingredients.size());
-                    }
+                    matched = cachedRecipeData.canIngredientApply(index, itemStack);
                 }
                 if (!matched) {
                     map.put(GTUtility.copy(1, itemStack), false);
@@ -319,10 +274,11 @@ public class CraftingRecipeLogic extends SyncHandler {
     /**
      * Attempts to extract the given stack from connected inventories
      *
-     * @param itemStack stack from the crafting matrix
+     * @param craftingIndex current crafting index
+     * @param itemStack     stack from the crafting matrix
      * @return true if the stack was successfully extracted or the stack is empty
      */
-    private boolean simulateExtractItem(ItemStack itemStack, int count) {
+    private boolean simulateExtractItem(int craftingIndex, ItemStack itemStack, int count) {
         if (itemStack.isEmpty()) return true;
         if (!stackLookupMap.containsKey(itemStack)) return false;
 
@@ -334,8 +290,10 @@ public class CraftingRecipeLogic extends SyncHandler {
             if (slotStack.getItem() instanceof ItemGTToolbelt) {
                 ItemGTToolbelt.setCraftingSlot(slotMap.get(slot), (EntityPlayerMP) getSyncManager().getPlayer());
             }
-            extracted += slotStack.getCount();
-            if (extracted >= count) return true;
+            if (cachedRecipeData.canIngredientApply(compactedIndexes.get(craftingIndex), slotStack)) {
+                extracted += slotStack.getCount();
+                if (extracted >= count) return true;
+            }
         }
 
         return false;
@@ -391,7 +349,7 @@ public class CraftingRecipeLogic extends SyncHandler {
 
             compactedIndexes.put(slot.getIndex(), next++);
             int count = requiredItems.getOrDefault(slotStack, 0) + 1;
-            slot.hasIngredients = simulateExtractItem(slotStack, count);
+            slot.hasIngredients = simulateExtractItem(slot.getIndex(), slotStack, count);
 
             if (slot.hasIngredients) {
                 requiredItems.put(GTUtility.copy(1, slotStack), count);
@@ -400,7 +358,7 @@ public class CraftingRecipeLogic extends SyncHandler {
                 ItemStack substitute = findSubstitute(slot.getIndex(), slotStack);
                 if (!substitute.isEmpty()) {
                     count = requiredItems.getOrDefault(substitute, 0) + 1;
-                    slot.hasIngredients = simulateExtractItem(substitute, count);
+                    slot.hasIngredients = simulateExtractItem(slot.getIndex(), substitute, count);
                     requiredItems.put(GTUtility.copy(1, substitute), count);
                 }
             }
