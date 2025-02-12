@@ -333,14 +333,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .marginTop(18)
                         .background(GTGuiTextures.SLOT.asIcon().size(22))
                         .marginBottom(4))
-                .child(IKey.dynamic(() -> {
-                    int amount = amountCrafted.getIntValue();
-                    if (amount > 1000) {
-                        return TextFormattingUtil.formatLongToCompactString(amount);
-                    } else {
-                        return TextFormattingUtil.formatNumbers(amount);
-                    }
-                }).alignment(Alignment.Center)
+                .child(IKey.dynamic(() -> TextFormattingUtil.formatLongToCompactString(amountCrafted.getIntValue(), 5))
+                        .alignment(Alignment.Center)
                         .asWidget().widthRel(1f));
     }
 
