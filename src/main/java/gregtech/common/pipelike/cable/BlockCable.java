@@ -131,7 +131,9 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     @Override
     public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
         if (worldIn.isRemote) {
-            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
+            IPipeTile<Insulation, WireProperties> pipeTile = getPipeTileEntity(worldIn, pos);
+            if (pipeTile == null) return;
+            TileEntityCable cable = (TileEntityCable) pipeTile;
             cable.killParticle();
         }
         super.breakBlock(worldIn, pos, state);
@@ -168,8 +170,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         if (pipeTile == null) return;
         Insulation insulation = pipeTile.getPipeType();
         if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase entityLiving) {
-            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
-            if (cable != null && cable.getFrameMaterial() == null && cable.getNodeData().getLossPerBlock() > 0) {
+            TileEntityCable cable = (TileEntityCable) pipeTile;
+            if (cable.getFrameMaterial() == null && cable.getNodeData().getLossPerBlock() > 0) {
                 long voltage = cable.getCurrentMaxVoltage();
                 double amperage = cable.getAverageAmperage();
                 if (voltage > 0L && amperage > 0L) {
