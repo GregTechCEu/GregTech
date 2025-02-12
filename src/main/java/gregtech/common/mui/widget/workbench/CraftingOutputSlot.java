@@ -43,11 +43,8 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
     private static final int SYNC_STACK = 5;
     private final CraftingSlotSH syncHandler;
 
-    public CraftingOutputSlot(IntSyncValue syncValue, MetaTileEntityWorkbench workbench) {
-        this.syncHandler = new CraftingSlotSH(
-                new CraftingOutputMS(
-                        workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
-                        syncValue, workbench));
+    public CraftingOutputSlot(IntSyncValue amountCrafted, MetaTileEntityWorkbench workbench) {
+        this.syncHandler = new CraftingSlotSH(amountCrafted, workbench);
         setSyncHandler(this.syncHandler);
         tooltipAutoUpdate(true);
         tooltipBuilder(tooltip -> {
@@ -100,8 +97,8 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
         private final List<ModularSlot> shiftClickSlots = new ArrayList<>();
 
-        public CraftingSlotSH(CraftingOutputMS slot) {
-            this.slot = slot;
+        public CraftingSlotSH(IntSyncValue amountCrafted, MetaTileEntityWorkbench workbench) {
+            this.slot = new CraftingOutputMS(amountCrafted, workbench);
             this.recipeLogic = slot.recipeLogic;
         }
 
@@ -256,15 +253,16 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
     protected static class CraftingOutputMS extends ModularSlot {
 
-        private final IntSyncValue syncValue;
+        private final IntSyncValue amountCrafted;
         private final CraftingRecipeLogic recipeLogic;
         private final CraftingRecipeMemory recipeMemory;
         private final IItemHandler craftingGrid;
 
-        public CraftingOutputMS(IInventory craftingInventory, IntSyncValue syncValue,
-                                MetaTileEntityWorkbench workbench) {
-            super(new InventoryWrapper(craftingInventory, workbench.getCraftingRecipeLogic()), 0, true);
-            this.syncValue = syncValue;
+        public CraftingOutputMS(IntSyncValue amountCrafted, MetaTileEntityWorkbench workbench) {
+            super(new InventoryWrapper(
+                    workbench.getCraftingRecipeLogic().getCraftingResultInventory(),
+                    workbench.getCraftingRecipeLogic()), 0, true);
+            this.amountCrafted = amountCrafted;
             this.recipeLogic = workbench.getCraftingRecipeLogic();
             this.recipeMemory = workbench.getRecipeMemory();
             this.craftingGrid = workbench.getCraftingGrid();
@@ -285,7 +283,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
         }
 
         public void notifyRecipePerformed(ItemStack stack) {
-            this.syncValue.setValue(this.syncValue.getValue() + stack.getCount(), true, true);
+            this.amountCrafted.setValue(this.amountCrafted.getValue() + stack.getCount(), true, true);
             this.recipeMemory.notifyRecipePerformed(this.craftingGrid, stack);
         }
 
