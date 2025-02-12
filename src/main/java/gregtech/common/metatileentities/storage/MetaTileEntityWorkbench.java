@@ -9,6 +9,7 @@ import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
@@ -332,8 +333,14 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                         .marginTop(18)
                         .background(GTGuiTextures.SLOT.asIcon().size(22))
                         .marginBottom(4))
-                .child(IKey.dynamic(amountCrafted::getStringValue)
-                        .alignment(Alignment.Center)
+                .child(IKey.dynamic(() -> {
+                    int amount = amountCrafted.getIntValue();
+                    if (amount > 1000) {
+                        return TextFormattingUtil.formatLongToCompactString(amount);
+                    } else {
+                        return TextFormattingUtil.formatNumbers(amount);
+                    }
+                }).alignment(Alignment.Center)
                         .asWidget().widthRel(1f));
     }
 
