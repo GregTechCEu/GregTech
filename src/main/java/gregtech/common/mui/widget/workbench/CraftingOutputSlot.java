@@ -149,7 +149,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
                             }
                             quickTransfer(finalStack, false);
                         } else {
-                            syncToClient(SYNC_STACK, this::syncCraftedStack);
+                            syncToClient(SYNC_STACK, this::syncCursorStack);
                         }
                     }
                 }
@@ -211,26 +211,24 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
 
         @Override
         public void readOnClient(int id, PacketBuffer buf) {
-            if (id == SYNC_STACK) {
+            if (id == SYNC_STACK && buf.readBoolean()) {
                 getSyncManager().setCursorItem(NetworkUtils.readItemStack(buf));
             }
         }
 
-        private void syncCraftedStack(PacketBuffer buf) {
+        private void syncCursorStack(PacketBuffer buf) {
             ItemStack curStack = getSyncManager().getCursorItem();
             ItemStack outStack = this.slot.getStack();
-            ItemStack toSync = outStack.copy();
-            if (ItemHandlerHelper.canItemStacksStack(curStack, outStack)) {
+            if (this.slot.canTakeStack(getSyncManager().getPlayer())) {
+                ItemStack toSync = outStack.copy();
                 int combined = curStack.getCount() + outStack.getCount();
-                if (combined <= outStack.getMaxStackSize()) {
-                    toSync.setCount(curStack.getCount() + outStack.getCount());
-                } else {
-                    toSync.setCount(outStack.getMaxStackSize());
-                }
-            } else if (!curStack.isEmpty()) {
-                toSync = curStack;
+                // clamp to max stack size
+                toSync.setCount(Math.min(combined, outStack.getMaxStackSize()));
+                buf.writeBoolean(true);
+                NetworkUtils.writeItemStack(buf, toSync);
+            } else {
+                buf.writeBoolean(false);
             }
-            NetworkUtils.writeItemStack(buf, toSync);
         }
 
         public ItemStack getOutputStack() {
@@ -277,7 +275,7 @@ public class CraftingOutputSlot extends Widget<CraftingOutputSlot> implements In
             ItemStack curStack = playerIn.inventory.getItemStack();
             if (curStack.isEmpty()) return true;
 
-            ItemStack outStack = recipeLogic.getCachedRecipe().getRecipeOutput();
+            ItemStack outStack = getStack();
             if (ItemHandlerHelper.canItemStacksStack(curStack, outStack)) {
                 int combined = curStack.getCount() + outStack.getCount();
                 return combined <= outStack.getMaxStackSize();
