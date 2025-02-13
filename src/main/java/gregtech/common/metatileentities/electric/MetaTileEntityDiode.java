@@ -132,7 +132,8 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
 
     protected void reinitializeEnergyContainer() {
         long tierVoltage = GTValues.V[getTier()];
-        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * getMaxAmperage(), tierVoltage, amps, tierVoltage, amps);
+        this.energyContainer = new EnergyContainerHandler(this, tierVoltage * getMaxAmperage(), tierVoltage, amps,
+                tierVoltage, amps);
         ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
         ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
     }
