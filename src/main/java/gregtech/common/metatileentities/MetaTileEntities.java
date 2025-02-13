@@ -867,7 +867,7 @@ public class MetaTileEntities {
         endPos = GregTechAPI.isHighTier() ? DIODES.length - 1 : Math.min(DIODES.length - 1, GTValues.UV + 2);
         for (int i = 0; i < endPos; i++) {
             String diodeId = "diode." + GTValues.VN[i].toLowerCase();
-            MetaTileEntityDiode diode = new MetaTileEntityDiode(gregtechId(diodeId), i);
+            MetaTileEntityDiode diode = new MetaTileEntityDiode(gregtechId(diodeId), i, 16);
             DIODES[i] = registerMetaTileEntity(1300 + i, diode);
         }
 
