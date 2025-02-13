@@ -48,11 +48,12 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
         if (invalidSlot(slot)) return;
         IItemHandler itemHandler = handlerBySlotIndex.get(slot);
+        int actualSlot = slot - baseIndexOffset.get(itemHandler);
         if (itemHandler instanceof IItemHandlerModifiable modifiable) {
-            modifiable.setStackInSlot(slot - baseIndexOffset.get(itemHandler), stack);
+            modifiable.setStackInSlot(actualSlot, stack);
         } else {
-            itemHandler.extractItem(slot, Integer.MAX_VALUE, false);
-            itemHandler.insertItem(slot, stack, false);
+            itemHandler.extractItem(actualSlot, Integer.MAX_VALUE, false);
+            itemHandler.insertItem(actualSlot, stack, false);
         }
     }
 
