@@ -125,7 +125,6 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
         }
     }
 
-    /** Change this value (or override) to make the Diode able to handle more amps. Must be a power of 2 */
     protected int getMaxAmperage() {
         return maxAmps;
     }
