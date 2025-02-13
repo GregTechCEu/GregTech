@@ -60,6 +60,9 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
         maxAmps = 16;
     }
 
+    /**
+     * @param maxAmps Must be power of 2
+     */
     public MetaTileEntityDiode(ResourceLocation metaTileEntityId, int tier, int maxAmps) {
         super(metaTileEntityId, tier);
         amps = 1;
