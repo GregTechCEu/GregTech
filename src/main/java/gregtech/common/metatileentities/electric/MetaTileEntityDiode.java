@@ -52,14 +52,6 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
     private boolean isWorkingEnabled;
     private final int maxAmps;
 
-    public MetaTileEntityDiode(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, tier);
-        amps = 1;
-        reinitializeEnergyContainer();
-        isWorkingEnabled = true;
-        maxAmps = 16;
-    }
-
     /**
      * @param maxAmps Must be power of 2
      */
@@ -73,7 +65,7 @@ public class MetaTileEntityDiode extends MetaTileEntityMultiblockPart
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityDiode(metaTileEntityId, getTier());
+        return new MetaTileEntityDiode(metaTileEntityId, getTier(), getMaxAmperage());
     }
 
     @Override
