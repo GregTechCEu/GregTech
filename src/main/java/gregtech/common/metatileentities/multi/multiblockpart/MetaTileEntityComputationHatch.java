@@ -2,15 +2,18 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IOpticalComputationHatch;
-import gregtech.api.capability.IOpticalComputationProvider;
+import gregtech.api.capability.data.IComputationDataAccess;
+import gregtech.api.capability.data.IComputationProvider;
+import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.query.DataQueryObject;
+import gregtech.api.capability.data.query.IBridgeable;
+import gregtech.api.capability.data.query.IComputationQuery;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.util.GTLog;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.pipelike.optical.tile.TileEntityOpticalPipe;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -26,11 +29,11 @@ import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
 
-public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart implements
-                                            IMultiblockAbilityPart<IOpticalComputationHatch>, IOpticalComputationHatch {
+public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
+                                            implements IMultiblockAbilityPart<IComputationDataAccess>,
+                                            IComputationDataAccess {
 
     private final boolean isTransmitter;
 
@@ -50,79 +53,32 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
-        seen.add(this);
-        var controller = getController();
-        if (controller == null || !controller.isStructureFormed()) return 0;
-        if (isTransmitter()) {
-            // Ask the Multiblock controller, which *should* be an IOpticalComputationProvider
-            if (controller instanceof IOpticalComputationProvider provider) {
-                return provider.requestCWUt(cwut, simulate, seen);
+    public boolean accessData(@NotNull DataQueryObject queryObject) {
+        if (isAttachedToMultiBlock()) {
+            if (isTransmitter()) {
+                MultiblockControllerBase controller = getController();
+                if (!controller.isActive()) return false;
+
+                if (controller instanceof IComputationProvider provider &&
+                        queryObject instanceof IComputationQuery cq) {
+                    cq.registerProvider(provider);
+                }
+                List<IComputationDataAccess> reception = controller
+                        .getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION);
+                if (queryObject instanceof IBridgeable bridgeable && reception.size() > 1) {
+                    bridgeable.setBridged();
+                }
+                return IDataAccess.accessData(reception, queryObject);
             } else {
-                GTLog.logger.error("Computation Transmission Hatch could not request CWU/t from its controller!");
-                return 0;
+                TileEntity tileEntity = getNeighbor(getFrontFacing());
+                if (tileEntity == null) return false;
+
+                IDataAccess cap = tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_DATA_ACCESS,
+                        getFrontFacing().getOpposite());
+                if (queryObject.traverseTo(cap)) return cap.accessData(queryObject);
             }
-        } else {
-            // Ask the attached Transmitter hatch, if it exists
-            IOpticalComputationProvider provider = getOpticalNetProvider();
-            if (provider == null) return 0;
-            return provider.requestCWUt(cwut, simulate, seen);
         }
-    }
-
-    @Override
-    public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
-        seen.add(this);
-        var controller = getController();
-        if (controller == null || !controller.isStructureFormed()) return 0;
-        if (isTransmitter()) {
-            // Ask the Multiblock controller, which *should* be an IOpticalComputationProvider
-            if (controller instanceof IOpticalComputationProvider provider) {
-                return provider.getMaxCWUt(seen);
-            } else {
-                GTLog.logger.error("Computation Transmission Hatch could not get maximum CWU/t from its controller!");
-                return 0;
-            }
-        } else {
-            // Ask the attached Transmitter hatch, if it exists
-            IOpticalComputationProvider provider = getOpticalNetProvider();
-            if (provider == null) return 0;
-            return provider.getMaxCWUt(seen);
-        }
-    }
-
-    @Override
-    public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
-        seen.add(this);
-        var controller = getController();
-        // return true here so that unlinked hatches don't cause problems in multis like the Network Switch
-        if (controller == null || !controller.isStructureFormed()) return true;
-        if (isTransmitter()) {
-            // Ask the Multiblock controller, which *should* be an IOpticalComputationProvider
-            if (controller instanceof IOpticalComputationProvider provider) {
-                return provider.canBridge(seen);
-            } else {
-                GTLog.logger.error("Computation Transmission Hatch could not test bridge status of its controller!");
-                return false;
-            }
-        } else {
-            // Ask the attached Transmitter hatch, if it exists
-            IOpticalComputationProvider provider = getOpticalNetProvider();
-            if (provider == null) return true; // nothing found, so don't report a problem, just pass quietly
-            return provider.canBridge(seen);
-        }
-    }
-
-    @Nullable
-    private IOpticalComputationProvider getOpticalNetProvider() {
-        TileEntity tileEntity = getNeighbor(getFrontFacing());
-        if (tileEntity == null) return null;
-
-        if (tileEntity instanceof TileEntityOpticalPipe) {
-            return tileEntity.getCapability(GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER,
-                    getFrontFacing().getOpposite());
-        }
-        return null;
+        return false;
     }
 
     @Override
@@ -145,20 +101,20 @@ public class MetaTileEntityComputationHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public MultiblockAbility<IOpticalComputationHatch> getAbility() {
+    public MultiblockAbility<IComputationDataAccess> getAbility() {
         return isTransmitter() ? MultiblockAbility.COMPUTATION_DATA_TRANSMISSION :
                 MultiblockAbility.COMPUTATION_DATA_RECEPTION;
     }
 
     @Override
-    public void registerAbilities(List<IOpticalComputationHatch> abilityList) {
+    public void registerAbilities(List<IComputationDataAccess> abilityList) {
         abilityList.add(this);
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
-        if (side == getFrontFacing() && capability == GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER) {
-            return GregtechTileCapabilities.CABABILITY_COMPUTATION_PROVIDER.cast(this);
+        if (capability == GregtechTileCapabilities.CAPABILITY_DATA_ACCESS) {
+            return GregtechTileCapabilities.CAPABILITY_DATA_ACCESS.cast(this);
         }
         return super.getCapability(capability, side);
     }

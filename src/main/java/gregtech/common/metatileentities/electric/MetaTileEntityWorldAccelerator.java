@@ -4,10 +4,10 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -361,7 +361,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
 
     private static boolean canTileAccelerate(TileEntity tile) {
         // Check GT tiles first
-        if (tile instanceof IGregTechTileEntity || tile instanceof TileEntityPipeBase) return false;
+        if (tile instanceof IGregTechTileEntity || tile instanceof PipeTileEntity) return false;
 
         gatherWorldAcceleratorBlacklist();
 

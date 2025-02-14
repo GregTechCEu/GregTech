@@ -1,12 +1,8 @@
 package gregtech.integration.theoneprobe.provider.debug;
 
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.Node;
-import gregtech.api.pipenet.PipeNet;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.block.state.IBlockState;
@@ -44,28 +40,13 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     list.forEach(probeInfo::text);
                 }
             }
-            if (tileEntity instanceof TileEntityPipeBase) {
-                IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-                BlockPipe<?, ?, ?> blockPipe = pipeTile.getPipeBlock();
-                PipeNet<?> pipeNet = blockPipe.getWorldPipeNet(world).getNetFromPos(data.getPos());
-                if (pipeNet != null) {
-                    probeInfo.text("Net: " + pipeNet.hashCode());
-                    probeInfo.text("Node Info: ");
-                    StringBuilder builder = new StringBuilder();
-                    Node<?> node = pipeNet.getAllNodes().get(data.getPos());
-                    builder.append("{")
-                            .append("active: ").append(node.isActive)
-                            .append(", mark: ").append(node.mark)
-                            .append(", open: ").append(node.openConnections)
-                            .append("}");
-                    probeInfo.text(builder.toString());
-                }
-                probeInfo.text("tile open: " + pipeTile.getConnections());
-                // if (blockPipe instanceof BlockFluidPipe) {
-                // if (pipeTile instanceof TileEntityFluidPipeTickable) {
-                // probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
-                // }
-                // }
+            if (tileEntity instanceof PipeTileEntity pipeTile) {
+                String builder = "{" +
+                        ", mark: " + pipeTile.getVisualColor() +
+                        ", open: " + pipeTile.getConnectionMask() +
+                        ", blocked: " + pipeTile.getBlockedMask() +
+                        "}";
+                probeInfo.text(builder);
             }
         }
     }

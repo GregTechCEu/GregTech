@@ -3,11 +3,12 @@ package gregtech.integration;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
@@ -68,8 +69,9 @@ public final class RecipeCompatUtil {
             if (block instanceof BlockFrame) {
                 return "frame" + ((BlockFrame) block).getGtMaterial(item).toCamelCaseString();
             }
-            if (block instanceof BlockMaterialPipe blockMaterialPipe) {
-                return blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(item).toCamelCaseString();
+            if (block instanceof PipeMaterialBlock blockMaterialPipe) {
+                Material mat = blockMaterialPipe.getMaterialForStack(item);
+                if (mat != null) return blockMaterialPipe.getStructure().getOrePrefix().name + mat.toCamelCaseString();
             }
         }
         return null;

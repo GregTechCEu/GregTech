@@ -29,13 +29,13 @@ public class EntityDamageUtil {
     public static void applyTemperatureDamage(@NotNull EntityLivingBase entity, int temperature, float multiplier,
                                               int maximum) {
         if (temperature > 320) {
-            int damage = (int) ((multiplier * (temperature - 300)) / 50.0F);
+            float damage = (multiplier * (temperature - 300)) / 50.0F;
             if (maximum > 0) {
                 damage = Math.min(maximum, damage);
             }
             applyHeatDamage(entity, damage);
         } else if (temperature < 260) {
-            int damage = (int) ((multiplier * (273 - temperature)) / 25.0F);
+            float damage = (multiplier * (273 - temperature)) / 25.0F;
             if (maximum > 0) {
                 damage = Math.min(maximum, damage);
             }
@@ -47,7 +47,7 @@ public class EntityDamageUtil {
      * @param entity the entity to damage
      * @param damage the damage to apply
      */
-    public static void applyHeatDamage(@NotNull EntityLivingBase entity, int damage) {
+    public static void applyHeatDamage(@NotNull EntityLivingBase entity, float damage) {
         // do not attempt to damage by 0
         if (damage <= 0) return;
         if (!entity.isEntityAlive()) return;
@@ -67,7 +67,7 @@ public class EntityDamageUtil {
      * @param entity the entity to damage
      * @param damage the damage to apply
      */
-    public static void applyFrostDamage(@NotNull EntityLivingBase entity, int damage) {
+    public static void applyFrostDamage(@NotNull EntityLivingBase entity, float damage) {
         // do not attempt to damage by 0
         if (damage <= 0) return;
         if (!entity.isEntityAlive()) return;
@@ -97,7 +97,7 @@ public class EntityDamageUtil {
      * @param entity the entity to damage
      * @param damage the damage to apply
      */
-    public static void applyChemicalDamage(@NotNull EntityLivingBase entity, int damage) {
+    public static void applyChemicalDamage(@NotNull EntityLivingBase entity, float damage) {
         // do not attempt to damage by 0
         if (damage <= 0) return;
         if (!entity.isEntityAlive()) return;
@@ -105,7 +105,7 @@ public class EntityDamageUtil {
         if (entity instanceof AbstractSkeleton) return;
 
         entity.attackEntityFrom(DamageSources.getChemicalDamage(), damage);
-        entity.addPotionEffect(new PotionEffect(MobEffects.POISON, damage * 100, 1));
+        entity.addPotionEffect(new PotionEffect(MobEffects.POISON, (int) (damage * 100), 1));
         if (entity instanceof EntityPlayerMP) AdvancementTriggers.CHEMICAL_DEATH.trigger((EntityPlayerMP) entity);
     }
 }
