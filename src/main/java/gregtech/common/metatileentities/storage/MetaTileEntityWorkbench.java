@@ -1,54 +1,64 @@
 package gregtech.common.metatileentities.storage;
 
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.Widget.ClickData;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.AbstractWidgetGroup;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.CraftingStationInputWidgetGroup;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.TabGroup;
-import gregtech.api.gui.widgets.TabGroup.TabLocation;
-import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.gui.widgets.tab.ItemTabInfo;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.storage.ICraftingStorage;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
+import gregtech.api.mui.sync.PagedWidgetSyncHandler;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.Position;
+import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.gui.widget.craftingstation.CraftingSlotWidget;
-import gregtech.common.gui.widget.craftingstation.ItemListGridWidget;
-import gregtech.common.gui.widget.craftingstation.MemorizedRecipeWidget;
-import gregtech.common.inventory.IItemList;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import gregtech.common.inventory.handlers.ToolItemStackHandler;
-import gregtech.common.inventory.itemsource.ItemSources;
-import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
+import gregtech.common.mui.widget.workbench.CraftingInputSlot;
+import gregtech.common.mui.widget.workbench.CraftingOutputSlot;
+import gregtech.common.mui.widget.workbench.RecipeMemorySlot;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.sync.IntSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.PageButton;
+import com.cleanroommc.modularui.widgets.PagedWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.layout.Grid;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
+import com.cleanroommc.modularui.widgets.slot.SlotGroup;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -56,66 +66,31 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-public class MetaTileEntityWorkbench extends MetaTileEntity implements ICraftingStorage {
+public class MetaTileEntityWorkbench extends MetaTileEntity {
 
-    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
+    private static final IDrawable CHEST = new ItemDrawable(new ItemStack(Blocks.CHEST))
+            .asIcon().size(16);
+
+    private final IDrawable WORKSTATION = new ItemDrawable(getStackForm())
+            .asIcon().size(16);
+
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
+    private final ItemStackHandler internalInventory = new GTItemStackHandler(this, 18);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
-    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
+    private ItemHandlerList combinedInventory;
+    private ItemHandlerList connectedInventory;
+
+    private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9, this.craftingGrid);
     private CraftingRecipeLogic recipeLogic = null;
     private int itemsCrafted = 0;
 
-    private final ArrayList<EntityPlayer> listeners = new ArrayList<>();
-
     public MetaTileEntityWorkbench(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-    }
-
-    public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeLogic craftingRecipeLogic,
-                                                         ItemStackHandler craftingGrid,
-                                                         CraftingRecipeMemory recipeMemory,
-                                                         ItemStackHandler toolInventory,
-                                                         ItemStackHandler internalInventory) {
-        WidgetGroup widgetGroup = new WidgetGroup();
-        widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 14, 26, 26, GuiTextures.SLOT));
-        widgetGroup.addWidget(new CraftingSlotWidget(craftingRecipeLogic, 0, 88 - 9, 44 - 9));
-
-        // crafting grid
-        widgetGroup.addWidget(new CraftingStationInputWidgetGroup(4, 7, craftingGrid, craftingRecipeLogic));
-
-        Supplier<String> textSupplier = () -> Integer.toString(craftingRecipeLogic.getItemsCraftedAmount());
-        widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 19, "", textSupplier));
-
-        Consumer<ClickData> clearAction = (clickData) -> craftingRecipeLogic.clearCraftingGrid();
-        widgetGroup.addWidget(new ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction)
-                .setButtonTexture(GuiTextures.BUTTON_CLEAR_GRID));
-
-        widgetGroup.addWidget(new ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3,
-                TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                widgetGroup.addWidget(new MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid,
-                        168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
-            }
-        }
-        // tool inventory
-        for (int i = 0; i < 9; i++) {
-            widgetGroup.addWidget(new SlotWidget(toolInventory, i, 7 + i * 18, 75)
-                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.TOOL_SLOT_OVERLAY));
-        }
-        // internal inventory
-        for (int i = 0; i < 2; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                widgetGroup.addWidget(new SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i * 18)
-                        .setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
-        return widgetGroup;
     }
 
     @Override
@@ -142,12 +117,32 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
     }
 
     @Override
+    public void writeInitialSyncData(@NotNull PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeInt(this.itemsCrafted);
+        for (int i = 0; i < craftingGrid.getSlots(); i++) {
+            NetworkUtils.writeItemStack(buf, craftingGrid.getStackInSlot(i));
+        }
+        this.recipeMemory.writeInitialSyncData(buf);
+    }
+
+    @Override
+    public void receiveInitialSyncData(@NotNull PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        this.itemsCrafted = buf.readInt();
+        for (int i = 0; i < craftingGrid.getSlots(); i++) {
+            craftingGrid.setStackInSlot(i, NetworkUtils.readItemStack(buf));
+        }
+        this.recipeMemory.receiveInitialSyncData(buf);
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
         data.setTag("ToolInventory", toolInventory.serializeNBT());
         data.setTag("InternalInventory", internalInventory.serializeNBT());
-        data.setInteger("ItemsCrafted", recipeLogic == null ? itemsCrafted : recipeLogic.getItemsCraftedAmount());
+        data.setInteger("ItemsCrafted", itemsCrafted);
         data.setTag("RecipeMemory", recipeMemory.serializeNBT());
         return data;
     }
@@ -162,33 +157,36 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         this.recipeMemory.deserializeNBT(data.getCompoundTag("RecipeMemory"));
     }
 
-    private void createCraftingRecipeLogic(EntityPlayer entityPlayer) {
-        if (!getWorld().isRemote) {
-            if (recipeLogic == null) {
-                this.recipeLogic = new CraftingRecipeLogic(this);
-                this.recipeLogic.setItemsCraftedAmount(itemsCrafted);
-                ItemSources itemSources = this.recipeLogic.getItemSourceList();
-                itemSources.addItemHandler(new InventoryItemSource(getWorld(), toolInventory, -2));
-                itemSources.addItemHandler(new InventoryItemSource(getWorld(), internalInventory, -1));
-                this.recipeLogic.checkNeighbourInventories(getPos());
-            }
-            this.listeners.add(entityPlayer);
+    public IItemHandlerModifiable getAvailableHandlers() {
+        var handlers = new ArrayList<IItemHandler>();
+        for (var facing : EnumFacing.VALUES) {
+            var neighbor = getNeighbor(facing);
+            if (neighbor == null) continue;
+            var handler = neighbor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+            if (handler != null) handlers.add(handler);
         }
+        this.connectedInventory = new ItemHandlerList(handlers);
+        handlers.clear();
+
+        handlers.add(this.internalInventory);
+        handlers.add(this.toolInventory);
+        handlers.add(this.connectedInventory);
+        return this.combinedInventory = new ItemHandlerList(handlers);
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (!getWorld().isRemote) {
-            if (recipeLogic != null) {
-                getCraftingRecipeLogic().update();
-            }
-        }
+    public void onNeighborChanged() {
+        getCraftingRecipeLogic().updateInventory(getAvailableHandlers());
+        writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
     }
 
-    private CraftingRecipeLogic getCraftingRecipeLogic() {
+    public @NotNull CraftingRecipeLogic getCraftingRecipeLogic() {
         Preconditions.checkState(getWorld() != null, "getRecipeResolver called too early");
-        return recipeLogic;
+        if (this.recipeLogic == null) {
+            this.recipeLogic = new CraftingRecipeLogic(getWorld(), getAvailableHandlers(), getCraftingGrid());
+            writeCustomData(GregtechDataCodes.UPDATE_CLIENT_HANDLER, this::sendHandlerToClient);
+        }
+        return this.recipeLogic;
     }
 
     @Override
@@ -198,51 +196,250 @@ public class MetaTileEntityWorkbench extends MetaTileEntity implements ICrafting
         clearInventory(itemBuffer, toolInventory);
     }
 
-    private AbstractWidgetGroup createItemListTab() {
-        WidgetGroup widgetGroup = new WidgetGroup();
-        widgetGroup.addWidget(new LabelWidget(5, 20, "gregtech.machine.workbench.storage_note_1"));
-        widgetGroup.addWidget(new LabelWidget(5, 30, "gregtech.machine.workbench.storage_note_2"));
-        CraftingRecipeLogic recipeResolver = getCraftingRecipeLogic();
-        IItemList itemList = recipeResolver == null ? null : recipeResolver.getItemSourceList();
-        widgetGroup.addWidget(new ItemListGridWidget(11, 45, 8, 5, itemList));
-        return widgetGroup;
+    @Override
+    public boolean usesMui2() {
+        return true;
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
-        createCraftingRecipeLogic(entityPlayer);
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager syncManager) {
+        getCraftingRecipeLogic().updateCurrentRecipe();
+        this.recipeLogic.clearSlotMap();
 
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
-                .bindPlayerInventory(entityPlayer.inventory, 138);
-        builder.label(5, 5, getMetaFullName());
+        syncManager.syncValue("recipe_logic", this.recipeLogic);
+        syncManager.syncValue("recipe_memory", this.recipeMemory);
 
-        TabGroup<AbstractWidgetGroup> tabGroup = new TabGroup<>(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
-        tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.workbench",
-                new ItemStack(Blocks.CRAFTING_TABLE)),
-                createWorkbenchTab(recipeLogic, craftingGrid, recipeMemory, toolInventory, internalInventory));
-        tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.item_list",
-                new ItemStack(Blocks.CHEST)), createItemListTab());
-        builder.widget(tabGroup);
-        builder.bindCloseListener(() -> discardRecipeResolver(entityPlayer));
+        var controller = new PagedWidget.Controller();
+        syncManager.syncValue("page_controller", new PagedWidgetSyncHandler(controller));
 
-        return builder.build(getHolder(), entityPlayer);
+        return GTGuis.createPanel(this, 176, 224)
+                .child(Flow.row()
+                        .debugName("tab row")
+                        .widthRel(1f)
+                        .leftRel(0.5f)
+                        .margin(3, 0)
+                        .coverChildrenHeight()
+                        .topRel(0f, 3, 1f)
+                        .child(new PageButton(0, controller)
+                                .tab(GuiTextures.TAB_TOP, 0)
+                                .addTooltipLine(IKey.lang("gregtech.machine.workbench.tab.workbench"))
+                                .overlay(WORKSTATION))
+                        .child(new PageButton(1, controller)
+                                .tab(GuiTextures.TAB_TOP, 0)
+                                .addTooltipLine(IKey.lang("gregtech.machine.workbench.tab.item_list"))
+                                .addTooltipLine(IKey.lang("gregtech.machine.workbench.storage_note")
+                                        .style(TextFormatting.DARK_GRAY))
+                                .overlay(CHEST)))
+                .child(IKey.lang(getMetaFullName())
+                        .asWidget()
+                        .top(7).left(7))
+                .child(new PagedWidget<>()
+                        .top(22)
+                        .margin(7)
+                        .widthRel(0.9f)
+                        .controller(controller)
+                        .coverChildrenHeight()
+                        // workstation page
+                        .addPage(Flow.column()
+                                .debugName("crafting page")
+                                .coverChildrenWidth()
+                                .child(Flow.row()
+                                        .debugName("crafting row")
+                                        .coverChildrenHeight()
+                                        .widthRel(1f)
+                                        // crafting grid
+                                        .child(createCraftingGrid())
+                                        // crafting output slot
+                                        .child(createCraftingOutput(guiData, syncManager))
+                                        // recipe memory
+                                        .child(createRecipeMemoryGrid(syncManager)))
+                                // tool inventory
+                                .child(createToolInventory(syncManager))
+                                // internal inventory
+                                .child(createInternalInventory(syncManager)))
+                        // storage page
+                        .addPage(createInventoryPage(syncManager)))
+                .bindPlayerInventory();
+    }
+
+    private ModularSlot trackSlot(IItemHandler handler, int slot) {
+        int offset = combinedInventory.getIndexOffset(handler);
+        if (offset == -1) throw new NullPointerException("handler cannot be found");
+        this.recipeLogic.updateSlotMap(offset, slot);
+        return new ModularSlot(handler, slot);
+    }
+
+    public IWidget createToolInventory(PanelSyncManager syncManager) {
+        var toolSlots = new SlotGroup("tool_slots", 9, -120, true);
+        syncManager.registerSlotGroup(toolSlots);
+
+        return SlotGroupWidget.builder()
+                .row("XXXXXXXXX")
+                .key('X', i -> new ItemSlot()
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.TOOL_SLOT_OVERLAY)
+                        .slot(trackSlot(this.toolInventory, i)
+                                .slotGroup(toolSlots)))
+                .build().marginTop(2);
+    }
+
+    public IWidget createInternalInventory(PanelSyncManager syncManager) {
+        var inventory = new SlotGroup("internal_slots", 9, -100, true);
+        syncManager.registerSlotGroup(inventory);
+
+        return SlotGroupWidget.builder()
+                .row("XXXXXXXXX")
+                .row("XXXXXXXXX")
+                .key('X', i -> new ItemSlot()
+                        .slot(trackSlot(this.internalInventory, i)
+                                .slotGroup(inventory)))
+                .build().marginTop(2);
+    }
+
+    public IWidget createCraftingGrid() {
+        return SlotGroupWidget.builder()
+                .matrix("XXX",
+                        "XXX",
+                        "XXX")
+                .key('X', i -> CraftingInputSlot.create(this.recipeLogic, this.craftingGrid, i)
+                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                            if (!init) {
+                                this.recipeLogic.updateCurrentRecipe();
+                            }
+                        })
+                        .background(GTGuiTextures.SLOT))
+                .build()
+                .child(new ButtonWidget<>()
+                        .margin(2)
+                        .size(8)
+                        .topRel(0f)
+                        .rightRel(0f, 0, 1f)
+                        .background(GTGuiTextures.BUTTON_CLEAR_GRID)
+                        .addTooltipLine(IKey.lang("gregtech.machine.workbench.clear_grid"))
+                        .disableHoverBackground()
+                        .onMousePressed(mouseButton -> {
+                            this.recipeLogic.clearCraftingGrid();
+                            return true;
+                        }));
+    }
+
+    public IWidget createCraftingOutput(PosGuiData guiData, PanelSyncManager syncManager) {
+        var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
+        syncManager.syncValue("amount_crafted", amountCrafted);
+
+        return Flow.column()
+                .size(54)
+                .child(new CraftingOutputSlot(amountCrafted, this)
+                        .marginTop(18)
+                        .background(GTGuiTextures.SLOT.asIcon().size(22))
+                        .marginBottom(4))
+                .child(IKey.dynamic(() -> TextFormattingUtil.formatLongToCompactString(amountCrafted.getIntValue(), 5))
+                        .alignment(Alignment.Center)
+                        .asWidget().widthRel(1f));
+    }
+
+    public IWidget createRecipeMemoryGrid(PanelSyncManager syncManager) {
+        return SlotGroupWidget.builder()
+                .matrix("XXX",
+                        "XXX",
+                        "XXX")
+                .key('X', i -> new RecipeMemorySlot(this.recipeMemory, i)
+                        .background(GTGuiTextures.SLOT))
+                .build().right(0);
+    }
+
+    public IWidget createInventoryPage(PanelSyncManager syncManager) {
+        if (this.connectedInventory.getSlots() == 0) {
+            return Flow.column()
+                    .debugName("inventory page - empty")
+                    .leftRel(0.5f)
+                    .padding(2)
+                    .height(18 * 6)
+                    .width(18 * 8 + 4)
+                    .background(GTGuiTextures.DISPLAY);
+        }
+
+        // this is actually supposed to include the tool and storage inventory
+        // but that causes problems
+        List<ItemSlot> list = new ArrayList<>(this.connectedInventory.getSlots());
+
+        int rowSize = Math.min(this.connectedInventory.getSlots(), 8);
+        var connected = new SlotGroup("connected_inventory", rowSize, true)
+                .setAllowSorting(false);
+        syncManager.registerSlotGroup(connected);
+
+        for (int i = 0; i < this.connectedInventory.getSlots(); i++) {
+            list.add(new ItemSlot()
+                    .setEnabledIf(itemSlot -> {
+                        int slot = itemSlot.getSlot().getSlotIndex();
+                        return slot < this.connectedInventory.getSlots();
+                    })
+                    .slot(trackSlot(this.connectedInventory, i)
+                            .slotGroup(connected)));
+        }
+
+        // sort list
+        list.sort((o1, o2) -> {
+            var left = o1.getSlot().getStack();
+            var right = o2.getSlot().getStack();
+
+            if (!left.isEmpty() && !right.isEmpty()) return 0;
+            if (left.isEmpty() && right.isEmpty()) return 0;
+
+            return right.isEmpty() ? -1 : 1;
+        });
+
+        return Flow.column()
+                .debugName("inventory page")
+                .padding(2)
+                .leftRel(0.5f)
+                .coverChildren()
+                .background(GTGuiTextures.DISPLAY)
+                .child(new Grid()
+                        .scrollable(new VerticalScrollData())
+                        .width(18 * 8 + 4)
+                        .height(18 * 6)
+                        .mapTo(rowSize, list));
+    }
+
+    public void sendHandlerToClient(PacketBuffer buffer) {
+        buffer.writeVarInt(this.connectedInventory.getSlots());
+    }
+
+    public void readHandler(PacketBuffer buf) {
+        int connected = buf.readVarInt();
+
+        // set connected inventory
+        this.connectedInventory = new ItemHandlerList(Collections.singletonList(new ItemStackHandler(connected)));
+
+        // set combined inventory
+        this.combinedInventory = new ItemHandlerList(Arrays.asList(
+                this.internalInventory,
+                this.toolInventory,
+                this.connectedInventory));
+
+        getCraftingRecipeLogic().updateInventory(this.combinedInventory);
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.UPDATE_CLIENT_HANDLER) {
+            readHandler(buf);
+        }
+    }
+
+    public int getItemsCrafted() {
+        return this.itemsCrafted;
+    }
+
+    public void setItemsCrafted(int itemsCrafted) {
+        this.itemsCrafted = itemsCrafted;
     }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.workbench.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.workbench.tooltip2"));
-    }
-
-    public void discardRecipeResolver(EntityPlayer entityPlayer) {
-        this.listeners.remove(entityPlayer);
-        if (listeners.isEmpty()) {
-            if (!getWorld().isRemote && recipeLogic != null) {
-                itemsCrafted = recipeLogic.getItemsCraftedAmount();
-                this.markDirty();
-            }
-            recipeLogic = null;
-        }
     }
 
     public ItemStackHandler getCraftingGrid() {

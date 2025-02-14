@@ -148,8 +148,19 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         for (int i = 0; i < rows; i++) {
             widgets.add(new ArrayList<>());
             for (int j = 0; j < this.rowSize; j++) {
-                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(inventory, i * rowSize + j)
-                        .slotGroup("item_inv")));
+                int index = i * rowSize + j;
+                widgets.get(i).add(new ItemSlot().slot(SyncHandlers.itemSlot(inventory, index)
+                        .slotGroup("item_inv")
+                        .changeListener((newItem, onlyAmountChanged, client, init) -> {
+                            if (client || init) return;
+
+                            for (var facing : EnumFacing.VALUES) {
+                                var neighbor = getNeighbor(facing);
+                                if (neighbor instanceof IGregTechTileEntity gtte) {
+                                    gtte.getMetaTileEntity().onNeighborChanged();
+                                }
+                            }
+                        })));
             }
         }
         return GTGuis.createPanel(this, rowSize * 18 + 14, 18 + 4 * 18 + 5 + 14 + 18 * rows)

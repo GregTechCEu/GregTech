@@ -105,7 +105,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
                     buf.writeBlockPos(this.bounds[0]);
                     buf.writeBlockPos(this.bounds[1]);
                 });
-                updateHandler();
+                onHandlerUpdate();
             }
         }
     }
@@ -332,6 +332,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
             storage.setDisconnected();
         }
         handler.rebuildCache();
+        onHandlerUpdate();
         calculateEnergyUsage();
         markDirty();
     }
@@ -344,7 +345,7 @@ public class MetaTileEntityQuantumStorageController extends MetaTileEntity imple
     }
 
     @Override
-    public void updateHandler() {
+    public void onHandlerUpdate() {
         if (getWorld().isRemote) return;
         notifyBlockUpdate();
         for (var pos : typePosMap.get(PROXY)) {

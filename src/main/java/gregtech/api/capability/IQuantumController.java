@@ -30,5 +30,5 @@ public interface IQuantumController extends ICapabilityProvider {
 
     long getTypeEnergy(IQuantumStorage<?> storage);
 
-    void updateHandler();
+    void onHandlerUpdate();
 }
