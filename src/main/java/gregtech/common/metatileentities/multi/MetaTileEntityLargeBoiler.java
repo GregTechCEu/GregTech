@@ -8,6 +8,8 @@ import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.KeyManager;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -117,14 +119,14 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addCustom(this::addCustomData)
                 .addWorkingStatusLine();
     }
 
     @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         super.configureWarningText(builder);
         builder.addCustom(richText -> {
             if (isStructureFormed() && getWaterFilled() == 0) {
@@ -159,7 +161,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 });
     }
 
-    private void addCustomData(MultiblockUIFactory.KeyManager keyManager) {
+    private void addCustomData(KeyManager keyManager) {
         if (isStructureFormed()) {
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,

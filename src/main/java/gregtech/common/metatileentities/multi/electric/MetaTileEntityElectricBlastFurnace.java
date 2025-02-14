@@ -10,7 +10,8 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.KeyManager;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -69,7 +70,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
@@ -79,7 +80,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
-    private void addHeatCapacity(MultiblockUIFactory.KeyManager keyManager) {
+    private void addHeatCapacity(KeyManager keyManager) {
         if (isStructureFormed()) {
             var heatString = KeyUtil.number(TextFormatting.RED,
                     getCurrentTemperature(), "K");

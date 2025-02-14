@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.FuelMultiblockController;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.FixedIntArraySyncValue;
@@ -73,7 +74,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
         builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive());
@@ -97,7 +98,7 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     }
 
     @Override
-    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+    protected void configureErrorText(MultiblockUIBuilder builder) {
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
         builder.addCustom(keyList -> {

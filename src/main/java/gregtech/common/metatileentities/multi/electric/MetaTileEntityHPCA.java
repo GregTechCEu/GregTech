@@ -9,6 +9,8 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.KeyManager;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
@@ -372,7 +374,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(true, hpcaHandler.getAllocatedCWUt() > 0)
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
@@ -397,7 +399,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(hasNotEnoughEnergy)
                 .addCustom(richText -> {
                     if (!isStructureFormed()) return;
@@ -420,7 +422,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+    protected void configureErrorText(MultiblockUIBuilder builder) {
         builder.addCustom(richText -> {
             if (!isStructureFormed()) return;
 
@@ -903,7 +905,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
-        public void addWarnings2(MultiblockUIFactory.KeyManager keyManager) {
+        public void addWarnings2(KeyManager keyManager) {
             List<IKey> warnings = new ArrayList<>();
             if (numBridges > 1) {
                 warnings.add(KeyUtil.lang(TextFormatting.GRAY,
@@ -924,7 +926,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
-        public void addErrors2(MultiblockUIFactory.KeyManager keyManager) {
+        public void addErrors2(KeyManager keyManager) {
             for (IHPCAComponentHatch component : components) {
                 if (component.isDamaged()) {
                     keyManager.add(KeyUtil.lang(TextFormatting.RED,
