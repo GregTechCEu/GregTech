@@ -10,7 +10,7 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MTETrait;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -100,7 +100,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addCustom(keyManager -> {
                     // custom steam tank line
@@ -121,7 +121,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addCustom(list -> {
             if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
                 list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.steam.low_steam"));

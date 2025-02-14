@@ -8,7 +8,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
@@ -249,7 +249,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(true, isActive() && isWorkingEnabled()) // transform into two-state system for display
                 .setWorkingStatusKeys("gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
@@ -259,7 +259,7 @@ public class MetaTileEntityDataBank extends MultiblockWithDisplayBase implements
     }
 
     @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(hasNotEnoughEnergy)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
