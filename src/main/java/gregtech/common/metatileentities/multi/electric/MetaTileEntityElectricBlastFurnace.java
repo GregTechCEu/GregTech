@@ -45,7 +45,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,12 +79,12 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
-    private void addHeatCapacity(List<IDrawable> keyList) {
+    private void addHeatCapacity(MultiblockUIFactory.KeyManager keyManager) {
         if (isStructureFormed()) {
             var heatString = KeyUtil.number(TextFormatting.RED,
                     getCurrentTemperature(), "K");
 
-            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+            keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.blast_furnace.max_temperature", heatString));
         }
     }
