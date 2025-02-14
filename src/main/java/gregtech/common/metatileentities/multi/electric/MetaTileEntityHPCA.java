@@ -53,11 +53,13 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -88,9 +90,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
+    private final gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier progressSupplier;
+
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
+        this.progressSupplier = new gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier(200, 47, false);
         this.hpcaHandler = new HPCAGridHandler(this);
     }
 
@@ -358,20 +363,32 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .addScreenChildren(iWidgets -> iWidgets.add(new Grid()
-                        .coverChildren()
+                .addScreenChildren(widgets -> widgets.add(new ParentWidget<>()
                         .leftRel(0.5f)
-                        .bottom(4)
-                        .minElementMargin(1)
-                        .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
-                                .asWidget()
+                        .bottom(5)
+                        .size(16 * 3 + 2)
+                        .child(new Grid()
+                                .sizeRel(1f)
+                                .padding(1)
+                                .minElementMargin(1)
+                                .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
+                                        .asWidget()
+                                        .tooltipAutoUpdate(true)
+                                        .tooltipBuilder(tooltip -> {
+                                            hpcaHandler.addInfo(tooltip);
+                                            if (isStructureFormed()) {
+                                                tooltip.addLine(hpcaHandler.getComponentKey(value));
+                                            }
+                                        })
+                                        .size(14)))
+                        .child(new ProgressWidget()
+                                .sizeRel(1f)
+                                .value(new DoubleSyncValue(progressSupplier))
+                                .texture(GTGuiTextures.HPCA_COMPONENT_OUTLINE,
+                                        47)
+                                .direction(ProgressWidget.Direction.LEFT)
                                 .tooltipAutoUpdate(true)
-                                .tooltipBuilder(tooltip -> {
-                                    if (isStructureFormed()) {
-                                        tooltip.addLine(hpcaHandler.getComponentKey(value));
-                                    }
-                                })
-                                .size(14))));
+                                .tooltipBuilder(hpcaHandler::addInfo))));
     }
 
     @Override
@@ -834,6 +851,48 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 maxCoolant += coolantProvider.getMaxCoolantPerTick();
             }
             return maxCoolant;
+        }
+
+        public void addInfo(IRichTextBuilder<?> textList) {
+            // Max Computation
+            IKey data = KeyUtil.number(TextFormatting.AQUA, getMaxCWUt());
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_computation", data));
+
+            // Cooling
+            TextFormatting coolingColor = getMaxCoolingAmount() < getMaxCoolingDemand() ? TextFormatting.RED :
+                    TextFormatting.GREEN;
+            data = KeyUtil.number(coolingColor, getMaxCoolingDemand());
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_cooling_demand", data));
+
+            data = KeyUtil.number(coolingColor, getMaxCoolingAmount());
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_cooling_available", data));
+
+            // Coolant Required
+            if (getMaxCoolantDemand() > 0) {
+                data = KeyUtil.number(
+                        TextFormatting.YELLOW,
+                        getMaxCoolantDemand(), "L ");
+                IKey coolantName = KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.hpca.info_coolant_name");
+                // data.appendSibling(coolantName);
+                data = IKey.comp(data, coolantName);
+            } else {
+                data = KeyUtil.string(TextFormatting.GREEN, "0");
+            }
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_coolant_required", data));
+
+            // Bridging
+            if (numBridges > 0) {
+                textList.addLine(KeyUtil.lang(TextFormatting.GREEN,
+                        "gregtech.multiblock.hpca.info_bridging_enabled"));
+            } else {
+                textList.addLine(KeyUtil.lang(TextFormatting.RED,
+                        "gregtech.multiblock.hpca.info_bridging_disabled"));
+            }
         }
 
         public void addWarnings2(KeyManager keyManager) {
