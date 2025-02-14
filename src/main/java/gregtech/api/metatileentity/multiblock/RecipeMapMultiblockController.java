@@ -10,7 +10,7 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
-import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
@@ -170,7 +170,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return true;
     }
 
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
@@ -179,7 +179,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy());
     }
 

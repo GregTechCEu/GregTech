@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
@@ -260,7 +261,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
                 .addCustom(list -> {
@@ -295,7 +296,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+    protected void configureErrorText(MultiblockUIBuilder builder) {
         builder.addCustom(list -> {
             if (isStructureFormed() && !drainFluid(false)) {
                 list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
@@ -304,7 +305,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     }
 
     @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(!drainEnergy(true));
         builder.addCustom(list -> {
             if (isStructureFormed() && isInventoryFull) {

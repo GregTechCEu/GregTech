@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.sync.FixedIntArraySyncValue;
@@ -119,7 +120,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
         builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
@@ -144,7 +145,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addCustom(keyList -> {
             if (!isStructureFormed() || getRotorHolder() == null)
                 return;
@@ -161,7 +162,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    protected void configureErrorText(MultiblockUIFactory.Builder builder) {
+    protected void configureErrorText(MultiblockUIBuilder builder) {
         builder.addCustom(keyList -> {
             if (!isStructureFormed() || getRotorHolder() == null)
                 return;
