@@ -94,7 +94,7 @@ public class SimpleItemFilter extends BaseFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
-        return GTGuis.createPopupPanel("simple_item_filter", 98, 81)
+        return GTGuis.createPopupPanel("simple_item_filter", 98, 81, false)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22).left(4));
     }
