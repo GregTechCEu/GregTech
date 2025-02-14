@@ -12,6 +12,7 @@ import gregtech.api.gui.widgets.ImageCycleButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
@@ -572,11 +573,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return true;
     }
 
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {}
+    protected void configureDisplayText(MultiblockUIBuilder builder) {}
 
-    protected void configureErrorText(MultiblockUIFactory.Builder builder) {}
+    protected void configureErrorText(MultiblockUIBuilder builder) {}
 
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {}
+    protected void configureWarningText(MultiblockUIBuilder builder) {}
 
     protected MultiblockUIFactory createUIFactory() {
         return new MultiblockUIFactory(this)
