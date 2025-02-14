@@ -72,47 +72,82 @@ public class GTGuis {
         return createPanel(valueItem.unlocalizedName);
     }
 
-    public static ModularPanel createPopupPanel(String name, int width, int height) {
-        return createPopupPanel(name, width, height, false, false);
+    public static PopupPanel createPopupPanel(String name, int width, int height) {
+        return defaultPopupPanel(name)
+                .size(width, height);
     }
 
-    public static ModularPanel createPopupPanel(String name, int width, int height, boolean disableBelow,
-                                                boolean closeOnOutsideClick) {
-        return new PopupPanel(name, width, height, disableBelow, closeOnOutsideClick);
+    public static PopupPanel createPopupPanel(String name, int width, int height, boolean deleteCachedPanel) {
+        return createPopupPanel(name, width, height)
+                .deleteCachedPanel(deleteCachedPanel);
     }
 
-    public static ModularPanel defaultPopupPanel(String name) {
-        return defaultPopupPanel(name, false, false);
+    public static PopupPanel defaultPopupPanel(String name) {
+        return new PopupPanel(name)
+                .size(DEFAULT_WIDTH, DEFAULT_HIEGHT);
     }
 
-    public static ModularPanel defaultPopupPanel(String name, boolean disableBelow,
-                                                 boolean closeOnOutsideClick) {
-        return new PopupPanel(name, DEFAULT_WIDTH, DEFAULT_HIEGHT, disableBelow, closeOnOutsideClick);
+    public static PopupPanel defaultPopupPanel(String name, boolean disableBelow,
+                                               boolean closeOnOutsideClick, boolean deleteCachedPanel) {
+        return defaultPopupPanel(name)
+                .disablePanelsBelow(disableBelow)
+                .closeOnOutOfBoundsClick(closeOnOutsideClick)
+                .deleteCachedPanel(deleteCachedPanel);
     }
 
-    private static class PopupPanel extends ModularPanel {
+    public static class PopupPanel extends ModularPanel {
 
-        private final boolean disableBelow;
-        private final boolean closeOnOutsideClick;
+        private boolean disableBelow;
+        private boolean closeOnOutsideClick;
+        private boolean deleteCachedPanel;
 
-        public PopupPanel(@NotNull String name, int width, int height, boolean disableBelow,
-                          boolean closeOnOutsideClick) {
+        private PopupPanel(@NotNull String name) {
             super(name);
-            size(width, height).align(Alignment.Center);
+            align(Alignment.Center);
             background(GTGuiTextures.BACKGROUND_POPUP);
             child(ButtonWidget.panelCloseButton().top(5).right(5)
                     .onMousePressed(mouseButton -> {
                         if (mouseButton == 0 || mouseButton == 1) {
                             this.closeIfOpen(true);
-                            if (isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
-                                handler.deleteCachedPanel();
-                            }
                             return true;
                         }
                         return false;
                     }));
+        }
+
+        @Override
+        public void onClose() {
+            super.onClose();
+            if (deleteCachedPanel && isSynced() && getSyncHandler() instanceof IPanelHandler handler) {
+                handler.deleteCachedPanel();
+            }
+        }
+
+        public PopupPanel disablePanelsBelow(boolean disableBelow) {
             this.disableBelow = disableBelow;
+            return this;
+        }
+
+        public PopupPanel closeOnOutOfBoundsClick(boolean closeOnOutsideClick) {
             this.closeOnOutsideClick = closeOnOutsideClick;
+            return this;
+        }
+
+        public PopupPanel deleteCachedPanel(boolean deleteCachedPanel) {
+            this.deleteCachedPanel = deleteCachedPanel;
+            return this;
+        }
+
+        @Override
+        public PopupPanel size(int w, int h) {
+            super.size(w, h);
+            return this;
+        }
+
+        @Override
+        public PopupPanel size(int val) {
+            super.size(val);
+            return this;
         }
 
         @Override

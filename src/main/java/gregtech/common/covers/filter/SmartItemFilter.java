@@ -98,7 +98,7 @@ public class SmartItemFilter extends BaseFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
-        return GTGuis.createPopupPanel("smart_item_filter", 98 + 27, 81)
+        return GTGuis.createPopupPanel("smart_item_filter", 98 + 27, 81, false)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22).left(4));
     }

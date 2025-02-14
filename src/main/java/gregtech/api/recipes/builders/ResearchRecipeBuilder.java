@@ -17,7 +17,7 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
     protected ItemStack dataStack;
     protected boolean ignoreNBT;
     protected String researchId;
-    protected int eut;
+    protected long eut;
 
     public T researchStack(@NotNull ItemStack researchStack) {
         if (!researchStack.isEmpty()) {
@@ -47,7 +47,7 @@ public abstract class ResearchRecipeBuilder<T extends ResearchRecipeBuilder<T>> 
         return (T) this;
     }
 
-    public T EUt(int eut) {
+    public T EUt(long eut) {
         this.eut = eut;
         return (T) this;
     }

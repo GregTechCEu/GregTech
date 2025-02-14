@@ -11,8 +11,8 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.CosmicProperty;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -270,7 +270,7 @@ public class MetaPrefixItem extends StandardMetaItem implements IHaloRenderItem,
     public boolean isBeaconPayment(@NotNull ItemStack stack) {
         Material material = getMaterial(stack);
         if (material != null && this.prefix != OrePrefix.ingot && this.prefix != OrePrefix.gem) {
-            ToolProperty property = material.getProperty(PropertyKey.TOOL);
+            MaterialToolProperty property = material.getProperty(PropertyKey.TOOL);
             return property != null && property.getToolHarvestLevel() >= 2;
         }
         return false;

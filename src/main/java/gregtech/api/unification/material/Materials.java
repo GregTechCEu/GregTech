@@ -110,6 +110,9 @@ public class Materials {
                 Materials.DyeRed, Materials.DyeBlack
         };
 
+        // Register soft tools
+        SoftToolAddition.register();
+
         OrePrefix.init();
     }
 

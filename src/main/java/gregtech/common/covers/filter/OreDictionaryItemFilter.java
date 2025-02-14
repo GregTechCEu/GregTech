@@ -75,7 +75,7 @@ public class OreDictionaryItemFilter extends BaseFilter {
 
     @Override
     public @NotNull ModularPanel createPopupPanel(PanelSyncManager syncManager) {
-        return GTGuis.createPopupPanel("ore_dict_filter", 188, 76)
+        return GTGuis.createPopupPanel("ore_dict_filter", 188, 76, false)
                 .padding(7)
                 .child(CoverWithUI.createTitleRow(getContainerStack()))
                 .child(createWidgets(syncManager).top(22));
