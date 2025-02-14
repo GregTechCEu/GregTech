@@ -21,7 +21,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -89,12 +88,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
-    private final gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier progressSupplier;
-
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
-        this.progressSupplier = new gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier(200, 47, false);
         this.hpcaHandler = new HPCAGridHandler(this);
     }
 
@@ -369,7 +365,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         .minElementMargin(1)
                         .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
                                 .asWidget()
-                                // could add tooltips here showing the name of the component
+                                .tooltipAutoUpdate(true)
+                                .tooltipBuilder(tooltip -> {
+                                    if (isStructureFormed()) {
+                                        tooltip.addLine(hpcaHandler.getComponentKey(value));
+                                    }
+                                })
                                 .size(14))));
     }
 
@@ -835,76 +836,6 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             return maxCoolant;
         }
 
-        public void addInfo(List<ITextComponent> textList) {
-            // Max Computation
-            ITextComponent data = TextComponentUtil.stringWithColor(TextFormatting.AQUA,
-                    Integer.toString(getMaxCWUt()));
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                    "gregtech.multiblock.hpca.info_max_computation", data));
-
-            // Cooling
-            TextFormatting coolingColor = getMaxCoolingAmount() < getMaxCoolingDemand() ? TextFormatting.RED :
-                    TextFormatting.GREEN;
-            data = TextComponentUtil.stringWithColor(coolingColor, Integer.toString(getMaxCoolingDemand()));
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                    "gregtech.multiblock.hpca.info_max_cooling_demand", data));
-
-            data = TextComponentUtil.stringWithColor(coolingColor, Integer.toString(getMaxCoolingAmount()));
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                    "gregtech.multiblock.hpca.info_max_cooling_available", data));
-
-            // Coolant Required
-            if (getMaxCoolantDemand() > 0) {
-                data = TextComponentUtil.stringWithColor(
-                        TextFormatting.YELLOW,
-                        getMaxCoolantDemand() + "L ");
-                ITextComponent coolantName = TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                        "gregtech.multiblock.hpca.info_coolant_name");
-                data.appendSibling(coolantName);
-            } else {
-                data = TextComponentUtil.stringWithColor(TextFormatting.GREEN, "0");
-            }
-            textList.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                    "gregtech.multiblock.hpca.info_max_coolant_required", data));
-
-            // Bridging
-            if (numBridges > 0) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.GREEN,
-                        "gregtech.multiblock.hpca.info_bridging_enabled"));
-            } else {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                        "gregtech.multiblock.hpca.info_bridging_disabled"));
-            }
-        }
-
-        public void addWarnings(List<ITextComponent> textList) {
-            List<ITextComponent> warnings = new ArrayList<>();
-            if (numBridges > 1) {
-                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.hpca.warning_multiple_bridges"));
-            }
-            if (computationProviders.isEmpty()) {
-                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.hpca.warning_no_computation"));
-            }
-            if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
-                warnings.add(TextComponentUtil.translationWithColor(TextFormatting.GRAY,
-                        "gregtech.multiblock.hpca.warning_low_cooling"));
-            }
-            if (!warnings.isEmpty()) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.YELLOW,
-                        "gregtech.multiblock.hpca.warning_structure_header"));
-                textList.addAll(warnings);
-            }
-        }
-
-        public void addErrors(List<ITextComponent> textList) {
-            if (components.stream().anyMatch(IHPCAComponentHatch::isDamaged)) {
-                textList.add(TextComponentUtil.translationWithColor(TextFormatting.RED,
-                        "gregtech.multiblock.hpca.error_damaged"));
-            }
-        }
-
         public void addWarnings2(KeyManager keyManager) {
             List<IKey> warnings = new ArrayList<>();
             if (numBridges > 1) {
@@ -949,6 +880,14 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                 return GTGuiTextures.BLANK_TRANSPARENT;
             }
             return components.get(index).getComponentIcon2();
+        }
+
+        public IKey getComponentKey(int index) {
+            if (components.size() <= index) {
+                return IKey.EMPTY;
+            }
+
+            return IKey.lang(components.get(index).getTileName());
         }
 
         public void tryGatherClientComponents(World world, BlockPos pos, EnumFacing frontFacing,

@@ -58,4 +58,9 @@ public interface IHPCAComponentHatch {
     default UITexture getComponentIcon2() {
         return GTGuiTextures.HPCA_ICON_EMPTY_COMPONENT;
     }
+
+    /**
+     * The untranslated name of the tile implementing an HPCA component
+     */
+    String getTileName();
 }
