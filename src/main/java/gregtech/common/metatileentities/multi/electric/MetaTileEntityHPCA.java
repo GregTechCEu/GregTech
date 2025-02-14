@@ -370,7 +370,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
                                 .asWidget()
                                 // could add tooltips here showing the name of the component
-                                .size(18))));
+                                .size(14))));
     }
 
     @Override
