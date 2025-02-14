@@ -2,6 +2,7 @@ package gregtech.api.metatileentity.multiblock.ui;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.JsonUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -424,6 +425,20 @@ public class MultiblockUIBuilder implements KeyManager {
                 "gregtech.multiblock.turbine.fuel_needed",
                 KeyUtil.string(TextFormatting.RED, fuelName),
                 KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
+        return this;
+    }
+
+    /**
+     * Adds the name of a recipe map to the display.
+     *
+     * @param map the {@link RecipeMap} to get the name of
+     */
+    public MultiblockUIBuilder addRecipeMapLine(RecipeMap<?> map) {
+        if (!isStructureFormed) return this;
+
+        IKey mapName = KeyUtil.lang(TextFormatting.YELLOW, map.getTranslationKey());
+        addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.machine_mode", mapName));
+
         return this;
     }
 
