@@ -8,6 +8,8 @@ import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.ui.KeyManager;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -37,7 +39,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.GuiAxis;
 import com.cleanroommc.modularui.api.IPanelHandler;
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
@@ -118,14 +119,14 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    protected void configureDisplayText(MultiblockUIFactory.Builder builder) {
+    protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addCustom(this::addCustomData)
                 .addWorkingStatusLine();
     }
 
     @Override
-    protected void configureWarningText(MultiblockUIFactory.Builder builder) {
+    protected void configureWarningText(MultiblockUIBuilder builder) {
         super.configureWarningText(builder);
         builder.addCustom(richText -> {
             if (isStructureFormed() && getWaterFilled() == 0) {
@@ -160,27 +161,27 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 });
     }
 
-    private void addCustomData(List<IDrawable> keyList) {
+    private void addCustomData(KeyManager keyManager) {
         if (isStructureFormed()) {
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
                     recipeLogic.getLastTickSteam(), " L/t");
 
-            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+            keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.steam_output", steamOutput));
 
             // Efficiency line
             IKey efficiency = KeyUtil.number(
                     () -> getNumberColor(recipeLogic.getHeatScaled()),
                     recipeLogic.getHeatScaled(), "%");
-            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+            keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.efficiency", efficiency));
 
             // Throttle line
             IKey throttle = KeyUtil.number(
                     () -> getNumberColor(getThrottle()),
                     getThrottle(), "%");
-            keyList.add(KeyUtil.lang(TextFormatting.GRAY,
+            keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.throttle", throttle));
         }
     }
