@@ -40,6 +40,10 @@ import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +60,11 @@ public class MultiblockUIFactory {
     private int width = 198, height = 202;
     private int screenHeight = 109;
     private Consumer<List<IWidget>> childrenConsumer;
+
+    static {
+        // register operations
+        Operation.init();
+    }
 
     public MultiblockUIFactory(@NotNull MultiblockWithDisplayBase mte) {
         this.mte = mte;
@@ -409,9 +418,11 @@ public class MultiblockUIFactory {
     }
 
     @SuppressWarnings({ "UnusedReturnValue", "unused" })
-    public static class Builder {
+    public static class Builder implements KeyManager {
 
         private final List<IDrawable> textList = new ArrayList<>();
+        private final List<Operation> operations = new ArrayList<>();
+
         private Consumer<Builder> action;
         private final SyncHandler syncHandler = makeSyncHandler();
 
@@ -811,13 +822,13 @@ public class MultiblockUIFactory {
 
         /** Insert an empty line into the text list. */
         public Builder addEmptyLine() {
-            this.textList.add(IKey.LINE_FEED);
+            addKey(IKey.LINE_FEED);
             return this;
         }
 
         /** Add custom text dynamically, allowing for custom application logic. */
-        public Builder addCustom(Consumer<List<IDrawable>> customConsumer) {
-            customConsumer.accept(this.textList);
+        public Builder addCustom(Consumer<KeyManager> customConsumer) {
+            customConsumer.accept(this);
             return this;
         }
 
@@ -827,12 +838,12 @@ public class MultiblockUIFactory {
 
         public void clear() {
             this.textList.clear();
+            this.operations.clear();
         }
 
         protected boolean hasChanged() {
             if (this.action == null) return false;
-            List<String> old = new ArrayList<>();
-            for (var drawable : this.textList) old.add(JsonUtils.toJsonString(drawable));
+            List<String> old = toString(this.textList);
             build();
             if (textList.size() != old.size()) return true;
             for (int i = 0; i < textList.size(); i++) {
@@ -840,6 +851,14 @@ public class MultiblockUIFactory {
                     return true;
             }
             return false;
+        }
+
+        private static List<String> toString(List<? extends IDrawable> drawables) {
+            List<String> strings = new ArrayList<>();
+            for (IDrawable drawable : drawables) {
+                strings.add(JsonUtils.toJsonString(drawable));
+            }
+            return strings;
         }
 
         protected void sync(String key, PanelSyncManager syncManager) {
@@ -863,8 +882,9 @@ public class MultiblockUIFactory {
 
                 private void syncText(PacketBuffer buffer) {
                     buffer.writeVarInt(textList.size());
-                    for (IDrawable drawable : textList) {
-                        var jsonString = JsonUtils.toJsonString(drawable);
+                    for (int i = 0; i < textList.size(); i++) {
+                        buffer.writeByte(Operation.getId(operations.get(i)));
+                        var jsonString = JsonUtils.toJsonString(textList.get(i));
                         NetworkUtils.writeStringSafe(buffer, jsonString);
                     }
                 }
@@ -874,8 +894,9 @@ public class MultiblockUIFactory {
                     if (id == 0) {
                         clear();
                         for (int i = buf.readVarInt(); i > 0; i--) {
+                            int op = buf.readByte();
                             String jsonString = NetworkUtils.readStringSafe(buf);
-                            addKey(JsonUtils.fromJsonString(jsonString));
+                            addKey(JsonUtils.fromJsonString(jsonString), Operation.getById(op));
                         }
                     }
                 }
@@ -891,8 +912,8 @@ public class MultiblockUIFactory {
                 build();
                 dirty = false;
             }
-            for (IDrawable drawable : textList) {
-                richText.addLine(drawable).spaceLine(2);
+            for (int i = 0; i < operations.size(); i++) {
+                operations.get(i).apply(textList.get(i), richText);
             }
         }
 
@@ -919,12 +940,95 @@ public class MultiblockUIFactory {
             this.onRebuild = onRebuild;
         }
 
-        private void addKey(IDrawable key) {
-            this.textList.add(key);
-        }
-
         private void addKey(IKey key, IDrawable... hover) {
             addKey(KeyUtil.setHover(key, hover));
+        }
+
+        private void addKey(IDrawable key) {
+            addKey(key, Operation.NEW_LINE_SPACE);
+        }
+
+        private void addKey(@NotNull IDrawable key, @NotNull Operation op) {
+            if (textList.size() != operations.size()) {
+                throw new IllegalStateException("textList and operations must be the same size!");
+            }
+            this.textList.add(key);
+            Operation.checkOp(op);
+            this.operations.add(op);
+        }
+
+        @Override
+        public void add(IDrawable drawable, Operation op) {
+            addKey(drawable, op);
+        }
+    }
+
+    @FunctionalInterface
+    public interface Operation {
+
+        Int2ObjectMap<Operation> ID_MAP = new Int2ObjectArrayMap<>();
+        Object2IntMap<Operation> REVERSE_MAP = new Object2IntArrayMap<>();
+
+        Operation NO_OP = (drawable, richText) -> {};
+        Operation NEW_LINE = (drawable, richText) -> richText.addLine(drawable);
+        Operation ADD = (drawable, richText) -> richText.add(drawable);
+        Operation NEW_LINE_SPACE = NEW_LINE.andThen(richText -> richText.spaceLine(2));
+
+        static void init() {
+            registerOp(NO_OP);
+            registerOp(NEW_LINE);
+            registerOp(ADD);
+            registerOp(NEW_LINE_SPACE);
+        }
+
+        static Operation getById(int id) {
+            return ID_MAP.get(id);
+        }
+
+        static int getId(Operation op) {
+            return REVERSE_MAP.get(op);
+        }
+
+        static void registerOp(Operation op) {
+            int nextId = ID_MAP.size();
+            ID_MAP.put(nextId, op);
+            REVERSE_MAP.put(op, nextId);
+        }
+
+        static void checkOp(Operation op) {
+            if (!REVERSE_MAP.containsKey(op))
+                throw new IllegalStateException("Operation is not registered!");
+            Operation check = ID_MAP.get(REVERSE_MAP.getInt(op));
+            if (check != op) throw new IllegalStateException("Operation is not identical!");
+        }
+
+        void apply(IDrawable drawable, IRichTextBuilder<?> richText);
+
+        default Operation andThen(Operation after) {
+            return (drawable, richText) -> {
+                this.apply(drawable, richText);
+                after.apply(drawable, richText);
+            };
+        }
+
+        default Operation andThen(Consumer<IRichTextBuilder<?>> after) {
+            return (drawable, richText) -> {
+                this.apply(drawable, richText);
+                after.accept(richText);
+            };
+        }
+    }
+
+    public interface KeyManager {
+
+        default void add(IDrawable drawable) {
+            add(drawable, Operation.NEW_LINE_SPACE);
+        }
+
+        void add(IDrawable drawable, Operation op);
+
+        default void addAll(Iterable<? extends IDrawable> drawables) {
+            drawables.forEach(this::add);
         }
     }
 }

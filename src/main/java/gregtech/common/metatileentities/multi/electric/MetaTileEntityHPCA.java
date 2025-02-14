@@ -51,7 +51,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
@@ -904,7 +903,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
-        public void addWarnings2(List<IDrawable> richText) {
+        public void addWarnings2(MultiblockUIFactory.KeyManager keyManager) {
             List<IKey> warnings = new ArrayList<>();
             if (numBridges > 1) {
                 warnings.add(KeyUtil.lang(TextFormatting.GRAY,
@@ -919,16 +918,16 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         "gregtech.multiblock.hpca.warning_low_cooling"));
             }
             if (!warnings.isEmpty()) {
-                richText.add(KeyUtil.lang(TextFormatting.YELLOW,
+                keyManager.add(KeyUtil.lang(TextFormatting.YELLOW,
                         "gregtech.multiblock.hpca.warning_structure_header"));
-                richText.addAll(warnings);
+                keyManager.addAll(warnings);
             }
         }
 
-        public void addErrors2(List<IDrawable> richText) {
+        public void addErrors2(MultiblockUIFactory.KeyManager keyManager) {
             for (IHPCAComponentHatch component : components) {
                 if (component.isDamaged()) {
-                    richText.add(KeyUtil.lang(TextFormatting.RED,
+                    keyManager.add(KeyUtil.lang(TextFormatting.RED,
                             "gregtech.multiblock.hpca.error_damaged"));
                     return;
                 }
