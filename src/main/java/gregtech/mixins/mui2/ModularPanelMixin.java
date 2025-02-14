@@ -68,9 +68,9 @@ public abstract class ModularPanelMixin extends ParentWidget<ModularPanel> imple
             loop:
             for (LocatedWidget widget : this.hovering) {
                 widget.applyMatrix(getContext());
+                GhostIngredientDrag<?> drag = gregTech$getGhostDrag();
                 if (widget.getElement() instanceof JeiGhostIngredientSlot<?>ghostSlot &&
                         Mods.JustEnoughItems.isModLoaded()) {
-                    GhostIngredientDrag<?> drag = gregTech$getGhostDrag();
                     if (drag != null && gregTech$insertGhostIngredient(drag, ghostSlot)) {
                         gregTech$stopDrag();
                         pressed = LocatedWidget.EMPTY;
@@ -79,7 +79,7 @@ public abstract class ModularPanelMixin extends ParentWidget<ModularPanel> imple
                         break;
                     }
                 }
-                if (widget.getElement() instanceof Interactable interactable) {
+                if (drag == null && widget.getElement() instanceof Interactable interactable) {
                     switch (interactable.onMousePressed(mouseButton)) {
                         case IGNORE:
                             break;

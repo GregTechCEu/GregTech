@@ -43,6 +43,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             tooltip.addFromItem(stack);
         });
 
+        // for hovering with items in hand
         listenGuiAction((IGuiAction.MouseDrag) (m, t) -> {
             if (isHovering() && dragging && syncHandler.isValid()) {
                 var player = syncHandler.getSyncManager().getCursorItem();
@@ -53,6 +54,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
             return false;
         });
 
+        // dragging has stopped
         listenGuiAction((IGuiAction.MouseReleased) mouseButton -> {
             dragging = false;
             return true;
@@ -162,7 +164,7 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         @Override
         public void init(String key, PanelSyncManager syncHandler) {
             super.init(key, syncHandler);
-            this.lastStoredItem = this.handler.getStackInSlot(this.index).copy();
+            this.lastStoredItem = getStack().copy();
         }
 
         @Override
@@ -185,16 +187,9 @@ public class CraftingInputSlot extends Widget<CraftingOutputSlot> implements Int
         public void detectAndSendChanges(boolean init) {
             ItemStack itemStack = getStack();
             if (itemStack.isEmpty() && this.lastStoredItem.isEmpty()) return;
-            boolean onlyAmountChanged = false;
-            if (init ||
-                    !ItemHandlerHelper.canItemStacksStack(this.lastStoredItem, itemStack) ||
-                    (onlyAmountChanged = itemStack.getCount() != this.lastStoredItem.getCount())) {
-                this.listener.onChange(itemStack, onlyAmountChanged, false, init);
-                if (onlyAmountChanged) {
-                    this.lastStoredItem.setCount(itemStack.getCount());
-                } else {
-                    this.lastStoredItem = itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy();
-                }
+            if (init || !ItemHandlerHelper.canItemStacksStack(this.lastStoredItem, itemStack)) {
+                this.listener.onChange(itemStack, false, false, init);
+                this.lastStoredItem = itemStack.isEmpty() ? ItemStack.EMPTY : itemStack.copy();
                 syncToClient(SLOT_CHANGED, buffer -> NetworkUtils.writeItemStack(buffer, itemStack));
             }
         }

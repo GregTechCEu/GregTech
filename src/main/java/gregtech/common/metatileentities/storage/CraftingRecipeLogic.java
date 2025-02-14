@@ -30,6 +30,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenCustomHashMap;
@@ -43,7 +44,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     // client only
     public static final int UPDATE_INGREDIENTS = 1;
     public static final int RESET_INGREDIENTS = 2;
-    public static final int SYNC_STACK = 4;
+    public static final int SYNC_STACK = 3;
 
     // server only
     public static final int UPDATE_MATRIX = 0;
@@ -71,7 +72,7 @@ public class CraftingRecipeLogic extends SyncHandler {
     private final Int2IntMap compactedIndexes = new Int2IntArrayMap(9);
     private final Int2IntMap slotMap = new Int2IntArrayMap();
 
-    private final Map<Integer, Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
+    private final Int2ObjectMap<Object2BooleanMap<ItemStack>> replaceAttemptMap = new Int2ObjectArrayMap<>();
     private final InventoryCrafting craftingMatrix;
     private final IInventory craftingResultInventory = new InventoryCraftResult();
     private final CachedRecipeData cachedRecipeData;

@@ -325,7 +325,6 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     public IWidget createCraftingOutput(PosGuiData guiData, PanelSyncManager syncManager) {
         var amountCrafted = new IntSyncValue(this::getItemsCrafted, this::setItemsCrafted);
         syncManager.syncValue("amount_crafted", amountCrafted);
-        amountCrafted.updateCacheFromSource(true); // todo remove on mui2 rc3
 
         return Flow.column()
                 .size(54)
@@ -418,8 +417,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 this.toolInventory,
                 this.connectedInventory));
 
-        getCraftingRecipeLogic()
-                .updateInventory(this.combinedInventory);
+        getCraftingRecipeLogic().updateInventory(this.combinedInventory);
     }
 
     @Override
