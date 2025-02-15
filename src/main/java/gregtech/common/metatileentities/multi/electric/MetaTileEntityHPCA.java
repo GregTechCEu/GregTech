@@ -60,6 +60,7 @@ import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -367,28 +368,28 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         .leftRel(0.5f)
                         .bottom(5)
                         .size(16 * 3 + 2)
-                        .child(new Grid()
-                                .sizeRel(1f)
-                                .padding(1)
-                                .minElementMargin(1)
-                                .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
-                                        .asWidget()
-                                        .tooltipAutoUpdate(true)
-                                        .tooltipBuilder(tooltip -> {
-                                            hpcaHandler.addInfo(tooltip);
-                                            if (isStructureFormed()) {
-                                                tooltip.addLine(hpcaHandler.getComponentKey(value));
-                                            }
-                                        })
-                                        .size(14)))
                         .child(new ProgressWidget()
                                 .sizeRel(1f)
                                 .value(new DoubleSyncValue(progressSupplier))
-                                .texture(GTGuiTextures.HPCA_COMPONENT_OUTLINE,
-                                        47)
+                                .texture(GTGuiTextures.HPCA_COMPONENT_OUTLINE, 47)
                                 .direction(ProgressWidget.Direction.LEFT)
-                                .tooltipAutoUpdate(true)
-                                .tooltipBuilder(hpcaHandler::addInfo))));
+                                .tooltipAutoUpdate(true))
+                        .child(new Grid()
+                                .sizeRel(1f)
+                                .padding(1)
+                                .mapTo(3, 9, value -> new Widget<>()
+                                        .overlay(new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
+                                                .asIcon().size(14).marginLeft(2).marginTop(2))
+                                        .tooltipAutoUpdate(true)
+                                        .tooltipBuilder(tooltip -> {
+                                            if (isStructureFormed()) {
+                                                tooltip.addLine(hpcaHandler.getComponentKey(value));
+                                                tooltip.spaceLine(2);
+                                            }
+                                            hpcaHandler.addInfo(tooltip);
+                                        })
+                                        .size(16)
+                                        .padding(1)))));
     }
 
     @Override
