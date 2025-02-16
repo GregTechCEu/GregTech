@@ -288,7 +288,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
             for (String name : VirtualEnderRegistry.getEntryNames(getOwner(), type)) {
                 rows.add(createRow(name, syncManager, type));
             }
-            return GTGuis.createPopupPanel("entry_selector", 168, 112)
+            return GTGuis.createPopupPanel("entry_selector", 168, 112, true)
                     .child(IKey.lang("cover.generic.ender.known_channels")
                             .color(UI_TITLE_COLOR)
                             .asWidget()
@@ -310,7 +310,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
     protected PanelSyncHandler.IPanelBuilder entryDescription(String key, T entry) {
         return (syncManager, syncHandler) -> {
             var sync = new StringSyncValue(entry::getDescription, entry::setDescription);
-            return GTGuis.createPopupPanel(key, 168, 36 + 6)
+            return GTGuis.createPopupPanel(key, 168, 36 + 6, true)
                     .child(IKey.lang("cover.generic.ender.set_description.title", entry.getColorStr())
                             .color(UI_TITLE_COLOR)
                             .asWidget()
