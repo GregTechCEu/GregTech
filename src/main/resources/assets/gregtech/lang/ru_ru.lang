@@ -6118,4 +6118,5 @@ gregtech.machine.substation_hatch.output_64a.uiv.name=Энергетически
 gregtech.machine.substation_hatch.output_64a.uxv.name=Энергетический выходной разъем Подстанции (64A §eUXV§r)
 gregtech.machine.substation_hatch.output_64a.opv.name=Энергетический выходной разъем Подстанции (64A §9§lOpV§r)
 gregtech.machine.substation_hatch.output_64a.max.name=Энергетический выходной разъем Подстанции (64A §c§lMAX§r)
-item.gt.tool.toolbelt.name=Пояс для инструментов (%s)%s
+item.gt.tool.toolbelt.name=Пояс для инструментов (%s)
+item.gt.tool.toolbelt.name.select=Пояс для инструментов (%s) (%s)
