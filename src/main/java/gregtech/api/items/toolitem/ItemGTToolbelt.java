@@ -451,13 +451,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public @NotNull String getItemStackDisplayName(@NotNull ItemStack stack) {
         ItemStack tool = getHandler(stack).getSelectedStack();
-        String selectedToolDisplay = "";
-        if (!tool.isEmpty()) {
-            selectedToolDisplay = " (" + tool.getDisplayName() + ")";
-        }
         getHandler(stack).disablePassthrough();
-        String name = LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(),
-                selectedToolDisplay);
+        String name;
+        if (!tool.isEmpty()) {
+            name = LocalizationUtils.format(getTranslationKey() + ".select", getToolMaterial(stack).getLocalizedName(),
+                    tool.getDisplayName());
+        } else {
+            name = LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName());
+        }
         getHandler(stack).enablePassthrough();
         return name;
     }
