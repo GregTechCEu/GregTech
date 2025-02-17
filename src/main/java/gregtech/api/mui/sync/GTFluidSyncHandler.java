@@ -45,6 +45,7 @@ public class GTFluidSyncHandler extends SyncHandler {
     private boolean phantom;
     private BooleanSupplier showAmountInTooltip = () -> true;
     private BooleanSupplier showAmountOnSlot = () -> true;
+    private BooleanSupplier drawAlwaysFull = () -> true;
 
     public GTFluidSyncHandler(IFluidTank tank) {
         this.tank = tank;
@@ -173,6 +174,20 @@ public class GTFluidSyncHandler extends SyncHandler {
         if (!isPhantom() && phantomFluid != null)
             return false;
         return this.showAmountOnSlot.getAsBoolean();
+    }
+
+    public GTFluidSyncHandler drawAlwaysFull(boolean drawAsFull) {
+        this.drawAlwaysFull = () -> drawAsFull;
+        return this;
+    }
+
+    public GTFluidSyncHandler drawAlwaysFull(BooleanSupplier drawAsFull) {
+        this.drawAlwaysFull = drawAsFull;
+        return this;
+    }
+
+    public boolean drawAlwaysFull() {
+        return this.drawAlwaysFull.getAsBoolean();
     }
 
     public @NotNull String getFormattedFluidAmount() {
