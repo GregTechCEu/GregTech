@@ -956,7 +956,8 @@ public class MetaTileEntities {
                 new MetaTileEntityHPCABridge(gregtechId("hpca.bridge_component")));
 
         RESERVOIR_HATCH = registerMetaTileEntity(1418, new MetaTileEntityReservoirHatch(gregtechId("reservoir_hatch")));
-        PASSTHROUGH_HATCH_LASER = registerMetaTileEntity(1419, new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
+        PASSTHROUGH_HATCH_LASER = registerMetaTileEntity(1419,
+                new MetaTileEntityPassthroughHatchLaser(gregtechId("passthrough_hatch_laser"), 5));
         endPos = GregTechAPI.isHighTier() ? LASER_INPUT_HATCH_256.length - 1 :
                 Math.min(LASER_INPUT_HATCH_256.length - 1, GTValues.UHV - GTValues.IV);
         for (int i = 0; i < endPos; i++) {

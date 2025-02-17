@@ -1,40 +1,32 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
-
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
-import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.IPassthroughHatch;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-
 import gregtech.client.renderer.texture.Textures;
-import gregtech.client.utils.PipelineUtil;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.capabilities.Capability;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class MetaTileEntityPassthroughHatchLaser extends MetaTileEntityMultiblockPart implements IPassthroughHatch,
-                                                                                                 IMultiblockAbilityPart<IPassthroughHatch> {
+                                                 IMultiblockAbilityPart<IPassthroughHatch> {
 
     public MetaTileEntityPassthroughHatchLaser(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
@@ -47,7 +39,8 @@ public class MetaTileEntityPassthroughHatchLaser extends MetaTileEntityMultibloc
             if (world != null && !world.isRemote) {
                 TileEntity te = world.getTileEntity(getPos().offset(getFrontFacing()));
                 if (te != null) {
-                    return GregtechTileCapabilities.CAPABILITY_LASER.cast(te.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, getFrontFacing().getOpposite()));
+                    return GregtechTileCapabilities.CAPABILITY_LASER.cast(te
+                            .getCapability(GregtechTileCapabilities.CAPABILITY_LASER, getFrontFacing().getOpposite()));
                 }
             }
         }
@@ -58,7 +51,6 @@ public class MetaTileEntityPassthroughHatchLaser extends MetaTileEntityMultibloc
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityPassthroughHatchLaser(metaTileEntityId, getTier());
     }
-
 
     @Override
     public MultiblockAbility<IPassthroughHatch> getAbility() {
