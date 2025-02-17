@@ -124,7 +124,16 @@ public final class GTFluidSlot extends Widget<GTFluidSlot> implements Interactab
         if (content == null)
             content = this.syncHandler.getLockedFluid();
 
-        GuiDraw.drawFluidTexture(content, 1, 1, getArea().w() - 2, getArea().h() - 2, 0);
+        float height = getArea().h() - 2;
+        int y = 1;
+
+        if (!this.syncHandler.drawAlwaysFull()) {
+            float newHeight = height * ((float) content.amount / this.syncHandler.getCapacity());
+            y += (int) (height - newHeight);
+            height = newHeight;
+        }
+
+        GuiDraw.drawFluidTexture(content, 1, y, getArea().w() - 2, height, 0);
 
         if (content != null && this.syncHandler.showAmountOnSlot()) {
             String amount = NumberFormat.formatWithMaxDigits(content.amount, 3) + "L";
