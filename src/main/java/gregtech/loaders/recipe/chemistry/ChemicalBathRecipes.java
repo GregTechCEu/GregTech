@@ -28,7 +28,7 @@ public class ChemicalBathRecipes {
                 .duration(100).volts(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .inputItem(Items.REEDS, 1, true)
+                .inputItem(Items.REEDS, 1)
                 .fluidInputs(Water.getFluid(100))
                 .outputItem(Items.PAPER)
                 .duration(100).volts(VA[ULV]).buildAndRegister();
@@ -46,7 +46,7 @@ public class ChemicalBathRecipes {
                 .duration(100).volts(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .inputItem(Items.REEDS, 1, true)
+                .inputItem(Items.REEDS, 1)
                 .fluidInputs(DistilledWater.getFluid(100))
                 .outputItem(Items.PAPER)
                 .duration(100).volts(VA[ULV]).buildAndRegister();

@@ -326,6 +326,11 @@ public class BoilerRecipeLogic extends AbstractRecipeLogic implements ICategoryO
     }
 
     @Override
+    protected boolean produceEnergy(long eu, boolean simulate) {
+        return false;
+    }
+
+    @Override
     public long getMaxVoltageIn() {
         GTLog.logger.error("Large Boiler called getMaxVoltage(), this should not be possible!");
         return 0;

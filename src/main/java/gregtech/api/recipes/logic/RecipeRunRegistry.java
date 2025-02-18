@@ -11,12 +11,13 @@ import java.util.function.Function;
 
 public final class RecipeRunRegistry {
 
-    private final static Object2ObjectOpenHashMap<String, Function<NBTTagCompound, RecipeRun>> REGISTRY = new Object2ObjectOpenHashMap<>();
+    private final static Object2ObjectOpenHashMap<String, Function<NBTTagCompound, RecipeRun>> REGISTRY = fireEvent();
 
     @Nullable
     public static RecipeRun deserialize(@NotNull String type, NBTTagCompound tag) {
         if (type.equals("Legacy")) return new LegacyRecipeRun(tag);
-        return null;
+        if (!REGISTRY.containsKey(type)) return null;
+        return REGISTRY.get(type).apply(tag);
     }
 
     private RecipeRunRegistry() {}

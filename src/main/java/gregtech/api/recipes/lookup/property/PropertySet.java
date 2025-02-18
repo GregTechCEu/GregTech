@@ -59,7 +59,7 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
                                                      long amperageOut) {
         PropertySet set = new PropertySet();
         set.add(new PowerSupplyProperty(voltageIn, amperageIn));
-        set.add(new PowerCapacityProperty(voltageOut, voltageOut));
+        set.add(new PowerCapacityProperty(voltageOut, amperageOut));
         return set;
     }
 

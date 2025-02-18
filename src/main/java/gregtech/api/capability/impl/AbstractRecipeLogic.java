@@ -56,9 +56,6 @@ import static gregtech.api.recipes.logic.OverclockingConstants.*;
 
 public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, RecipeRunner {
 
-    private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
-    private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
-
     @Nullable
     private final RecipeMap<?> recipeMap;
 
@@ -395,7 +392,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         RecipeRun run = runner.getCurrent();
         if (run != null) return;
         Recipe prev = runner.getPrevious();
-        if (checkPreviousRecipe(prev, properties)) {
+        if (prev != null && checkPreviousRecipe(prev, properties)) {
             Pair<RecipeRun, Recipe> pair = matchRecipe(prev, listViewOfItemInputs, listViewOfFluidInputs, properties);
             run = pair == null ? null : pair.getLeft();
         }
@@ -743,9 +740,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * @return true if the previous recipe is valid and can be run again, ignoring input items/fluids.
      */
-    @Contract("null, _ -> false")
-    protected boolean checkPreviousRecipe(@Nullable Recipe previousRecipe, @NotNull PropertySet properties) {
-        if (previousRecipe == null || !checkRecipe(previousRecipe)) return false;
+    protected boolean checkPreviousRecipe(@NotNull Recipe previousRecipe, @NotNull PropertySet properties) {
+        if (!checkRecipe(previousRecipe)) return false;
         return RecipePropertyWithFilter.matches(previousRecipe.getRecipePropertyStorage(), properties);
     }
 

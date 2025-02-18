@@ -9,7 +9,6 @@ import gregtech.api.items.toolitem.IGTTool;
 import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.GTRecipeOreInput;
 import gregtech.api.recipes.ingredients.IngredientCache;
 import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
 import gregtech.api.recipes.logic.PrimitiveRecipeRun;
