@@ -1150,6 +1150,9 @@ metaitem.tool.multiblock_builder.name=Multiblock Builder
 metaitem.tool.multiblock_builder.tooltip=For debugging and auto-building your Multiblocks!
 metaitem.tool.multiblock_builder.tooltip2=Sneak and right-click Multiblock controllers to auto-build them
 
+metaitem.tool.machine_configurator.name=Machine Configurator
+metaitem.tool.machine_configurator.tooltip=The ultimate solution to configuring your machines!
+
 metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
 metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled
 metaarmor.nms.nightvision.error=NanoMuscle™ Suite: §cNot enough power!
