@@ -89,7 +89,9 @@ public class GregTechAPI {
     }
 
     public static IMachineConfiguratorProfile getMachineConfiguratorProfile(String name) {
-        return MACHINE_CONFIGURATOR_PROFILES.get(name);
+        IMachineConfiguratorProfile profile = MACHINE_CONFIGURATOR_PROFILES.get(name);
+        if (profile == null) throw new IllegalArgumentException(String.format("No profile with name %s!", name));
+        return profile;
     }
 
     public static Collection<IMachineConfiguratorProfile> getMachineConfiguratorProfiles() {
