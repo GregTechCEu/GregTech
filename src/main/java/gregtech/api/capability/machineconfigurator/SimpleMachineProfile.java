@@ -14,9 +14,7 @@ public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
     public static final SimpleMachineProfile INSTANCE = new SimpleMachineProfile();
 
-    private SimpleMachineProfile() {
-        throw new RuntimeException("Use the INSTANCE var please!");
-    }
+    private SimpleMachineProfile() {}
 
     @Override
     public @NotNull String getName() {
