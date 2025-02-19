@@ -1,12 +1,10 @@
 package gregtech.api.capability.machineconfigurator;
 
-import net.minecraft.nbt.NBTTagCompound;
+import gregtech.api.util.function.NBTTagCompoundSupplier;
 
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 public interface IMachineConfiguratorProfile {
 
@@ -14,5 +12,5 @@ public interface IMachineConfiguratorProfile {
     String getName();
 
     @NotNull
-    ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, Supplier<NBTTagCompound> getConfig);
+    ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, NBTTagCompoundSupplier getConfig);
 }

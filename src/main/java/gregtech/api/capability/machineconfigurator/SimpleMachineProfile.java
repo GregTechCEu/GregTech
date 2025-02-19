@@ -1,16 +1,14 @@
 package gregtech.api.capability.machineconfigurator;
 
+import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-
-import net.minecraft.nbt.NBTTagCompound;
+import gregtech.api.util.function.NBTTagCompoundSupplier;
 
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
@@ -27,17 +25,26 @@ public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
     @NotNull
     @Override
-    public ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, Supplier<NBTTagCompound> getConfig) {
-        var panel = GTGuis.createPopupPanel("simple_machine_configurator", 50, 50);
+    public ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, NBTTagCompoundSupplier getConfig) {
+        var panel = GTGuis.createPopupPanel("simple_machine_configurator", 75, 150);
 
-        BooleanSyncValue autoOutputItems = new BooleanSyncValue(() -> getConfig.get().getBoolean("AutoOutputItems"),
-                bool -> getConfig.get().setBoolean("AutoOutputItems", bool));
-        BooleanSyncValue autoOutputFluids = new BooleanSyncValue(() -> getConfig.get().getBoolean("AutoOutputFluids"),
-                bool -> getConfig.get().setBoolean("AutoOutputFluids", bool));
+        BooleanSyncValue autoOutputItems = new BooleanSyncValue(() -> getConfig.getBoolean("AutoOutputItems"),
+                bool -> getConfig.setBoolean("AutoOutputItems", bool));
+        BooleanSyncValue autoOutputFluids = new BooleanSyncValue(() -> getConfig.getBoolean("AutoOutputFluids"),
+                bool -> getConfig.setBoolean("AutoOutputFluids", bool));
+
+        BooleanSyncValue allowItemInputFromOutput = new BooleanSyncValue(
+                () -> getConfig.getBoolean("AllowItemInputFromOutput"),
+                bool -> getConfig.setBoolean("AllowFluidInputFromOutput", bool));
+        BooleanSyncValue allowFluidInputFromOutput = new BooleanSyncValue(
+                () -> getConfig.getBoolean("AllowItemInputFromOutput"),
+                bool -> getConfig.setBoolean("AllowFluidInputFromOutput", bool));
 
         panel.child(new ToggleButton()
+                .overlay(GTGuiTextures.BUTTON_ITEM_OUTPUT)
                 .value(autoOutputItems));
         panel.child(new ToggleButton()
+                .overlay(GTGuiTextures.BUTTON_FLUID_OUTPUT)
                 .value(autoOutputFluids)
                 .pos(20, 0));
 
