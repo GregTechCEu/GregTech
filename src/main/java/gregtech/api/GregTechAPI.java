@@ -3,6 +3,7 @@ package gregtech.api;
 import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IHeatingCoilBlockStats;
+import gregtech.api.capability.copytool.IMachineConfiguratorProfile;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;
@@ -32,6 +33,8 @@ import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,6 +76,25 @@ public class GregTechAPI {
     public static final Object2ObjectMap<IBlockState, IHeatingCoilBlockStats> HEATING_COILS = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, IBatteryData> PSS_BATTERIES = new Object2ObjectOpenHashMap<>();
     public static final Object2ObjectMap<IBlockState, ICleanroomFilter> CLEANROOM_FILTERS = new Object2ObjectOpenHashMap<>();
+
+    private static final Map<String, IMachineConfiguratorProfile> MACHINE_CONFIGURATOR_PROFILES = new Object2ObjectOpenHashMap<>();
+
+    public static void registerMachineConfiguratorProfile(IMachineConfiguratorProfile profile) {
+        if (MACHINE_CONFIGURATOR_PROFILES.containsKey(profile.getName())) {
+            throw new IllegalStateException(
+                    String.format("A machine configurator profile with the id %s already exists!", profile.getName()));
+        }
+
+        MACHINE_CONFIGURATOR_PROFILES.put(profile.getName(), profile);
+    }
+
+    public static IMachineConfiguratorProfile getMachineConfiguratorProfile(String name) {
+        return MACHINE_CONFIGURATOR_PROFILES.get(name);
+    }
+
+    public static Collection<IMachineConfiguratorProfile> getMachineConfiguratorProfiles() {
+        return Collections.unmodifiableCollection(MACHINE_CONFIGURATOR_PROFILES.values());
+    }
 
     /** Will be available at the Pre-Initialization stage */
     public static boolean isHighTier() {

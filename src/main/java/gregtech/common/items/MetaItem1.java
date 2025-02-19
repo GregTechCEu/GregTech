@@ -44,6 +44,7 @@ import gregtech.common.items.behaviors.GTBoatBehavior;
 import gregtech.common.items.behaviors.IntCircuitBehaviour;
 import gregtech.common.items.behaviors.ItemMagnetBehavior;
 import gregtech.common.items.behaviors.LighterBehaviour;
+import gregtech.common.items.behaviors.MachineConfiguratorBehavior;
 import gregtech.common.items.behaviors.MultiblockBuilderBehavior;
 import gregtech.common.items.behaviors.NanoSaberBehavior;
 import gregtech.common.items.behaviors.ProspectorScannerBehavior;
@@ -1147,6 +1148,10 @@ public class MetaItem1 extends StandardMetaItem {
         LOGO.getMetaItem().addPropertyOverride(new ResourceLocation("xmas"), (s, w, e) -> GTValues.XMAS.get() ? 1 : 0);
 
         MULTIBLOCK_BUILDER = addItem(1004, "tool.multiblock_builder").addComponents(new MultiblockBuilderBehavior())
+                .setMaxStackSize(1);
+
+        COPY_TOOL = addItem(1005, "tool.machine_configurator")
+                .addComponents(new MachineConfiguratorBehavior())
                 .setMaxStackSize(1);
     }
 }

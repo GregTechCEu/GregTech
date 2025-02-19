@@ -4,6 +4,9 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.IGhostSlotConfigurable;
+import gregtech.api.capability.copytool.IMachineConfiguratorInteractable;
+import gregtech.api.capability.copytool.IMachineConfiguratorProfile;
+import gregtech.api.capability.copytool.simplemachine.SimpleMachineProfile;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
@@ -65,7 +68,8 @@ import java.util.function.Function;
 import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
-                                         implements IActiveOutputSide, IGhostSlotConfigurable {
+                                         implements IActiveOutputSide, IGhostSlotConfigurable,
+                                         IMachineConfiguratorInteractable {
 
     private final boolean hasFrontFacing;
 
@@ -590,5 +594,52 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @NotNull
+    @Override
+    public IMachineConfiguratorProfile getProfile() {
+        return SimpleMachineProfile.INSTANCE;
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound writeProfileData() {
+        NBTTagCompound tag = new NBTTagCompound();
+
+        tag.setBoolean("AutoOutputItems", autoOutputItems);
+        tag.setBoolean("AutoOutputFluids", autoOutputFluids);
+
+        tag.setBoolean("AllowItemInputFromOutput", allowInputFromOutputSideItems);
+        tag.setBoolean("AllowFluidInputFromOutput", allowInputFromOutputSideFluids);
+
+        tag.setByte("ItemOutputSide", (byte) outputFacingItems.getIndex());
+        tag.setByte("FluidOutputSide", (byte) outputFacingFluids.getIndex());
+
+        return tag;
+    }
+
+    @Override
+    public void readProfileData(@NotNull NBTTagCompound tag) {
+        if (tag.hasKey("AutoOutputItems")) {
+            setAutoOutputItems(tag.getBoolean("AutoOutputItems"));
+        }
+        if (tag.hasKey("AutoOutputFluids")) {
+            setAutoOutputFluids(tag.getBoolean("AutoOutputFluids"));
+        }
+
+        if (tag.hasKey("AllowItemInputFromOutput")) {
+            setAllowInputFromOutputSideItems(tag.getBoolean("AllowItemInputFromOutput"));
+        }
+        if (tag.hasKey("AllowFluidInputFromOutput")) {
+            setAllowInputFromOutputSideFluids(tag.getBoolean("AllowFluidInputFromOutput"));
+        }
+
+        if (tag.hasKey("ItemOutputSide")) {
+            setOutputFacingItems(EnumFacing.values()[tag.getByte("ItemOutputSide")]);
+        }
+        if (tag.hasKey("FluidOutputSide")) {
+            setOutputFacingFluids(EnumFacing.values()[tag.getByte("FluidOutputSide")]);
+        }
     }
 }
