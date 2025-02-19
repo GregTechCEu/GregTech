@@ -323,6 +323,10 @@ public class GTGuiTextures {
     public static final UITexture DUCT_TAPE_OVERLAY = fullImage("textures/gui/overlay/duct_tape_overlay.png", true);
     public static final UITexture RESEARCH_STATION_OVERLAY = fullImage(
             "textures/gui/overlay/research_station_overlay.png", true);
+    public static final UITexture ITEM_OUTPUT_OVERLAY = fullImage(
+            "textures/blocks/overlay/machine/overlay_item_output");
+    public static final UITexture FLUID_OUTPUT_OVERLAY = fullImage(
+            "textures/blocks/overlay/machine/overlay_fluid_output");
 
     // BUTTONS
 

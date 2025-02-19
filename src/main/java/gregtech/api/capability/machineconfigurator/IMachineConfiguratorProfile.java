@@ -12,5 +12,5 @@ public interface IMachineConfiguratorProfile {
     String getName();
 
     @NotNull
-    ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, NBTTagCompoundSupplier getConfig);
+    ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, NBTTagCompoundSupplier nbt);
 }

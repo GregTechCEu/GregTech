@@ -613,8 +613,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         tag.setBoolean("AllowItemInputFromOutput", allowInputFromOutputSideItems);
         tag.setBoolean("AllowFluidInputFromOutput", allowInputFromOutputSideFluids);
 
-        tag.setByte("ItemOutputSide", (byte) outputFacingItems.getIndex());
-        tag.setByte("FluidOutputSide", (byte) outputFacingFluids.getIndex());
+        EnumFacing relativeItemOutput = GTUtility.getFaceRelativeToFace(frontFacing, outputFacingItems);
+        tag.setByte("ItemOutputSide", (byte) relativeItemOutput.getIndex());
+
+        EnumFacing relativeFluidOutput = GTUtility.getFaceRelativeToFace(frontFacing, outputFacingItems);
+        tag.setByte("FluidOutputSide", (byte) relativeFluidOutput.getIndex());
 
         return tag;
     }
@@ -636,10 +639,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
         }
 
         if (tag.hasKey("ItemOutputSide")) {
-            setOutputFacingItems(EnumFacing.values()[tag.getByte("ItemOutputSide")]);
+            EnumFacing relativeItemOutput = EnumFacing.values()[tag.getByte("ItemOutputSide")];
+            setOutputFacingItems(GTUtility.getFaceRelativeToFace(frontFacing, relativeItemOutput));
         }
         if (tag.hasKey("FluidOutputSide")) {
-            setOutputFacingFluids(EnumFacing.values()[tag.getByte("FluidOutputSide")]);
+            EnumFacing relativeFluidOutput = EnumFacing.values()[tag.getByte("FluidOutputSide")];
+            setOutputFacingFluids(GTUtility.getFaceRelativeToFace(frontFacing, relativeFluidOutput));
         }
     }
 }

@@ -920,4 +920,43 @@ public class GTUtility {
     public static int safeCastLongToInt(long v) {
         return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
     }
+
+    public static EnumFacing getFaceRelativeToFace(EnumFacing frontFace, EnumFacing otherSide) {
+        switch (frontFace) {
+            case DOWN -> {
+                return switch (otherSide) {
+                    case DOWN -> EnumFacing.NORTH;
+                    case UP -> EnumFacing.SOUTH;
+                    case NORTH -> EnumFacing.UP;
+                    case SOUTH -> EnumFacing.DOWN;
+                    case WEST, EAST -> otherSide;
+                };
+            }
+            case UP -> {
+                return switch (otherSide) {
+                    case DOWN -> EnumFacing.SOUTH;
+                    case UP -> EnumFacing.NORTH;
+                    case NORTH -> EnumFacing.UP;
+                    case SOUTH -> EnumFacing.DOWN;
+                    case WEST, EAST -> otherSide;
+                };
+            }
+            case NORTH -> {
+                return otherSide;
+            }
+            case SOUTH -> {
+                return otherSide.rotateAround(EnumFacing.Axis.Y)
+                        .rotateAround(EnumFacing.Axis.Y);
+            }
+            case WEST -> {
+                return otherSide.rotateAround(EnumFacing.Axis.Y)
+                        .rotateAround(EnumFacing.Axis.Y)
+                        .rotateAround(EnumFacing.Axis.Y);
+            }
+            case EAST -> {
+                return otherSide.rotateAround(EnumFacing.Axis.Y);
+            }
+            default -> throw new IllegalStateException("Unexpected facing: " + frontFace);
+        }
+    }
 }
