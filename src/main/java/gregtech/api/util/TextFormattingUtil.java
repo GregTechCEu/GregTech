@@ -20,7 +20,7 @@ public class TextFormattingUtil {
 
     public static String formatLongToCompactString(long value, int precision) {
         if (value == 0 || Math.abs(value) < Math.pow(10, precision)) {
-            return Long.toString(value); // deal with easy case
+            return formatNumbers(value); // deal with easy case
         }
 
         StringBuilder stb = new StringBuilder();
