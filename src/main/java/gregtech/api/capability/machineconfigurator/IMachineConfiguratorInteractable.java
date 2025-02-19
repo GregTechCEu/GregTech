@@ -1,4 +1,4 @@
-package gregtech.api.capability.copytool;
+package gregtech.api.capability.machineconfigurator;
 
 import net.minecraft.nbt.NBTTagCompound;
 

@@ -5,7 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
-import gregtech.api.capability.copytool.simplemachine.SimpleMachineProfile;
+import gregtech.api.capability.machineconfigurator.SimpleMachineProfile;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
 import gregtech.api.fluids.GTFluidRegistration;

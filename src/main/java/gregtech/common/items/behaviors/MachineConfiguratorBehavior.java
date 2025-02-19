@@ -1,8 +1,8 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.capability.copytool.IMachineConfiguratorInteractable;
-import gregtech.api.capability.copytool.IMachineConfiguratorProfile;
+import gregtech.api.capability.machineconfigurator.IMachineConfiguratorInteractable;
+import gregtech.api.capability.machineconfigurator.IMachineConfiguratorProfile;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;

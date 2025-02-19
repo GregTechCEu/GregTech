@@ -3,7 +3,7 @@ package gregtech.api;
 import gregtech.api.advancement.IAdvancementManager;
 import gregtech.api.block.ICleanroomFilter;
 import gregtech.api.block.IHeatingCoilBlockStats;
-import gregtech.api.capability.copytool.IMachineConfiguratorProfile;
+import gregtech.api.capability.machineconfigurator.IMachineConfiguratorProfile;
 import gregtech.api.command.ICommandManager;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.event.HighTierEvent;

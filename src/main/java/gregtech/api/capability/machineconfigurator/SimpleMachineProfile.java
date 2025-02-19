@@ -1,6 +1,5 @@
-package gregtech.api.capability.copytool.simplemachine;
+package gregtech.api.capability.machineconfigurator;
 
-import gregtech.api.capability.copytool.IMachineConfiguratorProfile;
 import gregtech.api.mui.GTGuis;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +16,9 @@ public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
     public static final SimpleMachineProfile INSTANCE = new SimpleMachineProfile();
 
-    private SimpleMachineProfile() {}
+    private SimpleMachineProfile() {
+        throw new RuntimeException("Use the INSTANCE var please!");
+    }
 
     @Override
     public @NotNull String getName() {
