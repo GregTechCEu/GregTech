@@ -8,7 +8,6 @@
     "maxShiftBy": 10
   },
   "mixins": [
-    "InputMixin",
     "ModularPanelMixin"
   ],
   "client": [
