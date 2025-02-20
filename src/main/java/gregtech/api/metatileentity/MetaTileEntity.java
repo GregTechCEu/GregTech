@@ -18,6 +18,7 @@ import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverRayTracer;
 import gregtech.api.cover.CoverSaveHandler;
 import gregtech.api.cover.CoverUtil;
+import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -101,6 +102,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
@@ -110,8 +112,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -167,12 +171,17 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     @Nullable
     private UUID owner = null;
+    private Set<UUID> uiPlayers = new ObjectOpenHashSet<>();
+    private EnumMap<EnumFacing, Set<UUID>> uiCoverPlayers = new EnumMap<>(EnumFacing.class);
 
     private final Set<CreativeTabs> creativeTabs = new ObjectArraySet<>();
 
     {
         creativeTabs.add(CreativeTabs.SEARCH);
         creativeTabs.add(GTCreativeTabs.TAB_GREGTECH_MACHINES);
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            uiCoverPlayers.put(facing, new ObjectOpenHashSet<>());
+        }
     }
 
     protected MetaTileEntity(@NotNull ResourceLocation metaTileEntityId) {
@@ -520,6 +529,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 if (usesMui2()) {
+                    uiPlayers.add(playerIn.getUniqueID());
                     MetaTileEntityGuiFactory.open(playerIn, this);
                 } else {
                     MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
@@ -558,6 +568,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
             cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
             if (cover != null && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+                if (cover instanceof CoverWithUI) {
+                    uiCoverPlayers.get(gridSideHit).add(playerIn.getUniqueID());
+                }
                 return cover.onScrewdriverClick(playerIn, hand, hitResult) == EnumActionResult.SUCCESS;
             }
         }
@@ -640,6 +653,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                                   CuboidRayTraceResult hitResult) {
         if (getCoverAtSide(facing) != null) {
             removeCover(facing);
+            Iterator<UUID> iterator = uiCoverPlayers.get(facing).iterator();
+            while (iterator.hasNext()) {
+                Objects.requireNonNull(getWorld().getPlayerEntityByUUID(iterator.next())).closeScreen();
+                iterator.remove();
+            }
             return true;
         }
         return false;
@@ -1431,7 +1449,18 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (getWorld().isRemote) {
             GregTechAPI.soundManager.stopTileSound(getPos());
         } else {
-            MetaTileEntityGuiFactory.close(getPos(), getWorld());
+            Iterator<UUID> iterator = uiPlayers.iterator();
+            while (iterator.hasNext()) {
+                Objects.requireNonNull(getWorld().getPlayerEntityByUUID(iterator.next())).closeScreen();
+                iterator.remove();
+            }
+            for (Set<UUID> value : uiCoverPlayers.values()) {
+                iterator = value.iterator();
+                while (iterator.hasNext()) {
+                    Objects.requireNonNull(getWorld().getPlayerEntityByUUID(iterator.next())).closeScreen();
+                    iterator.remove();
+                }
+            }
         }
     }
 
