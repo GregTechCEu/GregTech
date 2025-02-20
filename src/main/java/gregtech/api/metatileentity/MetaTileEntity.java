@@ -1427,8 +1427,11 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void onRemoval() {}
 
     public void invalidate() {
-        if (getWorld() != null && getWorld().isRemote) {
+        if (getWorld() == null) return;
+        if (getWorld().isRemote) {
             GregTechAPI.soundManager.stopTileSound(getPos());
+        } else {
+            MetaTileEntityGuiFactory.close(getPos(), getWorld());
         }
     }
 
