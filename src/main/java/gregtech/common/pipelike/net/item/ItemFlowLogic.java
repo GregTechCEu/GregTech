@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMaps;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemFlowLogic extends RingBufferTransientLogicData<ItemFlowLogic, Object2LongMap<ItemTestObject>> {
 
@@ -22,7 +23,7 @@ public class ItemFlowLogic extends RingBufferTransientLogicData<ItemFlowLogic, O
     public static final int MEMORY_TICKS = WorldItemNet.getBufferTicks();
 
     private final Object2LongMap<ItemTestObject> sum = new Object2LongOpenHashMap<>();
-    private ItemTestObject last;
+    private @Nullable ItemTestObject last;
 
     public ItemFlowLogic() {
         super(MEMORY_TICKS);
@@ -68,7 +69,7 @@ public class ItemFlowLogic extends RingBufferTransientLogicData<ItemFlowLogic, O
         }
     }
 
-    public ItemTestObject getLast() {
+    public @Nullable ItemTestObject getLast() {
         return last;
     }
 }

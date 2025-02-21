@@ -118,7 +118,9 @@ gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
 gregtech.top.ld_pipe_output_endpoint=Output Endpoint:
 
 gregtech.top.pipe.temperature=Current Temperature:
-gregtech.top.pipe.energy=Avg. Energy: §a%s EU/t §f(%s§f) @ §a%sA
+gregtech.top.pipe.energy=Recent Energy Transfer:
+gregtech.top.pipe.energy_per=§a%s EU/t §f(%s§f) @ §a%sA
+gregtech.top.pipe.energy_last=Last Transfer: §a%s EU/t §f(%s§f) @ §a%sA
 gregtech.top.pipe.fluid_last=Last Fluid:
 gregtech.top.pipe.item_last=Last Item:
 

@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMaps;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FluidFlowLogic extends RingBufferTransientLogicData<FluidFlowLogic, Object2LongMap<FluidTestObject>> {
 
@@ -21,8 +22,8 @@ public class FluidFlowLogic extends RingBufferTransientLogicData<FluidFlowLogic,
 
     public static final int MEMORY_TICKS = WorldFluidNet.getBufferTicks();
 
-    private Object2LongMap<FluidTestObject> sum = new Object2LongOpenHashMap<>();
-    private FluidTestObject last;
+    private final Object2LongMap<FluidTestObject> sum = new Object2LongOpenHashMap<>();
+    private @Nullable FluidTestObject last;
 
     public FluidFlowLogic() {
         super(MEMORY_TICKS);
@@ -68,7 +69,7 @@ public class FluidFlowLogic extends RingBufferTransientLogicData<FluidFlowLogic,
         }
     }
 
-    public FluidTestObject getLast() {
+    public @Nullable FluidTestObject getLast() {
         return last;
     }
 }

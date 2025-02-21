@@ -69,26 +69,22 @@ public class PipeTileInfoProvider implements IProbeInfoProvider {
 
     private void addEnergyFlowInformation(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer,
                                           IProbeHitData iProbeHitData, EnergyFlowLogic logic) {
-        long cumulativeVoltage = 0;
-        long cumulativeAmperage = 0;
-        if (logic.getMemory(true).isEmpty()) return;
-        for (var memory : logic.getMemory(true).values()) {
-            double voltage = 0;
-            long amperage = 0;
-            for (EnergyFlowData flow : memory) {
-                long prev = amperage;
-                amperage += flow.amperage();
-                // weighted average
-                voltage = voltage * prev / amperage + (double) (flow.voltage() * flow.amperage()) / amperage;
+        if (!logic.getSum(true).isEmpty()) {
+            iProbeInfo.text(I18n.format("gregtech.top.pipe.energy"));
+            for (var entry : logic.getSum(true).entrySet()) {
+                String voltage = TextFormattingUtil.formatNumbers(entry.getKey());
+                String tier = GTValues.VNF[GTUtility.getTierByVoltage(entry.getKey())];
+                String amperage = TextFormattingUtil.formatNumbers(entry.getValue() / EnergyFlowLogic.MEMORY_TICKS);
+                iProbeInfo.text(I18n.format("gregtech.top.pipe.energy_per", voltage, tier, amperage));
             }
-            cumulativeVoltage += voltage;
-            cumulativeAmperage += amperage;
         }
-        long v = cumulativeVoltage / EnergyFlowLogic.MEMORY_TICKS;
-        String voltage = TextFormattingUtil.formatNumbers(v);
-        String amperage = TextFormattingUtil.formatNumbers(cumulativeAmperage / EnergyFlowLogic.MEMORY_TICKS);
-        String tier = GTValues.VNF[GTUtility.getTierByVoltage(v)];
-        iProbeInfo.text(I18n.format("gregtech.top.pipe.energy", voltage, tier, amperage));
+        EnergyFlowData last = logic.getLast();
+        if (last != null) {
+            String voltage = TextFormattingUtil.formatNumbers(last.voltage());
+            String tier = GTValues.VNF[GTUtility.getTierByVoltage(last.voltage())];
+            String amperage = TextFormattingUtil.formatNumbers(last.amperage());
+            iProbeInfo.text(I18n.format("gregtech.top.pipe.energy_last", voltage, tier, amperage));
+        }
     }
 
     private void addFluidFlowInformation(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer,
