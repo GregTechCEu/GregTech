@@ -19,14 +19,13 @@ public class ItemTestObject implements IPredicateTestObject, Predicate<ItemStack
 
     public final int stackLimit;
 
-    private final int hash;
+    private int hash = Integer.MIN_VALUE;
 
     public ItemTestObject(@NotNull ItemStack stack) {
         item = stack.getItem();
         meta = stack.getMetadata();
         tag = stack.getTagCompound();
         stackLimit = stack.getMaxStackSize();
-        this.hash = Objects.hash(item, meta, tag);
     }
 
     @Override
@@ -74,6 +73,9 @@ public class ItemTestObject implements IPredicateTestObject, Predicate<ItemStack
 
     @Override
     public int hashCode() {
+        if (hash == Integer.MIN_VALUE) {
+            hash = Objects.hash(item, meta, tag);
+        }
         return hash;
     }
 }
