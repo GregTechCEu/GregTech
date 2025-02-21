@@ -170,7 +170,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
                         "gregtech.multiblock.work_paused",
                         "gregtech.multiblock.miner.drilling")
                 .addEnergyUsageLine(energyContainer)
-                .addCustom(list -> {
+                .addCustom((list, isServer, internal) -> {
                     if (isStructureFormed()) {
                         if (minerLogic.getDrilledFluid() != null) {
                             // Fluid name
@@ -202,7 +202,7 @@ public class MetaTileEntityFluidDrill extends MultiblockWithDisplayBase
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(isStructureFormed() && !drainEnergy(true))
-                .addCustom(list -> {
+                .addCustom((list, isServer, internal) -> {
                     if (isStructureFormed() && minerLogic.isInventoryFull()) {
                         list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
                     }

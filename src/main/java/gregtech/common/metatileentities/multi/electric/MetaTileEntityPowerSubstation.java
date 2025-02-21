@@ -348,7 +348,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         builder.setWorkingStatus(true, isActive() && isWorkingEnabled()); // transform into two-state system for display
         builder.setWorkingStatusKeys("gregtech.multiblock.idling", "gregtech.multiblock.idling",
                 "gregtech.machine.active_transformer.routing");
-        builder.addCustom(list -> {
+        builder.addCustom((list, isServer, internal) -> {
             if (isStructureFormed() && energyBank != null) {
                 BigInteger energyStored = energyBank.getStored();
                 BigInteger energyCapacity = energyBank.getCapacity();
@@ -419,7 +419,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addCustom(list -> {
+        builder.addCustom((list, isServer, internal) -> {
             if (isStructureFormed() && averageInLastSec < averageOutLastSec) {
                 BigInteger timeToDrainSeconds = energyBank.getStored()
                         .divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20));

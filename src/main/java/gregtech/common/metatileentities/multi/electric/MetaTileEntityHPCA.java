@@ -399,7 +399,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.data_bank.providing")
-                .addCustom(richText -> {
+                .addCustom((richText, isServer, internal) -> {
                     if (!isStructureFormed()) return;
 
                     // Energy Usage
@@ -420,7 +420,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(hasNotEnoughEnergy)
-                .addCustom(richText -> {
+                .addCustom((richText, isServer, internal) -> {
                     if (!isStructureFormed()) return;
 
                     if (temperature > 500) {
@@ -442,7 +442,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
-        builder.addCustom(richText -> {
+        builder.addCustom((richText, isServer, internal) -> {
             if (!isStructureFormed()) return;
 
             if (temperature > 1000) {

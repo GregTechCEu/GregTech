@@ -128,12 +128,20 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         super.configureWarningText(builder);
-        builder.addCustom(richText -> {
-            if (isStructureFormed() && getWaterFilled() == 0) {
-                richText.add(KeyUtil.lang(TextFormatting.YELLOW,
-                        "gregtech.multiblock.large_boiler.no_water"));
-                richText.add(KeyUtil.lang(TextFormatting.GRAY,
-                        "gregtech.multiblock.large_boiler.explosion_tooltip"));
+        builder.addCustom((manager, isServer, internal) -> {
+            if (isStructureFormed()) {
+                boolean filled = getWaterFilled() == 0;
+                if (isServer) {
+                    internal.writeBoolean(filled);
+                } else {
+                    filled = internal.readBoolean();
+                }
+                if (filled) {
+                    manager.add(KeyUtil.lang(TextFormatting.YELLOW,
+                            "gregtech.multiblock.large_boiler.no_water"));
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY,
+                            "gregtech.multiblock.large_boiler.explosion_tooltip"));
+                }
             }
         });
     }
@@ -161,26 +169,38 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 });
     }
 
-    private void addCustomData(KeyManager keyManager) {
+    private void addCustomData(KeyManager keyManager, boolean isServer, PacketBuffer internal) {
         if (isStructureFormed()) {
+            int steam = recipeLogic.getLastTickSteam();
+            int heatScaled = recipeLogic.getHeatScaled();
+            int throttleAmt = getThrottle();
+            if (isServer) {
+                internal.writeInt(steam);
+                internal.writeInt(heatScaled);
+                internal.writeInt(throttleAmt);
+            } else {
+                steam = internal.readInt();
+                heatScaled = internal.readInt();
+                throttleAmt = internal.readInt();
+            }
+
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,
-                    recipeLogic.getLastTickSteam(), " L/t");
+                    steam, " L/t");
 
             keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.steam_output", steamOutput));
 
             // Efficiency line
             IKey efficiency = KeyUtil.number(
-                    () -> getNumberColor(recipeLogic.getHeatScaled()),
-                    recipeLogic.getHeatScaled(), "%");
+                    getNumberColor(heatScaled), heatScaled, "%");
             keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.efficiency", efficiency));
 
             // Throttle line
             IKey throttle = KeyUtil.number(
-                    () -> getNumberColor(getThrottle()),
-                    getThrottle(), "%");
+                    getNumberColor(throttleAmt),
+                    throttleAmt, "%");
             keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.large_boiler.throttle", throttle));
         }

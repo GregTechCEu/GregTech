@@ -102,7 +102,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addCustom(keyManager -> {
+                .addCustom((keyManager, isServer, internal) -> {
                     // custom steam tank line
                     IFluidTank steamFluidTank = recipeMapWorkable.getSteamFluidTankCombined();
                     if (steamFluidTank != null && steamFluidTank.getCapacity() > 0) {
@@ -122,7 +122,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addCustom(list -> {
+        builder.addCustom((list, isServer, internal) -> {
             if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
                 list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.steam.low_steam"));
             }

@@ -124,7 +124,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
         builder.setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
                 .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
-                .addCustom(keyList -> {
+                .addCustom((keyList, isServer, internal) -> {
                     if (!isStructureFormed()) return;
                     if (getRotorHolder() == null) return;
 
@@ -146,7 +146,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addCustom(keyList -> {
+        builder.addCustom((keyList, isServer, internal) -> {
             if (!isStructureFormed() || getRotorHolder() == null)
                 return;
 
@@ -163,7 +163,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
-        builder.addCustom(keyList -> {
+        builder.addCustom((keyList, isServer, internal) -> {
             if (!isStructureFormed() || getRotorHolder() == null)
                 return;
 

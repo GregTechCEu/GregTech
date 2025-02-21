@@ -169,7 +169,7 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.machine.active_transformer.routing")
-                .addCustom(list -> {
+                .addCustom((list, isServer, internal) -> {
                     if (isStructureFormed()) {
                         // Max input line
                         IKey maxInputFormatted = KeyUtil.number(TextFormatting.WHITE,

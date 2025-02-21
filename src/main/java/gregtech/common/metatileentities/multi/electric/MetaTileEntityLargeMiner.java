@@ -264,7 +264,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
-                .addCustom(list -> {
+                .addCustom((list, isServer, internal) -> {
                     if (isStructureFormed()) {
                         int workingAreaChunks = this.minerLogic.getCurrentRadius() * 2 / CHUNK_LENGTH;
                         int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
@@ -297,7 +297,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
-        builder.addCustom(list -> {
+        builder.addCustom((list, isServer, internal) -> {
             if (isStructureFormed() && !drainFluid(false)) {
                 list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
             }
@@ -307,7 +307,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(!drainEnergy(true));
-        builder.addCustom(list -> {
+        builder.addCustom((list, isServer, internal) -> {
             if (isStructureFormed() && isInventoryFull) {
                 list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
             }

@@ -84,7 +84,7 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(textList -> {
+                .addCustom((textList, isServer, internal) -> {
                     if (!isStructureFormed()) return;
 
                     // Coil energy discount line

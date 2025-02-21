@@ -59,7 +59,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(richText -> {
+                .addCustom((richText, isServer, internal) -> {
                     if (!isStructureFormed()) return;
 
                     if (heatingCoilDiscount > 1) {

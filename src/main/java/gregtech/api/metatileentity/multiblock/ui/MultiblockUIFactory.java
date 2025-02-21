@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTLambdaUtils;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.KeyUtil;
 
@@ -64,10 +65,6 @@ public class MultiblockUIFactory {
                 builder.addMaintenanceProblemLines(mte.getMaintenanceProblems());
         });
         configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));
-    }
-
-    private static @NotNull <T> Consumer<T> addAction(@Nullable Consumer<T> first, @NotNull Consumer<T> andThen) {
-        return first == null ? andThen : first.andThen(andThen);
     }
 
     /**
@@ -138,7 +135,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureWarningText(boolean merge, Consumer<MultiblockUIBuilder> warningText) {
-        this.warningText = merge ? addAction(this.warningText, warningText) : warningText;
+        this.warningText = merge ? GTLambdaUtils.mergeConsumers(this.warningText, warningText) : warningText;
         return this;
     }
 
@@ -157,7 +154,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureErrorText(boolean merge, Consumer<MultiblockUIBuilder> errorText) {
-        this.errorText = merge ? addAction(this.errorText, errorText) : errorText;
+        this.errorText = merge ? GTLambdaUtils.mergeConsumers(this.errorText, errorText) : errorText;
         return this;
     }
 
@@ -177,7 +174,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(boolean merge, Consumer<MultiblockUIBuilder> displayText) {
-        this.displayText = merge ? addAction(this.displayText, displayText) : displayText;
+        this.displayText = merge ? GTLambdaUtils.mergeConsumers(this.displayText, displayText) : displayText;
         return this;
     }
 

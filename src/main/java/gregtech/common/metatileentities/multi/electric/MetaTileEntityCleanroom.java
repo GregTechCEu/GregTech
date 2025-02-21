@@ -488,7 +488,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         builder.setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
-                .addCustom(list -> {
+                .addCustom((list, isServer, internal) -> {
                     // Cleanliness status line
                     if (isStructureFormed()) {
                         IKey cleanState;
@@ -511,7 +511,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(!drainEnergy(true))
-                .addCustom(list -> {
+                .addCustom((list, isServer, internal) -> {
                     if (isStructureFormed() && !isClean()) {
                         list.add(KeyUtil.lang(TextFormatting.YELLOW,
                                 "gregtech.multiblock.cleanroom.warning_contaminated"));

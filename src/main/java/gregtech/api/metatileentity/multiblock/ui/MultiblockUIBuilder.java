@@ -16,11 +16,14 @@ import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
+import io.netty.buffer.Unpooled;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static gregtech.api.util.GTLambdaUtils.*;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public class MultiblockUIBuilder implements KeyManager {
@@ -30,6 +33,7 @@ public class MultiblockUIBuilder implements KeyManager {
 
     private Consumer<MultiblockUIBuilder> action;
     private final SyncHandler syncHandler = makeSyncHandler();
+    private final PacketBuffer internal = new PacketBuffer(Unpooled.buffer());
 
     private boolean isWorkingEnabled;
     private boolean isActive;
@@ -43,12 +47,21 @@ public class MultiblockUIBuilder implements KeyManager {
     private Runnable onRebuild;
 
     void updateFormed(boolean isStructureFormed) {
-        this.isStructureFormed = isStructureFormed;
+        if (isServer()) {
+            this.isStructureFormed = isStructureFormed;
+            internal.writeBoolean(isStructureFormed);
+        } else {
+            this.isStructureFormed = internal.readBoolean();
+        }
+    }
+
+    private boolean isServer() {
+        return !this.syncHandler.getSyncManager().isClient();
     }
 
     public MultiblockUIBuilder structureFormed(boolean structureFormed) {
         updateFormed(structureFormed);
-        if (!structureFormed) {
+        if (!this.isStructureFormed) {
             var base = KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.invalid_structure");
             var hover = KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.invalid_structure.tooltip");
@@ -66,6 +79,13 @@ public class MultiblockUIBuilder implements KeyManager {
     public MultiblockUIBuilder setWorkingStatus(boolean isWorkingEnabled, boolean isActive) {
         this.isWorkingEnabled = isWorkingEnabled;
         this.isActive = isActive;
+        if (isServer()) {
+            internal.writeBoolean(isWorkingEnabled);
+            internal.writeBoolean(isActive);
+        } else {
+            this.isWorkingEnabled = internal.readBoolean();
+            this.isActive = internal.readBoolean();
+        }
         return this;
     }
 
@@ -97,6 +117,12 @@ public class MultiblockUIBuilder implements KeyManager {
 
         long maxVoltage = Math.max(energyContainer.getInputVoltage(), energyContainer.getOutputVoltage());
 
+        if (isServer()) {
+            internal.writeLong(maxVoltage);
+        } else {
+            maxVoltage = internal.readLong();
+        }
+
         IKey bodyText = KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.max_energy_per_tick",
                 KeyUtil.number(maxVoltage),
@@ -116,6 +142,12 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addEnergyTierLine(int tier) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeByte(tier);
+        } else {
+            tier = internal.readByte();
+        }
+
         if (tier < GTValues.ULV || tier > GTValues.MAX) return this;
 
         var bodyText = KeyUtil.lang(TextFormatting.GRAY,
@@ -133,6 +165,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addEnergyUsageExactLine(long energyUsage) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeLong(energyUsage);
+        } else {
+            energyUsage = internal.readLong();
+        }
         if (energyUsage > 0) {
             String energyFormatted = TextFormattingUtil.formatNumbers(energyUsage);
             // wrap in text component to keep it from being formatted
@@ -151,7 +188,15 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addEnergyProductionLine(long maxVoltage, long recipeEUt) {
         if (!isStructureFormed) return this;
-        if (maxVoltage != 0 && maxVoltage >= -recipeEUt) {
+        if (isServer()) {
+            internal.writeLong(maxVoltage);
+            internal.writeLong(recipeEUt);
+        } else {
+            maxVoltage = internal.readLong();
+            recipeEUt = internal.readLong();
+        }
+        // todo this recipe eut should always be positive
+        if (maxVoltage != 0 && maxVoltage >= Math.abs(recipeEUt)) {
             String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
             // wrap in text component to keep it from being formatted
             var voltageName = KeyUtil.voltage(GTValues.VOCNF, maxVoltage);
@@ -171,6 +216,13 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addEnergyProductionAmpsLine(long maxVoltage, int amperage) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeLong(maxVoltage);
+            internal.writeInt(amperage);
+        } else {
+            maxVoltage = internal.readLong();
+            amperage = internal.readInt();
+        }
         if (maxVoltage != 0 && amperage != 0) {
             String energyFormatted = TextFormattingUtil.formatNumbers(maxVoltage);
             // wrap in text component to keep it from being formatted
@@ -190,6 +242,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addComputationUsageLine(int maxCWUt) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeInt(maxCWUt);
+        } else {
+            maxCWUt = internal.readInt();
+        }
         if (maxCWUt > 0) {
             var computation = KeyUtil.number(TextFormatting.AQUA, maxCWUt);
             addKey(KeyUtil.lang(TextFormatting.GRAY,
@@ -205,6 +262,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addComputationUsageExactLine(int currentCWUt) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeInt(currentCWUt);
+        } else {
+            currentCWUt = internal.readInt();
+        }
         if (isActive && currentCWUt > 0) {
             var computation = KeyUtil.number(TextFormatting.AQUA, currentCWUt, " CWU/t");
             addKey(KeyUtil.lang(TextFormatting.GRAY,
@@ -280,6 +342,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addProgressLine(double progressPercent) {
         if (!isStructureFormed || !isActive) return this;
+        if (isServer()) {
+            internal.writeDouble(progressPercent);
+        } else {
+            progressPercent = internal.readDouble();
+        }
         addKey(KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.progress",
                 (int) (progressPercent * 100)));
@@ -293,6 +360,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addParallelsLine(int numParallels) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeInt(numParallels);
+        } else {
+            numParallels = internal.readInt();
+        }
         if (numParallels > 1) {
             var parallels = KeyUtil.number(TextFormatting.DARK_PURPLE, numParallels);
 
@@ -309,6 +381,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addLowPowerLine(boolean isLowPower) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeBoolean(isLowPower);
+        } else {
+            isLowPower = internal.readBoolean();
+        }
         if (isLowPower) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.not_enough_energy"));
@@ -323,6 +400,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addLowComputationLine(boolean isLowComputation) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeBoolean(isLowComputation);
+        } else {
+            isLowComputation = internal.readBoolean();
+        }
         if (isLowComputation) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.computation.not_enough_computation"));
@@ -337,6 +419,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addLowDynamoTierLine(boolean isTooLow) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeBoolean(isTooLow);
+        } else {
+            isTooLow = internal.readBoolean();
+        }
         if (isTooLow) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.not_enough_energy_output"));
@@ -353,6 +440,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addMaintenanceProblemLines(byte maintenanceProblems) {
         if (!isStructureFormed || !ConfigHolder.machines.enableMaintenance) return this;
+        if (isServer()) {
+            internal.writeByte(maintenanceProblems);
+        } else {
+            maintenanceProblems = internal.readByte();
+        }
         if (maintenanceProblems < 63) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.universal.has_problems"));
@@ -403,6 +495,11 @@ public class MultiblockUIBuilder implements KeyManager {
      */
     public MultiblockUIBuilder addMufflerObstructedLine(boolean isObstructed) {
         if (!isStructureFormed) return this;
+        if (isServer()) {
+            internal.writeBoolean(isObstructed);
+        } else {
+            isObstructed = internal.readBoolean();
+        }
         if (isObstructed) {
             addKey(KeyUtil.lang(TextFormatting.RED,
                     "gregtech.multiblock.universal.muffler_obstructed"));
@@ -418,9 +515,15 @@ public class MultiblockUIBuilder implements KeyManager {
      * Added if structure is formed, the machine is active, and the passed fuelName parameter is not null.
      */
     public MultiblockUIBuilder addFuelNeededLine(String fuelName, int previousRecipeDuration) {
-        if (!isStructureFormed || !isActive || fuelName == null) return this;
-
-        addKey(KeyUtil.lang(TextFormatting.GRAY,
+        if (!isStructureFormed || !isActive) return this;
+        if (isServer()) {
+            NetworkUtils.writeStringSafe(internal, fuelName);
+            internal.writeInt(previousRecipeDuration);
+        } else {
+            fuelName = NetworkUtils.readStringSafe(internal);
+            previousRecipeDuration = internal.readInt();
+        }
+        if (fuelName != null) addKey(KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.turbine.fuel_needed",
                 KeyUtil.string(TextFormatting.RED, fuelName),
                 KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
@@ -434,8 +537,8 @@ public class MultiblockUIBuilder implements KeyManager {
     }
 
     /** Add custom text dynamically, allowing for custom application logic. */
-    public MultiblockUIBuilder addCustom(Consumer<KeyManager> customConsumer) {
-        customConsumer.accept(this);
+    public MultiblockUIBuilder addCustom(CustomKeyFunction customConsumer) {
+        customConsumer.addCustom(this, isServer(), this.internal);
         return this;
     }
 
@@ -477,6 +580,7 @@ public class MultiblockUIBuilder implements KeyManager {
 
             @Override
             public void detectAndSendChanges(boolean init) {
+                if (getSyncManager().isClient()) return;
                 if (init || hasChanged()) {
                     if (init) {
                         onRebuild();
@@ -488,23 +592,29 @@ public class MultiblockUIBuilder implements KeyManager {
             }
 
             private void syncText(PacketBuffer buffer) {
-                buffer.writeVarInt(textList.size());
-                for (int i = 0; i < textList.size(); i++) {
-                    buffer.writeByte(Operation.getId(operations.get(i)));
-                    var jsonString = JsonUtils.toJsonString(textList.get(i));
-                    NetworkUtils.writeStringSafe(buffer, jsonString);
-                }
+                // byte[] bytes = internal.array();
+                buffer.writeBytes(internal);
+                internal.clear();
+                // buffer.writeVarInt(textList.size());
+                // for (int i = 0; i < textList.size(); i++) {
+                // buffer.writeByte(Operation.getId(operations.get(i)));
+                // var jsonString = JsonUtils.toJsonString(textList.get(i));
+                // NetworkUtils.writeStringSafe(buffer, jsonString);
+                // }
             }
 
             @Override
             public void readOnClient(int id, PacketBuffer buf) {
                 if (id == 0) {
-                    clear();
-                    for (int i = buf.readVarInt(); i > 0; i--) {
-                        int op = buf.readByte();
-                        String jsonString = NetworkUtils.readStringSafe(buf);
-                        addKey(JsonUtils.fromJsonString(jsonString), Operation.getById(op));
-                    }
+                    internal.clear();
+                    internal.writeBytes(buf);
+                    onRebuild();
+                    build();
+                    // for (int i = buf.readVarInt(); i > 0; i--) {
+                    // int op = buf.readByte();
+                    // String jsonString = NetworkUtils.readStringSafe(buf);
+                    // addKey(JsonUtils.fromJsonString(jsonString), Operation.getById(op));
+                    // }
                 }
             }
 

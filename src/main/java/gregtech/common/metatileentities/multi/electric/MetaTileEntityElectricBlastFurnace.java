@@ -35,6 +35,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -80,7 +81,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
-    private void addHeatCapacity(KeyManager keyManager) {
+    private void addHeatCapacity(KeyManager keyManager, boolean isServer, PacketBuffer internal) {
         if (isStructureFormed()) {
             var heatString = KeyUtil.number(TextFormatting.RED,
                     getCurrentTemperature(), "K");
