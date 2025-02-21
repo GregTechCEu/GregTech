@@ -40,7 +40,7 @@
 dependencies {
     // Published dependencies
     api("codechicken:codechickenlib:3.2.3.358")
-    api("com.cleanroommc:modularui:2.5.0-rc3") { transitive = false }
+    api("com.cleanroommc:modularui:2.5.0-rc4") { transitive = false }
     api("com.cleanroommc:groovyscript:1.2.0-hotfix1") { transitive = false }
     api("curse.maven:inventory-bogosorter-632327:4951607-deobf-4951608-sources-4951609")
     api("CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.20.700")
