@@ -130,13 +130,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     protected void configureWarningText(MultiblockUIBuilder builder) {
         super.configureWarningText(builder);
         builder.addCustom((manager, syncer) -> {
-            if (isStructureFormed()) {
-                if (syncer.syncBoolean(getWaterFilled() == 0)) {
-                    manager.add(KeyUtil.lang(TextFormatting.YELLOW,
-                            "gregtech.multiblock.large_boiler.no_water"));
-                    manager.add(KeyUtil.lang(TextFormatting.GRAY,
-                            "gregtech.multiblock.large_boiler.explosion_tooltip"));
-                }
+            if (isStructureFormed() && syncer.syncBoolean(getWaterFilled() == 0)) {
+                manager.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.large_boiler.no_water"));
+                manager.add(KeyUtil.lang(TextFormatting.GRAY,
+                        "gregtech.multiblock.large_boiler.explosion_tooltip"));
             }
         });
     }
