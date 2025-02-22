@@ -225,6 +225,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
                     if (tile.isBlocked(facing)) unblockTile(tile, other, facing);
                     else blockTile(tile, other, facing);
                 } else {
+                    if (worldIn.isRemote) return true;
                     if (tile.isConnected(facing)) {
                         ToolHelper.damageItem(item, playerIn);
                         ToolHelper.playToolSound(item, playerIn);
@@ -509,8 +510,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
     public @Nullable RayTraceAABB collisionRayTrace(@NotNull EntityPlayer player,
                                                     @NotNull World world, @NotNull BlockPos pos) {
-        Vec3d vec3d = player.getPositionEyes(0);
-        Vec3d vec3d1 = player.getLook(0);
+        Vec3d vec3d = player.getPositionEyes(1);
+        Vec3d vec3d1 = player.getLook(1);
         double blockReachDistance;
         if (world.isRemote) {
             blockReachDistance = Minecraft.getMinecraft().playerController.getBlockReachDistance();
