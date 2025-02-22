@@ -488,14 +488,6 @@ public class MultiblockUIBuilder implements KeyManager {
     protected boolean hasChanged() {
         if (this.action == null) return false;
         return getSyncer().hasChanged();
-        // List<String> old = toString(this.textList);
-        // build();
-        // if (textList.size() != old.size()) return true;
-        // for (int i = 0; i < textList.size(); i++) {
-        // if (!JsonUtils.toJsonString(textList.get(i)).equals(old.get(i)))
-        // return true;
-        // }
-        // return false;
     }
 
     protected void sync(String key, PanelSyncManager syncManager) {
