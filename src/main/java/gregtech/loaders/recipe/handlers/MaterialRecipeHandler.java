@@ -169,6 +169,11 @@ public class MaterialRecipeHandler {
                         .inputs(dustStack)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
                         .buildAndRegister();
+            } else if (!OreDictUnifier.get(block, mat).isEmpty()) {
+                COMPRESSOR_RECIPES.recipeBuilder()
+                        .input(dust, mat, (int) (block.getMaterialAmount(mat) / M))
+                        .output(block, mat)
+                        .duration(300).EUt(2).buildAndRegister();
             }
 
             // Some Ores with Direct Smelting Results have neither ingot nor gem properties

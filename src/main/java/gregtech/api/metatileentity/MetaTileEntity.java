@@ -737,7 +737,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     @Override
-    public final boolean acceptsCovers() {
+    public boolean acceptsCovers() {
         return covers.size() < EnumFacing.VALUES.length;
     }
 
@@ -1083,10 +1083,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             if (trait == null) {
                 GTLog.logger.warn("Could not find MTETrait for id: {} at position {}.", traitNetworkId, getPos());
             } else {
+                ISyncedTileEntity.addCode(internalId, trait);
                 trait.receiveCustomData(internalId, buf);
-
-                // this should be fine, as nothing else is read after this
-                ISyncedTileEntity.checkCustomData(internalId, buf, trait);
             }
         } else if (dataId == COVER_ATTACHED_MTE) {
             CoverSaveHandler.readCoverPlacement(buf, this);
@@ -1102,10 +1100,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             Cover cover = getCoverAtSide(coverSide);
             int internalId = buf.readVarInt();
             if (cover != null) {
+                ISyncedTileEntity.addCode(internalId, cover);
                 cover.readCustomData(internalId, buf);
-
-                // this should be fine, as nothing else is read after this
-                ISyncedTileEntity.checkCustomData(internalId, buf, cover);
             }
         } else if (dataId == UPDATE_SOUND_MUFFLED) {
             this.muffled = buf.readBoolean();
@@ -1166,6 +1162,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillInternalTankFromFluidContainer(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack inputContainerStack = importItems.extractItem(i, 1, true);
+            if (inputContainerStack.isEmpty() ||
+                    !inputContainerStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                continue;
+            }
             FluidActionResult result = FluidUtil.tryEmptyContainer(inputContainerStack, fluidHandler, Integer.MAX_VALUE,
                     null, false);
             if (result.isSuccess()) {
@@ -1188,6 +1188,10 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     public void fillContainerFromInternalTank(IFluidHandler fluidHandler) {
         for (int i = 0; i < importItems.getSlots(); i++) {
             ItemStack emptyContainer = importItems.extractItem(i, 1, true);
+            if (emptyContainer.isEmpty() ||
+                    !emptyContainer.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                continue;
+            }
             FluidActionResult result = FluidUtil.tryFillContainer(emptyContainer, fluidHandler, Integer.MAX_VALUE, null,
                     false);
             if (result.isSuccess()) {

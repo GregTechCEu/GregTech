@@ -129,11 +129,12 @@ public class GTValues {
      * The short names for the voltages, formatted for text
      */
     public static final String[] VNF = new String[] {
-            DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
-            GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
-            LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
-            DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
-            YELLOW + "UXV", BLUE + "OpV", RED.toString() + BOLD + "MAX" };
+            RED + "ULV", GRAY + "LV", GOLD + "MV",
+            YELLOW + "HV", DARK_GRAY + "EV", WHITE + "IV",
+            LIGHT_PURPLE + "LuV", AQUA + "ZPM", DARK_GREEN + "UV",
+            DARK_RED + "UHV", DARK_BLUE + "UEV", DARK_GREEN.toString() + BOLD + "UIV",
+            DARK_PURPLE.toString() + BOLD + "UXV", DARK_RED.toString() + BOLD + "OpV",
+            RED.toString() + BOLD + "MAX" };
 
     /**
      * The short names for the voltages, up to max Long, formatted for text
@@ -153,7 +154,7 @@ public class GTValues {
      * Color values for the voltages
      */
     public static final int[] VC = new int[] { 0xC80000, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xE99797,
-            0x7EC3C4, 0x7EB07E, 0xBF74C0, 0x0B5CFE, 0x914E91, 0x488748, 0x8C0000, 0x2828F5 };
+            0x7EC3C4, 0x7EB07E, 0xBF74C0, 0x0B5CFE, 0x488748, 0x914E91, 0x8C0000, 0x2828F5 };
 
     /**
      * The long names for the voltages

@@ -43,6 +43,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
@@ -115,7 +116,7 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         int heightBonus = (handler.getSlots() / 9) * 18;
 
-        SlotGroup group = new SlotGroup("toolbelt_inventory", 9);
+        SlotGroup group = new SlotGroup("toolbelt_inventory", Math.min(handler.getSlots(), 9));
         guiSyncManager.registerSlotGroup(group);
 
         List<ItemSlot> slots = new ArrayList<>();
@@ -410,7 +411,9 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     }
 
     private ToolStackHandler getHandler(ItemStack stack) {
-        return (ToolStackHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (handler instanceof ToolStackHandler h) return h;
+        else return FALLBACK;
     }
 
     @Override
@@ -448,13 +451,14 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
     @Override
     public @NotNull String getItemStackDisplayName(@NotNull ItemStack stack) {
         ItemStack tool = getHandler(stack).getSelectedStack();
-        String selectedToolDisplay = "";
-        if (!tool.isEmpty()) {
-            selectedToolDisplay = " (" + tool.getDisplayName() + ")";
-        }
         getHandler(stack).disablePassthrough();
-        String name = LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName(),
-                selectedToolDisplay);
+        String name;
+        if (!tool.isEmpty()) {
+            name = LocalizationUtils.format(getTranslationKey() + ".select", getToolMaterial(stack).getLocalizedName(),
+                    tool.getDisplayName());
+        } else {
+            name = LocalizationUtils.format(getTranslationKey(), getToolMaterial(stack).getLocalizedName());
+        }
         getHandler(stack).enablePassthrough();
         return name;
     }
@@ -601,6 +605,8 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
         stack.setTagCompound(nbt == null ? null : (nbt.hasKey("NBT") ? nbt.getCompoundTag("NBT") : null));
     }
 
+    protected static final ToolStackHandler FALLBACK = new ToolStackHandler(0);
+
     protected static class ToolStackHandler extends ItemStackHandler {
 
         private static final Set<String> EMPTY = ImmutableSet.of();
@@ -669,7 +675,6 @@ public class ItemGTToolbelt extends ItemGTTool implements IDyeableItem {
 
         @Override
         protected void onContentsChanged(int slot) {
-            if (this.selectedSlot == slot) this.selectedSlot = -1;
             this.updateSlot(slot);
             this.update();
 

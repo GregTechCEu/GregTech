@@ -6,19 +6,16 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.EnergyContainerBatteryBuffer;
-import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.*;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuis;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -37,6 +34,15 @@ import net.minecraftforge.items.ItemStackHandler;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.value.sync.SyncHandlers;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Grid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,27 +143,42 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public boolean usesMui2() {
+        return true;
+    }
+
+    @Override
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         int rowSize = (int) Math.sqrt(inventorySize);
         int colSize = rowSize;
         if (inventorySize == 8) {
             rowSize = 4;
             colSize = 2;
         }
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-                18 + 18 * colSize + 94)
-                .label(6, 6, getMetaFullName());
+
+        guiSyncManager.registerSlotGroup("item_inv", rowSize);
 
         int index = 0;
+        List<List<IWidget>> widgets = new ArrayList<>();
         for (int y = 0; y < colSize; y++) {
+            widgets.add(new ArrayList<>());
             for (int x = 0; x < rowSize; x++) {
-                builder.widget(new SlotWidget(importItems, index++, 88 - rowSize * 9 + x * 18, 18 + y * 18, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.BATTERY_OVERLAY));
+                widgets.get(y).add(new ItemSlot().slot(SyncHandlers.itemSlot(this.importItems, index++)
+                        .slotGroup("item_inv"))
+                        .background(GTGuiTextures.SLOT, GTGuiTextures.BATTERY_OVERLAY));
             }
         }
 
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * colSize + 12);
-        return builder.build(getHolder(), entityPlayer);
+        // TODO: Change the position of the name when it's standardized.
+        return GTGuis.createPanel(this, 176, 18 + 18 * colSize + 94)
+                .child(IKey.lang(getMetaFullName()).asWidget().pos(5, 5))
+                .child(SlotGroupWidget.playerInventory().left(7).bottom(7))
+                .child(new Grid()
+                        .top(18).height(colSize * 18).width(rowSize * 18)
+                        .minElementMargin(0, 0)
+                        .minColWidth(18).minRowHeight(18)
+                        .alignX(0.5f)
+                        .matrix(widgets));
     }
 
     @Override

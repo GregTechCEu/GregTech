@@ -43,7 +43,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
-import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
@@ -545,7 +544,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() - getIncrementValue(MouseData.create(mouseButton));
                                 throughput.setValue(val, true, true);
-                                Interactable.playButtonClickSound();
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(false))))
@@ -560,7 +558,6 @@ public class CoverConveyor extends CoverBase implements CoverWithUI, ITickable, 
                             .onMousePressed(mouseButton -> {
                                 int val = throughput.getValue() + getIncrementValue(MouseData.create(mouseButton));
                                 throughput.setValue(val, true, true);
-                                Interactable.playButtonClickSound();
                                 return true;
                             })
                             .onUpdateListener(w -> w.overlay(createAdjustOverlay(true)))));
