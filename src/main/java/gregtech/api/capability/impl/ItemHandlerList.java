@@ -34,10 +34,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
             }
             currentSlotIndex += slotsCount;
         }
-    }
-
-    public int getIndexOffset(IItemHandler handler) {
-        return baseIndexOffset.getOrDefault(handler, -1);
+        baseIndexOffset.defaultReturnValue(-1);
     }
 
     @Override
