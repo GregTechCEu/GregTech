@@ -31,6 +31,7 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -58,7 +59,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import codechicken.lib.raytracer.RayTracer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -509,7 +509,17 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
 
     public @Nullable RayTraceAABB collisionRayTrace(@NotNull EntityPlayer player,
                                                     @NotNull World world, @NotNull BlockPos pos) {
-        return collisionRayTrace(player, world, pos, RayTracer.getStartVec(player), RayTracer.getEndVec(player));
+        Vec3d vec3d = player.getPositionEyes(0);
+        Vec3d vec3d1 = player.getLook(0);
+        double blockReachDistance;
+        if (world.isRemote) {
+            blockReachDistance = Minecraft.getMinecraft().playerController.getBlockReachDistance();
+        } else {
+            blockReachDistance = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+        }
+        Vec3d vec3d2 = vec3d.add(vec3d1.x * blockReachDistance, vec3d1.y * blockReachDistance,
+                vec3d1.z * blockReachDistance);
+        return collisionRayTrace(player, world, pos, vec3d, vec3d2);
     }
 
     public @Nullable RayTraceAABB collisionRayTrace(@Nullable EntityPlayer player,
@@ -519,17 +529,14 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
             return RayTraceAABB.of(rayTrace(pos, start, end, FULL_BLOCK_AABB), FULL_BLOCK_AABB);
         }
         PipeTileEntity tile = getTileEntity(worldIn, pos);
-        if (tile == null) {
+        if (tile == null || tile.getFrameMaterial() != null) {
             return RayTraceAABB.of(rayTrace(pos, start, end, FULL_BLOCK_AABB), FULL_BLOCK_AABB);
         }
+        List<AxisAlignedBB> bbs = getStructure().getPipeBoxes(tile);
+        tile.getCoverBoxes(bbs::add);
         RayTraceResult min = null;
         AxisAlignedBB minbb = null;
         double minDistSqrd = Double.MAX_VALUE;
-        List<AxisAlignedBB> bbs = getStructure().getPipeBoxes(tile);
-        tile.getCoverBoxes(bbs::add);
-        if (tile.getFrameMaterial() != null) {
-            bbs.add(FULL_BLOCK_AABB);
-        }
         for (AxisAlignedBB aabb : bbs) {
             RayTraceResult result = rayTrace(pos, start, end, aabb);
             if (result == null) continue;
