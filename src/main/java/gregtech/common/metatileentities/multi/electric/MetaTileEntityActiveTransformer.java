@@ -169,22 +169,24 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.machine.active_transformer.routing")
-                .addCustom(list -> {
+                .addCustom((list, syncer) -> {
                     if (isStructureFormed()) {
                         // Max input line
                         IKey maxInputFormatted = KeyUtil.number(TextFormatting.WHITE,
-                                powerInput.getInputVoltage() * powerInput.getInputAmperage(), " EU/t");
+                                syncer.syncLong(powerInput.getInputVoltage() * powerInput.getInputAmperage()), " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.GREEN, "gregtech.multiblock.active_transformer.max_in",
                                 maxInputFormatted));
 
                         // Max output line
                         IKey maxOutputFormatted = KeyUtil.number(TextFormatting.WHITE,
-                                powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage(), " EU/t");
+                                syncer.syncLong(powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage()),
+                                " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.active_transformer.max_out",
                                 maxOutputFormatted));
 
                         // Average I/O line
-                        IKey avgIOFormatted = KeyUtil.number(TextFormatting.WHITE, averageIOLastSec, " EU/t");
+                        IKey avgIOFormatted = KeyUtil.number(TextFormatting.WHITE, syncer.syncLong(averageIOLastSec),
+                                " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.AQUA, "gregtech.multiblock.active_transformer.average_io",
                                 avgIOFormatted));
                     }
