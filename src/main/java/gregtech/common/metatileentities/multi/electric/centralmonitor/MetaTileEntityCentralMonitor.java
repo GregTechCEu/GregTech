@@ -309,7 +309,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
-        builder.addCustom((list, isServer, internal) -> {
+        builder.addCustom((list, syncer) -> {
             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.central_monitor.height", this.height));
 
             if (isStructureFormed()) {
@@ -320,7 +320,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addCustom((list, isServer, internal) -> {
+        builder.addCustom((list, syncer) -> {
             if (isStructureFormed() && !drainEnergy(true)) {
                 list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.central_monitor.low_power"));
             }

@@ -158,8 +158,8 @@ public class MetaTileEntityNetworkSwitch extends MetaTileEntityDataBank implemen
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         super.configureWarningText(builder);
-        builder.addCustom((list, isServer, internal) -> {
-            if (isStructureFormed() && computationHandler.hasNonBridgingConnections()) {
+        builder.addCustom((list, syncer) -> {
+            if (isStructureFormed() && syncer.syncBoolean(computationHandler.hasNonBridgingConnections())) {
                 list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.computation.non_bridging.detailed"));
             }
         });

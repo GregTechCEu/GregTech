@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.pattern.BlockPattern;
@@ -128,15 +129,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         super.configureWarningText(builder);
-        builder.addCustom((manager, isServer, internal) -> {
+        builder.addCustom((manager, syncer) -> {
             if (isStructureFormed()) {
-                boolean filled = getWaterFilled() == 0;
-                if (isServer) {
-                    internal.writeBoolean(filled);
-                } else {
-                    filled = internal.readBoolean();
-                }
-                if (filled) {
+                if (syncer.syncBoolean(getWaterFilled() == 0)) {
                     manager.add(KeyUtil.lang(TextFormatting.YELLOW,
                             "gregtech.multiblock.large_boiler.no_water"));
                     manager.add(KeyUtil.lang(TextFormatting.GRAY,
@@ -169,20 +164,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 });
     }
 
-    private void addCustomData(KeyManager keyManager, boolean isServer, PacketBuffer internal) {
+    private void addCustomData(KeyManager keyManager, UISyncer syncer) {
         if (isStructureFormed()) {
-            int steam = recipeLogic.getLastTickSteam();
-            int heatScaled = recipeLogic.getHeatScaled();
-            int throttleAmt = getThrottle();
-            if (isServer) {
-                internal.writeInt(steam);
-                internal.writeInt(heatScaled);
-                internal.writeInt(throttleAmt);
-            } else {
-                steam = internal.readInt();
-                heatScaled = internal.readInt();
-                throttleAmt = internal.readInt();
-            }
+            int steam = syncer.syncInt(recipeLogic.getLastTickSteam());
+            int heatScaled = syncer.syncInt(recipeLogic.getHeatScaled());
+            int throttleAmt = syncer.syncInt(getThrottle());
 
             // Steam Output line
             IKey steamOutput = KeyUtil.number(TextFormatting.AQUA,

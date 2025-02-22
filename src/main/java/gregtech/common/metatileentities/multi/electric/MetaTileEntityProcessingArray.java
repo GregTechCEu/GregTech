@@ -120,7 +120,7 @@ public class MetaTileEntityProcessingArray extends RecipeMapMultiblockController
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom((richText, isServer, internal) -> {
+                .addCustom((richText, syncer) -> {
                     if (!isStructureFormed()) return;
 
                     // Machine mode text
