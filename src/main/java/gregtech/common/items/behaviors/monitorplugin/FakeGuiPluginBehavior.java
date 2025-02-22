@@ -6,7 +6,11 @@ import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.items.toolitem.ToolClasses;
@@ -33,13 +37,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
 
@@ -51,11 +57,6 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
     private BlockPos partPos;
     private FakeModularUIPluginContainer fakeModularUIContainer;
     private GregFakePlayer fakePlayer;
-    private static final Method methodCreateUI = ObfuscationReflectionHelper.findMethod(MetaTileEntity.class,
-            "createUI", ModularUI.class, EntityPlayer.class);
-    static {
-        methodCreateUI.setAccessible(true);
-    }
 
     public void setConfig(int partIndex) {
         if (this.partIndex == partIndex || partIndex < 0) return;
@@ -108,7 +109,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                 }
                 return;
             }
-            ModularUI ui = (ModularUI) methodCreateUI.invoke(mte, fakePlayer);
+            ModularUI ui = mte.getModularUI(fakePlayer);
             if (ui == null) {
                 fakeModularUIContainer = null;
                 if (this.screen.getWorld().isRemote) {

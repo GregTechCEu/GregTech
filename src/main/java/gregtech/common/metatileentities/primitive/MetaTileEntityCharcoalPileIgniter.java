@@ -3,41 +3,36 @@ package gregtech.common.metatileentities.primitive;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IWorkable;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.*;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.util.Mods;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.metatileentities.MetaTileEntities;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemFireball;
-import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -87,7 +82,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     public MetaTileEntityCharcoalPileIgniter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
-        MinecraftForge.EVENT_BUS.register(MetaTileEntityCharcoalPileIgniter.class);
     }
 
     @Override
@@ -281,7 +275,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         return world.getBlockState(pos.move(EnumFacing.DOWN)).getBlock() == Blocks.BRICK_BLOCK;
     }
 
-    private void setActive(boolean active) {
+    public void setActive(boolean active) {
         this.isActive = active;
         writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(this.isActive));
     }
@@ -479,65 +473,6 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
         }
 
         return super.getCapability(capability, side);
-    }
-
-    @SubscribeEvent
-    public static void onItemUse(@NotNull PlayerInteractEvent.RightClickBlock event) {
-        TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
-        MetaTileEntity mte = null;
-        if (tileEntity instanceof IGregTechTileEntity) {
-            mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
-        }
-        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((IMultiblockController) mte).isStructureFormed()) {
-            if (event.getSide().isClient()) {
-                event.setCanceled(true);
-                event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
-            } else if (!mte.isActive()) {
-                boolean shouldActivate = false;
-                ItemStack stack = event.getItemStack();
-                if (stack.getItem() instanceof ItemFlintAndSteel) {
-                    // flint and steel
-                    stack.damageItem(1, event.getEntityPlayer());
-
-                    // flint and steel sound does not get played when handled like this
-                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
-                            SoundCategory.PLAYERS, 1.0F, 1.0F);
-
-                    shouldActivate = true;
-                } else if (stack.getItem() instanceof ItemFireball) {
-                    // fire charge
-                    stack.shrink(1);
-
-                    // fire charge sound does not get played when handled like this
-                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FIRECHARGE_USE,
-                            SoundCategory.PLAYERS, 1.0F, 1.0F);
-
-                    shouldActivate = true;
-                } else if (stack.getItem() instanceof MetaItem) {
-                    // lighters
-                    MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
-                    if (valueItem != null) {
-                        for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
-                            if (behaviour instanceof LighterBehaviour &&
-                                    ((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
-                                // lighter sound does not get played when handled like this
-                                event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
-                                        SoundCategory.PLAYERS, 1.0F, 1.0F);
-
-                                shouldActivate = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (shouldActivate) {
-                    ((MetaTileEntityCharcoalPileIgniter) mte).setActive(true);
-                    event.setCancellationResult(EnumActionResult.FAIL);
-                    event.setCanceled(true);
-                }
-            }
-        }
     }
 
     @Override

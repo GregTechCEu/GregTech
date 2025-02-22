@@ -2,9 +2,13 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.IWalkingSpeedBonus;
+import gregtech.api.capability.IMultiblockController;
 import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -19,8 +23,10 @@ import gregtech.common.entities.EntityGTExplosive;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.IStepAssist;
 import gregtech.common.items.armor.PowerlessJetpack;
+import gregtech.common.items.behaviors.LighterBehaviour;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
+import gregtech.common.metatileentities.primitive.MetaTileEntityCharcoalPileIgniter;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -36,11 +42,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemFireball;
+import net.minecraft.item.ItemFlintAndSteel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -106,6 +118,60 @@ public class EventHandlers {
         }
 
         ItemStack stack = event.getItemStack();
+        MetaTileEntity mte = null;
+        if (tileEntity instanceof IGregTechTileEntity) {
+            mte = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+        }
+        if (mte instanceof MetaTileEntityCharcoalPileIgniter && ((IMultiblockController) mte).isStructureFormed()) {
+            if (event.getSide().isClient()) {
+                event.setCanceled(true);
+                event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
+            } else if (!mte.isActive()) {
+                boolean shouldActivate = false;
+                if (stack.getItem() instanceof ItemFlintAndSteel) {
+                    // flint and steel
+                    stack.damageItem(1, event.getEntityPlayer());
+
+                    // flint and steel sound does not get played when handled like this
+                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
+                            SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+                    shouldActivate = true;
+                } else if (stack.getItem() instanceof ItemFireball) {
+                    // fire charge
+                    stack.shrink(1);
+
+                    // fire charge sound does not get played when handled like this
+                    event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FIRECHARGE_USE,
+                            SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+                    shouldActivate = true;
+                } else if (stack.getItem() instanceof MetaItem) {
+                    // lighters
+                    MetaItem<?>.MetaValueItem valueItem = ((MetaItem<?>) stack.getItem()).getItem(stack);
+                    if (valueItem != null) {
+                        for (IItemBehaviour behaviour : valueItem.getBehaviours()) {
+                            if (behaviour instanceof LighterBehaviour &&
+                                    ((LighterBehaviour) behaviour).consumeFuel(event.getEntityPlayer(), stack)) {
+                                // lighter sound does not get played when handled like this
+                                event.getWorld().playSound(null, event.getPos(), SoundEvents.ITEM_FLINTANDSTEEL_USE,
+                                        SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+                                shouldActivate = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (shouldActivate) {
+                    ((MetaTileEntityCharcoalPileIgniter) mte).setActive(true);
+                    event.setCancellationResult(EnumActionResult.FAIL);
+                    event.setCanceled(true);
+                }
+            }
+        }
+
         if (!stack.isEmpty() && stack.getItem() == Items.FLINT_AND_STEEL) {
             if (!event.getWorld().isRemote && !event.getEntityPlayer().capabilities.isCreativeMode &&
                     GTValues.RNG.nextInt(100) >= ConfigHolder.misc.flintChanceToCreateFire) {
