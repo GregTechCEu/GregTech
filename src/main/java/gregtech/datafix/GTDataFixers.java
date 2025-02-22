@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.datafix.migration.impl.MigrateMTEBlockTE;
 import gregtech.datafix.migration.impl.MigrateMTEItems;
+import gregtech.datafix.migration.impl.MigratePipeBlockTE;
+import gregtech.datafix.migration.impl.MigratePipeItems;
 import gregtech.datafix.migration.lib.MTERegistriesMigrator;
 import gregtech.datafix.walker.WalkItemStackLike;
 
@@ -57,6 +59,11 @@ public final class GTDataFixers {
                 MTERegistriesMigrator migrator = GregTechAPI.MIGRATIONS.registriesMigrator();
                 fixer.registerFix(GTFixType.ITEM_STACK_LIKE, new MigrateMTEItems(migrator));
                 fixer.registerFix(FixTypes.CHUNK, new MigrateMTEBlockTE(migrator));
+            }
+            case V2_POST_PIPES -> {
+                int v = GTDataVersion.V2_POST_PIPES.ordinal();
+                fixer.registerFix(GTFixType.ITEM_STACK_LIKE, new MigratePipeItems(v));
+                fixer.registerFix(FixTypes.CHUNK, new MigratePipeBlockTE(v));
             }
             default -> {}
         }

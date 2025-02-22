@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 public interface CoverableView extends ICapabilityProvider {
@@ -76,9 +77,17 @@ public interface CoverableView extends ICapabilityProvider {
     }
 
     /**
+     * @return a collection containing all attached covers.
+     */
+    @NotNull
+    Collection<Cover> getAttachedCovers();
+
+    /**
      * @return if there is any cover attached
      */
-    boolean hasAnyCover();
+    default boolean hasAnyCover() {
+        return !getAttachedCovers().isEmpty();
+    }
 
     /**
      * @param side        the side to get the redstone from

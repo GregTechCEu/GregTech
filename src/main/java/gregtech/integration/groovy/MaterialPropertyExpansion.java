@@ -1,6 +1,7 @@
 package gregtech.integration.groovy;
 
 import gregtech.api.fluids.FluidBuilder;
+import gregtech.api.fluids.FluidConstants;
 import gregtech.api.fluids.FluidState;
 import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKey;
@@ -8,16 +9,17 @@ import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.IngotProperty;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.OreProperty;
+import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
 import com.cleanroommc.groovyscript.api.GroovyBlacklist;
 import com.cleanroommc.groovyscript.api.GroovyLog;
@@ -39,10 +41,6 @@ public class MaterialPropertyExpansion {
         return m.hasProperty(PropertyKey.DUST);
     }
 
-    public static boolean hasFluidPipes(Material m) {
-        return m.hasProperty(PropertyKey.FLUID_PIPE);
-    }
-
     public static boolean hasFluid(Material m) {
         return m.hasProperty(PropertyKey.FLUID);
     }
@@ -55,10 +53,6 @@ public class MaterialPropertyExpansion {
         return m.hasProperty(PropertyKey.INGOT);
     }
 
-    public static boolean hasItemPipes(Material m) {
-        return m.hasProperty(PropertyKey.ITEM_PIPE);
-    }
-
     public static boolean hasOre(Material m) {
         return m.hasProperty(PropertyKey.ORE);
     }
@@ -67,8 +61,19 @@ public class MaterialPropertyExpansion {
         return m.hasProperty(PropertyKey.TOOL);
     }
 
+    public static boolean hasFluidPipes(Material m) {
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        return properties != null && properties.hasProperty(MaterialFluidProperties.KEY);
+    }
+
+    public static boolean hasItemPipes(Material m) {
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        return properties != null && properties.hasProperty(MaterialItemProperties.KEY);
+    }
+
     public static boolean hasWires(Material m) {
-        return m.hasProperty(PropertyKey.WIRE);
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        return properties != null && properties.hasProperty(MaterialEnergyProperties.KEY);
     }
 
     ////////////////////////////////////
@@ -143,26 +148,6 @@ public class MaterialPropertyExpansion {
         if (checkFrozen("add a wood to a material")) return;
         if (!m.hasProperty(PropertyKey.WOOD)) {
             m.setProperty(PropertyKey.WOOD, new WoodProperty());
-        }
-    }
-
-    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof) {
-        addFluidPipes(m, maxFluidTemperature, throughput, gasProof, false, false, false);
-    }
-
-    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof,
-                                     boolean acidProof, boolean cryoProof, boolean plasmaProof) {
-        if (checkFrozen("add fluid pipes to a material")) return;
-        if (m.hasProperty(PropertyKey.FLUID_PIPE)) {
-            m.getProperty(PropertyKey.FLUID_PIPE).setMaxFluidTemperature(maxFluidTemperature);
-            m.getProperty(PropertyKey.FLUID_PIPE).setThroughput(throughput);
-            m.getProperty(PropertyKey.FLUID_PIPE).setGasProof(gasProof);
-            m.getProperty(PropertyKey.FLUID_PIPE).setCanContain(FluidAttributes.ACID, acidProof);
-            m.getProperty(PropertyKey.FLUID_PIPE).setCryoProof(cryoProof);
-            m.getProperty(PropertyKey.FLUID_PIPE).setPlasmaProof(plasmaProof);
-        } else {
-            m.setProperty(PropertyKey.FLUID_PIPE, new FluidPipeProperties(maxFluidTemperature, throughput, gasProof,
-                    acidProof, cryoProof, plasmaProof));
         }
     }
 
@@ -261,14 +246,6 @@ public class MaterialPropertyExpansion {
         } else m.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
     }
 
-    public static void addItemPipes(Material m, int priority, float transferRate) {
-        if (checkFrozen("add Item Pipes to a material")) return;
-        if (m.hasProperty(PropertyKey.ITEM_PIPE)) {
-            m.getProperty(PropertyKey.ITEM_PIPE).setPriority(priority);
-            m.getProperty(PropertyKey.ITEM_PIPE).setTransferRate(transferRate);
-        } else m.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, transferRate));
-    }
-
     public static void addTools(Material m, MaterialToolProperty.Builder builder) {
         addTools(m, builder.build());
     }
@@ -319,37 +296,62 @@ public class MaterialPropertyExpansion {
                 .durabilityMultiplier(durabilityMultiplier));
     }
 
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, false, 0);
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof) {
+        addFluidPipes(m, maxFluidTemperature, throughput, gasProof, false, false);
     }
 
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, 0);
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int throughput, boolean gasProof,
+                                     boolean acidProof, boolean plasmaProof) {
+        addFluidPipes(m, maxFluidTemperature, FluidConstants.CRYOGENIC_FLUID_THRESHOLD + 1, throughput, gasProof,
+                acidProof, plasmaProof);
     }
 
-    public static void addWires(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
-                                int criticalTemp) {
+    public static void addFluidPipes(Material m, int maxFluidTemperature, int minFluidTemperature, int throughput,
+                                     boolean gasProof,
+                                     boolean acidProof, boolean plasmaProof) {
+        if (checkFrozen("add fluid pipes to a material")) return;
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        if (properties == null) {
+            properties = new PipeNetProperties();
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
+        }
+        properties.setProperty(new MaterialFluidProperties(throughput, maxFluidTemperature, minFluidTemperature)
+                .setContain(FluidState.GAS, gasProof).setContain(FluidAttributes.ACID, acidProof)
+                .setContain(FluidState.PLASMA, plasmaProof));
+    }
+
+    public static void addItemPipes(Material m, int priority, float transferRate) {
+        if (checkFrozen("add Item Pipes to a material")) return;
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        if (properties == null) {
+            properties = new PipeNetProperties();
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
+        }
+        properties.setProperty(new MaterialItemProperties((long) (transferRate * 8), priority));
+    }
+
+    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock) {
+        addWires(m, voltage, baseAmperage, lossPerBlock, false);
+    }
+
+    public static void addWires(Material m, long voltage, long baseAmperage, long lossPerBlock,
+                                boolean superconductor) {
         if (checkFrozen("add Wires to a material")) return;
-        if (m.hasProperty(PropertyKey.WIRE)) {
-            m.getProperty(PropertyKey.WIRE).setVoltage(voltage);
-            m.getProperty(PropertyKey.WIRE).setAmperage(baseAmperage);
-            m.getProperty(PropertyKey.WIRE).setLossPerBlock(lossPerBlock);
-            m.getProperty(PropertyKey.WIRE).setSuperconductor(isSuperCon);
-            m.getProperty(PropertyKey.WIRE).setSuperconductorCriticalTemperature(criticalTemp);
-        } else m.setProperty(PropertyKey.WIRE,
-                new WireProperties(voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp));
+        PipeNetProperties properties = m.getProperty(PropertyKey.PIPENET_PROPERTIES);
+        if (properties == null) {
+            properties = new PipeNetProperties();
+            m.setProperty(PropertyKey.PIPENET_PROPERTIES, properties);
+        }
+        properties.setProperty(MaterialEnergyProperties.create(voltage, baseAmperage, lossPerBlock,
+                superconductor));
     }
 
-    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, false, 0);
+    public static void addCables(Material m, long voltage, long baseAmperage, long lossPerBlock) {
+        addWires(m, voltage, baseAmperage, lossPerBlock);
     }
 
-    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, 0);
-    }
-
-    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon,
-                                 int criticalTemp) {
-        addWires(m, voltage, baseAmperage, lossPerBlock, isSuperCon, criticalTemp);
+    public static void addCables(Material m, int voltage, int baseAmperage, int lossPerBlock,
+                                 boolean superconductor) {
+        addWires(m, voltage, baseAmperage, lossPerBlock, superconductor);
     }
 }

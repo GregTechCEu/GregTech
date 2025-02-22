@@ -263,7 +263,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     private ModularSlot trackSlot(IItemHandler handler, int slot) {
-        int offset = combinedInventory.getIndexOffset(handler);
+        int offset = combinedInventory.getOffsetByHandler(handler);
         if (offset == -1) throw new NullPointerException("handler cannot be found");
         this.recipeLogic.updateSlotMap(offset, slot);
         return new ModularSlot(handler, slot);

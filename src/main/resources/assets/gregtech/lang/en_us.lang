@@ -117,6 +117,13 @@ gregtech.top.ld_pipe_output=Output
 gregtech.top.ld_pipe_input_endpoint=Input Endpoint:
 gregtech.top.ld_pipe_output_endpoint=Output Endpoint:
 
+gregtech.top.pipe.temperature=Current Temperature:
+gregtech.top.pipe.energy=Recent Energy Transfer:
+gregtech.top.pipe.energy_per=§a%s EU/t §f(%s§f) @ §a%sA
+gregtech.top.pipe.energy_last=Last Transfer: §a%s EU/t §f(%s§f) @ §a%sA
+gregtech.top.pipe.fluid_last=Last Fluid:
+gregtech.top.pipe.item_last=Last Item:
+
 option.gregtech.block_ore=Ore Blocks
 option.gregtech.controllable=Controllable Machines
 option.gregtech.converter=Energy Converters
@@ -1209,6 +1216,9 @@ metaitem.fertilizer.name=Fertilizer
 metaitem.blacklight.name=Blacklight
 metaitem.blacklight.tooltip=Long-Wave §dUltraviolet§7 light source
 
+metaitem.ultrasmooth_borosilicate_glass.name=Ultrasmooth Borosilicate Glass
+metaitem.laser_reflector.name=Dielectric Laser Mirror
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 gui.widget.recipeProgressWidget.default_tooltip=Show Recipes
 
@@ -1328,15 +1338,15 @@ cover.generic.enabled=Enabled
 cover.generic.transfer_mode=Transfer Mode
 cover.generic.manual_io=Manual IO Mode
 cover.generic.io=IO Mode
+cover.generic.distribution.name=Distribution Mode
+cover.generic.distribution.equalized=§bEqual Distribution§r\n§7Fills all destinations by the same amount per operation.\n§cMay be computationally expensive. Use sparingly.
+cover.generic.distribution.round_robin=§bRound Robin§r\n§7Fills destinations in a fixed order, but does not equalize.
+cover.generic.distribution.flood=§bFlood Insert§r\n§7Fills destinations based on their priorities and does not equalize.
 cover.pump.mode=Pump Mode
 cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export
 cover.conveyor.mode.import=Mode: Import
-cover.conveyor.distribution.name=Distribution Mode
-cover.conveyor.distribution.round_robin_enhanced=§bEnhanced Round Robin§r\n§7Splits items equally to all inventories
-cover.conveyor.distribution.round_robin=§bRound Robin§r with Priority\n§7Tries to split items equally to inventories
-cover.conveyor.distribution.first_insert=§bFirst Insert§r\n§7Will insert into the first inventory it finds
 cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§aEnabled
 cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§cDisabled
 cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
@@ -1365,7 +1375,6 @@ cover.bucket.mode.bucket_exact=kL
 cover.bucket.mode.milli_bucket_rate=L/s
 cover.bucket.mode.milli_bucket_exact=L
 cover.fluid_regulator.title=Fluid Regulator Settings (%s)
-cover.fluid_regulator.transfer_mode.description=§eTransfer Any§r - in this mode, cover will transfer as many fluids matching its filter as possible./n§eSupply Exact§r - in this mode, cover will supply fluids in portions specified in the window underneath this button. If amount of fluids is less than portion size, fluids won't be moved./n§eKeep Exact§r - in this mode, cover will keep specified amount of fluids in the destination inventory, supplying additional amount of fluids if required./n§7Tip: shift click will multiply increase/decrease amounts by 10 and ctrl click will multiply by 100.
 cover.fluid_regulator.supply_exact=Supply Exact: %s
 cover.fluid_regulator.keep_exact=Keep Exact: %s
 
@@ -1491,23 +1500,20 @@ item.material.oreprefix.toolHeadWrench=%s Wrench Tip
 item.material.oreprefix.turbineBlade=%s Turbine Blade
 item.material.oreprefix.block=Block of %s
 item.material.oreprefix.frameGt=%s Frame Box
-item.material.oreprefix.pipeTinyFluid=Tiny %s Fluid Pipe
-item.material.oreprefix.pipeSmallFluid=Small %s Fluid Pipe
-item.material.oreprefix.pipeNormalFluid=%s Fluid Pipe
-item.material.oreprefix.pipeLargeFluid=Large %s Fluid Pipe
-item.material.oreprefix.pipeHugeFluid=Huge %s Fluid Pipe
-item.material.oreprefix.pipeQuadrupleFluid=Quadruple %s Fluid Pipe
-item.material.oreprefix.pipeNonupleFluid=Nonuple %s Fluid Pipe
-item.material.oreprefix.pipeTinyItem=Tiny %s Item Pipe
-item.material.oreprefix.pipeSmallItem=Small %s Item Pipe
-item.material.oreprefix.pipeNormalItem=%s Item Pipe
-item.material.oreprefix.pipeLargeItem=Large %s Item Pipe
-item.material.oreprefix.pipeHugeItem=Huge %s Item Pipe
-item.material.oreprefix.pipeTinyRestrictive=Tiny Restrictive %s Item Pipe
-item.material.oreprefix.pipeSmallRestrictive=Small Restrictive %s Item Pipe
-item.material.oreprefix.pipeNormalRestrictive=Restrictive %s Item Pipe
-item.material.oreprefix.pipeLargeRestrictive=Large Restrictive %s Item Pipe
-item.material.oreprefix.pipeHugeRestrictive=Huge Restrictive %s Item Pipe
+item.material.oreprefix.pipeTiny=Tiny %s Pipe
+item.material.oreprefix.pipeSmall=Small %s Pipe
+item.material.oreprefix.pipeNormal=%s Pipe
+item.material.oreprefix.pipeLarge=Large %s Pipe
+item.material.oreprefix.pipeHuge=Huge %s Pipe
+item.material.oreprefix.pipeQuadruple=Quadruple %s Pipe
+item.material.oreprefix.pipeNonuple=Nonuple %s Pipe
+item.material.oreprefix.pipeTinyRestrictive=Tiny Restrictive %s Pipe
+item.material.oreprefix.pipeSmallRestrictive=Small Restrictive %s Pipe
+item.material.oreprefix.pipeNormalRestrictive=Restrictive %s Pipe
+item.material.oreprefix.pipeLargeRestrictive=Large Restrictive %s Pipe
+item.material.oreprefix.pipeHugeRestrictive=Huge Restrictive %s Pipe
+item.material.oreprefix.pipeQuadrupleRestrictive=Quadruple Restrictive %s Pipe
+item.material.oreprefix.pipeNonupleRestrictive=Nonuple Restrictive %s Pipe
 item.material.oreprefix.wireGtHex=16x %s Wire
 item.material.oreprefix.wireGtOctal=8x %s Wire
 item.material.oreprefix.wireGtQuadruple=4x %s Wire
@@ -1876,6 +1882,7 @@ gregtech.material.hafnia=Hafnia
 gregtech.material.hafnium_tetrachloride=Hafnium Tetrachloride
 gregtech.material.zircaloy_4=Zircaloy-4
 gregtech.material.inconel_718=Inconel-718
+gregtech.material.titanium_dioxide=Titanium Dioxide
 
 
 # Organic Chemistry Materials
@@ -2455,6 +2462,9 @@ tile.optical_pipe_normal.tooltip1=Transmitting §fComputation§7 or §fResearch 
 
 tile.laser_pipe_normal.name=Laser Transmitting Cable
 tile.laser_pipe_normal.tooltip1=Transmitting power with §fno loss§7 in straight lines
+
+tile.laser_pipe_mirror.name=Laser Mirror Cable
+tile.laser_pipe_mirror.tooltip1=Transmitting power with §fno loss§7 around a bend
 
 metaitem.prospector.lv.name=Electric Prospector's Scanner (LV)
 metaitem.prospector.hv.name=Electric Prospector's Scanner (HV)
@@ -5505,6 +5515,8 @@ gregtech.universal.tooltip.base_production_fluid=§eBase Production: §f%,d L/t
 gregtech.universal.tooltip.produces_fluid=§eProduces: §f%,d L/t
 gregtech.universal.tooltip.terrain_resist=§eThis Machine will not explode when exposed to the Elements
 gregtech.universal.tooltip.requires_redstone=§4Requires Redstone power
+gregtech.universal.netlogicdisconnect=Failed to decode an encoded NetLogicEntry. This suggests that the server and client have different GT versions or modifications.
+gregtech.universal.netpredicatedisconnect=Failed to decode an encoded EdgePredicate. This suggests that the server and client have different GT versions or modifications.
 
 gregtech.block.tooltip.no_mob_spawning=§bMobs cannot spawn on this block
 
@@ -5721,16 +5733,17 @@ gregtech.cable.amperage=§eMax Amperage: §f%,d
 gregtech.cable.loss_per_block=§cLoss/Meter/Ampere: §f%,d§f EU-Volt
 gregtech.cable.superconductor=§d%s Superconductor
 
-gregtech.fluid_pipe.capacity=§9Capacity: §f%,d L
-gregtech.fluid_pipe.max_temperature=§cTemperature Limit: §f%,d K
-gregtech.fluid_pipe.channels=§eChannels: §f%d
+gregtech.fluid_pipe.max_temperature=§cMax Temperature: §f%,d K
+gregtech.fluid_pipe.min_temperature=§bMin Temperature: §f%,d K
+gregtech.pipe.channels=§eChannels: §f%d
+gregtech.pipe.priority=§9Priority: §f%s
 gregtech.fluid_pipe.gas_proof=§6Can handle Gases
 gregtech.fluid_pipe.acid_proof=§6Can handle Acids
-gregtech.fluid_pipe.cryo_proof=§6Can handle Cryogenics
 gregtech.fluid_pipe.plasma_proof=§6Can handle all Plasmas
 gregtech.fluid_pipe.not_gas_proof=§4Gases may leak!
 
-gregtech.item_pipe.priority=§9Priority: §f%,d
+gregtech.fluid_pipe=§dFluid Pipe
+gregtech.item_pipe=§dItem Pipe
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.

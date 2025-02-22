@@ -64,14 +64,14 @@ public class AssemblerRecipeLoader {
         // Other
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, Titanium, 2)
-                .input(pipeNormalFluid, Titanium, 4)
+                .input(pipeNormal, Titanium, 4)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, ConfigHolder.recipes.casingsPerCraft))
                 .duration(50).EUt(16).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, TungstenSteel, 2)
-                .input(pipeNormalFluid, TungstenSteel, 4)
+                .input(pipeNormal, TungstenSteel, 4)
                 .inputs(METAL_CASING.getItemVariant(TUNGSTENSTEEL_ROBUST))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(EXTREME_ENGINE_INTAKE_CASING,
                         ConfigHolder.recipes.casingsPerCraft))

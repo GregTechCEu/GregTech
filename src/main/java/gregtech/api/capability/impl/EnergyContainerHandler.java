@@ -212,7 +212,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
                             .getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, oppositeSide);
                     if (energyContainer == null || !energyContainer.inputsEnergy(oppositeSide)) continue;
                     amperesUsed += energyContainer.acceptEnergyFromNetwork(oppositeSide, outputVoltage,
-                            outputAmperes - amperesUsed);
+                            outputAmperes - amperesUsed, false);
                     if (amperesUsed == outputAmperes) break;
                 }
             }
@@ -223,19 +223,21 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         if (amps >= getInputAmperage()) return 0;
         long canAccept = getEnergyCapacity() - getEnergyStored();
         if (voltage > 0L && (side == null || inputsEnergy(side))) {
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
+                if (!simulate) metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return Math.min(amperage, getInputAmperage() - amps);
             }
             if (canAccept >= voltage) {
                 long amperesAccepted = Math.min(canAccept / voltage, Math.min(amperage, getInputAmperage() - amps));
                 if (amperesAccepted > 0) {
-                    setEnergyStored(getEnergyStored() + voltage * amperesAccepted);
-                    amps += amperesAccepted;
+                    if (!simulate) {
+                        setEnergyStored(getEnergyStored() + voltage * amperesAccepted);
+                        amps += amperesAccepted;
+                    }
                     return amperesAccepted;
                 }
             }

@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.high_voltage.89_fluid_pipe_death_cold.name"
     },
     "icon": {
-      "item": "gregtech:fluid_pipe_normal",
+      "item": "gregtech:pipe_normal",
       "data": 323
     }
   },

@@ -29,7 +29,7 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         if (amperage <= 0 || voltage <= 0)
             return 0;
 
@@ -41,13 +41,14 @@ public class EnergyContainerBatteryCharger extends EnergyContainerHandler {
 
         if (side == null || inputsEnergy(side)) {
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
+                if (!simulate) metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
             }
 
             // Prioritizes as many packets as available from the buffer
             long internalAmps = Math.min(maxAmps, Math.max(0, getInternalStorage() / voltage));
 
             usedAmps = Math.min(usedAmps, maxAmps - internalAmps);
+            if (simulate) return usedAmps;
             amps += usedAmps;
             energyInputPerSec += usedAmps * voltage;
 

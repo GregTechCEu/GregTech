@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -20,7 +21,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     private final Int2ObjectMap<IItemHandler> handlerBySlotIndex = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<IItemHandler> baseIndexOffset = new Object2IntArrayMap<>();
 
-    public ItemHandlerList(List<? extends IItemHandler> itemHandlerList) {
+    public ItemHandlerList(Collection<? extends IItemHandler> itemHandlerList) {
         int currentSlotIndex = 0;
         for (IItemHandler itemHandler : itemHandlerList) {
             if (baseIndexOffset.containsKey(itemHandler)) {
@@ -33,10 +34,7 @@ public class ItemHandlerList implements IItemHandlerModifiable {
             }
             currentSlotIndex += slotsCount;
         }
-    }
-
-    public int getIndexOffset(IItemHandler handler) {
-        return baseIndexOffset.getOrDefault(handler, -1);
+        baseIndexOffset.defaultReturnValue(-1);
     }
 
     @Override
@@ -89,8 +87,17 @@ public class ItemHandlerList implements IItemHandlerModifiable {
     }
 
     @NotNull
+    @UnmodifiableView
     public Collection<IItemHandler> getBackingHandlers() {
-        return Collections.unmodifiableCollection(handlerBySlotIndex.values());
+        return handlerBySlotIndex.values();
+    }
+
+    public IItemHandler getHandlerBySlot(int slot) {
+        return handlerBySlotIndex.get(slot);
+    }
+
+    public int getOffsetByHandler(IItemHandler handler) {
+        return baseIndexOffset.getInt(handler);
     }
 
     private boolean invalidSlot(int slot) {

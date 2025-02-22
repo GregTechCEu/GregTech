@@ -130,8 +130,8 @@ import gregtech.common.metatileentities.storage.MetaTileEntityQuantumProxy;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumStorageController;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.common.metatileentities.storage.MetaTileEntityWorkbench;
-import gregtech.common.pipelike.fluidpipe.longdistance.MetaTileEntityLDFluidEndpoint;
-import gregtech.common.pipelike.itempipe.longdistance.MetaTileEntityLDItemEndpoint;
+import gregtech.common.pipelike.longdistance.fluid.MetaTileEntityLDFluidEndpoint;
+import gregtech.common.pipelike.longdistance.item.MetaTileEntityLDItemEndpoint;
 import gregtech.integration.jei.multiblock.MultiblockInfoCategory;
 
 import net.minecraft.util.ResourceLocation;

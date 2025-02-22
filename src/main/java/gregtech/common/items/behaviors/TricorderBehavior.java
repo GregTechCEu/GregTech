@@ -9,18 +9,21 @@ import gregtech.api.capability.IQuantumController;
 import gregtech.api.capability.IQuantumStorage;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.graphnet.logic.NetLogicData;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import gregtech.common.pipelike.net.energy.EnergyFlowData;
+import gregtech.common.pipelike.net.energy.EnergyFlowLogic;
+import gregtech.common.pipelike.net.energy.WorldEnergyNet;
 import gregtech.core.sound.GTSoundEvents;
 
 import net.minecraft.block.Block;
@@ -310,32 +313,49 @@ public class TricorderBehavior implements IItemBehaviour {
                 }
             }
 
-        } else if (tileEntity instanceof IPipeTile) {
+        } else if (tileEntity instanceof PipeTileEntity pipeTile) {
             // pipes need special name handling
-            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
-
-            if (pipeTile.getPipeBlock().getRegistryName() != null) {
+            if (pipeTile.getBlockType().getRegistryName() != null) {
                 list.add(new TextComponentTranslation("behavior.tricorder.block_name",
                         new TextComponentTranslation(
-                                LocalizationUtils.format(pipeTile.getPipeBlock().getTranslationKey()))
+                                LocalizationUtils.format(pipeTile.getBlockType().getTranslationKey()))
                                         .setStyle(new Style().setColor(TextFormatting.BLUE)),
                         new TextComponentTranslation(
                                 TextFormattingUtil.formatNumbers(block.getMetaFromState(world.getBlockState(pos))))
                                         .setStyle(new Style().setColor(TextFormatting.BLUE))));
             }
+            NetLogicData data = pipeTile.getNetLogicData(WorldEnergyNet.getWorldNet(world).getNetworkID());
+            if (data != null) {
+                long cumulativeVoltage = 0;
+                long cumulativeAmperage = 0;
+                for (var memory : data.getLogicEntryDefaultable(EnergyFlowLogic.TYPE).getMemory(true).values()) {
+                    double voltage = 0;
+                    long amperage = 0;
+                    for (EnergyFlowData flow : memory) {
+                        long prev = amperage;
+                        amperage += flow.amperage();
+                        // weighted average
+                        voltage = voltage * prev / amperage + (double) (flow.voltage() * flow.amperage()) / amperage;
+                    }
+                    cumulativeVoltage += voltage;
+                    cumulativeAmperage += amperage;
+                }
+                cumulativeVoltage /= EnergyFlowLogic.MEMORY_TICKS;
+                cumulativeAmperage /= EnergyFlowLogic.MEMORY_TICKS;
+                list.add(new TextComponentTranslation("behavior.tricorder.eut_per_sec",
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(cumulativeVoltage))
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
+                list.add(new TextComponentTranslation("behavior.tricorder.amp_per_sec",
+                        new TextComponentTranslation(TextFormattingUtil.formatNumbers(cumulativeAmperage))
+                                .setStyle(new Style().setColor(TextFormatting.RED))));
+            }
 
             // pipe-specific info
-            if (tileEntity instanceof IDataInfoProvider) {
-                IDataInfoProvider provider = (IDataInfoProvider) tileEntity;
+            if (tileEntity instanceof IDataInfoProvider provider) {
 
                 list.add(new TextComponentTranslation("behavior.tricorder.divider"));
 
                 list.addAll(provider.getDataInfo());
-            }
-
-            if (tileEntity instanceof TileEntityFluidPipe) {
-                // getting fluid info always costs 500
-                energyCost += 500;
             }
         } else if (tileEntity instanceof IDataInfoProvider) {
             IDataInfoProvider provider = (IDataInfoProvider) tileEntity;

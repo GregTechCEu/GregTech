@@ -26,10 +26,11 @@ public class FilteredFluidStats implements IItemComponent, IItemCapabilityProvid
         this.filter = filter;
     }
 
-    public FilteredFluidStats(int capacity, int maxFluidTemperature, boolean gasProof, boolean acidProof,
-                              boolean cryoProof, boolean plasmaProof, boolean allowPartialFill) {
+    public FilteredFluidStats(int capacity, int maxFluidTemperature, int minFluidTemperature, boolean gasProof,
+                              boolean acidProof,
+                              boolean plasmaProof, boolean allowPartialFill) {
         this(capacity, allowPartialFill,
-                new PropertyFluidFilter(maxFluidTemperature, gasProof, acidProof, cryoProof, plasmaProof));
+                new PropertyFluidFilter(maxFluidTemperature, minFluidTemperature, gasProof, acidProof, plasmaProof));
     }
 
     @Override

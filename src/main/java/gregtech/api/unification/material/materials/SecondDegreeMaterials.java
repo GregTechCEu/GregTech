@@ -122,7 +122,7 @@ public class SecondDegreeMaterials {
                 .toolStats(MaterialToolProperty.Builder.of(9.0F, 7.0F, 2048, 4)
                         .enchantability(14).build())
                 .rotorStats(8.0f, 4.0f, 2560)
-                .fluidPipeProperties(3587, 225, true, true, false, false)
+                .fluidPipeProperties(3587, 225, true, true, false)
                 .cableProperties(V[IV], 3, 2)
                 .blast(b -> b
                         .temp(4000, GasTier.MID)
@@ -290,7 +290,7 @@ public class SecondDegreeMaterials {
                 .toolStats(MaterialToolProperty.Builder.of(3.0F, 3.0F, 1536, 3)
                         .attackSpeed(-0.2F).enchantability(5).build())
                 .rotorStats(7.0f, 3.0f, 1920)
-                .fluidPipeProperties(2073, 50, true, true, false, false)
+                .fluidPipeProperties(2073, 50, true, true, false)
                 .blast(1453, GasTier.LOW)
                 .build();
 
@@ -307,7 +307,7 @@ public class SecondDegreeMaterials {
                 .ingot(1)
                 .liquid(new FluidBuilder().temperature(1921))
                 .color(0xE6F3E6).iconSet(SHINY)
-                .flags(GENERATE_FINE_WIRE, GENERATE_PLATE)
+                .flags(GENERATE_FINE_WIRE, GENERATE_PLATE, NO_SMASHING)
                 .components(Boron, 1, SiliconDioxide, 7)
                 .build();
 
