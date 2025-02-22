@@ -488,11 +488,11 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
         builder.setWorkingStatus(cleanroomLogic.isWorkingEnabled(), cleanroomLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
                 .addEnergyUsageExactLine(isClean() ? 4 : GTValues.VA[getEnergyTier()])
-                .addCustom(list -> {
+                .addCustom((list, syncer) -> {
                     // Cleanliness status line
                     if (isStructureFormed()) {
                         IKey cleanState;
-                        if (isClean()) {
+                        if (syncer.syncBoolean(isClean())) { // is this method actually synced?
                             cleanState = KeyUtil.lang(TextFormatting.GREEN, "gregtech.multiblock.cleanroom.clean_state",
                                     cleanAmount);
                         } else {
@@ -511,13 +511,13 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(!drainEnergy(true))
-                .addCustom(list -> {
-                    if (isStructureFormed() && !isClean()) {
+                .addCustom((list, syncer) -> {
+                    if (isStructureFormed() && !syncer.syncBoolean(isClean())) {
                         list.add(KeyUtil.lang(TextFormatting.YELLOW,
                                 "gregtech.multiblock.cleanroom.warning_contaminated"));
                     }
 
-                    if (!cleanroomLogic.isVoltageHighEnough()) {
+                    if (!syncer.syncBoolean(cleanroomLogic.isVoltageHighEnough())) {
                         IKey energyNeeded = IKey.str(GTValues.VNF[cleanroomFilter.getMinTier()]);
                         list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.cleanroom.low_tier",
                                 energyNeeded));

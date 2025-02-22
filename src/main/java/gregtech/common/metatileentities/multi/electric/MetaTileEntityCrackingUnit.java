@@ -84,12 +84,12 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(textList -> {
+                .addCustom((textList, syncer) -> {
                     if (!isStructureFormed()) return;
 
                     // Coil energy discount line
                     IKey energyDiscount = KeyUtil.number(TextFormatting.AQUA,
-                            100 - 10L * getCoilTier(), "%");
+                            syncer.syncLong(100 - 10L * getCoilTier()), "%");
 
                     IKey base = KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.cracking_unit.energy",
