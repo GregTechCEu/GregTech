@@ -114,7 +114,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
                 .addEnergyUsageLine(this.getEnergyContainer())
                 .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltage()))
-                .addCustom(textList -> {
+                .addCustom((textList, syncer) -> {
                     if (!isStructureFormed()) return;
 
                     int processingSpeed = coilTier == 0 ? 75 : 50 * (coilTier + 1);

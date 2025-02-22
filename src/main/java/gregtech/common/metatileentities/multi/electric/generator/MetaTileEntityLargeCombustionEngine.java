@@ -86,8 +86,8 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
         }
 
         builder.addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
-                .addCustom(richText -> {
-                    if (isStructureFormed() && recipeLogic.isOxygenBoosted) {
+                .addCustom((richText, syncer) -> {
+                    if (isStructureFormed() && syncer.syncBoolean(recipeLogic.isOxygenBoosted)) {
                         String key = isExtreme ?
                                 "gregtech.multiblock.large_combustion_engine.liquid_oxygen_boosted" :
                                 "gregtech.multiblock.large_combustion_engine.oxygen_boosted";
@@ -101,17 +101,17 @@ public class MetaTileEntityLargeCombustionEngine extends FuelMultiblockControlle
     protected void configureErrorText(MultiblockUIBuilder builder) {
         var recipeLogic = (LargeCombustionEngineWorkableHandler) recipeMapWorkable;
 
-        builder.addCustom(keyList -> {
+        builder.addCustom((keyList, syncer) -> {
             if (!isStructureFormed()) return;
 
-            if (checkIntakesObstructed()) {
+            if (syncer.syncBoolean(checkIntakesObstructed())) {
                 keyList.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.large_combustion_engine.obstructed"));
                 keyList.add(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.large_combustion_engine.obstructed.desc"));
             }
 
-            if (!recipeLogic.checkLubricant()) {
+            if (syncer.syncBoolean(!recipeLogic.checkLubricant())) {
                 keyList.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.large_combustion_engine.no_lubricant"));
             }
