@@ -1,9 +1,9 @@
-package gregtech.api.capability.machineconfigurator;
+package gregtech.api.configurator.profile;
 
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
-import gregtech.api.util.function.NBTTagCompoundSupplier;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
@@ -31,7 +31,7 @@ public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
     @NotNull
     @Override
-    public ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, NBTTagCompoundSupplier nbt) {
+    public ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, NBTTagCompound nbt) {
         var panel = GTGuis.createPopupPanel("simple_machine_configurator", 75, 150);
 
         BooleanSyncValue autoOutputItems = new BooleanSyncValue(() -> nbt.getBoolean("AutoOutputItems"),

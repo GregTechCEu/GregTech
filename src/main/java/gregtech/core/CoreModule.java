@@ -5,7 +5,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
-import gregtech.api.capability.machineconfigurator.SimpleMachineProfile;
+import gregtech.api.configurator.profile.SimpleMachineProfile;
+import gregtech.api.configurator.registry.ConfiguratorDataRegistry;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
 import gregtech.api.fluids.GTFluidRegistration;
@@ -355,5 +356,6 @@ public class CoreModule implements IGregTechModule {
     public void serverStopped(FMLServerStoppedEvent event) {
         VirtualEnderRegistry.clearMaps();
         CapesRegistry.clearMaps();
+        ConfiguratorDataRegistry.clearMaps();
     }
 }

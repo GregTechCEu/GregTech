@@ -1,4 +1,6 @@
-package gregtech.api.capability.machineconfigurator;
+package gregtech.api.configurator;
+
+import gregtech.api.configurator.profile.IMachineConfiguratorProfile;
 
 import net.minecraft.nbt.NBTTagCompound;
 
