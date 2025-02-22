@@ -7,16 +7,22 @@ import gregtech.client.renderer.pipe.PipeModelRedirector;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 @Desugar
-public record OpticalStructure(String name, float renderThickness, PipeModelRedirector model)
+// the model is an object supplier to get around clientside-only class restrictions, it should still be of type
+// PipeModelRedirector.
+public record OpticalStructure(String name, float renderThickness, Supplier<Object> model)
         implements IPipeStructure {
 
     public static final OpticalStructure INSTANCE = new OpticalStructure("optical_pipe_normal", 0.375f,
-            PipeModelRegistry.getOpticalModel());
+            () -> PipeModelRegistry.getOpticalModel());
 
     @Override
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {
@@ -47,8 +53,9 @@ public record OpticalStructure(String name, float renderThickness, PipeModelRedi
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public PipeModelRedirector getModel() {
-        return model;
+        return (PipeModelRedirector) model.get();
     }
 
     public static void register(@NotNull PipeStructureRegistrationEvent event) {

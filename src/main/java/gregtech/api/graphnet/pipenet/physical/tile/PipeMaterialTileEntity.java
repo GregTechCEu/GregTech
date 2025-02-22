@@ -5,7 +5,7 @@ import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,7 +69,7 @@ public class PipeMaterialTileEntity extends PipeTileEntity {
     @Override
     @SideOnly(Side.CLIENT)
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
-        return super.getRenderInformation(state).withProperty(AbstractPipeModel.MATERIAL_PROPERTY, getMaterial());
+        return super.getRenderInformation(state).withProperty(PipeRenderProperties.MATERIAL_PROPERTY, getMaterial());
     }
 
     @Override

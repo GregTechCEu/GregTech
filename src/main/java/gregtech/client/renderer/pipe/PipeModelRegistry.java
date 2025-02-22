@@ -47,11 +47,14 @@ public final class PipeModelRegistry {
         initPipes();
         initCables();
         ResourceLocation loc = GTUtility.gregtechId("block/pipe_activable");
-        OPTICAL = new ActivablePipeModel(Textures.OPTICAL_PIPE_IN, Textures.OPTICAL_PIPE_SIDE,
-                Textures.OPTICAL_PIPE_SIDE_OVERLAY, Textures.OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE, false);
+        OPTICAL = new ActivablePipeModel(
+                Textures.PipeTextures.OPTICAL_PIPE_IN, Textures.PipeTextures.OPTICAL_PIPE_SIDE,
+                Textures.PipeTextures.OPTICAL_PIPE_SIDE_OVERLAY, Textures.PipeTextures.OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE,
+                false);
         OPTICAL_MODEL = new PipeModelRedirector(new ModelResourceLocation(loc, "optical"), m -> OPTICAL, s -> null);
-        LASER = new ActivablePipeModel(Textures.LASER_PIPE_IN, Textures.LASER_PIPE_SIDE, Textures.LASER_PIPE_OVERLAY,
-                Textures.LASER_PIPE_OVERLAY_EMISSIVE, true);
+        LASER = new ActivablePipeModel(Textures.PipeTextures.LASER_PIPE_IN, Textures.PipeTextures.LASER_PIPE_SIDE,
+                Textures.PipeTextures.LASER_PIPE_OVERLAY,
+                Textures.PipeTextures.LASER_PIPE_OVERLAY_EMISSIVE, true);
         LASER_MODEL = new PipeModelRedirector(new ModelResourceLocation(loc, "laser"), m -> LASER, s -> null);
     }
 
@@ -131,30 +134,30 @@ public final class PipeModelRegistry {
     private static void initPipes() {
         PipeModel[] array = new PipeModel[PIPE_MODEL_COUNT];
         // standard
-        array[0] = new PipeModel(Textures.PIPE_TINY, Textures.PIPE_SIDE, false);
-        array[1] = new PipeModel(Textures.PIPE_SMALL, Textures.PIPE_SIDE, false);
-        array[2] = new PipeModel(Textures.PIPE_NORMAL, Textures.PIPE_SIDE, false);
-        array[3] = new PipeModel(Textures.PIPE_LARGE, Textures.PIPE_SIDE, false);
-        array[4] = new PipeModel(Textures.PIPE_HUGE, Textures.PIPE_SIDE, false);
-        array[5] = new PipeModel(Textures.PIPE_QUADRUPLE, Textures.PIPE_SIDE, false);
-        array[6] = new PipeModel(Textures.PIPE_NONUPLE, Textures.PIPE_SIDE, false);
+        array[0] = new PipeModel(Textures.PipeTextures.PIPE_TINY, Textures.PipeTextures.PIPE_SIDE, false);
+        array[1] = new PipeModel(Textures.PipeTextures.PIPE_SMALL, Textures.PipeTextures.PIPE_SIDE, false);
+        array[2] = new PipeModel(Textures.PipeTextures.PIPE_NORMAL, Textures.PipeTextures.PIPE_SIDE, false);
+        array[3] = new PipeModel(Textures.PipeTextures.PIPE_LARGE, Textures.PipeTextures.PIPE_SIDE, false);
+        array[4] = new PipeModel(Textures.PipeTextures.PIPE_HUGE, Textures.PipeTextures.PIPE_SIDE, false);
+        array[5] = new PipeModel(Textures.PipeTextures.PIPE_QUADRUPLE, Textures.PipeTextures.PIPE_SIDE, false);
+        array[6] = new PipeModel(Textures.PipeTextures.PIPE_NONUPLE, Textures.PipeTextures.PIPE_SIDE, false);
         PIPE_OVERRIDES.addAndMoveToLast(new MaterialModelOverride.StandardOverride<>(array, m -> true));
 
         array = new PipeModel[PIPE_MODEL_COUNT];
-        array[1] = new PipeModel(Textures.PIPE_SMALL_WOOD, Textures.PIPE_SIDE_WOOD, false);
-        array[2] = new PipeModel(Textures.PIPE_NORMAL_WOOD, Textures.PIPE_SIDE_WOOD, false);
-        array[3] = new PipeModel(Textures.PIPE_LARGE_WOOD, Textures.PIPE_SIDE_WOOD, false);
+        array[1] = new PipeModel(Textures.PipeTextures.PIPE_SMALL_WOOD, Textures.PipeTextures.PIPE_SIDE_WOOD, false);
+        array[2] = new PipeModel(Textures.PipeTextures.PIPE_NORMAL_WOOD, Textures.PipeTextures.PIPE_SIDE_WOOD, false);
+        array[3] = new PipeModel(Textures.PipeTextures.PIPE_LARGE_WOOD, Textures.PipeTextures.PIPE_SIDE_WOOD, false);
         registerPipeOverride(
                 new MaterialModelOverride.StandardOverride<>(array, m -> m != null && m.hasProperty(PropertyKey.WOOD)));
 
         array = new PipeModel[PIPE_MODEL_COUNT];
-        array[0] = new PipeModel(Textures.PIPE_TINY, Textures.PIPE_SIDE, true);
-        array[1] = new PipeModel(Textures.PIPE_SMALL, Textures.PIPE_SIDE, true);
-        array[2] = new PipeModel(Textures.PIPE_NORMAL, Textures.PIPE_SIDE, true);
-        array[3] = new PipeModel(Textures.PIPE_LARGE, Textures.PIPE_SIDE, true);
-        array[4] = new PipeModel(Textures.PIPE_HUGE, Textures.PIPE_SIDE, true);
-        array[5] = new PipeModel(Textures.PIPE_QUADRUPLE, Textures.PIPE_SIDE, true);
-        array[6] = new PipeModel(Textures.PIPE_NONUPLE, Textures.PIPE_SIDE, true);
+        array[0] = new PipeModel(Textures.PipeTextures.PIPE_TINY, Textures.PipeTextures.PIPE_SIDE, true);
+        array[1] = new PipeModel(Textures.PipeTextures.PIPE_SMALL, Textures.PipeTextures.PIPE_SIDE, true);
+        array[2] = new PipeModel(Textures.PipeTextures.PIPE_NORMAL, Textures.PipeTextures.PIPE_SIDE, true);
+        array[3] = new PipeModel(Textures.PipeTextures.PIPE_LARGE, Textures.PipeTextures.PIPE_SIDE, true);
+        array[4] = new PipeModel(Textures.PipeTextures.PIPE_HUGE, Textures.PipeTextures.PIPE_SIDE, true);
+        array[5] = new PipeModel(Textures.PipeTextures.PIPE_QUADRUPLE, Textures.PipeTextures.PIPE_SIDE, true);
+        array[6] = new PipeModel(Textures.PipeTextures.PIPE_NONUPLE, Textures.PipeTextures.PIPE_SIDE, true);
         PIPE_RESTRICTIVE_OVERRIDES.addAndMoveToLast(new MaterialModelOverride.StandardOverride<>(array, m -> true));
 
         ResourceLocation loc = GTUtility.gregtechId("block/pipe_material");
@@ -201,7 +204,7 @@ public final class PipeModelRegistry {
                 array[i] = new CableModel();
                 continue;
             }
-            array[i] = new CableModel(Textures.INSULATION[i - 1], Textures.INSULATION_FULL);
+            array[i] = new CableModel(Textures.PipeTextures.INSULATION[i - 1], Textures.PipeTextures.INSULATION_FULL);
         }
         CABLE_OVERRIDES.addAndMoveToLast(new MaterialModelOverride.StandardOverride<>(array, m -> true));
 

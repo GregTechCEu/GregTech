@@ -5,7 +5,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.client.model.pipeline.VertexLighterFlatSpecial;
 import gregtech.client.model.pipeline.VertexLighterSmoothAoSpecial;
 import gregtech.client.renderer.pipe.cover.CoverRenderer;
-import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
+import gregtech.client.renderer.pipe.cover.CoverRendererValues;
 import gregtech.client.utils.AdvCCRSConsumer;
 import gregtech.client.utils.FacadeBlockAccess;
 import gregtech.client.utils.ItemRenderCompat;
@@ -173,7 +173,7 @@ public class FacadeRenderer implements IItemRenderer {
             }
             // is there anything that can be done to make this cheaper?
             quads.addAll(remap(sliceQuads(fromArray(modelQuads), facing.getIndex(),
-                    new Cuboid6(CoverRendererBuilder.PLATE_AABBS.get(facing)))));
+                    new Cuboid6(CoverRendererValues.PLATE_AABBS.get(facing)))));
         };
     }
 

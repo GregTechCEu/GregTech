@@ -31,11 +31,12 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     public static final int DEFAULT_INSULATION_COLOR = 0xFF404040;
 
     public static final CableModel INSTANCE = new CableModel();
-    public static final CableModel[] INSULATED_INSTANCES = new CableModel[Textures.INSULATION.length];
+    public static final CableModel[] INSULATED_INSTANCES = new CableModel[Textures.PipeTextures.INSULATION.length];
 
     static {
         for (int i = 0; i < INSULATED_INSTANCES.length; i++) {
-            INSULATED_INSTANCES[i] = new CableModel(Textures.INSULATION[i], Textures.INSULATION_FULL);
+            INSULATED_INSTANCES[i] = new CableModel(Textures.PipeTextures.INSULATION[i],
+                    Textures.PipeTextures.INSULATION_FULL);
         }
     }
 
@@ -52,7 +53,7 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
 
     public CableModel(@Nullable Supplier<SpriteInformation> insulationTex,
                       @Nullable Supplier<SpriteInformation> fullInsulationTex) {
-        this(Textures.WIRE, insulationTex, fullInsulationTex);
+        this(Textures.PipeTextures.WIRE, insulationTex, fullInsulationTex);
     }
 
     public CableModel() {
@@ -62,8 +63,8 @@ public class CableModel extends AbstractPipeModel<CacheKey> {
     @Override
     protected ColorData computeColorData(@NotNull IExtendedBlockState ext) {
         if (insulationTex == null) return super.computeColorData(ext);
-        Material material = ext.getValue(AbstractPipeModel.MATERIAL_PROPERTY);
-        int insulationColor = safeInt(ext.getValue(COLOR_PROPERTY));
+        Material material = ext.getValue(PipeRenderProperties.MATERIAL_PROPERTY);
+        int insulationColor = safeInt(ext.getValue(PipeRenderProperties.COLOR_PROPERTY));
         if (material != null) {
             int matColor = GTUtility.convertRGBtoARGB(material.getMaterialRGB());
             if (insulationColor == 0 || insulationColor == matColor) {

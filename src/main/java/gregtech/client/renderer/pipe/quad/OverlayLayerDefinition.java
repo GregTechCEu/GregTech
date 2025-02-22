@@ -6,7 +6,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.util.vector.Vector3f;
+
+import javax.vecmath.Vector3f;
 
 @FunctionalInterface
 @SideOnly(Side.CLIENT)

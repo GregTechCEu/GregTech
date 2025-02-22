@@ -4,7 +4,7 @@ import gregtech.api.graphnet.pipenet.physical.IPipeStructure;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeActivableTileEntity;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.pipe.ActivablePipeModel;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -26,7 +26,7 @@ public abstract class PipeActivableBlock extends PipeBlock {
 
     @Override
     protected @NotNull BlockStateContainer.Builder constructState(BlockStateContainer.@NotNull Builder builder) {
-        return super.constructState(builder).add(ActivablePipeModel.ACTIVE_PROPERTY);
+        return super.constructState(builder).add(PipeRenderProperties.ACTIVE_PROPERTY);
     }
 
     @Override

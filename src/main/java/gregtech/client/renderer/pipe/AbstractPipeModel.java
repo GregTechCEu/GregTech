@@ -1,9 +1,5 @@
 package gregtech.client.renderer.pipe;
 
-import gregtech.api.block.UnlistedByteProperty;
-import gregtech.api.block.UnlistedFloatProperty;
-import gregtech.api.block.UnlistedIntegerProperty;
-import gregtech.api.block.UnlistedPropertyMaterial;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
@@ -45,17 +41,6 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public abstract class AbstractPipeModel<K extends CacheKey> {
 
-    public static UnlistedFloatProperty THICKNESS_PROPERTY = new UnlistedFloatProperty("thickness");
-
-    public static UnlistedPropertyMaterial FRAME_MATERIAL_PROPERTY = new UnlistedPropertyMaterial("frame_material");
-    public static UnlistedByteProperty FRAME_MASK_PROPERTY = new UnlistedByteProperty("frame_mask");
-
-    public static UnlistedByteProperty CLOSED_MASK_PROPERTY = new UnlistedByteProperty("closed_mask");
-    public static UnlistedByteProperty BLOCKED_MASK_PROPERTY = new UnlistedByteProperty("blocked_mask");
-
-    public static UnlistedIntegerProperty COLOR_PROPERTY = new UnlistedIntegerProperty("color");
-    public static final UnlistedPropertyMaterial MATERIAL_PROPERTY = new UnlistedPropertyMaterial("material");
-
     protected final Object2ObjectOpenHashMap<ResourceLocation, ColorQuadCache> frameCache = new Object2ObjectOpenHashMap<>();
     protected final Object2ObjectOpenHashMap<K, StructureQuadCache> pipeCache;
 
@@ -77,13 +62,14 @@ public abstract class AbstractPipeModel<K extends CacheKey> {
         if (side == null) {
             List<BakedQuad> quads;
             ColorData data = computeColorData(state);
-            CoverRendererPackage rendererPackage = state.getValue(CoverRendererPackage.PROPERTY);
+            CoverRendererPackage rendererPackage = state.getValue(CoverRendererPackage.CRP_PROPERTY);
             byte coverMask = rendererPackage == null ? 0 : rendererPackage.getMask();
             if (shouldRenderInLayer(getCurrentRenderLayer())) {
                 quads = getQuads(toKey(state), PipeBlock.readConnectionMask(state),
-                        safeByte(state.getValue(CLOSED_MASK_PROPERTY)), safeByte(state.getValue(BLOCKED_MASK_PROPERTY)),
-                        data, state.getValue(FRAME_MATERIAL_PROPERTY),
-                        safeByte(state.getValue(FRAME_MASK_PROPERTY)), coverMask);
+                        safeByte(state.getValue(PipeRenderProperties.CLOSED_MASK_PROPERTY)), safeByte(state.getValue(
+                                PipeRenderProperties.BLOCKED_MASK_PROPERTY)),
+                        data, state.getValue(PipeRenderProperties.FRAME_MATERIAL_PROPERTY),
+                        safeByte(state.getValue(PipeRenderProperties.FRAME_MASK_PROPERTY)), coverMask);
             } else quads = new ObjectArrayList<>();
             if (rendererPackage != null) renderCovers(quads, rendererPackage, state);
             return quads;
@@ -93,9 +79,9 @@ public abstract class AbstractPipeModel<K extends CacheKey> {
 
     protected void renderCovers(List<BakedQuad> quads, @NotNull CoverRendererPackage rendererPackage,
                                 @NotNull IExtendedBlockState ext) {
-        int color = safeInt(ext.getValue(COLOR_PROPERTY));
-        if (ext.getUnlistedProperties().containsKey(AbstractPipeModel.MATERIAL_PROPERTY)) {
-            Material material = ext.getValue(AbstractPipeModel.MATERIAL_PROPERTY);
+        int color = safeInt(ext.getValue(PipeRenderProperties.COLOR_PROPERTY));
+        if (ext.getUnlistedProperties().containsKey(PipeRenderProperties.MATERIAL_PROPERTY)) {
+            Material material = ext.getValue(PipeRenderProperties.MATERIAL_PROPERTY);
             if (material != null) {
                 int matColor = GTUtility.convertRGBtoARGB(material.getMaterialRGB());
                 if (color == 0 || color == matColor) {
@@ -108,7 +94,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> {
     }
 
     protected ColorData computeColorData(@NotNull IExtendedBlockState ext) {
-        return new ColorData(safeInt(ext.getValue(COLOR_PROPERTY)));
+        return new ColorData(safeInt(ext.getValue(PipeRenderProperties.COLOR_PROPERTY)));
     }
 
     protected static byte safeByte(@Nullable Byte abyte) {
@@ -150,7 +136,7 @@ public abstract class AbstractPipeModel<K extends CacheKey> {
     protected abstract @NotNull K toKey(@NotNull IExtendedBlockState state);
 
     protected final @NotNull CacheKey defaultKey(@NotNull IExtendedBlockState state) {
-        return CacheKey.of(state.getValue(THICKNESS_PROPERTY));
+        return CacheKey.of(state.getValue(PipeRenderProperties.THICKNESS_PROPERTY));
     }
 
     protected abstract StructureQuadCache constructForKey(K key);

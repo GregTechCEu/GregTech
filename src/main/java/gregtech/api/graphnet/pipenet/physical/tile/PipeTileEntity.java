@@ -20,9 +20,9 @@ import gregtech.api.network.PacketDataList;
 import gregtech.api.unification.material.Material;
 import gregtech.client.particle.GTOverheatParticle;
 import gregtech.client.particle.GTParticleManager;
-import gregtech.client.renderer.pipe.AbstractPipeModel;
-import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
+import gregtech.client.renderer.pipe.cover.CoverRendererValues;
 import gregtech.common.blocks.MetaBlocks;
 
 import net.minecraft.block.state.IBlockState;
@@ -691,9 +691,13 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
 
     public void updateTemperatureLogic(@NotNull TemperatureLogic logic) {
         this.temperatureLogic = logic;
+        if (getWorld().isRemote) updateTemperatureLogicClient(logic);
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void updateTemperatureLogicClient(@NotNull TemperatureLogic logic) {
         if (overheatParticle == null || !overheatParticle.isAlive()) {
-            long tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-            int temp = logic.getTemperature(tick);
+            int temp = logic.getTemperature(logic.getLastRestorationTick());
             if (temp > GTOverheatParticle.TEMPERATURE_CUTOFF) {
                 IPipeStructure structure = this.getStructure();
                 overheatParticle = new GTOverheatParticle(this, logic, structure.getPipeBoxes(this),
@@ -780,18 +784,18 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
             }
         }
         frameMask = (byte) ~frameMask;
-        return state.withProperty(AbstractPipeModel.THICKNESS_PROPERTY, this.getStructure().getRenderThickness())
-                .withProperty(AbstractPipeModel.CLOSED_MASK_PROPERTY, renderMask)
-                .withProperty(AbstractPipeModel.BLOCKED_MASK_PROPERTY, blockedMask)
-                .withProperty(AbstractPipeModel.COLOR_PROPERTY, getVisualColor())
-                .withProperty(AbstractPipeModel.FRAME_MATERIAL_PROPERTY, frameMaterial)
-                .withProperty(AbstractPipeModel.FRAME_MASK_PROPERTY, frameMask)
-                .withProperty(CoverRendererPackage.PROPERTY, getCoverHolder().createPackage());
+        return state.withProperty(PipeRenderProperties.THICKNESS_PROPERTY, this.getStructure().getRenderThickness())
+                .withProperty(PipeRenderProperties.CLOSED_MASK_PROPERTY, renderMask)
+                .withProperty(PipeRenderProperties.BLOCKED_MASK_PROPERTY, blockedMask)
+                .withProperty(PipeRenderProperties.COLOR_PROPERTY, getVisualColor())
+                .withProperty(PipeRenderProperties.FRAME_MATERIAL_PROPERTY, frameMaterial)
+                .withProperty(PipeRenderProperties.FRAME_MASK_PROPERTY, frameMask)
+                .withProperty(CoverRendererPackage.CRP_PROPERTY, getCoverHolder().createPackage());
     }
 
     public final ItemStack getPickItem(RayTraceResult target, EntityPlayer player) {
         if (target instanceof RayTraceAABB traceAABB) {
-            for (var bb : CoverRendererBuilder.PLATE_AABBS.entrySet()) {
+            for (var bb : CoverRendererValues.PLATE_AABBS.entrySet()) {
                 if (traceAABB.getBB().equals(bb.getValue())) {
                     // trace hit a cover box
                     Cover cover = getCoverHolder().getCoverAtSide(bb.getKey());
@@ -810,13 +814,17 @@ public class PipeTileEntity extends NeighborCacheTileEntityBase implements ITick
     @Override
     public void scheduleRenderUpdate() {
         super.scheduleRenderUpdate();
+        if (getWorld().isRemote) scheduleRenderUpdateClient();
+    }
+
+    protected void scheduleRenderUpdateClient() {
         if (overheatParticle != null) overheatParticle.updatePipeBoxes(getStructure().getPipeBoxes(this));
     }
 
     public void getCoverBoxes(Consumer<AxisAlignedBB> consumer) {
         for (EnumFacing facing : EnumFacing.VALUES) {
             if (getCoverHolder().hasCover(facing)) {
-                consumer.accept(CoverRendererBuilder.PLATE_AABBS.get(facing));
+                consumer.accept(CoverRendererValues.PLATE_AABBS.get(facing));
             }
         }
     }

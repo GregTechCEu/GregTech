@@ -59,7 +59,7 @@ public class PipeModelRedirector implements IBakedModel {
     public @NotNull List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
         if (state instanceof IExtendedBlockState ext) {
             Optional<Material> mat = (Optional<Material>) ext.getUnlistedProperties()
-                    .get(AbstractPipeModel.MATERIAL_PROPERTY);
+                    .get(PipeRenderProperties.MATERIAL_PROPERTY);
             // noinspection OptionalAssignedToNull
             return supplier.getModel(mat == null ? null : mat.orElse(null)).getQuads(ext, side, rand);
         }
@@ -87,7 +87,7 @@ public class PipeModelRedirector implements IBakedModel {
 
     @Override
     public @NotNull TextureAtlasSprite getParticleTexture() {
-        return Textures.WIRE.get().sprite();
+        return Textures.PipeTextures.WIRE.get().sprite();
     }
 
     @Override

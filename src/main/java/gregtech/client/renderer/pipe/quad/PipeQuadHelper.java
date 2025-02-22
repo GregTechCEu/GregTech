@@ -11,10 +11,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.util.EnumMap;
 import java.util.List;
+
+import javax.vecmath.Vector3f;
 
 @SideOnly(Side.CLIENT)
 public final class PipeQuadHelper {

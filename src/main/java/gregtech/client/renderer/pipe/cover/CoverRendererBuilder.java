@@ -1,6 +1,5 @@
 package gregtech.client.renderer.pipe.cover;
 
-import gregtech.api.cover.CoverUtil;
 import gregtech.client.renderer.pipe.cache.ColorQuadCache;
 import gregtech.client.renderer.pipe.cache.SubListAddress;
 import gregtech.client.renderer.pipe.quad.ColorData;
@@ -17,7 +16,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -26,42 +24,22 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 
+import javax.vecmath.Vector3f;
+
 @SideOnly(Side.CLIENT)
 public class CoverRendererBuilder {
-
-    private static final float OVERLAY_DIST_1 = 0.003f;
-    private static final float OVERLAY_DIST_2 = 0.006f;
 
     private static final ColorQuadCache[] PLATE_QUADS;
     private static final EnumMap<EnumFacing, SubListAddress> PLATE_COORDS = new EnumMap<>(EnumFacing.class);
 
-    public static final EnumMap<EnumFacing, AxisAlignedBB> PLATE_AABBS = new EnumMap<>(EnumFacing.class);
-    private static final EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> PLATE_BOXES = new EnumMap<>(EnumFacing.class);
-    private static final EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> OVERLAY_BOXES_1 = new EnumMap<>(
-            EnumFacing.class);
-    private static final EnumMap<EnumFacing, Pair<Vector3f, Vector3f>> OVERLAY_BOXES_2 = new EnumMap<>(
-            EnumFacing.class);
-
     private static final UVMapper defaultMapper = UVMapper.standard(0);
 
     static {
-        for (EnumFacing facing : EnumFacing.VALUES) {
-            PLATE_AABBS.put(facing, CoverUtil.getCoverPlateBox(facing, 1d / 16).aabb());
-        }
-        for (var value : PLATE_AABBS.entrySet()) {
-            // make sure that plates render slightly below any normal block quad
-            PLATE_BOXES.put(value.getKey(), QuadHelper.fullOverlay(value.getKey(), value.getValue(), -OVERLAY_DIST_1));
-            OVERLAY_BOXES_1.put(value.getKey(),
-                    QuadHelper.fullOverlay(value.getKey(), value.getValue(), OVERLAY_DIST_1));
-            OVERLAY_BOXES_2.put(value.getKey(),
-                    QuadHelper.fullOverlay(value.getKey(), value.getValue(), OVERLAY_DIST_2));
-        }
         PLATE_QUADS = new ColorQuadCache[Textures.VOLTAGE_CASINGS.length];
         for (int i = 0; i < Textures.VOLTAGE_CASINGS.length; i++) {
             if (Textures.VOLTAGE_CASINGS[i] == null) break;
@@ -84,7 +62,7 @@ public class CoverRendererBuilder {
     protected static SubListAddress buildPlates(List<RecolorableBakedQuad> quads, EnumFacing facing,
                                                 SpriteInformation sprite) {
         int start = quads.size();
-        Pair<Vector3f, Vector3f> box = PLATE_BOXES.get(facing);
+        Pair<Vector3f, Vector3f> box = CoverRendererValues.PLATE_BOXES.get(facing);
         for (EnumFacing dir : EnumFacing.values()) {
             quads.add(QuadHelper.buildQuad(dir, box, CoverRendererBuilder.defaultMapper, sprite));
         }
@@ -144,11 +122,14 @@ public class CoverRendererBuilder {
                 new EnumMap<>(EnumFacing.class) : null;
         for (EnumFacing facing : EnumFacing.VALUES) {
             spriteQuads.put(facing, ImmutablePair.of(
-                    QuadHelper.buildQuad(facing, OVERLAY_BOXES_1.get(facing), mapper, sprite),
-                    QuadHelper.buildQuad(facing.getOpposite(), OVERLAY_BOXES_1.get(facing), mapper, sprite)));
+                    QuadHelper.buildQuad(facing, CoverRendererValues.OVERLAY_BOXES_1.get(facing), mapper, sprite),
+                    QuadHelper.buildQuad(facing.getOpposite(), CoverRendererValues.OVERLAY_BOXES_1.get(facing), mapper,
+                            sprite)));
             if (spriteEmissive != null) spriteEmissiveQuads.put(facing, ImmutablePair.of(
-                    QuadHelper.buildQuad(facing, OVERLAY_BOXES_2.get(facing), mapperEmissive, spriteEmissive),
-                    QuadHelper.buildQuad(facing.getOpposite(), OVERLAY_BOXES_2.get(facing), mapperEmissive,
+                    QuadHelper.buildQuad(facing, CoverRendererValues.OVERLAY_BOXES_2.get(facing), mapperEmissive,
+                            spriteEmissive),
+                    QuadHelper.buildQuad(facing.getOpposite(), CoverRendererValues.OVERLAY_BOXES_2.get(facing),
+                            mapperEmissive,
                             spriteEmissive)));
         }
 

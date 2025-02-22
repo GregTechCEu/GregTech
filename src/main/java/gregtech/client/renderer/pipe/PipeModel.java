@@ -45,7 +45,8 @@ public class PipeModel extends AbstractPipeModel<CacheKey> {
 
     public PipeModel(@NotNull Supplier<SpriteInformation> inTex, @NotNull Supplier<SpriteInformation> sideTex,
                      boolean restrictive) {
-        this(inTex, sideTex, restrictive ? Textures.RESTRICTIVE_OVERLAY : null, Textures.PIPE_BLOCKED_OVERLAY);
+        this(inTex, sideTex, restrictive ? Textures.PipeTextures.RESTRICTIVE_OVERLAY : null,
+                Textures.PipeTextures.PIPE_BLOCKED_OVERLAY);
     }
 
     @Override

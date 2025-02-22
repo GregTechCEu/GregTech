@@ -6,6 +6,8 @@ import gregtech.client.renderer.pipe.PipeModelRedirector;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Contract;
@@ -24,6 +26,7 @@ public interface IPipeStructure extends IStringSerializable {
 
     boolean isPaintable();
 
+    @SideOnly(Side.CLIENT)
     PipeModelRedirector getModel();
 
     /**

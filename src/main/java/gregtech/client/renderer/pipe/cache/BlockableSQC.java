@@ -15,10 +15,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.util.EnumMap;
 import java.util.List;
+
+import javax.vecmath.Vector3f;
 
 @SideOnly(Side.CLIENT)
 public class BlockableSQC extends StructureQuadCache {

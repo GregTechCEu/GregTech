@@ -1,10 +1,10 @@
 package gregtech.client.renderer.pipe.quad;
 
+import gregtech.client.model.ModelFactory;
 import gregtech.client.renderer.pipe.util.SpriteInformation;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
-import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
@@ -17,29 +17,35 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.util.vector.Vector3f;
 
-@SideOnly(Side.CLIENT)
+import javax.vecmath.Vector3f;
+
 public final class QuadHelper {
-
-    private static final FaceBakery BAKERY = new FaceBakery();
 
     private QuadHelper() {}
 
+    @SideOnly(Side.CLIENT)
     public static @NotNull RecolorableBakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
                                                           @NotNull UVMapper uv,
                                                           @NotNull SpriteInformation targetSprite) {
         BlockPartFace face = new BlockPartFace(null, -1, targetSprite.sprite().getIconName(), uv.map(normal, box));
-        BakedQuad quad = BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite.sprite(), normal,
+        BakedQuad quad = ModelFactory.getBakery().makeBakedQuad(of(box.getLeft()), of(box.getRight()), face,
+                targetSprite.sprite(), normal,
                 ModelRotation.X0_Y0, null, false, true);
         return new RecolorableBakedQuad(quad, targetSprite);
     }
 
+    @SideOnly(Side.CLIENT)
     public static @NotNull BakedQuad buildQuad(EnumFacing normal, Pair<Vector3f, Vector3f> box,
                                                @NotNull UVMapper uv, @NotNull TextureAtlasSprite targetSprite) {
         BlockPartFace face = new BlockPartFace(null, -1, targetSprite.getIconName(), uv.map(normal, box));
-        return BAKERY.makeBakedQuad(box.getLeft(), box.getRight(), face, targetSprite, normal, ModelRotation.X0_Y0,
-                null, false, true);
+        return ModelFactory.getBakery().makeBakedQuad(of(box.getLeft()), of(box.getRight()), face, targetSprite, normal,
+                ModelRotation.X0_Y0, null, false, true);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static @NotNull org.lwjgl.util.vector.Vector3f of(@NotNull Vector3f vec) {
+        return new org.lwjgl.util.vector.Vector3f(vec.x, vec.y, vec.z);
     }
 
     @Contract("_ -> new")

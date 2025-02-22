@@ -1,7 +1,7 @@
 package gregtech.api.graphnet.pipenet.physical.tile;
 
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.client.renderer.pipe.ActivablePipeModel;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -31,7 +31,7 @@ public class PipeActivableTileEntity extends PipeTileEntity implements IActivabl
     @Override
     @SideOnly(Side.CLIENT)
     public IExtendedBlockState getRenderInformation(IExtendedBlockState state) {
-        return super.getRenderInformation(state).withProperty(ActivablePipeModel.ACTIVE_PROPERTY, isActive());
+        return super.getRenderInformation(state).withProperty(PipeRenderProperties.ACTIVE_PROPERTY, isActive());
     }
 
     @Override

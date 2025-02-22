@@ -1,6 +1,5 @@
 package gregtech.client.renderer.pipe;
 
-import gregtech.api.block.UnlistedBooleanProperty;
 import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.unification.material.Material;
@@ -33,8 +32,6 @@ import java.util.stream.Collectors;
 
 @SideOnly(Side.CLIENT)
 public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
-
-    public static final UnlistedBooleanProperty ACTIVE_PROPERTY = new UnlistedBooleanProperty("active");
 
     private final Supplier<SpriteInformation> inTex;
     private final Supplier<SpriteInformation> sideTex;
@@ -83,7 +80,8 @@ public class ActivablePipeModel extends AbstractPipeModel<ActivableCacheKey> {
 
     @Override
     protected @NotNull ActivableCacheKey toKey(@NotNull IExtendedBlockState state) {
-        return ActivableCacheKey.of(state.getValue(THICKNESS_PROPERTY), state.getValue(ACTIVE_PROPERTY));
+        return ActivableCacheKey.of(state.getValue(PipeRenderProperties.THICKNESS_PROPERTY), state.getValue(
+                PipeRenderProperties.ACTIVE_PROPERTY));
     }
 
     @Override

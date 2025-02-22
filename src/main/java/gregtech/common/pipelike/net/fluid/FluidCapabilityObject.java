@@ -79,8 +79,6 @@ public class FluidCapabilityObject implements IPipeCapabilityObject, IFluidHandl
 
     @Override
     public <T> T getCapability(@NotNull Capability<T> capability, @Nullable EnumFacing facing) {
-        // can't expose the sided capability if there is no node to interact with
-        if (facing != null && capabilityWrapper.getNodeForFacing(facing) == null) return null;
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(facing == null ? this : wrappers.get(facing));
         }

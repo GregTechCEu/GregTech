@@ -558,61 +558,37 @@ public class Textures {
     public static final ResourceLocation YELLOW_CAPE_TEXTURE = gregtechId("textures/capes/yellowcape.png");
 
     @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper WIRE = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper INSULATION_FULL = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper[] INSULATION = SpriteInformationWrapper
-            .array(PipeModelRegistry.CABLE_MODEL_COUNT - 1);
+    public static final class PipeTextures {
 
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper RESTRICTIVE_OVERLAY = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_TINY = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_SMALL = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_NORMAL = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_LARGE = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_HUGE = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_QUADRUPLE = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_NONUPLE = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_SIDE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper RESTRICTIVE_OVERLAY = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_TINY = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_SMALL = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_NORMAL = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_LARGE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_HUGE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_QUADRUPLE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_NONUPLE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_SIDE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_SMALL_WOOD = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_NORMAL_WOOD = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_LARGE_WOOD = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_SIDE_WOOD = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper OPTICAL_PIPE_IN = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper OPTICAL_PIPE_SIDE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper OPTICAL_PIPE_SIDE_OVERLAY = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper LASER_PIPE_IN = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper LASER_PIPE_SIDE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper LASER_PIPE_OVERLAY = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper LASER_PIPE_OVERLAY_EMISSIVE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper PIPE_BLOCKED_OVERLAY = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper WIRE = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper INSULATION_FULL = new SpriteInformationWrapper();
+        public static final SpriteInformationWrapper[] INSULATION = SpriteInformationWrapper
+                .array(PipeModelRegistry.CABLE_MODEL_COUNT - 1);
 
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_SMALL_WOOD = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_NORMAL_WOOD = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_LARGE_WOOD = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_SIDE_WOOD = new SpriteInformationWrapper();
-
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper OPTICAL_PIPE_IN = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper OPTICAL_PIPE_SIDE = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper OPTICAL_PIPE_SIDE_OVERLAY = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE = new SpriteInformationWrapper();
-
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper LASER_PIPE_IN = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper LASER_PIPE_SIDE = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper LASER_PIPE_OVERLAY = new SpriteInformationWrapper();
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper LASER_PIPE_OVERLAY_EMISSIVE = new SpriteInformationWrapper();
-
-    @SideOnly(Side.CLIENT)
-    public static final SpriteInformationWrapper PIPE_BLOCKED_OVERLAY = new SpriteInformationWrapper();
+        private PipeTextures() {}
+    }
 
     @SideOnly(Side.CLIENT)
     public static ThreadLocal<CubeRendererState> RENDER_STATE;
@@ -634,45 +610,47 @@ public class Textures {
             registrar.registerIcons(textureMap);
         }
 
-        WIRE.accept(textureMap.registerSprite(gregtechId("blocks/cable/wire")), 0);
-        INSULATION_FULL.accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_full")), 1);
-        for (int i = 0; i < INSULATION.length; i++) {
-            INSULATION[i].accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_" + i)), 1);
+        PipeTextures.WIRE.accept(textureMap.registerSprite(gregtechId("blocks/cable/wire")), 0);
+        PipeTextures.INSULATION_FULL.accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_full")), 1);
+        for (int i = 0; i < PipeTextures.INSULATION.length; i++) {
+            PipeTextures.INSULATION[i].accept(textureMap.registerSprite(gregtechId("blocks/cable/insulation_" + i)), 1);
         }
 
-        PIPE_BLOCKED_OVERLAY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_blocked")), -1);
-        RESTRICTIVE_OVERLAY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive")), -1);
+        PipeTextures.PIPE_BLOCKED_OVERLAY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_blocked")), -1);
+        PipeTextures.RESTRICTIVE_OVERLAY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_restrictive")),
+                -1);
 
-        PIPE_TINY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in")), 0);
-        PIPE_SMALL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in")), 0);
-        PIPE_NORMAL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in")), 0);
-        PIPE_LARGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in")), 0);
-        PIPE_HUGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_huge_in")), 0);
-        PIPE_QUADRUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_quadruple_in")), 0);
-        PIPE_NONUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_nonuple_in")), 0);
-        PIPE_SIDE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side")), 0);
-        PIPE_SMALL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in_wood")), 0);
-        PIPE_NORMAL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in_wood")), 0);
-        PIPE_LARGE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood")), 0);
-        PIPE_SIDE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood")), 0);
+        PipeTextures.PIPE_TINY.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_tiny_in")), 0);
+        PipeTextures.PIPE_SMALL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in")), 0);
+        PipeTextures.PIPE_NORMAL.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in")), 0);
+        PipeTextures.PIPE_LARGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in")), 0);
+        PipeTextures.PIPE_HUGE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_huge_in")), 0);
+        PipeTextures.PIPE_QUADRUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_quadruple_in")), 0);
+        PipeTextures.PIPE_NONUPLE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_nonuple_in")), 0);
+        PipeTextures.PIPE_SIDE.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side")), 0);
+        PipeTextures.PIPE_SMALL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_small_in_wood")), 0);
+        PipeTextures.PIPE_NORMAL_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_normal_in_wood")),
+                0);
+        PipeTextures.PIPE_LARGE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_large_in_wood")), 0);
+        PipeTextures.PIPE_SIDE_WOOD.accept(textureMap.registerSprite(gregtechId("blocks/pipe/pipe_side_wood")), 0);
 
-        OPTICAL_PIPE_IN.accept(textureMap
+        PipeTextures.OPTICAL_PIPE_IN.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_in")), -1);
-        OPTICAL_PIPE_SIDE.accept(textureMap
+        PipeTextures.OPTICAL_PIPE_SIDE.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side")), -1);
-        OPTICAL_PIPE_SIDE_OVERLAY.accept(textureMap
+        PipeTextures.OPTICAL_PIPE_SIDE_OVERLAY.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay")), 0);
-        OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE.accept(textureMap
+        PipeTextures.OPTICAL_PIPE_SIDE_OVERLAY_ACTIVE.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_optical_side_overlay_active")),
                 0);
 
-        LASER_PIPE_IN.accept(
+        PipeTextures.LASER_PIPE_IN.accept(
                 textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_in")), -1);
-        LASER_PIPE_SIDE.accept(textureMap
+        PipeTextures.LASER_PIPE_SIDE.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side")), -1);
-        LASER_PIPE_OVERLAY.accept(textureMap
+        PipeTextures.LASER_PIPE_OVERLAY.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay")), 0);
-        LASER_PIPE_OVERLAY_EMISSIVE.accept(textureMap
+        PipeTextures.LASER_PIPE_OVERLAY_EMISSIVE.accept(textureMap
                 .registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_laser_side_overlay_emissive")),
                 0);
 

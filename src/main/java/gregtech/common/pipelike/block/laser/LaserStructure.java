@@ -7,19 +7,25 @@ import gregtech.client.renderer.pipe.PipeModelRedirector;
 import gregtech.client.renderer.pipe.PipeModelRegistry;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 @SuppressWarnings("unused")
 @Desugar
-public record LaserStructure(String name, float renderThickness, boolean mirror, PipeModelRedirector model)
+// the model is an object supplier to get around clientside-only class restrictions, it should still be of type
+// PipeModelRedirector.
+public record LaserStructure(String name, float renderThickness, boolean mirror, Supplier<Object> model)
         implements IPipeStructure {
 
     public static final LaserStructure NORMAL = new LaserStructure("laser_pipe_normal", 0.375f,
-            false, PipeModelRegistry.getLaserModel());
+            false, () -> PipeModelRegistry.getLaserModel());
     public static final LaserStructure MIRROR = new LaserStructure("laser_pipe_mirror", 0.5f,
-            true, PipeModelRegistry.getLaserModel());
+            true, () -> PipeModelRegistry.getLaserModel());
 
     @Override
     public boolean canConnectTo(EnumFacing side, byte connectionMask) {
@@ -60,8 +66,9 @@ public record LaserStructure(String name, float renderThickness, boolean mirror,
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public PipeModelRedirector getModel() {
-        return model;
+        return (PipeModelRedirector) model.get();
     }
 
     public static void register(@NotNull PipeStructureRegistrationEvent event) {

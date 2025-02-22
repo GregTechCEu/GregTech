@@ -15,8 +15,9 @@ import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.EntityDamageUtil;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
-import gregtech.client.renderer.pipe.AbstractPipeModel;
+import gregtech.client.renderer.pipe.PipeRenderProperties;
 import gregtech.client.renderer.pipe.cover.CoverRendererPackage;
 import gregtech.client.utils.BloomEffectUtil;
 import gregtech.client.utils.TooltipHelper;
@@ -54,6 +55,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.raytracer.RayTracer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -456,6 +459,7 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BloomEffectUtil.getEffectiveBloomLayer();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         PipeTileEntity tile = getTileEntity(world, blockPos);
@@ -620,10 +624,10 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
     }
 
     protected @NotNull BlockStateContainer.Builder constructState(BlockStateContainer.@NotNull Builder builder) {
-        return builder.add(AbstractPipeModel.THICKNESS_PROPERTY).add(AbstractPipeModel.CLOSED_MASK_PROPERTY)
-                .add(AbstractPipeModel.BLOCKED_MASK_PROPERTY).add(AbstractPipeModel.COLOR_PROPERTY)
-                .add(AbstractPipeModel.FRAME_MATERIAL_PROPERTY).add(AbstractPipeModel.FRAME_MASK_PROPERTY)
-                .add(CoverRendererPackage.PROPERTY);
+        return builder.add(PipeRenderProperties.THICKNESS_PROPERTY).add(PipeRenderProperties.CLOSED_MASK_PROPERTY)
+                .add(PipeRenderProperties.BLOCKED_MASK_PROPERTY).add(PipeRenderProperties.COLOR_PROPERTY)
+                .add(PipeRenderProperties.FRAME_MATERIAL_PROPERTY).add(PipeRenderProperties.FRAME_MASK_PROPERTY)
+                .add(CoverRendererPackage.CRP_PROPERTY);
     }
 
     @SuppressWarnings("deprecation")
@@ -687,7 +691,8 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         try {
             // noinspection deprecation
             return getTileClass(world, state).newInstance();
-        } catch (Throwable ignored) {
+        } catch (Exception e) {
+            GTLog.logger.error("Failed to create pipe tile entity!", e);
             return null;
         }
     }
@@ -714,8 +719,9 @@ public abstract class PipeBlock extends BuiltInRenderBlock {
         PipeTileEntity tile = getTileEntity(world, pos);
         if (tile != null) {
             TemperatureLogic temperatureLogic = tile.getTemperatureLogic();
-            int temp = temperatureLogic == null ? 0 : temperatureLogic
-                    .getTemperature(FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter());
+            // the overheat particle ticks the temperature forward for us
+            int temp = temperatureLogic == null ? 0 :
+                    temperatureLogic.getTemperature(temperatureLogic.getLastRestorationTick());
             // max light at 5000 K
             // min light at 500 K
             if (temp >= 5000) {
