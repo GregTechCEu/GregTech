@@ -192,8 +192,7 @@ public class MultiblockUIFactory {
      * <br>
      * Size will be 18x18.
      */
-    public MultiblockUIFactory createFlexButton(
-                                                BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
+    public MultiblockUIFactory createFlexButton(BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
         this.flexButton = flexButton;
         return this;
     }
