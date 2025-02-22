@@ -403,7 +403,8 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                     if (!isStructureFormed()) return;
 
                     // Energy Usage
-                    String voltageName = syncer.syncString(GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]);
+                    String voltageName = syncer
+                            .syncString(GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]);
                     manager.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.hpca.energy",
                             KeyUtil.number(syncer.syncLong(hpcaHandler.cachedEUt)),

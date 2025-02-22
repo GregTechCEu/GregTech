@@ -16,7 +16,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.KeyUtil;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.entity.player.EntityPlayer;

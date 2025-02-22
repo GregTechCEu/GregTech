@@ -179,12 +179,14 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
 
                         // Max output line
                         IKey maxOutputFormatted = KeyUtil.number(TextFormatting.WHITE,
-                                syncer.syncLong(powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage()), " EU/t");
+                                syncer.syncLong(powerOutput.getOutputVoltage() * powerOutput.getOutputAmperage()),
+                                " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.multiblock.active_transformer.max_out",
                                 maxOutputFormatted));
 
                         // Average I/O line
-                        IKey avgIOFormatted = KeyUtil.number(TextFormatting.WHITE, syncer.syncLong(averageIOLastSec), " EU/t");
+                        IKey avgIOFormatted = KeyUtil.number(TextFormatting.WHITE, syncer.syncLong(averageIOLastSec),
+                                " EU/t");
                         list.add(KeyUtil.lang(TextFormatting.AQUA, "gregtech.multiblock.active_transformer.average_io",
                                 avgIOFormatted));
                     }
