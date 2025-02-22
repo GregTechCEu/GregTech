@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import gregtech.api.fluids.GTFluid;
-import gregtech.api.mui.drawables.HoverableKey;
 
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.Fluid;
@@ -13,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
@@ -130,7 +130,9 @@ public class KeyUtil {
 
     public static IDrawable setHover(IKey body, IDrawable... hover) {
         if (ArrayUtils.isEmpty(hover)) return body;
-        return HoverableKey.of(body, hover);
+        return body.asTextIcon()
+                .asHoverable()
+                .addTooltipDrawableLines(Arrays.asList(hover));
     }
 
     @NotNull
