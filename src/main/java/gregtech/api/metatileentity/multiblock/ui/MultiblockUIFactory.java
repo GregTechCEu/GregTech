@@ -72,7 +72,6 @@ public class MultiblockUIFactory {
      * <i>It is not recommended to override this method</i>
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        // this.valueSyncer.accept(panelSyncManager);
         var panel = createRootPanel();
 
         panel.child(createScreen(panelSyncManager));
@@ -110,8 +109,7 @@ public class MultiblockUIFactory {
             } else if (!warning.isEmpty()) {
                 return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
             } else {
-                // todo getLogo()?
-                return GTGuiTextures.GREGTECH_LOGO;
+                return GTGuiTextures.getLogo(mte.getUITheme());
             }
         });
 
