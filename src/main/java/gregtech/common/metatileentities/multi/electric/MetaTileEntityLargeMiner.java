@@ -264,18 +264,18 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(minerLogic.isWorkingEnabled(), minerLogic.isActive())
                 .addEnergyUsageLine(energyContainer)
-                .addCustom(list -> {
+                .addCustom((list, syncer) -> {
                     if (isStructureFormed()) {
-                        int workingAreaChunks = this.minerLogic.getCurrentRadius() * 2 / CHUNK_LENGTH;
-                        int workingArea = getWorkingArea(minerLogic.getCurrentRadius());
+                        int workingAreaChunks = syncer.syncInt(this.minerLogic.getCurrentRadius() * 2 / CHUNK_LENGTH);
+                        int workingArea = syncer.syncInt(getWorkingArea(minerLogic.getCurrentRadius()));
 
                         list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_at"));
                         list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.mining_pos",
-                                minerLogic.getMineX().get(),
-                                minerLogic.getMineY().get(),
-                                minerLogic.getMineZ().get()));
+                                syncer.syncInt(minerLogic.getMineX().get()),
+                                syncer.syncInt(minerLogic.getMineY().get()),
+                                syncer.syncInt(minerLogic.getMineZ().get())));
 
-                        if (minerLogic.isChunkMode()) {
+                        if (syncer.syncBoolean(minerLogic.isChunkMode())) {
                             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.machine.miner.working_area_chunks",
                                     workingAreaChunks,
                                     workingAreaChunks));
@@ -284,11 +284,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
                                     workingArea, workingArea));
                         }
 
-                        if (minerLogic.isDone()) {
+                        if (syncer.syncBoolean(minerLogic.isDone())) {
                             list.add(KeyUtil.lang(TextFormatting.GREEN, "gregtech.machine.miner.done"));
-                        } else if (minerLogic.isWorking()) {
+                        } else if (syncer.syncBoolean(minerLogic.isWorking())) {
                             list.add(KeyUtil.lang(TextFormatting.GOLD, "gregtech.machine.miner.working"));
-                        } else if (!isWorkingEnabled()) {
+                        } else if (!syncer.syncBoolean(isWorkingEnabled())) {
                             list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.work_paused"));
                         }
                     }
@@ -297,8 +297,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
-        builder.addCustom(list -> {
-            if (isStructureFormed() && !drainFluid(false)) {
+        builder.addCustom((list, syncer) -> {
+            if (isStructureFormed() && syncer.syncBoolean(!drainFluid(false))) {
                 list.add(KeyUtil.lang(TextFormatting.RED, "gregtech.machine.miner.multi.needsfluid"));
             }
         });
@@ -307,8 +307,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(!drainEnergy(true));
-        builder.addCustom(list -> {
-            if (isStructureFormed() && isInventoryFull) {
+        builder.addCustom((list, syncer) -> {
+            if (isStructureFormed() && syncer.syncBoolean(isInventoryFull)) {
                 list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.machine.miner.invfull"));
             }
         });
