@@ -16,7 +16,6 @@ import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.KeyUtil;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,14 +101,15 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     @Override
     protected void configureDisplayText(MultiblockUIBuilder builder) {
         builder.setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addCustom(keyManager -> {
+                .addCustom((keyManager, syncer) -> {
                     // custom steam tank line
                     IFluidTank steamFluidTank = recipeMapWorkable.getSteamFluidTankCombined();
-                    if (steamFluidTank != null && steamFluidTank.getCapacity() > 0) {
-                        String stored = TextFormattingUtil.formatNumbers(steamFluidTank.getFluidAmount());
-                        String capacity = TextFormattingUtil.formatNumbers(steamFluidTank.getCapacity());
-
-                        IKey steamInfo = KeyUtil.string(TextFormatting.BLUE, "%s/%s L", stored, capacity);
+                    int stored = syncer.syncInt(steamFluidTank.getFluidAmount());
+                    int capacity = syncer.syncInt(steamFluidTank.getCapacity());
+                    if (capacity > 0) {
+                        IKey steamInfo = KeyUtil.string(TextFormatting.BLUE, "%s/%s L",
+                                KeyUtil.number(stored),
+                                KeyUtil.number(capacity));
                         IKey steamStored = KeyUtil.lang(TextFormatting.GRAY,
                                 "gregtech.multiblock.steam.steam_stored", steamInfo);
                         keyManager.add(steamStored);
@@ -122,12 +122,12 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addCustom(list -> {
-            if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
+        builder.addCustom((list, syncer) -> {
+            boolean noEnergy = syncer.syncBoolean(recipeMapWorkable.isHasNotEnoughEnergy());
+            if (isStructureFormed() && noEnergy) {
                 list.add(KeyUtil.lang(TextFormatting.YELLOW, "gregtech.multiblock.steam.low_steam"));
             }
-        })
-                .addMaintenanceProblemLines(getMaintenanceProblems());
+        }).addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override

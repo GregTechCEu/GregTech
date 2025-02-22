@@ -348,10 +348,12 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         builder.setWorkingStatus(true, isActive() && isWorkingEnabled()); // transform into two-state system for display
         builder.setWorkingStatusKeys("gregtech.multiblock.idling", "gregtech.multiblock.idling",
                 "gregtech.machine.active_transformer.routing");
-        builder.addCustom(list -> {
-            if (isStructureFormed() && energyBank != null) {
-                BigInteger energyStored = energyBank.getStored();
-                BigInteger energyCapacity = energyBank.getCapacity();
+        builder.addCustom((manager, syncer) -> {
+            if (isStructureFormed() && syncer.syncBoolean(energyBank != null)) {
+                BigInteger energyStored = syncer
+                        .syncBigInt(energyBank == null ? BigInteger.ZERO : energyBank.getStored());
+                BigInteger energyCapacity = syncer
+                        .syncBigInt(energyBank == null ? BigInteger.ZERO : energyBank.getCapacity());
 
                 // Stored EU line
                 IKey storedFormatted = KeyUtil.string(
@@ -363,7 +365,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 IKey bodyStored = (KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.stored",
                         truncated));
 
-                list.add(KeyUtil.setHover(bodyStored, storedFormatted));
+                manager.add(KeyUtil.setHover(bodyStored, storedFormatted));
 
                 // EU Capacity line
                 IKey capacityFormatted = KeyUtil.string(
@@ -375,41 +377,45 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 IKey bodyCap = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.capacity",
                         capCompact);
 
-                list.add(KeyUtil.setHover(bodyCap, capacityFormatted));
+                manager.add(KeyUtil.setHover(bodyCap, capacityFormatted));
 
                 // Passive Drain line
                 IKey passiveDrain = KeyUtil.string(TextFormatting.DARK_RED,
-                        TextFormattingUtil.formatNumbers(getPassiveDrain()) + " EU/t");
-                list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.passive_drain",
+                        TextFormattingUtil.formatNumbers(syncer.syncLong(getPassiveDrain())) + " EU/t");
+                manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.passive_drain",
                         passiveDrain));
 
                 // Average EU IN line
-                IKey avgValue = KeyUtil.string(TextFormatting.GREEN,
-                        TextFormattingUtil.formatNumbers(averageInLastSec) + " EU/t");
+                long avgIn = syncer.syncLong(averageInLastSec);
+                long avgOut = syncer.syncLong(averageOutLastSec);
+
+                IKey avgValue = KeyUtil.number(TextFormatting.GREEN, avgIn, " EU/t");
                 IKey base = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_in",
                         avgValue);
                 IKey hover = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_in_hover");
-                list.add(KeyUtil.setHover(base, hover));
+                manager.add(KeyUtil.setHover(base, hover));
 
                 // Average EU OUT line
-                avgValue = KeyUtil.string(TextFormatting.RED,
-                        TextFormattingUtil.formatNumbers(averageOutLastSec) + " EU/t");
+                avgValue = KeyUtil.number(TextFormatting.RED, avgOut, " EU/t");
                 base = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_out", avgValue);
                 hover = KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.average_out_hover");
-                list.add(KeyUtil.setHover(base, hover));
+                manager.add(KeyUtil.setHover(base, hover));
 
                 // Time to fill/drain line
-                if (averageInLastSec > averageOutLastSec) {
+                if (avgIn > avgOut) {
                     IKey timeToFill = getTimeToFillDrainText(energyCapacity.subtract(energyStored)
-                            .divide(BigInteger.valueOf((averageInLastSec - averageOutLastSec) * 20)));
-                    timeToFill.style(TextFormatting.GREEN);
-                    list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_fill",
+                            .divide(BigInteger.valueOf((avgIn - avgOut) * 20)))
+                                    .style(TextFormatting.GREEN);
+
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_fill",
                             timeToFill));
-                } else if (averageInLastSec < averageOutLastSec) {
+
+                } else if (avgIn < avgOut) {
                     IKey timeToDrain = getTimeToFillDrainText(
-                            energyStored.divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20)));
-                    timeToDrain.style(TextFormatting.RED);
-                    list.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_drain",
+                            energyStored.divide(BigInteger.valueOf((avgOut - avgIn) * 20)))
+                                    .style(TextFormatting.RED);
+
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.power_substation.time_to_drain",
                             timeToDrain));
                 }
             }
@@ -419,7 +425,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
 
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
-        builder.addCustom(list -> {
+        builder.addCustom((list, syncer) -> {
             if (isStructureFormed() && averageInLastSec < averageOutLastSec) {
                 BigInteger timeToDrainSeconds = energyBank.getStored()
                         .divide(BigInteger.valueOf((averageOutLastSec - averageInLastSec) * 20));
