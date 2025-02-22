@@ -15,6 +15,7 @@ import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTUtility;
 import gregtech.common.crafting.ToolHeadReplaceRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.ToolItems;
@@ -237,7 +238,7 @@ public class ToolRecipeHandler {
     }
 
     private static void processElectricTool(OrePrefix prefix, Material material, MaterialToolProperty property) {
-        final int voltageMultiplier = material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
+        final long voltageMultiplier = material.getBlastTemperature() > 2800 ? VA[LV] : VA[ULV];
         OrePrefix toolPrefix;
 
         if (material.hasFlag(GENERATE_PLATE)) {
@@ -293,7 +294,7 @@ public class ToolRecipeHandler {
                         .input(OrePrefix.gear, material)
                         .output(toolPrefix, material)
                         .duration((int) material.getMass() * 4)
-                        .EUt(8 * voltageMultiplier)
+                        .EUt(GTUtility.scaleVoltage(8 * voltageMultiplier, material.getWorkingTier()))
                         .buildAndRegister();
             }
 
