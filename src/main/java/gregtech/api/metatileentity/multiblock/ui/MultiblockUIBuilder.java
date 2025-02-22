@@ -2,7 +2,6 @@ package gregtech.api.metatileentity.multiblock.ui;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.util.JsonUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
@@ -497,14 +496,6 @@ public class MultiblockUIBuilder implements KeyManager {
         // return true;
         // }
         // return false;
-    }
-
-    private static List<String> toString(List<? extends IDrawable> drawables) {
-        List<String> strings = new ArrayList<>();
-        for (IDrawable drawable : drawables) {
-            strings.add(JsonUtils.toJsonString(drawable));
-        }
-        return strings;
     }
 
     protected void sync(String key, PanelSyncManager syncManager) {
