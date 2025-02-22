@@ -26,8 +26,15 @@ public class GTItemStackHandler extends ItemStackHandler {
     }
 
     @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        if (ItemStack.areItemStacksEqual(stack, getStackInSlot(slot)))
+            return;
+
+        super.setStackInSlot(slot, stack);
+    }
+
+    @Override
     public void onContentsChanged(int slot) {
-        super.onContentsChanged(slot);
         metaTileEntity.markDirty();
     }
 }
