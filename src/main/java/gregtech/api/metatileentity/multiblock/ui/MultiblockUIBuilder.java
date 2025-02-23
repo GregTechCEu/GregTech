@@ -27,13 +27,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-public class MultiblockUIBuilder implements KeyManager {
+public class MultiblockUIBuilder {
 
     private final List<IDrawable> textList = new ArrayList<>();
     private final List<Operation> operations = new ArrayList<>();
 
     private Consumer<MultiblockUIBuilder> action;
-    private final SyncHandler syncHandler = makeSyncHandler();
+    private final InternalSyncHandler syncHandler = new InternalSyncHandler();
+    private final KeyManager manager = new InternalKeyManager();
+
     @Nullable
     private InternalSyncer syncer;
 
@@ -472,7 +474,7 @@ public class MultiblockUIBuilder implements KeyManager {
 
     /** Add custom text dynamically, allowing for custom application logic. */
     public MultiblockUIBuilder addCustom(CustomKeyFunction customConsumer) {
-        customConsumer.addCustom(this, getSyncer());
+        customConsumer.addCustom(this.manager, getSyncer());
         return this;
     }
 
@@ -492,33 +494,6 @@ public class MultiblockUIBuilder implements KeyManager {
 
     protected void sync(String key, PanelSyncManager syncManager) {
         syncManager.syncValue(key, this.syncHandler);
-    }
-
-    private SyncHandler makeSyncHandler() {
-        return new SyncHandler() {
-
-            @Override
-            public void detectAndSendChanges(boolean init) {
-                if (init || hasChanged()) {
-                    if (init) {
-                        onRebuild();
-                        build();
-                    }
-                    syncToClient(0, buf -> getSyncer().writeBuffer(buf));
-                }
-            }
-
-            @Override
-            public void readOnClient(int id, PacketBuffer buf) {
-                if (id == 0) {
-                    getSyncer().readBuffer(buf);
-                    markDirty();
-                }
-            }
-
-            @Override
-            public void readOnServer(int id, PacketBuffer buf) {}
-        };
     }
 
     public void build(IRichTextBuilder<?> richText) {
@@ -575,9 +550,14 @@ public class MultiblockUIBuilder implements KeyManager {
         this.operations.add(op);
     }
 
-    @Override
-    public void add(IDrawable drawable, Operation op) {
-        addKey(drawable, op);
+    public class InternalKeyManager implements KeyManager {
+
+        private InternalKeyManager() {}
+
+        @Override
+        public void add(IDrawable drawable, Operation op) {
+            addKey(drawable, op);
+        }
     }
 
     public class InternalSyncer implements UISyncer {
@@ -697,5 +677,32 @@ public class MultiblockUIBuilder implements KeyManager {
         public void clear() {
             this.internal.clear();
         }
+    }
+
+    public class InternalSyncHandler extends SyncHandler {
+
+        private InternalSyncHandler() {}
+
+        @Override
+        public void detectAndSendChanges(boolean init) {
+            if (init || hasChanged()) {
+                if (init) {
+                    onRebuild();
+                    build();
+                }
+                syncToClient(0, buf -> getSyncer().writeBuffer(buf));
+            }
+        }
+
+        @Override
+        public void readOnClient(int id, PacketBuffer buf) {
+            if (id == 0) {
+                getSyncer().readBuffer(buf);
+                markDirty();
+            }
+        }
+
+        @Override
+        public void readOnServer(int id, PacketBuffer buf) {}
     }
 }
