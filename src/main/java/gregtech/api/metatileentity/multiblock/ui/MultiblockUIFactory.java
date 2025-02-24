@@ -10,6 +10,7 @@ import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLambdaUtils;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.KeyUtil;
+import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.util.text.TextFormatting;
 
@@ -24,12 +25,9 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
-import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
@@ -72,9 +70,8 @@ public class MultiblockUIFactory {
      * <i>It is not recommended to override this method</i>
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        var panel = createRootPanel();
-
-        panel.child(createScreen(panelSyncManager));
+        var panel = GTGuis.createPanel(mte, width, height)
+                .child(createScreen(panelSyncManager));
 
         // TODO createExtras() hook for overrides?
         if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
@@ -208,10 +205,6 @@ public class MultiblockUIFactory {
         return this;
     }
 
-    protected @NotNull ModularPanel createRootPanel() {
-        return GTGuis.createPanel(mte, width, height);
-    }
-
     /**
      * @param progressMulti    the multiblock with progress bars
      * @param panelSyncManager the sync manager for synchronizing widgets
@@ -237,7 +230,7 @@ public class MultiblockUIFactory {
 
             // the numbers for the given row of bars
             int from = r * cols;
-            int to = Math.min(from + cols, cols);
+            int to = Math.min(from + cols, progressMulti.getProgressBarCount());
 
             // calculate bar width
             int barCount = Math.max(1, to - from);
@@ -265,24 +258,22 @@ public class MultiblockUIFactory {
         display.setAction(this.displayText);
         display.sync("display", syncManager);
 
-        // todo scrolling doesn't work for rich text widget
-        var scrollWidget = new ScrollWidget<>(new VerticalScrollData())
+        var scrollableTextWidget = new ScrollableTextWidget()
                 .sizeRel(1f)
-                .child(new RichTextWidget()
-                        .sizeRel(1f)
-                        .alignment(Alignment.TopLeft)
-                        .margin(4, 4)
-                        .autoUpdate(true)
-                        .textBuilder(display::build));
+                .alignment(Alignment.TopLeft)
+                .margin(4, 4)
+                .autoUpdate(true)
+                .textBuilder(display::build);
+
+        var parent = new ParentWidget<>();
 
         if (this.childrenConsumer != null) {
             List<IWidget> extra = new ArrayList<>();
             this.childrenConsumer.accept(extra);
-            extra.forEach(scrollWidget::child);
+            extra.forEach(parent::child);
         }
 
-        return new ParentWidget<>()
-                .child(scrollWidget)
+        return parent.child(scrollableTextWidget)
                 .child(createIndicator(syncManager))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)
