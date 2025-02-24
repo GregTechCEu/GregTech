@@ -1,7 +1,5 @@
 package gregtech.api.mui.widget;
 
-import com.cleanroommc.modularui.value.sync.SyncHandler;
-
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
@@ -14,13 +12,14 @@ import net.minecraftforge.items.IItemHandler;
 
 import com.cleanroommc.modularui.api.IPanelHandler;
 import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.utils.MouseData;
 import com.cleanroommc.modularui.value.sync.ItemSlotSH;
+import com.cleanroommc.modularui.value.sync.SyncHandler;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.layout.Grid;
@@ -29,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GhostCircuitSlotWidget extends ItemSlot {
 
@@ -112,9 +109,10 @@ public class GhostCircuitSlotWidget extends ItemSlot {
 
                 return GTGuis.createPopupPanel("circuit_selector", 176, 120)
                         .child(IKey.lang("metaitem.circuit.integrated.gui").asWidget().pos(5, 5))
-                        .child(circuitPreview.asIcon().size(16).asWidget()
+                        .child(new Widget<>()
                                 .size(18)
                                 .top(19).alignX(0.5f)
+                                .overlay(circuitPreview.asIcon().margin(1))
                                 .background(GTGuiTextures.SLOT, GTGuiTextures.INT_CIRCUIT_OVERLAY))
                         .child(new Grid()
                                 .left(7).right(7).top(41).height(4 * 18)
@@ -124,7 +122,8 @@ public class GhostCircuitSlotWidget extends ItemSlot {
                                                 IntCircuitIngredient.getIntegratedCircuit(value)).asIcon())
                                         .disableHoverBackground()
                                         .onMousePressed(mouseButton -> {
-                                            getSyncHandler().syncToServer(SYNC_CIRCUIT_INDEX, buf -> buf.writeShort(value));
+                                            getSyncHandler().syncToServer(SYNC_CIRCUIT_INDEX,
+                                                    buf -> buf.writeShort(value));
                                             circuitPreview.setItem(IntCircuitIngredient.getIntegratedCircuit(value));
                                             if (Interactable.hasShiftDown()) this.selectorPanel.closePanel();
                                             return true;
