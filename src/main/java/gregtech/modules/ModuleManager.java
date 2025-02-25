@@ -435,7 +435,7 @@ public final class ModuleManager implements IModuleManager {
     }
 
     /**
-     * @param module the module to get the comment fo
+     * @param module the module to get the comment for
      * @return the comment for the module's configuration
      */
     private static String getComment(@NotNull IGregTechModule module) {
