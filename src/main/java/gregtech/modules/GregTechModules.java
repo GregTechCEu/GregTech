@@ -21,8 +21,6 @@ public final class GregTechModules implements IModuleContainer {
     public static final String MODULE_FR = "fr_integration";
     public static final String MODULE_CHISEL = "chisel_integration";
 
-    private GregTechModules() {}
-
     @Override
     public String getID() {
         return GTValues.MODID;
