@@ -41,7 +41,7 @@ public final class ModuleManager implements IModuleManager {
     private @Nullable IModuleContainer currentContainer;
 
     private ModuleStage currentStage = ModuleStage.C_SETUP;
-    private final Logger logger = LogManager.getLogger("GregTech Module Loader");
+    private static final Logger logger = LogManager.getLogger("GregTech Module Loader");
     private Configuration config;
 
     private ModuleManager() {}
@@ -96,8 +96,8 @@ public final class ModuleManager implements IModuleManager {
      */
     public void setup(@NotNull ASMDataTable asmDataTable, @NotNull File configDirectory) {
         // find and register all containers registered with the @ModuleContainer annotation
-        // then sort them by container name
         discoverContainers(asmDataTable);
+        // then sort them by container name
         containers = containers.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(
@@ -365,7 +365,7 @@ public final class ModuleManager implements IModuleManager {
      * @param table the ASM Data Table containing the module data
      * @return a map of Container ID to list of associated modules sorted by Module ID
      */
-    private @NotNull Map<String, List<IGregTechModule>> getModules(@NotNull ASMDataTable table) {
+    private static @NotNull Map<String, List<IGregTechModule>> getModules(@NotNull ASMDataTable table) {
         List<IGregTechModule> instances = getInstances(table);
         Map<String, List<IGregTechModule>> modules = new Object2ReferenceLinkedOpenHashMap<>();
         for (IGregTechModule module : instances) {
@@ -380,7 +380,7 @@ public final class ModuleManager implements IModuleManager {
      * @return all IGregTechModule instances in sorted order by Container and Module ID
      */
     @SuppressWarnings("unchecked")
-    private @NotNull List<IGregTechModule> getInstances(@NotNull ASMDataTable table) {
+    private static @NotNull List<IGregTechModule> getInstances(@NotNull ASMDataTable table) {
         Set<ASMDataTable.ASMData> dataSet = table.getAll(GregTechModule.class.getCanonicalName());
         List<IGregTechModule> instances = new ArrayList<>();
         for (ASMDataTable.ASMData data : dataSet) {
@@ -413,6 +413,11 @@ public final class ModuleManager implements IModuleManager {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Discovers ModuleContainers and registers them
+     *
+     * @param table the table containing the ModuleContainer data
+     */
     private void discoverContainers(@NotNull ASMDataTable table) {
         Set<ASMDataTable.ASMData> dataSet = table.getAll(ModuleContainer.class.getCanonicalName());
         for (ASMDataTable.ASMData data : dataSet) {

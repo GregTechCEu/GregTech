@@ -21,7 +21,7 @@ public interface IGregTechModule {
     /**
      * What other modules this module depends on.
      * <p>
-     * e.g. <code>new ResourceLocation("gregtech", "foo_module")</code> represents a dependency on the module
+     * e.g. {@code new ResourceLocation("gregtech", "foo_module")} represents a dependency on the module
      * "foo_module" in the container "gregtech"
      */
     @NotNull
