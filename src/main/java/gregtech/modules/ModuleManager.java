@@ -101,6 +101,12 @@ public class ModuleManager implements IModuleManager {
             for (Class<?> clazz : module.getEventBusSubscribers()) {
                 MinecraftForge.EVENT_BUS.register(clazz);
             }
+            for (Class<?> clazz : module.getTerrainGenBusSubscribers()) {
+                MinecraftForge.TERRAIN_GEN_BUS.register(clazz);
+            }
+            for (Class<?> clazz : module.getOreGenBusSubscribers()) {
+                MinecraftForge.ORE_GEN_BUS.register(clazz);
+            }
         }
     }
 
