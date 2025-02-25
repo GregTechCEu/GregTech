@@ -29,25 +29,25 @@ public interface IGregTechModule {
         return Collections.emptySet();
     }
 
-    default void construction(FMLConstructionEvent event) {}
+    default void construction(@NotNull FMLConstructionEvent event) {}
 
-    default void preInit(FMLPreInitializationEvent event) {}
+    default void preInit(@NotNull FMLPreInitializationEvent event) {}
 
-    default void init(FMLInitializationEvent event) {}
+    default void init(@NotNull FMLInitializationEvent event) {}
 
-    default void postInit(FMLPostInitializationEvent event) {}
+    default void postInit(@NotNull FMLPostInitializationEvent event) {}
 
-    default void loadComplete(FMLLoadCompleteEvent event) {}
+    default void loadComplete(@NotNull FMLLoadCompleteEvent event) {}
 
-    default void serverAboutToStart(FMLServerAboutToStartEvent event) {}
+    default void serverAboutToStart(@NotNull FMLServerAboutToStartEvent event) {}
 
-    default void serverStarting(FMLServerStartingEvent event) {}
+    default void serverStarting(@NotNull FMLServerStartingEvent event) {}
 
-    default void serverStarted(FMLServerStartedEvent event) {}
+    default void serverStarted(@NotNull FMLServerStartedEvent event) {}
 
-    default void serverStopping(FMLServerStoppingEvent event) {}
+    default void serverStopping(@NotNull FMLServerStoppingEvent event) {}
 
-    default void serverStopped(FMLServerStoppedEvent event) {}
+    default void serverStopped(@NotNull FMLServerStoppedEvent event) {}
 
     /**
      * Register packets using GregTech's packet handling API here.
@@ -87,7 +87,11 @@ public interface IGregTechModule {
         return Collections.emptyList();
     }
 
-    default boolean processIMC(FMLInterModComms.IMCMessage message) {
+    /**
+     * @param message the message to process
+     * @return if the message was processed, stopping all other modules from processing it
+     */
+    default boolean processIMC(@NotNull FMLInterModComms.IMCMessage message) {
         return false;
     }
 
