@@ -386,7 +386,6 @@ public final class ModuleManager implements IModuleManager {
         for (ASMDataTable.ASMData data : dataSet) {
             String moduleID = (String) data.getAnnotationInfo().get("moduleID");
             List<String> modDependencies = (List<String>) data.getAnnotationInfo().get("modDependencies");
-
             if (modDependencies == null || modDependencies.stream().allMatch(Loader::isModLoaded)) {
                 try {
                     Class<?> clazz = Class.forName(data.getClassName());
@@ -426,7 +425,7 @@ public final class ModuleManager implements IModuleManager {
                 if (IGregTechModule.class.isAssignableFrom(clazz)) {
                     registerContainer((IModuleContainer) clazz.getConstructor().newInstance());
                 } else {
-                    logger.error("Module Class {} is not an instanceof IModuleContainer", clazz.getName());
+                    logger.error("Module Container Class {} is not an instanceof IModuleContainer", clazz.getName());
                 }
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException |
                      InvocationTargetException e) {
