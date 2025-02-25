@@ -117,6 +117,7 @@ public final class ModuleManager implements IModuleManager {
                 MinecraftForge.ORE_GEN_BUS.register(clazz);
             }
         }
+        currentContainer = null;
     }
 
     public void onConstruction(@NotNull FMLConstructionEvent event) {
@@ -127,6 +128,7 @@ public final class ModuleManager implements IModuleManager {
             module.construction(event);
             module.getLogger().debug("Construction complete");
         }
+        currentContainer = null;
     }
 
     public void onPreInit(@NotNull FMLPreInitializationEvent event) {
@@ -143,6 +145,7 @@ public final class ModuleManager implements IModuleManager {
             module.preInit(event);
             module.getLogger().debug("Pre-init complete");
         }
+        currentContainer = null;
     }
 
     public void onInit(@NotNull FMLInitializationEvent event) {
@@ -153,6 +156,7 @@ public final class ModuleManager implements IModuleManager {
             module.init(event);
             module.getLogger().debug("Init complete");
         }
+        currentContainer = null;
     }
 
     public void onPostInit(@NotNull FMLPostInitializationEvent event) {
@@ -163,6 +167,7 @@ public final class ModuleManager implements IModuleManager {
             module.postInit(event);
             module.getLogger().debug("Post-init complete");
         }
+        currentContainer = null;
     }
 
     public void onLoadComplete(@NotNull FMLLoadCompleteEvent event) {
@@ -173,6 +178,7 @@ public final class ModuleManager implements IModuleManager {
             module.loadComplete(event);
             module.getLogger().debug("Load-complete complete");
         }
+        currentContainer = null;
     }
 
     public void onServerAboutToStart(@NotNull FMLServerAboutToStartEvent event) {
@@ -183,6 +189,7 @@ public final class ModuleManager implements IModuleManager {
             module.serverAboutToStart(event);
             module.getLogger().debug("Server-about-to-start complete");
         }
+        currentContainer = null;
     }
 
     public void onServerStarting(@NotNull FMLServerStartingEvent event) {
@@ -193,6 +200,7 @@ public final class ModuleManager implements IModuleManager {
             module.serverStarting(event);
             module.getLogger().debug("Server-starting complete");
         }
+        currentContainer = null;
     }
 
     public void onServerStarted(@NotNull FMLServerStartedEvent event) {
@@ -203,6 +211,7 @@ public final class ModuleManager implements IModuleManager {
             module.serverStarted(event);
             module.getLogger().debug("Server-started complete");
         }
+        currentContainer = null;
     }
 
     public void onServerStopping(@NotNull FMLServerStoppingEvent event) {
@@ -210,6 +219,7 @@ public final class ModuleManager implements IModuleManager {
             currentContainer = containers.get(getContainerID(module));
             module.serverStopping(event);
         }
+        currentContainer = null;
     }
 
     public void onServerStopped(@NotNull FMLServerStoppedEvent event) {
@@ -217,6 +227,7 @@ public final class ModuleManager implements IModuleManager {
             currentContainer = containers.get(getContainerID(module));
             module.serverStopped(event);
         }
+        currentContainer = null;
     }
 
     /**
