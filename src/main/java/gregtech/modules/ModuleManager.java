@@ -12,7 +12,10 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.event.*;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,7 +101,8 @@ public final class ModuleManager implements IModuleManager {
         containers = containers.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+                        Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a, Object2ReferenceLinkedOpenHashMap::new));
 
         currentStage = ModuleStage.M_SETUP;
         configFolder = new File(configDirectory, GTValues.MODID);
@@ -253,8 +258,8 @@ public final class ModuleManager implements IModuleManager {
     private void configureModules(@NotNull Map<String, List<IGregTechModule>> modules) {
         Locale locale = Locale.getDefault();
         Locale.setDefault(Locale.ENGLISH);
-        Set<ResourceLocation> toLoad = new LinkedHashSet<>();
-        Set<IGregTechModule> modulesToLoad = new LinkedHashSet<>();
+        Set<ResourceLocation> toLoad = new ObjectLinkedOpenHashSet<>();
+        Set<IGregTechModule> modulesToLoad = new ReferenceLinkedOpenHashSet<>();
         Configuration config = getConfiguration();
         config.load();
         config.addCustomCategoryComment(MODULE_CFG_CATEGORY_NAME,
@@ -362,7 +367,7 @@ public final class ModuleManager implements IModuleManager {
      */
     private @NotNull Map<String, List<IGregTechModule>> getModules(@NotNull ASMDataTable table) {
         List<IGregTechModule> instances = getInstances(table);
-        Map<String, List<IGregTechModule>> modules = new LinkedHashMap<>();
+        Map<String, List<IGregTechModule>> modules = new Object2ReferenceLinkedOpenHashMap<>();
         for (IGregTechModule module : instances) {
             GregTechModule info = module.getClass().getAnnotation(GregTechModule.class);
             modules.computeIfAbsent(info.containerID(), k -> new ArrayList<>()).add(module);
@@ -380,24 +385,32 @@ public final class ModuleManager implements IModuleManager {
         List<IGregTechModule> instances = new ArrayList<>();
         for (ASMDataTable.ASMData data : dataSet) {
             String moduleID = (String) data.getAnnotationInfo().get("moduleID");
-            List<String> modDependencies = (ArrayList<String>) data.getAnnotationInfo().get("modDependencies");
+            List<String> modDependencies = (List<String>) data.getAnnotationInfo().get("modDependencies");
+
             if (modDependencies == null || modDependencies.stream().allMatch(Loader::isModLoaded)) {
                 try {
                     Class<?> clazz = Class.forName(data.getClassName());
-                    instances.add((IGregTechModule) clazz.newInstance());
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                    logger.error("Could not initialize module " + moduleID, e);
+                    if (IGregTechModule.class.isAssignableFrom(clazz)) {
+                        instances.add((IGregTechModule) clazz.getConstructor().newInstance());
+                    } else {
+                        logger.error("Module of class {} with id {} is not an instanceof IGregTechModule",
+                                clazz.getName(), moduleID);
+                    }
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException |
+                         NoSuchMethodException | InvocationTargetException e) {
+                    logger.error("Could not initialize module {}", moduleID, e);
                 }
             } else {
                 logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID,
                         modDependencies);
             }
         }
-        return instances.stream().sorted((m1, m2) -> {
-            GregTechModule m1a = m1.getClass().getAnnotation(GregTechModule.class);
-            GregTechModule m2a = m2.getClass().getAnnotation(GregTechModule.class);
-            return (m1a.containerID() + ":" + m1a.moduleID()).compareTo(m2a.containerID() + ":" + m2a.moduleID());
-        }).collect(Collectors.toCollection(ArrayList::new));
+        return instances.stream()
+                .sorted(Comparator.comparing((m) -> m.getClass()
+                        .getAnnotation(GregTechModule.class),
+                        Comparator.comparing(GregTechModule::containerID)
+                                .thenComparing(GregTechModule::moduleID)))
+                .collect(Collectors.toList());
     }
 
     private void discoverContainers(@NotNull ASMDataTable table) {
@@ -405,9 +418,14 @@ public final class ModuleManager implements IModuleManager {
         for (ASMDataTable.ASMData data : dataSet) {
             try {
                 Class<?> clazz = Class.forName(data.getClassName());
-                registerContainer((IModuleContainer) clazz.newInstance());
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                logger.error("Could not initialize module container " + data.getClassName(), e);
+                if (IGregTechModule.class.isAssignableFrom(clazz)) {
+                    registerContainer((IModuleContainer) clazz.getConstructor().newInstance());
+                } else {
+                    logger.error("Module Class {} is not an instanceof IModuleContainer", clazz.getName());
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException |
+                     InvocationTargetException e) {
+                logger.error("Could not initialize module container {}", data.getClassName(), e);
             }
         }
     }
