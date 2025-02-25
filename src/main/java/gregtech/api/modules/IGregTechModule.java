@@ -57,7 +57,8 @@ public interface IGregTechModule {
     /**
      * As the class gets subscribed, not any specific instance, event handlers must be static!
      *
-     * @return A list of classes to subscribe to the Forge Event Bus, {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
+     * @return A list of classes to subscribe to the Forge Event Bus,
+     *         {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
      */
     default @NotNull List<Class<?>> getEventBusSubscribers() {
         return Collections.emptyList();
@@ -66,7 +67,8 @@ public interface IGregTechModule {
     /**
      * As the class gets subscribed, not any specific instance, event handlers must be static!
      *
-     * @return A list of classes to subscribe to the Forge Terrain Gen Bus, {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.
+     * @return A list of classes to subscribe to the Forge Terrain Gen Bus,
+     *         {@link net.minecraftforge.common.MinecraftForge#TERRAIN_GEN_BUS}.
      */
     default @NotNull List<Class<?>> getTerrainGenBusSubscribers() {
         return Collections.emptyList();
@@ -75,7 +77,8 @@ public interface IGregTechModule {
     /**
      * As the class gets subscribed, not any specific instance, event handlers must be static!
      *
-     * @return A list of classes to subscribe to the Forge Ore Gen Bus, {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.
+     * @return A list of classes to subscribe to the Forge Ore Gen Bus,
+     *         {@link net.minecraftforge.common.MinecraftForge#ORE_GEN_BUS}.
      */
     default @NotNull List<Class<?>> getOreGenBusSubscribers() {
         return Collections.emptyList();
