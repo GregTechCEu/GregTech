@@ -36,7 +36,7 @@ public final class ModuleManager implements IModuleManager {
 
     private Map<String, IModuleContainer> containers = new Object2ReferenceLinkedOpenHashMap<>();
     private final Map<ResourceLocation, IGregTechModule> sortedModules = new Object2ReferenceLinkedOpenHashMap<>();
-    private final Set<IGregTechModule> loadedModules = new ReferenceOpenHashSet<>();
+    private final Set<IGregTechModule> loadedModules = new ReferenceLinkedOpenHashSet<>();
 
     private @Nullable IModuleContainer currentContainer;
 
