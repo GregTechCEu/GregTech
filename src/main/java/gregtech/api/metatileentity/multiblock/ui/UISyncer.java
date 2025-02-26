@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
+import java.util.Collection;
 
 public interface UISyncer {
 
@@ -41,6 +42,15 @@ public interface UISyncer {
 
     default <T> T syncObject(T initial, IByteBufAdapter<T> adapter) {
         return syncObject(initial, adapter, adapter);
+    }
+
+    <T> Collection<T> syncCollection(Collection<T> initial,
+                                     IByteBufSerializer<T> serializer,
+                                     IByteBufDeserializer<T> deserializer);
+
+    default <T> Collection<T> syncCollection(Collection<T> initial,
+                                             IByteBufAdapter<T> adapter) {
+        return syncCollection(initial, adapter, adapter);
     }
 
     void readBuffer(ByteBuf buf);
