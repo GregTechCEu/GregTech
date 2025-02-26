@@ -277,10 +277,6 @@ public class MultiblockUIFactory {
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
         var parent = new ParentWidget<>();
 
-        if (this.screenFunction != null) {
-            this.screenFunction.addWidgets(parent, syncManager);
-        }
-
         if (displayText != NO_OP) {
             MultiblockUIBuilder display = builder();
             display.setAction(this.displayText);
@@ -292,6 +288,10 @@ public class MultiblockUIFactory {
                     .margin(4, 4)
                     .autoUpdate(true)
                     .textBuilder(display::build));
+        }
+
+        if (this.screenFunction != null) {
+            this.screenFunction.addWidgets(parent, syncManager);
         }
 
         return parent.child(createIndicator(syncManager))
