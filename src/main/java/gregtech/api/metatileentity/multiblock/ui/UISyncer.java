@@ -44,12 +44,11 @@ public interface UISyncer {
         return syncObject(initial, adapter, adapter);
     }
 
-    <T> Collection<T> syncCollection(Collection<T> initial,
-                                     IByteBufSerializer<T> serializer,
-                                     IByteBufDeserializer<T> deserializer);
+    <T, C extends Collection<T>> C syncCollection(C initial,
+                                                  IByteBufSerializer<T> serializer,
+                                                  IByteBufDeserializer<T> deserializer);
 
-    default <T> Collection<T> syncCollection(Collection<T> initial,
-                                             IByteBufAdapter<T> adapter) {
+    default <T, C extends Collection<T>> C syncCollection(C initial, IByteBufAdapter<T> adapter) {
         return syncCollection(initial, adapter, adapter);
     }
 
