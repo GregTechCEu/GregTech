@@ -115,29 +115,28 @@ public class GTValues {
             "MAX+9", "MAX+10", "MAX+11", "MAX+12", "MAX+13", "MAX+14", "MAX+15", "MAX+16",
     };
 
-    private static final String MAX_PLUS = RED.toString() + BOLD + "M" + YELLOW + BOLD + "A" + GREEN + BOLD + "X" +
-            AQUA + BOLD + "+" + LIGHT_PURPLE + BOLD;
-
     /**
      * The short names for the voltages, formatted for text
      */
     public static final String[] VNF = new String[] {
-            RED + "ULV", GRAY + "LV", GOLD + "MV",
-            YELLOW + "HV", DARK_GRAY + "EV", WHITE + "IV",
-            LIGHT_PURPLE + "LuV", AQUA + "ZPM", DARK_GREEN + "UV",
-            DARK_RED + "UHV", DARK_BLUE + "UEV", DARK_GREEN.toString() + BOLD + "UIV",
-            DARK_PURPLE.toString() + BOLD + "UXV", DARK_RED.toString() + BOLD + "OpV",
-            RED.toString() + BOLD + "MAX" };
+            DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
+            GOLD + "HV", DARK_PURPLE + "EV", BLUE + "IV",
+            LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
+            DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
+            YELLOW + "UXV", BLUE.toString() + BOLD + "OpV", RED.toString() + BOLD + "MAX" };
+
+    private static final String MAX_PLUS = RED.toString() + BOLD + "M" + YELLOW + BOLD + "A" + GREEN + BOLD + "X" +
+            AQUA + BOLD + "+" + LIGHT_PURPLE + BOLD;
 
     /**
      * The short names for the voltages, up to max Long, formatted for text
      */
     public static final String[] VOCNF = new String[] {
             DARK_GRAY + "ULV", GRAY + "LV", AQUA + "MV",
-            GOLD + "HV", DARK_PURPLE + "EV", DARK_BLUE + "IV",
+            GOLD + "HV", DARK_PURPLE + "EV", BLUE + "IV",
             LIGHT_PURPLE + "LuV", RED + "ZPM", DARK_AQUA + "UV",
             DARK_RED + "UHV", GREEN + "UEV", DARK_GREEN + "UIV",
-            YELLOW + "UXV", BLUE + "OpV", RED.toString() + BOLD + "MAX",
+            YELLOW + "UXV", BLUE.toString() + BOLD + "OpV", RED.toString() + BOLD + "MAX",
             MAX_PLUS + "1", MAX_PLUS + "2", MAX_PLUS + "3", MAX_PLUS + "4",
             MAX_PLUS + "5", MAX_PLUS + "6", MAX_PLUS + "7", MAX_PLUS + "8",
             MAX_PLUS + "9", MAX_PLUS + "10", MAX_PLUS + "11", MAX_PLUS + "12",
@@ -147,7 +146,7 @@ public class GTValues {
      * Color values for the voltages
      */
     public static final int[] VC = new int[] { 0xC80000, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xE99797,
-            0x7EC3C4, 0x7EB07E, 0xBF74C0, 0x0B5CFE, 0x488748, 0x914E91, 0x8C0000, 0x2828F5 };
+            0x7EC3C4, 0x7EB07E, 0xBF74C0, 0x0B5CFE, 0x914E91, 0x488748, 0x8C0000, 0x2828F5 };
 
     /**
      * The long names for the voltages
