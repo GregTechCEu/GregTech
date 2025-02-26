@@ -5,7 +5,6 @@ import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
 import com.cleanroommc.modularui.utils.serialization.IEquals;
-import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -51,10 +50,4 @@ public interface UISyncer {
     default <T, C extends Collection<T>> C syncCollection(C initial, IByteBufAdapter<T> adapter) {
         return syncCollection(initial, adapter, adapter);
     }
-
-    void readBuffer(ByteBuf buf);
-
-    void writeBuffer(ByteBuf buf);
-
-    boolean hasChanged();
 }
