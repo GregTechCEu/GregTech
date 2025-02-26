@@ -5,6 +5,7 @@ import com.cleanroommc.modularui.api.drawable.IHoverable;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.layout.IViewport;
 import com.cleanroommc.modularui.api.layout.IViewportStack;
+import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.Interactable;
 import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.drawable.text.RichText;
@@ -32,6 +33,13 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
 
     private final ScrollArea scroll = new ScrollArea();
     private final TextRenderer renderer = new TextRenderer();
+
+    public ScrollableTextWidget() {
+        listenGuiAction((IGuiAction.MouseReleased) mouseButton -> {
+            this.scroll.mouseReleased(getContext());
+            return false;
+        });
+    }
 
     @Override
     public void onInit() {
@@ -155,7 +163,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                 getWidgetTheme(context.getTheme()).getTextColor(),
                 getWidgetTheme(context.getTheme()).getTextShadow());
         this.text.compileAndDraw(this.renderer, context, false);
-        this.scroll.getScrollY().setScrollSize((int) this.renderer.getLastHeight());
+        int diff = ((int) this.renderer.getLastHeight() - getArea().h()) / 2;
+        this.scroll.getScrollY().setScrollSize(getArea().h() + Math.max(0, diff));
     }
 
     @Override
