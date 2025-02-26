@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
@@ -55,7 +56,7 @@ public class MultiblockUIBuilder {
     private Runnable onRebuild;
 
     @NotNull
-    private UISyncer getSyncer() {
+    private InternalSyncer getSyncer() {
         if (this.syncer == null) {
             this.syncer = new InternalSyncer(isServer());
         }
@@ -491,8 +492,8 @@ public class MultiblockUIBuilder {
     }
 
     /** Add custom text dynamically, allowing for custom application logic. */
-    public MultiblockUIBuilder addCustom(CustomKeyFunction customConsumer) {
-        customConsumer.addCustom(this.manager, getSyncer());
+    public MultiblockUIBuilder addCustom(BiConsumer<KeyManager, UISyncer> customConsumer) {
+        customConsumer.accept(this.manager, getSyncer());
         return this;
     }
 
@@ -514,10 +515,17 @@ public class MultiblockUIBuilder {
         syncManager.syncValue(key, this.syncHandler);
     }
 
+    /**
+     * Builds the passed in rich text with operations and drawables. <br />
+     * Will clear and rebuild if this builder is marked dirty
+     *
+     * @param richText the rich text to add drawables to
+     */
     public void build(IRichTextBuilder<?> richText) {
         if (dirty) {
+            clear();
             onRebuild();
-            build();
+            runAction();
             dirty = false;
         }
         for (int i = 0; i < operations.size(); i++) {
@@ -531,21 +539,37 @@ public class MultiblockUIBuilder {
         }
     }
 
+    /**
+     * Mark this builder as dirty. Will be rebuilt during {@link #build(IRichTextBuilder) build()}
+     */
     public void markDirty() {
         dirty = true;
     }
 
-    protected void build() {
-        clear();
+    /*
+     * this is run on the server side to write values to the internal syncer
+     * those values are then synced to the client and read back in the same order
+     */
+    private void runAction() {
         if (this.action != null) {
             this.action.accept(this);
         }
     }
 
+    /**
+     * Set the action for this builder. Called on server and client.
+     * 
+     * @param action the action to apply to this builder
+     */
     public void setAction(Consumer<MultiblockUIBuilder> action) {
         this.action = action;
     }
 
+    /**
+     * The runnable is called prior to rebuilding, usually used for updating {@link #structureFormed(boolean)}
+     *
+     * @param onRebuild the runnable to run prior to rebuilding
+     */
     public void onRebuild(Runnable onRebuild) {
         this.onRebuild = onRebuild;
     }
@@ -583,7 +607,7 @@ public class MultiblockUIBuilder {
         private final PacketBuffer internal = new PacketBuffer(Unpooled.buffer());
         private final boolean isServer;
 
-        public InternalSyncer(boolean isServer) {
+        private InternalSyncer(boolean isServer) {
             this.isServer = isServer;
         }
 
@@ -687,23 +711,21 @@ public class MultiblockUIBuilder {
             return initial;
         }
 
-        @Override
         public void readBuffer(ByteBuf buf) {
             clear();
             internal.writeBytes(buf);
         }
 
-        @Override
         public void writeBuffer(ByteBuf buf) {
             buf.writeBytes(internal);
         }
 
-        @Override
         public boolean hasChanged() {
             byte[] old = internal.array().clone();
             this.internal.clear();
+            clear();
             onRebuild();
-            build();
+            runAction();
             return !Arrays.equals(old, internal.array());
         }
     }
@@ -717,7 +739,7 @@ public class MultiblockUIBuilder {
             if (init || hasChanged()) {
                 if (init) {
                     onRebuild();
-                    build();
+                    runAction();
                 }
                 syncToClient(0, buf -> getSyncer().writeBuffer(buf));
             }
