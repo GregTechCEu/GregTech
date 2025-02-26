@@ -14,6 +14,8 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.network.NetworkUtils;
+import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
+import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import io.netty.buffer.ByteBuf;
@@ -25,6 +27,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
@@ -666,6 +669,22 @@ public class MultiblockUIBuilder {
             } else {
                 byte[] bytes = internal.readByteArray();
                 return new BigInteger(bytes);
+            }
+        }
+
+        @Override
+        @NotNull
+        public <T> T syncObject(@NotNull T initial, IByteBufSerializer<T> serializer,
+                                IByteBufDeserializer<T> deserializer) {
+            if (isServer) {
+                serializer.serializeSafe(internal, Objects.requireNonNull(initial));
+                return initial;
+            } else {
+                try {
+                    return deserializer.deserialize(internal);
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
             }
         }
 
