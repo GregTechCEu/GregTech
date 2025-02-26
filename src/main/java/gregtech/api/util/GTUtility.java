@@ -936,7 +936,7 @@ public class GTUtility {
         }
 
         int tierLower = Math.max(0, workingTier - 1);
-        if (voltage > GTValues.VOC[tierLower]) {
+        if (voltage > GTValues.V[tierLower]) {
             // no action needed, this recipe is already scaled accordingly.
             return voltage;
         }
