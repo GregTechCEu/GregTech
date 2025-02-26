@@ -441,7 +441,7 @@ public class MaterialRecipeHandler {
                     .notConsumable(OrePrefix.craftingLens, MarkerMaterials.Color.White)
                     .output(gemPrefix, material)
                     .duration(300)
-                    .EUt(240)
+                    .EUt(GTUtility.scaleVoltage(240, material.getWorkingTier()))
                     .buildAndRegister();
         }
     }
@@ -497,6 +497,7 @@ public class MaterialRecipeHandler {
 
     public static void processFrame(OrePrefix framePrefix, Material material, DustProperty property) {
         if (material.hasFlag(GENERATE_FRAME)) {
+            int workingTier = material.getWorkingTier();
             boolean isWoodenFrame = ModHandler.isMaterialWood(material);
             ModHandler.addShapedRecipe(String.format("frame_%s", material),
                     OreDictUnifier.get(framePrefix, material, 2),
@@ -507,7 +508,7 @@ public class MaterialRecipeHandler {
                     .input(OrePrefix.stick, material, 4)
                     .circuitMeta(4)
                     .outputs(OreDictUnifier.get(framePrefix, material, 1))
-                    .EUt(VA[ULV]).duration(64)
+                    .EUt(GTUtility.scaleVoltage(VA[ULV], workingTier)).duration(64)
                     .buildAndRegister();
         }
     }
