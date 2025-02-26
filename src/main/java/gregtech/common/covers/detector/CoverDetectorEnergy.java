@@ -5,6 +5,8 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.util.RedstoneUtil;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityPowerSubstation;
 
@@ -27,7 +29,7 @@ public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable 
 
     @Override
     public boolean canAttach(@NotNull CoverableView coverable, @NotNull EnumFacing side) {
-        return coverable.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null ||
+        return coverable.hasCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) ||
                 coverable instanceof MetaTileEntityPowerSubstation; // todo check this
     }
 
@@ -57,6 +59,11 @@ public class CoverDetectorEnergy extends CoverDetectorBase implements ITickable 
     public void renderCover(@NotNull CCRenderState renderState, @NotNull Matrix4 translation,
                             IVertexOperation[] pipeline, @NotNull Cuboid6 plateBox, @NotNull BlockRenderLayer layer) {
         Textures.DETECTOR_ENERGY.renderSided(getAttachedSide(), plateBox, renderState, pipeline, translation);
+    }
+
+    @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.DETECTOR_ENERGY).build();
     }
 
     @Override

@@ -114,13 +114,13 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
         List<IEnergyContainer> inputs = new ArrayList<>();
         inputs.addAll(getAbilities(MultiblockAbility.INPUT_ENERGY));
         inputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
-        inputs.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
+        inputs.addAll(getAbilities(MultiblockAbility.LASER_RECEPTION));
         this.inputHatches = new EnergyContainerList(inputs);
 
         List<IEnergyContainer> outputs = new ArrayList<>();
         outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
         outputs.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
-        outputs.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
+        outputs.addAll(getAbilities(MultiblockAbility.LASER_TRANSMISSION));
         this.outputHatches = new EnergyContainerList(outputs);
 
         List<IBatteryData> parts = new ArrayList<>();
@@ -249,9 +249,9 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
                 .where('X', states(getCasingState()).setMinGlobalLimited(MIN_CASINGS)
                         .or(maintenancePredicate())
                         .or(abilities(MultiblockAbility.INPUT_ENERGY, MultiblockAbility.SUBSTATION_INPUT_ENERGY,
-                                MultiblockAbility.INPUT_LASER).setMinGlobalLimited(1))
+                                MultiblockAbility.LASER_RECEPTION).setMinGlobalLimited(1))
                         .or(abilities(MultiblockAbility.OUTPUT_ENERGY, MultiblockAbility.SUBSTATION_OUTPUT_ENERGY,
-                                MultiblockAbility.OUTPUT_LASER).setMinGlobalLimited(1)))
+                                MultiblockAbility.LASER_TRANSMISSION).setMinGlobalLimited(1)))
                 .where('G', states(getGlassState()))
                 .where('B', BATTERY_PREDICATE.get())
                 .build();

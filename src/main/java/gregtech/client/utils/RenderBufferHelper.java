@@ -2,6 +2,7 @@ package gregtech.client.utils;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -53,6 +54,12 @@ public class RenderBufferHelper {
     public static void renderCubeFace(BufferBuilder buffer, Cuboid6 cuboid, float r, float g, float b, float a,
                                       boolean shade) {
         renderCubeFace(buffer, cuboid.min.x, cuboid.min.y, cuboid.min.z, cuboid.max.x, cuboid.max.y, cuboid.max.z, r, g,
+                b, a, shade);
+    }
+
+    public static void renderCubeFace(BufferBuilder buffer, AxisAlignedBB cuboid, float r, float g, float b, float a,
+                                      boolean shade) {
+        renderCubeFace(buffer, cuboid.minX, cuboid.minY, cuboid.minZ, cuboid.maxX, cuboid.maxY, cuboid.maxZ, r, g,
                 b, a, shade);
     }
 

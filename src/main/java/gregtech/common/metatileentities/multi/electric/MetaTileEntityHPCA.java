@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
+import gregtech.api.capability.data.IComputationProvider;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
@@ -67,7 +68,7 @@ import java.util.function.Supplier;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
-                                implements IOpticalComputationProvider, IControllable, IProgressBarMultiblock {
+                                implements IComputationProvider, IControllable, IProgressBarMultiblock {
 
     private static final double IDLE_TEMPERATURE = 200;
     private static final double DAMAGE_TEMPERATURE = 1000;
@@ -112,22 +113,19 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     }
 
     @Override
-    public int requestCWUt(int cwut, boolean simulate, @NotNull Collection<IOpticalComputationProvider> seen) {
-        seen.add(this);
-        return isActive() && isWorkingEnabled() && !hasNotEnoughEnergy ? hpcaHandler.allocateCWUt(cwut, simulate) : 0;
+    public long supplyCWU(long requested, boolean simulate) {
+        return isActive() && isWorkingEnabled() && !hasNotEnoughEnergy ?
+                hpcaHandler.allocateCWUt((int) Math.min(Integer.MAX_VALUE, requested), simulate) : 0;
     }
 
     @Override
-    public int getMaxCWUt(@NotNull Collection<IOpticalComputationProvider> seen) {
-        seen.add(this);
+    public boolean supportsBridging() {
+        return hpcaHandler.hasHPCABridge();
+    }
+
+    @Override
+    public long maxCWUt() {
         return isActive() && isWorkingEnabled() ? hpcaHandler.getMaxCWUt() : 0;
-    }
-
-    @Override
-    public boolean canBridge(@NotNull Collection<IOpticalComputationProvider> seen) {
-        seen.add(this);
-        // don't show a problem if the structure is not yet formed
-        return !isStructureFormed() || hpcaHandler.hasHPCABridge();
     }
 
     @Override

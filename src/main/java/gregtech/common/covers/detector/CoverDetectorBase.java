@@ -10,9 +10,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import org.jetbrains.annotations.NotNull;
 
 import static gregtech.api.capability.GregtechDataCodes.UPDATE_INVERTED;
@@ -96,7 +96,7 @@ public abstract class CoverDetectorBase extends CoverBase {
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer playerIn, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         if (getWorld().isRemote) {
             return EnumActionResult.SUCCESS;
         }

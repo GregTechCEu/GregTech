@@ -7,6 +7,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.ILaserContainer;
+import gregtech.api.capability.ILaserRelay;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -201,12 +202,15 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
                 IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
                         opposite);
                 // Try to get laser capability
-                if (container == null)
-                    container = tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, opposite);
-
-                if (container == null || !container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0)
-                    continue;
-                ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed);
+                if (container == null) {
+                    ILaserRelay relay = tile.getCapability(GregtechTileCapabilities.CAPABILITY_LASER, opposite);
+                    if (relay != null) {
+                        ampsUsed += relay.receiveLaser(voltage, amps - ampsUsed);
+                    }
+                } else {
+                    if (!container.inputsEnergy(opposite) || container.getEnergyCanBeInserted() == 0) continue;
+                    ampsUsed += container.acceptEnergyFromNetwork(opposite, voltage, amps - ampsUsed, false);
+                }
                 if (ampsUsed >= amps)
                     break;
             }
@@ -238,20 +242,29 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements ILas
     }
 
     @Override
-    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+    public long receiveLaser(long laserVoltage, long laserAmperage) {
+        return acceptEnergyFromNetwork(null, laserVoltage, laserAmperage, false);
+    }
+
+    @Override
+    public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
         if (source || !active || ampsReceived >= amps) {
             return 0;
         }
         if (voltage > this.voltage) {
-            if (doExplosion)
-                return 0;
-            doExplosion = true;
+            if (!simulate) {
+                if (doExplosion)
+                    return 0;
+                doExplosion = true;
+            }
             return Math.min(amperage, getInputAmperage() - ampsReceived);
         }
         long amperesAccepted = Math.min(amperage, getInputAmperage() - ampsReceived);
         if (amperesAccepted > 0) {
-            ampsReceived += amperesAccepted;
-            energyIOPerSec += amperesAccepted * voltage;
+            if (!simulate) {
+                ampsReceived += amperesAccepted;
+                energyIOPerSec += amperesAccepted * voltage;
+            }
             return amperesAccepted;
         }
         return 0;

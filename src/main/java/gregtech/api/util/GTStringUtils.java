@@ -1,10 +1,10 @@
 package gregtech.api.util;
 
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -55,8 +55,10 @@ public final class GTStringUtils {
                 id = "block" + ((BlockCompressed) block).getGtMaterial(stack).toCamelCaseString();
             } else if (block instanceof BlockFrame) {
                 id = "frame" + ((BlockFrame) block).getGtMaterial(stack).toCamelCaseString();
-            } else if (block instanceof BlockMaterialPipe blockMaterialPipe) {
-                id = blockMaterialPipe.getPrefix().name + blockMaterialPipe.getItemMaterial(stack).toCamelCaseString();
+            } else if (block instanceof PipeMaterialBlock blockMaterialPipe) {
+                Material mat = blockMaterialPipe.getMaterialForStack(stack);
+                if (mat != null)
+                    id = blockMaterialPipe.getStructure().getOrePrefix().name + mat.toCamelCaseString();
             }
 
             if (id != null) {

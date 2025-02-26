@@ -25,6 +25,8 @@ import net.minecraft.block.BlockSnow;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
@@ -34,13 +36,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.Constants;
@@ -51,6 +56,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -64,6 +71,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,6 +82,8 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
+import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
 public class GTUtility {
@@ -919,5 +930,152 @@ public class GTUtility {
      */
     public static int safeCastLongToInt(long v) {
         return v > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) v;
+    }
+
+    public static double geometricMean(double first, double... numbers) {
+        for (double number : numbers) {
+            first *= number;
+        }
+        return Math.pow(first, 1D / (1 + numbers.length));
+    }
+
+    @NotNull
+    @SideOnly(Side.CLIENT)
+    public static EntityPlayer getSP() {
+        return net.minecraft.client.Minecraft.getMinecraft().player;
+    }
+
+    /**
+     * @param minValue  the minimum possible succeeding value
+     * @param maxValue  the maximum possible succeeding value
+     * @param test      the predicate to query for success
+     * @param ascending determines the direction of search
+     * @return the smallest succeeding value if ascending, or the largest succeeding value if descending.
+     */
+    public static long binarySearchLong(long minValue, long maxValue, LongPredicate test, boolean ascending) {
+        while (maxValue - minValue > 1) {
+            long middle = (minValue + maxValue) / 2;
+            // XOR
+            if (test.test(middle) ^ !ascending) {
+                maxValue = middle;
+            } else {
+                minValue = middle;
+            }
+        }
+        return test.test(ascending ? minValue : maxValue) ^ ascending ? maxValue : minValue;
+    }
+
+    /**
+     * @param minValue  the minimum possible succeeding value
+     * @param maxValue  the maximum possible succeeding value
+     * @param test      the predicate to query for success
+     * @param ascending determines the direction of search
+     * @return the smallest succeeding value if ascending, or the largest succeeding value if descending.
+     */
+    public static int binarySearchInt(int minValue, int maxValue, IntPredicate test, boolean ascending) {
+        while (maxValue - minValue > 1) {
+            int middle = (minValue + maxValue) / 2;
+            // XOR
+            if (test.test(middle) ^ !ascending) {
+                maxValue = middle;
+            } else {
+                minValue = middle;
+            }
+        }
+        return test.test(ascending ? minValue : maxValue) ^ ascending ? maxValue : minValue;
+    }
+
+    public static int[] convertARGBtoArray(int argb) {
+        int a = argb >> 24 & 255;
+        int r = argb >> 16 & 255;
+        int g = argb >> 8 & 255;
+        int b = argb & 255;
+        return new int[] { a, r, g, b };
+    }
+
+    @Contract(pure = true)
+    public static boolean evalMask(@NotNull Enum<?> anEnum, byte mask) {
+        return (mask & (1 << anEnum.ordinal())) > 0;
+    }
+
+    @Contract(pure = true)
+    public static boolean evalMask(@NotNull Enum<?> anEnum, @NotNull BitSet mask) {
+        return mask.get(anEnum.ordinal());
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static <T extends Enum<T>> EnumSet<T> maskToSet(@NotNull Class<T> enumClass, byte mask) {
+        EnumSet<T> set = EnumSet.noneOf(enumClass);
+        for (T anEnum : enumClass.getEnumConstants()) {
+            if (evalMask(anEnum, mask)) set.add(anEnum);
+        }
+        return set;
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static <T extends Enum<T>> EnumSet<T> maskToSet(@NotNull Class<T> enumClass, @NotNull BitSet mask) {
+        EnumSet<T> set = EnumSet.noneOf(enumClass);
+        for (T anEnum : enumClass.getEnumConstants()) {
+            if (evalMask(anEnum, mask)) set.add(anEnum);
+        }
+        return set;
+    }
+
+    @Contract(pure = true)
+    @NotNull
+    public static BitSet setToMask(@NotNull EnumSet<?> enumSet) {
+        BitSet mask = new BitSet();
+        for (Enum<?> anEnum : enumSet) {
+            mask.set(anEnum.ordinal());
+        }
+        return mask;
+    }
+
+    /**
+     * Forces the initialization of a class; this includes things like loading its static fields.
+     * This can be useful because a statement like {@code AClass.class} does not initialize a class.
+     * <br>
+     * <br>
+     * Does nothing if the class is already initialized.
+     *
+     * @param clazz the class object to initialize.
+     */
+    public static void forceInitialization(@NotNull Class<?> clazz) {
+        try {
+            Class.forName(clazz.getName(), true, clazz.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError(e);  // Can't happen
+        }
+    }
+
+    public static int moveACloserTo0ByB(int a, int b) {
+        return a > 0 ? a - b : a + b;
+    }
+
+    public static void spawnParticles(World world, EnumFacing direction, EnumParticleTypes particleType, BlockPos pos,
+                                      int particleCount) {
+        spawnParticles(world, direction, particleType, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                particleCount);
+    }
+
+    public static void spawnParticles(World world, EnumFacing direction, EnumParticleTypes particleType, Entity entity,
+                                      int particleCount) {
+        Vec3d vec = entity.getPositionEyes(1);
+        spawnParticles(world, direction, particleType, vec.x, vec.y, vec.y, particleCount);
+    }
+
+    public static void spawnParticles(World world, EnumFacing direction, EnumParticleTypes particleType, double x,
+                                      double y, double z,
+                                      int particleCount) {
+        if (world instanceof WorldServer server) {
+            server.spawnParticle(particleType,
+                    x, y, z, particleCount,
+                    direction.getXOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
+                    direction.getYOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
+                    direction.getZOffset() * 0.2 + GTValues.RNG.nextDouble() * 0.1,
+                    0.1);
+        }
     }
 }

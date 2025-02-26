@@ -20,7 +20,7 @@ public final class GTCreativeTabs {
     public static final BaseCreativeTab TAB_GREGTECH_CABLES = new BaseCreativeTab(GTValues.MODID + ".cables",
             () -> OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_PIPES = new BaseCreativeTab(GTValues.MODID + ".pipes",
-            () -> OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Aluminium), true);
+            () -> OreDictUnifier.get(OrePrefix.pipeNormal, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_TOOLS = new BaseCreativeTab(GTValues.MODID + ".tools",
             () -> ToolItems.HARD_HAMMER.get(Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_MATERIALS = new BaseCreativeTab(GTValues.MODID + ".materials",

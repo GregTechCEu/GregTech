@@ -255,40 +255,36 @@ public class OrePrefix {
     public static final OrePrefix frameGt = new OrePrefix("frameGt", M * 2, null, null, ENABLE_UNIFICATION,
             material -> material.hasFlag(GENERATE_FRAME));
 
-    public static final OrePrefix pipeTinyFluid = new OrePrefix("pipeTinyFluid", M / 2, null, null, ENABLE_UNIFICATION,
+    public static final OrePrefix pipeTiny = new OrePrefix("pipeTiny", M / 2, null, null, ENABLE_UNIFICATION,
+            hasNoWoodProperty);
+    public static final OrePrefix pipeSmall = new OrePrefix("pipeSmall", M, null, null, ENABLE_UNIFICATION,
             null);
-    public static final OrePrefix pipeSmallFluid = new OrePrefix("pipeSmallFluid", M, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeNormalFluid = new OrePrefix("pipeNormalFluid", M * 3, null, null,
+    public static final OrePrefix pipeNormal = new OrePrefix("pipeNormal", M * 3, null, null,
             ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeFluid = new OrePrefix("pipeLargeFluid", M * 6, null, null,
+    public static final OrePrefix pipeLarge = new OrePrefix("pipeLarge", M * 6, null, null,
             ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeHugeFluid = new OrePrefix("pipeHugeFluid", M * 12, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 4, null, null,
-            ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 9, null, null,
-            ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeHuge = new OrePrefix("pipeHuge", M * 12, null, null, ENABLE_UNIFICATION,
+            hasNoWoodProperty);
+    public static final OrePrefix pipeQuadruple = new OrePrefix("pipeQuadruple", M * 4, null, null,
+            ENABLE_UNIFICATION, hasNoWoodProperty);
+    public static final OrePrefix pipeNonuple = new OrePrefix("pipeNonuple", M * 9, null, null,
+            ENABLE_UNIFICATION, hasNoWoodProperty);
 
-    public static final OrePrefix pipeTinyItem = new OrePrefix("pipeTinyItem", M / 2, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeSmallItem = new OrePrefix("pipeSmallItem", M, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeNormalItem = new OrePrefix("pipeNormalItem", M * 3, null, null,
-            ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeLargeItem = new OrePrefix("pipeLargeItem", M * 6, null, null, ENABLE_UNIFICATION,
-            null);
-    public static final OrePrefix pipeHugeItem = new OrePrefix("pipeHugeItem", M * 12, null, null, ENABLE_UNIFICATION,
-            null);
-
+    public static final OrePrefix pipeTinyRestrictive = new OrePrefix("pipeTinyRestrictive", M / 2, null, null,
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeSmallRestrictive = new OrePrefix("pipeSmallRestrictive", M, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeNormalRestrictive = new OrePrefix("pipeNormalRestrictive", M * 3, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeLargeRestrictive = new OrePrefix("pipeLargeRestrictive", M * 6, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
     public static final OrePrefix pipeHugeRestrictive = new OrePrefix("pipeHugeRestrictive", M * 12, null, null,
-            ENABLE_UNIFICATION, null);
+            ENABLE_UNIFICATION, hasNoWoodProperty);
+    public static final OrePrefix pipeQuadrupleRestrictive = new OrePrefix("pipeQuadrupleRestrictive", M * 4, null,
+            null,
+            ENABLE_UNIFICATION, hasNoWoodProperty);
+    public static final OrePrefix pipeNonupleRestrictive = new OrePrefix("pipeNonupleRestrictive", M * 9, null, null,
+            ENABLE_UNIFICATION, hasNoWoodProperty);
 
     public static final OrePrefix wireGtHex = new OrePrefix("wireGtHex", M * 8, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix wireGtOctal = new OrePrefix("wireGtOctal", M * 4, null, null, ENABLE_UNIFICATION,
@@ -342,6 +338,7 @@ public class OrePrefix {
         public static final Predicate<Material> hasIngotProperty = mat -> mat.hasProperty(PropertyKey.INGOT);
         public static final Predicate<Material> hasBlastProperty = mat -> mat.hasProperty(PropertyKey.BLAST);
         public static final Predicate<Material> hasRotorProperty = mat -> mat.hasProperty(PropertyKey.ROTOR);
+        public static final Predicate<Material> hasNoWoodProperty = mat -> !mat.hasProperty(PropertyKey.WOOD);
     }
 
     public static void init() {
@@ -457,9 +454,12 @@ public class OrePrefix {
                 new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
 
         pipeSmallRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeTinyRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeNormalRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeLargeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
         pipeHugeRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeQuadrupleRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
+        pipeNonupleRestrictive.addSecondaryMaterial(new MaterialStack(Materials.Iron, ring.materialAmount * 2));
 
         cableGtSingle.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
         cableGtDouble.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount));
@@ -467,7 +467,6 @@ public class OrePrefix {
         cableGtOctal.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 3));
         cableGtHex.addSecondaryMaterial(new MaterialStack(Materials.Rubber, plate.materialAmount * 5));
 
-        plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);
 
         dustSmall.setIgnored(Materials.Lapotron);

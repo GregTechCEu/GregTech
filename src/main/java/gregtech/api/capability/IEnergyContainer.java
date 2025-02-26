@@ -5,14 +5,14 @@ import net.minecraft.util.EnumFacing;
 public interface IEnergyContainer {
 
     /**
-     * This method is basically {@link #changeEnergy(long)}, but it also handles amperes.
+     * This method is basically {@link #changeEnergy(long)}, but it also handles amperes and simulation.
      * This method should always be used when energy is passed between blocks.
      *
-     * @param voltage  amount of energy packets (energy to add / input voltage)
-     * @param amperage packet size (energy to add / input amperage)
+     * @param voltage  packet size (energy to add divided by input amperage)
+     * @param amperage amount of energy packets (energy to add divided by input voltage)
      * @return amount of used amperes. 0 if not accepted anything.
      */
-    long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage);
+    long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate);
 
     /**
      * @return if this container accepts energy from the given side
@@ -29,7 +29,7 @@ public interface IEnergyContainer {
     /**
      * This changes the amount stored.
      * <b>This should only be used internally</b> (f.e. draining while working or filling while generating).
-     * For transfer between blocks use {@link #acceptEnergyFromNetwork(EnumFacing, long, long)}!!!
+     * For transfer between blocks use {@link #acceptEnergyFromNetwork(EnumFacing, long, long, boolean)}!!!
      *
      * @param differenceAmount amount of energy to add (>0) or remove (<0)
      * @return amount of energy added or removed
@@ -123,7 +123,7 @@ public interface IEnergyContainer {
     IEnergyContainer DEFAULT = new IEnergyContainer() {
 
         @Override
-        public long acceptEnergyFromNetwork(EnumFacing enumFacing, long l, long l1) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
             return 0;
         }
 

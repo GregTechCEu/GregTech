@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 public abstract class SyncedTileEntityBase extends BlockStateTileEntity implements ISyncedTileEntity {
 
     private final PacketDataList updates = new PacketDataList();
+    private int lastWorldNotifyTick;
 
     public @Nullable TileEntity getNeighbor(EnumFacing facing) {
         if (world == null || pos == null) return null;
@@ -38,7 +39,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         dataWriter.accept(new PacketBuffer(backedBuffer));
         byte[] updateData = Arrays.copyOfRange(backedBuffer.array(), 0, backedBuffer.writerIndex());
         this.updates.add(discriminator, updateData);
-        notifyWorld();
+        notifyWorldOfPendingPackets();
     }
 
     /**
@@ -48,20 +49,20 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
      */
     public void addPacketsFrom(SyncedTileEntityBase syncedTileEntityBase) {
         if (this == syncedTileEntityBase || syncedTileEntityBase.updates.isEmpty()) return;
-        boolean wasEmpty = this.updates.isEmpty();
         this.updates.addAll(syncedTileEntityBase.updates);
         syncedTileEntityBase.updates.clear();
-        if (wasEmpty) notifyWorld(); // if the data is not empty we already notified the world
+        notifyWorldOfPendingPackets();
     }
 
-    private void notifyWorld() {
-        @SuppressWarnings("deprecation")
-        IBlockState blockState = getBlockType().getStateFromMeta(getBlockMetadata());
+    protected void notifyWorldOfPendingPackets() {
+        // this must be called every time packets are added, because it doesn't always get picked up the first time.
+        IBlockState blockState = getBlockState();
         world.notifyBlockUpdate(getPos(), blockState, blockState, 0);
     }
 
     @Override
     public final @Nullable SPacketUpdateTileEntity getUpdatePacket() {
+        beforeUpdatePacket(this.updates);
         if (this.updates.isEmpty()) {
             return null;
         }
@@ -69,6 +70,8 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity implemen
         updateTag.setTag("d", this.updates.dumpToNbt());
         return new SPacketUpdateTileEntity(getPos(), 0, updateTag);
     }
+
+    protected void beforeUpdatePacket(PacketDataList pendingUpdates) {}
 
     @Override
     public final void onDataPacket(@NotNull NetworkManager net, @NotNull SPacketUpdateTileEntity pkt) {

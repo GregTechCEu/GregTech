@@ -1,10 +1,10 @@
 package gregtech.integration.theoneprobe.provider;
 
 import gregtech.api.GTValues;
+import gregtech.api.longdist.ILDEndpoint;
+import gregtech.api.longdist.LongDistanceNetwork;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
-import gregtech.api.pipenet.longdist.ILDEndpoint;
-import gregtech.api.pipenet.longdist.LongDistanceNetwork;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

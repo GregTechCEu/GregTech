@@ -5,6 +5,7 @@ import gregtech.api.block.VariantActiveBlock;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.capability.IMultipleRecipeMaps;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -13,7 +14,6 @@ import gregtech.api.pattern.BlockWorldState;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTLog;
@@ -256,10 +256,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                 .toArray(IBlockState[]::new))
                         .or(new TraceabilityPredicate(blockWorldState -> {
                             TileEntity tileEntity = blockWorldState.getTileEntity();
-                            if (!(tileEntity instanceof IPipeTile)) {
-                                return false;
-                            }
-                            IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
+                            if (!(tileEntity instanceof PipeTileEntity pipeTile)) return false;
                             return ArrayUtils.contains(frameMaterials, pipeTile.getFrameMaterial());
                         }));
     }

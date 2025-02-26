@@ -2,6 +2,7 @@ package gregtech.api.metatileentity.interfaces;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,11 @@ public interface INeighborCache extends IHasWorldObjectAndCoords {
      */
     default @Nullable TileEntity getNeighbor(@NotNull EnumFacing facing) {
         return world().getTileEntity(pos().offset(facing));
+    }
+
+    default @Nullable TileEntity getNeighborNoChunkloading(@NotNull EnumFacing facing) {
+        BlockPos pos = pos().offset(facing);
+        return world().isBlockLoaded(pos) ? world().getTileEntity(pos) : null;
     }
 
     /**

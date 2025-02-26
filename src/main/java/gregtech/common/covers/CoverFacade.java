@@ -7,6 +7,7 @@ import gregtech.api.cover.CoverableView;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.util.GTLog;
 import gregtech.client.renderer.handler.FacadeRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
 import gregtech.common.covers.facade.FacadeHelper;
 import gregtech.common.items.behaviors.FacadeItem;
 
@@ -22,6 +23,8 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -70,6 +73,12 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
         FacadeRenderer.renderBlockCover(renderState, translation, getCoverableView().getWorld(),
                 getCoverableView().getPos(), getAttachedSide().getIndex(), facadeState, plateBox, layer);
         ForgeHooksClient.setRenderLayer(oldLayer);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected CoverRenderer buildRenderer() {
+        return FacadeRenderer.createRenderer(getWorld(), getPos(), facadeState);
     }
 
     @Override
@@ -140,6 +149,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
 
     private void updateFacadeState() {
         this.facadeState = FacadeHelper.lookupBlockForItem(facadeStack);
+        this.renderer = null;
         // called during world load, where world can be null
         if (getWorld() != null && !getWorld().isRemote) {
             scheduleRenderUpdate();
@@ -147,7 +157,7 @@ public class CoverFacade extends CoverBase implements IFacadeCover {
     }
 
     @Override
-    public boolean shouldAutoConnectToPipes() {
+    public boolean forcePipeRenderConnection() {
         return false;
     }
 

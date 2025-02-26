@@ -1467,7 +1467,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(80000).duration(600)
                 .input(WETWARE_CIRCUIT_BOARD)
                 .input(STEM_CELLS, 16)
-                .input(pipeSmallFluid, Polybenzimidazole, 8)
+                .input(pipeSmall, Polybenzimidazole, 8)
                 .input(plate, Electrum, 8)
                 .input(foil, SiliconeRubber, 16)
                 .input(bolt, HSSE, 8)

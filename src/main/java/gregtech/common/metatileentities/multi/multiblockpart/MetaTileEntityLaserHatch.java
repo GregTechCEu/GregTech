@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.ILaserContainer;
 import gregtech.api.capability.impl.LaserContainerHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
@@ -34,17 +35,17 @@ import static gregtech.api.GTValues.VNF;
 public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
                                       implements IMultiblockAbilityPart<ILaserContainer>, IDataInfoProvider {
 
-    private final boolean isOutput;
+    private final boolean isTransmitter;
     private final int tier;
     private final int amperage;
     private final ILaserContainer buffer;
 
-    public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isOutput, int tier, int amperage) {
+    public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, boolean isTransmitter, int tier, int amperage) {
         super(metaTileEntityId, tier);
-        this.isOutput = isOutput;
+        this.isTransmitter = isTransmitter;
         this.tier = tier;
         this.amperage = amperage;
-        if (isOutput) {
+        if (isTransmitter) {
             this.buffer = LaserContainerHandler.emitterContainer(this, GTValues.V[tier] * 64L * amperage,
                     GTValues.V[tier], amperage);
             ((LaserContainerHandler) this.buffer).setSideOutputCondition(s -> s == getFrontFacing());
@@ -57,7 +58,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new MetaTileEntityLaserHatch(metaTileEntityId, isOutput, tier, amperage);
+        return new MetaTileEntityLaserHatch(metaTileEntityId, isTransmitter, tier, amperage);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public MultiblockAbility<ILaserContainer> getAbility() {
-        return isOutput ? MultiblockAbility.OUTPUT_LASER : MultiblockAbility.INPUT_LASER;
+        return isTransmitter ? MultiblockAbility.LASER_TRANSMISSION : MultiblockAbility.LASER_RECEPTION;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            if (isOutput) {
+            if (isTransmitter) {
                 Textures.LASER_SOURCE.renderSided(getFrontFacing(), renderState, translation, pipeline);
             } else {
                 Textures.LASER_TARGET.renderSided(getFrontFacing(), renderState, translation, pipeline);
@@ -90,11 +91,11 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, @NotNull List<String> tooltip,
                                boolean advanced) {
-        tooltip.add(I18n.format(isOutput ? "gregtech.machine.laser_hatch.source.tooltip1" :
+        tooltip.add(I18n.format(isTransmitter ? "gregtech.machine.laser_hatch.source.tooltip1" :
                 "gregtech.machine.laser_hatch.target.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.laser_hatch.tooltip2"));
 
-        if (isOutput) {
+        if (isTransmitter) {
             tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", V[tier], VNF[tier]));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", amperage));
         } else {
@@ -114,6 +115,9 @@ public class MetaTileEntityLaserHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (side == getFrontFacing() && capability == GregtechTileCapabilities.CAPABILITY_LASER) {
+            return GregtechTileCapabilities.CAPABILITY_LASER.cast(this.buffer);
+        }
         return super.getCapability(capability, side);
     }
 }

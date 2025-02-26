@@ -2,9 +2,9 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IObjectHolder;
-import gregtech.api.capability.IOpticalComputationHatch;
-import gregtech.api.capability.IOpticalComputationProvider;
-import gregtech.api.capability.IOpticalComputationReceiver;
+import gregtech.api.capability.data.IComputationUser;
+import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.query.ComputationQuery;
 import gregtech.api.capability.impl.ComputationRecipeLogic;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -47,10 +47,8 @@ import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
 
-public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
-                                           implements IOpticalComputationReceiver {
+public class MetaTileEntityResearchStation extends RecipeMapMultiblockController implements IComputationUser {
 
-    private IOpticalComputationProvider computationProvider;
     private IObjectHolder objectHolder;
 
     public MetaTileEntityResearchStation(ResourceLocation metaTileEntityId) {
@@ -66,20 +64,11 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        List<IOpticalComputationHatch> providers = getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION);
-        if (providers != null && providers.size() >= 1) {
-            computationProvider = providers.get(0);
-        }
         List<IObjectHolder> holders = getAbilities(MultiblockAbility.OBJECT_HOLDER);
         if (holders != null && holders.size() >= 1) {
             objectHolder = holders.get(0);
             // cannot set in initializeAbilities since super() calls it before setting the objectHolder field here
             this.inputInventory = new ItemHandlerList(Collections.singletonList(objectHolder.getAsHandler()));
-        }
-
-        // should never happen, but would rather do this than have an obscure NPE
-        if (computationProvider == null || objectHolder == null) {
-            invalidateStructure();
         }
     }
 
@@ -99,7 +88,6 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
 
     @Override
     public void invalidateStructure() {
-        computationProvider = null;
         // recheck the ability to make sure it wasn't the one broken
         List<IObjectHolder> holders = getAbilities(MultiblockAbility.OBJECT_HOLDER);
         if (holders != null && holders.size() >= 1 && holders.get(0) == objectHolder) {
@@ -110,8 +98,14 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     }
 
     @Override
-    public IOpticalComputationProvider getComputationProvider() {
-        return computationProvider;
+    public long requestCWU(long requested, boolean simulate) {
+        return queryConnected().requestCWU(requested, simulate);
+    }
+
+    private ComputationQuery queryConnected() {
+        ComputationQuery query = new ComputationQuery();
+        IDataAccess.accessData(getAbilities(MultiblockAbility.COMPUTATION_DATA_RECEPTION), query);
+        return query;
     }
 
     public IObjectHolder getObjectHolder() {

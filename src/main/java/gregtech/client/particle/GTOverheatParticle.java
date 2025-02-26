@@ -1,6 +1,8 @@
 package gregtech.client.particle;
 
 import gregtech.api.GTValues;
+import gregtech.api.graphnet.pipenet.logic.TemperatureLogic;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.client.renderer.IRenderSetup;
 import gregtech.client.shader.postprocessing.BloomEffect;
 import gregtech.client.shader.postprocessing.BloomType;
@@ -8,7 +10,6 @@ import gregtech.client.utils.EffectRenderContext;
 import gregtech.client.utils.RenderBufferHelper;
 import gregtech.client.utils.RenderUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,11 +17,11 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import codechicken.lib.vec.Cuboid6;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -31,6 +32,8 @@ import java.util.List;
  * @author brachy84
  */
 public class GTOverheatParticle extends GTBloomParticle {
+
+    public static final int TEMPERATURE_CUTOFF = 400;
 
     /**
      * <a href="http://www.vendian.org/mncharity/dir3/blackbody/">Source</a>
@@ -145,36 +148,46 @@ public class GTOverheatParticle extends GTBloomParticle {
         return RenderUtil.interpolateColor(color, blackBodyColors[index + 1], temperature % 200 / 200f);
     }
 
-    private final TileEntityCable tileEntity;
+    private final PipeTileEntity tileEntity;
+    private @NotNull TemperatureLogic temperatureLogic;
 
-    protected final int meltTemp;
-    protected int temperature = 293;
-    protected List<Cuboid6> pipeBoxes;
+    protected List<AxisAlignedBB> pipeBoxes;
     protected boolean insulated;
 
     protected float alpha = 0;
     protected int color = blackBodyColors[0];
 
-    public GTOverheatParticle(@NotNull TileEntityCable tileEntity, int meltTemp, @NotNull List<Cuboid6> pipeBoxes,
-                              boolean insulated) {
+    public GTOverheatParticle(@NotNull PipeTileEntity tileEntity, @NotNull TemperatureLogic temperatureLogic,
+                              @NotNull List<AxisAlignedBB> pipeBoxes, boolean insulated) {
         super(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
         this.tileEntity = tileEntity;
-        this.meltTemp = meltTemp;
+        this.temperatureLogic = temperatureLogic;
         this.pipeBoxes = pipeBoxes;
         updatePipeBoxes(pipeBoxes);
         this.insulated = insulated;
     }
 
-    public void updatePipeBoxes(@NotNull List<Cuboid6> pipeBoxes) {
+    public void updatePipeBoxes(@NotNull List<AxisAlignedBB> pipeBoxes) {
         this.pipeBoxes = pipeBoxes;
-        for (Cuboid6 cuboid : this.pipeBoxes) {
-            cuboid.expand(0.001);
-        }
+        pipeBoxes.replaceAll(axisAlignedBB -> axisAlignedBB.expand(0.003, 0.003, 0.003));
     }
 
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
-        if (temperature <= 293 || temperature > meltTemp) {
+    public void setTemperatureLogic(@NotNull TemperatureLogic logic) {
+        this.temperatureLogic = logic;
+    }
+
+    @Override
+    public void onUpdate() {
+        if (tileEntity.isInvalid() || !tileEntity.isOverheatParticleAlive()) {
+            setExpired();
+            tileEntity.killOverheatParticle();
+            return;
+        }
+
+        // onUpdate is called once per tick
+        int temperature = temperatureLogic.getTemperature(temperatureLogic.getLastRestorationTick() + 1);
+
+        if (temperature <= TEMPERATURE_CUTOFF || temperature > temperatureLogic.getTemperatureMaximum()) {
             setExpired();
             return;
         }
@@ -187,16 +200,8 @@ public class GTOverheatParticle extends GTBloomParticle {
             alpha = 0.8f;
         }
         color = getBlackBodyColor(temperature);
-    }
 
-    @Override
-    public void onUpdate() {
-        if (tileEntity.isInvalid() || !tileEntity.isParticleAlive()) {
-            setExpired();
-            return;
-        }
-
-        if (temperature > 400 && GTValues.RNG.nextFloat() < 0.04) {
+        if (GTValues.RNG.nextFloat() < 0.04) {
             spawnSmoke();
         }
     }
@@ -215,8 +220,7 @@ public class GTOverheatParticle extends GTBloomParticle {
     public String toString() {
         return "GTOverheatParticle{" +
                 "tileEntity=" + tileEntity +
-                ", meltTemp=" + meltTemp +
-                ", temperature=" + temperature +
+                ", temperatureLogic=" + temperatureLogic +
                 ", pipeBoxes=" + pipeBoxes +
                 ", insulated=" + insulated +
                 ", alpha=" + alpha +
@@ -244,7 +248,7 @@ public class GTOverheatParticle extends GTBloomParticle {
         float blue = (color & 0xFF) / 255f;
 
         buffer.setTranslation(posX - context.cameraX(), posY - context.cameraY(), posZ - context.cameraZ());
-        for (Cuboid6 cuboid : pipeBoxes) {
+        for (AxisAlignedBB cuboid : pipeBoxes) {
             RenderBufferHelper.renderCubeFace(buffer, cuboid, red, green, blue, alpha, true);
         }
     }
@@ -252,10 +256,9 @@ public class GTOverheatParticle extends GTBloomParticle {
     @Override
     public boolean shouldRenderBloomEffect(@NotNull EffectRenderContext context) {
         if (this.insulated) return false;
-        for (Cuboid6 cuboid : pipeBoxes) {
-            if (!context.camera().isBoxInFrustum(
-                    cuboid.min.x + posX, cuboid.min.y + posY, cuboid.min.z + posZ,
-                    cuboid.max.x + posX, cuboid.max.y + posY, cuboid.max.z + posZ)) {
+        for (AxisAlignedBB cuboid : pipeBoxes) {
+            if (!context.camera().isBoxInFrustum(cuboid.minX + posX, cuboid.minY + posY, cuboid.minZ + posZ,
+                    cuboid.maxX + posX, cuboid.maxY + posY, cuboid.maxZ + posZ)) {
                 return false;
             }
         }

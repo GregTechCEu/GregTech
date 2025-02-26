@@ -239,8 +239,9 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss, @Optional boolean isSuperCon) {
-        backingBuilder.cableProperties(voltage, amperage, loss, isSuperCon);
+    public CTMaterialBuilder cableProperties(long voltage, int amperage, int loss,
+                                             @Optional boolean superconductor) {
+        backingBuilder.cableProperties(voltage, amperage, loss, superconductor);
         return this;
     }
 
@@ -252,8 +253,16 @@ public class CTMaterialBuilder {
 
     @ZenMethod
     public CTMaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
-                                                 boolean cryoProof, boolean plasmaProof) {
-        backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof);
+                                                 boolean plasmaProof) {
+        backingBuilder.fluidPipeProperties(maxTemp, throughput, gasProof, acidProof, plasmaProof);
+        return this;
+    }
+
+    @ZenMethod
+    public CTMaterialBuilder fluidPipeProperties(int maxTemp, int minTemp, int throughput, boolean gasProof,
+                                                 boolean acidProof,
+                                                 boolean plasmaProof) {
+        backingBuilder.fluidPipeProperties(maxTemp, minTemp, throughput, gasProof, acidProof, plasmaProof);
         return this;
     }
 

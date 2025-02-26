@@ -5,6 +5,8 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.mui.GTGuis;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,10 +16,10 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
@@ -60,13 +62,18 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
     }
 
     @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.STORAGE).build();
+    }
+
+    @Override
     public void onRemoval() {
         dropInventoryContents(storageHandler);
     }
 
     @Override
     public @NotNull EnumActionResult onRightClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                                  @NotNull CuboidRayTraceResult hitResult) {
+                                                  @NotNull RayTraceResult hitResult) {
         if (!getCoverableView().getWorld().isRemote) {
             openUI((EntityPlayerMP) player);
         }
@@ -75,7 +82,7 @@ public class CoverStorage extends CoverBase implements CoverWithUI {
 
     @Override
     public @NotNull EnumActionResult onScrewdriverClick(@NotNull EntityPlayer player, @NotNull EnumHand hand,
-                                                        @NotNull CuboidRayTraceResult hitResult) {
+                                                        @NotNull RayTraceResult hitResult) {
         if (!getWorld().isRemote) {
             openUI((EntityPlayerMP) player);
         }

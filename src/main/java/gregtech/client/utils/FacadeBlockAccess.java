@@ -1,7 +1,5 @@
 package gregtech.client.utils;
 
-import gregtech.api.pipenet.IBlockAppearance;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -55,8 +53,7 @@ public class FacadeBlockAccess implements IBlockAccess {
         IBlockState worldState = world.getBlockState(pos);
         Block worldBlock = worldState.getBlock();
 
-        if (worldBlock instanceof IBlockAppearance) {
-            IBlockAppearance blockAppearance = (IBlockAppearance) worldBlock;
+        if (worldBlock instanceof IBlockAppearance blockAppearance) {
             if (blockAppearance.supportsVisualConnections()) {
                 return Result.COVER;
             }

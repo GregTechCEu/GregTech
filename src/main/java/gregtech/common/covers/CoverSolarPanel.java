@@ -6,6 +6,8 @@ import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
 import gregtech.api.util.GTUtility;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
 
@@ -46,6 +48,11 @@ public class CoverSolarPanel extends CoverBase implements ITickable {
     }
 
     @Override
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.SOLAR_PANEL).build();
+    }
+
+    @Override
     public void update() {
         CoverableView coverable = getCoverableView();
         World world = coverable.getWorld();
@@ -53,7 +60,7 @@ public class CoverSolarPanel extends CoverBase implements ITickable {
             IEnergyContainer energyContainer = coverable.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER,
                     getAttachedSide());
             if (energyContainer != null) {
-                energyContainer.acceptEnergyFromNetwork(null, EUt, 1);
+                energyContainer.acceptEnergyFromNetwork(null, EUt, 1, false);
             }
         }
     }

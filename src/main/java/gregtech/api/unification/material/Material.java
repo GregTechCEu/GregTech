@@ -3,6 +3,7 @@ package gregtech.api.unification.material;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
+import gregtech.api.fluids.attribute.FluidAttributes;
 import gregtech.api.fluids.store.FluidStorageKey;
 import gregtech.api.fluids.store.FluidStorageKeys;
 import gregtech.api.unification.Element;
@@ -13,19 +14,17 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.ExtraToolProperty;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.IngotProperty;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.MaterialToolProperty;
 import gregtech.api.unification.material.properties.OreProperty;
+import gregtech.api.unification.material.properties.PipeNetProperties;
 import gregtech.api.unification.material.properties.PolymerProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.RotorProperty;
-import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.material.properties.WoodProperty;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
@@ -33,6 +32,9 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
@@ -1068,36 +1070,59 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss) {
-            cableProperties((int) voltage, amperage, loss, false);
+        private PipeNetProperties getOrCreatePipeNetProperties() {
+            if (properties.hasProperty(PropertyKey.PIPENET_PROPERTIES)) {
+                return properties.getProperty(PropertyKey.PIPENET_PROPERTIES);
+            } else {
+                PipeNetProperties prop = new PipeNetProperties();
+                properties.setProperty(PropertyKey.PIPENET_PROPERTIES, prop);
+                return prop;
+            }
+        }
+
+        public Builder cableProperties(long voltage, long amperage, long loss) {
+            getOrCreatePipeNetProperties().setProperty(MaterialEnergyProperties.create(voltage, amperage, loss));
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
-            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
+        public Builder cableProperties(long voltage, long amperage, long loss, boolean superconductor) {
+            getOrCreatePipeNetProperties()
+                    .setProperty(MaterialEnergyProperties.create(voltage, amperage, loss, superconductor));
             return this;
         }
 
-        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon,
-                                       int criticalTemperature) {
-            properties.setProperty(PropertyKey.WIRE,
-                    new WireProperties((int) voltage, amperage, loss, isSuperCon, criticalTemperature));
+        public Builder fluidPipeProperties(int maxTemp, long throughput, boolean gasProof) {
+            getOrCreatePipeNetProperties().setProperty(
+                    MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof));
             return this;
         }
 
-        public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
-            return fluidPipeProperties(maxTemp, throughput, gasProof, false, false, false);
+        public Builder fluidPipeProperties(int maxTemp, long throughput, boolean gasProof, float priority) {
+            getOrCreatePipeNetProperties().setProperty(MaterialFluidProperties.createMax(throughput, maxTemp, priority)
+                    .setContain(FluidState.GAS, gasProof));
+            return this;
         }
 
         public Builder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof, boolean acidProof,
-                                           boolean cryoProof, boolean plasmaProof) {
-            properties.setProperty(PropertyKey.FLUID_PIPE,
-                    new FluidPipeProperties(maxTemp, throughput, gasProof, acidProof, cryoProof, plasmaProof));
+                                           boolean plasmaProof) {
+            getOrCreatePipeNetProperties().setProperty(
+                    MaterialFluidProperties.createMax(throughput, maxTemp).setContain(FluidState.GAS, gasProof)
+                            .setContain(FluidAttributes.ACID, acidProof).setContain(FluidState.PLASMA, plasmaProof));
+            return this;
+        }
+
+        public Builder fluidPipeProperties(int maxTemp, int minTemp, int throughput, boolean gasProof,
+                                           boolean acidProof,
+                                           boolean plasmaProof) {
+            getOrCreatePipeNetProperties().setProperty(new MaterialFluidProperties(throughput, maxTemp, minTemp)
+                    .setContain(FluidState.GAS, gasProof).setContain(FluidAttributes.ACID, acidProof)
+                    .setContain(FluidState.PLASMA, plasmaProof));
             return this;
         }
 
         public Builder itemPipeProperties(int priority, float stacksPerSec) {
-            properties.setProperty(PropertyKey.ITEM_PIPE, new ItemPipeProperties(priority, stacksPerSec));
+            getOrCreatePipeNetProperties()
+                    .setProperty(new MaterialItemProperties((long) (stacksPerSec * 8), priority));
             return this;
         }
 

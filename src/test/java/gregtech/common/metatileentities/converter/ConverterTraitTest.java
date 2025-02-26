@@ -298,7 +298,8 @@ public class ConverterTraitTest {
         private long energyStored;
 
         @Override
-        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
+            if (simulate) return Math.min(energyCapacity - energyStored, voltage * amperage) / voltage;
             return addEnergy(voltage * amperage) / voltage;
         }
 

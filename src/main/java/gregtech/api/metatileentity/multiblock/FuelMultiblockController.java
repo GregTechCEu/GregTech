@@ -36,7 +36,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
         super.initializeAbilities();
         List<IEnergyContainer> outputEnergy = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
         outputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
-        outputEnergy.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
+        outputEnergy.addAll(getAbilities(MultiblockAbility.LASER_TRANSMISSION));
         this.energyContainer = new EnergyContainerList(outputEnergy);
     }
 

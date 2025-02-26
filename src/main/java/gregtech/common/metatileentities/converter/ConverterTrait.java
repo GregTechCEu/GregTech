@@ -124,7 +124,7 @@ public class ConverterTrait extends MTETrait {
 
             // send out energy
             energyInserted = container.acceptEnergyFromNetwork(metaTileEntity.getFrontFacing().getOpposite(), voltage,
-                    ampsToInsert) * voltage;
+                    ampsToInsert, false) * voltage;
         } else { // push out FE
             // Get the FE capability in front of us
             IEnergyStorage storage = getCapabilityAtFront(CapabilityEnergy.ENERGY);
@@ -148,20 +148,22 @@ public class ConverterTrait extends MTETrait {
     public class EUContainer implements IEnergyContainer {
 
         @Override
-        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage, boolean simulate) {
             if (amperage <= 0 || voltage <= 0 || feToEu || side == metaTileEntity.getFrontFacing())
                 return 0;
             if (usedAmps >= amps) return 0;
             if (voltage > getInputVoltage()) {
-                metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
+                if (!simulate) metaTileEntity.doExplosion(GTUtility.getExplosionPower(voltage));
                 return Math.min(amperage, amps - usedAmps);
             }
 
             long space = baseCapacity - storedEU;
             if (space < voltage) return 0;
             long maxAmps = Math.min(Math.min(amperage, amps - usedAmps), space / voltage);
-            storedEU += voltage * maxAmps;
-            usedAmps += maxAmps;
+            if (!simulate) {
+                storedEU += voltage * maxAmps;
+                usedAmps += maxAmps;
+            }
             return maxAmps;
         }
 

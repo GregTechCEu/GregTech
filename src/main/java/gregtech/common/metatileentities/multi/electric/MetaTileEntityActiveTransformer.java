@@ -93,8 +93,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
         List<IEnergyContainer> powerOutput = new ArrayList<>(getAbilities(MultiblockAbility.OUTPUT_ENERGY));
         powerOutput.addAll(getAbilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY));
 
-        powerInput.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
-        powerOutput.addAll(getAbilities(MultiblockAbility.OUTPUT_LASER));
+        powerInput.addAll(getAbilities(MultiblockAbility.LASER_RECEPTION));
+        powerOutput.addAll(getAbilities(MultiblockAbility.LASER_TRANSMISSION));
 
         // Invalidate the structure if there is not at least one output and one input
         if (powerInput.isEmpty() || powerOutput.isEmpty()) {
@@ -131,8 +131,8 @@ public class MetaTileEntityActiveTransformer extends MultiblockWithDisplayBase i
                 .or(abilities(MultiblockAbility.OUTPUT_ENERGY).setPreviewCount(2))
                 .or(abilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY).setPreviewCount(1))
                 .or(abilities(MultiblockAbility.SUBSTATION_OUTPUT_ENERGY).setPreviewCount(1))
-                .or(abilities(MultiblockAbility.INPUT_LASER).setPreviewCount(1))
-                .or(abilities(MultiblockAbility.OUTPUT_LASER).setPreviewCount(1));
+                .or(abilities(MultiblockAbility.LASER_RECEPTION).setPreviewCount(1))
+                .or(abilities(MultiblockAbility.LASER_TRANSMISSION).setPreviewCount(1));
     }
 
     @Override

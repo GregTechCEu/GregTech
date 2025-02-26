@@ -1,5 +1,6 @@
 package gregtech.api.capability;
 
+import gregtech.api.capability.data.IDataAccess;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.metatileentity.multiblock.IMaintenance;
@@ -45,10 +46,9 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IMaintenance.class);
         registerCapabilityWithNoDefault(IMultipleRecipeMaps.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
-        registerCapabilityWithNoDefault(IDataAccessHatch.class);
-        registerCapabilityWithNoDefault(IOpticalComputationProvider.class);
+        registerCapabilityWithNoDefault(IDataAccess.class);
         registerCapabilityWithNoDefault(ConverterTrait.class);
-        registerCapabilityWithNoDefault(ILaserContainer.class);
+        registerCapabilityWithNoDefault(ILaserRelay.class);
 
         // internal capabilities
         CapabilityManager.INSTANCE.register(GTWorldGenCapability.class, GTWorldGenCapability.STORAGE,

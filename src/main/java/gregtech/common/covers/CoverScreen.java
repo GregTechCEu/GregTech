@@ -3,6 +3,8 @@ package gregtech.common.covers;
 import gregtech.api.cover.CoverBase;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverableView;
+import gregtech.client.renderer.pipe.cover.CoverRenderer;
+import gregtech.client.renderer.pipe.cover.CoverRendererBuilder;
 import gregtech.client.renderer.texture.Textures;
 
 import net.minecraft.util.BlockRenderLayer;
@@ -33,7 +35,12 @@ public class CoverScreen extends CoverBase {
     }
 
     @Override
-    public boolean shouldAutoConnectToPipes() {
+    protected CoverRenderer buildRenderer() {
+        return new CoverRendererBuilder(Textures.DISPLAY).build();
+    }
+
+    @Override
+    public boolean forcePipeRenderConnection() {
         return false;
     }
 }

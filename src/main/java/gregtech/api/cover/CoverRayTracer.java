@@ -1,6 +1,6 @@
 package gregtech.api.cover;
 
-import gregtech.api.pipenet.block.BlockPipe;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,8 +20,8 @@ public final class CoverRayTracer {
                                                              @NotNull EntityPlayer player) {
         // if the coverable view is from a blockpipe, use the proper raytrace method
         RayTraceResult result = coverableView.getWorld().getBlockState(coverableView.getPos())
-                .getBlock() instanceof BlockPipe<?, ?, ?>pipe ?
-                        pipe.getServerCollisionRayTrace(player, coverableView.getPos(), coverableView.getWorld()) :
+                .getBlock() instanceof PipeBlock pipe ?
+                        pipe.collisionRayTrace(player, coverableView.getWorld(), coverableView.getPos()) :
                         RayTracer.retraceBlock(coverableView.getWorld(), player, coverableView.getPos());
         if (result == null || result.typeOfHit != RayTraceResult.Type.BLOCK) {
             return null;
@@ -36,8 +36,6 @@ public final class CoverRayTracer {
                 return determineGridSideHit(result);
             } else if (rayTraceResult.cuboid6.data instanceof CoverSideData coverSideData) {
                 return coverSideData.side;
-            } else if (rayTraceResult.cuboid6.data instanceof BlockPipe.PipeConnectionData pipeConnectionData) {
-                return pipeConnectionData.side;
             } else if (rayTraceResult.cuboid6.data instanceof PrimaryBoxData primaryBoxData) {
                 return primaryBoxData.usePlacementGrid ? determineGridSideHit(result) : result.sideHit;
             } // unknown hit type, fall through

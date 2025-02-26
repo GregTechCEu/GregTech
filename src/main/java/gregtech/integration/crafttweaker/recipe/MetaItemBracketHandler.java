@@ -1,16 +1,20 @@
 package gregtech.integration.crafttweaker.recipe;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.graphnet.pipenet.physical.block.PipeMaterialBlock;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PipeNetProperties;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.registry.MaterialRegistry;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.pipelike.cable.BlockCable;
-import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import gregtech.common.pipelike.block.cable.CableBlock;
+import gregtech.common.pipelike.handlers.properties.MaterialEnergyProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialFluidProperties;
+import gregtech.common.pipelike.handlers.properties.MaterialItemProperties;
 import gregtech.integration.groovy.GroovyScriptModule;
 
 import net.minecraft.item.ItemStack;
@@ -79,19 +83,27 @@ public class MetaItemBracketHandler implements IBracketHandler {
         for (MaterialRegistry registry : GregTechAPI.materialManager.getRegistries()) {
             String modid = registry.getModid();
             Map<String, ItemStack> map = metaBlockNames.computeIfAbsent(modid, (k) -> new Object2ObjectOpenHashMap<>());
-            for (BlockCable cable : MetaBlocks.CABLES.get(modid)) {
-                for (Material material : cable.getEnabledMaterials()) {
-                    map.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
-                }
-            }
-            for (BlockItemPipe cable : MetaBlocks.ITEM_PIPES.get(modid)) {
-                for (Material material : cable.getEnabledMaterials()) {
-                    map.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
-                }
-            }
-            for (BlockFluidPipe cable : MetaBlocks.FLUID_PIPES.get(modid)) {
-                for (Material material : cable.getEnabledMaterials()) {
-                    map.put(cable.getPrefix().name + material.toCamelCaseString(), cable.getItem(material));
+
+            for (Material material : registry) {
+                PipeNetProperties prop = material.getProperty(PropertyKey.PIPENET_PROPERTIES);
+                if (prop == null) continue;
+
+                for (PipeNetProperties.IPipeNetMaterialProperty property : prop.getRegisteredProperties()) {
+                    // TODO this is awkward, surely there's a better solution?
+                    if (property instanceof MaterialEnergyProperties) {
+                        for (CableBlock cable : MetaBlocks.CABLES.get(modid)) {
+                            String name = cable.getStructure().getOrePrefix().name + material.toCamelCaseString();
+                            ItemStack stack = cable.getItem(material);
+                            map.put(name, stack);
+                        }
+                    } else
+                        if (property instanceof MaterialItemProperties || property instanceof MaterialFluidProperties) {
+                            for (PipeMaterialBlock pipe : MetaBlocks.MATERIAL_PIPES.get(modid)) {
+                                String name = pipe.getStructure().getOrePrefix().name + material.toCamelCaseString();
+                                ItemStack stack = pipe.getItem(material);
+                                map.put(name, stack);
+                            }
+                        }
                 }
             }
             metaBlockNames.put(modid, map);

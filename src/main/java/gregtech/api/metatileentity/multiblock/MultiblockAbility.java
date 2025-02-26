@@ -1,6 +1,9 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.capability.*;
+import gregtech.api.capability.data.IComputationDataAccess;
+import gregtech.api.capability.data.IDataAccess;
+import gregtech.api.capability.data.IStandardDataAccess;
 import gregtech.api.metatileentity.MetaTileEntity;
 
 import net.minecraftforge.fluids.IFluidTank;
@@ -58,18 +61,19 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IPassthroughHatch> PASSTHROUGH_HATCH = new MultiblockAbility<>(
             "passthrough_hatch");
 
-    public static final MultiblockAbility<IDataAccessHatch> DATA_ACCESS_HATCH = new MultiblockAbility<>(
+    public static final MultiblockAbility<IDataAccess> DATA_ACCESS_HATCH = new MultiblockAbility<>(
             "data_access_hatch");
-    public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_RECEPTION = new MultiblockAbility<>(
+    public static final MultiblockAbility<IStandardDataAccess> OPTICAL_DATA_RECEPTION = new MultiblockAbility<>(
             "optical_data_reception");
-    public static final MultiblockAbility<IOpticalDataAccessHatch> OPTICAL_DATA_TRANSMISSION = new MultiblockAbility<>(
+    public static final MultiblockAbility<IStandardDataAccess> OPTICAL_DATA_TRANSMISSION = new MultiblockAbility<>(
             "optical_data_transmission");
-    public static final MultiblockAbility<ILaserContainer> INPUT_LASER = new MultiblockAbility<>("input_laser");
-    public static final MultiblockAbility<ILaserContainer> OUTPUT_LASER = new MultiblockAbility<>("output_laser");
+    public static final MultiblockAbility<ILaserContainer> LASER_RECEPTION = new MultiblockAbility<>("laser_reception");
+    public static final MultiblockAbility<ILaserContainer> LASER_TRANSMISSION = new MultiblockAbility<>(
+            "laser_transmission");
 
-    public static final MultiblockAbility<IOpticalComputationHatch> COMPUTATION_DATA_RECEPTION = new MultiblockAbility<>(
+    public static final MultiblockAbility<IComputationDataAccess> COMPUTATION_DATA_RECEPTION = new MultiblockAbility<>(
             "computation_data_reception");
-    public static final MultiblockAbility<IOpticalComputationHatch> COMPUTATION_DATA_TRANSMISSION = new MultiblockAbility<>(
+    public static final MultiblockAbility<IComputationDataAccess> COMPUTATION_DATA_TRANSMISSION = new MultiblockAbility<>(
             "computation_data_transmission");
 
     public static final MultiblockAbility<IHPCAComponentHatch> HPCA_COMPONENT = new MultiblockAbility<>(

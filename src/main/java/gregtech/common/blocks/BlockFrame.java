@@ -1,15 +1,13 @@
 package gregtech.common.blocks;
 
+import gregtech.api.graphnet.pipenet.physical.block.ItemPipeBlock;
+import gregtech.api.graphnet.pipenet.physical.block.PipeBlock;
+import gregtech.api.graphnet.pipenet.physical.tile.PipeTileEntity;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;
-import gregtech.api.pipenet.block.BlockPipe;
-import gregtech.api.pipenet.block.ItemBlockPipe;
-import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.util.GTLog;
 import gregtech.client.model.MaterialStateMapper;
 import gregtech.client.model.modelfactories.MaterialBlockModelLoader;
 import gregtech.common.ConfigHolder;
@@ -123,34 +121,30 @@ public abstract class BlockFrame extends BlockMaterialBase {
 
     public boolean replaceWithFramedPipe(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
                                          ItemStack stackInHand, EnumFacing facing) {
-        BlockPipe<?, ?, ?> blockPipe = (BlockPipe<?, ?, ?>) ((ItemBlockPipe<?, ?>) stackInHand.getItem()).getBlock();
-        if (blockPipe.getItemPipeType(stackInHand).getThickness() < 1) {
+        PipeBlock block = PipeBlock.getBlockFromItem(stackInHand);
+        if (block != null && block.getStructure().getRenderThickness() < 1) {
             ItemBlock itemBlock = (ItemBlock) stackInHand.getItem();
-            IBlockState pipeState = blockPipe.getDefaultState();
+            IBlockState pipeState = block.getDefaultState();
             // these 0 values are not actually used by forge
             itemBlock.placeBlockAt(stackInHand, playerIn, worldIn, pos, facing, 0, 0, 0, pipeState);
-            IPipeTile<?, ?> pipeTile = blockPipe.getPipeTileEntity(worldIn, pos);
-            if (pipeTile instanceof TileEntityPipeBase) {
-                ((TileEntityPipeBase<?, ?>) pipeTile).setFrameMaterial(getGtMaterial(state));
-            } else {
-                GTLog.logger.error("Pipe was not placed!");
-                return false;
+            PipeTileEntity pipeTile = block.getTileEntity(worldIn, pos);
+            if (pipeTile != null) {
+                pipeTile.setFrameMaterial(getGtMaterial(state));
+                SoundType type = block.getSoundType(state, worldIn, pos, playerIn);
+                worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
+                        (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
+                if (!playerIn.capabilities.isCreativeMode) {
+                    stackInHand.shrink(1);
+                }
+                return true;
             }
-            SoundType type = blockPipe.getSoundType(state, worldIn, pos, playerIn);
-            worldIn.playSound(playerIn, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
-                    (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
-            if (!playerIn.capabilities.isCreativeMode) {
-                stackInHand.shrink(1);
-            }
-            return true;
         }
         return false;
     }
 
     public boolean removeFrame(World world, BlockPos pos, EntityPlayer player, ItemStack stack) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileEntityPipeBase<?, ?>) {
-            TileEntityPipeBase<?, ?> pipeTile = (TileEntityPipeBase<?, ?>) te;
+        if (te instanceof PipeTileEntity pipeTile) {
             Material frameMaterial = pipeTile.getFrameMaterial();
             if (frameMaterial != null) {
                 pipeTile.setFrameMaterial(null);
@@ -172,7 +166,7 @@ public abstract class BlockFrame extends BlockMaterialBase {
             return false;
         }
         // replace frame with pipe and set the frame material to this frame
-        if (stack.getItem() instanceof ItemBlockPipe) {
+        if (stack.getItem() instanceof ItemPipeBlock) {
             return replaceWithFramedPipe(world, pos, state, player, stack, facing);
         }
 
@@ -183,6 +177,11 @@ public abstract class BlockFrame extends BlockMaterialBase {
         BlockFrame frameBlock = getFrameBlockFromItem(stack);
         if (frameBlock == null) return false;
 
+        return runPlacementLogic(frameBlock, pos, world, stack, player);
+    }
+
+    public static boolean runPlacementLogic(@NotNull BlockFrame frameBlock, @NotNull BlockPos pos, @NotNull World world,
+                                            @NotNull ItemStack stack, @NotNull EntityPlayer player) {
         BlockPos.PooledMutableBlockPos blockPos = BlockPos.PooledMutableBlockPos.retain();
         blockPos.setPos(pos);
         for (int i = 0; i < 32; i++) {
@@ -191,14 +190,14 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 continue;
             }
             TileEntity te = world.getTileEntity(blockPos);
-            if (te instanceof IPipeTile && ((IPipeTile<?, ?>) te).getFrameMaterial() != null) {
+            if (te instanceof PipeTileEntity tile && tile.getFrameMaterial() != null) {
                 blockPos.move(EnumFacing.UP);
                 continue;
             }
-            if (canPlaceBlockAt(world, blockPos)) {
+            if (frameBlock.canPlaceBlockAt(world, blockPos)) {
                 world.setBlockState(blockPos,
                         frameBlock.getStateFromMeta(stack.getItem().getMetadata(stack.getItemDamage())));
-                SoundType type = getSoundType(stack);
+                SoundType type = frameBlock.getSoundType(stack);
                 world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F,
                         type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
@@ -206,11 +205,11 @@ public abstract class BlockFrame extends BlockMaterialBase {
                 }
                 blockPos.release();
                 return true;
-            } else if (te instanceof TileEntityPipeBase && ((TileEntityPipeBase<?, ?>) te).getFrameMaterial() == null) {
-                ((TileEntityPipeBase<?, ?>) te).setFrameMaterial(frameBlock.getGtMaterial(stack));
-                SoundType type = getSoundType(stack);
-                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS, (type.getVolume() + 1.0F) / 2.0F,
-                        type.getPitch() * 0.8F);
+            } else if (te instanceof PipeTileEntity tile && tile.getFrameMaterial() == null) {
+                tile.setFrameMaterial(frameBlock.getGtMaterial(stack));
+                SoundType type = frameBlock.getSoundType(stack);
+                world.playSound(null, pos, type.getPlaceSound(), SoundCategory.BLOCKS,
+                        (type.getVolume() + 1.0F) / 2.0F, type.getPitch() * 0.8F);
                 if (!player.capabilities.isCreativeMode) {
                     stack.shrink(1);
                 }
