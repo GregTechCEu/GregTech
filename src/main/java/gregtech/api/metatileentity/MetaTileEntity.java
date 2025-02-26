@@ -529,6 +529,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (!playerIn.isSneaking() && openGUIOnRightClick()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 if (usesMui2()) {
+                    // todo remove when fixed in mui2
                     uiPlayers.add(playerIn.getUniqueID());
                     MetaTileEntityGuiFactory.open(playerIn, this);
                 } else {
@@ -568,6 +569,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
             EnumFacing gridSideHit = CoverRayTracer.determineGridSideHit(hitResult);
             cover = gridSideHit == null ? null : getCoverAtSide(gridSideHit);
             if (cover != null && playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty()) {
+                // todo remove when fixed in mui2
                 if (cover instanceof CoverWithUI) {
                     uiCoverPlayers.get(gridSideHit).add(playerIn.getUniqueID());
                 }
@@ -653,6 +655,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
                                   CuboidRayTraceResult hitResult) {
         if (getCoverAtSide(facing) != null) {
             removeCover(facing);
+            // todo remove when fixed in mui2
             Iterator<UUID> iterator = uiCoverPlayers.get(facing).iterator();
             while (iterator.hasNext()) {
                 Objects.requireNonNull(getWorld().getPlayerEntityByUUID(iterator.next())).closeScreen();
@@ -1449,6 +1452,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         if (getWorld().isRemote) {
             GregTechAPI.soundManager.stopTileSound(getPos());
         } else {
+            // todo remove when fixed in mui2
             Iterator<UUID> iterator = uiPlayers.iterator();
             while (iterator.hasNext()) {
                 Objects.requireNonNull(getWorld().getPlayerEntityByUUID(iterator.next())).closeScreen();
