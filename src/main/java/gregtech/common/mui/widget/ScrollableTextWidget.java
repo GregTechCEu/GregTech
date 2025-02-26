@@ -1,7 +1,6 @@
 package gregtech.common.mui.widget;
 
 import com.cleanroommc.modularui.api.GuiAxis;
-import com.cleanroommc.modularui.api.ITheme;
 import com.cleanroommc.modularui.api.drawable.IHoverable;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.api.layout.IViewport;
@@ -13,7 +12,6 @@ import com.cleanroommc.modularui.drawable.text.TextRenderer;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.RichTooltip;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
-import com.cleanroommc.modularui.theme.WidgetTextFieldTheme;
 import com.cleanroommc.modularui.utils.HoveredWidgetList;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widget.scroll.ScrollArea;
@@ -97,15 +95,12 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Nullable
     public Object getHoveredElement() {
         if (!isHovering()) return null;
-        getContext().pushMatrix();
-        Object o = this.text.getHoveringElement(getContext());
-        getContext().popMatrix();
-        return o;
+        return this.text.getHoveringElement(getContext());
     }
 
     @Override
     public Area getArea() {
-        return this.scroll;
+        return getScrollArea();
     }
 
     public ScrollArea getScrollArea() {
@@ -129,12 +124,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
 
     @Override
     public void onResized() {
-        if (this.scroll.getScrollX() != null) {
-            this.scroll.getScrollX().clamp(this.scroll);
-        }
-        if (this.scroll.getScrollY() != null) {
-            this.scroll.getScrollY().clamp(this.scroll);
-        }
+        this.scroll.getScrollY().clamp(this.scroll);
     }
 
     @Override
@@ -152,11 +142,6 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
         }
     }
 
-    @Override
-    protected WidgetTextFieldTheme getWidgetThemeInternal(ITheme theme) {
-        return theme.getTextFieldTheme();
-    }
-
     private void drawText(ModularGuiContext context) {
         if (this.autoUpdate || this.dirty) {
             if (this.builder != null) {
@@ -167,8 +152,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
         }
         this.text.setupRenderer(this.renderer, getArea().getPadding().left, getArea().getPadding().top - getScrollY(),
                 getArea().paddedWidth(), getArea().paddedHeight(),
-                getWidgetThemeInternal(context.getTheme()).getTextColor(),
-                getWidgetThemeInternal(context.getTheme()).getTextShadow());
+                getWidgetTheme(context.getTheme()).getTextColor(),
+                getWidgetTheme(context.getTheme()).getTextShadow());
         this.text.compileAndDraw(this.renderer, context, false);
         this.scroll.getScrollY().setScrollSize((int) this.renderer.getLastHeight());
     }
