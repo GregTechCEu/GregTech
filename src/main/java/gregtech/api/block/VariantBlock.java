@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block implements IWalkingSpeedBonus {
+public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block {
 
     protected PropertyEnum<T> VARIANT;
     protected T[] VALUES;
