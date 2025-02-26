@@ -382,10 +382,10 @@ public class Material implements Comparable<Material> {
             throw new IllegalArgumentException(
                     "Cannot set working tier for material " + materialInfo.resourceLocation + "to less than 0 (ULV)!");
         }
-        if (workingTier > GTValues.MAX_TRUE) {
+        if (workingTier > GTValues.MAX) {
             throw new IllegalArgumentException(
                     "Cannot set working tier for material " + materialInfo.resourceLocation +
-                            "to greater than 30 (MAX_TRUE)!");
+                            "to greater than 14 (MAX)!");
 
         }
         materialInfo.workingTier = workingTier;
@@ -1143,10 +1143,10 @@ public class Material implements Comparable<Material> {
                         "Cannot set working tier for material " + materialInfo.resourceLocation +
                                 "to less than 0 (ULV)!");
             }
-            if (tier > GTValues.MAX_TRUE) {
+            if (tier > GTValues.MAX) {
                 throw new IllegalArgumentException(
                         "Cannot set working tier for material " + materialInfo.resourceLocation +
-                                "to greater than 30 (MAX_TRUE)!");
+                                "to greater than 14 (MAX)!");
 
             }
             materialInfo.workingTier = tier;

@@ -295,7 +295,7 @@ public class MaterialRecipeHandler {
     public static void processIngot(OrePrefix ingotPrefix, Material material, IngotProperty property) {
         int workingTier = material.getWorkingTier();
 
-        if (material.hasFlag(MORTAR_GRINDABLE)) {
+        if (material.hasFlag(MORTAR_GRINDABLE) && workingTier <= HV) {
             ModHandler.addShapedRecipe(String.format("mortar_grind_%s", material),
                     OreDictUnifier.get(OrePrefix.dust, material), "X", "m", 'X',
                     new UnificationEntry(ingotPrefix, material));
@@ -418,8 +418,9 @@ public class MaterialRecipeHandler {
     public static void processGemConversion(OrePrefix gemPrefix, @Nullable OrePrefix prevPrefix, Material material) {
         long materialAmount = gemPrefix.getMaterialAmount(material);
         ItemStack crushedStack = OreDictUnifier.getDust(material, materialAmount);
+        int workingTier = material.getWorkingTier();
 
-        if (material.hasFlag(MORTAR_GRINDABLE)) {
+        if (material.hasFlag(MORTAR_GRINDABLE) && workingTier <= HV) {
             ModHandler.addShapedRecipe(String.format("gem_to_dust_%s_%s", material, gemPrefix), crushedStack,
                     "X", "m", 'X', new UnificationEntry(gemPrefix, material));
         }
@@ -441,7 +442,7 @@ public class MaterialRecipeHandler {
                     .notConsumable(OrePrefix.craftingLens, MarkerMaterials.Color.White)
                     .output(gemPrefix, material)
                     .duration(300)
-                    .EUt(GTUtility.scaleVoltage(240, material.getWorkingTier()))
+                    .EUt(GTUtility.scaleVoltage(240, workingTier))
                     .buildAndRegister();
         }
     }

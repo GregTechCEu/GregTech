@@ -952,11 +952,11 @@ public class GTUtility {
         // voltage up by a "0/4 overclock". The goal here is to retain recipes with EU/t such as 24 staying
         // below a full amp but still increasing the tier. For instance, 24 EU/t with working tier of MV would become
         // 96 EU/t rather than 120 EU/t with this logic.
-        while (voltage <= GTValues.VOC[workingTier - 1]) {
+        while (voltage <= GTValues.V[workingTier - 1]) {
             voltage *= 4;
         }
 
         // Sanity check to make sure we don't accidentally create full-amp recipes.
-        return Math.min(voltage, GTValues.VA_FULL[workingTier]);
+        return Math.min(voltage, GTValues.VA[workingTier]);
     }
 }
