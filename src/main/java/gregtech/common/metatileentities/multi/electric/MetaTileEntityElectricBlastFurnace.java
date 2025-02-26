@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
+import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
@@ -80,10 +81,10 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 .addProgressLine(recipeMapWorkable.getProgressPercent());
     }
 
-    private void addHeatCapacity(KeyManager keyManager) {
+    private void addHeatCapacity(KeyManager keyManager, UISyncer syncer) {
         if (isStructureFormed()) {
             var heatString = KeyUtil.number(TextFormatting.RED,
-                    getCurrentTemperature(), "K");
+                    syncer.syncInt(getCurrentTemperature()), "K");
 
             keyManager.add(KeyUtil.lang(TextFormatting.GRAY,
                     "gregtech.multiblock.blast_furnace.max_temperature", heatString));

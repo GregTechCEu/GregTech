@@ -7,8 +7,10 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
+import gregtech.api.util.GTLambdaUtils;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.KeyUtil;
+import gregtech.common.mui.widget.ScrollableTextWidget;
 
 import net.minecraft.util.text.TextFormatting;
 
@@ -23,12 +25,9 @@ import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widget.ParentWidget;
-import com.cleanroommc.modularui.widget.ScrollWidget;
 import com.cleanroommc.modularui.widget.Widget;
-import com.cleanroommc.modularui.widget.scroll.VerticalScrollData;
 import com.cleanroommc.modularui.widgets.CycleButtonWidget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
-import com.cleanroommc.modularui.widgets.RichTextWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
@@ -66,19 +65,13 @@ public class MultiblockUIFactory {
         configureDisplayText(builder -> builder.title(mte.getMetaFullName()).structureFormed(mte.isStructureFormed()));
     }
 
-    private static @NotNull <T> Consumer<T> addAction(@Nullable Consumer<T> first, @NotNull Consumer<T> andThen) {
-        return first == null ? andThen : first.andThen(andThen);
-    }
-
     /**
      * Constructs the multiblock ui panel<br />
      * <i>It is not recommended to override this method</i>
      */
     public @NotNull ModularPanel buildUI(PosGuiData guiData, PanelSyncManager panelSyncManager) {
-        // this.valueSyncer.accept(panelSyncManager);
-        var panel = createRootPanel();
-
-        panel.child(createScreen(panelSyncManager));
+        var panel = GTGuis.createPanel(mte, width, height)
+                .child(createScreen(panelSyncManager));
 
         // TODO createExtras() hook for overrides?
         if (mte instanceof ProgressBarMultiblock progressBarMultiblock &&
@@ -113,8 +106,7 @@ public class MultiblockUIFactory {
             } else if (!warning.isEmpty()) {
                 return GTGuiTextures.GREGTECH_LOGO_BLINKING_YELLOW;
             } else {
-                // todo getLogo()?
-                return GTGuiTextures.GREGTECH_LOGO;
+                return GTGuiTextures.getLogo(mte.getUITheme());
             }
         });
 
@@ -138,7 +130,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureWarningText(boolean merge, Consumer<MultiblockUIBuilder> warningText) {
-        this.warningText = merge ? addAction(this.warningText, warningText) : warningText;
+        this.warningText = merge ? GTLambdaUtils.mergeConsumers(this.warningText, warningText) : warningText;
         return this;
     }
 
@@ -157,7 +149,7 @@ public class MultiblockUIFactory {
      * This is called every tick on the client-side
      */
     public MultiblockUIFactory configureErrorText(boolean merge, Consumer<MultiblockUIBuilder> errorText) {
-        this.errorText = merge ? addAction(this.errorText, errorText) : errorText;
+        this.errorText = merge ? GTLambdaUtils.mergeConsumers(this.errorText, errorText) : errorText;
         return this;
     }
 
@@ -177,7 +169,7 @@ public class MultiblockUIFactory {
      * or {@link KeyUtil#lang(String, Object...)}
      */
     public MultiblockUIFactory configureDisplayText(boolean merge, Consumer<MultiblockUIBuilder> displayText) {
-        this.displayText = merge ? addAction(this.displayText, displayText) : displayText;
+        this.displayText = merge ? GTLambdaUtils.mergeConsumers(this.displayText, displayText) : displayText;
         return this;
     }
 
@@ -197,8 +189,7 @@ public class MultiblockUIFactory {
      * <br>
      * Size will be 18x18.
      */
-    public MultiblockUIFactory createFlexButton(
-                                                BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
+    public MultiblockUIFactory createFlexButton(BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton) {
         this.flexButton = flexButton;
         return this;
     }
@@ -212,10 +203,6 @@ public class MultiblockUIFactory {
     public MultiblockUIFactory setScreenHeight(int height) {
         this.screenHeight = height;
         return this;
-    }
-
-    protected @NotNull ModularPanel createRootPanel() {
-        return GTGuis.createPanel(mte, width, height);
     }
 
     /**
@@ -243,7 +230,7 @@ public class MultiblockUIFactory {
 
             // the numbers for the given row of bars
             int from = r * cols;
-            int to = Math.min(from + cols, cols);
+            int to = Math.min(from + cols, progressMulti.getProgressBarCount());
 
             // calculate bar width
             int barCount = Math.max(1, to - from);
@@ -271,24 +258,22 @@ public class MultiblockUIFactory {
         display.setAction(this.displayText);
         display.sync("display", syncManager);
 
-        // todo scrolling doesn't work for rich text widget
-        var scrollWidget = new ScrollWidget<>(new VerticalScrollData())
+        var scrollableTextWidget = new ScrollableTextWidget()
                 .sizeRel(1f)
-                .child(new RichTextWidget()
-                        .sizeRel(1f)
-                        .alignment(Alignment.TopLeft)
-                        .margin(4, 4)
-                        .autoUpdate(true)
-                        .textBuilder(display::build));
+                .alignment(Alignment.TopLeft)
+                .margin(4, 4)
+                .autoUpdate(true)
+                .textBuilder(display::build);
+
+        var parent = new ParentWidget<>();
 
         if (this.childrenConsumer != null) {
             List<IWidget> extra = new ArrayList<>();
             this.childrenConsumer.accept(extra);
-            extra.forEach(scrollWidget::child);
+            extra.forEach(parent::child);
         }
 
-        return new ParentWidget<>()
-                .child(scrollWidget)
+        return parent.child(scrollableTextWidget)
                 .child(createIndicator(syncManager))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)

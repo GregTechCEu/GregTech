@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.metatileentity.multiblock.ui.KeyManager;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
+import gregtech.api.metatileentity.multiblock.ui.UISyncer;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
@@ -21,7 +22,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.ConfigHolder;
@@ -53,11 +53,14 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widget.ParentWidget;
+import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.layout.Grid;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -88,9 +91,12 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
 
     private double temperature = IDLE_TEMPERATURE; // start at idle temperature
 
+    private final gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier progressSupplier;
+
     public MetaTileEntityHPCA(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         this.energyContainer = new EnergyContainerList(new ArrayList<>());
+        this.progressSupplier = new gregtech.api.gui.widgets.ProgressWidget.TimedProgressSupplier(200, 47, false);
         this.hpcaHandler = new HPCAGridHandler(this);
     }
 
@@ -358,20 +364,32 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .addScreenChildren(iWidgets -> iWidgets.add(new Grid()
-                        .coverChildren()
+                .addScreenChildren(widgets -> widgets.add(new ParentWidget<>()
                         .leftRel(0.5f)
-                        .bottom(4)
-                        .minElementMargin(1)
-                        .mapTo(3, 9, value -> new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
-                                .asWidget()
-                                .tooltipAutoUpdate(true)
-                                .tooltipBuilder(tooltip -> {
-                                    if (isStructureFormed()) {
-                                        tooltip.addLine(hpcaHandler.getComponentKey(value));
-                                    }
-                                })
-                                .size(14))));
+                        .bottom(5)
+                        .size(16 * 3 + 2)
+                        .child(new ProgressWidget()
+                                .sizeRel(1f)
+                                .value(new DoubleSyncValue(progressSupplier))
+                                .texture(GTGuiTextures.HPCA_COMPONENT_OUTLINE, 47)
+                                .direction(ProgressWidget.Direction.LEFT)
+                                .tooltipAutoUpdate(true))
+                        .child(new Grid()
+                                .sizeRel(1f)
+                                .padding(1)
+                                .mapTo(3, 9, value -> new Widget<>()
+                                        .overlay(new DynamicDrawable(() -> hpcaHandler.getComponentTexture2(value))
+                                                .asIcon().size(14).marginLeft(2).marginTop(2))
+                                        .tooltipAutoUpdate(true)
+                                        .tooltipBuilder(tooltip -> {
+                                            if (isStructureFormed()) {
+                                                tooltip.addLine(hpcaHandler.getComponentKey(value));
+                                                tooltip.spaceLine(2);
+                                            }
+                                            hpcaHandler.addInfo(tooltip);
+                                        })
+                                        .size(16)
+                                        .padding(1)))));
     }
 
     @Override
@@ -381,20 +399,22 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.data_bank.providing")
-                .addCustom(richText -> {
+                .addCustom((manager, syncer) -> {
                     if (!isStructureFormed()) return;
 
                     // Energy Usage
-                    String voltageName = GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())];
-                    richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                    String voltageName = syncer
+                            .syncString(GTValues.VNF[GTUtility.getTierByVoltage(hpcaHandler.getMaxEUt())]);
+                    manager.add(KeyUtil.lang(TextFormatting.GRAY,
                             "gregtech.multiblock.hpca.energy",
-                            TextFormattingUtil.formatNumbers(hpcaHandler.cachedEUt),
-                            TextFormattingUtil.formatNumbers(hpcaHandler.getMaxEUt()),
+                            KeyUtil.number(syncer.syncLong(hpcaHandler.cachedEUt)),
+                            KeyUtil.number(syncer.syncLong(hpcaHandler.getMaxEUt())),
                             voltageName));
 
                     // Provided Computation
-                    richText.add(KeyUtil.lang("gregtech.multiblock.hpca.computation",
-                            hpcaHandler.cachedCWUt, hpcaHandler.getMaxCWUt()));
+                    manager.add(KeyUtil.lang("gregtech.multiblock.hpca.computation",
+                            syncer.syncInt(hpcaHandler.cachedCWUt),
+                            syncer.syncInt(hpcaHandler.getMaxCWUt())));
                 })
                 .addWorkingStatusLine();
     }
@@ -402,37 +422,35 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected void configureWarningText(MultiblockUIBuilder builder) {
         builder.addLowPowerLine(hasNotEnoughEnergy)
-                .addCustom(richText -> {
+                .addCustom((manager, syncer) -> {
                     if (!isStructureFormed()) return;
 
-                    if (temperature > 500) {
+                    if (syncer.syncDouble(temperature) > 500) {
                         // Temperature warning
-                        richText.add(KeyUtil.lang(TextFormatting.YELLOW,
+                        manager.add(KeyUtil.lang(TextFormatting.YELLOW,
                                 "gregtech.multiblock.hpca.warning_temperature"));
 
                         // Active cooler overdrive warning
-                        richText.add(KeyUtil.lang(TextFormatting.GRAY,
+                        manager.add(KeyUtil.lang(TextFormatting.GRAY,
                                 "gregtech.multiblock.hpca.warning_temperature_active_cool"));
                     }
 
                     // Structure warnings
-                    // hpcaHandler.addWarnings(richText);
-                    hpcaHandler.addWarnings2(richText);
+                    hpcaHandler.addWarnings(manager, syncer);
                 })
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
     @Override
     protected void configureErrorText(MultiblockUIBuilder builder) {
-        builder.addCustom(richText -> {
+        builder.addCustom((manager, syncer) -> {
             if (!isStructureFormed()) return;
 
-            if (temperature > 1000) {
-                richText.add(KeyUtil.lang(TextFormatting.RED,
+            if (syncer.syncDouble(temperature) > 1000) {
+                manager.add(KeyUtil.lang(TextFormatting.RED,
                         "gregtech.multiblock.hpca.error_temperature"));
             }
-            // hpcaHandler.addErrors(textList);
-            hpcaHandler.addErrors2(richText);
+            hpcaHandler.addErrors(manager, syncer);
         });
     }
 
@@ -836,17 +854,59 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             return maxCoolant;
         }
 
-        public void addWarnings2(KeyManager keyManager) {
+        public void addInfo(IRichTextBuilder<?> textList) {
+            // Max Computation
+            IKey data = KeyUtil.number(TextFormatting.AQUA, getMaxCWUt());
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_computation", data));
+
+            // Cooling
+            TextFormatting coolingColor = getMaxCoolingAmount() < getMaxCoolingDemand() ? TextFormatting.RED :
+                    TextFormatting.GREEN;
+            data = KeyUtil.number(coolingColor, getMaxCoolingDemand());
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_cooling_demand", data));
+
+            data = KeyUtil.number(coolingColor, getMaxCoolingAmount());
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_cooling_available", data));
+
+            // Coolant Required
+            if (getMaxCoolantDemand() > 0) {
+                data = KeyUtil.number(
+                        TextFormatting.YELLOW,
+                        getMaxCoolantDemand(), "L ");
+                IKey coolantName = KeyUtil.lang(TextFormatting.YELLOW,
+                        "gregtech.multiblock.hpca.info_coolant_name");
+                // data.appendSibling(coolantName);
+                data = IKey.comp(data, coolantName);
+            } else {
+                data = KeyUtil.string(TextFormatting.GREEN, "0");
+            }
+            textList.addLine(KeyUtil.lang(TextFormatting.GRAY,
+                    "gregtech.multiblock.hpca.info_max_coolant_required", data));
+
+            // Bridging
+            if (numBridges > 0) {
+                textList.addLine(KeyUtil.lang(TextFormatting.GREEN,
+                        "gregtech.multiblock.hpca.info_bridging_enabled"));
+            } else {
+                textList.addLine(KeyUtil.lang(TextFormatting.RED,
+                        "gregtech.multiblock.hpca.info_bridging_disabled"));
+            }
+        }
+
+        public void addWarnings(KeyManager keyManager, UISyncer syncer) {
             List<IKey> warnings = new ArrayList<>();
-            if (numBridges > 1) {
+            if (syncer.syncInt(numBridges) > 1) {
                 warnings.add(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.hpca.warning_multiple_bridges"));
             }
-            if (computationProviders.isEmpty()) {
+            if (syncer.syncBoolean(computationProviders.isEmpty())) {
                 warnings.add(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.hpca.warning_no_computation"));
             }
-            if (getMaxCoolingDemand() > getMaxCoolingAmount()) {
+            if (syncer.syncBoolean(getMaxCoolingDemand() > getMaxCoolingAmount())) {
                 warnings.add(KeyUtil.lang(TextFormatting.GRAY,
                         "gregtech.multiblock.hpca.warning_low_cooling"));
             }
@@ -857,9 +917,9 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             }
         }
 
-        public void addErrors2(KeyManager keyManager) {
+        public void addErrors(KeyManager keyManager, UISyncer syncer) {
             for (IHPCAComponentHatch component : components) {
-                if (component.isDamaged()) {
+                if (syncer.syncBoolean(component.isDamaged())) {
                     keyManager.add(KeyUtil.lang(TextFormatting.RED,
                             "gregtech.multiblock.hpca.error_damaged"));
                     return;
