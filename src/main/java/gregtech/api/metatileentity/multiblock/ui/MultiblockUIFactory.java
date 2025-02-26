@@ -6,6 +6,7 @@ import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.ProgressBarMultiblock;
 import gregtech.api.mui.GTGuiTextures;
+import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GTGuis;
 import gregtech.api.util.GTLambdaUtils;
 import gregtech.api.util.GTLog;
@@ -18,6 +19,7 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
+import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -84,7 +86,7 @@ public class MultiblockUIFactory {
                 .height(77)
                 .margin(4, 0)
                 .child(SlotGroupWidget.playerInventory(0)
-                        .alignX(0f))
+                        .left(2))
                 .child(createButtons(panel, panelSyncManager, guiData)));
     }
 
@@ -295,9 +297,21 @@ public class MultiblockUIFactory {
         }
 
         return parent.child(createIndicator(syncManager))
-                .background(GTGuiTextures.DISPLAY)
+                .background(getDisplayBackground())
                 .size(190, screenHeight)
                 .pos(4, 4);
+    }
+
+    // todo this should be part of the theme instead
+    private UITexture getDisplayBackground() {
+        var theme = mte.getUITheme();
+        if (theme == GTGuiTheme.BRONZE) {
+            return GTGuiTextures.DISPLAY_BRONZE;
+        } else if (theme == GTGuiTheme.STEEL) {
+            return GTGuiTextures.DISPLAY_STEEL;
+        } else {
+            return GTGuiTextures.DISPLAY;
+        }
     }
 
     @NotNull
