@@ -446,15 +446,15 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent);
-        final MultiblockUIBuilder status = MultiblockUIFactory.builder();
-        status.setAction(b -> b.structureFormed(isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addWorkingStatusLine());
         return new MultiblockUIFactory(this)
                 .setSize(198, 236)
                 .setScreenHeight(138)
                 .disableDisplayText()
                 .addScreenChildren((parent, syncManager) -> {
+                    MultiblockUIBuilder status = MultiblockUIFactory.builder();
+                    status.setAction(b -> b.structureFormed(true)
+                            .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                            .addWorkingStatusLine());
                     status.sync("status", syncManager);
                     parent.child(new Column()
                             .padding(4)
@@ -465,7 +465,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                             .child(new ProgressWidget()
                                     .size(77, 77)
                                     .tooltipAutoUpdate(true)
-                                    // todo this tooltip is not updating correctly
                                     .tooltipBuilder(status::build)
                                     .background(GTGuiTextures.FUSION_DIAGRAM.asIcon()
                                             .size(89, 101)
