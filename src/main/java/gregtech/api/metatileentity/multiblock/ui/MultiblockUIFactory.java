@@ -33,8 +33,6 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -45,7 +43,8 @@ public class MultiblockUIFactory {
     protected BiFunction<PosGuiData, PanelSyncManager, IWidget> flexButton = (guiData, syncManager) -> null;
     private int width = 198, height = 202;
     private int screenHeight = 109;
-    private Consumer<List<IWidget>> childrenConsumer;
+    private ScreenFunction screenFunction;
+    private static final Consumer<MultiblockUIBuilder> NO_OP = b -> {};
 
     static {
         // register operations
@@ -90,6 +89,13 @@ public class MultiblockUIFactory {
     }
 
     private Widget<?> createIndicator(PanelSyncManager syncManager) {
+        if (warningText == NO_OP && errorText == NO_OP) {
+            return new Widget<>()
+                    .size(18)
+                    .pos(174 - 5, screenHeight - 18 - 3)
+                    .overlay(GTGuiTextures.getLogo(mte.getUITheme()));
+        }
+
         MultiblockUIBuilder error = builder();
         error.sync("error", syncManager);
         error.setAction(this.errorText);
@@ -143,6 +149,11 @@ public class MultiblockUIFactory {
         return configureWarningText(true, warningText);
     }
 
+    public MultiblockUIFactory disableWarningText() {
+        this.warningText = NO_OP;
+        return this;
+    }
+
     /**
      * Returns a list of translation keys indicating any current errors in this Multiblock. <br />
      * Prioritized over any warnings provided by {@link #configureWarningText(Consumer)}.<br />
@@ -160,6 +171,11 @@ public class MultiblockUIFactory {
      */
     public MultiblockUIFactory configureErrorText(Consumer<MultiblockUIBuilder> errorText) {
         return configureErrorText(true, errorText);
+    }
+
+    public MultiblockUIFactory disableErrorText() {
+        this.errorText = NO_OP;
+        return this;
     }
 
     /**
@@ -181,6 +197,11 @@ public class MultiblockUIFactory {
      */
     public MultiblockUIFactory configureDisplayText(Consumer<MultiblockUIBuilder> displayText) {
         return configureDisplayText(true, displayText);
+    }
+
+    public MultiblockUIFactory disableDisplayText() {
+        this.displayText = NO_OP;
+        return this;
     }
 
     /**
@@ -248,33 +269,32 @@ public class MultiblockUIFactory {
         return column;
     }
 
-    public MultiblockUIFactory addScreenChildren(Consumer<List<IWidget>> consumer) {
-        this.childrenConsumer = consumer;
+    public MultiblockUIFactory addScreenChildren(ScreenFunction function) {
+        this.screenFunction = function;
         return this;
     }
 
     protected Widget<?> createScreen(PanelSyncManager syncManager) {
-        MultiblockUIBuilder display = builder();
-        display.setAction(this.displayText);
-        display.sync("display", syncManager);
-
-        var scrollableTextWidget = new ScrollableTextWidget()
-                .sizeRel(1f)
-                .alignment(Alignment.TopLeft)
-                .margin(4, 4)
-                .autoUpdate(true)
-                .textBuilder(display::build);
-
         var parent = new ParentWidget<>();
 
-        if (this.childrenConsumer != null) {
-            List<IWidget> extra = new ArrayList<>();
-            this.childrenConsumer.accept(extra);
-            extra.forEach(parent::child);
+        if (this.screenFunction != null) {
+            this.screenFunction.addWidgets(parent, syncManager);
         }
 
-        return parent.child(scrollableTextWidget)
-                .child(createIndicator(syncManager))
+        if (displayText != NO_OP) {
+            MultiblockUIBuilder display = builder();
+            display.setAction(this.displayText);
+            display.sync("display", syncManager);
+
+            parent.child(new ScrollableTextWidget()
+                    .sizeRel(1f)
+                    .alignment(Alignment.TopLeft)
+                    .margin(4, 4)
+                    .autoUpdate(true)
+                    .textBuilder(display::build));
+        }
+
+        return parent.child(createIndicator(syncManager))
                 .background(GTGuiTextures.DISPLAY)
                 .size(190, screenHeight)
                 .pos(4, 4);
@@ -383,6 +403,12 @@ public class MultiblockUIFactory {
         public static int HEIGHT = 7;
 
         private Bars() {}
+    }
+
+    @FunctionalInterface
+    public interface ScreenFunction {
+
+        void addWidgets(ParentWidget<?> parent, PanelSyncManager syncManager);
     }
 
     public static MultiblockUIBuilder builder() {
