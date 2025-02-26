@@ -508,7 +508,7 @@ public class MultiblockUIBuilder {
         return getSyncer().hasChanged();
     }
 
-    protected void sync(String key, PanelSyncManager syncManager) {
+    public void sync(String key, PanelSyncManager syncManager) {
         syncManager.syncValue(key, this.syncHandler);
     }
 
@@ -540,7 +540,7 @@ public class MultiblockUIBuilder {
         }
     }
 
-    protected void setAction(Consumer<MultiblockUIBuilder> action) {
+    public void setAction(Consumer<MultiblockUIBuilder> action) {
         this.action = action;
     }
 
