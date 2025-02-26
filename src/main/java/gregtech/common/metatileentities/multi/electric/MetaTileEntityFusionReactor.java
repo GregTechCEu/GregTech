@@ -21,6 +21,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockDisplayText;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
+import gregtech.api.metatileentity.multiblock.ui.MultiblockUIBuilder;
 import gregtech.api.metatileentity.multiblock.ui.MultiblockUIFactory;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.pattern.BlockPattern;
@@ -450,36 +451,38 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         }
 
         DoubleSyncValue progress = new DoubleSyncValue(recipeMapWorkable::getProgressPercent);
+        final MultiblockUIBuilder status = MultiblockUIFactory.builder();
+        status.setAction(b -> b.structureFormed(isStructureFormed())
+                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .addWorkingStatusLine());
         return new MultiblockUIFactory(this)
                 .setSize(198, 236)
                 .setScreenHeight(138)
-                .configureDisplayText(false, builder -> {})
-                .addScreenChildren(widgets -> widgets.add(new Column()
-                        .padding(4)
-                        .expanded()
-                        .child(title.asWidget()
-                                .marginBottom(8)
-                                .size(69, 12))
-                        .child(new ProgressWidget()
-                                .size(77, 77)
-                                .tooltipAutoUpdate(true)
-                                // this is fine client only because these values are already synced
-                                .tooltipBuilder(tooltip -> MultiblockUIFactory.builder()
-                                        .structureFormed(isStructureFormed())
-                                        .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(),
-                                                recipeMapWorkable.isActive())
-                                        .addWorkingStatusLine()
-                                        .build(tooltip))
-                                .background(GTGuiTextures.FUSION_DIAGRAM.asIcon()
-                                        .size(89, 101)
-                                        .marginTop(11))
-                                .direction(ProgressWidget.Direction.CIRCULAR_CW)
-                                .value(progress)
-                                .texture(null, GTGuiTextures.FUSION_PROGRESS, 77))
-                        .child(GTGuiTextures.FUSION_LEGEND.asWidget()
-                                .left(4)
-                                .bottom(4)
-                                .size(108, 41))));
+                .disableDisplayText()
+                .addScreenChildren((parent, syncManager) -> {
+                    status.sync("status", syncManager);
+                    parent.child(new Column()
+                            .padding(4)
+                            .expanded()
+                            .child(title.asWidget()
+                                    .marginBottom(8)
+                                    .size(69, 12))
+                            .child(new ProgressWidget()
+                                    .size(77, 77)
+                                    .tooltipAutoUpdate(true)
+                                    // todo this tooltip is not updating correctly
+                                    .tooltipBuilder(status::build)
+                                    .background(GTGuiTextures.FUSION_DIAGRAM.asIcon()
+                                            .size(89, 101)
+                                            .marginTop(11))
+                                    .direction(ProgressWidget.Direction.CIRCULAR_CW)
+                                    .value(progress)
+                                    .texture(null, GTGuiTextures.FUSION_PROGRESS, 77))
+                            .child(GTGuiTextures.FUSION_LEGEND.asWidget()
+                                    .left(4)
+                                    .bottom(4)
+                                    .size(108, 41)));
+                });
     }
 
     private void addEnergyBarHoverText(List<ITextComponent> hoverList) {

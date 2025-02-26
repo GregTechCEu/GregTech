@@ -364,7 +364,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     protected MultiblockUIFactory createUIFactory() {
         return super.createUIFactory()
-                .addScreenChildren(widgets -> widgets.add(new ParentWidget<>()
+                .addScreenChildren((parent, syncManager) -> parent.child(new ParentWidget<>()
                         .leftRel(0.5f)
                         .bottom(5)
                         .size(16 * 3 + 2)
