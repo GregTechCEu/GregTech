@@ -560,6 +560,7 @@ public class MultiblockUIBuilder {
     }
 
     private void addKey(@NotNull IDrawable key, @NotNull Operation op) {
+        if (isServer()) return;
         if (textList.size() != operations.size()) {
             throw new IllegalStateException("textList and operations must be the same size!");
         }
