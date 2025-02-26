@@ -22,8 +22,10 @@ import io.netty.buffer.Unpooled;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -663,6 +665,26 @@ public class MultiblockUIBuilder {
                     throw new IllegalStateException(e);
                 }
             }
+        }
+
+        @Override
+        public <T> Collection<T> syncCollection(Collection<T> initial, IByteBufSerializer<T> serializer,
+                                                IByteBufDeserializer<T> deserializer) {
+            if (isServer()) {
+                internal.writeVarInt(initial.size());
+                initial.forEach(t -> serializer.serializeSafe(internal, t));
+            } else {
+                initial.clear();
+                int size = internal.readVarInt();
+                try {
+                    for (int i = 0; i < size; i++) {
+                        initial.add(deserializer.deserialize(internal));
+                    }
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+            return initial;
         }
 
         @Override
