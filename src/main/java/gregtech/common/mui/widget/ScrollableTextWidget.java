@@ -98,7 +98,6 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     public Object getHoveredElement() {
         if (!isHovering()) return null;
         getContext().pushMatrix();
-        getContext().translate(getArea().x, getArea().y);
         Object o = this.text.getHoveringElement(getContext());
         getContext().popMatrix();
         return o;
@@ -126,11 +125,7 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     }
 
     @Override
-    public void getWidgetsAt(IViewportStack stack, HoveredWidgetList widgets, int x, int y) {
-        if (getArea().isInside(x, y) && !getScrollArea().isInsideScrollbarArea(x, y) && hasChildren()) {
-            IViewport.getChildrenAt(this, stack, widgets, x, y);
-        }
-    }
+    public void getWidgetsAt(IViewportStack stack, HoveredWidgetList widgets, int x, int y) {}
 
     @Override
     public void onResized() {
