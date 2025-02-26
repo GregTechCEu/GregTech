@@ -1,5 +1,7 @@
 package gregtech.api.metatileentity.multiblock.ui;
 
+import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
+import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
 import io.netty.buffer.ByteBuf;
 
 import java.math.BigInteger;
@@ -21,6 +23,8 @@ public interface UISyncer {
     float syncFloat(float initial);
 
     BigInteger syncBigInt(BigInteger initial);
+
+    <T> T syncObject(T initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer);
 
     void readBuffer(ByteBuf buf);
 
