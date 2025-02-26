@@ -13,7 +13,6 @@ import net.minecraft.util.text.TextFormatting;
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
-import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -23,7 +22,6 @@ import io.netty.buffer.Unpooled;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -538,7 +536,6 @@ public class MultiblockUIBuilder {
     protected void build() {
         clear();
         if (this.action != null) {
-            if (isServer()) getSyncer().clear();
             this.action.accept(this);
         }
     }
@@ -623,16 +620,6 @@ public class MultiblockUIBuilder {
         }
 
         @Override
-        public String syncString(String initial) {
-            if (isServer()) {
-                NetworkUtils.writeStringSafe(internal, initial);
-                return initial;
-            } else {
-                return NetworkUtils.readStringSafe(internal);
-            }
-        }
-
-        @Override
         public byte syncByte(byte initial) {
             if (isServer()) {
                 internal.writeByte(initial);
@@ -663,21 +650,10 @@ public class MultiblockUIBuilder {
         }
 
         @Override
-        public BigInteger syncBigInt(BigInteger initial) {
-            if (isServer()) {
-                internal.writeByteArray(initial.toByteArray());
-                return initial;
-            } else {
-                byte[] bytes = internal.readByteArray();
-                return new BigInteger(bytes);
-            }
-        }
-
-        @Override
         @NotNull
         public <T> T syncObject(@NotNull T initial, IByteBufSerializer<T> serializer,
                                 IByteBufDeserializer<T> deserializer) {
-            if (isServer) {
+            if (isServer()) {
                 serializer.serializeSafe(internal, Objects.requireNonNull(initial));
                 return initial;
             } else {
@@ -703,14 +679,10 @@ public class MultiblockUIBuilder {
         @Override
         public boolean hasChanged() {
             byte[] old = internal.array().clone();
+            this.internal.clear();
             onRebuild();
             build();
             return !Arrays.equals(old, internal.array());
-        }
-
-        @Override
-        public void clear() {
-            this.internal.clear();
         }
     }
 
