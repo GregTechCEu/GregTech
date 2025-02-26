@@ -3,7 +3,6 @@ package gregtech.api.metatileentity.multiblock.ui;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.util.JsonUtils;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
