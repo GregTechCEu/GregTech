@@ -668,8 +668,8 @@ public class MultiblockUIBuilder {
         }
 
         @Override
-        public <T> Collection<T> syncCollection(Collection<T> initial, IByteBufSerializer<T> serializer,
-                                                IByteBufDeserializer<T> deserializer) {
+        public <T, C extends Collection<T>> C syncCollection(C initial, IByteBufSerializer<T> serializer,
+                                                             IByteBufDeserializer<T> deserializer) {
             if (isServer()) {
                 internal.writeVarInt(initial.size());
                 initial.forEach(t -> serializer.serializeSafe(internal, t));
