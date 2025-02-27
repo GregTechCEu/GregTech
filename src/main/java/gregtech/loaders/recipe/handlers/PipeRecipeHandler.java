@@ -80,6 +80,7 @@ public class PipeRecipeHandler {
 
     private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
+        int workingTier = material.getWorkingTier();
 
         // Some pipes like wood do not have an ingot
         if (material.hasProperty(PropertyKey.INGOT)) {
@@ -88,7 +89,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
                     .outputs(GTUtility.copy(2, pipeStack))
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
@@ -98,21 +99,25 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_TINY)
                     .outputs(GTUtility.copy(2, pipeStack))
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
-                        GTUtility.copy(2, pipeStack), " s ", "rXw",
-                        'X', new UnificationEntry(OrePrefix.plank, material));
+                if (workingTier <= HV) {
+                    ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
+                            GTUtility.copy(2, pipeStack), " s ", "rXw",
+                            'X', new UnificationEntry(OrePrefix.plank, material));
+                }
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder()
                         .input(plate, material)
                         .circuitMeta(18)
                         .fluidInputs(Glue.getFluid(10))
                         .output(pipePrefix, material, 2)
+                        .duration(200)
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
-            } else {
+            } else if (workingTier <= HV) {
                 ModHandler.addShapedRecipe(String.format("tiny_%s_pipe", material),
                         GTUtility.copy(2, pipeStack), " s ", "hXw",
                         'X', new UnificationEntry(OrePrefix.plate, material));
@@ -122,6 +127,7 @@ public class PipeRecipeHandler {
 
     private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
+        int workingTier = material.getWorkingTier();
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -129,7 +135,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
                     .outputs(pipeStack)
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
@@ -139,22 +145,26 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_SMALL)
                     .outputs(pipeStack)
                     .duration((int) (material.getMass()))
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
-                        pipeStack, "sXr",
-                        'X', new UnificationEntry(OrePrefix.plank, material));
+                if (workingTier <= HV) {
+                    ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
+                            pipeStack, "sXr",
+                            'X', new UnificationEntry(OrePrefix.plank, material));
+                }
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder()
                         .input(plate, material)
                         .circuitMeta(12)
                         .fluidInputs(Glue.getFluid(10))
                         .output(pipePrefix, material)
+                        .duration(200)
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
 
-            } else {
+            } else if (workingTier <= HV) {
                 ModHandler.addShapedRecipe(String.format("small_%s_pipe", material),
                         pipeStack, "wXh",
                         'X', new UnificationEntry(OrePrefix.plate, material));
@@ -164,6 +174,7 @@ public class PipeRecipeHandler {
 
     private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
+        int workingTier = material.getWorkingTier();
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -171,7 +182,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
@@ -181,22 +192,26 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_NORMAL)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 3)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
-                        pipeStack, "XXX", "s r",
-                        'X', new UnificationEntry(OrePrefix.plank, material));
+                if (workingTier <= HV) {
+                    ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
+                            pipeStack, "XXX", "s r",
+                            'X', new UnificationEntry(OrePrefix.plank, material));
+                }
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder()
                         .input(plate, material, 3)
                         .circuitMeta(6)
                         .fluidInputs(Glue.getFluid(20))
                         .output(pipePrefix, material)
+                        .duration(200)
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
 
-            } else {
+            } else if (workingTier <= HV) {
                 ModHandler.addShapedRecipe(String.format("medium_%s_pipe", material),
                         pipeStack, "XXX", "w h",
                         'X', new UnificationEntry(OrePrefix.plate, material));
@@ -206,6 +221,7 @@ public class PipeRecipeHandler {
 
     private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
+        int workingTier = material.getWorkingTier();
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -213,7 +229,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 6)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
@@ -223,21 +239,25 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_LARGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 6)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         } else {
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
-                        pipeStack, "XXX", "s r", "XXX",
-                        'X', new UnificationEntry(OrePrefix.plank, material));
+                if (workingTier <= HV) {
+                    ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
+                            pipeStack, "XXX", "s r", "XXX",
+                            'X', new UnificationEntry(OrePrefix.plank, material));
+                }
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder()
                         .input(plate, material, 6)
                         .circuitMeta(2)
                         .fluidInputs(Glue.getFluid(50))
                         .output(pipePrefix, material)
+                        .duration(100)
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
-            } else {
+            } else if (workingTier <= HV) {
                 ModHandler.addShapedRecipe(String.format("large_%s_pipe", material),
                         pipeStack, "XXX", "w h", "XXX",
                         'X', new UnificationEntry(OrePrefix.plate, material));
@@ -247,6 +267,7 @@ public class PipeRecipeHandler {
 
     private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
+        int workingTier = material.getWorkingTier();
 
         if (material.hasProperty(PropertyKey.INGOT)) {
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -254,7 +275,7 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 24)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         }
 
@@ -264,21 +285,25 @@ public class PipeRecipeHandler {
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_PIPE_HUGE)
                     .outputs(pipeStack)
                     .duration((int) material.getMass() * 24)
-                    .EUt(6 * getVoltageMultiplier(material))
+                    .EUt(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                     .buildAndRegister();
         } else if (OrePrefix.plateDouble.doGenerateItem(material)) {
             if (ModHandler.isMaterialWood(material)) {
-                ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
-                        pipeStack, "XXX", "s r", "XXX",
-                        'X', new UnificationEntry(OrePrefix.plateDouble, material));
+                if (workingTier <= HV) {
+                    ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
+                            pipeStack, "XXX", "s r", "XXX",
+                            'X', new UnificationEntry(OrePrefix.plateDouble, material));
+                }
 
-                ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(VA[LV])
+                ASSEMBLER_RECIPES.recipeBuilder()
                         .input(plateDouble, material, 6)
                         .circuitMeta(24)
                         .fluidInputs(Glue.getFluid(100))
                         .output(pipePrefix, material)
+                        .duration(100)
+                        .EUt(GTUtility.scaleVoltage(VA[LV], workingTier))
                         .buildAndRegister();
-            } else {
+            } else if (workingTier <= HV) {
                 ModHandler.addShapedRecipe(String.format("huge_%s_pipe", material),
                         pipeStack, "XXX", "w h", "XXX",
                         'X', new UnificationEntry(OrePrefix.plateDouble, material));
@@ -318,7 +343,7 @@ public class PipeRecipeHandler {
                 .buildAndRegister();
     }
 
-    private static int getVoltageMultiplier(Material material) {
+    private static long getVoltageMultiplier(Material material) {
         return material.getBlastTemperature() >= 2800 ? VA[LV] : VA[ULV];
     }
 }

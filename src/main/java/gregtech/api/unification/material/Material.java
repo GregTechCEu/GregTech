@@ -1,5 +1,6 @@
 package gregtech.api.unification.material;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.FluidState;
@@ -368,6 +369,26 @@ public class Material implements Comparable<Material> {
     public int getBlastTemperature() {
         BlastProperty prop = properties.getProperty(PropertyKey.BLAST);
         return prop == null ? 0 : prop.getBlastTemperature();
+    }
+
+    @ZenGetter("workingTier")
+    public int getWorkingTier() {
+        return materialInfo.workingTier;
+    }
+
+    @ZenMethod
+    public void setWorkingTier(int workingTier) {
+        if (workingTier < 0) {
+            throw new IllegalArgumentException(
+                    "Cannot set working tier for material " + materialInfo.resourceLocation + "to less than 0 (ULV)!");
+        }
+        if (workingTier > GTValues.MAX) {
+            throw new IllegalArgumentException(
+                    "Cannot set working tier for material " + materialInfo.resourceLocation +
+                            "to greater than 14 (MAX)!");
+
+        }
+        materialInfo.workingTier = workingTier;
     }
 
     public FluidStack getPlasma(int amount) {
@@ -1110,6 +1131,28 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /**
+         * Sets the tier for "working" recipes to require, such as extruding, bending, etc.
+         *
+         * @param tier The tier. Defaults to {@link GTValues#LV} if unset,
+         *             though some recipes may still vary (such as Extruder recipes or Dense Plates).
+         */
+        public Builder workingTier(int tier) {
+            if (tier < 0) {
+                throw new IllegalArgumentException(
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to less than 0 (ULV)!");
+            }
+            if (tier > GTValues.MAX) {
+                throw new IllegalArgumentException(
+                        "Cannot set working tier for material " + materialInfo.resourceLocation +
+                                "to greater than 14 (MAX)!");
+
+            }
+            materialInfo.workingTier = tier;
+            return this;
+        }
+
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyInfo(properties, averageRGB);
@@ -1167,6 +1210,13 @@ public class Material implements Comparable<Material> {
          * Default: none.
          */
         private Element element;
+
+        /**
+         * The tier for "working" recipes to require, such as extruding, bending, etc.
+         * <p>
+         * Default: {@link GTValues#LV}, though some recipes may still vary (such as Dense Plates being MV).
+         */
+        private int workingTier = GTValues.LV;
 
         private MaterialInfo(int metaItemSubId, @NotNull ResourceLocation resourceLocation) {
             this.metaItemSubId = metaItemSubId;
