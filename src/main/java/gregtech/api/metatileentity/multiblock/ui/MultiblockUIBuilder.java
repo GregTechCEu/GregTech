@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.util.FluidStackHashStrategy;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
@@ -23,6 +25,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenCustomHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +34,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -570,17 +572,18 @@ public class MultiblockUIBuilder {
     private int addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength, int maxLines) {
         itemOutputs = getSyncer().syncCollection(new ArrayList<>(itemOutputs), ByteBufAdapters.ITEM_STACK);
 
-        Map<String, Long> itemMap = new LinkedHashMap<>();
+        Map<ItemStack, Long> itemMap = new Object2LongLinkedOpenCustomHashMap<>(
+                ItemStackHashStrategy.comparingAllButCount());
         for (ItemStack itemStack : itemOutputs) {
             if (itemStack.isEmpty()) continue;
-            itemMap.merge(itemStack.getDisplayName(), (long) itemStack.getCount(), Long::sum);
+            itemMap.merge(itemStack, (long) itemStack.getCount(), Long::sum);
         }
 
         int printedLines = 0;
-        for (Map.Entry<String, Long> entry : itemMap.entrySet()) {
+        for (Map.Entry<ItemStack, Long> entry : itemMap.entrySet()) {
             if (printedLines >= maxLines) break;
 
-            IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey());
+            IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey().getDisplayName());
             IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
             IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
 
@@ -603,7 +606,8 @@ public class MultiblockUIBuilder {
     private int addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength, int maxLines) {
         fluidOutputs = getSyncer().syncCollection(new ArrayList<>(fluidOutputs), ByteBufAdapters.FLUID_STACK);
 
-        Map<FluidStack, Long> fluidMap = new LinkedHashMap<>();
+        Map<FluidStack, Long> fluidMap = new Object2LongLinkedOpenCustomHashMap<>(
+                FluidStackHashStrategy.comparingAllButAmount);
         for (FluidStack fluidStack : fluidOutputs) {
             if (fluidStack.amount < 1) continue;
             fluidMap.merge(fluidStack, (long) fluidStack.amount, Long::sum);
