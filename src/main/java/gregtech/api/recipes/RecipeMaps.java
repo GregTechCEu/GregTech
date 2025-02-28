@@ -79,8 +79,9 @@ public final class RecipeMaps {
             new SimpleRecipeBuilder())
                     .itemInputs(2)
                     .itemOutputs(1)
-                    .itemSlotOverlay(GTGuiTextures.FURNACE_OVERLAY_1, false)
-                    .progressBar(GTGuiTextures.PROGRESS_BAR_ARROW)
+                    .uiBuilder(builder -> builder
+                            .itemSlotOverlay(GTGuiTextures.FURNACE_OVERLAY_1, false)
+                            .progressBar(GTGuiTextures.PROGRESS_BAR_ARROW))
                     .sound(GTSoundEvents.FURNACE)
                     .build();
 
