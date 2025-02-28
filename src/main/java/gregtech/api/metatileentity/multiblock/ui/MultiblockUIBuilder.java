@@ -3,6 +3,8 @@ package gregtech.api.metatileentity.multiblock.ui;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.mui.drawable.GTFluidDrawable;
+import gregtech.api.mui.drawable.GTItemDrawable;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.FluidStackHashStrategy;
 import gregtech.api.util.ItemStackHashStrategy;
@@ -540,23 +542,27 @@ public class MultiblockUIBuilder {
      * @param recipeLength the recipe length, in ticks.
      * @param maxLines     the maximum number of lines to print until truncating with {@code ...}
      */
-    public MultiblockUIBuilder addRecipeOutputLine(@Nullable List<ItemStack> itemOutputs,
-                                                   @Nullable List<FluidStack> fluidOutputs,
+    public MultiblockUIBuilder addRecipeOutputLine(@NotNull List<ItemStack> itemOutputs,
+                                                   @NotNull List<FluidStack> fluidOutputs,
                                                    int recipeLength, int maxLines) {
         recipeLength = getSyncer().syncInt(recipeLength);
         maxLines = getSyncer().syncInt(maxLines);
 
-        if (itemOutputs != null) {
-            maxLines -= addItemOutputLine(itemOutputs, recipeLength, maxLines);
-        }
+        if (recipeLength == 0) return this;
 
-        if (fluidOutputs != null) {
+        addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation.ADD);
+
+        if (!itemOutputs.isEmpty())
+            maxLines -= addItemOutputLine(itemOutputs, recipeLength, maxLines);
+
+        if (!fluidOutputs.isEmpty())
             maxLines -= addFluidOutputLine(fluidOutputs, recipeLength, maxLines);
-        }
 
         if (maxLines == 0) {
             addKey(KeyUtil.string(TextFormatting.WHITE, "..."));
         }
+
+        addEmptyLine();
 
         return this;
     }
@@ -587,8 +593,13 @@ public class MultiblockUIBuilder {
             IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
             IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
 
-            addKey(formatRecipeData(itemName, itemAmount, itemRate));
+            IDrawable stack = new GTItemDrawable(entry.getKey(), entry.getValue())
+                    .asIcon()
+                    .asHoverable()
+                    .addTooltipLine(formatRecipeData(itemName, itemAmount, itemRate));
 
+            addKey(stack, Operation.ADD);
+            addKey(IKey.SPACE, Operation.ADD);
             printedLines += 1;
         }
 
@@ -621,7 +632,13 @@ public class MultiblockUIBuilder {
             IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue(), "L");
             IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
 
-            addKey(formatRecipeData(fluidName, fluidAmount, fluidRate));
+            IDrawable fluid = new GTFluidDrawable(entry.getKey(), entry.getValue())
+                    .asIcon()
+                    .asHoverable()
+                    .addTooltipLine(formatRecipeData(fluidName, fluidAmount, fluidRate));
+
+            addKey(fluid, Operation.ADD);
+            addKey(IKey.SPACE, Operation.ADD);
 
             printedLines += 1;
         }
