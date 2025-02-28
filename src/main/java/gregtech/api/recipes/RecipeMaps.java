@@ -121,7 +121,7 @@ public final class RecipeMaps {
                     .itemOutputs(9)
                     .fluidInputs(1)
                     .fluidOutputs(1)
-                    .progressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE)
+                    .uiBuilder(builder -> builder.progressBar(GTGuiTextures.PROGRESS_BAR_ARC_FURNACE))
                     .sound(GTSoundEvents.ARC)
                     .onBuild(gregtechId("arc_furnace_oxygen"), recipeBuilder -> {
                         if (recipeBuilder.getFluidInputs().isEmpty()) {
@@ -148,8 +148,9 @@ public final class RecipeMaps {
                     .itemInputs(9)
                     .itemOutputs(1)
                     .fluidInputs(1)
-                    .itemSlotOverlay(GuiTextures.CIRCUIT_OVERLAY, false)
-                    .progressBar(GuiTextures.PROGRESS_BAR_CIRCUIT)
+                    .uiBuilder(builder -> builder
+                            .itemSlotOverlay(GTGuiTextures.CIRCUIT_OVERLAY, false)
+                            .progressBar(GTGuiTextures.PROGRESS_BAR_CIRCUIT))
                     .sound(GTSoundEvents.ASSEMBLER)
                     .onBuild(gregtechId("assembler_solder"), recipeBuilder -> {
                         var fluidInputs = recipeBuilder.getFluidInputs();
@@ -209,9 +210,9 @@ public final class RecipeMaps {
                     .itemOutputs(2)
                     .fluidInputs(1)
                     .fluidOutputs(1)
-                    .itemSlotOverlay(GuiTextures.DUST_OVERLAY, false)
-                    .itemSlotOverlay(GuiTextures.CRYSTAL_OVERLAY, true)
-                    .progressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION)
+                    .uiBuilder(builder -> builder.itemSlotOverlay(GTGuiTextures.DUST_OVERLAY, false)
+                            .itemSlotOverlay(GTGuiTextures.CRYSTAL_OVERLAY, true)
+                            .progressBar(GTGuiTextures.PROGRESS_BAR_CRYSTALLIZATION))
                     .sound(GTSoundEvents.FURNACE)
                     .build();
 
