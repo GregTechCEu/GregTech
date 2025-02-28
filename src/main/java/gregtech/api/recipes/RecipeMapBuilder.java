@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
 
@@ -65,7 +66,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     @ApiStatus.Experimental
     private boolean usesMui2 = false;
 
-    private @Nullable Consumer<RecipeMapUIBuilder> mapUIBuilder;
+    private @Nullable UnaryOperator<RecipeMapUIBuilder> mapUIBuilder;
 
     /**
      * @param unlocalizedName      the name of the recipemap
@@ -275,7 +276,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         return this;
     }
 
-    public @NotNull RecipeMapBuilder<B> uiBuilder(@NotNull Consumer<RecipeMapUIBuilder> mapUIBuilder) {
+    public @NotNull RecipeMapBuilder<B> uiBuilder(@NotNull UnaryOperator<RecipeMapUIBuilder> mapUIBuilder) {
         this.usesMui2 = true;
         this.mapUIBuilder = mapUIBuilder;
         return this;
@@ -289,10 +290,8 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
         RecipeMapUI<?> ui = new RecipeMapUI<>(recipeMap, modifyItemInputs, modifyItemOutputs, modifyFluidInputs,
                 modifyFluidOutputs, isGenerator);
         if (usesMui2) {
-            var builder = new RecipeMapUIBuilder();
             // noinspection DataFlowIssue
-            this.mapUIBuilder.accept(builder);
-            builder.setMapUi(ui);
+            this.mapUIBuilder.apply(new RecipeMapUIBuilder()).setMapUi(ui);
         } else {
             if (progressBar != null) {
                 ui.setProgressBarTexture(progressBar);
