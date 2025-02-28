@@ -86,7 +86,6 @@ public enum KeyBind {
     @SideOnly(Side.CLIENT)
     private boolean isKeyDown;
 
-
     /**
      * For Vanilla/Other Mod keybinds
      * <p>
