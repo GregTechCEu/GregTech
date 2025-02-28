@@ -61,7 +61,7 @@ import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.value.BoolValue;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
-import com.cleanroommc.modularui.value.sync.GuiSyncManager;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.Widget;
 import com.cleanroommc.modularui.widgets.ItemSlot;
@@ -498,7 +498,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData guiData, GuiSyncManager guiSyncManager) {
+    public ModularPanel buildUI(PosGuiData guiData, PanelSyncManager guiSyncManager) {
         RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
         if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
