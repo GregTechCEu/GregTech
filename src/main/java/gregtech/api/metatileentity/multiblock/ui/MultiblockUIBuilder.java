@@ -2,17 +2,21 @@ package gregtech.api.metatileentity.multiblock.ui;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
+import com.cleanroommc.modularui.utils.serialization.ByteBufAdapters;
 import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
 import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
@@ -27,7 +31,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
@@ -45,6 +51,8 @@ public class MultiblockUIBuilder {
     private Consumer<MultiblockUIBuilder> action;
     private final InternalSyncHandler syncHandler = new InternalSyncHandler();
     private final KeyManager manager = new InternalKeyManager();
+
+    private static final int DEFAULT_MAX_RECIPE_LINES = 25;
 
     @Nullable
     private InternalSyncer syncer;
@@ -313,17 +321,23 @@ public class MultiblockUIBuilder {
     }
 
     /**
-     * Adds a simple progress line that displays progress as a percentage.
+     * Adds a progress line that displays recipe progress as "time / total time (percentage)".
      * <br>
      * Added if structure is formed and the machine is active.
      *
-     * @param progressPercent Progress formatted as a range of [0,1] representing the progress of the recipe.
+     * @param progress    current progress.
+     * @param maxProgress total progress to be made.
      */
-    public MultiblockUIBuilder addProgressLine(double progressPercent) {
+    public MultiblockUIBuilder addProgressLine(int progress, int maxProgress) {
         if (!isStructureFormed || !isActive) return this;
-        addKey(KeyUtil.lang(TextFormatting.GRAY,
-                "gregtech.multiblock.progress",
-                (int) (getSyncer().syncDouble(progressPercent) * 100)));
+
+        progress = getSyncer().syncInt(progress);
+        maxProgress = getSyncer().syncInt(maxProgress);
+
+        addKey(KeyUtil.lang(TextFormatting.WHITE, "gregtech.multiblock.recipe_progress",
+                String.format("%,3.2f", (float) progress / 20),
+                String.format("%,3.2f", (float) maxProgress / 20),
+                String.format("%,3.1f", (float) progress / maxProgress * 100f)));
         return this;
     }
 
@@ -482,6 +496,150 @@ public class MultiblockUIBuilder {
         addKey(KeyUtil.lang(TextFormatting.GRAY, "gregtech.multiblock.machine_mode", mapName));
 
         return this;
+    }
+
+    /**
+     * Adds the current outputs of a recipe from recipe logic. Items then fluids.
+     *
+     * @param arl an instance of an {@link AbstractRecipeLogic} to gather the outputs from.
+     */
+    public MultiblockUIBuilder addRecipeOutputLine(@NotNull AbstractRecipeLogic arl) {
+        return addRecipeOutputLine(arl, DEFAULT_MAX_RECIPE_LINES);
+    }
+
+    /**
+     * Adds the current outputs of a recipe from recipe logic. Items then fluids.
+     *
+     * @param arl      an instance of an {@link AbstractRecipeLogic} to gather the outputs from.
+     * @param maxLines the maximum number of lines to print until truncating with {@code ...}
+     */
+    public MultiblockUIBuilder addRecipeOutputLine(@NotNull AbstractRecipeLogic arl, int maxLines) {
+        return addRecipeOutputLine(arl.getItemOutputs(), arl.getFluidOutputs(), arl.getMaxProgress(), maxLines);
+    }
+
+    /**
+     * Adds the current outputs of a recipe. Items then fluids.
+     *
+     * @param itemOutputs  a list of {@link ItemStack}s to display.
+     * @param fluidOutputs a list of {@link FluidStack}s to display.
+     * @param recipeLength the recipe length, in ticks.
+     */
+    public MultiblockUIBuilder addRecipeOutputLine(@Nullable List<ItemStack> itemOutputs,
+                                                   @Nullable List<FluidStack> fluidOutputs,
+                                                   int recipeLength) {
+        return addRecipeOutputLine(itemOutputs, fluidOutputs, recipeLength, DEFAULT_MAX_RECIPE_LINES);
+    }
+
+    /**
+     * Adds the current outputs of a recipe. Items then fluids.
+     *
+     * @param itemOutputs  a list of {@link ItemStack}s to display.
+     * @param fluidOutputs a list of {@link FluidStack}s to display.
+     * @param recipeLength the recipe length, in ticks.
+     * @param maxLines     the maximum number of lines to print until truncating with {@code ...}
+     */
+    public MultiblockUIBuilder addRecipeOutputLine(@Nullable List<ItemStack> itemOutputs,
+                                                   @Nullable List<FluidStack> fluidOutputs,
+                                                   int recipeLength, int maxLines) {
+        recipeLength = getSyncer().syncInt(recipeLength);
+        maxLines = getSyncer().syncInt(maxLines);
+
+        if (itemOutputs != null) {
+            maxLines -= addItemOutputLine(itemOutputs, recipeLength, maxLines);
+        }
+
+        if (fluidOutputs != null) {
+            maxLines -= addFluidOutputLine(fluidOutputs, recipeLength, maxLines);
+        }
+
+        if (maxLines == 0) {
+            addKey(KeyUtil.string(TextFormatting.WHITE, "..."));
+        }
+
+        return this;
+    }
+
+    /**
+     * Add the item outputs of a recipe to the display.
+     *
+     * @param itemOutputs  a list of {@link ItemStack}s to display.
+     * @param recipeLength the recipe length, in ticks.
+     * @param maxLines     number of lines to print.
+     * @return the number of lines printed.
+     */
+    private int addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength, int maxLines) {
+        itemOutputs = getSyncer().syncCollection(new ArrayList<>(itemOutputs), ByteBufAdapters.ITEM_STACK);
+
+        Map<String, Long> itemMap = new LinkedHashMap<>();
+        for (ItemStack itemStack : itemOutputs) {
+            if (itemStack.isEmpty()) continue;
+            itemMap.merge(itemStack.getDisplayName(), (long) itemStack.getCount(), Long::sum);
+        }
+
+        int printedLines = 0;
+        for (Map.Entry<String, Long> entry : itemMap.entrySet()) {
+            if (printedLines >= maxLines) break;
+
+            IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey());
+            IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
+            IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
+
+            addKey(formatRecipeData(itemName, itemAmount, itemRate));
+
+            printedLines += 1;
+        }
+
+        return printedLines;
+    }
+
+    /**
+     * Add the fluid outputs of a recipe to the display.
+     *
+     * @param fluidOutputs a list of {@link FluidStack}s to display.
+     * @param recipeLength the recipe length, in ticks.
+     * @param maxLines     number of lines to print.
+     * @return the number of lines printed.
+     */
+    private int addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength, int maxLines) {
+        fluidOutputs = getSyncer().syncCollection(new ArrayList<>(fluidOutputs), ByteBufAdapters.FLUID_STACK);
+
+        Map<FluidStack, Long> fluidMap = new LinkedHashMap<>();
+        for (FluidStack fluidStack : fluidOutputs) {
+            if (fluidStack.amount < 1) continue;
+            fluidMap.merge(fluidStack, (long) fluidStack.amount, Long::sum);
+        }
+
+        int printedLines = 0;
+        for (Map.Entry<FluidStack, Long> entry : fluidMap.entrySet()) {
+            if (printedLines >= maxLines) break;
+
+            IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
+            IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue(), "L");
+            IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
+
+            addKey(formatRecipeData(fluidName, fluidAmount, fluidRate));
+
+            printedLines += 1;
+        }
+
+        return printedLines;
+    }
+
+    private static String formatRecipeRate(int recipeLength, long amount) {
+        float perSecond = ((float) amount / recipeLength) * 20f;
+
+        String rate;
+        if (perSecond > 1) {
+            rate = "(" + String.format("%,.2f", perSecond).replaceAll("\\.?0+$", "") + "/s)";
+        } else {
+            rate = "(" + String.format("%,.2f", 1 / (perSecond)).replaceAll("\\.?0+$", "") + "s/ea)";
+        }
+
+        return rate;
+    }
+
+    private static IKey formatRecipeData(IKey name, IKey amount, IKey rate) {
+        return IKey.comp(name, KeyUtil.string(TextFormatting.WHITE, " x "), amount, IKey.SPACE, rate);
     }
 
     /** Insert an empty line into the text list. */

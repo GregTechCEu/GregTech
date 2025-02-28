@@ -1172,6 +1172,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         setMaximumOverclockVoltage(GTValues.V[tier]);
     }
 
+    @NotNull
+    public List<ItemStack> getItemOutputs() {
+        return itemOutputs;
+    }
+
+    @NotNull
+    public List<FluidStack> getFluidOutputs() {
+        return fluidOutputs;
+    }
+
     /**
      * Used to reset cached values in the Recipe Logic on events such as multiblock structure deformation
      */
