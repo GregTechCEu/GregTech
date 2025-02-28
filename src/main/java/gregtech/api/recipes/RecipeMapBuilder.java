@@ -36,12 +36,6 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
 
     private boolean isGenerator;
 
-    private @Nullable TextureArea progressBar;
-    private @Nullable ProgressWidget.MoveType moveType;
-
-    private @Nullable TextureArea specialTexture;
-    private int @Nullable [] specialTextureLocation;
-
     private RecipeMapUIFunction recipeMapUIFunction = this::buildUI;
 
     private SoundEvent sound;
@@ -61,6 +55,8 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
     private @Nullable gregtech.api.gui.widgets.ProgressWidget.MoveType moveType;
     @Deprecated
     private @Nullable TextureArea specialTexture;
+    @Deprecated
+    private int @Nullable [] specialTextureLocation;
 
     /* *********************** MUI 2 *********************** */
 
