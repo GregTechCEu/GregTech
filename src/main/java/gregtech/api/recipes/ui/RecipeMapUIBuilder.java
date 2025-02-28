@@ -3,28 +3,34 @@ package gregtech.api.recipes.ui;
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
-import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
 
+@SuppressWarnings({ "unused", "UnusedReturnValue" })
 public class RecipeMapUIBuilder {
 
-    // todo try to store this better
-    private final Byte2ObjectMap<UITexture> slotOverlayTextures = new Byte2ObjectArrayMap<>();
-    private @Nullable UITexture progressTexture;
-    private @Nullable ProgressWidget.Direction progressDirection;
-    private @Nullable UITexture specialTexture;
-    private @NotNull Area specialTextureLocation = new Area();
+    private final RecipeMapUI<?> mapUI;
+
+    public RecipeMapUIBuilder(RecipeMapUI<?> mapUI) {
+        this.mapUI = mapUI;
+    }
 
     /**
      * @param progressBar the progress bar texture to use
      * @return this
      */
-    public @NotNull RecipeMapUIBuilder progressBar(@Nullable UITexture progressBar) {
-        this.progressTexture = progressBar;
+    public @NotNull RecipeMapUIBuilder progressBar(@NotNull UITexture progressBar) {
+        this.mapUI.setProgressBarTexture(progressBar);
+        return this;
+    }
+
+    /**
+     * @param moveType the progress bar move type to use
+     * @return this
+     */
+    public @NotNull RecipeMapUIBuilder progressDirection(@NotNull ProgressWidget.Direction moveType) {
+        this.mapUI.setProgressBarDirection(moveType);
         return this;
     }
 
@@ -33,10 +39,9 @@ public class RecipeMapUIBuilder {
      * @param moveType    the progress bar move type to use
      * @return this
      */
-    public @NotNull RecipeMapUIBuilder progressBar(@Nullable UITexture progressBar,
-                                                   @Nullable ProgressWidget.Direction moveType) {
-        this.progressDirection = moveType;
-        return progressBar(progressBar);
+    public @NotNull RecipeMapUIBuilder progressBar(@NotNull UITexture progressBar,
+                                                   @NotNull ProgressWidget.Direction moveType) {
+        return progressBar(progressBar).progressDirection(moveType);
     }
 
     /**
@@ -58,8 +63,7 @@ public class RecipeMapUIBuilder {
      */
     public @NotNull RecipeMapUIBuilder itemSlotOverlay(@NotNull UITexture texture, boolean isOutput,
                                                        boolean isLastSlot) {
-        this.slotOverlayTextures.put(computeOverlayKey(isOutput, false, isLastSlot), texture);
-        return this;
+        return slotOverlay(texture, isOutput, false, isLastSlot);
     }
 
     /**
@@ -81,30 +85,30 @@ public class RecipeMapUIBuilder {
      */
     public @NotNull RecipeMapUIBuilder fluidSlotOverlay(@NotNull UITexture texture, boolean isOutput,
                                                         boolean isLastSlot) {
-        this.slotOverlayTextures.put(computeOverlayKey(isOutput, true, isLastSlot), texture);
+        return slotOverlay(texture, isOutput, true, isLastSlot);
+    }
+
+    /**
+     * @param texture    the texture to use
+     * @param isOutput   if the slot is an output slot
+     * @param isFluid    if the slot is a fluid slot
+     * @param isLastSlot if the slot is the last slot
+     * @return this
+     */
+    public @NotNull RecipeMapUIBuilder slotOverlay(@NotNull UITexture texture, boolean isOutput,
+                                                   boolean isFluid, boolean isLastSlot) {
+        this.mapUI.setSlotOverlay(computeOverlayKey(isOutput, isFluid, isLastSlot), texture);
         return this;
     }
 
-    public @NotNull RecipeMapUIBuilder specialTexture(@NotNull UITexture texture, int x, int y, int width,
-                                                      int height) {
-        this.specialTexture = texture;
-        this.specialTextureLocation.set(x, y, width, height);
-        return this;
+    public @NotNull RecipeMapUIBuilder specialTexture(@NotNull UITexture texture,
+                                                      int x, int y,
+                                                      int width, int height) {
+        return specialTexture(texture, new Area(x, y, width, height));
     }
 
-    public void setMapUi(RecipeMapUI<?> mapUi) {
-        mapUi.setUsesMui2();
-        if (progressTexture != null) {
-            mapUi.setProgressBarTexture(progressTexture);
-        }
-        if (progressDirection != null) {
-            mapUi.setProgressBarDirection(progressDirection);
-        }
-        if (specialTexture != null) {
-            mapUi.setSpecialTexture(specialTexture, specialTextureLocation);
-        }
-        for (var entry : slotOverlayTextures.byte2ObjectEntrySet()) {
-            mapUi.setSlotOverlay(entry.getByteKey(), entry.getValue());
-        }
+    public @NotNull RecipeMapUIBuilder specialTexture(@NotNull UITexture texture, @NotNull Area area) {
+        this.mapUI.setSpecialTexture(texture, area);
+        return this;
     }
 }
