@@ -9,7 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
 import com.cleanroommc.modularui.drawable.UITexture;
-import com.cleanroommc.modularui.widgets.ProgressWidget;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectArrayMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import static gregtech.api.recipes.ui.RecipeMapUI.computeOverlayKey;
