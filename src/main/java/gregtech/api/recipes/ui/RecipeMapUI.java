@@ -20,6 +20,7 @@ import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.value.sync.SyncHandlers;
 import com.cleanroommc.modularui.widget.ParentWidget;
 import com.cleanroommc.modularui.widget.Widget;
+import com.cleanroommc.modularui.widget.sizer.Area;
 import com.cleanroommc.modularui.widgets.FluidSlot;
 import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
@@ -30,7 +31,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.function.DoubleSupplier;
 
@@ -45,7 +45,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
 
     private final boolean isGenerator;
 
-    private int @Nullable [] specialTexturePosition;
+    private @NotNull Area specialTexturePosition = new Area();
     private boolean isJEIVisible = true;
 
     /* *********************** MUI 1 *********************** */
@@ -156,7 +156,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
-        if (specialTexture != null && specialTexturePosition != null) {
+        if (specialTexture != null) {
             addSpecialTexture(builder);
         }
         return builder;
@@ -184,7 +184,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                         progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
-        if (specialTexture != null && specialTexturePosition != null) {
+        if (specialTexture != null) {
             addSpecialTexture(builder);
         }
         return builder;
@@ -212,7 +212,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 new gregtech.api.gui.widgets.RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20,
                         progressBarTexture, moveType, recipeMap));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
-        if (specialTexture != null && specialTexturePosition != null) {
+        if (specialTexture != null) {
             addSpecialTexture(builder);
         }
         return builder;
@@ -262,7 +262,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int y = startInputsY + 18 * i;
-                    addSlot(builder, startSpecX, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    addSlot(builder, startSpecX, y, i, itemHandler, fluidHandler, true, isOutputs);
                 }
             } else {
                 int startSpecY = startInputsY + itemSlotsToDown * 18;
@@ -270,7 +270,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                     int x = isOutputs ? startInputsX + 18 * (i % 3) :
                             startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
-                    addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    addSlot(builder, x, y, i, itemHandler, fluidHandler, true, isOutputs);
                 }
             }
         }
@@ -416,7 +416,11 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public void setSpecialTexture(@NotNull TextureArea specialTexture, int @NotNull [] position) {
         this.specialTexture = specialTexture;
-        this.specialTexturePosition = position;
+        this.specialTexturePosition.set(
+                position[0],
+                position[1],
+                position[2],
+                position[3]);
     }
 
     /**
@@ -431,7 +435,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     /**
      * @return the special texture's position
      */
-    public int @Nullable @UnmodifiableView [] specialTexturePosition() {
+    public Area specialTexturePosition() {
         return this.specialTexturePosition;
     }
 
@@ -444,11 +448,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
     public @NotNull ModularUI.Builder addSpecialTexture(@NotNull ModularUI.Builder builder) {
-        if (specialTexturePosition != null) {
-            builder.image(specialTexturePosition[0], specialTexturePosition[1],
-                    specialTexturePosition[2],
-                    specialTexturePosition[3], specialTexture);
-        }
+        builder.image(specialTexturePosition.x(), specialTexturePosition.y(),
+                specialTexturePosition.w(),
+                specialTexturePosition.h(), specialTexture);
         return builder;
     }
 
@@ -532,10 +534,9 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
                 .direction(progressDirection));
         addInventorySlotGroup(group, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(group, exportItems, exportFluids, true, yOffset);
-        if (specialTextureNew != null && specialTexturePosition != null) {
+        if (specialTextureNew != null) {
             group.child(new Widget<>()
-                    .pos(specialTexturePosition[0], specialTexturePosition[1])
-                    .size(specialTexturePosition[2], specialTexturePosition[3])
+                    .flex(flex -> flex.getArea().set(specialTexturePosition))
                     .background(specialTextureNew));
         }
         return group;
@@ -665,7 +666,7 @@ public class RecipeMapUI<R extends RecipeMap<?>> {
      * @param specialTexture the special texture to set
      * @param position       the position of the texture: [x, y, width, height]
      */
-    public void setSpecialTexture(@NotNull UITexture specialTexture, int @NotNull [] position) {
+    public void setSpecialTexture(@NotNull UITexture specialTexture, @NotNull Area position) {
         this.specialTextureNew = specialTexture;
         this.specialTexturePosition = position;
     }
