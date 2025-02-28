@@ -228,7 +228,6 @@ public class CoreModule implements IGregTechModule {
         /* End API Block Registration */
 
         proxy.onPreLoad();
-        KeyBind.init();
     }
 
     @Override
