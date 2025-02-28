@@ -289,7 +289,7 @@ public class RecipeMapBuilder<B extends RecipeBuilder<B>> {
                 modifyFluidOutputs, isGenerator);
         if (usesMui2) {
             // noinspection DataFlowIssue
-            this.mapUIBuilder.apply(new RecipeMapUIBuilder()).setMapUi(ui);
+            this.mapUIBuilder.apply(new RecipeMapUIBuilder(ui));
         } else {
             if (progressBar != null) {
                 ui.setProgressBarTexture(progressBar);
