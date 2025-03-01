@@ -50,4 +50,10 @@ public interface UISyncer {
     default <T, C extends Collection<T>> C syncCollection(C initial, IByteBufAdapter<T> adapter) {
         return syncCollection(initial, adapter, adapter);
     }
+
+    <T> T[] syncArray(T[] initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer);
+
+    default <T> T[] syncArray(T[] initial, IByteBufAdapter<T> adapter) {
+        return syncArray(initial, adapter, adapter);
+    }
 }
