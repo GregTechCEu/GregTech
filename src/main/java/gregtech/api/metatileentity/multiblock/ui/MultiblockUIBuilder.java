@@ -28,6 +28,7 @@ import com.cleanroommc.modularui.value.sync.SyncHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
@@ -552,11 +552,9 @@ public class MultiblockUIBuilder {
 
         addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation.ADD);
 
-        if (!itemOutputs.isEmpty())
-            maxLines -= addItemOutputLine(itemOutputs, recipeLength, maxLines);
+        maxLines -= addItemOutputLine(itemOutputs, recipeLength, maxLines);
 
-        if (!fluidOutputs.isEmpty())
-            maxLines -= addFluidOutputLine(fluidOutputs, recipeLength, maxLines);
+        maxLines -= addFluidOutputLine(fluidOutputs, recipeLength, maxLines);
 
         if (maxLines == 0) {
             addKey(KeyUtil.string(TextFormatting.WHITE, "..."));
@@ -578,7 +576,7 @@ public class MultiblockUIBuilder {
     private int addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength, int maxLines) {
         itemOutputs = getSyncer().syncCollection(new ArrayList<>(itemOutputs), ByteBufAdapters.ITEM_STACK);
 
-        Map<ItemStack, Long> itemMap = new Object2LongLinkedOpenCustomHashMap<>(
+        Object2LongMap<ItemStack> itemMap = new Object2LongLinkedOpenCustomHashMap<>(
                 ItemStackHashStrategy.comparingAllButCount());
         for (ItemStack itemStack : itemOutputs) {
             if (itemStack.isEmpty()) continue;
@@ -586,14 +584,14 @@ public class MultiblockUIBuilder {
         }
 
         int printedLines = 0;
-        for (Map.Entry<ItemStack, Long> entry : itemMap.entrySet()) {
+        for (var entry : itemMap.object2LongEntrySet()) {
             if (printedLines >= maxLines) break;
 
             IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey().getDisplayName());
-            IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue());
-            IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
+            IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getLongValue());
+            IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getLongValue()));
 
-            IDrawable stack = new GTItemDrawable(entry.getKey(), entry.getValue())
+            IDrawable stack = new GTItemDrawable(entry.getKey(), entry.getLongValue())
                     .asIcon()
                     .asHoverable()
                     .addTooltipLine(formatRecipeData(itemName, itemAmount, itemRate));
@@ -617,7 +615,7 @@ public class MultiblockUIBuilder {
     private int addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength, int maxLines) {
         fluidOutputs = getSyncer().syncCollection(new ArrayList<>(fluidOutputs), ByteBufAdapters.FLUID_STACK);
 
-        Map<FluidStack, Long> fluidMap = new Object2LongLinkedOpenCustomHashMap<>(
+        Object2LongMap<FluidStack> fluidMap = new Object2LongLinkedOpenCustomHashMap<>(
                 FluidStackHashStrategy.comparingAllButAmount);
         for (FluidStack fluidStack : fluidOutputs) {
             if (fluidStack.amount < 1) continue;
@@ -625,14 +623,14 @@ public class MultiblockUIBuilder {
         }
 
         int printedLines = 0;
-        for (Map.Entry<FluidStack, Long> entry : fluidMap.entrySet()) {
+        for (var entry : fluidMap.object2LongEntrySet()) {
             if (printedLines >= maxLines) break;
 
             IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
-            IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getValue(), "L");
-            IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getValue()));
+            IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getLongValue(), "L");
+            IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getLongValue()));
 
-            IDrawable fluid = new GTFluidDrawable(entry.getKey(), entry.getValue())
+            IDrawable fluid = new GTFluidDrawable(entry.getKey(), entry.getLongValue())
                     .asIcon()
                     .asHoverable()
                     .addTooltipLine(formatRecipeData(fluidName, fluidAmount, fluidRate));
