@@ -9,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+import java.util.function.LongSupplier;
 
 public interface UISyncer {
 
@@ -17,21 +21,45 @@ public interface UISyncer {
             (buffer, value) -> buffer.writeByteArray(value.toByteArray()),
             IEquals.defaultTester());
 
-    boolean syncBoolean(boolean initial);
+    boolean syncBoolean(@NotNull BooleanSupplier initial);
 
-    int syncInt(int initial);
+    int syncInt(@NotNull IntSupplier initial);
 
-    long syncLong(long initial);
+    long syncLong(@NotNull LongSupplier initial);
+
+    byte syncByte(@NotNull ByteSupplier initial);
+
+    double syncDouble(@NotNull DoubleSupplier initial);
+
+    float syncFloat(@NotNull FloatSupplier initial);
+
+    default boolean syncBoolean(boolean initial) {
+        return syncBoolean(() -> initial);
+    }
+
+    default int syncInt(int initial) {
+        return syncInt(() -> initial);
+    }
+
+    default long syncLong(long initial) {
+        return syncLong(() -> initial);
+    }
+
+    default byte syncByte(byte initial) {
+        return syncByte(() -> initial);
+    }
+
+    default double syncDouble(double initial) {
+        return syncDouble(() -> initial);
+    }
+
+    default float syncFloat(float initial) {
+        return syncFloat(() -> initial);
+    }
 
     default @NotNull String syncString(@NotNull String initial) {
         return syncObject(initial, ByteBufAdapters.STRING);
     }
-
-    byte syncByte(byte initial);
-
-    double syncDouble(double initial);
-
-    float syncFloat(float initial);
 
     default BigInteger syncBigInt(BigInteger initial) {
         return syncObject(initial, BIG_INT);
@@ -55,5 +83,15 @@ public interface UISyncer {
 
     default <T> T[] syncArray(T[] initial, IByteBufAdapter<T> adapter) {
         return syncArray(initial, adapter, adapter);
+    }
+
+    interface ByteSupplier {
+
+        byte getByte();
+    }
+
+    interface FloatSupplier {
+
+        float getFloat();
     }
 }
