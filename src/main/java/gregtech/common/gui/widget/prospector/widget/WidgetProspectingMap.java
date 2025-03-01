@@ -64,7 +64,7 @@ public class WidgetProspectingMap extends Widget {
     private long lastClicked;
 
     private final List<String> hoveredNames = new ArrayList<>();
-    private float hoveredOreHeight = 0.0f;
+    private int hoveredOreHeight = 0;
     private int color;
 
     public WidgetProspectingMap(int xPosition, int yPosition, int chunkRadius, WidgetOreList widgetOreList,
@@ -243,7 +243,7 @@ public class WidgetProspectingMap extends Widget {
         // draw tooltips
         if (this.isMouseOverElement(mouseX, mouseY) && texture != null) {
             this.hoveredNames.clear();
-            this.hoveredOreHeight = 0.0f;
+            this.hoveredOreHeight = 0;
             List<String> tooltips = new ArrayList<>();
             int cX = (mouseX - this.getPosition().x) / 16;
             int cZ = (mouseY - this.getPosition().y) / 16;
@@ -285,18 +285,18 @@ public class WidgetProspectingMap extends Widget {
                     }
                 }
                 oreHeight.forEach((name, height) -> {
+                    hoveredOreHeight += height;
                     int count = oreInfo.getOrDefault(name, 0);
-                    float avgHeight = height / (count != 0 ? count : 1);
+                    float avgHeight = count != 0 ? height / count : 0.0f;
                     oreHeight.put(name, avgHeight);
-                    hoveredOreHeight += avgHeight * count;
                 });
                 int totalCount = oreInfo.values().stream().reduce(0, Integer::sum);
                 if (totalCount != 0) {
-                    hoveredOreHeight /= totalCount;
+                    hoveredOreHeight = Math.round(hoveredOreHeight / (float) totalCount);
                 }
                 oreInfo.forEach((name, count) -> {
                     float height = oreHeight.getOrDefault(name, 0.0f);
-                    tooltips.add(name + " --- " + count + " at y: " + Math.round(height));
+                    tooltips.add(name + ", y" + Math.round(height) + " --- " + count);
                     hoveredNames.add(name);
                 });
             } else if (this.mode == ProspectorMode.FLUID) {
@@ -342,7 +342,7 @@ public class WidgetProspectingMap extends Widget {
 
         int xPos = ((Minecraft.getMinecraft().player.chunkCoordX + xDiff) << 4) + 8;
         int zPos = ((Minecraft.getMinecraft().player.chunkCoordZ + zDiff) << 4) + 8;
-        int yPos = hoveredOreHeight != 0.0f ? Math.round(hoveredOreHeight) :
+        int yPos = hoveredOreHeight != 0 ? hoveredOreHeight :
                 Minecraft.getMinecraft().world.getHeight(xPos, zPos);
 
         BlockPos b = new BlockPos(xPos, yPos, zPos);
