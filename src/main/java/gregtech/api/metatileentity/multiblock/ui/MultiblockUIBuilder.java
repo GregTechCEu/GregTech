@@ -30,7 +30,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
+import java.util.function.LongSupplier;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 public class MultiblockUIBuilder {
@@ -65,7 +69,7 @@ public class MultiblockUIBuilder {
     }
 
     void updateFormed(boolean isStructureFormed) {
-        this.isStructureFormed = this.getSyncer().syncBoolean(isStructureFormed);
+        this.isStructureFormed = getSyncer().syncBoolean(isStructureFormed);
     }
 
     private boolean isServer() {
@@ -317,10 +321,9 @@ public class MultiblockUIBuilder {
      */
     public MultiblockUIBuilder addProgressLine(double progressPercent) {
         if (!isStructureFormed || !isActive) return this;
-        progressPercent = getSyncer().syncDouble(progressPercent);
         addKey(KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.progress",
-                (int) (progressPercent * 100)));
+                (int) (getSyncer().syncDouble(progressPercent) * 100)));
         return this;
     }
 
@@ -333,10 +336,9 @@ public class MultiblockUIBuilder {
         if (!isStructureFormed) return this;
         numParallels = getSyncer().syncInt(numParallels);
         if (numParallels > 1) {
-            var parallels = KeyUtil.number(TextFormatting.DARK_PURPLE, numParallels);
-
             addKey(KeyUtil.lang(TextFormatting.GRAY,
-                    "gregtech.multiblock.parallel", parallels));
+                    "gregtech.multiblock.parallel",
+                    KeyUtil.number(TextFormatting.DARK_PURPLE, numParallels)));
         }
         return this;
     }
@@ -348,8 +350,7 @@ public class MultiblockUIBuilder {
      */
     public MultiblockUIBuilder addLowPowerLine(boolean isLowPower) {
         if (!isStructureFormed) return this;
-        isLowPower = getSyncer().syncBoolean(isLowPower);
-        if (isLowPower) {
+        if (getSyncer().syncBoolean(isLowPower)) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.not_enough_energy"));
         }
@@ -363,8 +364,7 @@ public class MultiblockUIBuilder {
      */
     public MultiblockUIBuilder addLowComputationLine(boolean isLowComputation) {
         if (!isStructureFormed) return this;
-        isLowComputation = getSyncer().syncBoolean(isLowComputation);
-        if (isLowComputation) {
+        if (getSyncer().syncBoolean(isLowComputation)) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.computation.not_enough_computation"));
         }
@@ -378,8 +378,7 @@ public class MultiblockUIBuilder {
      */
     public MultiblockUIBuilder addLowDynamoTierLine(boolean isTooLow) {
         if (!isStructureFormed) return this;
-        isTooLow = getSyncer().syncBoolean(isTooLow);
-        if (isTooLow) {
+        if (getSyncer().syncBoolean(isTooLow)) {
             addKey(KeyUtil.lang(TextFormatting.YELLOW,
                     "gregtech.multiblock.not_enough_energy_output"));
         }
@@ -446,8 +445,7 @@ public class MultiblockUIBuilder {
      */
     public MultiblockUIBuilder addMufflerObstructedLine(boolean isObstructed) {
         if (!isStructureFormed) return this;
-        isObstructed = getSyncer().syncBoolean(isObstructed);
-        if (isObstructed) {
+        if (getSyncer().syncBoolean(isObstructed)) {
             addKey(KeyUtil.lang(TextFormatting.RED,
                     "gregtech.multiblock.universal.muffler_obstructed"));
             addKey(KeyUtil.lang(TextFormatting.GRAY,
@@ -465,7 +463,7 @@ public class MultiblockUIBuilder {
         if (!isStructureFormed || !isActive) return this;
         fuelName = getSyncer().syncString(fuelName);
         previousRecipeDuration = getSyncer().syncInt(previousRecipeDuration);
-        if (fuelName != null) addKey(KeyUtil.lang(TextFormatting.GRAY,
+        addKey(KeyUtil.lang(TextFormatting.GRAY,
                 "gregtech.multiblock.turbine.fuel_needed",
                 KeyUtil.string(TextFormatting.RED, fuelName),
                 KeyUtil.number(TextFormatting.AQUA, previousRecipeDuration)));
@@ -617,60 +615,66 @@ public class MultiblockUIBuilder {
         }
 
         @Override
-        public boolean syncBoolean(boolean initial) {
+        public boolean syncBoolean(@NotNull BooleanSupplier initial) {
             if (isServer()) {
-                internal.writeBoolean(initial);
-                return initial;
+                boolean val = initial.getAsBoolean();
+                internal.writeBoolean(val);
+                return val;
             } else {
                 return internal.readBoolean();
             }
         }
 
         @Override
-        public int syncInt(int initial) {
+        public int syncInt(@NotNull IntSupplier initial) {
             if (isServer()) {
-                internal.writeInt(initial);
-                return initial;
+                int val = initial.getAsInt();
+                internal.writeInt(val);
+                return val;
             } else {
                 return internal.readInt();
             }
         }
 
         @Override
-        public long syncLong(long initial) {
+        public long syncLong(@NotNull LongSupplier initial) {
             if (isServer()) {
-                internal.writeLong(initial);
-                return initial;
+                long val = initial.getAsLong();
+                internal.writeLong(val);
+                return val;
             } else {
                 return internal.readLong();
             }
         }
 
         @Override
-        public byte syncByte(byte initial) {
+        public byte syncByte(@NotNull ByteSupplier initial) {
             if (isServer()) {
-                internal.writeByte(initial);
-                return initial;
+                byte val = initial.getByte();
+                internal.writeByte(val);
+                return val;
             } else {
                 return internal.readByte();
             }
         }
 
         @Override
-        public double syncDouble(double initial) {
+        public double syncDouble(@NotNull DoubleSupplier initial) {
             if (isServer()) {
-                internal.writeDouble(initial);
-                return initial;
+                double val = initial.getAsDouble();
+                internal.writeDouble(val);
+                return val;
             } else {
                 return internal.readDouble();
             }
         }
 
         @Override
-        public float syncFloat(float initial) {
+        public float syncFloat(@NotNull FloatSupplier initial) {
             if (isServer()) {
-                internal.writeFloat(initial);
-                return initial;
+                float val = initial.getFloat();
+                internal.writeFloat(val);
+                return val;
             } else {
                 return internal.readFloat();
             }
