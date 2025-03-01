@@ -1,7 +1,9 @@
 package gregtech.core.network.packets;
 
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.network.IPacket;
 import gregtech.api.network.IServerExecutor;
 
@@ -46,10 +48,11 @@ public class PacketRecoverMTE implements IPacket, IServerExecutor {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof IGregTechTileEntity holder && holder.isValid()) {
             holder.writeCustomData(INITIALIZE_MTE, buffer -> {
-                buffer.writeVarInt(
-                        holder.getMetaTileEntity().getRegistry()
-                                .getIdByObjectName(holder.getMetaTileEntity().metaTileEntityId));
-                holder.getMetaTileEntity().writeInitialSyncData(buffer);
+                MetaTileEntity metaTileEntity = holder.getMetaTileEntity();
+                MTERegistry registry = metaTileEntity.getRegistry();
+                buffer.writeVarInt(registry.getNetworkId());
+                buffer.writeVarInt(registry.getIdByObjectName(metaTileEntity.metaTileEntityId));
+                metaTileEntity.writeInitialSyncData(buffer);
             });
         } else if (!(world.getBlockState(pos).getBlock() instanceof BlockMachine)) {
             handler.player.connection.sendPacket(new SPacketBlockChange(world, pos));
