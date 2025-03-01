@@ -1,6 +1,6 @@
 package gregtech.api;
 
-import gregtech.api.util.XSTR;
+import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -10,7 +10,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.time.LocalDate;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import static net.minecraft.util.text.TextFormatting.*;
@@ -45,7 +44,7 @@ public class GTValues {
      */
     public static final short W = OreDictionary.WILDCARD_VALUE;
 
-    public static final Random RNG = new XSTR();
+    public static final XoShiRo256PlusPlusRandom RNG = new XoShiRo256PlusPlusRandom();
 
     /** Current time on the Client. Will always be zero on the server. */
     public static long CLIENT_TIME = 0;
