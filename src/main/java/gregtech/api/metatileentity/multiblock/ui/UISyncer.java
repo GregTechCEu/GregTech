@@ -21,16 +21,52 @@ public interface UISyncer {
             (buffer, value) -> buffer.writeByteArray(value.toByteArray()),
             IEquals.defaultTester());
 
+    /**
+     * Calls the supplier server side only so there's no potential NPEs for the client
+     *
+     * @param initial supplier to be called on the server
+     * @return synced value
+     */
     boolean syncBoolean(@NotNull BooleanSupplier initial);
 
+    /**
+     * Calls the supplier server side only so there's no potential NPEs for the client
+     *
+     * @param initial supplier to be called on the server
+     * @return synced value
+     */
     int syncInt(@NotNull IntSupplier initial);
 
+    /**
+     * Calls the supplier server side only so there's no potential NPEs for the client
+     *
+     * @param initial supplier to be called on the server
+     * @return synced value
+     */
     long syncLong(@NotNull LongSupplier initial);
 
+    /**
+     * Calls the supplier server side only so there's no potential NPEs for the client
+     *
+     * @param initial supplier to be called on the server
+     * @return synced value
+     */
     byte syncByte(@NotNull ByteSupplier initial);
 
+    /**
+     * Calls the supplier server side only so there's no potential NPEs for the client
+     *
+     * @param initial supplier to be called on the server
+     * @return synced value
+     */
     double syncDouble(@NotNull DoubleSupplier initial);
 
+    /**
+     * Calls the supplier server side only so there's no potential NPEs for the client
+     *
+     * @param initial supplier to be called on the server
+     * @return synced value
+     */
     float syncFloat(@NotNull FloatSupplier initial);
 
     default boolean syncBoolean(boolean initial) {
