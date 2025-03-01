@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -692,21 +693,38 @@ public class MultiblockUIBuilder {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public <T, C extends Collection<T>> C syncCollection(C initial, IByteBufSerializer<T> serializer,
                                                              IByteBufDeserializer<T> deserializer) {
             if (isServer()) {
                 internal.writeVarInt(initial.size());
                 initial.forEach(t -> serializer.serializeSafe(internal, t));
+                return initial;
             } else {
-                initial.clear();
                 int size = internal.readVarInt();
+                List<T> copy = new ArrayList<>(internal.readVarInt());
                 try {
                     for (int i = 0; i < size; i++) {
-                        initial.add(deserializer.deserialize(internal));
+                        copy.add(deserializer.deserialize(internal));
                     }
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
+                return (C) copy;
+            }
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T[] syncArray(T[] initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer) {
+            if (isServer()) {
+                internal.writeVarInt(initial.length);
+                for (T t : initial) {
+                    serializer.serializeSafe(internal, t);
+                }
+            } else {
+                initial = (T[]) Array.newInstance(initial.getClass().getComponentType(), internal.readVarInt());
+                Arrays.setAll(initial, i -> deserializer.deserializeSafe(internal));
             }
             return initial;
         }
