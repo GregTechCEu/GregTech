@@ -5,15 +5,12 @@ import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 
 import net.minecraft.network.PacketBuffer;
 
-import com.cleanroommc.modularui.utils.serialization.IByteBufAdapter;
-import com.cleanroommc.modularui.utils.serialization.IByteBufDeserializer;
-import com.cleanroommc.modularui.utils.serialization.IByteBufSerializer;
-import com.cleanroommc.modularui.utils.serialization.IEquals;
+import com.cleanroommc.modularui.utils.serialization.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.math.BigInteger;
 
 public class GTByteBufAdapters {
 
@@ -23,9 +20,13 @@ public class GTByteBufAdapters {
     public static final IByteBufAdapter<ChancedFluidOutput> CHANCED_FLUID_OUTPUT = makeAdapter(
             ChancedFluidOutput::fromBuffer, ChancedFluidOutput::toBuffer);
 
+    public static final IByteBufAdapter<BigInteger> BIG_INT = makeAdapter(
+            buffer -> new BigInteger(buffer.readByteArray()),
+            (buffer, value) -> buffer.writeByteArray(value.toByteArray()));
+
     public static <T> IByteBufAdapter<T> makeAdapter(@NotNull IByteBufDeserializer<T> deserializer,
                                                      @NotNull IByteBufSerializer<T> serializer) {
-        return makeAdapter(deserializer, serializer, Objects::equals);
+        return makeAdapter(deserializer, serializer, IEquals.defaultTester());
     }
 
     public static <T> IByteBufAdapter<T> makeAdapter(@NotNull IByteBufDeserializer<T> deserializer,
