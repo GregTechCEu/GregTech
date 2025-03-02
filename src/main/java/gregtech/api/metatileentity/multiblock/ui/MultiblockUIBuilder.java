@@ -697,7 +697,6 @@ public class MultiblockUIBuilder {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public <T, C extends Collection<T>> C syncCollection(C initial, IByteBufSerializer<T> serializer,
                                                              IByteBufDeserializer<T> deserializer) {
             if (isServer()) {
@@ -706,15 +705,14 @@ public class MultiblockUIBuilder {
                 return initial;
             } else {
                 int size = internal.readVarInt();
-                List<T> copy = new ArrayList<>(internal.readVarInt());
                 try {
                     for (int i = 0; i < size; i++) {
-                        copy.add(deserializer.deserialize(internal));
+                        initial.add(deserializer.deserialize(internal));
                     }
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
-                return (C) copy;
+                return initial;
             }
         }
 
