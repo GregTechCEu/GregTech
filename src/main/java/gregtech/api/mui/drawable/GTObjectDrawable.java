@@ -81,4 +81,11 @@ public class GTObjectDrawable implements IDrawable {
     public Widget<?> asWidget() {
         return IDrawable.super.asWidget().size(18);
     }
+
+    public Object getObject() {
+        if (object instanceof BoostableChanceEntry<?>entry) {
+            return entry.getIngredient();
+        }
+        return object;
+    }
 }
