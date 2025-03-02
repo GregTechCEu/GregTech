@@ -136,6 +136,16 @@ public class KeyUtil {
     }
 
     @NotNull
+    public static IKey fluid(TextFormatting formatting, FluidStack fluid) {
+        return fluid(fluid.getFluid(), fluid).style(formatting);
+    }
+
+    @NotNull
+    public static IKey fluid(TextFormatting formatting, Fluid fluid) {
+        return fluid(fluid).style(formatting);
+    }
+
+    @NotNull
     public static IKey fluid(@Nullable FluidStack fluid) {
         if (fluid == null) return IKey.EMPTY;
         return fluid(fluid.getFluid(), fluid);
