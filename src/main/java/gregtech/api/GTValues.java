@@ -1,13 +1,11 @@
 package gregtech.api;
 
-import gregtech.api.util.XSTR;
+import gregtech.api.util.random.XoShiRo256PlusPlusRandom;
 import gregtech.common.ConfigHolder;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.oredict.OreDictionary;
-
-import org.jetbrains.annotations.ApiStatus;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -45,7 +43,7 @@ public class GTValues {
      */
     public static final short W = OreDictionary.WILDCARD_VALUE;
 
-    public static final Random RNG = new XSTR();
+    public static final Random RNG = new XoShiRo256PlusPlusRandom();
 
     /** Current time on the Client. Will always be zero on the server. */
     public static long CLIENT_TIME = 0;
@@ -172,48 +170,6 @@ public class GTValues {
      * GregTech Mod Name
      */
     public static final String MOD_NAME = "GregTech";
-
-    /** @deprecated Use {@link gregtech.api.util.Mods} instead */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static final String MODID_FR = "forestry",
-            MODID_CT = "crafttweaker",
-            MODID_TOP = "theoneprobe",
-            MODID_CTM = "ctm",
-            MODID_CC = "cubicchunks",
-            MODID_AR = "advancedrocketry",
-            MODID_ECORE = "endercore",
-            MODID_EIO = "enderio",
-            MODID_BC = "buildcraftcore",
-            MODID_COFH = "cofhcore",
-            MODID_APPENG = "appliedenergistics2",
-            MODID_JEI = "jei",
-            MODID_GROOVYSCRIPT = "groovyscript",
-            MODID_NC = "nuclearcraft",
-            MODID_IE = "immersiveengineering",
-            MODID_OC = "opencomputers",
-            MODID_JOURNEYMAP = "journeymap",
-            MODID_VOXELMAP = "voxelmap",
-            MODID_XAERO_MINIMAP = "xaerominimap",
-            MODID_HWYLA = "hwyla",
-            MODID_BAUBLES = "baubles",
-            MODID_TOP_ADDONS = "topaddons",
-            MODID_IC2 = "ic2",
-            MODID_GTFO = "gregtechfoodoption",
-            MODID_BINNIE = "binniecore",
-            MODID_XU2 = "extrautils2",
-            MODID_TR = "techreborn",
-            MODID_MB = "magicbees",
-            MODID_EB = "extrabees",
-            MODID_ET = "extratrees",
-            MODID_GENETICS = "genetics",
-            MODID_BOP = "biomesoplenty",
-            MODID_TCON = "tconstruct",
-            MODID_PROJRED_CORE = "projectred-core",
-            MODID_RC = "railcraft",
-            MODID_CHISEL = "chisel",
-            MODID_RS = "refinedstorage",
-            MODID_LITTLETILES = "littletiles";
 
     private static Boolean isClient;
 

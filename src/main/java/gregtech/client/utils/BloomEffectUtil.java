@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.github.bsideup.jabel.Desugar;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -48,13 +46,6 @@ public class BloomEffectUtil {
 
     private static final ReentrantLock BLOOM_RENDER_LOCK = new ReentrantLock();
 
-    /**
-     * @deprecated use {@link #getBloomLayer()}
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static BlockRenderLayer BLOOM;
-
     private static BlockRenderLayer bloom;
     private static Framebuffer bloomFBO;
 
@@ -64,16 +55,6 @@ public class BloomEffectUtil {
     @NotNull
     public static BlockRenderLayer getBloomLayer() {
         return Objects.requireNonNull(bloom, "Bloom effect is not initialized yet");
-    }
-
-    /**
-     * @deprecated renamed for clarity; use {@link #getEffectiveBloomLayer()}.
-     */
-    @NotNull
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static BlockRenderLayer getRealBloomLayer() {
-        return getEffectiveBloomLayer();
     }
 
     /**
@@ -310,31 +291,8 @@ public class BloomEffectUtil {
         }
     }
 
-    /**
-     * @deprecated use ticket-based bloom render hooks
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static void requestCustomBloom(IBloomRenderFast handler, Consumer<BufferBuilder> render) {
-        BloomType bloomType = BloomType.fromValue(handler.customBloomStyle());
-        var validityChecker = new Predicate<BloomRenderTicket>() {
-
-            boolean invalid;
-
-            @Override
-            public boolean test(BloomRenderTicket bloomRenderTicket) {
-                return !invalid;
-            }
-        };
-        registerBloomRender(handler, bloomType, (b, c) -> {
-            render.accept(b);
-            validityChecker.invalid = true;
-        }, validityChecker);
-    }
-
     public static void init() {
         bloom = BlockRenderLayer.valueOf("BLOOM");
-        BLOOM = bloom;
     }
 
     // Calls injected via ASM
@@ -600,20 +558,6 @@ public class BloomEffectUtil {
             this.worldContext = worldContext;
         }
 
-        @Nullable
-        @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        public IRenderSetup getRenderSetup() {
-            return this.renderSetup;
-        }
-
-        @NotNull
-        @Deprecated
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        public BloomType getBloomType() {
-            return this.bloomType;
-        }
-
         public boolean isValid() {
             return !this.invalidated;
         }
@@ -627,26 +571,5 @@ public class BloomEffectUtil {
                 invalidate();
             }
         }
-    }
-
-    /**
-     * @deprecated use ticket-based bloom render hooks
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public interface IBloomRenderFast extends IRenderSetup {
-
-        /**
-         * Custom Bloom Style.
-         *
-         * @return 0 - Simple Gaussian Blur Bloom
-         *         <p>
-         *         1 - Unity Bloom
-         *         </p>
-         *         <p>
-         *         2 - Unreal Bloom
-         *         </p>
-         */
-        int customBloomStyle();
     }
 }

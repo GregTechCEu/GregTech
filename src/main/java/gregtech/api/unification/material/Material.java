@@ -43,7 +43,6 @@ import net.minecraftforge.fluids.FluidStack;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import stanhebben.zenscript.annotations.OperatorType;
@@ -970,34 +969,6 @@ public class Material implements Comparable<Material> {
         public Builder rotorStats(float speed, float damage, int durability) {
             properties.setProperty(PropertyKey.ROTOR, new RotorProperty(speed, damage, durability));
             return this;
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(int)}. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp) {
-            return blast(temp);
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(int, BlastProperty.GasTier)}. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier) {
-            return blast(temp, gasTier);
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride) {
-            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride));
-        }
-
-        /** @deprecated use {@link Material.Builder#blast(UnaryOperator)} for more detailed stats. */
-        @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-        @Deprecated
-        public Builder blastTemp(int temp, BlastProperty.GasTier gasTier, int eutOverride, int durationOverride) {
-            return blast(b -> b.temp(temp, gasTier).blastStats(eutOverride, durationOverride));
         }
 
         public Builder blast(int temp) {
