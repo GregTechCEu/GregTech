@@ -529,7 +529,7 @@ public class MultiblockUIBuilder {
         if (getSyncer().syncBoolean(recipe == null)) return this;
         if (getSyncer().syncBoolean(arl.getRecipeMap() == null)) return this;
 
-        //noinspection DataFlowIssue
+        // noinspection DataFlowIssue
         long eut = getSyncer().syncLong(() -> recipe.getEUt());
         long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());
 

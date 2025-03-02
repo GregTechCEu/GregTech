@@ -47,10 +47,12 @@ public class GTObjectDrawable implements IDrawable {
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
         renderer.setAlignment(Alignment.BottomRight, width - 1, height - 1);
         drawObject(object, context, x, y, width, height, widgetTheme);
-        renderer.setPos(x + 1, y + 1);
-        String amount = NumberFormat.formatWithMaxDigits(this.amount, 3);
-        if (object instanceof FluidStack) amount += "L";
-        renderer.draw(amount);
+        if (amount > 1) {
+            renderer.setPos(x + 1, y + 1);
+            String amount = NumberFormat.formatWithMaxDigits(this.amount, 3);
+            if (object instanceof FluidStack) amount += "L";
+            renderer.draw(amount);
+        }
     }
 
     private void drawObject(Object object, GuiContext context, int x, int y, int width, int height,
@@ -64,7 +66,8 @@ public class GTObjectDrawable implements IDrawable {
         } else if (object instanceof BoostableChanceEntry<?>entry) {
             drawObject(entry.getIngredient(), context, x, y, width, height, widgetTheme);
             String chance = "~" + this.boostFunction.apply(entry) / 100 + "%";
-            renderer.setPos(x + 1, y - 3);
+            if (amount > 1) y -= 4;
+            renderer.setPos(x + 1, y + 1);
             renderer.draw(chance);
         }
     }
