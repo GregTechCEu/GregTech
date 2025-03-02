@@ -32,7 +32,7 @@ public class GTByteBufAdapters {
                                                      @NotNull IByteBufSerializer<T> serializer,
                                                      @Nullable IEquals<T> equals) {
         final IEquals<T> tester = equals != null ? equals : IEquals.defaultTester();
-        return new IByteBufAdapter<T>() {
+        return new IByteBufAdapter<>() {
 
             @Override
             public T deserialize(PacketBuffer buffer) throws IOException {
