@@ -3,10 +3,15 @@ package gregtech.api.metatileentity.multiblock.ui;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
-import gregtech.api.mui.drawable.GTFluidDrawable;
-import gregtech.api.mui.drawable.GTItemDrawable;
+import gregtech.api.mui.GTByteBufAdapters;
+import gregtech.api.mui.drawable.GTObjectDrawable;
+import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.chance.boost.ChanceBoostFunction;
+import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
+import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.util.FluidStackHashStrategy;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.KeyUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -517,131 +522,166 @@ public class MultiblockUIBuilder {
      * @param arl      an instance of an {@link AbstractRecipeLogic} to gather the outputs from.
      * @param maxLines the maximum number of lines to print until truncating with {@code ...}
      */
-    public MultiblockUIBuilder addRecipeOutputLine(@NotNull AbstractRecipeLogic arl, int maxLines) {
-        return addRecipeOutputLine(arl.getItemOutputs(), arl.getFluidOutputs(), arl.getMaxProgress(), maxLines);
-    }
+    public MultiblockUIBuilder addRecipeOutputLine(AbstractRecipeLogic arl, int maxLines) {
+        // todo doing this every tick on the server is probably not good
+        Recipe recipe = arl.getParallelRecipe();
 
-    /**
-     * Adds the current outputs of a recipe. Items then fluids.
-     *
-     * @param itemOutputs  a list of {@link ItemStack}s to display.
-     * @param fluidOutputs a list of {@link FluidStack}s to display.
-     * @param recipeLength the recipe length, in ticks.
-     */
-    public MultiblockUIBuilder addRecipeOutputLine(@Nullable List<ItemStack> itemOutputs,
-                                                   @Nullable List<FluidStack> fluidOutputs,
-                                                   int recipeLength) {
-        return addRecipeOutputLine(itemOutputs, fluidOutputs, recipeLength, DEFAULT_MAX_RECIPE_LINES);
-    }
+        if (getSyncer().syncBoolean(recipe == null)) return this;
+        if (getSyncer().syncBoolean(arl.getRecipeMap() == null)) return this;
 
-    /**
-     * Adds the current outputs of a recipe. Items then fluids.
-     *
-     * @param itemOutputs  a list of {@link ItemStack}s to display.
-     * @param fluidOutputs a list of {@link FluidStack}s to display.
-     * @param recipeLength the recipe length, in ticks.
-     * @param maxLines     the maximum number of lines to print until truncating with {@code ...}
-     */
-    public MultiblockUIBuilder addRecipeOutputLine(@NotNull List<ItemStack> itemOutputs,
-                                                   @NotNull List<FluidStack> fluidOutputs,
-                                                   int recipeLength, int maxLines) {
-        recipeLength = getSyncer().syncInt(recipeLength);
-        maxLines = getSyncer().syncInt(maxLines);
+        long eut = getSyncer().syncLong(recipe == null ? 0 : recipe.getEUt());
+        long maxVoltage = getSyncer().syncLong(arl.getMaximumOverclockVoltage());
 
-        if (recipeLength == 0) return this;
+        List<ItemStack> itemOutputs = new ArrayList<>();
+        List<ChancedItemOutput> chancedItemOutputs = new ArrayList<>();
+        List<FluidStack> fluidOutputs = new ArrayList<>();
+        List<ChancedFluidOutput> chancedFluidOutputs = new ArrayList<>();
 
-        addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation.ADD);
-
-        maxLines -= addItemOutputLine(itemOutputs, recipeLength, maxLines);
-
-        maxLines -= addFluidOutputLine(fluidOutputs, recipeLength, maxLines);
-
-        if (maxLines == 0) {
-            addKey(KeyUtil.string(TextFormatting.WHITE, "..."));
+        if (isServer()) {
+            // recipe is checked indirectly for null
+            // noinspection DataFlowIssue
+            itemOutputs.addAll(recipe.getOutputs());
+            chancedItemOutputs.addAll(recipe.getChancedOutputs().getChancedEntries());
+            fluidOutputs.addAll(recipe.getFluidOutputs());
+            chancedFluidOutputs.addAll(recipe.getChancedFluidOutputs().getChancedEntries());
         }
 
-        addEmptyLine();
+        itemOutputs = getSyncer().syncCollection(itemOutputs, ByteBufAdapters.ITEM_STACK);
+        fluidOutputs = getSyncer().syncCollection(fluidOutputs, ByteBufAdapters.FLUID_STACK);
+        chancedItemOutputs = getSyncer().syncCollection(chancedItemOutputs, GTByteBufAdapters.CHANCED_ITEM_OUTPUT);
+        chancedFluidOutputs = getSyncer().syncCollection(chancedFluidOutputs, GTByteBufAdapters.CHANCED_FLUID_OUTPUT);
 
+        addKey(KeyUtil.string(TextFormatting.GRAY, "Producing: "), Operation.NEW_LINE);
+
+        var chanceFunction = arl.getRecipeMap().getChanceFunction();
+        int recipeTier = GTUtility.getTierByVoltage(eut);
+        int machineTier = GTUtility.getOCTierByVoltage(maxVoltage);
+
+        // items
+
+        Object2LongMap<ItemStack> itemMap = new Object2LongLinkedOpenCustomHashMap<>(
+                ItemStackHashStrategy.comparingAllButCount());
+
+        for (ItemStack stack : itemOutputs) {
+            itemMap.merge(stack, (long) stack.getCount(), Long::sum);
+        }
+
+        for (var stack : itemMap.keySet()) {
+            addItemOutputLine(stack, itemMap.getLong(stack), arl.getMaxProgress());
+        }
+
+        for (var chancedItemOutput : chancedItemOutputs) {
+            addChancedItemOutputLine(chancedItemOutput, chanceFunction, recipeTier, machineTier, arl.getMaxProgress());
+        }
+
+        // fluids
+
+        Object2LongMap<FluidStack> fluidMap = new Object2LongLinkedOpenCustomHashMap<>(
+                FluidStackHashStrategy.comparingAllButAmount);
+
+        for (FluidStack stack : fluidOutputs) {
+            fluidMap.merge(stack, (long) stack.amount, Long::sum);
+        }
+
+        for (var stack : fluidMap.keySet()) {
+            addFluidOutputLine(stack, fluidMap.getLong(stack), arl.getMaxProgress());
+        }
+
+        for (var chancedFluidOutput : chancedFluidOutputs) {
+            addChancedFluidOutputLine(chancedFluidOutput, chanceFunction, recipeTier, machineTier,
+                    arl.getMaxProgress());
+        }
         return this;
     }
 
     /**
-     * Add the item outputs of a recipe to the display.
+     * Add an item output of a recipe to the display.
      *
-     * @param itemOutputs  a list of {@link ItemStack}s to display.
+     * @param stack        the {@link ItemStack} to display.
      * @param recipeLength the recipe length, in ticks.
-     * @param maxLines     number of lines to print.
-     * @return the number of lines printed.
      */
-    private int addItemOutputLine(@NotNull List<ItemStack> itemOutputs, int recipeLength, int maxLines) {
-        itemOutputs = getSyncer().syncCollection(new ArrayList<>(itemOutputs), ByteBufAdapters.ITEM_STACK);
+    private void addItemOutputLine(@NotNull ItemStack stack, long count, int recipeLength) {
+        IKey name = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
+        IKey amount = KeyUtil.number(TextFormatting.GOLD, count);
+        IKey rate = KeyUtil.string(TextFormatting.WHITE,
+                formatRecipeRate(getSyncer().syncInt(recipeLength), count));
 
-        Object2LongMap<ItemStack> itemMap = new Object2LongLinkedOpenCustomHashMap<>(
-                ItemStackHashStrategy.comparingAllButCount());
-        for (ItemStack itemStack : itemOutputs) {
-            if (itemStack.isEmpty()) continue;
-            itemMap.merge(itemStack, (long) itemStack.getCount(), Long::sum);
-        }
-
-        int printedLines = 0;
-        for (var entry : itemMap.object2LongEntrySet()) {
-            if (printedLines >= maxLines) break;
-
-            IKey itemName = KeyUtil.string(TextFormatting.AQUA, entry.getKey().getDisplayName());
-            IKey itemAmount = KeyUtil.number(TextFormatting.GOLD, entry.getLongValue());
-            IKey itemRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getLongValue()));
-
-            IDrawable stack = new GTItemDrawable(entry.getKey(), entry.getLongValue())
-                    .asIcon()
-                    .asHoverable()
-                    .addTooltipLine(formatRecipeData(itemName, itemAmount, itemRate));
-
-            addKey(stack, Operation.ADD);
-            addKey(IKey.SPACE, Operation.ADD);
-            printedLines += 1;
-        }
-
-        return printedLines;
+        addKey(new GTObjectDrawable(stack, count)
+                .asIcon()
+                .asHoverable()
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
+        // addKey(IKey.SPACE, Operation.ADD);
     }
 
     /**
      * Add the fluid outputs of a recipe to the display.
      *
-     * @param fluidOutputs a list of {@link FluidStack}s to display.
+     * @param stack        a {@link FluidStack}s to display.
      * @param recipeLength the recipe length, in ticks.
-     * @param maxLines     number of lines to print.
-     * @return the number of lines printed.
      */
-    private int addFluidOutputLine(@NotNull List<FluidStack> fluidOutputs, int recipeLength, int maxLines) {
-        fluidOutputs = getSyncer().syncCollection(new ArrayList<>(fluidOutputs), ByteBufAdapters.FLUID_STACK);
+    private void addFluidOutputLine(@NotNull FluidStack stack, long count, int recipeLength) {
+        IKey name = KeyUtil.fluid(TextFormatting.AQUA, stack);
+        IKey amount = KeyUtil.number(TextFormatting.GOLD, count);
+        IKey rate = KeyUtil.string(TextFormatting.WHITE,
+                formatRecipeRate(getSyncer().syncInt(recipeLength), count));
 
-        Object2LongMap<FluidStack> fluidMap = new Object2LongLinkedOpenCustomHashMap<>(
-                FluidStackHashStrategy.comparingAllButAmount);
-        for (FluidStack fluidStack : fluidOutputs) {
-            if (fluidStack.amount < 1) continue;
-            fluidMap.merge(fluidStack, (long) fluidStack.amount, Long::sum);
-        }
+        addKey(new GTObjectDrawable(stack, count)
+                .asIcon()
+                .asHoverable()
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
+        // addKey(IKey.SPACE, Operation.ADD);
+    }
 
-        int printedLines = 0;
-        for (var entry : fluidMap.object2LongEntrySet()) {
-            if (printedLines >= maxLines) break;
+    /**
+     * Add a chanced item output of a recipe to the display.
+     *
+     * @param chancedItemOutput chanced item output
+     * @param boostFunction     function to calculate boosted chance
+     * @param recipeTier        voltage tier of the recipe
+     * @param machineTier       machine tier
+     * @param recipeLength      max duration of the recipe
+     */
+    private void addChancedItemOutputLine(@NotNull ChancedItemOutput chancedItemOutput,
+                                          ChanceBoostFunction boostFunction,
+                                          int recipeTier, int machineTier, int recipeLength) {
+        var stack = chancedItemOutput.getIngredient();
+        IKey name = KeyUtil.string(TextFormatting.AQUA, stack.getDisplayName());
+        IKey amount = KeyUtil.number(TextFormatting.GOLD, stack.getCount());
+        IKey rate = KeyUtil.string(TextFormatting.WHITE,
+                formatRecipeRate(getSyncer().syncInt(recipeLength), stack.getCount()));
 
-            IKey fluidName = KeyUtil.fluid(TextFormatting.AQUA, entry.getKey());
-            IKey fluidAmount = KeyUtil.number(TextFormatting.GOLD, entry.getLongValue(), "L");
-            IKey fluidRate = KeyUtil.string(TextFormatting.WHITE, formatRecipeRate(recipeLength, entry.getLongValue()));
+        addKey(new GTObjectDrawable(chancedItemOutput, stack.getCount())
+                .setBoostFunction(entry -> boostFunction.getBoostedChance(entry, recipeTier, machineTier))
+                .asIcon()
+                .asHoverable()
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
+        // addKey(IKey.SPACE, Operation.ADD);
+    }
 
-            IDrawable fluid = new GTFluidDrawable(entry.getKey(), entry.getLongValue())
-                    .asIcon()
-                    .asHoverable()
-                    .addTooltipLine(formatRecipeData(fluidName, fluidAmount, fluidRate));
+    /**
+     * Add a chanced fluid output of a recipe to the display.
+     *
+     * @param chancedFluidOutput chanced fluid output
+     * @param boostFunction      function to calculate boosted chance
+     * @param recipeTier         voltage tier of the recipe
+     * @param machineTier        machine tier
+     * @param recipeLength       max duration of the recipe
+     */
+    private void addChancedFluidOutputLine(@NotNull ChancedFluidOutput chancedFluidOutput,
+                                           ChanceBoostFunction boostFunction,
+                                           int recipeTier, int machineTier, int recipeLength) {
+        var stack = chancedFluidOutput.getIngredient();
+        IKey name = KeyUtil.fluid(TextFormatting.AQUA, stack);
+        IKey amount = KeyUtil.number(TextFormatting.GOLD, stack.amount);
+        IKey rate = KeyUtil.string(TextFormatting.WHITE,
+                formatRecipeRate(getSyncer().syncInt(recipeLength), stack.amount));
 
-            addKey(fluid, Operation.ADD);
-            addKey(IKey.SPACE, Operation.ADD);
-
-            printedLines += 1;
-        }
-
-        return printedLines;
+        addKey(new GTObjectDrawable(chancedFluidOutput, stack.amount)
+                .setBoostFunction(entry -> boostFunction.getBoostedChance(entry, recipeTier, machineTier))
+                .asIcon()
+                .asHoverable()
+                .addTooltipLine(formatRecipeData(name, amount, rate)), Operation.ADD);
+        // addKey(IKey.SPACE, Operation.ADD);
     }
 
     private static String formatRecipeRate(int recipeLength, long amount) {
