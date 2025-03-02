@@ -59,10 +59,10 @@ public class GTObjectDrawable implements IDrawable {
                             WidgetTheme widgetTheme) {
         if (object instanceof ItemStack stack) {
             GTGuiTextures.SLOT.draw(context, x, y, width, height, widgetTheme);
-            GuiDraw.drawItem(stack, x + 1, y + 1, width - 1, height - 1);
+            GuiDraw.drawItem(stack, x + 1, y + 1, width - 2, height - 2);
         } else if (object instanceof FluidStack stack) {
             GTGuiTextures.FLUID_SLOT.draw(context, x, y, width, height, widgetTheme);
-            GuiDraw.drawFluidTexture(stack, x + 1, y + 1, width - 1, height - 1, 0);
+            GuiDraw.drawFluidTexture(stack, x + 1, y + 1, width - 2, height - 2, 0);
         } else if (object instanceof BoostableChanceEntry<?>entry) {
             drawObject(entry.getIngredient(), context, x, y, width, height, widgetTheme);
             String chance = "~" + this.boostFunction.apply(entry) / 100 + "%";
