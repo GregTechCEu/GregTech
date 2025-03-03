@@ -5,8 +5,9 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.GregTechAPIInternal;
 import gregtech.api.block.IHeatingCoilBlockStats;
 import gregtech.api.capability.SimpleCapabilityManager;
+import gregtech.api.configurator.playerdata.ConfiguratorDataRegistry;
+import gregtech.api.configurator.profile.ConfiguratorProfileRegistry;
 import gregtech.api.configurator.profile.SimpleMachineProfile;
-import gregtech.api.configurator.registry.ConfiguratorDataRegistry;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.CoverUIFactory;
 import gregtech.api.fluids.GTFluidRegistration;
@@ -232,7 +233,7 @@ public class CoreModule implements IGregTechModule {
         proxy.onPreLoad();
         KeyBind.init();
 
-        GregTechAPI.registerMachineConfiguratorProfile(SimpleMachineProfile.INSTANCE);
+        ConfiguratorProfileRegistry.registerMachineConfiguratorProfile(SimpleMachineProfile.INSTANCE);
     }
 
     @Override

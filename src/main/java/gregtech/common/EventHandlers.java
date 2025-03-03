@@ -2,7 +2,7 @@ package gregtech.common;
 
 import gregtech.api.GTValues;
 import gregtech.api.block.IWalkingSpeedBonus;
-import gregtech.api.configurator.registry.ConfiguratorDataRegistry;
+import gregtech.api.configurator.playerdata.ConfiguratorDataRegistry;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.toolitem.ToolClasses;
 import gregtech.api.items.toolitem.ToolHelper;

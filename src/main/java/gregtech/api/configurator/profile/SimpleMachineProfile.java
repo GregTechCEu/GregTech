@@ -1,5 +1,6 @@
 package gregtech.api.configurator.profile;
 
+import gregtech.api.configurator.playerdata.ConfiguratorDataRegistry;
 import gregtech.api.mui.GTGuiTextures;
 import gregtech.api.mui.GTGuis;
 
@@ -18,6 +19,8 @@ import com.cleanroommc.modularui.widgets.ToggleButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class SimpleMachineProfile implements IMachineConfiguratorProfile {
 
     public static final SimpleMachineProfile INSTANCE = new SimpleMachineProfile();
@@ -29,10 +32,17 @@ public class SimpleMachineProfile implements IMachineConfiguratorProfile {
         return "SimpleMachineProfile";
     }
 
+    @Override
+    public @NotNull String getTranslationKey() {
+        return "gregtech.machine_configurator.simple_machine_profile";
+    }
+
     @NotNull
     @Override
-    public ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, NBTTagCompound nbt) {
+    public ModularPanel createConfiguratorPanel(PanelSyncManager panelSyncManager, UUID playerID) {
         var panel = GTGuis.createPopupPanel("simple_machine_configurator", 75, 150);
+
+        NBTTagCompound nbt = ConfiguratorDataRegistry.getPlayerData(playerID).getSlotConfig(selectedSlot.getValue());
 
         BooleanSyncValue autoOutputItems = new BooleanSyncValue(() -> nbt.getBoolean("AutoOutputItems"),
                 bool -> nbt.setBoolean("AutoOutputItems", bool));

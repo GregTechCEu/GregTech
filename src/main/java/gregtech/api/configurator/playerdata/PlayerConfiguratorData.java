@@ -1,6 +1,6 @@
-package gregtech.api.configurator.registry;
+package gregtech.api.configurator.playerdata;
 
-import gregtech.api.GregTechAPI;
+import gregtech.api.configurator.profile.ConfiguratorProfileRegistry;
 import gregtech.api.configurator.profile.IMachineConfiguratorProfile;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,7 +45,11 @@ public class PlayerConfiguratorData implements INBTSerializable<NBTTagCompound> 
 
     @Nullable
     public IMachineConfiguratorProfile getSlotProfile(String name) {
-        return GregTechAPI.getMachineConfiguratorProfile(getSlot(name).getString(PROFILE_NBT_KEY));
+        return ConfiguratorProfileRegistry.getMachineConfiguratorProfile(getSlot(name).getString(PROFILE_NBT_KEY));
+    }
+
+    public void setSlotProfile(String name, IMachineConfiguratorProfile profile) {
+        getSlot(name).setString(PROFILE_NBT_KEY, profile.getName());
     }
 
     @NotNull

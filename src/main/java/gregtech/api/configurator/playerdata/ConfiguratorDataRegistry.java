@@ -1,4 +1,4 @@
-package gregtech.api.configurator.registry;
+package gregtech.api.configurator.playerdata;
 
 import gregtech.api.GTValues;
 
