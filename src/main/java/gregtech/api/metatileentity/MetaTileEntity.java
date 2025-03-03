@@ -846,8 +846,8 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     public void update() {
-        if (!getWorld().isRemote && !allowTickAcceleration()) {
-            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        if (!allowTickAcceleration() && getWorld().getMinecraftServer() != null) {
+            int currentTick = getWorld().getMinecraftServer().getTickCounter();
             if (currentTick == lastTick) {
                 return;
             }
