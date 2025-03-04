@@ -1,7 +1,6 @@
 package gregtech.common.mui.widget;
 
-import gregtech.api.mui.drawable.GTObjectDrawable;
-import gregtech.mixins.mui2.IconAccessor;
+import gregtech.api.mui.IconAcessor;
 
 import com.cleanroommc.modularui.api.GuiAxis;
 import com.cleanroommc.modularui.api.drawable.IHoverable;
@@ -10,7 +9,6 @@ import com.cleanroommc.modularui.api.layout.IViewport;
 import com.cleanroommc.modularui.api.layout.IViewportStack;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
 import com.cleanroommc.modularui.api.widget.Interactable;
-import com.cleanroommc.modularui.drawable.DelegateIcon;
 import com.cleanroommc.modularui.drawable.Stencil;
 import com.cleanroommc.modularui.drawable.text.RichText;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
@@ -73,10 +71,9 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                 tooltip.draw(context);
             }
         }
-        if (getHoveredElement() instanceof DelegateIcon delegateIcon &&
-                delegateIcon.findRootDelegate() instanceof IconAccessor accessor &&
-                accessor.getDrawable() instanceof GTObjectDrawable objectDrawable) {
-            lastIngredient = objectDrawable.getObject();
+        if (getHoveredElement() instanceof IconAcessor accessor &&
+                accessor.gregTech$getDrawable() instanceof JeiIngredientProvider provider) {
+            lastIngredient = provider.getIngredient();
         } else {
             lastIngredient = null;
         }
