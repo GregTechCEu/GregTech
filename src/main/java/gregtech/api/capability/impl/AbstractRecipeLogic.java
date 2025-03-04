@@ -187,6 +187,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return metaTileEntity.getExportFluids();
     }
 
+    public Recipe getParallelRecipe() {
+        if (previousRecipe == null) return null;
+        return findParallelRecipe(previousRecipe, getInputInventory(), getInputTank(),
+                getOutputInventory(), getOutputTank(), getMaxParallelVoltage(), getParallelLimit());
+    }
+
     /**
      * @return true if energy is consumed by this Recipe Logic, otherwise false
      */
