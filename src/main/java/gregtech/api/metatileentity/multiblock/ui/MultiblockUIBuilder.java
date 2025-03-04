@@ -38,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -920,7 +919,6 @@ public class MultiblockUIBuilder {
             if (isServer()) {
                 internal.writeVarInt(initial.size());
                 initial.forEach(t -> serializer.serializeSafe(internal, t));
-                return initial;
             } else {
                 int size = internal.readVarInt();
                 try {
@@ -930,12 +928,11 @@ public class MultiblockUIBuilder {
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
-                return initial;
             }
+            return initial;
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public <T> T[] syncArray(T[] initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer) {
             if (isServer()) {
                 internal.writeVarInt(initial.length);
@@ -943,7 +940,7 @@ public class MultiblockUIBuilder {
                     serializer.serializeSafe(internal, t);
                 }
             } else {
-                initial = (T[]) Array.newInstance(initial.getClass().getComponentType(), internal.readVarInt());
+                initial = Arrays.copyOf(initial, internal.readVarInt());
                 Arrays.setAll(initial, i -> deserializer.deserializeSafe(internal));
             }
             return initial;
