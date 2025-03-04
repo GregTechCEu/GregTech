@@ -103,16 +103,64 @@ public interface UISyncer {
         return syncObject(initial, adapter, adapter);
     }
 
+    /**
+     * Syncs the elements of the collection to the internal buffer. <br />
+     * On the server, elements are serialized in the order of iteration. <br />
+     * On the client, elements are deserialized in the same order and re-added to the collection.
+     * The list <b>will</b> be modified on the client
+     *
+     * @param initial collection whose elements should be synced
+     * @param serializer serializer to write an element to the buffer
+     * @param deserializer deserializer to read the elements to add them back to the collection
+     * @param <T> collection element's type
+     * @param <C> the collection type itself
+     * @return the synced collection
+     */
     <T, C extends Collection<T>> C syncCollection(C initial,
                                                   IByteBufSerializer<T> serializer,
                                                   IByteBufDeserializer<T> deserializer);
 
+    /**
+     * Syncs the elements of the collection to the internal buffer. <br />
+     * On the server, elements are serialized in the order of iteration. <br />
+     * On the client, elements are deserialized in the same order and re-added to the collection.
+     * The list <b>will</b> be modified on the client
+     *
+     * @param initial collection whose elements should be synced
+     * @param adapter adapter for serialization/deserialization
+     * @param <T> collection element's type
+     * @param <C> the collection type itself
+     * @return the synced collection
+     */
     default <T, C extends Collection<T>> C syncCollection(C initial, IByteBufAdapter<T> adapter) {
         return syncCollection(initial, adapter, adapter);
     }
 
+    /**
+     * Syncs the elements of the collection to the internal buffer. <br />
+     * On the server, elements are serialized in the order of iteration. <br />
+     * On the client, elements are deserialized in the same order. <br />
+     * The array <b>will not</b> be modified, instead copied
+     *
+     * @param initial collection whose elements should be synced
+     * @param serializer serializer to write an element to the buffer
+     * @param deserializer deserializer to read the elements to add them back to the collection
+     * @param <T> element type
+     * @return for server, the initial array, otherwise the synced array copy
+     */
     <T> T[] syncArray(T[] initial, IByteBufSerializer<T> serializer, IByteBufDeserializer<T> deserializer);
 
+    /**
+     * Syncs the elements of the array to the internal buffer. <br />
+     * On the server, elements are serialized in the order of iteration. <br />
+     * On the client, elements are deserialized in the same order. <br />
+     * The array <b>will not</b> be modified, instead copied
+     *
+     * @param initial collection whose elements should be synced
+     * @param adapter adapter for serialization/deserialization
+     * @param <T> element type
+     * @return for server, the initial array, otherwise the synced array copy
+     */
     default <T> T[] syncArray(T[] initial, IByteBufAdapter<T> adapter) {
         return syncArray(initial, adapter, adapter);
     }
