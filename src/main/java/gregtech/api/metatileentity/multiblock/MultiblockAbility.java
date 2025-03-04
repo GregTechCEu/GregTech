@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,10 +115,11 @@ public class MultiblockAbility<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public <R> List<R> castList(AbilityInstances instances) {
+    public @NotNull <R> List<R> castList(AbilityInstances instances) {
         if (instances.isKey(this)) {
             return (List<R>) instances;
         }
-        return null;
+        throw new IllegalArgumentException("Cannot cast instances of " + instances + " because they are not of " +
+                this.clazz.getSimpleName() + "!");
     }
 }

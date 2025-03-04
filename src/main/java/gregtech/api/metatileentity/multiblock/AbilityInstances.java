@@ -119,4 +119,9 @@ public class AbilityInstances extends AbstractObjectList<Object> {
     public int size() {
         return instances.size();
     }
+
+    @Override
+    public String toString() {
+        return String.format("key{%s, %s}", this.key, super.toString());
+    }
 }
