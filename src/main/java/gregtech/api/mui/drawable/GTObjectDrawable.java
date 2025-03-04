@@ -10,16 +10,18 @@ import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.drawable.GuiDraw;
 import com.cleanroommc.modularui.drawable.Icon;
 import com.cleanroommc.modularui.drawable.text.TextRenderer;
+import com.cleanroommc.modularui.integration.jei.JeiIngredientProvider;
 import com.cleanroommc.modularui.screen.viewport.GuiContext;
 import com.cleanroommc.modularui.theme.WidgetTheme;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.utils.NumberFormat;
 import com.cleanroommc.modularui.widget.Widget;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public class GTObjectDrawable implements IDrawable {
+public class GTObjectDrawable implements IDrawable, JeiIngredientProvider {
 
     private static final TextRenderer renderer = new TextRenderer();
 
@@ -82,7 +84,8 @@ public class GTObjectDrawable implements IDrawable {
         return IDrawable.super.asWidget().size(18);
     }
 
-    public Object getObject() {
+    @Override
+    public @Nullable Object getIngredient() {
         if (object instanceof BoostableChanceEntry<?>entry) {
             return entry.getIngredient();
         }
