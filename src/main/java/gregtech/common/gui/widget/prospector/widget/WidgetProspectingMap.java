@@ -262,7 +262,7 @@ public class WidgetProspectingMap extends Widget {
             if (this.mode == ProspectorMode.ORE) { // draw ore
                 tooltips.add(I18n.format("terminal.prospector.ore"));
                 HashMap<String, Integer> oreInfo = new HashMap<>();
-                HashMap<String, Float> oreHeight = new HashMap<>();
+                HashMap<String, Integer> oreHeight = new HashMap<>();
                 for (int i = 0; i < 16; i++) {
                     for (int j = 0; j < 16; j++) {
                         if (texture.map[cX * 16 + i][cZ * 16 + j] != null) {
@@ -271,7 +271,7 @@ public class WidgetProspectingMap extends Widget {
                                 if (ProspectingTexture.SELECTED_ALL.equals(texture.getSelected()) ||
                                         texture.getSelected().equals(dict)) {
                                     oreInfo.put(name, oreInfo.getOrDefault(name, 0) + 1);
-                                    oreHeight.put(name, oreHeight.getOrDefault(name, 0.0f) + height.intValue());
+                                    oreHeight.put(name, oreHeight.getOrDefault(name, 0) + height.intValue());
                                     if (oreInfo.get(name) > maxAmount[0]) {
                                         maxAmount[0] = oreInfo.get(name);
                                         MaterialStack m = OreDictUnifier.getMaterial(OreDictUnifier.get(dict));
@@ -287,16 +287,16 @@ public class WidgetProspectingMap extends Widget {
                 oreHeight.forEach((name, height) -> {
                     hoveredOreHeight += height;
                     int count = oreInfo.getOrDefault(name, 0);
-                    float avgHeight = count != 0 ? height / count : 0.0f;
+                    int avgHeight = count != 0 ? height / count : 0;
                     oreHeight.put(name, avgHeight);
                 });
                 int totalCount = oreInfo.values().stream().reduce(0, Integer::sum);
                 if (totalCount != 0) {
-                    hoveredOreHeight = Math.round(hoveredOreHeight / (float) totalCount);
+                    hoveredOreHeight /= totalCount;
                 }
                 oreInfo.forEach((name, count) -> {
-                    float height = oreHeight.getOrDefault(name, 0.0f);
-                    tooltips.add(name + ", y" + Math.round(height) + " --- " + count);
+                    int height = oreHeight.getOrDefault(name, 0);
+                    tooltips.add(name + ", y" + height + " --- " + count);
                     hoveredNames.add(name);
                 });
             } else if (this.mode == ProspectorMode.FLUID) {
