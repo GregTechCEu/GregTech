@@ -126,13 +126,6 @@ public final class AssemblyLineManager {
         }
     }
 
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    public static void createDefaultResearchRecipe(@NotNull String researchId, @NotNull ItemStack researchItem,
-                                                   @NotNull ItemStack dataItem, int duration, long EUt, int CWUt) {
-        createDefaultResearchRecipe(researchId, researchItem, dataItem, true, duration, EUt, CWUt);
-    }
-
     public static void createDefaultResearchRecipe(@NotNull String researchId, @NotNull ItemStack researchItem,
                                                    @NotNull ItemStack dataItem, boolean ignoreNBT, int duration,
                                                    long EUt, int CWUt) {

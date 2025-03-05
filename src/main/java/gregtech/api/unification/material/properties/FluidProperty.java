@@ -37,17 +37,6 @@ public class FluidProperty implements IMaterialProperty, FluidStorage {
     }
 
     /**
-     * Obsolete method, FluidProperty now contains this functionality.
-     *
-     * @deprecated {@link FluidStorage}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public @NotNull FluidStorage getStorage() {
-        return this;
-    }
-
-    /**
      * @see FluidStorageImpl#registerFluids(Material)
      */
     @ApiStatus.Internal

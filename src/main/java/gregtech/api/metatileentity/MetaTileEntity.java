@@ -827,26 +827,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         }
     }
 
-    /**
-     * @deprecated Will be removed in 2.9. Comparators no longer supported for MetaTileEntities, as cover are
-     *             interactions favored.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public int getActualComparatorValue() {
-        return 0;
-    }
-
     public int getActualLightValue() {
-        return 0;
-    }
-
-    /**
-     * @deprecated Will be removed in 2.9.
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.9")
-    @Deprecated
-    public final int getComparatorValue() {
         return 0;
     }
 
@@ -1023,7 +1004,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         buf.writeShort(this.mteTraitByNetworkId.size());
         for (Int2ObjectMap.Entry<MTETrait> entry : mteTraitByNetworkId.int2ObjectEntrySet()) {
             buf.writeVarInt(entry.getIntKey());
-            entry.getValue().writeInitialData(buf);
+            entry.getValue().writeInitialSyncData(buf);
         }
         CoverSaveHandler.writeInitialSyncData(buf, this);
         buf.writeBoolean(muffled);

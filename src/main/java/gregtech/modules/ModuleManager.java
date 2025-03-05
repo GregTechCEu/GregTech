@@ -12,29 +12,35 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.event.*;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ModuleManager implements IModuleManager {
+public final class ModuleManager implements IModuleManager {
 
     private static final ModuleManager INSTANCE = new ModuleManager();
     private static final String MODULE_CFG_FILE_NAME = "modules.cfg";
     private static final String MODULE_CFG_CATEGORY_NAME = "modules";
     private static File configFolder;
 
-    private Map<String, IModuleContainer> containers = new LinkedHashMap<>();
-    private final Map<ResourceLocation, IGregTechModule> sortedModules = new LinkedHashMap<>();
-    private final Set<IGregTechModule> loadedModules = new LinkedHashSet<>();
+    private Map<String, IModuleContainer> containers = new Object2ReferenceLinkedOpenHashMap<>();
+    private final Map<ResourceLocation, IGregTechModule> sortedModules = new Object2ReferenceLinkedOpenHashMap<>();
+    private final Set<IGregTechModule> loadedModules = new ReferenceLinkedOpenHashSet<>();
 
-    private IModuleContainer currentContainer;
+    private @Nullable IModuleContainer currentContainer;
 
     private ModuleStage currentStage = ModuleStage.C_SETUP;
-    private final Logger logger = LogManager.getLogger("GregTech Module Loader");
+    private static final Logger logger = LogManager.getLogger("GregTech Module Loader");
     private Configuration config;
 
     private ModuleManager() {}
@@ -44,11 +50,11 @@ public class ModuleManager implements IModuleManager {
     }
 
     @Override
-    public boolean isModuleEnabled(ResourceLocation id) {
+    public boolean isModuleEnabled(@NotNull ResourceLocation id) {
         return sortedModules.containsKey(id);
     }
 
-    public boolean isModuleEnabled(IGregTechModule module) {
+    private boolean isModuleEnabled(@NotNull IGregTechModule module) {
         GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
         String comment = getComment(module);
         Property prop = getConfiguration().get(MODULE_CFG_CATEGORY_NAME,
@@ -57,22 +63,22 @@ public class ModuleManager implements IModuleManager {
     }
 
     @Override
-    public IModuleContainer getLoadedContainer() {
+    public @Nullable IModuleContainer getLoadedContainer() {
         return currentContainer;
     }
 
     @Override
-    public ModuleStage getStage() {
+    public @NotNull ModuleStage getStage() {
         return currentStage;
     }
 
     @Override
-    public boolean hasPassedStage(ModuleStage stage) {
+    public boolean hasPassedStage(@NotNull ModuleStage stage) {
         return currentStage.ordinal() > stage.ordinal();
     }
 
     @Override
-    public void registerContainer(IModuleContainer container) {
+    public void registerContainer(@NotNull IModuleContainer container) {
         if (currentStage != ModuleStage.C_SETUP) {
             logger.error("Failed to register module container {}, as module loading has already begun", container);
             return;
@@ -81,14 +87,21 @@ public class ModuleManager implements IModuleManager {
         containers.put(container.getID(), container);
     }
 
-    public void setup(ASMDataTable asmDataTable, File configDirectory) {
-        // find and register all containers registered with the @ModuleContainer annotation, then sort them by container
-        // name
+    /**
+     * Set up the Module Manager
+     *
+     * @param asmDataTable    the data table containing all of the Module Container and Module classes
+     * @param configDirectory the directory containing the GT config directory
+     */
+    public void setup(@NotNull ASMDataTable asmDataTable, @NotNull File configDirectory) {
+        // find and register all containers registered with the @ModuleContainer annotation
         discoverContainers(asmDataTable);
+        // then sort them by container name
         containers = containers.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+                        Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a, Object2ReferenceLinkedOpenHashMap::new));
 
         currentStage = ModuleStage.M_SETUP;
         configFolder = new File(configDirectory, GTValues.MODID);
@@ -101,10 +114,17 @@ public class ModuleManager implements IModuleManager {
             for (Class<?> clazz : module.getEventBusSubscribers()) {
                 MinecraftForge.EVENT_BUS.register(clazz);
             }
+            for (Class<?> clazz : module.getTerrainGenBusSubscribers()) {
+                MinecraftForge.TERRAIN_GEN_BUS.register(clazz);
+            }
+            for (Class<?> clazz : module.getOreGenBusSubscribers()) {
+                MinecraftForge.ORE_GEN_BUS.register(clazz);
+            }
         }
+        currentContainer = null;
     }
 
-    public void onConstruction(FMLConstructionEvent event) {
+    public void onConstruction(@NotNull FMLConstructionEvent event) {
         currentStage = ModuleStage.CONSTRUCTION;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
@@ -112,9 +132,10 @@ public class ModuleManager implements IModuleManager {
             module.construction(event);
             module.getLogger().debug("Construction complete");
         }
+        currentContainer = null;
     }
 
-    public void onPreInit(FMLPreInitializationEvent event) {
+    public void onPreInit(@NotNull FMLPreInitializationEvent event) {
         currentStage = ModuleStage.PRE_INIT;
         // Separate loops for strict ordering
         for (IGregTechModule module : loadedModules) {
@@ -128,9 +149,10 @@ public class ModuleManager implements IModuleManager {
             module.preInit(event);
             module.getLogger().debug("Pre-init complete");
         }
+        currentContainer = null;
     }
 
-    public void onInit(FMLInitializationEvent event) {
+    public void onInit(@NotNull FMLInitializationEvent event) {
         currentStage = ModuleStage.INIT;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
@@ -138,9 +160,10 @@ public class ModuleManager implements IModuleManager {
             module.init(event);
             module.getLogger().debug("Init complete");
         }
+        currentContainer = null;
     }
 
-    public void onPostInit(FMLPostInitializationEvent event) {
+    public void onPostInit(@NotNull FMLPostInitializationEvent event) {
         currentStage = ModuleStage.POST_INIT;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
@@ -148,9 +171,10 @@ public class ModuleManager implements IModuleManager {
             module.postInit(event);
             module.getLogger().debug("Post-init complete");
         }
+        currentContainer = null;
     }
 
-    public void onLoadComplete(FMLLoadCompleteEvent event) {
+    public void onLoadComplete(@NotNull FMLLoadCompleteEvent event) {
         currentStage = ModuleStage.FINISHED;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
@@ -158,9 +182,10 @@ public class ModuleManager implements IModuleManager {
             module.loadComplete(event);
             module.getLogger().debug("Load-complete complete");
         }
+        currentContainer = null;
     }
 
-    public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
+    public void onServerAboutToStart(@NotNull FMLServerAboutToStartEvent event) {
         currentStage = ModuleStage.SERVER_ABOUT_TO_START;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
@@ -168,9 +193,10 @@ public class ModuleManager implements IModuleManager {
             module.serverAboutToStart(event);
             module.getLogger().debug("Server-about-to-start complete");
         }
+        currentContainer = null;
     }
 
-    public void onServerStarting(FMLServerStartingEvent event) {
+    public void onServerStarting(@NotNull FMLServerStartingEvent event) {
         currentStage = ModuleStage.SERVER_STARTING;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
@@ -178,9 +204,10 @@ public class ModuleManager implements IModuleManager {
             module.serverStarting(event);
             module.getLogger().debug("Server-starting complete");
         }
+        currentContainer = null;
     }
 
-    public void onServerStarted(FMLServerStartedEvent event) {
+    public void onServerStarted(@NotNull FMLServerStartedEvent event) {
         currentStage = ModuleStage.SERVER_STARTED;
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
@@ -188,23 +215,31 @@ public class ModuleManager implements IModuleManager {
             module.serverStarted(event);
             module.getLogger().debug("Server-started complete");
         }
+        currentContainer = null;
     }
 
-    public void onServerStopping(FMLServerStoppingEvent event) {
+    public void onServerStopping(@NotNull FMLServerStoppingEvent event) {
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
             module.serverStopping(event);
         }
+        currentContainer = null;
     }
 
-    public void onServerStopped(FMLServerStoppedEvent event) {
+    public void onServerStopped(@NotNull FMLServerStoppedEvent event) {
         for (IGregTechModule module : loadedModules) {
             currentContainer = containers.get(getContainerID(module));
             module.serverStopped(event);
         }
+        currentContainer = null;
     }
 
-    public void processIMC(ImmutableList<FMLInterModComms.IMCMessage> messages) {
+    /**
+     * Forward incoming IMC messages to each loaded module
+     *
+     * @param messages the messages to forward
+     */
+    public void processIMC(@NotNull @Unmodifiable List<FMLInterModComms.IMCMessage> messages) {
         for (FMLInterModComms.IMCMessage message : messages) {
             for (IGregTechModule module : loadedModules) {
                 if (module.processIMC(message)) {
@@ -214,11 +249,16 @@ public class ModuleManager implements IModuleManager {
         }
     }
 
-    private void configureModules(Map<String, List<IGregTechModule>> modules) {
+    /**
+     * Configure the modules according to the module Configuration
+     *
+     * @param modules the modules to configure
+     */
+    private void configureModules(@NotNull Map<String, List<IGregTechModule>> modules) {
         Locale locale = Locale.getDefault();
         Locale.setDefault(Locale.ENGLISH);
-        Set<ResourceLocation> toLoad = new LinkedHashSet<>();
-        Set<IGregTechModule> modulesToLoad = new LinkedHashSet<>();
+        Set<ResourceLocation> toLoad = new ObjectLinkedOpenHashSet<>();
+        Set<IGregTechModule> modulesToLoad = new ReferenceLinkedOpenHashSet<>();
         Configuration config = getConfiguration();
         config.load();
         config.addCustomCategoryComment(MODULE_CFG_CATEGORY_NAME,
@@ -297,7 +337,11 @@ public class ModuleManager implements IModuleManager {
         Locale.setDefault(locale);
     }
 
-    private static IGregTechModule getCoreModule(List<IGregTechModule> modules) {
+    /**
+     * @param modules the list of modules possibly containing a Core Module
+     * @return the first found Core Module found
+     */
+    private static @Nullable IGregTechModule getCoreModule(@NotNull Iterable<IGregTechModule> modules) {
         for (IGregTechModule module : modules) {
             GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
             if (annotation.coreModule()) {
@@ -307,14 +351,22 @@ public class ModuleManager implements IModuleManager {
         return null;
     }
 
-    private static String getContainerID(IGregTechModule module) {
+    /**
+     * @param module the module to get the container ID for
+     * @return the container ID
+     */
+    private static @NotNull String getContainerID(@NotNull IGregTechModule module) {
         GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
         return annotation.containerID();
     }
 
-    private Map<String, List<IGregTechModule>> getModules(ASMDataTable table) {
+    /**
+     * @param table the ASM Data Table containing the module data
+     * @return a map of Container ID to list of associated modules sorted by Module ID
+     */
+    private static @NotNull Map<String, List<IGregTechModule>> getModules(@NotNull ASMDataTable table) {
         List<IGregTechModule> instances = getInstances(table);
-        Map<String, List<IGregTechModule>> modules = new LinkedHashMap<>();
+        Map<String, List<IGregTechModule>> modules = new Object2ReferenceLinkedOpenHashMap<>();
         for (IGregTechModule module : instances) {
             GregTechModule info = module.getClass().getAnnotation(GregTechModule.class);
             modules.computeIfAbsent(info.containerID(), k -> new ArrayList<>()).add(module);
@@ -322,45 +374,70 @@ public class ModuleManager implements IModuleManager {
         return modules;
     }
 
+    /**
+     * @param table the ASM Data Table containing the module data
+     * @return all IGregTechModule instances in sorted order by Container and Module ID
+     */
     @SuppressWarnings("unchecked")
-    private List<IGregTechModule> getInstances(ASMDataTable table) {
+    private static @NotNull List<IGregTechModule> getInstances(@NotNull ASMDataTable table) {
         Set<ASMDataTable.ASMData> dataSet = table.getAll(GregTechModule.class.getCanonicalName());
         List<IGregTechModule> instances = new ArrayList<>();
         for (ASMDataTable.ASMData data : dataSet) {
             String moduleID = (String) data.getAnnotationInfo().get("moduleID");
-            List<String> modDependencies = (ArrayList<String>) data.getAnnotationInfo().get("modDependencies");
+            List<String> modDependencies = (List<String>) data.getAnnotationInfo().get("modDependencies");
             if (modDependencies == null || modDependencies.stream().allMatch(Loader::isModLoaded)) {
                 try {
                     Class<?> clazz = Class.forName(data.getClassName());
-                    instances.add((IGregTechModule) clazz.newInstance());
-                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                    logger.error("Could not initialize module " + moduleID, e);
+                    if (IGregTechModule.class.isAssignableFrom(clazz)) {
+                        instances.add((IGregTechModule) clazz.getConstructor().newInstance());
+                    } else {
+                        logger.error("Module of class {} with id {} is not an instanceof IGregTechModule",
+                                clazz.getName(), moduleID);
+                    }
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException |
+                         NoSuchMethodException | InvocationTargetException e) {
+                    logger.error("Could not initialize module {}", moduleID, e);
                 }
             } else {
                 logger.info("Module {} is missing at least one of mod dependencies: {}, skipping loading...", moduleID,
                         modDependencies);
             }
         }
-        return instances.stream().sorted((m1, m2) -> {
-            GregTechModule m1a = m1.getClass().getAnnotation(GregTechModule.class);
-            GregTechModule m2a = m2.getClass().getAnnotation(GregTechModule.class);
-            return (m1a.containerID() + ":" + m1a.moduleID()).compareTo(m2a.containerID() + ":" + m2a.moduleID());
-        }).collect(Collectors.toCollection(ArrayList::new));
+        return instances.stream()
+                .sorted(Comparator.comparing((m) -> m.getClass()
+                        .getAnnotation(GregTechModule.class),
+                        Comparator.comparing(GregTechModule::containerID)
+                                .thenComparing(GregTechModule::moduleID)))
+                .collect(Collectors.toList());
     }
 
-    private void discoverContainers(ASMDataTable table) {
+    /**
+     * Discovers ModuleContainers and registers them
+     *
+     * @param table the table containing the ModuleContainer data
+     */
+    private void discoverContainers(@NotNull ASMDataTable table) {
         Set<ASMDataTable.ASMData> dataSet = table.getAll(ModuleContainer.class.getCanonicalName());
         for (ASMDataTable.ASMData data : dataSet) {
             try {
                 Class<?> clazz = Class.forName(data.getClassName());
-                registerContainer((IModuleContainer) clazz.newInstance());
-            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                logger.error("Could not initialize module container " + data.getClassName(), e);
+                if (IGregTechModule.class.isAssignableFrom(clazz)) {
+                    registerContainer((IModuleContainer) clazz.getConstructor().newInstance());
+                } else {
+                    logger.error("Module Container Class {} is not an instanceof IModuleContainer", clazz.getName());
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | NoSuchMethodException |
+                     InvocationTargetException e) {
+                logger.error("Could not initialize module container {}", data.getClassName(), e);
             }
         }
     }
 
-    private String getComment(IGregTechModule module) {
+    /**
+     * @param module the module to get the comment for
+     * @return the comment for the module's configuration
+     */
+    private static String getComment(@NotNull IGregTechModule module) {
         GregTechModule annotation = module.getClass().getAnnotation(GregTechModule.class);
 
         String comment = annotation.description();
@@ -393,7 +470,10 @@ public class ModuleManager implements IModuleManager {
         return comment;
     }
 
-    private Configuration getConfiguration() {
+    /**
+     * @return the module configuration instance
+     */
+    private @NotNull Configuration getConfiguration() {
         if (config == null) {
             config = new Configuration(new File(configFolder, MODULE_CFG_FILE_NAME));
         }
