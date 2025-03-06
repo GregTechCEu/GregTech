@@ -369,7 +369,7 @@ public class PolymerRecipes {
         CHEMICAL_RECIPES.recipeBuilder().volts(VA[IV]).duration(100)
                 .fluidInputs(Dichlorobenzidine.getFluid(1000))
                 .fluidInputs(Ammonia.getFluid(2000))
-                .input(dustTiny, Copper)
+                .inputItem(dustTiny, Copper)
                 .fluidOutputs(Diaminobenzidine.getFluid(1000))
                 .fluidOutputs(HydrochloricAcid.getFluid(2000))
                 .buildAndRegister();

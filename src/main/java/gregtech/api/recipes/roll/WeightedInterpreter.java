@@ -43,10 +43,7 @@ public final class WeightedInterpreter implements RollInterpreter {
             mainloop:
             for (int i = 0; i < attempts; i++) {
                 if (GTValues.RNG.nextInt(10_000) < chancePerRoll) {
-                    long pick;
-                    do {
-                        pick = GTValues.RNG.nextLong();
-                    } while (pick >= sum);
+                    long pick = GTValues.RNG.nextLong(sum);
                     int pointer = 0;
                     for (; pointer < maxYield.length; pointer++) {
                         while (picked[pointer]) {

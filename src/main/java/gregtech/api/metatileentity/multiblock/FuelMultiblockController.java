@@ -91,7 +91,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
                 .addMaintenanceProblemLines(getMaintenanceProblems());
     }
 
-    protected boolean isDynamoTierTooLow() {]
+    protected boolean isDynamoTierTooLow() {
         // TODO multiple recipe display
         // if (isStructureFormed()) {
         // return getMaxVoltage() < -recipeEUt();

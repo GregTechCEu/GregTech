@@ -169,9 +169,9 @@ public class MaterialRecipeHandler {
                         .buildAndRegister();
             } else if (!OreDictUnifier.get(block, mat).isEmpty()) {
                 COMPRESSOR_RECIPES.recipeBuilder()
-                        .input(dust, mat, (int) (block.getMaterialAmount(mat) / M))
-                        .output(block, mat)
-                        .duration(300).EUt(2).buildAndRegister();
+                        .inputItem(dust, mat, (int) (block.getMaterialAmount(mat) / M))
+                        .outputItem(block, mat)
+                        .duration(300).volts(2).buildAndRegister();
             }
 
             // Some Ores with Direct Smelting Results have neither ingot nor gem properties
@@ -309,7 +309,8 @@ public class MaterialRecipeHandler {
                         .inputItem(ingotPrefix, material)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD)
                         .outputs(OreDictUnifier.get(stick, material, 2))
-                        .duration((int) material.getMass() * 2).volts(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
+                        .duration((int) material.getMass() * 2)
+                        .volts(GTUtility.scaleVoltage(6 * getVoltageMultiplier(material), workingTier))
                         .buildAndRegister();
             }
         }
@@ -391,7 +392,8 @@ public class MaterialRecipeHandler {
                         .inputItem(ingotPrefix, material)
                         .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
                         .outputs(OreDictUnifier.get(plate, material))
-                        .duration((int) material.getMass()).volts(GTUtility.scaleVoltage(8 * voltageMultiplier, workingTier))
+                        .duration((int) material.getMass())
+                        .volts(GTUtility.scaleVoltage(8 * voltageMultiplier, workingTier))
                         .buildAndRegister();
 
                 if (material.hasFlag(NO_SMASHING)) {
@@ -399,7 +401,8 @@ public class MaterialRecipeHandler {
                             .inputItem(dust, material)
                             .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
                             .outputs(OreDictUnifier.get(plate, material))
-                            .duration((int) material.getMass()).volts(GTUtility.scaleVoltage(8 * voltageMultiplier, workingTier))
+                            .duration((int) material.getMass())
+                            .volts(GTUtility.scaleVoltage(8 * voltageMultiplier, workingTier))
                             .buildAndRegister();
                 }
             }
@@ -496,7 +499,8 @@ public class MaterialRecipeHandler {
             ASSEMBLER_RECIPES.recipeBuilder()
                     .inputItem(stick, material, 4)
                     .circuitMeta(4)
-                    .outputs(OreDictUnifier.get(framePrefix, material, 1)).volts(GTUtility.scaleVoltage(VA[ULV], workingTier)).duration(64)
+                    .outputs(OreDictUnifier.get(framePrefix, material, 1))
+                    .volts(GTUtility.scaleVoltage(VA[ULV], workingTier)).duration(64)
                     .buildAndRegister();
         }
     }

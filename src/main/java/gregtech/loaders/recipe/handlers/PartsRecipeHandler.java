@@ -254,7 +254,8 @@ public class PartsRecipeHandler {
                             .notConsumable(MetaItems.SHAPE_EXTRUDER_GEAR_SMALL)
                             .outputs(stack)
                             .duration((int) material.getMass())
-                            .volts(GTUtility.scaleVoltage(material.getBlastTemperature() >= 2800 ? 256 : 64, workingTier))
+                            .volts(GTUtility.scaleVoltage(material.getBlastTemperature() >= 2800 ? 256 : 64,
+                                    workingTier))
                             .buildAndRegister();
                 }
             } else if (workingTier <= HV) {

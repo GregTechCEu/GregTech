@@ -104,39 +104,39 @@ public class ChemicalBathRecipes {
                 .duration(125).volts(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, BlackSteel)
+                .inputItem(ingotHot, BlackSteel)
                 .fluidInputs(Water.getFluid(100))
-                .output(ingot, BlackSteel)
+                .outputItem(ingot, BlackSteel)
                 .duration(200).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, BlackSteel)
+                .inputItem(ingotHot, BlackSteel)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(ingot, BlackSteel)
+                .outputItem(ingot, BlackSteel)
                 .duration(125).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, RedSteel)
+                .inputItem(ingotHot, RedSteel)
                 .fluidInputs(Water.getFluid(100))
-                .output(ingot, RedSteel)
+                .outputItem(ingot, RedSteel)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, RedSteel)
+                .inputItem(ingotHot, RedSteel)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(ingot, RedSteel)
+                .outputItem(ingot, RedSteel)
                 .duration(250).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, BlueSteel)
+                .inputItem(ingotHot, BlueSteel)
                 .fluidInputs(Water.getFluid(100))
-                .output(ingot, BlueSteel)
+                .outputItem(ingot, BlueSteel)
                 .duration(400).EUt(VA[MV]).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-                .input(ingotHot, BlueSteel)
+                .inputItem(ingotHot, BlueSteel)
                 .fluidInputs(DistilledWater.getFluid(100))
-                .output(ingot, BlueSteel)
+                .outputItem(ingot, BlueSteel)
                 .duration(250).EUt(VA[MV]).buildAndRegister();
     }
 }

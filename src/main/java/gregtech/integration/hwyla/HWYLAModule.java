@@ -17,7 +17,7 @@ import gregtech.integration.hwyla.provider.MultiRecipeMapDataProvider;
 import gregtech.integration.hwyla.provider.MultiblockDataProvider;
 import gregtech.integration.hwyla.provider.PrimitivePumpDataProvider;
 import gregtech.integration.hwyla.provider.QuantumStorageProvider;
-import gregtech.integration.hwyla.provider.RecipeLogicDataProvider;
+import gregtech.integration.hwyla.provider.RecipeWorkableDataProvider;
 import gregtech.integration.hwyla.provider.SteamBoilerDataProvider;
 import gregtech.integration.hwyla.provider.TransformerDataProvider;
 import gregtech.integration.hwyla.provider.WorkableDataProvider;
