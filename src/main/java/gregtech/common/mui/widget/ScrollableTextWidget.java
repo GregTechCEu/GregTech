@@ -2,6 +2,8 @@ package gregtech.common.mui.widget;
 
 import gregtech.api.mui.IconAcessor;
 
+import net.minecraft.client.gui.FontRenderer;
+
 import com.cleanroommc.modularui.api.GuiAxis;
 import com.cleanroommc.modularui.api.drawable.IHoverable;
 import com.cleanroommc.modularui.api.drawable.IRichTextBuilder;
@@ -114,7 +116,9 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
     @Nullable
     public Object getHoveredElement() {
         if (!isHovering()) return null;
-        return this.text.getHoveringElement(getContext());
+        FontRenderer fr = getContext().getFontRenderer();
+        int x = getContext().getMouseX(), y = getContext().getMouseY();
+        return this.text.getHoveringElement(fr, x, y + getScrollY()); // undo scrolling
     }
 
     @Override
@@ -174,7 +178,8 @@ public class ScrollableTextWidget extends Widget<ScrollableTextWidget>
                 getWidgetTheme(context.getTheme()).getTextColor(),
                 getWidgetTheme(context.getTheme()).getTextShadow());
         this.text.compileAndDraw(this.renderer, context, false);
-        int diff = ((int) this.renderer.getLastHeight() - getArea().h()) / 2;
+        // this isn't perfect, but i hope it's good enough
+        int diff = (int) Math.ceil((this.renderer.getLastHeight() - getArea().h()) / 2);
         this.scroll.getScrollY().setScrollSize(getArea().h() + Math.max(0, diff));
     }
 
