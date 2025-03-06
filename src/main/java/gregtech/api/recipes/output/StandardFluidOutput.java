@@ -2,12 +2,14 @@ package gregtech.api.recipes.output;
 
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.roll.ListWithRollInformation;
+import gregtech.api.recipes.roll.RollInterpreterApplication;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -64,9 +66,7 @@ public final class StandardFluidOutput implements FluidOutputProvider {
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<FluidStack> getCompleteOutputs(int parallel, int trimLimit,
-                                                                          @UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                                                          @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
+    public @NotNull @UnmodifiableView List<FluidStack> getCompleteOutputs(int parallel, int trimLimit) {
         List<FluidStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size()) * parallel / 2);
         int limit = Math.min(this.outputs.size(), trimLimit);
         for (int j = 0; j < limit; j++) {
@@ -89,5 +89,14 @@ public final class StandardFluidOutput implements FluidOutputProvider {
             if (stack == null || stack.getFluid() == null || stack.amount == 0) return false;
         }
         return true;
+    }
+
+    @Override
+    public @Nullable String addSmallDisplay(int index) {
+        if (outputs.isRolled(index)) {
+            return outputs.getInterpreter().interpretSmallDisplay(index, RollInterpreterApplication.FLUID_OUTPUT,
+                    outputs.getMaxYield(index), outputs.getRollValue(index), outputs.getRollBoost(index));
+        }
+        return null;
     }
 }

@@ -1617,7 +1617,7 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return false;
     }
 
-    protected PropertySet computePropertySet() {
+    protected @NotNull PropertySet computePropertySet() {
         PropertySet set = PropertySet.empty();
         set.add(new DimensionInhabitedProperty(getWorld().provider.getDimension()));
         set.add(new BiomeInhabitedProperty(getWorld().getBiomeForCoordsBody(getPos())));

@@ -2,6 +2,7 @@ package gregtech.api.recipes.output;
 
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.roll.ListWithRollInformation;
+import gregtech.api.recipes.roll.RollInterpreterApplication;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -10,6 +11,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -67,9 +69,7 @@ public final class StandardItemOutput implements ItemOutputProvider {
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<ItemStack> getCompleteOutputs(int parallel, int trimLimit,
-                                                                         @UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                                                         @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
+    public @NotNull @UnmodifiableView List<ItemStack> getCompleteOutputs(int parallel, int trimLimit) {
         List<ItemStack> outputs = new ObjectArrayList<>(Math.min(trimLimit, this.outputs.size()) * parallel / 2);
         int limit = Math.min(this.outputs.size(), trimLimit);
         for (int j = 0; j < limit; j++) {
@@ -92,5 +92,14 @@ public final class StandardItemOutput implements ItemOutputProvider {
             if (stack == null || stack.getItem() == Items.AIR || stack.isEmpty()) return false;
         }
         return true;
+    }
+
+    @Override
+    public @Nullable String addSmallDisplay(int index) {
+        if (outputs.isRolled(index)) {
+            return outputs.getInterpreter().interpretSmallDisplay(index, RollInterpreterApplication.ITEM_OUTPUT,
+                    outputs.getMaxYield(index), outputs.getRollValue(index), outputs.getRollBoost(index));
+        }
+        return null;
     }
 }

@@ -53,7 +53,7 @@ public abstract class FuelMultiblockController extends RecipeMapMultiblockContro
     }
 
     @Override
-    protected PropertySet computePropertySet() {
+    protected @NotNull PropertySet computePropertySet() {
         PropertySet set = super.computePropertySet();
         set.comprehensive(getEnergyContainer().getInputVoltage(),
                 getEnergyContainer().getInputAmperage(), getMaxVoltage(),

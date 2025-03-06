@@ -134,7 +134,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity
                 });
     }
 
-    protected PropertySet computePropertySet() {
+    protected @NotNull PropertySet computePropertySet() {
         PropertySet set = super.computePropertySet();
         set.comprehensive(getEnergyContainer().getInputVoltage(), 1, getEnergyContainer().getOutputVoltage(),
                 getEnergyContainer().getOutputAmperage());

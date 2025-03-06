@@ -445,15 +445,16 @@ public class MinerLogic {
      * @param map          the recipemap from which to get the drops
      * @param tier         the tier at which the operation is performed, used for calculating the chanced output boost
      */
-    protected static void applyTieredHammerNoRandomDrops(@NotNull IBlockState blockState, List<ItemStack> drops,
-                                                         int fortuneLevel, @NotNull RecipeMap<?> map, int tier) {
+    protected void applyTieredHammerNoRandomDrops(@NotNull IBlockState blockState, List<ItemStack> drops,
+                                                  int fortuneLevel, @NotNull RecipeMap<?> map, int tier) {
         ItemStack itemStack = GTUtility.toItem(blockState);
-        Recipe recipe = map.find(Collections.singletonList(itemStack), Collections.emptyList(), Objects::nonNull);
-        if (recipe != null && !recipe.getOutputs().isEmpty()) {
+        List<ItemStack> singleton = Collections.singletonList(itemStack);
+        Recipe recipe = map.find(singleton, Collections.emptyList(), Objects::nonNull);
+        if (recipe != null && recipe.getItemOutputProvider().getMaximumOutputs(1) > 0) {
             drops.clear();
-            for (ItemStack outputStack : recipe.getResultItemOutputs(GTUtility.getTierByVoltage(recipe.getVoltage()),
-                    tier,
-                    map)) {
+            for (ItemStack outputStack : recipe.getItemOutputProvider().computeOutputs(singleton,
+                    Collections.emptyList(),
+                    miner.computePropertySet(), GTUtility.getTierByVoltage(recipe.getVoltage()), tier, 1)) {
                 outputStack = outputStack.copy();
                 if (OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
                     if (fortuneLevel > 0) {

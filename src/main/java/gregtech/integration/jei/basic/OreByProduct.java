@@ -1,6 +1,9 @@
 package gregtech.integration.jei.basic;
 
 import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
+import gregtech.api.recipes.roll.RollInterpreter;
+import gregtech.api.recipes.roll.RollInterpreterApplication;
+import gregtech.api.recipes.ui.JEIDisplayControl;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -25,6 +28,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +56,7 @@ public class OreByProduct implements IRecipeWrapper {
 
     private static ImmutableList<ItemStack> ALWAYS_MACHINES;
 
+    // TODO move onto RollInformation
     private final Int2ObjectMap<ChancedItemOutput> chances = new Int2ObjectOpenHashMap<>();
     private final List<List<ItemStack>> inputs = new ArrayList<>();
     private final List<List<ItemStack>> outputs = new ArrayList<>();
@@ -351,5 +356,18 @@ public class OreByProduct implements IRecipeWrapper {
         } else {
             addChance(baseLow, tierLow);
         }
+    }
+
+    protected JEIDisplayControl outputControl() {
+        return new JEIDisplayControl() {
+
+            @Override
+            public @Nullable String addSmallDisplay(int index) {
+                ChancedItemOutput chance = chances.get(index);
+                if (chance == null) return null;
+                return RollInterpreter.chanceIndependent().interpretSmallDisplay(index,
+                        RollInterpreterApplication.ITEM_OUTPUT, 1, chance.getChance(), chance.getChanceBoost());
+            }
+        };
     }
 }

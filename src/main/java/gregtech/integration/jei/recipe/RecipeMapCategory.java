@@ -143,20 +143,19 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
             if (uiWidget instanceof SlotWidget slotWidget) {
                 if (!(slotWidget.getHandle() instanceof SlotItemHandler handle)) continue;
                 if (handle.getItemHandler() == importItems) {
+                    int index = handle.getSlotIndex();
                     // this is input item stack slot widget, so add it to item group
-                    itemStackGroup.init(handle.getSlotIndex(), true,
-                            new ItemStackTextRenderer(recipeWrapper.isNotConsumedItem(handle.getSlotIndex())),
+                    itemStackGroup.init(index, true,
+                            new ItemStackTextRenderer(index, recipeWrapper.getItemInDisplayControl()),
                             slotWidget.getPosition().x + 1,
                             slotWidget.getPosition().y + 1,
                             slotWidget.getSize().width - 2,
                             slotWidget.getSize().height - 2, 0, 0);
                 } else if (handle.getItemHandler() == exportItems) {
+                    int index = importItems.getSlots() + handle.getSlotIndex();
                     // this is output item stack slot widget, so add it to item group
-                    itemStackGroup.init(importItems.getSlots() + handle.getSlotIndex(), false,
-                            new ItemStackTextRenderer(
-                                    recipeWrapper.getOutputChance(
-                                            handle.getSlotIndex() - recipeWrapper.getRecipe().getOutputs().size()),
-                                    recipeWrapper.getChancedOutputLogic()),
+                    itemStackGroup.init(index, false,
+                            new ItemStackTextRenderer(index, recipeWrapper.getItemOutDisplayControl()),
                             slotWidget.getPosition().x + 1,
                             slotWidget.getPosition().y + 1,
                             slotWidget.getSize().width - 2,
@@ -173,8 +172,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                     fluidStackGroup.init(importIndex, true,
                             new FluidStackTextRenderer(fluidAmount, false,
                                     tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
-                                    tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset), null)
-                                            .setNotConsumed(recipeWrapper.isNotConsumedFluid(importIndex)),
+                                    tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset),
+                                    null, importIndex, recipeWrapper.getFluidInDisplayControl()),
                             tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
                             tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
                             tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
@@ -190,10 +189,9 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                     fluidStackGroup.init(importFluids.getFluidTanks().size() + exportIndex, false,
                             new FluidStackTextRenderer(fluidAmount, false,
                                     tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
-                                    tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset), null,
-                                    recipeWrapper.getFluidOutputChance(
-                                            exportIndex - recipeWrapper.getRecipe().getFluidOutputs().size()),
-                                    recipeWrapper.getChancedFluidOutputLogic()),
+                                    tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset),
+                                    null, importFluids.getFluidTanks().size() + exportIndex,
+                                    recipeWrapper.getFluidOutDisplayControl()),
                             tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
                             tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
                             tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),

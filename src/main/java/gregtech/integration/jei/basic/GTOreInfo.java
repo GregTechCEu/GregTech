@@ -1,5 +1,8 @@
 package gregtech.integration.jei.basic;
 
+import gregtech.api.recipes.roll.RollInterpreter;
+import gregtech.api.recipes.roll.RollInterpreterApplication;
+import gregtech.api.recipes.ui.JEIDisplayControl;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.FileUtility;
@@ -33,6 +36,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -355,5 +359,16 @@ public class GTOreInfo implements IRecipeWrapper {
 
     public int getOreWeight(int index) {
         return oreWeights.size() > index ? oreWeights.get(index) : -1;
+    }
+
+    public JEIDisplayControl outputControl() {
+        return new JEIDisplayControl() {
+
+            @Override
+            public @NotNull String addSmallDisplay(int index) {
+                return RollInterpreter.chanceIndependent().interpretSmallDisplay(index,
+                        RollInterpreterApplication.ITEM_OUTPUT, 1, getOreWeight(index) * 100L, 0);
+            }
+        };
     }
 }

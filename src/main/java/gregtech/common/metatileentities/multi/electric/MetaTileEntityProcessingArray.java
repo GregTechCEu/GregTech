@@ -88,7 +88,7 @@ public class MetaTileEntityProcessingArray extends DistinctRecipeMapMultiblockCo
     }
 
     @Override
-    protected PropertySet computePropertySet() {
+    protected @NotNull PropertySet computePropertySet() {
         PropertySet set = super.computePropertySet();
         set.comprehensive(machineVoltage,
                 getEnergyContainer().getInputAmperage(), machineVoltage,

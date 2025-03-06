@@ -28,9 +28,7 @@ public final class EmptyFluidOutput implements FluidOutputProvider {
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<FluidStack> getCompleteOutputs(int parallel, int trimLimit,
-                                                                          @UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                                                          @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
+    public @NotNull @UnmodifiableView List<FluidStack> getCompleteOutputs(int parallel, int trimLimit) {
         return Collections.emptyList();
     }
 

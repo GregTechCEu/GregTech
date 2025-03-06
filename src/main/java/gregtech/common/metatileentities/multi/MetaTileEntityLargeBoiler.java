@@ -237,7 +237,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     @Override
-    public PropertySet computePropertySet() {
+    public @NotNull PropertySet computePropertySet() {
         return super.computePropertySet();
     }
 

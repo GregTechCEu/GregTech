@@ -24,6 +24,7 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
@@ -138,6 +139,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase
         if (energyContainer == null) return this.tier;
         return Math.min(this.tier + 1,
                 Math.max(this.tier, GTUtility.getFloorTierByVoltage(energyContainer.getInputVoltage())));
+    }
+
+    @Override
+    public @NotNull PropertySet computePropertySet() {
+        return super.computePropertySet();
     }
 
     @Override

@@ -4,6 +4,8 @@ import gregtech.api.statemachine.GTStateMachineTransientOperator;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.github.bsideup.jabel.Desugar;
+
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -29,5 +31,6 @@ public class RecipeMaintenanceOperator implements GTStateMachineTransientOperato
         transientData.put(key, maintenance.get());
     }
 
+    @Desugar
     public record MaintenanceValues(int count, double durationBonus) {}
 }

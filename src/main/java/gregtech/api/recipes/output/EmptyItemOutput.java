@@ -28,9 +28,7 @@ public final class EmptyItemOutput implements ItemOutputProvider {
     }
 
     @Override
-    public @NotNull @UnmodifiableView List<ItemStack> getCompleteOutputs(int parallel, int trimLimit,
-                                                                         @UnmodifiableView @NotNull List<ItemStack> inputItems,
-                                                                         @UnmodifiableView @NotNull List<FluidStack> inputFluids) {
+    public @NotNull @UnmodifiableView List<ItemStack> getCompleteOutputs(int parallel, int trimLimit) {
         return Collections.emptyList();
     }
 

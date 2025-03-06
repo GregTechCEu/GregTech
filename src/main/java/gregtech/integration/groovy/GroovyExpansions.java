@@ -2,7 +2,6 @@ package gregtech.integration.groovy;
 
 import gregtech.api.fluids.FluidBuilder;
 import gregtech.api.fluids.attribute.FluidAttributes;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
@@ -12,17 +11,8 @@ import gregtech.api.unification.material.properties.ToolProperty;
 import net.minecraft.util.ResourceLocation;
 
 import com.cleanroommc.groovyscript.GroovyScript;
-import com.cleanroommc.groovyscript.api.GroovyLog;
 
 public class GroovyExpansions {
-
-    public static <R extends RecipeBuilder<R>> RecipeBuilder<R> property(RecipeBuilder<R> builder, String key,
-                                                                         Object value) {
-        if (!builder.applyPropertyCT(key, value)) {
-            GroovyLog.get().error("Failed to add property '{}' with '{}' to recipe", key, value);
-        }
-        return builder;
-    }
 
     public static Material.Builder materialBuilder(MaterialEvent event, int id, ResourceLocation resourceLocation) {
         return new Material.Builder(id, resourceLocation);

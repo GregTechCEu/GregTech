@@ -129,7 +129,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ICon
     }
 
     @Override
-    protected PropertySet computePropertySet() {
+    protected @NotNull PropertySet computePropertySet() {
         PropertySet set = super.computePropertySet();
         set.supply(GTValues.V[GTValues.LV], 1);
         return set;

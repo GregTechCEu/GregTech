@@ -1,9 +1,6 @@
 package gregtech.api.recipes;
 
 import gregtech.api.recipes.category.GTRecipeCategory;
-import gregtech.api.recipes.chance.output.ChancedOutputList;
-import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
-import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.output.FluidOutputProvider;
@@ -268,29 +265,6 @@ public class Recipe {
     // TODO
 
     public List<ItemStack> getOutputs() {
-        return null;
-    }
-
-    /**
-     * Returns all outputs from the recipe.
-     * This is where Chanced Outputs for the recipe are calculated.
-     * The Recipe should be trimmed by calling {@link Recipe#getItemAndChanceOutputs(int)} before calling this method,
-     * if trimming is required.
-     *
-     * @param recipeTier  The Voltage Tier of the Recipe, used for chanced output calculation
-     * @param machineTier The Voltage Tier of the Machine, used for chanced output calculation
-     * @param recipeMap   The RecipeMap that the recipe is being performed upon, used for chanced output calculation
-     * @return A list of all resulting ItemStacks from the recipe, after chance has been applied to any chanced outputs
-     */
-    public List<ItemStack> getResultItemOutputs(int recipeTier, int machineTier, RecipeMap<?> recipeMap) {
-        return null;
-    }
-
-    public ChancedOutputList<ItemStack, ChancedItemOutput> getChancedOutputs() {
-        return null;
-    }
-
-    public ChancedOutputList<FluidStack, ChancedFluidOutput> getChancedFluidOutputs() {
         return null;
     }
 

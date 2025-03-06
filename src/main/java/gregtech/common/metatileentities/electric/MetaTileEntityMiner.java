@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.core.sound.GTSoundEvents;
 
@@ -182,6 +183,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public @NotNull PropertySet computePropertySet() {
+        return super.computePropertySet();
     }
 
     @Override

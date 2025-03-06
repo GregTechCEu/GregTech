@@ -15,6 +15,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleSidedCubeRenderer;
@@ -184,6 +185,11 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
         tooltip.add(I18n.format("gregtech.tool_action.wrench.set_facing"));
         tooltip.add(I18n.format("gregtech.tool_action.soft_mallet.reset"));
         super.addToolUsages(stack, world, tooltip, advanced);
+    }
+
+    @Override
+    public @NotNull PropertySet computePropertySet() {
+        return super.computePropertySet();
     }
 
     public boolean drainEnergy(boolean simulate) {

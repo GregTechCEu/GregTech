@@ -165,7 +165,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     }
 
     @Override
-    protected PropertySet computePropertySet() {
+    protected @NotNull PropertySet computePropertySet() {
         PropertySet set = super.computePropertySet();
         set.add(new EUToStartProperty(Math.min(energyContainer.getEnergyCapacity(),
                 energyContainer.getEnergyStored() + heat)));

@@ -27,7 +27,7 @@ public final class WeightedInterpreter implements RollInterpreter {
                                              long @NotNull [] rollBoost, int boostStrength, int parallel) {
         long[] adj = new long[maxYield.length];
         if (maxYield.length == 0) return adj;
-        long sum = 0;
+        long sum = 1;
         boolean[] skipped = new boolean[maxYield.length];
         for (int i = 0; i < maxYield.length; i++) {
             if (rollValue[i] == Long.MIN_VALUE) {
@@ -43,7 +43,10 @@ public final class WeightedInterpreter implements RollInterpreter {
             mainloop:
             for (int i = 0; i < attempts; i++) {
                 if (GTValues.RNG.nextInt(10_000) < chancePerRoll) {
-                    long pick = GTValues.RNG.nextLong(sum);
+                    long pick;
+                    do {
+                        pick = GTValues.RNG.nextLong();
+                    } while (pick >= sum);
                     int pointer = 0;
                     for (; pointer < maxYield.length; pointer++) {
                         while (picked[pointer]) {

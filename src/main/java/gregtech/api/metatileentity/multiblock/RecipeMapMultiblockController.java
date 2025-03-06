@@ -140,7 +140,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return getRecipeMap().getLookup();
     }
 
-    protected PropertySet computePropertySet() {
+    protected @NotNull PropertySet computePropertySet() {
         PropertySet set = super.computePropertySet();
         set.comprehensive(getEnergyContainer().getInputVoltage(),
                 getEnergyContainer().getInputAmperage(), getEnergyContainer().getOutputVoltage(),
