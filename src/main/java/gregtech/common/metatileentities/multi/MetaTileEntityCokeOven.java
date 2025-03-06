@@ -77,7 +77,7 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
-                recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
+                isActive(), isWorkingEnabled());
     }
 
     @SideOnly(Side.CLIENT)
@@ -99,7 +99,8 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
                 .widget(new LabelWidget(5, 5, getMetaFullName()))
                 .widget(new SlotWidget(importItems, 0, 52, 30, true, true)
                         .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_FURNACE_OVERLAY))
-                .widget(new RecipeProgressWidget(recipeMapWorkable::getProgressPercent, 76, 32, 20, 15,
+                // TODO multiple recipe display
+                .widget(new RecipeProgressWidget(/* recipeMapWorkable::getProgressPercent */() -> 0, 76, 32, 20, 15,
                         GuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, ProgressWidget.MoveType.HORIZONTAL,
                         RecipeMaps.COKE_OVEN_RECIPES))
                 .widget(new SlotWidget(exportItems, 0, 103, 30, true, false)

@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -10,7 +9,8 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.OverclockingConstants;
+import gregtech.api.recipes.logic.RecipeLogicConstants;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.TooltipHelper;
@@ -44,18 +44,17 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
 
     public MetaTileEntityLargeChemicalReactor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.LARGE_CHEMICAL_RECIPES);
-        this.recipeMapWorkable = new MultiblockRecipeLogic(this) {
-
-            @Override
-            protected double getOverclockingDurationFactor() {
-                return OverclockingConstants.PERFECT_DURATION_FACTOR;
-            }
-        };
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityLargeChemicalReactor(metaTileEntityId);
+    }
+
+    @Override
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setOverclockSpeedFactor(RecipeLogicConstants.PERFECT_OVERCLOCK_SPEED_FACTOR);
     }
 
     @Override

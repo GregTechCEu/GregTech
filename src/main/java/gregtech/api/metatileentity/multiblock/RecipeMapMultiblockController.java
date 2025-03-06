@@ -1,72 +1,164 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IDistinctBusController;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IHasRecipeMap;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.DistinctRecipeLogic;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.IDataInfoProvider;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
+import gregtech.api.recipes.logic.workable.RecipeWorkable;
+import gregtech.api.recipes.lookup.AbstractRecipeLookup;
+import gregtech.api.recipes.lookup.property.CleanroomFulfilmentProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
-import java.util.Set;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase implements IDataInfoProvider,
-                                                    ICleanroomReceiver, IDistinctBusController {
+                                                    ICleanroomReceiver,
+                                                    IControllable,
+                                                    IHasRecipeMap,
+                                                    RecipeWorkable.ISupportsRecipeWorkable {
 
     public final RecipeMap<?> recipeMap;
-    protected MultiblockRecipeLogic recipeMapWorkable;
+    protected RecipeWorkable workable;
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler inputFluidInventory;
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
 
-    private List<DistinctRecipeLogic.DistinctInputGroup> distinctInputGroups = new ObjectArrayList<>();
-    private boolean isDistinct = false;
+    protected Deque<ItemStack> bufferedItemOutputs;
+    protected boolean awaitingItemOutputSpace;
+    protected Deque<FluidStack> bufferedFluidOutputs;
+    protected boolean awaitingFluidOutputSpace;
 
     private ICleanroomProvider cleanroom;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
-        this.recipeMapWorkable = new MultiblockRecipeLogic(this);
+        RecipeStandardStateMachineBuilder std = new RecipeStandardStateMachineBuilder(this::getLookup);
+        modifyRecipeLogicStandardBuilder(std);
+        this.workable = new RecipeWorkable(this, std);
+        this.bufferedItemOutputs = new ArrayDeque<>();
+        this.bufferedFluidOutputs = new ArrayDeque<>();
         resetTileAbilities();
+    }
+
+    /**
+     * Called during initialization. Should not require any fields to be populated for the state machine to be
+     * constructed.
+     * Override this if you merely need to set up the standard state machine builder.
+     */
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        builder.setOffthreadSearchAndSetup(true)
+                .setParallelLimit(this::getBaseParallelLimit)
+                .setUpTransformForOverclocks(true)
+                .setDownTransformForParallels(true)
+                .setMaintenance(this::getMaintenanceValues)
+                .setItemInput(this::getInputInventory)
+                .setFluidInput(this::getInputFluidInventory)
+                .setProperties(this::computePropertySet)
+                .setFluidOutput(bufferedFluidOutputs::addAll)
+                .setFluidTrim(this::getFluidOutputLimit)
+                .setItemOutput(bufferedItemOutputs::addAll)
+                .setItemTrim(this::getItemOutputLimit)
+                .setNotifiedFluidInputs(this::getNotifiedFluidInputList)
+                .setNotifiedItemInputs(this::getNotifiedItemInputList)
+                .setItemOutAmountLimit(() -> getOutputInventory().getSlots() * 64)
+                .setItemOutStackLimit(() -> getOutputInventory().getSlots())
+                .setFluidOutAmountLimit(() -> {
+                    int sum = 0;
+                    for (var e : getOutputFluidInventory().getFluidTanks()) {
+                        int capacity = e.getCapacity();
+                        sum += capacity;
+                    }
+                    return sum;
+                })
+                .setFluidOutStackLimit(() -> getOutputFluidInventory().getTanks())
+                .setPerTickRecipeCheck((recipe) -> {
+                    double progress = recipe.getInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY);
+                    double maxProgress = recipe.getDouble("Duration");
+                    long voltage = recipe.getLong("Voltage");
+                    long amperage = recipe.getLong("Amperage");
+                    long eut = (long) (Math.min(1, maxProgress - progress) * voltage * amperage);
+                    boolean generating = recipe.getBoolean("Generating");
+                    if (!generating) {
+                        return Math.abs(getEnergyContainer().removeEnergy(eut)) >= eut;
+                    } else {
+                        getEnergyContainer().addEnergy(eut);
+                        return true;
+                    }
+                });
+    }
+
+    @NotNull
+    @Override
+    public RecipeMap<?> getRecipeMap() {
+        return recipeMap;
+    }
+
+    protected @NotNull AbstractRecipeLookup getLookup() {
+        return getRecipeMap().getLookup();
+    }
+
+    protected PropertySet computePropertySet() {
+        PropertySet set = super.computePropertySet();
+        set.comprehensive(getEnergyContainer().getInputVoltage(),
+                getEnergyContainer().getInputAmperage(), getEnergyContainer().getOutputVoltage(),
+                getEnergyContainer().getOutputAmperage());
+
+        if (ConfigHolder.machines.cleanMultiblocks) {
+            set.add(new CleanroomFulfilmentProperty(c -> true));
+        } else {
+            ICleanroomProvider prov = getCleanroom();
+            if (prov != null) {
+                set.add(new CleanroomFulfilmentProperty(c -> prov.isClean() && prov.checkCleanroomType(c)));
+            }
+        }
+        return set;
+    }
+
+    protected int getBaseParallelLimit() {
+        return 1;
     }
 
     public IEnergyContainer getEnergyContainer() {
@@ -89,18 +181,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         return outputFluidInventory;
     }
 
-    public MultiblockRecipeLogic getRecipeMapWorkable() {
-        return recipeMapWorkable;
-    }
-
-    /**
-     * Performs extra checks for validity of given recipe before multiblock
-     * will start it's processing.
-     */
-    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
-        return true;
-    }
-
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
@@ -111,19 +191,75 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void invalidateStructure() {
         super.invalidateStructure();
         resetTileAbilities();
-        this.recipeMapWorkable.invalidate();
     }
 
     @Override
     protected void updateFormedValid() {
-        if (!hasMufflerMechanics() || isMufflerFaceFree()) {
-            this.recipeMapWorkable.updateWorkable();
+        updateBufferedOutputs();
+    }
+
+    @Override
+    public boolean shouldRecipeWorkableUpdate() {
+        return isStructureFormed() && !isStructureObstructed();
+    }
+
+    @Override
+    public boolean areOutputsClogged() {
+        updateBufferedOutputs();
+        return awaitingItemOutputSpace || awaitingFluidOutputSpace;
+    }
+
+    protected void updateBufferedOutputs() {
+        if (awaitingItemOutputSpace && !getNotifiedItemOutputList().isEmpty()) {
+            awaitingItemOutputSpace = false;
+        }
+        if (awaitingFluidOutputSpace && !getNotifiedFluidInputList().isEmpty()) {
+            awaitingFluidOutputSpace = false;
+        }
+        getNotifiedItemOutputList().clear();
+        getNotifiedFluidInputList().clear();
+        if (!awaitingItemOutputSpace) {
+            while (!bufferedItemOutputs.isEmpty()) {
+                ItemStack first = bufferedItemOutputs.removeFirst();
+                ItemStack remainder = GTTransferUtils.insertItem(getOutputInventory(), first, false);
+                if (!remainder.isEmpty() && !canVoidRecipeItemOutputs()) {
+                    bufferedItemOutputs.addFirst(remainder);
+                    awaitingItemOutputSpace = true;
+                    break;
+                }
+            }
+        }
+        if (!awaitingFluidOutputSpace) {
+            getNotifiedFluidOutputList().clear();
+            while (!bufferedFluidOutputs.isEmpty()) {
+                FluidStack first = bufferedFluidOutputs.peekFirst();
+                first.amount -= getOutputFluidInventory().fill(first, true);
+                if (first.amount <= 0 || canVoidRecipeFluidOutputs()) {
+                    bufferedFluidOutputs.removeFirst();
+                } else {
+                    awaitingFluidOutputSpace = true;
+                    break;
+                }
+            }
         }
     }
 
     @Override
     public boolean isActive() {
-        return isStructureFormed() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
+        return workable.isRunning();
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            setWorkingEnabled(buf.readBoolean());
+        }
+    }
+
+    protected boolean insufficientEnergy() {
+        // if the energy container has less than a tenth of its capacity, we're probably low on energy.
+        return isActive() && getEnergyContainer().getEnergyStored() <= getEnergyContainer().getEnergyCapacity() * 0.1;
     }
 
     protected void initializeAbilities() {
@@ -138,11 +274,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         inputEnergy.addAll(getAbilities(MultiblockAbility.SUBSTATION_INPUT_ENERGY));
         inputEnergy.addAll(getAbilities(MultiblockAbility.INPUT_LASER));
         this.energyContainer = new EnergyContainerList(inputEnergy);
-        initializeDistinctGroups();
     }
 
-    private void resetTileAbilities() {
-        this.distinctInputGroups.clear();
+    protected void resetTileAbilities() {
         this.inputInventory = new GTItemStackHandler(this, 0);
         this.inputFluidInventory = new FluidTankList(true);
         this.outputInventory = new GTItemStackHandler(this, 0);
@@ -156,20 +290,43 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
+        // TODO multiple recipe display
         MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
-                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
+                .setWorkingStatus(isWorkingEnabled(), isActive())
+                .addEnergyUsageLine(getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(getEnergyContainer().getInputVoltage()))
+                .addParallelsLine(getBaseParallelLimit())
+                .addWorkingStatusLine();
+        // .addProgressLine(recipeProgressPercent());
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
+                .addLowPowerLine(insufficientEnergy())
                 .addMaintenanceProblemLines(getMaintenanceProblems());
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workable.getProgressAndComplete().isLogicEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        if (isWorkingAllowed != workable.getProgressAndComplete().isLogicEnabled()) {
+            workable.getProgressAndComplete().setLogicEnabled(isWorkingAllowed);
+            workable.getLookupAndSetup().setLogicEnabled(isWorkingAllowed);
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, b -> b.writeBoolean(isWorkingAllowed));
+        }
     }
 
     @Override
@@ -219,99 +376,26 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
-                recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound data) {
-        super.writeToNBT(data);
-        data.setBoolean("isDistinct", isDistinct);
-        return data;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound data) {
-        super.readFromNBT(data);
-        isDistinct = data.getBoolean("isDistinct");
-    }
-
-    @Override
-    public void writeInitialSyncData(PacketBuffer buf) {
-        super.writeInitialSyncData(buf);
-        buf.writeBoolean(isDistinct);
-    }
-
-    @Override
-    public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
-        isDistinct = buf.readBoolean();
-    }
-
-    @Override
-    public boolean canBeDistinct() {
-        return false;
-    }
-
-    @Override
-    public boolean isDistinct() {
-        return isDistinct;
-    }
-
-    @Override
-    public void setDistinct(boolean isDistinct) {
-        this.isDistinct = isDistinct;
-        getMultiblockParts().forEach(part -> part.onDistinctChange(isDistinct));
-        // mark buses as changed on distinct toggle
-        if (this.isDistinct) {
-            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
-        } else {
-            this.notifiedItemInputList.add(this.inputInventory);
-        }
-        initializeDistinctGroups();
-    }
-
-    protected void initializeDistinctGroups() {
-        distinctInputGroups.clear();
-        List<IFluidTank> ih = this.getAbilities(MultiblockAbility.IMPORT_FLUIDS);
-        Set<IFluidHandler> inputHatches = new ObjectOpenHashSet<>(ih.size());
-        for (IFluidTank tank : ih) {
-            if (tank instanceof IFluidHandler h) inputHatches.add(h);
-        }
-        if (isDistinct) {
-            for (IItemHandlerModifiable input : this.getAbilities(MultiblockAbility.IMPORT_ITEMS)) {
-                distinctInputGroups.add(new DistinctRecipeLogic.DefaultInputGroup(input, Collections.singleton(input),
-                        getInputFluidInventory(), inputHatches));
-            }
-        } else {
-            Set<IItemHandlerModifiable> inputBuses = new ObjectOpenHashSet<>(
-                    this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
-            distinctInputGroups.add(
-                    new DistinctRecipeLogic.DefaultInputGroup(getInputInventory(), inputBuses, getInputFluidInventory(),
-                            inputHatches));
-        }
-    }
-
-    public Collection<DistinctRecipeLogic.DistinctInputGroup> getInputGroups() {
-        return this.distinctInputGroups;
+                workable.isRunning(), isWorkingEnabled());
     }
 
     @Override
     public SoundEvent getSound() {
-        return recipeMap.getSound();
+        return getRecipeMap().getSound();
     }
 
     @NotNull
     @Override
     public List<ITextComponent> getDataInfo() {
         List<ITextComponent> list = new ArrayList<>();
-        if (recipeMapWorkable.getMaxProgress() > 0) {
-            list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getProgress() / 20))
-                            .setStyle(new Style().setColor(TextFormatting.GREEN)),
-                    new TextComponentTranslation(
-                            TextFormattingUtil.formatNumbers(recipeMapWorkable.getMaxProgress() / 20))
-                                    .setStyle(new Style().setColor(TextFormatting.YELLOW))));
-        }
+        // if (maxProgress() > 0) {
+        // list.add(new TextComponentTranslation("behavior.tricorder.workable_progress",
+        // new TextComponentTranslation(TextFormattingUtil.formatNumbers(progress() / 20))
+        // .setStyle(new Style().setColor(TextFormatting.GREEN)),
+        // new TextComponentTranslation(
+        // TextFormattingUtil.formatNumbers((long) Math.ceil(maxProgress() / 20)))
+        // .setStyle(new Style().setColor(TextFormatting.YELLOW))));
+        // }
 
         list.add(new TextComponentTranslation("behavior.tricorder.energy_container_storage",
                 new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyStored()))
@@ -319,14 +403,14 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getEnergyCapacity()))
                         .setStyle(new Style().setColor(TextFormatting.YELLOW))));
 
-        if (recipeMapWorkable.getRecipeEUt() > 0) {
-            list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
-                    new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt()))
-                            .setStyle(new Style().setColor(TextFormatting.RED)),
-                    new TextComponentTranslation(
-                            TextFormattingUtil.formatNumbers(recipeMapWorkable.getRecipeEUt() == 0 ? 0 : 1))
-                                    .setStyle(new Style().setColor(TextFormatting.RED))));
-        }
+        // if (recipeEUt() > 0) {
+        // list.add(new TextComponentTranslation("behavior.tricorder.workable_consumption",
+        // new TextComponentTranslation(TextFormattingUtil.formatNumbers(recipeEUt()))
+        // .setStyle(new Style().setColor(TextFormatting.RED)),
+        // new TextComponentTranslation(
+        // TextFormattingUtil.formatNumbers(recipeEUt() == 0 ? 0 : 1))
+        // .setStyle(new Style().setColor(TextFormatting.RED))));
+        // }
 
         list.add(new TextComponentTranslation("behavior.tricorder.multiblock_energy_input",
                 new TextComponentTranslation(TextFormattingUtil.formatNumbers(energyContainer.getInputVoltage()))
@@ -340,10 +424,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                             .setStyle(new Style().setColor(TextFormatting.RED))));
         }
 
-        if (recipeMapWorkable.getBaseParallelLimit() > 1) {
+        if (getBaseParallelLimit() > 1) {
             list.add(new TextComponentTranslation("behavior.tricorder.multiblock_parallel",
                     new TextComponentTranslation(
-                            TextFormattingUtil.formatNumbers(recipeMapWorkable.getBaseParallelLimit()))
+                            TextFormattingUtil.formatNumbers(getBaseParallelLimit()))
                                     .setStyle(new Style().setColor(TextFormatting.GREEN))));
         }
 

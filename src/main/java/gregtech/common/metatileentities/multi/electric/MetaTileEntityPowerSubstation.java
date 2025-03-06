@@ -198,7 +198,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
             markDirty();
             World world = getWorld();
             if (world != null && !world.isRemote) {
-                writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
+                writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
             }
         }
     }
@@ -500,7 +500,7 @@ public class MetaTileEntityPowerSubstation extends MultiblockWithDisplayBase
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        if (dataId == GregtechDataCodes.IS_WORKING) {
             isActive = buf.readBoolean();
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {

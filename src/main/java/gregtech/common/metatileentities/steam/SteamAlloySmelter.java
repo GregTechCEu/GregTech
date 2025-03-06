@@ -52,9 +52,10 @@ public class SteamAlloySmelter extends SteamMetaTileEntity {
                         GuiTextures.FURNACE_OVERLAY_STEAM.get(isHighPressure))
                 .slot(this.importItems, 1, 35, 25, GuiTextures.SLOT_STEAM.get(isHighPressure),
                         GuiTextures.FURNACE_OVERLAY_STEAM.get(isHighPressure))
-                .progressBar(workableHandler::getProgressPercent, 79, 26, 20, 16,
+                // TODO multiple recipe display
+                .progressBar(/* workableHandler::getProgressPercent */() -> 0, 79, 26, 20, 16,
                         GuiTextures.PROGRESS_BAR_ARROW_STEAM.get(isHighPressure), MoveType.HORIZONTAL,
-                        workableHandler.getRecipeMap())
+                        getRecipeMap())
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);
     }

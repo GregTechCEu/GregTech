@@ -26,25 +26,21 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
     /**
      * @param voltage  the voltage supply
      * @param amperage the amperage supply
-     * @return a new {@link PropertySet} with power supply set.
      */
-    @Contract("_, _ -> new")
-    public static @NotNull PropertySet supply(long voltage, long amperage) {
-        PropertySet set = new PropertySet();
-        set.add(new PowerSupplyProperty(voltage, amperage));
-        return set;
+    @Contract("_,_ -> this")
+    public PropertySet supply(long voltage, long amperage) {
+        this.add(new PowerSupplyProperty(voltage, amperage));
+        return this;
     }
 
     /**
      * @param voltage  the voltage capacity
      * @param amperage the amperage capacity
-     * @return a new {@link PropertySet} with power capacity set.
      */
-    @Contract("_, _ -> new")
-    public static @NotNull PropertySet capacity(long voltage, long amperage) {
-        PropertySet set = new PropertySet();
-        set.add(new PowerCapacityProperty(voltage, amperage));
-        return set;
+    @Contract("_,_ -> this")
+    public PropertySet capacity(long voltage, long amperage) {
+        this.add(new PowerCapacityProperty(voltage, amperage));
+        return this;
     }
 
     /**
@@ -52,15 +48,12 @@ public final class PropertySet extends ObjectOpenCustomHashSet<IRecipeSearchProp
      * @param amperageIn  the amperage supply
      * @param voltageOut  the voltage capacity
      * @param amperageOut the amperage capacity
-     * @return a new {@link PropertySet} with power supply and capacity set.
      */
-    @Contract("_, _, _, _ -> new")
-    public static @NotNull PropertySet comprehensive(long voltageIn, long amperageIn, long voltageOut,
-                                                     long amperageOut) {
-        PropertySet set = new PropertySet();
-        set.add(new PowerSupplyProperty(voltageIn, amperageIn));
-        set.add(new PowerCapacityProperty(voltageOut, amperageOut));
-        return set;
+    @Contract("_,_,_,_ -> this")
+    public PropertySet comprehensive(long voltageIn, long amperageIn, long voltageOut, long amperageOut) {
+        this.add(new PowerSupplyProperty(voltageIn, amperageIn));
+        this.add(new PowerCapacityProperty(voltageOut, amperageOut));
+        return this;
     }
 
     @Contract("_ -> this")

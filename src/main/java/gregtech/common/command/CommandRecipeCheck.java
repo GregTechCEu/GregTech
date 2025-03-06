@@ -8,8 +8,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.chance.output.impl.ChancedFluidOutput;
-import gregtech.api.recipes.chance.output.impl.ChancedItemOutput;
 import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.OreItemIngredient;
@@ -20,6 +18,7 @@ import gregtech.api.recipes.output.FluidOutputProvider;
 import gregtech.api.recipes.output.ItemOutputProvider;
 import gregtech.api.recipes.output.StandardFluidOutput;
 import gregtech.api.recipes.output.StandardItemOutput;
+import gregtech.api.recipes.roll.RollInformation;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
@@ -206,24 +205,24 @@ public class CommandRecipeCheck extends CommandBase {
 
         if (itemProvider.getMaximumOutputs(1) > 0) {
             if (itemProvider instanceof StandardItemOutput standard) {
-                if (!standard.getOutputs().isEmpty()) {
+                if (standard.getOutputs().getUnrolled().length != 0) {
                     output.append("Item outputs:\n");
-                    for (ItemStack stack : standard.getOutputs()) {
+                    for (ItemStack stack : standard.getOutputs().getUnrolled()) {
                         output.append("    ")
                                 .append(prettyPrintItemStack(stack))
                                 .append("\n");
                     }
                 }
 
-                if (!standard.getChancedEntries().isEmpty()) {
+                if (standard.getOutputs().hasRolledEntries()) {
                     output.append("Item chanced outputs:\n");
-                    for (ChancedItemOutput chanceEntry : standard.getChancedEntries()) {
+                    for (RollInformation<ItemStack> chanceEntry : standard.getOutputs().recomposeRolled()) {
                         output.append("    ")
-                                .append(prettyPrintItemStack(chanceEntry.getIngredient()))
+                                .append(prettyPrintItemStack(chanceEntry.value()))
                                 .append(" (Chance: ")
-                                .append(chanceEntry.getChance())
+                                .append(chanceEntry.rollValue())
                                 .append(", Boost: ")
-                                .append(chanceEntry.getChanceBoost())
+                                .append(chanceEntry.rollBoost())
                                 .append(")\n");
                     }
                 }
@@ -236,9 +235,9 @@ public class CommandRecipeCheck extends CommandBase {
 
         if (fluidProvider.getMaximumOutputs(1) > 0) {
             if (fluidProvider instanceof StandardFluidOutput standard) {
-                if (!standard.getOutputs().isEmpty()) {
+                if (standard.getOutputs().getUnrolled().length != 0) {
                     output.append("Fluid outputs:\n");
-                    for (FluidStack fluid : standard.getOutputs()) {
+                    for (FluidStack fluid : standard.getOutputs().getUnrolled()) {
                         output.append("    ")
                                 .append(fluid.getUnlocalizedName())
                                 .append(" * ")
@@ -247,15 +246,15 @@ public class CommandRecipeCheck extends CommandBase {
                     }
                 }
 
-                if (!standard.getChancedEntries().isEmpty()) {
+                if (standard.getOutputs().hasRolledEntries()) {
                     output.append("Fluid chanced outputs:\n");
-                    for (ChancedFluidOutput chanceEntry : standard.getChancedEntries()) {
+                    for (RollInformation<FluidStack> chanceEntry : standard.getOutputs().recomposeRolled()) {
                         output.append("    ")
-                                .append(chanceEntry.getIngredient().getUnlocalizedName())
+                                .append(chanceEntry.value().getUnlocalizedName())
                                 .append(" (Chance: ")
-                                .append(chanceEntry.getChance())
+                                .append(chanceEntry.rollValue())
                                 .append(", Boost: ")
-                                .append(chanceEntry.getChanceBoost())
+                                .append(chanceEntry.rollBoost())
                                 .append(")\n");
                     }
                 }

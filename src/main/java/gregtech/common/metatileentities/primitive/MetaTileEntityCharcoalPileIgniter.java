@@ -283,7 +283,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
 
     private void setActive(boolean active) {
         this.isActive = active;
-        writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(this.isActive));
+        writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(this.isActive));
     }
 
     private void updateMaxProgressTime() {
@@ -426,7 +426,7 @@ public class MetaTileEntityCharcoalPileIgniter extends MultiblockControllerBase 
             this.lDist = buf.readInt();
             this.rDist = buf.readInt();
             this.hDist = buf.readInt();
-        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        } else if (dataId == GregtechDataCodes.IS_WORKING) {
             this.isActive = buf.readBoolean();
             scheduleRenderUpdate();
         }

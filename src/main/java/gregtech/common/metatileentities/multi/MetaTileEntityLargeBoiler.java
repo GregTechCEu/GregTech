@@ -1,6 +1,8 @@
 package gregtech.common.metatileentities.multi;
 
-import gregtech.api.capability.impl.BoilerRecipeLogic;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.impl.BoilerLogic;
 import gregtech.api.capability.impl.CommonFluidFilters;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -10,13 +12,16 @@ import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.category.ICategoryOverride;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -47,20 +52,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IProgressBarMultiblock {
+public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase implements IProgressBarMultiblock,
+                                       ICategoryOverride,
+                                       IControllable {
 
     public final BoilerType boilerType;
-    protected BoilerRecipeLogic recipeLogic;
+    protected BoilerLogic logic;
     private FluidTankList fluidImportInventory;
     private ItemHandlerList itemImportInventory;
     private FluidTankList steamOutputTank;
 
     private int throttlePercentage = 100;
 
+    private boolean workingEnabled;
+
     public MetaTileEntityLargeBoiler(ResourceLocation metaTileEntityId, BoilerType boilerType) {
         super(metaTileEntityId);
         this.boilerType = boilerType;
-        this.recipeLogic = new BoilerRecipeLogic(this);
+        this.logic = new BoilerLogic(this);
         resetTileAbilities();
     }
 
@@ -80,7 +89,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         super.invalidateStructure();
         resetTileAbilities();
         this.throttlePercentage = 100;
-        this.recipeLogic.invalidate();
+        this.logic.invalidate();
     }
 
     private void initializeAbilities() {
@@ -98,13 +107,13 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
+                .setWorkingStatus(isWorkingEnabled(), isActive())
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
                         // Steam Output line
                         ITextComponent steamOutput = TextComponentUtil.stringWithColor(
                                 TextFormatting.AQUA,
-                                TextFormattingUtil.formatNumbers(recipeLogic.getLastTickSteam()) + " L/t");
+                                TextFormattingUtil.formatNumbers(logic.getLastTickSteam()) + " L/t");
 
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.GRAY,
@@ -112,9 +121,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                 steamOutput));
 
                         // Efficiency line
+                        int heat = logic.getChassisHeat();
+                        int loss = logic.getHeatLoss(logic.getChassisTemperature(heat));
+                        double eff = (double) (heat - loss) / heat;
                         ITextComponent efficiency = TextComponentUtil.stringWithColor(
-                                getNumberColor(recipeLogic.getHeatScaled()),
-                                recipeLogic.getHeatScaled() + "%");
+                                getNumberColor(eff * 100), TextFormattingUtil.formatNumbers(eff) + "%");
 
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.GRAY,
@@ -135,12 +146,12 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .addWorkingStatusLine();
     }
 
-    private TextFormatting getNumberColor(int number) {
+    private TextFormatting getNumberColor(double number) {
         if (number == 0) {
             return TextFormatting.DARK_RED;
         } else if (number <= 40) {
             return TextFormatting.RED;
-        } else if (number < 100) {
+        } else if (number <= 90) {
             return TextFormatting.YELLOW;
         } else {
             return TextFormatting.GREEN;
@@ -183,7 +194,11 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     public boolean isActive() {
-        return super.isActive() && recipeLogic.isActive() && recipeLogic.isWorkingEnabled();
+        return super.isActive() && logic.isBurningFuel();
+    }
+
+    public boolean canOperate() {
+        return isStructureFormed() && !isStructureObstructed() && isWorkingEnabled();
     }
 
     @Override
@@ -213,18 +228,24 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                                boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.multiblock.large_boiler.rate_tooltip",
-                (int) (boilerType.steamPerTick() * 20 * boilerType.runtimeBoost(20) / 20.0)));
-        tooltip.add(
-                I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip", boilerType.getTicksToBoiling() / 20));
-        tooltip.add(I18n.format("gregtech.universal.tooltip.base_production_fluid", boilerType.steamPerTick()));
+                1600 * BoilerLogic.EU_PER_SOLID_BURNTIME * BoilerLogic.STEAM_PER_WATER / BoilerLogic.EU_PER_WATER));
+        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.heat_time_tooltip",
+                boilerType.maximumChassisTemperature(), boilerType.chassisThermalInertia()));
+        tooltip.add(I18n.format("gregtech.multiblock.large_boiler.max_rate_tooltip",
+                logic.getWaterBoilAmount(boilerType.maximumChassisTemperature()) * BoilerLogic.STEAM_PER_WATER));
         tooltip.add(TooltipHelper.BLINKING_RED + I18n.format("gregtech.multiblock.large_boiler.explosion_tooltip"));
+    }
+
+    @Override
+    public PropertySet computePropertySet() {
+        return super.computePropertySet();
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(),
-                recipeLogic.isWorkingEnabled());
+                isWorkingEnabled());
     }
 
     @SideOnly(Side.CLIENT)
@@ -259,7 +280,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     @Override
     protected void updateFormedValid() {
-        this.recipeLogic.update();
+        this.logic.update();
     }
 
     @Override
@@ -303,11 +324,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public FluidTankList getExportFluids() {
         return steamOutputTank;
-    }
-
-    @Override
-    protected boolean shouldUpdate(MTETrait trait) {
-        return !(trait instanceof BoilerRecipeLogic);
     }
 
     @Override
@@ -367,5 +383,36 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             }
         }
         return new int[] { filled, capacity };
+    }
+
+    @Override
+    public @NotNull RecipeMap<?> @NotNull [] getJEIRecipeMapCategoryOverrides() {
+        return new RecipeMap<?>[] { RecipeMaps.COMBUSTION_GENERATOR_FUELS, RecipeMaps.SEMI_FLUID_GENERATOR_FUELS };
+    }
+
+    @Override
+    public @NotNull String @NotNull [] getJEICategoryOverrides() {
+        return new String[] { "minecraft.fuel" };
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        if (isWorkingAllowed != workingEnabled) {
+            workingEnabled = isWorkingAllowed;
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, buf -> buf.writeBoolean(isWorkingAllowed));
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            workingEnabled = buf.readBoolean();
+        }
     }
 }

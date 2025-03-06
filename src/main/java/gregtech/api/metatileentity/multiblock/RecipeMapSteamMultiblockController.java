@@ -1,66 +1,110 @@
 package gregtech.api.metatileentity.multiblock;
 
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
-import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
+import gregtech.api.recipes.logic.workable.RecipeSteamWorkable;
+import gregtech.api.util.FacingPos;
+import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.common.ConfigHolder;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 
-public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase {
+public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements IControllable,
+                                                         RecipeSteamWorkable.ISupportsRecipeSteamWorkable {
 
     protected static final double CONVERSION_RATE = ConfigHolder.machines.multiblockSteamToEU;
 
     public final RecipeMap<?> recipeMap;
-    protected SteamMultiblockRecipeLogic recipeMapWorkable;
+    protected RecipeSteamWorkable workable;
 
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
     protected IMultipleTankHandler steamFluidTank;
 
+    protected Deque<ItemStack> bufferedItemOutputs;
+    protected boolean awaitingItemOutputSpace;
+
+    protected final double conversionRate;
+
     public RecipeMapSteamMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap,
                                               double conversionRate) {
         super(metaTileEntityId);
         this.recipeMap = recipeMap;
-        this.recipeMapWorkable = new SteamMultiblockRecipeLogic(this, recipeMap, steamFluidTank, conversionRate);
+        this.conversionRate = conversionRate;
+        this.bufferedItemOutputs = new ArrayDeque<>();
         resetTileAbilities();
+    }
+
+    /**
+     * Called during initialization. Should not require any fields to be populated for the state machine to be
+     * constructed.
+     * Override this if you merely need to set up the standard state machine builder.
+     */
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        builder.setOffthreadSearchAndSetup(true)
+                .setDownTransformForParallels(true)
+                .setParallelLimit(this::getBaseParallelLimit)
+                .setDurationDiscount(() -> 1.5)
+                .setMaintenance(this::getMaintenanceValues)
+                .setItemInput(this::getInputInventory)
+                .setProperties(this::computePropertySet)
+                .setItemOutput(bufferedItemOutputs::addAll)
+                .setItemTrim(this::getItemOutputLimit)
+                .setNotifiedItemInputs(this::getNotifiedItemInputList)
+                .setItemOutAmountLimit(() -> getOutputInventory().getSlots() * 64)
+                .setItemOutStackLimit(() -> getOutputInventory().getSlots())
+                .setPerTickRecipeCheck((recipe) -> {
+                    double progress = recipe.getInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY);
+                    double maxProgress = recipe.getDouble("Duration");
+                    long voltage = recipe.getLong("Voltage");
+                    long amperage = recipe.getLong("Amperage");
+                    long eut = (long) (Math.min(1, maxProgress - progress) * voltage * amperage);
+                    boolean generating = recipe.getBoolean("Generating");
+                    if (!generating) {
+                        FluidStack drain = getSteamFluidTank().drain((int) (eut * conversionRate), true);
+                        return (drain == null ? 0 : drain.amount) >= eut;
+                    } else {
+                        return true;
+                    }
+                });
     }
 
     public IMultipleTankHandler getSteamFluidTank() {
         return steamFluidTank;
-    }
-
-    /**
-     * Performs extra checks for validity of given recipe before multiblock
-     * will start it's processing.
-     */
-    public boolean checkRecipe(Recipe recipe, boolean consumeIfProcess) {
-        return true;
     }
 
     @Override
@@ -77,16 +121,46 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void updateFormedValid() {
-        recipeMapWorkable.update();
+        updateBufferedOutputs();
     }
 
-    private void initializeAbilities() {
+    @Override
+    public boolean shouldRecipeWorkableUpdate() {
+        return isStructureFormed() && !isStructureObstructed();
+    }
+
+    @Override
+    public boolean areOutputsClogged() {
+        updateBufferedOutputs();
+        return awaitingItemOutputSpace;
+    }
+
+    protected void updateBufferedOutputs() {
+        if (awaitingItemOutputSpace && !getNotifiedItemOutputList().isEmpty()) {
+            awaitingItemOutputSpace = false;
+        }
+        getNotifiedItemOutputList().clear();
+        getNotifiedFluidInputList().clear();
+        if (!awaitingItemOutputSpace) {
+            while (!bufferedItemOutputs.isEmpty()) {
+                ItemStack first = bufferedItemOutputs.removeFirst();
+                ItemStack remainder = GTTransferUtils.insertItem(getOutputInventory(), first, false);
+                if (!remainder.isEmpty() && !canVoidRecipeItemOutputs()) {
+                    bufferedItemOutputs.addFirst(remainder);
+                    awaitingItemOutputSpace = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    protected void initializeAbilities() {
         this.inputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.STEAM_IMPORT_ITEMS));
         this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.STEAM_EXPORT_ITEMS));
         this.steamFluidTank = new FluidTankList(true, getAbilities(MultiblockAbility.STEAM));
     }
 
-    private void resetTileAbilities() {
+    protected void resetTileAbilities() {
         this.inputInventory = new GTItemStackHandler(this, 0);
         this.outputInventory = new GTItemStackHandler(this, 0);
         this.steamFluidTank = new FluidTankList(true);
@@ -95,13 +169,19 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .setWorkingStatus(isWorkingEnabled(), isActive())
                 .addCustom(tl -> {
                     // custom steam tank line
-                    IFluidTank steamFluidTank = recipeMapWorkable.getSteamFluidTankCombined();
-                    if (steamFluidTank != null && steamFluidTank.getCapacity() > 0) {
-                        String stored = TextFormattingUtil.formatNumbers(steamFluidTank.getFluidAmount());
-                        String capacity = TextFormattingUtil.formatNumbers(steamFluidTank.getCapacity());
+                    int steam = 0;
+                    int sCapacity = 0;
+                    for (int i = 0; i < getSteamFluidTank().getTanks(); i++) {
+                        IMultipleTankHandler.MultiFluidTankEntry tank = getSteamFluidTank().getTankAt(i);
+                        steam += tank.getFluidAmount();
+                        sCapacity += tank.getCapacity();
+                    }
+                    if (sCapacity > 0) {
+                        String stored = TextFormattingUtil.formatNumbers(steam);
+                        String capacity = TextFormattingUtil.formatNumbers(sCapacity);
 
                         ITextComponent steamInfo = TextComponentUtil.stringWithColor(
                                 TextFormatting.BLUE,
@@ -113,22 +193,49 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
                                 steamInfo));
                     }
                 })
-                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
+                .addParallelsLine(getBaseParallelLimit())
+                .addWorkingStatusLine();
+        // .addProgressLine(recipeMapWorkable.getProgressPercent());
+        // TODO multiple recipe display
+    }
+
+    protected int getBaseParallelLimit() {
+        return 1;
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
                 .addCustom(tl -> {
-                    if (isStructureFormed() && recipeMapWorkable.isHasNotEnoughEnergy()) {
+                    if (isStructureFormed() && insufficientSteam()) {
                         tl.add(TextComponentUtil.translationWithColor(
                                 TextFormatting.YELLOW,
                                 "gregtech.multiblock.steam.low_steam"));
                     }
                 })
                 .addMaintenanceProblemLines(getMaintenanceProblems());
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workable.getProgressAndComplete().isLogicEnabled();
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isWorkingAllowed) {
+        if (isWorkingAllowed != workable.getProgressAndComplete().isLogicEnabled()) {
+            workable.getProgressAndComplete().setLogicEnabled(isWorkingAllowed);
+            workable.getLookupAndSetup().setLogicEnabled(isWorkingAllowed);
+            writeCustomData(GregtechDataCodes.WORKING_ENABLED, b -> b.writeBoolean(isWorkingAllowed));
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if (dataId == GregtechDataCodes.WORKING_ENABLED) {
+            setWorkingEnabled(buf.readBoolean());
+        }
     }
 
     @Override
@@ -158,15 +265,10 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    protected boolean shouldUpdate(MTETrait trait) {
-        return !(trait instanceof SteamMultiblockRecipeLogic);
-    }
-
-    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
-                recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
+                isActive(), isWorkingEnabled());
     }
 
     @Override
@@ -176,7 +278,28 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     public boolean isActive() {
-        return super.isActive() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
+        return workable.isRunning();
+    }
+
+    protected boolean insufficientSteam() {
+        if (!isActive()) return false;
+        // if the steam container has less than a tenth of its capacity, we're probably low on steam.
+        int steam = 0;
+        int capacity = 0;
+        for (int i = 0; i < getSteamFluidTank().getTanks(); i++) {
+            IMultipleTankHandler.MultiFluidTankEntry tank = getSteamFluidTank().getTankAt(i);
+            steam += tank.getFluidAmount();
+            capacity += tank.getCapacity();
+        }
+        return steam <= capacity * 0.1;
+    }
+
+    public IItemHandlerModifiable getInputInventory() {
+        return inputInventory;
+    }
+
+    public IItemHandlerModifiable getOutputInventory() {
+        return outputInventory;
     }
 
     @Override
@@ -195,5 +318,15 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         builder.bindPlayerInventory(entityPlayer.inventory,
                 GuiTextures.SLOT_STEAM.get(ConfigHolder.machines.steelSteamMultiblocks), 7, 125);
         return builder;
+    }
+
+    @Override
+    public @NotNull Collection<FacingPos> getVentingBlockFacings() {
+        return Collections.singleton(new FacingPos(getPos(), getFrontFacing()));
+    }
+
+    @Override
+    public float getVentingDamage() {
+        return 0;
     }
 }

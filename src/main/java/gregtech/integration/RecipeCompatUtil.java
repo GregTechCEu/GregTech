@@ -11,7 +11,6 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockFrame;
-import gregtech.integration.crafttweaker.CTRecipeHelper;
 import gregtech.integration.groovy.GrSRecipeHelper;
 import gregtech.modules.GregTechModules;
 
@@ -79,9 +78,6 @@ public final class RecipeCompatUtil {
         TweakerType type = getPriorityTweaker();
         if (type == TweakerType.GROOVYSCRIPT) {
             return GrSRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
-        }
-        if (type == TweakerType.CRAFTTWEAKER) {
-            return CTRecipeHelper.getRecipeRemoveLine(recipeMap, recipe);
         }
         return null;
     }

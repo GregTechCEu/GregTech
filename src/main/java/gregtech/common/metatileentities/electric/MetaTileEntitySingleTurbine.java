@@ -39,10 +39,10 @@ public class MetaTileEntitySingleTurbine extends SimpleGeneratorMetaTileEntity {
         if (getFrontFacing().getAxis() == EnumFacing.Axis.Y) {
             // If facing is up or down, render the turbine on all 4 sides.
             // Turbine renderer renders front and back, so just render it on both axes.
-            this.renderer.renderOrientedState(renderState, translation, pipeline, EnumFacing.NORTH, workable.isActive(),
-                    workable.isWorkingEnabled());
-            this.renderer.renderOrientedState(renderState, translation, pipeline, EnumFacing.WEST, workable.isActive(),
-                    workable.isWorkingEnabled());
+            this.renderer.renderOrientedState(renderState, translation, pipeline, EnumFacing.NORTH, isActive(),
+                    isWorkingEnabled());
+            this.renderer.renderOrientedState(renderState, translation, pipeline, EnumFacing.WEST, isActive(),
+                    isWorkingEnabled());
         } else {
             super.renderOverlays(renderState, translation, pipeline);
         }

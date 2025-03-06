@@ -331,7 +331,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
             this.isActive = active;
             markDirty();
             if (getWorld() != null && !getWorld().isRemote) {
-                writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
+                writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
             }
         }
     }
@@ -509,7 +509,7 @@ public class MetaTileEntityHPCA extends MultiblockWithDisplayBase
     @Override
     public void receiveCustomData(int dataId, @NotNull PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        if (dataId == GregtechDataCodes.IS_WORKING) {
             this.isActive = buf.readBoolean();
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {

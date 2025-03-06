@@ -1,13 +1,11 @@
 package gregtech.common.metatileentities.electric;
 
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.RecipeRunner;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 
@@ -16,8 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.function.Supplier;
 
 public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
 
@@ -32,6 +28,12 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityRockBreaker(metaTileEntityId, RecipeMaps.ROCK_BREAKER_RECIPES,
                 Textures.ROCK_BREAKER_OVERLAY, getTier());
+    }
+
+    @Override
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setShouldStartRecipeLookup(workerNBT -> hasValidFluids);
     }
 
     @Override
@@ -88,19 +90,6 @@ public class MetaTileEntityRockBreaker extends SimpleMachineMetaTileEntity {
         super.readFromNBT(data);
         if (data.hasKey("hasValidFluids")) {
             this.hasValidFluids = data.getBoolean("hasValidFluids");
-        }
-    }
-
-    protected class RockBreakerRecipeLogic extends RecipeLogicEnergy {
-
-        public RockBreakerRecipeLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap,
-                                      Supplier<IEnergyContainer> energyContainer) {
-            super(metaTileEntity, recipeMap, energyContainer);
-        }
-
-        @Override
-        protected boolean shouldSearchForRecipes(RecipeRunner runner) {
-            return hasValidFluids && super.shouldSearchForRecipes(runner);
         }
     }
 

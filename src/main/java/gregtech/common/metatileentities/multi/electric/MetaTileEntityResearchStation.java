@@ -5,7 +5,6 @@ import gregtech.api.capability.IObjectHolder;
 import gregtech.api.capability.IOpticalComputationHatch;
 import gregtech.api.capability.IOpticalComputationProvider;
 import gregtech.api.capability.IOpticalComputationReceiver;
-import gregtech.api.capability.impl.ComputationRecipeLogic;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
@@ -18,8 +17,14 @@ import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.RecipeRun;
-import gregtech.api.recipes.logic.RecipeView;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStallType;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.overclock.RecipeNoOverclockingOperator;
+import gregtech.api.recipes.logic.statemachine.running.RecipeCleanupOperation;
+import gregtech.api.recipes.logic.statemachine.running.RecipeComputationFinalizer;
+import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
+import gregtech.api.recipes.lookup.property.MaxCWUtProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
@@ -32,11 +37,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -54,14 +61,105 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     private IOpticalComputationProvider computationProvider;
     private IObjectHolder objectHolder;
 
+    protected boolean lackedComputation;
+
     public MetaTileEntityResearchStation(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.RESEARCH_STATION_RECIPES);
-        this.recipeMapWorkable = new ResearchStationRecipeLogic(this);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityResearchStation(metaTileEntityId);
+    }
+
+    @Override
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setFinalCheck(run -> {
+            IObjectHolder holder = getObjectHolder();
+            if (!run.getItemsConsumed().isEmpty() && !run.getItemsConsumed().get(0)
+                    .isItemEqual(holder.getHeldItem(false)))
+                return false;
+            holder.setLocked(true);
+            return true;
+        }).setOutputOperation(() -> workerNBT -> {
+            NBTTagCompound recipe = workerNBT.getCompoundTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY);
+            NBTTagList list = recipe.getTagList("ItemsOut", Constants.NBT.TAG_COMPOUND);
+            IObjectHolder holder = getObjectHolder();
+            holder.setHeldItem(ItemStack.EMPTY);
+
+            ItemStack outputItem = ItemStack.EMPTY;
+            if (!list.isEmpty()) {
+                outputItem = new ItemStack(list.getCompoundTagAt(0));
+            }
+            holder.setDataItem(outputItem);
+            holder.setLocked(false);
+        })
+                .setOverclockFactory(RecipeNoOverclockingOperator::create)
+                .setStallType(RecipeStallType.PAUSE)
+                .setRecipeFinalizer(RecipeComputationFinalizer.STANDARD_INSTANCE)
+                .setPerTickRecipeCheck((recipe) -> {
+                    double progress = recipe.getInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY);
+                    double maxProgress = recipe.getDouble("Duration");
+                    double actualProgress = Math.min(1, maxProgress - progress);
+
+                    int perTick = RecipeComputationFinalizer.getCWUt(recipe);
+
+                    int draw = getComputationProvider().requestCWUt(perTick, false);
+                    if (draw < perTick) {
+                        lackedComputation = true;
+                        return false;
+                    } else {
+                        lackedComputation = false;
+                    }
+                    getComputationProvider().requestCWUt(perTick, false);
+
+                    long voltage = recipe.getLong("Voltage");
+                    long amperage = recipe.getLong("Amperage");
+                    long eut = (long) (actualProgress * voltage * amperage);
+                    boolean generating = recipe.getBoolean("Generating");
+                    if (!generating) {
+                        return Math.abs(getEnergyContainer().removeEnergy(eut)) >= eut;
+                    } else {
+                        getEnergyContainer().addEnergy(eut);
+                        return true;
+                    }
+                })
+                .setProgressOperationOverride((b, s) -> {
+                    b.andThenDefault(d -> {
+                        NBTTagCompound recipe = d.getCompoundTag(RecipeCleanupOperation.STANDARD_RECIPE_KEY);
+                        if (!d.getBoolean("RecipeCheckSuccess")) {
+                            if (s == RecipeStallType.RESET) {
+                                recipe.setInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY, 0);
+                            } else if (s == RecipeStallType.DEGRESS) {
+                                int prog = recipe.getInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY);
+                                if (prog > 0) {
+                                    recipe.setInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY,
+                                            Math.max(0, prog - 2));
+                                }
+                            } else {
+                                return;
+                            }
+                        }
+                        int total = RecipeComputationFinalizer.getTotalCWU(recipe);
+                        int progress;
+                        if (total == 0) {
+                            progress = 1;
+                        } else {
+                            progress = getComputationProvider().requestCWUt(total, false);
+
+                        }
+                        recipe.setInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY,
+                                recipe.getInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY) + progress);
+                    }, false);
+                });
+    }
+
+    @Override
+    protected @NotNull PropertySet computePropertySet() {
+        PropertySet set = super.computePropertySet();
+        set.add(new MaxCWUtProperty(getComputationProvider().requestCWUt(Integer.MAX_VALUE, true)));
+        return super.computePropertySet();
     }
 
     @Override
@@ -91,11 +189,6 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
         if (isStructureFormed() && objectHolder.getFrontFacing() != getFrontFacing().getOpposite()) {
             invalidateStructure();
         }
-    }
-
-    @Override
-    public ComputationRecipeLogic getRecipeMapWorkable() {
-        return (ComputationRecipeLogic) recipeMapWorkable;
     }
 
     @Override
@@ -226,69 +319,24 @@ public class MetaTileEntityResearchStation extends RecipeMapMultiblockController
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeMapWorkable.isWorkingEnabled(), recipeMapWorkable.isActive())
+                .setWorkingStatus(isWorkingEnabled(), isActive())
                 .setWorkingStatusKeys(
                         "gregtech.multiblock.idling",
                         "gregtech.multiblock.work_paused",
                         "gregtech.machine.research_station.researching")
-                .addEnergyUsageLine(recipeMapWorkable.getEnergyContainer())
-                .addEnergyTierLine(GTUtility.getTierByVoltage(recipeMapWorkable.getMaxVoltageIn()))
-                .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
-                .addParallelsLine(recipeMapWorkable.getBaseParallelLimit())
-                .addWorkingStatusLine()
-                .addProgressLine(recipeMapWorkable.getProgressPercent());
+                .addEnergyUsageLine(getEnergyContainer())
+                .addEnergyTierLine(GTUtility.getTierByVoltage(getEnergyContainer().getInputVoltage()))
+                // .addComputationUsageExactLine(getRecipeMapWorkable().getCurrentDrawnCWUt())
+                .addWorkingStatusLine();
+        // .addProgressLine(recipeProgressPercent());
+        // TODO multiple recipe display
     }
 
     @Override
     protected void addWarningText(List<ITextComponent> textList) {
         MultiblockDisplayText.builder(textList, isStructureFormed(), false)
-                .addLowPowerLine(recipeMapWorkable.isHasNotEnoughEnergy())
-                .addLowComputationLine(getRecipeMapWorkable().hasNotEnoughComputation())
+                .addLowPowerLine(insufficientEnergy())
+                .addLowComputationLine(lackedComputation)
                 .addMaintenanceProblemLines(getMaintenanceProblems());
-    }
-
-    private static class ResearchStationRecipeLogic extends ComputationRecipeLogic {
-
-        public ResearchStationRecipeLogic(MetaTileEntityResearchStation metaTileEntity) {
-            super(metaTileEntity, ComputationType.SPORADIC);
-        }
-
-        @NotNull
-        @Override
-        public MetaTileEntityResearchStation getMetaTileEntity() {
-            return (MetaTileEntityResearchStation) super.getMetaTileEntity();
-        }
-
-        @Override
-        public long getMaxOverclockVoltage(boolean generatingRecipe) {
-            return 0;
-        }
-
-        @Override
-        protected boolean performConsumption(@NotNull RecipeView view,
-                                             @NotNull RecipeRun run, @NotNull List<ItemStack> items,
-                                             @NotNull List<FluidStack> fluids) {
-            // we do not consume at this stage, but instead lock the object holder.
-            IObjectHolder holder = getMetaTileEntity().getObjectHolder();
-            holder.setLocked(true);
-            return true;
-        }
-
-        // "replace" the items in the slots rather than outputting elsewhere
-        // unlock the object holder
-        @Override
-        protected boolean outputRecipeOutputs(@NotNull RecipeRun run) {
-            super.outputRecipeOutputs(run);
-            IObjectHolder holder = getMetaTileEntity().getObjectHolder();
-            holder.setHeldItem(ItemStack.EMPTY);
-
-            ItemStack outputItem = ItemStack.EMPTY;
-            if (run.getItemsOut().size() >= 1) {
-                outputItem = run.getItemsOut().get(0);
-            }
-            holder.setDataItem(outputItem);
-            holder.setLocked(false);
-            return true;
-        }
     }
 }

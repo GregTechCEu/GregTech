@@ -91,7 +91,8 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
                         .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_DUST_OVERLAY))
                 .widget(new SlotWidget(importItems, 2, 52, 56, true, true)
                         .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_FURNACE_OVERLAY))
-                .widget(new RecipeProgressWidget(recipeMapWorkable::getProgressPercent, 77, 39, 20, 15,
+                // TODO multiple recipe display
+                .widget(new RecipeProgressWidget(/* recipeMapWorkable::getProgressPercent */() -> 0, 77, 39, 20, 15,
                         GuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, ProgressWidget.MoveType.HORIZONTAL,
                         RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES))
                 .widget(new SlotWidget(exportItems, 0, 104, 38, true, false)
@@ -107,8 +108,8 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
-                recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
-        if (recipeMapWorkable.isActive() && isStructureFormed()) {
+                isActive(), isWorkingEnabled());
+        if (isActive() && isStructureFormed()) {
             EnumFacing back = getFrontFacing().getOpposite();
             Matrix4 offset = translation.copy().translate(back.getXOffset(), -0.3, back.getZOffset());
             CubeRendererState op = Textures.RENDER_STATE.get();

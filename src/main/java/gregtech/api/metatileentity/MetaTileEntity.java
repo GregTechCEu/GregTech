@@ -3,12 +3,10 @@ package gregtech.api.metatileentity;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
-import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
@@ -28,7 +26,9 @@ import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.mui.GTGuiTheme;
 import gregtech.api.mui.GregTechGuiScreen;
 import gregtech.api.mui.factory.MetaTileEntityGuiFactory;
-import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.lookup.property.BiomeInhabitedProperty;
+import gregtech.api.recipes.lookup.property.DimensionInhabitedProperty;
+import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTTransferUtils;
 import gregtech.api.util.GTUtility;
@@ -1518,31 +1518,6 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return face == this.getFrontFacing() && this.canRenderFrontFaceX();
     }
 
-    /**
-     * @return the MTE's {@link AbstractRecipeLogic}
-     */
-    @Nullable
-    public final AbstractRecipeLogic getRecipeLogic() {
-        MTETrait trait = getMTETrait(GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT);
-        if (trait instanceof AbstractRecipeLogic) {
-            return ((AbstractRecipeLogic) trait);
-        } else if (trait != null) {
-            throw new IllegalStateException(
-                    "MTE Trait " + trait.getName() + " has name " + GregtechDataCodes.ABSTRACT_WORKABLE_TRAIT +
-                            " but is not instanceof AbstractRecipeLogic");
-        }
-        return null;
-    }
-
-    /**
-     * @return the RecipeMap from the MTE's {@link AbstractRecipeLogic}
-     */
-    @Nullable
-    public final RecipeMap<?> getRecipeMap() {
-        AbstractRecipeLogic recipeLogic = getRecipeLogic();
-        return recipeLogic == null ? null : recipeLogic.getRecipeMap();
-    }
-
     public void checkWeatherOrTerrainExplosion(float explosionPower, double additionalFireChance,
                                                IEnergyContainer energyContainer) {
         World world = getWorld();
@@ -1640,6 +1615,13 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     @Override
     public boolean canVoidRecipeFluidOutputs() {
         return false;
+    }
+
+    protected PropertySet computePropertySet() {
+        PropertySet set = PropertySet.empty();
+        set.add(new DimensionInhabitedProperty(getWorld().provider.getDimension()));
+        set.add(new BiomeInhabitedProperty(getWorld().getBiomeForCoordsBody(getPos())));
+        return set;
     }
 
     @NotNull

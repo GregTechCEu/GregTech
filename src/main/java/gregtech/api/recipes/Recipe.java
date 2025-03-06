@@ -66,11 +66,6 @@ public class Recipe {
     private final boolean hidden;
     private final GTRecipeCategory recipeCategory;
 
-    /**
-     * If this Recipe is a Crafttweaker recipe. Used for logging purposes
-     */
-    // TODO YEET
-    private final boolean isCTRecipe;
     private final boolean groovyRecipe;
     private final RecipePropertyStorage recipePropertyStorage;
 
@@ -84,7 +79,7 @@ public class Recipe {
                   @NotNull ItemOutputProvider itemOutputProvider,
                   @NotNull FluidOutputProvider fluidOutputProvider,
                   @NotNull RecipePropertyStorage recipePropertyStorage,
-                  int duration, boolean hidden, boolean isCTRecipe,
+                  int duration, boolean hidden,
                   @NotNull GTRecipeCategory recipeCategory) {
         int ingredients = itemIngredients.size() + fluidIngredients.size();
         if (ingredients > 64) throw new IllegalArgumentException(
@@ -98,7 +93,6 @@ public class Recipe {
         this.duration = duration;
         this.hidden = hidden;
         this.recipeCategory = recipeCategory;
-        this.isCTRecipe = isCTRecipe;
         this.hashCode = makeHashCode();
         this.groovyRecipe = GroovyScriptModule.isCurrentlyRunning();
         this.equalityItemFrequencyMap = new Object2ByteOpenHashMap<>();
@@ -114,7 +108,7 @@ public class Recipe {
     @NotNull
     public Recipe copy() {
         return new Recipe(this.itemIngredients, this.fluidIngredients, this.itemOutputProvider,
-                this.fluidOutputProvider, this.recipePropertyStorage, this.duration, this.hidden, this.isCTRecipe,
+                this.fluidOutputProvider, this.recipePropertyStorage, this.duration, this.hidden,
                 this.recipeCategory);
     }
 
@@ -162,7 +156,6 @@ public class Recipe {
                 .append("fluidOutputs", fluidOutputProvider)
                 .append("duration", duration)
                 .append("hidden", hidden)
-                .append("CTRecipe", isCTRecipe)
                 .append("GSRecipe", groovyRecipe)
                 .toString();
     }
@@ -218,10 +211,6 @@ public class Recipe {
 
     public boolean isHidden() {
         return hidden;
-    }
-
-    public boolean getIsCTRecipe() {
-        return isCTRecipe;
     }
 
     public boolean isGroovyRecipe() {

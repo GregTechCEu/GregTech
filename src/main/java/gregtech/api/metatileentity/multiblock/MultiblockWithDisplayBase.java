@@ -15,6 +15,7 @@ import gregtech.api.gui.widgets.IndicatorImageWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.pattern.TraceabilityPredicate;
+import gregtech.api.recipes.logic.statemachine.RecipeMaintenanceOperator;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -173,6 +174,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return 1.0;
         }
         return maintenanceHatch.getDurationMultiplier();
+    }
+
+    @NotNull
+    public RecipeMaintenanceOperator.MaintenanceValues getMaintenanceValues() {
+        int numMaintenanceProblems = !this.hasMaintenanceMechanics() ||
+                !ConfigHolder.machines.enableMaintenance ? 0 : this.getNumMaintenanceProblems();
+        return new RecipeMaintenanceOperator.MaintenanceValues(numMaintenanceProblems,
+                getMaintenanceDurationMultiplier());
     }
 
     @Override
@@ -446,9 +455,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
                 .setClickHandler(this::handleDisplayClick));
 
         // Power Button
-        // todo in the future, refactor so that this class is instanceof IControllable.
-        IControllable controllable = getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-        if (controllable != null) {
+        if (this instanceof IControllable controllable) {
             builder.widget(new ImageCycleButtonWidget(173, 183, 18, 18, GuiTextures.BUTTON_POWER,
                     controllable::isWorkingEnabled, controllable::setWorkingEnabled));
             builder.widget(new ImageWidget(173, 201, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));

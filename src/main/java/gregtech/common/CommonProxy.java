@@ -11,9 +11,6 @@ import gregtech.api.recipes.GTRecipeInputCache;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.ingredients.IngredientCache;
 import gregtech.api.recipes.ingredients.old.GTRecipeOreInput;
-import gregtech.api.recipes.logic.PrimitiveRecipeRun;
-import gregtech.api.recipes.logic.RecipeRunRegistrationEvent;
-import gregtech.api.recipes.logic.SingleRecipeRun;
 import gregtech.api.recipes.lookup.AbstractRecipeLookup;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
 import gregtech.api.unification.material.Material;
@@ -397,12 +394,6 @@ public class CommonProxy {
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
-    }
-
-    @SubscribeEvent
-    public void registerRecipeRuns(RecipeRunRegistrationEvent event) {
-        event.register(SingleRecipeRun.NAME, SingleRecipeRun::new);
-        event.register(PrimitiveRecipeRun.NAME, PrimitiveRecipeRun::new);
     }
 
     private static <T extends Block> ItemBlock createItemBlock(T block, Function<T, ItemBlock> producer) {

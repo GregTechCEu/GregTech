@@ -113,7 +113,7 @@ public class CleanroomLogic {
             this.metaTileEntity.markDirty();
             World world = this.metaTileEntity.getWorld();
             if (world != null && !world.isRemote) {
-                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
             }
         }
     }

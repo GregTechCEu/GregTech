@@ -50,7 +50,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
                                       CuboidRayTraceResult hitResult) {
         if (recipeMaps.length == 1) return true;
         if (!getWorld().isRemote) {
-            if (!this.recipeMapWorkable.isActive()) {
+            if (!isActive()) {
                 int index;
                 RecipeMap<?>[] recipeMaps = getAvailableRecipeMaps();
                 if (playerIn.isSneaking()) // cycle recipemaps backwards
@@ -78,7 +78,7 @@ public abstract class MultiMapMultiblockController extends RecipeMapMultiblockCo
         this.recipeMapIndex = index;
         if (!getWorld().isRemote) {
             writeCustomData(GregtechDataCodes.RECIPE_MAP_INDEX, buf -> buf.writeByte(index));
-            recipeMapWorkable.forceRecipeRecheck();
+            workable.getLookupAndSetup().clear();
             markDirty();
         }
     }

@@ -14,7 +14,6 @@ import gregtech.api.cover.Cover;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -117,7 +116,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(),
+        return new SimpleMachineMetaTileEntity(metaTileEntityId, getRecipeMap(), renderer, getTier(),
                 hasFrontFacing, getTankScalingFunction(), tickingParticle, randomParticle);
     }
 
@@ -480,15 +479,16 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
-        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
-        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
-                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6) {
+        if (recipeMap.getMaxInputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6 ||
+                recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxFluidOutputs() >= 6) {
             yOffset = FONT_HEIGHT;
         }
 
-        ModularUI.Builder builder = workableRecipeMap.getRecipeMapUI()
-                .createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids,
+        ModularUI.Builder builder = recipeMap.getRecipeMapUI()
+                // TODO multiple recipe display
+                .createUITemplate(/* this::recipeProgressPercent */ () -> 0, importItems, exportItems, importFluids,
+                        exportFluids,
                         yOffset)
                 .widget(new LabelWidget(5, 5, getMetaFullName()))
                 .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset, true, true, false)
@@ -496,7 +496,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                         .setTooltipText("gregtech.gui.charger_slot.tooltip", GTValues.VNF[getTier()],
                                 GTValues.VNF[getTier()]))
                 .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY).setIgnoreColor(true)
-                        .setPredicate(workable::isHasNotEnoughEnergy))
+                        .setPredicate(this::insufficientEnergy))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         int leftButtonStartX = 7;
@@ -513,13 +513,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity
                     GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                             .setTooltipText("gregtech.gui.fluid_auto_output.tooltip")
                             .shouldUseBaseBackground());
-            leftButtonStartX += 18;
         }
-
-        builder.widget(new CycleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
-                workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                        .setTooltipHoverString("gregtech.gui.overclock.description")
-                        .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         if (exportItems.getSlots() + exportFluids.getTanks() <= 9) {
             ImageWidget logo = new ImageWidget(152, 63 + yOffset, 17, 17,

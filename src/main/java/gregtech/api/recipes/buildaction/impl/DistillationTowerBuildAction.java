@@ -3,6 +3,7 @@ package gregtech.api.recipes.buildaction.impl;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.buildaction.RecipeBuildAction;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.recipes.logic.RecipeLogicConstants;
 import gregtech.api.util.GTUtility;
 
 import net.minecraft.item.ItemStack;
@@ -11,8 +12,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static gregtech.api.recipes.logic.OverclockingConstants.STD_DURATION_FACTOR_INV;
 
 public final class DistillationTowerBuildAction implements RecipeBuildAction<SimpleRecipeBuilder> {
 
@@ -31,7 +30,7 @@ public final class DistillationTowerBuildAction implements RecipeBuildAction<Sim
                     prototype.getFluidOutputs().get(i),
                     !prototype.getItemOutputs().isEmpty() ? prototype.getItemOutputs().get(0) : null);
 
-            int recipeDuration = (int) (prototype.getDuration() * STD_DURATION_FACTOR_INV);
+            int recipeDuration = (int) (prototype.getDuration() * RecipeLogicConstants.OVERCLOCK_SPEED_FACTOR);
 
             boolean shouldDivide = ratio != 1;
 

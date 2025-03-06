@@ -56,7 +56,6 @@ import net.minecraftforge.fml.common.Optional;
 import com.cleanroommc.groovyscript.api.GroovyLog;
 import com.cleanroommc.groovyscript.api.IIngredient;
 import com.cleanroommc.groovyscript.helper.ingredient.OreDictIngredient;
-import crafttweaker.CraftTweakerAPI;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -105,7 +104,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected boolean hidden = false;
     protected GTRecipeCategory category;
-    protected boolean isCTRecipe = false;
 
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
 
@@ -187,7 +185,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         duration = recipeBuilder.duration;
         hidden = recipeBuilder.hidden;
         category = recipeBuilder.category;
-        isCTRecipe = recipeBuilder.isCTRecipe;
         recipeStatus = recipeBuilder.recipeStatus;
         this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
         if (recipeBuilder.ignoredBuildActions != null) {
@@ -216,7 +213,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         duration = recipeBuilder.duration;
         hidden = recipeBuilder.hidden;
         category = recipeBuilder.category;
-        isCTRecipe = recipeBuilder.isCTRecipe;
         recipeStatus = recipeBuilder.recipeStatus;
         this.ignoreAllBuildActions = recipeBuilder.ignoreAllBuildActions;
         if (recipeBuilder.ignoredBuildActions != null) {
@@ -1398,11 +1394,6 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R isCTRecipe() {
-        this.isCTRecipe = true;
-        return (R) this;
-    }
-
     public R setRecipeMap(RecipeMap<R> recipeMap) {
         this.recipeMap = recipeMap;
         return (R) this;
@@ -1422,7 +1413,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
                         fluidInputInterpreter),
                 resolveItemOutputProvider(),
                 resolveFluidOutputProvider(),
-                recipePropertyStorage, duration, hidden, isCTRecipe, category));
+                recipePropertyStorage, duration, hidden, category));
     }
 
     protected ItemOutputProvider resolveItemOutputProvider() {
@@ -1447,24 +1438,14 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         if (duration <= 0) {
             GTLog.logger.error("Duration cannot be less or equal to 0", new Throwable());
-            if (isCTRecipe) {
-                CraftTweakerAPI.logError("Duration cannot be less or equal to 0", new Throwable());
-            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         if (recipeMap != null) { // recipeMap can be null in tests
             if (category == null) {
                 GTLog.logger.error("Recipes must have a category", new Throwable());
-                if (isCTRecipe) {
-                    CraftTweakerAPI.logError("Recipes must have a category", new Throwable());
-                }
                 recipeStatus = EnumValidationResult.INVALID;
             } else if (category.getRecipeMap() != this.recipeMap) {
                 GTLog.logger.error("Cannot apply Category with incompatible RecipeMap", new Throwable());
-                if (isCTRecipe) {
-                    CraftTweakerAPI.logError("Cannot apply Category with incompatible RecipeMap",
-                            new Throwable());
-                }
                 recipeStatus = EnumValidationResult.INVALID;
             }
         }

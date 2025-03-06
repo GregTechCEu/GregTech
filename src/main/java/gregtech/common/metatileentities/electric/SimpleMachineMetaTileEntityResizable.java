@@ -96,7 +96,7 @@ public class SimpleMachineMetaTileEntityResizable extends SimpleMachineMetaTileE
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new SimpleMachineMetaTileEntityResizable(metaTileEntityId, workable.getRecipeMap(), inputAmount,
+        return new SimpleMachineMetaTileEntityResizable(metaTileEntityId, getRecipeMap(), inputAmount,
                 outputAmount, renderer, getTier(), hasFrontFacing(),
                 getTankScalingFunction(), tickingParticle, randomParticle);
     }

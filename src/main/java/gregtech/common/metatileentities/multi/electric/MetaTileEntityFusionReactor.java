@@ -7,7 +7,6 @@ import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
@@ -27,12 +26,23 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternMatchContext;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.logic.PrimitiveRecipeRun;
+import gregtech.api.recipes.logic.RecipeLogicConstants;
 import gregtech.api.recipes.logic.RecipeView;
+import gregtech.api.recipes.logic.SingleRecipeRun;
+import gregtech.api.recipes.logic.statemachine.RecipeMaintenanceOperator;
+import gregtech.api.recipes.logic.statemachine.RecipeRunCheckOperator;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.overclock.RecipeStandardOverclockingOperator;
+import gregtech.api.recipes.logic.statemachine.running.RecipeCleanupSaveOperation;
+import gregtech.api.recipes.logic.statemachine.running.RecipeFinalizingOperator;
 import gregtech.api.recipes.lookup.property.EUToStartProperty;
+import gregtech.api.recipes.lookup.property.PowerCapacityProperty;
+import gregtech.api.recipes.lookup.property.PowerSupplyProperty;
 import gregtech.api.recipes.lookup.property.PropertySet;
 import gregtech.api.recipes.properties.impl.FusionEUToStartProperty;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
@@ -64,6 +74,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -71,6 +82,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -78,16 +91,14 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.DoubleSupplier;
 
-import static gregtech.api.recipes.logic.OverclockingConstants.PERFECT_HALF_DURATION_FACTOR;
-import static gregtech.api.recipes.logic.OverclockingConstants.PERFECT_HALF_VOLTAGE_FACTOR;
 import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
@@ -97,7 +108,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
-    private long heat = 0; // defined in TileEntityFusionReactor but serialized in FusionRecipeLogic
+    private long heat = 0;
     private int fusionRingColor = NO_COLOR;
     private final FusionProgressSupplier progressBarSupplier;
 
@@ -106,7 +117,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
     public MetaTileEntityFusionReactor(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
-        this.recipeMapWorkable = new FusionRecipeLogic(this);
         this.tier = tier;
         this.energyContainer = new EnergyContainerHandler(this, 0, 0, 0, 0, 0) {
 
@@ -122,6 +132,44 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityFusionReactor(metaTileEntityId, tier);
+    }
+
+    @Override
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setFinalCheck(run -> {
+            long heatDiff = run.getRecipeView().getRecipe().getProperty(FusionEUToStartProperty.getInstance(), 0L) -
+                    heat;
+            // if the stored heat is >= required energy, recipe is okay to run
+            if (heatDiff <= 0)
+                return RecipeRunCheckOperator.standardConsumptionCheck(run, getInputInventory(),
+                        getInputFluidInventory());
+
+            // if the remaining energy needed is more than stored, do not run
+            if (energyContainer.getEnergyStored() < heatDiff)
+                return false;
+
+            // check consumptions
+            if (!RecipeRunCheckOperator.standardConsumptionCheck(run, getInputInventory(), getInputFluidInventory()))
+                return false;
+
+            // remove the energy needed
+            energyContainer.removeEnergy(heatDiff);
+            // increase the stored heat
+            heat += heatDiff;
+            return true;
+        }).setOverclockFactory(FusionOverclockOperator::new)
+                .setCleanupOperator(RecipeCleanupSaveOperation.STANDARD_INSTANCE)
+                .setOverclockSpeedFactor(RecipeLogicConstants.FUSION_OVERCLOCK_SPEED_FACTOR)
+                .setOverclockCostFactor(RecipeLogicConstants.FUSION_OVERCLOCK_VOLTAGE_FACTOR);
+    }
+
+    @Override
+    protected PropertySet computePropertySet() {
+        PropertySet set = super.computePropertySet();
+        set.add(new EUToStartProperty(Math.min(energyContainer.getEnergyCapacity(),
+                energyContainer.getEnergyStored() + heat)));
+        return set;
     }
 
     @NotNull
@@ -208,7 +256,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
     @SideOnly(Side.CLIENT)
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        if (this.recipeMapWorkable.isActive()) {
+        if (isActive()) {
             return Textures.ACTIVE_FUSION_TEXTURE;
         } else {
             return Textures.FUSION_TEXTURE;
@@ -299,20 +347,51 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
     @Override
     protected void updateFormedValid() {
+        if (this.heat > 0) {
+            if (!isActive() || insufficientEnergy()) {
+                heat = heat <= 10000 ? 0 : (heat - 10000);
+            }
+        }
         if (this.inputEnergyContainers.getEnergyStored() > 0) {
             long energyAdded = this.energyContainer.addEnergy(this.inputEnergyContainers.getEnergyStored());
             if (energyAdded > 0) this.inputEnergyContainers.removeEnergy(energyAdded);
         }
         super.updateFormedValid();
-        if (recipeMapWorkable.isWorking() && fusionRingColor == NO_COLOR) {
-            if (recipeMapWorkable.getPreviousRecipe() != null &&
-                    !recipeMapWorkable.getPreviousRecipe().getFluidOutputs().isEmpty()) {
-                setFusionRingColor(0xFF000000 |
-                        recipeMapWorkable.getPreviousRecipe().getFluidOutputs().get(0).getFluid().getColor());
-            }
-        } else if (!recipeMapWorkable.isWorking() && isStructureFormed()) {
-            setFusionRingColor(NO_COLOR);
-        }
+        // TODO multiple recipe display
+        // if (isRecipeSelected() && activeWorker.isLogicEnabled()) {
+        // if (fusionRingColor == NO_COLOR) {
+        // FluidStack out = getOutputFluidStack();
+        // if (out != null) {
+        // setFusionRingColor(0xFF000000 | out.getFluid().getColor());
+        // }
+        // }
+        // } else if (isStructureFormed()) {
+        // setFusionRingColor(NO_COLOR);
+        // }
+    }
+
+    /**
+     * See {@link RecipeFinalizingOperator} for encoding pattern.
+     */
+    protected @Nullable NBTTagCompound getMostUpToDateRecipe() {
+        // TODO multiple recipe display
+        // NBTTagCompound worker = activeWorker.logicData();
+        // if (worker.hasKey(RecipeFinalizingOperator.STANDARD_RESULTS_KEY)) {
+        // return worker.getCompoundTag(RecipeFinalizingOperator.STANDARD_RESULTS_KEY);
+        // } else if (worker.hasKey(RecipeCleanupSaveOperation.STANDARD_PREVIOUS_RECIPE_KEY)) {
+        // return worker.getCompoundTag(RecipeCleanupSaveOperation.STANDARD_PREVIOUS_RECIPE_KEY);
+        // }
+        return null;
+    }
+
+    protected @Nullable FluidStack getOutputFluidStack() {
+        NBTTagCompound recipe = getMostUpToDateRecipe();
+        if (recipe == null) return null;
+
+        NBTTagList list = recipe.getTagList("FluidsOut", Constants.NBT.TAG_COMPOUND);
+        if (list.isEmpty()) return null;
+
+        return FluidStack.loadFluidStackFromNBT(list.getCompoundTagAt(0));
     }
 
     @Override
@@ -332,7 +411,9 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
         if (dataId == GregtechDataCodes.UPDATE_COLOR) {
             this.fusionRingColor = buf.readVarInt();
         } else {
+            boolean active = this.isActive();
             super.receiveCustomData(dataId, buf);
+            if (active != this.isActive()) progressBarSupplier.resetCountdown();
         }
     }
 
@@ -413,7 +494,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
         // Power Button + Detail
         builder.widget(new ImageCycleButtonWidget(173, 211, 18, 18, GuiTextures.BUTTON_POWER,
-                recipeMapWorkable::isWorkingEnabled, recipeMapWorkable::setWorkingEnabled));
+                this::isWorkingEnabled, this::setWorkingEnabled));
         builder.widget(new ImageWidget(173, 229, 18, 6, GuiTextures.BUTTON_POWER_DETAIL));
 
         // Voiding Mode Button
@@ -453,6 +534,19 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
                 TextFormatting.GRAY,
                 "gregtech.multiblock.fusion_reactor.heat",
                 heatInfo));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setLong("Heat", heat);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        heat = data.getLong("Heat");
     }
 
     private static class FusionProgressSupplier {
@@ -564,117 +658,79 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController
 
             public ProgressWidget getWidget(MetaTileEntityFusionReactor instance) {
                 return new ProgressWidget(
-                        () -> instance.recipeMapWorkable.isActive() ?
+                        () -> instance.isActive() ?
                                 instance.progressBarSupplier.getSupplier(this).getAsDouble() : 0,
                         x, y, width, height, texture, moveType)
                                 .setIgnoreColor(true)
                                 .setHoverTextConsumer(
                                         tl -> MultiblockDisplayText.builder(tl, instance.isStructureFormed())
-                                                .setWorkingStatus(instance.recipeMapWorkable.isWorkingEnabled(),
-                                                        instance.recipeMapWorkable.isActive())
+                                                .setWorkingStatus(instance.isWorkingEnabled(),
+                                                        instance.isActive())
                                                 .addWorkingStatusLine());
             }
         }
     }
 
-    private class FusionRecipeLogic extends MultiblockRecipeLogic {
+    protected class FusionOverclockOperator extends RecipeStandardOverclockingOperator {
 
-        public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
-            super(tileEntity);
+        public FusionOverclockOperator(double costFactor, double speedFactor, boolean canUpTransform,
+                                       @Nullable DoubleSupplier durationDiscount) {
+            super(costFactor, speedFactor, canUpTransform, durationDiscount);
         }
 
         @Override
-        protected double getOverclockingDurationFactor() {
-            return PERFECT_HALF_DURATION_FACTOR;
-        }
+        public void operate(NBTTagCompound data, Map<String, Object> transientData) {
+            RecipeView view = (RecipeView) transientData.get(keyView);
+            PropertySet properties = (PropertySet) transientData.get(keyProperties);
+            RecipeMaintenanceOperator.MaintenanceValues maintenance = (RecipeMaintenanceOperator.MaintenanceValues) transientData
+                    .get(RecipeMaintenanceOperator.STANDARD_KEY);
+            if (view == null || properties == null) throw new IllegalStateException();
 
-        @Override
-        protected double getOverclockingVoltageFactor() {
-            return PERFECT_HALF_VOLTAGE_FACTOR;
-        }
-
-        @Override
-        public long getMaxVoltageIn() {
-            return Math.min(GTValues.V[tier], super.getMaxVoltageIn());
-        }
-
-        @Override
-        public void updateWorkable() {
-            super.updateWorkable();
-            // Drain heat when the reactor is not active, is paused via soft mallet, or does not have enough energy and
-            // has fully wiped recipe progress
-            // Don't drain heat when there is not enough energy and there is still some recipe progress, as that makes
-            // it doubly hard to complete the recipe
-            // (Will have to recover heat and recipe progress)
-            if (heat > 0) {
-                if (!isActive || !workingEnabled || (hasNotEnoughEnergy && progressTime == 0)) {
-                    heat = heat <= 10000 ? 0 : (heat - 10000);
+            double discount = durationDiscount != null ? durationDiscount.getAsDouble() : 1;
+            if (maintenance != null) {
+                discount *= maintenance.durationBonus();
+                if (view.getRecipe().isGenerating()) {
+                    discount *= 1 - RecipeLogicConstants.MAINTENANCE_PROBLEM_DURATION_FACTOR * maintenance.count();
+                } else {
+                    discount *= 1 + RecipeLogicConstants.MAINTENANCE_PROBLEM_DURATION_FACTOR * maintenance.count();
                 }
             }
-        }
-
-        @Override
-        protected @NotNull PropertySet computePropertySet() {
-            PropertySet set = super.computePropertySet();
-            set.add(new EUToStartProperty(Math.min(energyContainer.getEnergyCapacity(),
-                    energyContainer.getEnergyStored() + heat)));
-            return set;
-        }
-
-        @Override
-        public boolean checkRecipe(@NotNull Recipe recipe) {
-            if (!super.checkRecipe(recipe))
-                return false;
-
-            long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
-            // if the stored heat is >= required energy, recipe is okay to run
-            if (heatDiff <= 0)
-                return true;
-
-            // if the remaining energy needed is more than stored, do not run
-            if (energyContainer.getEnergyStored() < heatDiff)
-                return false;
-
-            // remove the energy needed
-            energyContainer.removeEnergy(heatDiff);
-            // increase the stored heat
-            heat += heatDiff;
-            return true;
-        }
-
-        @Override
-        protected @Range(from = 0, to = Integer.MAX_VALUE) int computeOverclockCount(@NotNull RecipeView recipeView,
-                                                                                     @NotNull PropertySet properties,
-                                                                                     int machineVoltageTier) {
-            // Limit the number of OCs to the difference in fusion reactor MK.
-            // I.e., a MK2 reactor can overclock a MK1 recipe once, and a
-            // MK3 reactor can overclock a MK2 recipe once, or a MK1 recipe twice.
-            long euToStart = recipeView.getRecipe().getProperty(FusionEUToStartProperty.getInstance(), 0L);
-            int fusionTier = FusionEUToStartProperty.getFusionTier(euToStart);
-            if (fusionTier != 0) fusionTier = MetaTileEntityFusionReactor.this.tier - fusionTier;
-            return Math.min(fusionTier, super.computeOverclockCount(recipeView, properties, machineVoltageTier));
-        }
-
-        @NotNull
-        @Override
-        public NBTTagCompound serializeNBT() {
-            NBTTagCompound tag = super.serializeNBT();
-            tag.setLong("Heat", heat);
-            return tag;
-        }
-
-        @Override
-        public void deserializeNBT(@NotNull NBTTagCompound compound) {
-            super.deserializeNBT(compound);
-            heat = compound.getLong("Heat");
-        }
-
-        @Override
-        protected void setActive(boolean active) {
-            if (active != isActive) {
-                MetaTileEntityFusionReactor.this.progressBarSupplier.resetCountdown();
+            if (view.getActualEUt() == 0) {
+                transientData.put(keyRun,
+                        new PrimitiveRecipeRun(view, properties, view.getActualDuration() * discount));
+                return;
             }
-            super.setActive(active);
+            int recipeVoltageTier = GTUtility.getTierByVoltage(view.getRecipe().getVoltage());
+            long machineVoltage;
+            long amperage;
+            if (view.getRecipe().isGenerating()) {
+                PowerCapacityProperty property = properties.getDefaultable(PowerCapacityProperty.EMPTY);
+                machineVoltage = property.voltage();
+                amperage = property.amperage();
+            } else {
+                PowerSupplyProperty property = properties.getDefaultable(PowerSupplyProperty.EMPTY);
+                machineVoltage = property.voltage();
+                amperage = property.amperage();
+            }
+            int machineVoltageTier = GTUtility.getFloorTierByVoltage(machineVoltage);
+            int overclocks;
+            if (canUpTransform) {
+                // log base cost factor of the ratio of available EUt to required EUt
+                overclocks = (int) (Math.log((double) (machineVoltage * amperage) / view.getActualEUt()) /
+                        Math.log(costFactor));
+            } else {
+                overclocks = machineVoltageTier - recipeVoltageTier;
+                while (view.getActualEUt() * Math.pow(costFactor, overclocks) > machineVoltage * amperage) overclocks--;
+            }
+            overclocks = Math.max(0, overclocks);
+
+            long euToStart = view.getRecipe().getProperty(FusionEUToStartProperty.getInstance(), 0L);
+            int fusionTier = FusionEUToStartProperty.getFusionTier(euToStart);
+            if (fusionTier != 0) overclocks = Math.min(overclocks, MetaTileEntityFusionReactor.this.tier - fusionTier);
+
+            transientData.put(keyRun, new SingleRecipeRun(view, recipeVoltageTier, machineVoltageTier, properties,
+                    Math.pow(costFactor, overclocks),
+                    view.getActualDuration() * discount / Math.pow(speedFactor, overclocks)));
         }
     }
 

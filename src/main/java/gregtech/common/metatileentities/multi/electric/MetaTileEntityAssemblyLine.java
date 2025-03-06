@@ -3,9 +3,7 @@ package gregtech.common.metatileentities.multi.electric;
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IDataAccessHatch;
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.DistinctRecipeLogic;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -21,6 +19,9 @@ import gregtech.api.recipes.ingredients.GTFluidIngredient;
 import gregtech.api.recipes.ingredients.GTItemIngredient;
 import gregtech.api.recipes.ingredients.match.AbstractMatchCalculation;
 import gregtech.api.recipes.ingredients.match.MatchCalculation;
+import gregtech.api.recipes.logic.statemachine.RecipeFluidMatchOperator;
+import gregtech.api.recipes.logic.statemachine.RecipeItemMatchOperator;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.api.recipes.properties.impl.ResearchProperty;
 import gregtech.api.recipes.roll.ListWithRollInformation;
 import gregtech.api.util.GTUtility;
@@ -41,6 +42,7 @@ import gregtech.core.sound.GTSoundEvents;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -50,14 +52,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
@@ -65,9 +63,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.AbstractList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -93,6 +90,27 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityAssemblyLine(metaTileEntityId);
+    }
+
+    @Override
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setOffthreadSearchAndSetup(false)
+                .setItemMatchOperator(new ItemMatchOperator())
+                .setFluidMatchOperator(new FluidMatchOperator())
+                .setRecipeSearchPredicate(recipe -> {
+                    if (getOrderedItemBuses().size() < recipe.getItemIngredients().size() ||
+                            getOrderedFluidHatches().size() < recipe.getFluidIngredients().size())
+                        return false;
+                    if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
+                        return true;
+                    } else {
+                        return isRecipeAvailable(getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
+                                isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
+                    }
+                })
+                .setItemInputView(() -> itemView)
+                .setFluidInputView(() -> fluidView);
     }
 
     @NotNull
@@ -186,13 +204,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        super.renderMetaTileEntity(renderState, translation, pipeline);
-        getFrontOverlay().renderOrientedState(renderState, translation, pipeline, getFrontFacing(),
-                recipeMapWorkable.isActive(), recipeMapWorkable.isWorkingEnabled());
-    }
-
-    @Override
     public SoundEvent getBreakdownSound() {
         return GTSoundEvents.BREAKDOWN_MECHANICAL;
     }
@@ -201,32 +212,33 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
     public void update() {
         super.update();
         if (ConfigHolder.client.shader.assemblyLineParticles) {
-            if (getRecipeMapWorkable().isWorking()) {
-                int maxBeams = getAbilities(MultiblockAbility.IMPORT_ITEMS).size() + 1;
-                int maxProgress = getRecipeMapWorkable().getMaxProgress();
-
-                // Each beam should be visible for an equal amount of time, which is derived from the maximum number of
-                // beams and the maximum progress in the recipe.
-                int beamTime = Math.max(1, maxProgress / maxBeams);
-
-                int beamCount = Math.min(maxBeams, getRecipeMapWorkable().getProgress() / beamTime + 1);
-
-                if (beamCount != this.beamCount) {
-                    if (beamCount < this.beamCount) {
-                        // if beam count decreases, the last beam in the queue needs to be removed for the sake of fade
-                        // time.
-                        this.beamCount = Math.max(0, beamCount - 1);
-                        writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
-                    }
-                    this.beamTime = beamTime;
-                    this.beamCount = beamCount;
-                    writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
-                }
-            } else if (beamCount != 0) {
-                this.beamTime = 0;
-                this.beamCount = 0;
-                writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
-            }
+            // TODO multiple recipe display
+            // if (isActive()) {
+            // int maxBeams = getAbilities(MultiblockAbility.IMPORT_ITEMS).size() + 1;
+            // int maxProgress = (int) maxProgress();
+            //
+            // // Each beam should be visible for an equal amount of time, which is derived from the maximum number of
+            // // beams and the maximum progress in the recipe.
+            // int beamTime = Math.max(1, maxProgress / maxBeams);
+            //
+            // int beamCount = Math.min(maxBeams, progress() / beamTime + 1);
+            //
+            // if (beamCount != this.beamCount) {
+            // if (beamCount < this.beamCount) {
+            // // if beam count decreases, the last beam in the queue needs to be removed for the sake of fade
+            // // time.
+            // this.beamCount = Math.max(0, beamCount - 1);
+            // writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
+            // }
+            // this.beamTime = beamTime;
+            // this.beamCount = beamCount;
+            // writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
+            // }
+            // } else if (beamCount != 0) {
+            // this.beamTime = 0;
+            // this.beamCount = 0;
+            // writeCustomData(GregtechDataCodes.UPDATE_PARTICLE, this::writeParticles);
+            // }
         }
     }
 
@@ -376,20 +388,6 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         orderedFluidHatchesCache = null;
     }
 
-    @Override
-    public boolean checkRecipe(@NotNull Recipe recipe, boolean consumeIfSuccess) {
-        if (consumeIfSuccess) return true; // don't check twice
-        if (getOrderedItemBuses().size() < recipe.getItemIngredients().size() ||
-                getOrderedFluidHatches().size() < recipe.getFluidIngredients().size())
-            return false;
-        if (!ConfigHolder.machines.enableResearch || !recipe.hasProperty(ResearchProperty.getInstance())) {
-            return super.checkRecipe(recipe, false);
-        } else {
-            return isRecipeAvailable(getAbilities(MultiblockAbility.DATA_ACCESS_HATCH), recipe) ||
-                    isRecipeAvailable(getAbilities(MultiblockAbility.OPTICAL_DATA_RECEPTION), recipe);
-        }
-    }
-
     private static boolean isRecipeAvailable(@NotNull Iterable<? extends IDataAccessHatch> hatches,
                                              @NotNull Recipe recipe) {
         for (IDataAccessHatch hatch : hatches) {
@@ -414,164 +412,105 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
         }
     }
 
-    protected static class AssemblyLineRecipeLogic extends MultiblockRecipeLogic {
+    private final List<ItemStack> itemView = new AbstractList<>() {
 
-        private final List<DistinctInputGroup> group = Collections.singletonList(new AssemblyLineInputGroup());
-
-        public AssemblyLineRecipeLogic(MetaTileEntityAssemblyLine tileEntity) {
-            super(tileEntity);
+        @Override
+        public ItemStack set(int index, ItemStack element) {
+            for (IItemHandlerModifiable bus : getOrderedItemBuses()) {
+                int size = bus.getSlots();
+                if (index >= size) {
+                    index -= size;
+                    continue;
+                }
+                ItemStack oldStack = bus.getStackInSlot(index);
+                bus.setStackInSlot(index, element == null ? ItemStack.EMPTY : element);
+                return oldStack;
+            }
+            throw new IndexOutOfBoundsException();
         }
 
         @Override
-        public @NotNull MetaTileEntityAssemblyLine getMetaTileEntity() {
-            return (MetaTileEntityAssemblyLine) metaTileEntity;
+        public ItemStack get(int index) {
+            for (IItemHandlerModifiable bus : getOrderedItemBuses()) {
+                int size = bus.getSlots();
+                if (index >= size) {
+                    index -= size;
+                    continue;
+                }
+                return bus.getStackInSlot(index);
+            }
+            throw new IndexOutOfBoundsException();
         }
 
         @Override
-        public Collection<DistinctInputGroup> getInputGroups() {
-            return group;
+        public int size() {
+            int size = 0;
+            for (IItemHandlerModifiable bus : getOrderedItemBuses()) {
+                size += bus.getSlots();
+            }
+            return size;
+        }
+    };
+
+    private final List<FluidStack> fluidView = new AbstractList<>() {
+
+        @Override
+        public FluidStack set(int index, FluidStack element) {
+            for (IMultipleTankHandler hatch : getOrderedFluidHatches()) {
+                int size = hatch.getTanks();
+                if (index >= size) {
+                    index -= size;
+                    continue;
+                }
+                IFluidTank fluidTank = hatch.getTankAt(index).getDelegate();
+                FluidStack oldStack = fluidTank.getFluid();
+                if (fluidTank instanceof FluidTank) {
+                    ((FluidTank) fluidTank).setFluid(element);
+                }
+                return oldStack;
+            }
+            throw new IndexOutOfBoundsException();
         }
 
         @Override
-        protected @NotNull MatchCalculation<ItemStack> getItemMatch(@NotNull Recipe recipe,
-                                                                    @NotNull List<ItemStack> items) {
-            if (ConfigHolder.machines.orderedAssembly) return new OrderedItemMatch(recipe.getItemIngredients(),
-                    getMetaTileEntity().getOrderedItemBuses(), items);
-            else return super.getItemMatch(recipe, items);
+        public FluidStack get(int index) {
+            for (IMultipleTankHandler hatch : getOrderedFluidHatches()) {
+                int size = hatch.getTanks();
+                if (index >= size) {
+                    index -= size;
+                    continue;
+                }
+                return hatch.getTankAt(index).getFluid();
+            }
+            throw new IndexOutOfBoundsException();
         }
 
         @Override
-        protected @NotNull MatchCalculation<FluidStack> getFluidMatch(@NotNull Recipe recipe,
-                                                                      @NotNull List<FluidStack> fluids) {
-            if (ConfigHolder.machines.orderedFluidAssembly) return new OrderedFluidMatch(recipe.getFluidIngredients(),
-                    getMetaTileEntity().getOrderedFluidHatches(), fluids);
-            else return super.getFluidMatch(recipe, fluids);
+        public int size() {
+            int size = 0;
+            for (IMultipleTankHandler hatch : getOrderedFluidHatches()) {
+                size += hatch.getTanks();
+            }
+            return size;
         }
+    };
 
-        public class AssemblyLineInputGroup implements DistinctRecipeLogic.DistinctInputGroup {
+    public class ItemMatchOperator extends RecipeItemMatchOperator {
 
-            private final List<ItemStack> item = new AbstractList<>() {
+        @Override
+        public void operate(NBTTagCompound data, Map<String, Object> transientData) {
+            List<ItemStack> items = (List<ItemStack>) transientData.get(keyItems);
+            Recipe recipe = (Recipe) transientData.get(keyRecipe);
 
-                @Override
-                public ItemStack set(int index, ItemStack element) {
-                    for (IItemHandlerModifiable bus : getMetaTileEntity().getOrderedItemBuses()) {
-                        int size = bus.getSlots();
-                        if (index >= size) {
-                            index -= size;
-                            continue;
-                        }
-                        ItemStack oldStack = bus.getStackInSlot(index);
-                        bus.setStackInSlot(index, element == null ? ItemStack.EMPTY : element);
-                        return oldStack;
-                    }
-                    throw new IndexOutOfBoundsException();
-                }
-
-                @Override
-                public ItemStack get(int index) {
-                    for (IItemHandlerModifiable bus : getMetaTileEntity().getOrderedItemBuses()) {
-                        int size = bus.getSlots();
-                        if (index >= size) {
-                            index -= size;
-                            continue;
-                        }
-                        return bus.getStackInSlot(index);
-                    }
-                    throw new IndexOutOfBoundsException();
-                }
-
-                @Override
-                public int size() {
-                    int size = 0;
-                    for (IItemHandlerModifiable bus : getMetaTileEntity().getOrderedItemBuses()) {
-                        size += bus.getSlots();
-                    }
-                    return size;
-                }
-            };
-
-            private final List<FluidStack> fluid = new AbstractList<>() {
-
-                @Override
-                public FluidStack set(int index, FluidStack element) {
-                    for (IMultipleTankHandler hatch : getMetaTileEntity().getOrderedFluidHatches()) {
-                        int size = hatch.getTanks();
-                        if (index >= size) {
-                            index -= size;
-                            continue;
-                        }
-                        IFluidTank fluidTank = hatch.getTankAt(index).getDelegate();
-                        FluidStack oldStack = fluidTank.getFluid();
-                        if (fluidTank instanceof FluidTank) {
-                            ((FluidTank) fluidTank).setFluid(element);
-                        }
-                        return oldStack;
-                    }
-                    throw new IndexOutOfBoundsException();
-                }
-
-                @Override
-                public FluidStack get(int index) {
-                    for (IMultipleTankHandler hatch : getMetaTileEntity().getOrderedFluidHatches()) {
-                        int size = hatch.getTanks();
-                        if (index >= size) {
-                            index -= size;
-                            continue;
-                        }
-                        return hatch.getTankAt(index).getFluid();
-                    }
-                    throw new IndexOutOfBoundsException();
-                }
-
-                @Override
-                public int size() {
-                    int size = 0;
-                    for (IMultipleTankHandler hatch : getMetaTileEntity().getOrderedFluidHatches()) {
-                        size += hatch.getTanks();
-                    }
-                    return size;
-                }
-            };
-
-            @Override
-            public @NotNull List<ItemStack> itemInventoryView() {
-                return item;
+            int limit = data.hasKey(keyLimit) ? data.getInteger(keyLimit) : 1;
+            if (items != null && recipe != null && limit > 0) {
+                MatchCalculation<ItemStack> match = new OrderedItemMatch(recipe.getItemIngredients(),
+                        getOrderedItemBuses(), items);
+                transientData.put(keyResult, match);
+                data.setInteger(keyMaxOut, match.largestSucceedingScale(limit));
+                return;
             }
-
-            @Override
-            public boolean containsItemHandler(IItemHandlerModifiable handler) {
-                return true;
-            }
-
-            @Override
-            public @NotNull List<FluidStack> fluidInventoryView() {
-                return fluid;
-            }
-
-            @Override
-            public boolean containsFluidHandler(IFluidHandler handler) {
-                return true;
-            }
-
-            @Override
-            public void setInvalidItemInputs(boolean invalidInputs) {
-                AssemblyLineRecipeLogic.super.setInvalidItemInputs(invalidInputs);
-            }
-
-            @Override
-            public void setInvalidFluidInputs(boolean invalidInputs) {
-                AssemblyLineRecipeLogic.super.setInvalidFluidInputs(invalidInputs);
-            }
-
-            @Override
-            public boolean areItemInputsInvalid() {
-                return hasInvalidItemInputs();
-            }
-
-            @Override
-            public boolean areFluidInputsInvalid() {
-                return hasInvalidFluidInputs();
-            }
+            data.setInteger(keyMaxOut, 0);
         }
     }
 
@@ -654,6 +593,25 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 list.add(stack);
             }
             return list;
+        }
+    }
+
+    public class FluidMatchOperator extends RecipeFluidMatchOperator {
+
+        @Override
+        public void operate(NBTTagCompound data, Map<String, Object> transientData) {
+            List<FluidStack> fluids = (List<FluidStack>) transientData.get(keyFluids);
+            Recipe recipe = (Recipe) transientData.get(keyRecipe);
+
+            int limit = data.hasKey(keyLimit) ? data.getInteger(keyLimit) : 1;
+            if (fluids != null && recipe != null && limit > 0) {
+                MatchCalculation<FluidStack> match = new OrderedFluidMatch(recipe.getFluidIngredients(),
+                        getOrderedFluidHatches(), fluidView);
+                transientData.put(keyResult, match);
+                data.setInteger(keyMaxOut, match.largestSucceedingScale(limit));
+                return;
+            }
+            data.setInteger(keyMaxOut, 0);
         }
     }
 

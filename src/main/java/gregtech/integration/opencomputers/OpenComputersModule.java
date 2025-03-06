@@ -36,7 +36,7 @@ public class OpenComputersModule extends IntegrationSubmodule {
         getLogger().info("Registering OpenComputers Drivers...");
         registerDriver(new DriverEnergyContainer());
         registerDriver(new DriverWorkable());
-        registerDriver(new DriverAbstractRecipeLogic());
+        registerDriver(new DriverRecipeWorkableLogic());
         registerDriver(new DriverRecipeMapMultiblockController());
         registerDriver(new DriverCoverHolder());
         registerDriver(new DriverSimpleMachine());

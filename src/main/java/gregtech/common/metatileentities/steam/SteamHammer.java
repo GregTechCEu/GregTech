@@ -43,9 +43,10 @@ public class SteamHammer extends SteamMetaTileEntity {
         return createUITemplate(player)
                 .slot(this.importItems, 0, 53, 25, GuiTextures.SLOT_STEAM.get(isHighPressure),
                         GuiTextures.HAMMER_OVERLAY_STEAM.get(isHighPressure))
-                .progressBar(workableHandler::getProgressPercent, 79, 25, 20, 18,
+                // TODO multiple recipe display
+                .progressBar(/* workableHandler::getProgressPercent */() -> 0, 79, 25, 20, 18,
                         GuiTextures.PROGRESS_BAR_HAMMER_STEAM.get(isHighPressure), MoveType.VERTICAL_DOWNWARDS,
-                        workableHandler.getRecipeMap())
+                        getRecipeMap())
                 .image(79, 41, 20, 18, GuiTextures.PROGRESS_BAR_HAMMER_BASE_STEAM.get(isHighPressure))
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure))
                 .build(getHolder(), player);

@@ -3,6 +3,7 @@ package gregtech.api.util;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.MachineItemBlock;
+import gregtech.api.capability.IHasRecipeMap;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.fluids.GTFluid;
@@ -682,8 +683,9 @@ public class GTUtility {
         }
 
         MetaTileEntity machine = getMetaTileEntity(machineStack);
-        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity)) {
-            RecipeMap<?> recipeMap = machine.getRecipeMap();
+        if (machine instanceof WorkableTieredMetaTileEntity && !(machine instanceof SimpleGeneratorMetaTileEntity) &&
+                machine instanceof IHasRecipeMap has) {
+            RecipeMap<?> recipeMap = has.getRecipeMap();
             return recipeMap != null && !ArrayUtils.contains(recipeMapBlacklist, recipeMap.getUnlocalizedName());
         }
 

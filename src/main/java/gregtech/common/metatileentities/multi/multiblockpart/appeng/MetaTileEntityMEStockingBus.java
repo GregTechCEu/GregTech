@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.multiblockpart.appeng;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IDistinctBusController;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
@@ -8,7 +9,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemList;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.slot.ExportOnlyAEItemSlot;
 import gregtech.common.metatileentities.multi.multiblockpart.appeng.stack.WrappedItemStack;
@@ -156,7 +156,7 @@ public class MetaTileEntityMEStockingBus extends MetaTileEntityMEInputBus {
         if (controller == null) return false;
 
         // In distinct mode, we don't need to check other buses since only one bus can run a recipe at a time.
-        if (!(controller instanceof RecipeMapMultiblockController rmmc) || !rmmc.isDistinct()) {
+        if (!(controller instanceof IDistinctBusController rmmc) || !rmmc.isDistinct()) {
             // Otherwise, we need to test for if the item is configured
             // in any stocking bus in the multi (besides ourselves).
             var abilityList = controller.getAbilities(MultiblockAbility.IMPORT_ITEMS);

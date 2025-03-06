@@ -581,7 +581,7 @@ public class MinerLogic {
         if (dataId == GregtechDataCodes.PUMP_HEAD_LEVEL) {
             this.pipeLength = buf.readInt();
             metaTileEntity.scheduleRenderUpdate();
-        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        } else if (dataId == GregtechDataCodes.IS_WORKING) {
             this.isActive = buf.readBoolean();
             metaTileEntity.scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {
@@ -703,7 +703,7 @@ public class MinerLogic {
             this.isActive = isActive;
             this.metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE,
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING,
                         buf -> buf.writeBoolean(isActive));
             }
         }

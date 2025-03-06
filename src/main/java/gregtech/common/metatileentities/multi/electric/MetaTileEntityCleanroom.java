@@ -674,7 +674,7 @@ public class MetaTileEntityCleanroom extends MultiblockWithDisplayBase
             this.bDist = buf.readInt();
             this.fDist = buf.readInt();
             this.hDist = buf.readInt();
-        } else if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        } else if (dataId == GregtechDataCodes.IS_WORKING) {
             this.cleanroomLogic.setActive(buf.readBoolean());
             scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {

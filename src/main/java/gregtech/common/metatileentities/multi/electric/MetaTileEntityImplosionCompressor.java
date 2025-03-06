@@ -2,8 +2,8 @@ package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.DistinctRecipeMapMultiblockController;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
 
-public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockController {
+public class MetaTileEntityImplosionCompressor extends DistinctRecipeMapMultiblockController {
 
     public MetaTileEntityImplosionCompressor(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.IMPLOSION_RECIPES);
@@ -68,11 +68,6 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
 
     @Override
     public boolean hasMufflerMechanics() {
-        return true;
-    }
-
-    @Override
-    public boolean canBeDistinct() {
         return true;
     }
 }

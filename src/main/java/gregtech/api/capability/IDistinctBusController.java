@@ -2,7 +2,9 @@ package gregtech.api.capability;
 
 public interface IDistinctBusController {
 
-    boolean canBeDistinct();
+    default boolean canBeDistinct() {
+        return true;
+    }
 
     boolean isDistinct();
 

@@ -25,6 +25,10 @@ public class FacingPos {
         return pos;
     }
 
+    public BlockPos offset() {
+        return pos.offset(facing);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,10 +1,8 @@
 package gregtech.api.recipes.logic;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -12,6 +10,12 @@ import org.jetbrains.annotations.Range;
 import java.util.List;
 
 public interface RecipeRun {
+
+    /**
+     * Use sparingly. If the recipe run has an available method for what you need, use that whenever possible.
+     */
+    @NotNull
+    RecipeView getRecipeView();
 
     @NotNull
     List<ItemStack> getItemsOut();
@@ -22,21 +26,11 @@ public interface RecipeRun {
     @NotNull
     List<ItemStack> getItemsConsumed();
 
-    /**
-     * Does not need to be serialized; should only be used to consume during recipe run setup, before the run can even
-     * be written to nbt.
-     */
-    @ApiStatus.Internal
     long @Nullable [] getItemArrayConsumption();
 
     @NotNull
     List<FluidStack> getFluidsConsumed();
 
-    /**
-     * Does not need to be serialized; should only be used to consume during recipe run setup, before the run can even
-     * be written to nbt.
-     */
-    @ApiStatus.Internal
     long @Nullable [] getFluidArrayConsumption();
 
     @Range(from = 1, to = Integer.MAX_VALUE)
@@ -54,8 +48,4 @@ public interface RecipeRun {
     long getRequiredAmperage();
 
     boolean isGenerating();
-
-    String getRegistryName();
-
-    NBTTagCompound serializeNBT();
 }

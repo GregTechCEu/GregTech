@@ -1,9 +1,7 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.capability.IDistillationTower;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.DistillationTowerLogicHandler;
-import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -13,8 +11,7 @@ import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.logic.RecipeRun;
-import gregtech.api.util.GTTransferUtils;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.TextComponentUtil;
@@ -35,6 +32,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
@@ -43,7 +41,8 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController implements IDistillationTower {
 
-    protected DistillationTowerLogicHandler handler;
+    protected @Nullable DistillationTowerLogicHandler handler;
+    protected FluidStack[] fluidOutputBuffer;
 
     @SuppressWarnings("unused") // backwards compatibility
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId) {
@@ -53,7 +52,6 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId, boolean useAdvHatchLogic) {
         super(metaTileEntityId, RecipeMaps.DISTILLATION_RECIPES);
         if (useAdvHatchLogic) {
-            this.recipeMapWorkable = new DistillationTowerRecipeLogic(this);
             this.handler = new DistillationTowerLogicHandler(this);
         } else this.handler = null;
     }
@@ -61,6 +59,40 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
         return new MetaTileEntityDistillationTower(metaTileEntityId, this.handler != null);
+    }
+
+    @Override
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setFluidOutput(this::bufferOutputs);
+    }
+
+    protected void bufferOutputs(List<FluidStack> fluids) {
+        if (handler == null) {
+            bufferedFluidOutputs.addAll(fluids);
+            return;
+        }
+        int s = Math.min(fluids.size(), fluidOutputBuffer.length);
+        for (int i = 0; i < s; i++) {
+            FluidStack fluid = fluids.get(i);
+            if (fluidOutputBuffer[s] != null) {
+                throw new IllegalStateException(
+                        "A Distillation Tower attempted to buffer a second recipe to its output buffer, this should be impossible!");
+            }
+            fluidOutputBuffer[s] = fluid;
+        }
+    }
+
+    @Override
+    protected void updateBufferedOutputs() {
+        super.updateBufferedOutputs();
+        if (handler == null) return;
+        if (!awaitingFluidOutputSpace) {
+            getNotifiedFluidOutputList().clear();
+            if (!handler.applyFluidToOutputs(fluidOutputBuffer, true)) {
+                awaitingFluidOutputSpace = true;
+            }
+        }
     }
 
     /**
@@ -165,33 +197,5 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     public int getFluidOutputLimit() {
         if (this.handler != null) return this.handler.getLayerCount();
         else return super.getFluidOutputLimit();
-    }
-
-    protected class DistillationTowerRecipeLogic extends MultiblockRecipeLogic {
-
-        public DistillationTowerRecipeLogic(MetaTileEntityDistillationTower tileEntity) {
-            super(tileEntity);
-        }
-
-        @Override
-        protected boolean outputRecipeOutputs(@NotNull RecipeRun run) {
-            if (GTTransferUtils.addItemsToItemHandler(getOutputInventory(), true, run.getItemsOut()) &&
-                    handler.applyFluidToOutputs(run.getFluidsOut(), false)) {
-                GTTransferUtils.addItemsToItemHandler(getOutputInventory(), false, run.getItemsOut());
-                handler.applyFluidToOutputs(run.getFluidsOut(), true);
-                return true;
-            } else return false;
-        }
-
-        @Override
-        protected boolean canFitFluids(List<FluidStack> fluids) {
-            return metaTileEntity.canVoidRecipeFluidOutputs() ||
-                    handler.applyFluidToOutputs(fluids, false);
-        }
-
-        @Override
-        protected IMultipleTankHandler getOutputTank() {
-            return handler.getFluidTanks();
-        }
     }
 }

@@ -34,7 +34,7 @@ public class HWYLAModule extends IntegrationSubmodule implements IWailaPlugin {
         MaintenanceDataProvider.INSTANCE.register(registrar);
         MultiRecipeMapDataProvider.INSTANCE.register(registrar);
         ConverterDataProvider.INSTANCE.register(registrar);
-        RecipeLogicDataProvider.INSTANCE.register(registrar);
+        RecipeWorkableDataProvider.INSTANCE.register(registrar);
         SteamBoilerDataProvider.INSTANCE.register(registrar);
         PrimitivePumpDataProvider.INSTANCE.register(registrar);
         // one day, if cover provider is ported to waila, register it right here

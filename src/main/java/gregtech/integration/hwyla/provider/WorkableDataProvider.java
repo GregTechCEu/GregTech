@@ -3,7 +3,6 @@ package gregtech.integration.hwyla.provider;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IWorkable;
-import gregtech.api.capability.impl.ComputationRecipeLogic;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -39,8 +38,9 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
         NBTTagCompound subTag = new NBTTagCompound();
         subTag.setBoolean("Active", capability.isActive());
         if (capability.isActive()) {
-            subTag.setBoolean("ShowAsComputation",
-                    capability instanceof ComputationRecipeLogic logic && !logic.shouldShowDuration());
+            // TODO fix as computation display
+            // subTag.setBoolean("ShowAsComputation",
+            // capability instanceof ComputationRecipeLogic logic && !logic.shouldShowDuration());
             subTag.setInteger("Progress", capability.getProgress());
             subTag.setInteger("MaxProgress", capability.getMaxProgress());
         }
@@ -63,9 +63,9 @@ public class WorkableDataProvider extends CapabilityDataProvider<IWorkable> {
                 int progress = tag.getInteger("Progress");
                 int maxProgress = tag.getInteger("MaxProgress");
 
-                if (tag.getBoolean("ShowAsComputation")) {
-                    tooltip.add(I18n.format("gregtech.waila.progress_computation", progress, maxProgress));
-                }
+                // if (tag.getBoolean("ShowAsComputation")) {
+                // tooltip.add(I18n.format("gregtech.waila.progress_computation", progress, maxProgress));
+                // }
 
                 if (maxProgress == 0) {
                     tooltip.add(I18n.format("gregtech.waila.progress_idle"));

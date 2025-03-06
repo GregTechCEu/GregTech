@@ -2,7 +2,9 @@ package gregtech.api.capability;
 
 import gregtech.api.recipes.RecipeMap;
 
-public interface IMultipleRecipeMaps {
+import org.jetbrains.annotations.Nullable;
+
+public interface IMultipleRecipeMaps extends IHasRecipeMap {
 
     /**
      * Used to get all possible RecipeMaps a Multiblock can run
@@ -16,6 +18,11 @@ public interface IMultipleRecipeMaps {
      * @return the currently selected RecipeMap
      */
     RecipeMap<?> getCurrentRecipeMap();
+
+    @Override
+    default @Nullable RecipeMap<?> getRecipeMap() {
+        return getCurrentRecipeMap();
+    }
 
     /** @return the index of the currently selected RecipeMap. Used for UI. */
     int getRecipeMapIndex();

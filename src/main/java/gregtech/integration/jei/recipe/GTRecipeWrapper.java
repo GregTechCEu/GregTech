@@ -284,8 +284,8 @@ public class GTRecipeWrapper extends AdvancedRecipeWrapper {
         BooleanSupplier creativePlayerPredicate = () -> Minecraft.getMinecraft().player != null &&
                 Minecraft.getMinecraft().player.isCreative();
         BooleanSupplier creativeTweaker = () -> creativePlayerPredicate.getAsBoolean() &&
-                (recipe.getIsCTRecipe() || recipe.isGroovyRecipe());
-        BooleanSupplier creativeDefault = () -> creativePlayerPredicate.getAsBoolean() && !recipe.getIsCTRecipe() &&
+                (recipe.isGroovyRecipe());
+        BooleanSupplier creativeDefault = () -> creativePlayerPredicate.getAsBoolean() &&
                 !recipe.isGroovyRecipe();
 
         // X Button

@@ -2,10 +2,8 @@ package gregtech.integration.jei;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IHasRecipeMap;
 import gregtech.api.capability.IMultipleRecipeMaps;
-import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -209,30 +207,12 @@ public class JustEnoughItemsModule extends IntegrationSubmodule implements IModP
                     if (override.shouldReplace()) continue;
                 }
 
-                if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
-                    IControllable workableCapability = metaTileEntity
-                            .getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-
-                    if (workableCapability instanceof ICategoryOverride override && override.shouldOverride()) {
-                        for (RecipeMap<?> recipeMap : override.getJEIRecipeMapCategoryOverrides()) {
-                            registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
-                        }
-                        if (override.getJEICategoryOverrides().length != 0)
-                            registry.addRecipeCatalyst(metaTileEntity.getStackForm(),
-                                    override.getJEICategoryOverrides());
-                        if (override.shouldReplace()) continue;
+                if (metaTileEntity instanceof IMultipleRecipeMaps maps) {
+                    for (RecipeMap<?> recipeMap : maps.getAvailableRecipeMaps()) {
+                        registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
                     }
-
-                    if (workableCapability instanceof AbstractRecipeLogic logic) {
-                        if (metaTileEntity instanceof IMultipleRecipeMaps) {
-                            for (RecipeMap<?> recipeMap : ((IMultipleRecipeMaps) metaTileEntity)
-                                    .getAvailableRecipeMaps()) {
-                                registerRecipeMapCatalyst(registry, recipeMap, metaTileEntity);
-                            }
-                        } else if (logic.getRecipeMap() != null) {
-                            registerRecipeMapCatalyst(registry, logic.getRecipeMap(), metaTileEntity);
-                        }
-                    }
+                } else if (metaTileEntity instanceof IHasRecipeMap map && map.getRecipeMap() != null) {
+                    registerRecipeMapCatalyst(registry, map.getRecipeMap(), metaTileEntity);
                 }
             }
         }

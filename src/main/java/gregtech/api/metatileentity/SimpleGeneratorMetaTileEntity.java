@@ -4,13 +4,14 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.FuelRecipeLogic;
-import gregtech.api.capability.impl.RecipeLogicEnergy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStallType;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.overclock.RecipeNoOverclockingOperator;
 import gregtech.client.renderer.ICubeRenderer;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.utils.PipelineUtil;
@@ -52,13 +53,17 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity tileEntity) {
-        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, workable.getRecipeMap(), renderer, getTier(),
+        return new SimpleGeneratorMetaTileEntity(metaTileEntityId, recipeMap, renderer, getTier(),
                 getTankScalingFunction(), handlesRecipeOutputs);
     }
 
     @Override
-    protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        return new FuelRecipeLogic(this, recipeMap, () -> energyContainer);
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setOverclockFactory(RecipeNoOverclockingOperator::create)
+                .setDownTransformForParallels(true)
+                .setParallelLimit(() -> Integer.MAX_VALUE)
+                .setStallType(RecipeStallType.PAUSE);
     }
 
     @Override
@@ -96,17 +101,17 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
-        RecipeMap<?> workableRecipeMap = workable.getRecipeMap();
         int yOffset = 0;
-        if (workableRecipeMap.getMaxInputs() >= 6 || workableRecipeMap.getMaxFluidInputs() >= 6 ||
-                workableRecipeMap.getMaxOutputs() >= 6 || workableRecipeMap.getMaxFluidOutputs() >= 6)
+        if (recipeMap.getMaxInputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6 ||
+                recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxFluidOutputs() >= 6)
             yOffset = FONT_HEIGHT;
 
         ModularUI.Builder builder;
         if (handlesRecipeOutputs)
-            builder = workableRecipeMap.getRecipeMapUI().createUITemplate(workable::getProgressPercent,
+            // TODO multiple recipe display
+            builder = recipeMap.getRecipeMapUI().createUITemplate(/* this::recipeProgressPercent */() -> 0,
                     importItems, exportItems, importFluids, exportFluids, yOffset);
-        else builder = workableRecipeMap.getRecipeMapUI().createUITemplateNoOutputs(workable::getProgressPercent,
+        else builder = recipeMap.getRecipeMapUI().createUITemplateNoOutputs(/* this::recipeProgressPercent */() -> 0,
                 importItems,
                 exportItems, importFluids, exportFluids, yOffset);
         builder.widget(new LabelWidget(6, 6, getMetaFullName()))
@@ -124,8 +129,8 @@ public class SimpleGeneratorMetaTileEntity extends WorkableTieredMetaTileEntity 
     }
 
     protected void renderOverlays(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        this.renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), workable.isActive(),
-                workable.isWorkingEnabled());
+        this.renderer.renderOrientedState(renderState, translation, pipeline, getFrontFacing(), isActive(),
+                isWorkingEnabled());
     }
 
     @Override

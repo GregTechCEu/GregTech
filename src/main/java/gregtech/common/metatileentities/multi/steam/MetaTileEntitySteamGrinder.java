@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.steam;
 
-import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -39,13 +38,16 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
 
     public MetaTileEntitySteamGrinder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.MACERATOR_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
-        this.recipeMapWorkable.setParallelLimit(PARALLEL_LIMIT);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity metaTileEntityHolder) {
         return new MetaTileEntitySteamGrinder(metaTileEntityId);
+    }
+
+    @Override
+    protected int getBaseParallelLimit() {
+        return PARALLEL_LIMIT;
     }
 
     @Override

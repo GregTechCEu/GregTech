@@ -43,9 +43,10 @@ public class SteamMacerator extends SteamMetaTileEntity {
         return createUITemplate(player)
                 .slot(this.importItems, 0, 53, 25, GuiTextures.SLOT_STEAM.get(isHighPressure),
                         GuiTextures.CRUSHED_ORE_OVERLAY_STEAM.get(isHighPressure))
-                .progressBar(workableHandler::getProgressPercent, 79, 26, 21, 18,
+                // TODO multiple recipe display
+                .progressBar(/* workableHandler::getProgressPercent */() -> 0, 79, 26, 21, 18,
                         GuiTextures.PROGRESS_BAR_MACERATE_STEAM.get(isHighPressure), MoveType.HORIZONTAL,
-                        workableHandler.getRecipeMap())
+                        getRecipeMap())
                 .slot(this.exportItems, 0, 107, 25, true, false, GuiTextures.SLOT_STEAM.get(isHighPressure),
                         GuiTextures.DUST_OVERLAY_STEAM.get(isHighPressure))
                 .build(getHolder(), player);

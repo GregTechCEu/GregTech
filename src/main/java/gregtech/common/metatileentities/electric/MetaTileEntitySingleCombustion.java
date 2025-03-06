@@ -41,8 +41,8 @@ public class MetaTileEntitySingleCombustion extends SimpleGeneratorMetaTileEntit
     protected void renderOverlays(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         if (getFrontFacing() == EnumFacing.DOWN) {
             // Trick the render into rendering on the top, as this case didn't render otherwise
-            this.renderer.renderOrientedState(renderState, translation, pipeline, EnumFacing.NORTH, workable.isActive(),
-                    workable.isWorkingEnabled());
+            this.renderer.renderOrientedState(renderState, translation, pipeline, EnumFacing.NORTH, isActive(),
+                    isWorkingEnabled());
         } else if (getFrontFacing() != EnumFacing.UP) {
             // Don't render the top overlay if the facing is up, as the textures
             // would collide, otherwise render normally.

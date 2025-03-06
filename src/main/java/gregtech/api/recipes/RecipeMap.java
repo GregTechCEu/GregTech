@@ -22,7 +22,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.Mods;
 import gregtech.api.util.ValidationResult;
-import gregtech.integration.crafttweaker.recipe.CTRecipe;
 import gregtech.integration.groovy.GroovyScriptModule;
 import gregtech.integration.groovy.VirtualizedRecipeMap;
 import gregtech.modules.GregTechModules;
@@ -35,24 +34,18 @@ import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import com.google.common.collect.ImmutableList;
-import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
-import crafttweaker.api.item.IItemStack;
-import crafttweaker.api.liquid.ILiquidStack;
-import crafttweaker.api.minecraft.CraftTweakerMC;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
-import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenSetter;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -420,19 +413,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         boolean emptyInputs = recipe.getItemIngredients().isEmpty() && recipe.getFluidIngredients().isEmpty();
         if (emptyInputs) {
             GTLog.logger.error("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
-            if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of recipe inputs. Recipe inputs are empty.", new Throwable());
-            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         boolean emptyOutputs = !this.allowEmptyOutput && recipe.getItemOutputProvider().getMaximumOutputs(1) == 0 &&
                 recipe.getFluidOutputProvider().getMaximumOutputs(1) == 0;
         if (emptyOutputs) {
             GTLog.logger.error("Invalid amount of recipe outputs. Recipe outputs are empty.", new Throwable());
-            if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError("Invalid amount of outputs inputs. Recipe outputs are empty.",
-                        new Throwable());
-            }
             recipeStatus = EnumValidationResult.INVALID;
         }
 
@@ -440,11 +426,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (amount > getMaxInputs()) {
             GTLog.logger.error("Invalid amount of recipe inputs. Actual: {}. Should be at most {}.", amount,
                     getMaxInputs(), new Throwable());
-            if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(String.format(
-                        "Invalid amount of recipe inputs. Actual: %s. Should be at most %s.", amount, getMaxInputs()),
-                        new Throwable());
-            }
             recipeStatus = EnumValidationResult.INVALID;
         }
 
@@ -452,11 +433,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (amount > getMaxOutputs()) {
             GTLog.logger.error("Invalid amount of recipe outputs. Actual: {}. Should be at most {}.", amount,
                     getMaxOutputs(), new Throwable());
-            if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI
-                        .logError(String.format("Invalid amount of recipe outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxOutputs()), new Throwable());
-            }
             recipeStatus = EnumValidationResult.INVALID;
         }
 
@@ -464,12 +440,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (amount > getMaxFluidInputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid inputs. Actual: {}. Should be at most {}.", amount,
                     getMaxFluidInputs(), new Throwable());
-            if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(
-                        String.format("Invalid amount of recipe fluid inputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidInputs()),
-                        new Throwable());
-            }
             recipeStatus = EnumValidationResult.INVALID;
         }
 
@@ -477,12 +447,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (amount > getMaxFluidOutputs()) {
             GTLog.logger.error("Invalid amount of recipe fluid outputs. Actual: {}. Should be at most {}.", amount,
                     getMaxFluidOutputs(), new Throwable());
-            if (recipe.getIsCTRecipe()) {
-                CraftTweakerAPI.logError(
-                        String.format("Invalid amount of recipe fluid outputs. Actual: %s. Should be at most %s.",
-                                amount, getMaxFluidOutputs()),
-                        new Throwable());
-            }
             recipeStatus = EnumValidationResult.INVALID;
         }
         return ValidationResult.newResult(recipeStatus, recipe);
@@ -504,7 +468,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-        CompactibleIterator<Recipe> iter = findRecipes(inputs, fluidInputs, PropertySet.supply(voltage, 1));
+        CompactibleIterator<Recipe> iter = findRecipes(inputs, fluidInputs, PropertySet.empty().supply(voltage, 1));
         if (!iter.hasNext()) return null;
         else return iter.next();
     }
@@ -521,7 +485,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @Deprecated
     @ApiStatus.ScheduledForRemoval(inVersion = "2.10")
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs) {
-        CompactibleIterator<Recipe> iter = findRecipes(inputs, fluidInputs, PropertySet.supply(voltage, 1));
+        CompactibleIterator<Recipe> iter = findRecipes(inputs, fluidInputs, PropertySet.empty().supply(voltage, 1));
         if (!iter.hasNext()) return null;
         else return iter.next();
     }
@@ -546,7 +510,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 .collect(Collectors.toList());
 
         CompactibleIterator<Recipe> iter = findRecipes(items, fluids,
-                propertylessSearch ? null : PropertySet.supply(voltage, 1));
+                propertylessSearch ? null : PropertySet.empty().supply(voltage, 1));
 
         if (!propertylessSearch) {
             if (!iter.hasNext()) return null;
@@ -600,25 +564,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public @Nullable SoundEvent getSound() {
         return sound;
-    }
-
-    @ZenMethod("findRecipe")
-    @Method(modid = Mods.Names.CRAFT_TWEAKER)
-    @Nullable
-    public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs,
-                                 @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
-        List<ItemStack> mcItemInputs = itemInputs == null ? Collections.emptyList() :
-                Arrays.stream(itemInputs).map(CraftTweakerMC::getItemStack).collect(Collectors.toList());
-        List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() :
-                Arrays.stream(fluidInputs).map(CraftTweakerMC::getLiquidStack).collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, true);
-        return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
-    }
-
-    @ZenGetter("recipes")
-    @Method(modid = Mods.Names.CRAFT_TWEAKER)
-    public List<CTRecipe> ctGetRecipeList() {
-        return getRecipeList().stream().map(recipe -> new CTRecipe(this, recipe)).collect(Collectors.toList());
     }
 
     @ZenGetter("localizedName")

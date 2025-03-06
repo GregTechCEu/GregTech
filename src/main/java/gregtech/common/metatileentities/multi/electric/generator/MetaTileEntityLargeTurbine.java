@@ -2,8 +2,6 @@ package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IRotorHolder;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
@@ -12,8 +10,9 @@ import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
 import gregtech.api.metatileentity.multiblock.*;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
-import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.statemachine.builder.RecipeStandardStateMachineBuilder;
+import gregtech.api.recipes.logic.statemachine.running.RecipeProgressOperation;
 import gregtech.api.util.TextComponentUtil;
 import gregtech.api.util.TextFormattingUtil;
 import gregtech.client.renderer.ICubeRenderer;
@@ -26,7 +25,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -48,8 +46,6 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
 
     private static final int MIN_DURABILITY_TO_WARN = 10;
 
-    public IFluidHandler exportFluidHandler;
-
     public MetaTileEntityLargeTurbine(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int tier,
                                       IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer,
                                       boolean hasMufflerHatch, ICubeRenderer frontOverlay) {
@@ -60,7 +56,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         this.hasMufflerHatch = hasMufflerHatch;
         this.frontOverlay = frontOverlay;
         this.tier = tier;
-        this.recipeMapWorkable = new LargeTurbineWorkableHandler(this, tier);
+        setVoidingMode(3);
     }
 
     @Override
@@ -69,17 +65,54 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                 casingRenderer, hasMufflerHatch, frontOverlay);
     }
 
+    @Override
+    protected void modifyRecipeLogicStandardBuilder(RecipeStandardStateMachineBuilder builder) {
+        super.modifyRecipeLogicStandardBuilder(builder);
+        builder.setVoltageDiscount(() -> {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder != null && rotorHolder.hasRotor())
+                return rotorHolder.getTotalEfficiency() / 100d * rotorHolder.getTotalPower() / 100d;
+            return 1;
+        });
+        builder.setDurationDiscount(() -> {
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder != null && rotorHolder.hasRotor())
+                return 100d / rotorHolder.getTotalPower();
+            return 1;
+        });
+        builder.setPerTickRecipeCheck(recipe -> {
+            double progress = recipe.getInteger(RecipeProgressOperation.STANDARD_PROGRESS_KEY);
+            double maxProgress = recipe.getDouble("Duration");
+            long voltage = recipe.getLong("Voltage");
+            long amperage = recipe.getLong("Amperage");
+            long eut = (long) (Math.min(1, maxProgress - progress) * voltage * amperage);
+
+            IRotorHolder rotorHolder = getRotorHolder();
+            if (rotorHolder != null && rotorHolder.hasRotor()) {
+                int maxSpeed = rotorHolder.getMaxRotorHolderSpeed();
+                int currentSpeed = rotorHolder.getRotorSpeed();
+                if (currentSpeed < maxSpeed) {
+                    eut = (long) (eut * Math.pow(1d * currentSpeed / maxSpeed, 2));
+                }
+            } else {
+                return false;
+            }
+
+            boolean generating = recipe.getBoolean("Generating");
+            if (!generating) {
+                return Math.abs(getEnergyContainer().removeEnergy(eut)) >= eut;
+            } else {
+                getEnergyContainer().addEnergy(eut);
+                return true;
+            }
+        });
+    }
+
     public IRotorHolder getRotorHolder() {
         List<IRotorHolder> abilities = getAbilities(MultiblockAbility.ROTOR_HOLDER);
         if (abilities.isEmpty())
             return null;
         return abilities.get(0);
-    }
-
-    @Override
-    public void invalidateStructure() {
-        super.invalidateStructure();
-        this.exportFluidHandler = null;
     }
 
     /**
@@ -95,30 +128,16 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
     }
 
     @Override
-    protected void formStructure(PatternMatchContext context) {
-        super.formStructure(context);
-        this.exportFluidHandler = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
-        ((LargeTurbineWorkableHandler) this.recipeMapWorkable).updateTanks();
-    }
-
-    @Override
-    protected long getMaxVoltage() {
-        long maxProduction = recipeMapWorkable.getMaxVoltageIn();
-        long currentProduction = ((LargeTurbineWorkableHandler) recipeMapWorkable).boostProduction((int) maxProduction);
-        if (isActive() && currentProduction <= maxProduction) {
-            return recipeMapWorkable.getMaxVoltageIn();
-        } else {
-            return 0L;
-        }
+    protected final boolean allowSameFluidFillForOutputs() {
+        return true;
     }
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-
+        // TODO multiple recipe display
         MultiblockDisplayText.builder(textList, isStructureFormed())
-                .setWorkingStatus(recipeLogic.isWorkingEnabled(), recipeLogic.isActive())
-                .addEnergyProductionLine(getMaxVoltage(), recipeLogic.getRecipeEUt())
+                .setWorkingStatus(isWorkingEnabled(), isActive())
+                // .addEnergyProductionLine(getMaxVoltage(), recipeEUt())
                 .addCustom(tl -> {
                     if (isStructureFormed()) {
                         IRotorHolder rotorHolder = getRotorHolder();
@@ -133,7 +152,7 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
                         }
                     }
                 })
-                .addFuelNeededLine(recipeLogic.getRecipeFluidInputInfo(), recipeLogic.getPreviousRecipeDuration())
+                .addFuelNeededLine(getRecipeFluidInputInfo(), estimateRecipeDuration())
                 .addWorkingStatusLine();
     }
 
@@ -269,9 +288,8 @@ public class MetaTileEntityLargeTurbine extends FuelMultiblockController
         if (index == 0) {
             int[] fuelAmount = new int[2];
             if (getInputFluidInventory() != null) {
-                MultiblockFuelRecipeLogic recipeLogic = (MultiblockFuelRecipeLogic) recipeMapWorkable;
-                if (recipeLogic.getInputFluidStack() != null) {
-                    FluidStack testStack = recipeLogic.getInputFluidStack().copy();
+                FluidStack testStack = getInputFluidStack();
+                if (testStack != null) {
                     testStack.amount = Integer.MAX_VALUE;
                     fuelAmount = getTotalFluidAmount(testStack, getInputFluidInventory());
                 }

@@ -190,7 +190,7 @@ public class FluidDrillLogic {
             this.isActive = active;
             this.metaTileEntity.markDirty();
             if (metaTileEntity.getWorld() != null && !metaTileEntity.getWorld().isRemote) {
-                this.metaTileEntity.writeCustomData(GregtechDataCodes.WORKABLE_ACTIVE, buf -> buf.writeBoolean(active));
+                this.metaTileEntity.writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
             }
         }
     }
@@ -310,7 +310,7 @@ public class FluidDrillLogic {
      * {@link MetaTileEntity#receiveCustomData(int, PacketBuffer)} method
      */
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == GregtechDataCodes.WORKABLE_ACTIVE) {
+        if (dataId == GregtechDataCodes.IS_WORKING) {
             this.isActive = buf.readBoolean();
             metaTileEntity.scheduleRenderUpdate();
         } else if (dataId == GregtechDataCodes.WORKING_ENABLED) {

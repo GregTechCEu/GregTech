@@ -17,13 +17,13 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Allows hatchscan behavior to be used on fluid outputs. Not a child of {@link AbstractRecipeLogic}
- * for compatibility with other children.
+ * Allows hatchscan behavior to be used on fluid outputs.
  */
 public class DistillationTowerLogicHandler {
 
@@ -38,22 +38,27 @@ public class DistillationTowerLogicHandler {
     }
 
     /**
-     * Applies fluids to outputs on a sorted one fluid -> one hatch basis
+     * Applies fluids to outputs on a sorted one fluid -> one hatch basis. Modifies the provided array.
      * 
-     * @param fluids the fluids to output. Will be automatically trimmed if there are not enough output hatches.
+     * @param fluids the fluids to output. Will ignore fluids beyond the limit of output hatches.
      * @param doFill whether the application should be simulated or not.
-     * @return whether the fluids were successfully applied to the outputs or not.
+     * @return whether the array, limited to the range corresponding to available output hatches, is now empty.
      */
-    public boolean applyFluidToOutputs(List<FluidStack> fluids, boolean doFill) {
-        boolean valid = true;
-        int size = Math.min(fluids.size(), this.getOrderedFluidOutputs().size());
+    public boolean applyFluidToOutputs(@Nullable FluidStack @NotNull [] fluids, boolean doFill) {
+        int size = Math.min(fluids.length, this.getOrderedFluidOutputs().size());
+        boolean arrayEmpty = true;
         for (int i = 0; i < size; i++) {
+            if (fluids[i] == null) continue;
             IFluidHandler handler = this.getOrderedFluidOutputs().get(i);
-            int accepted = handler.fill(fluids.get(i), doFill);
-            if (accepted != fluids.get(i).amount) valid = false;
-            if (!doFill && !valid) break;
+            int accepted = handler.fill(fluids[i], doFill);
+            if (accepted < fluids[i].amount) {
+                fluids[i].amount -= accepted;
+                arrayEmpty = false;
+            } else {
+                fluids[i] = null;
+            }
         }
-        return valid;
+        return arrayEmpty;
     }
 
     /**

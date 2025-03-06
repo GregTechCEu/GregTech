@@ -2,7 +2,6 @@ package gregtech.common.metatileentities.multi.multiblockpart;
 
 import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IRotorHolder;
-import gregtech.api.capability.impl.MultiblockFuelRecipeLogic;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
@@ -14,7 +13,6 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.RelativeDirection;
 import gregtech.client.renderer.texture.Textures;
-import gregtech.common.items.behaviors.AbstractMaterialPartBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.core.advancement.AdvancementTriggers;
@@ -426,14 +424,6 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockNotifiabl
 
         private void damageRotor(int damageAmount) {
             if (!hasRotor()) return;
-
-            if (getTurbineBehavior().getPartMaxDurability(getTurbineStack()) <=
-                    AbstractMaterialPartBehavior.getPartDamage(getTurbineStack()) + damageAmount) {
-                var holder = (MultiblockFuelRecipeLogic) getController().getRecipeLogic();
-                if (holder != null && holder.isWorking()) {
-                    holder.invalidate();
-                }
-            }
 
             // noinspection ConstantConditions
             getTurbineBehavior().applyRotorDamage(getStackInSlot(0), damageAmount);
