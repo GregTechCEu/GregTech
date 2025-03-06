@@ -296,7 +296,7 @@ public class WidgetProspectingMap extends Widget {
                 }
                 oreInfo.forEach((name, count) -> {
                     int height = oreHeight.getOrDefault(name, 0);
-                    tooltips.add(name + " --- §e" + count + "§r§7, y" + height + "§r");
+                    tooltips.add(name + " --- §e" + count + "§r, §cy" + height + "§r");
                     hoveredNames.add(name);
                 });
             } else if (this.mode == ProspectorMode.FLUID) {
