@@ -29,7 +29,6 @@ import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.drawable.Rectangle;
-import com.cleanroommc.modularui.factory.GuiData;
 import com.cleanroommc.modularui.factory.SidedPosGuiData;
 import com.cleanroommc.modularui.network.NetworkUtils;
 import com.cleanroommc.modularui.screen.ModularPanel;
@@ -142,11 +141,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
         this.playerUUID = guiData.getPlayer().getUniqueID();
 
         return panel.child(CoverWithUI.createTitleRow(getPickItem()))
-                .child(createWidgets(guiData, guiSyncManager))
+                .child(createWidgets(panel, guiSyncManager))
                 .bindPlayerInventory();
     }
 
-    protected Flow createWidgets(GuiData data, PanelSyncManager syncManager) {
+    protected Flow createWidgets(ModularPanel modularPanel, PanelSyncManager syncManager) {
         var name = new StringSyncValue(this::getColorStr, this::updateColor);
 
         var entrySelectorSH = syncManager.panel("entry_selector", entrySelector(getType()), true);
@@ -163,7 +162,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                                 .setPattern(COLOR_INPUT_PATTERN)
                                 .widthRel(0.5f)
                                 .marginRight(2))
-                        .child(createEntrySlot())
+                        .child(createEntrySlot(modularPanel, syncManager))
                         .child(new ButtonWidget<>()
                                 .overlay(GTGuiTextures.MENU_OVERLAY)
                                 .background(GTGuiTextures.MC_BUTTON)
@@ -181,7 +180,7 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
                 .child(createIoRow());
     }
 
-    protected abstract IWidget createEntrySlot();
+    protected abstract IWidget createEntrySlot(ModularPanel panel, PanelSyncManager syncManager);
 
     protected IWidget createColorIcon() {
         return new DynamicDrawable(() -> new Rectangle()
@@ -402,7 +401,11 @@ public abstract class CoverAbstractEnderLink<T extends VirtualEntry> extends Cov
 
     protected abstract IWidget createSlotWidget(T entry);
 
-    protected abstract void deleteEntry(UUID player, String name);
+    protected void deleteEntry(UUID player, String name) {
+        VirtualEnderRegistry.deleteEntry(player, getType(), name, this::shouldDeleteEntry);
+    }
+
+    protected abstract boolean shouldDeleteEntry(T activeEntry);
 
     private final class EnderCoverSyncHandler extends SyncHandler {
 
